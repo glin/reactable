@@ -14,12 +14,12 @@ devtools::install_github("glin/reactable")
 
 ## Examples
 
-### Filtering
+- [Filtering](https://glin.github.io/reactable/inst/examples/filtering.html)
 ```r
 reactable(iris, filterable = TRUE)
 ```
 
-### Pivoting
+- [Pivoting](https://glin.github.io/reactable/inst/examples/pivoting.html)
 ```r
 reactable(iris, pivotBy = "Species")
 ```

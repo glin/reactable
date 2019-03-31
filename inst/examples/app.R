@@ -2,7 +2,7 @@ library(shiny)
 library(reactable)
 
 ui <- fluidPage(
-  tags$head(tags$style('body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }')),
+  includeCSS("assets/styles.css"),
   titlePanel("reactable example"),
   checkboxInput("pivotBySpecies", "Pivot by Species"),
   reactableOutput("table")
