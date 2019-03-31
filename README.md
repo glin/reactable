@@ -27,7 +27,8 @@ reactable(iris, pivotBy = "Species")
 reactable(
   data,                # Data frame or matrix
   rownames = TRUE,     # Show row names?
-  pivotBy = NULL,      # Vector of column names to pivot by
+  colnames = NULL,     # Optional named list of column names
+  pivotBy = NULL,      # Optional vector of column names to pivot by
   sortable = TRUE,     # Enable sorting?
   resizable = TRUE,    # Enable column resizing?
   filterable = FALSE,  # Enable column filtering?

@@ -4,15 +4,17 @@
 \alias{reactable}
 \title{Create a data table}
 \usage{
-reactable(data, rownames = TRUE, pivotBy = NULL, sortable = TRUE,
-  resizable = TRUE, filterable = FALSE, pageSize = 20, minRows = 1,
-  striped = TRUE, highlight = TRUE, width = NULL, height = NULL,
-  elementId = NULL)
+reactable(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
+  sortable = TRUE, resizable = TRUE, filterable = FALSE,
+  pageSize = 20, minRows = 1, striped = TRUE, highlight = TRUE,
+  width = NULL, height = NULL, elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
 
 \item{rownames}{Show row names? Defaults to \code{TRUE}.}
+
+\item{colnames}{Optional named list of column names.}
 
 \item{pivotBy}{Optional character vector of column names to pivot by.}
 

@@ -9,6 +9,7 @@ NULL
 #'
 #' @param data A data frame or matrix.
 #' @param rownames Show row names? Defaults to `TRUE`.
+#' @param colnames Optional named list of column names.
 #' @param pivotBy Optional character vector of column names to pivot by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
@@ -22,18 +23,24 @@ NULL
 #' @param elementId Optional element ID for the widget.
 #' @return An htmlwidget.
 #' @export
-reactable <- function(data, rownames = TRUE, pivotBy = NULL, sortable = TRUE,
-                      resizable = TRUE, filterable = FALSE, pageSize = 20,
-                      minRows = 1, striped = TRUE, highlight = TRUE,
+reactable <- function(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
+                      sortable = TRUE, resizable = TRUE, filterable = FALSE,
+                      pageSize = 20, minRows = 1, striped = TRUE, highlight = TRUE,
                       width = NULL, height = NULL, elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
   }
 
-  columns <- lapply(colnames(data), function(name) {
-    column <- list(Header = name, accessor = name)
-    if (is.numeric(data[[name]])) {
+  cols <- lapply(colnames(data), function(key) {
+    column <- list(accessor = key)
+    if (!is.null(colnames[[key]])) {
+      column$Header <- colnames[[key]]
+    } else {
+      column$Header <- key
+    }
+    # Right-align numbers
+    if (is.numeric(data[[key]])) {
       column$style <- list(textAlign = "right")
     }
     column
@@ -42,7 +49,7 @@ reactable <- function(data, rownames = TRUE, pivotBy = NULL, sortable = TRUE,
   if (rownames) {
     # Serialize row names with predictable order and ID
     data[["__rowname__"]] <- rownames(data)
-    columns <- c(list(list(accessor = "__rowname__")), columns)
+    cols <- c(list(list(accessor = "__rowname__")), cols)
   }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
@@ -50,7 +57,7 @@ reactable <- function(data, rownames = TRUE, pivotBy = NULL, sortable = TRUE,
   component <- reactR::reactMarkup(
     reactR::component("Reactable", list(
       data = data,
-      columns = columns,
+      columns = cols,
       pivotBy = as.list(pivotBy),
       sortable = sortable,
       resizable = resizable,
