@@ -1,5 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.travis\.yml$
 ^\.babelrc$
 ^\.eslintignore$
 ^\.eslintrc\.json$

@@ -1,0 +1,13 @@
+matrix:
+  include:
+    - node_js: node
+      language: node_js
+      cache:
+        directories:
+          - node_modules
+    - r: oldrel
+      language: r
+      cache: packages
+    - r: release
+      language: r
+      cache: packages
