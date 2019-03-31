@@ -1,0 +1,119 @@
+#' reactable: R Interface to the React Table Library
+#'
+#' @keywords internal
+#' @import htmlwidgets
+#' @name reactable-package
+NULL
+
+#' Create a data table
+#'
+#' @param data A data frame or matrix.
+#' @param rownames Show row names? Defaults to `TRUE`.
+#' @param pivotBy Optional character vector of column names to pivot by.
+#' @param sortable Enable sorting? Defaults to `TRUE`.
+#' @param resizable Enable column resizing? Defaults to `TRUE`.
+#' @param filterable Enable column filtering? Defaults to `FALSE`.
+#' @param pageSize Default page size for the table. Defaults to 20.
+#' @param minRows Minimum number of rows in the table. Defaults to 1.
+#' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
+#' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
+#' @param width Width in pixels (optional, defaults to automatic sizing).
+#' @param height Height in pixels (optional, defaults to automatic sizing).
+#' @param elementId Optional element ID for the widget.
+#' @return An htmlwidget.
+#' @export
+reactable <- function(data, rownames = TRUE, pivotBy = NULL, sortable = TRUE,
+                      resizable = TRUE, filterable = FALSE, pageSize = 20,
+                      minRows = 1, striped = TRUE, highlight = TRUE,
+                      width = NULL, height = NULL, elementId = NULL) {
+
+  if (!(is.data.frame(data) || is.matrix(data))) {
+    stop("`data` must be a data frame or matrix")
+  }
+
+  columns <- lapply(colnames(data), function(name) {
+    column <- list(Header = name, accessor = name)
+    if (is.numeric(data[[name]])) {
+      column$style <- list(textAlign = "right")
+    }
+    column
+  })
+
+  if (rownames) {
+    # Serialize row names with predictable order and ID
+    data[["__rowname__"]] <- rownames(data)
+    columns <- c(list(list(accessor = "__rowname__")), columns)
+  }
+
+  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+
+  component <- reactR::reactMarkup(
+    reactR::component("Reactable", list(
+      data = data,
+      columns = columns,
+      pivotBy = as.list(pivotBy),
+      sortable = sortable,
+      resizable = resizable,
+      filterable = filterable,
+      defaultPageSize = pageSize,
+      minRows = minRows,
+      striped = striped,
+      highlight = highlight
+    ))
+  )
+
+  htmlwidgets::createWidget(
+    name = "reactable",
+    component,
+    width = width,
+    height = height,
+    package = "reactable",
+    elementId = elementId
+  )
+}
+
+#' Shiny bindings for reactable
+#'
+#' Output and render functions for using reactable within Shiny
+#' applications and interactive Rmd documents.
+#'
+#' @param outputId output variable to read from
+#' @param width,height Must be a valid CSS unit (like \code{'100\%'},
+#'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
+#'   string and have \code{'px'} appended.
+#' @param expr An expression that generates a reactable
+#' @param env The environment in which to evaluate \code{expr}.
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#'   is useful if you want to save an expression in a variable.
+#'
+#' @name reactable-shiny
+#'
+#' @export
+reactableOutput <- function(outputId, width = "100%", height = "400px") {
+  htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height, package = "reactable")
+}
+
+#' @rdname reactable-shiny
+#' @export
+renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
+  if (!quoted) { expr <- substitute(expr) }
+  htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
+}
+
+
+#' Called by HTMLWidgets to produce the widget's root element.
+#'
+#' @param id Element ID.
+#' @param style Element style.
+#' @param class Element class.
+#' @param ... Additional arguments.
+#' @rdname reactable-shiny
+reactable_html <- function(id, style, class, ...) {
+  htmltools::tagList(
+    # Necessary for RStudio viewer version < 1.2
+    reactR::html_dependency_corejs(),
+    reactR::html_dependency_react(),
+    reactR::html_dependency_reacttools(),
+    htmltools::tags$div(id = id, class = class, style = style)
+  )
+}

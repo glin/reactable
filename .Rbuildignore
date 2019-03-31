@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.babelrc$
+^\.eslintignore$
+^\.eslintrc\.json$
+^\.prettierrc\.json$
+^node_modules$
+^srcjs$
+^package\.json$
+^webpack\.config\.js$
+^yarn\.lock$

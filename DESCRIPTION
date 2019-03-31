@@ -1,0 +1,20 @@
+Package: reactable
+Type: Package
+Title: R Interface to the React Table Library
+Version: 0.1.0
+Authors@R: person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre"))
+Description: R interface to the React Table JavaScript library.
+License: MIT
+Depends:
+    R (>= 3.1)
+Imports: 
+    htmltools,
+    htmlwidgets,
+    jsonlite,
+    reactR
+Suggests:
+    testthat
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
