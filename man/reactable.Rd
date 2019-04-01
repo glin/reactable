@@ -24,7 +24,7 @@ reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
 
 \item{pageSize}{Default page size for the table. Defaults to 20.}
 
-\item{minRows}{Minimum number of rows in the table. Defaults to 1.}
+\item{minRows}{Minimum number of rows to show. Defaults to 1.}
 
 \item{striped}{Add zebra-striping to table rows? Defaults to \code{TRUE}.}
 

@@ -42,7 +42,7 @@ reactable(
   resizable = TRUE,    # Enable column resizing?
   filterable = FALSE,  # Enable column filtering?
   pageSize = 20,       # Default page size
-  minRows = 1,         # Minimum number of rows
+  minRows = 1,         # Minimum number of rows to show
   striped = TRUE,      # Zebra-stripe rows?
   highlight = TRUE,    # Highlight rows on hover?
   pivotBy = NULL,      # Optional vector of column names to pivot by

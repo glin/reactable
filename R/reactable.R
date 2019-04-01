@@ -14,7 +14,7 @@ NULL
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
 #' @param pageSize Default page size for the table. Defaults to 20.
-#' @param minRows Minimum number of rows in the table. Defaults to 1.
+#' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param pivotBy Optional character vector of column names to pivot by.
