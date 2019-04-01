@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactTable from 'react-table'
 import PropTypes from 'prop-types'
-import { reactWidget } from 'reactR'
 
 import 'react-table/react-table.css'
 
-import { columnsToRows, aggregators } from './utils'
+import { aggregators } from './aggregators'
+import { columnsToRows } from './utils'
 
 const Reactable = ({
   data,
@@ -65,6 +65,4 @@ Reactable.propTypes = {
   highlight: PropTypes.bool
 }
 
-reactWidget('reactable', 'output', {
-  Reactable
-})
+export default Reactable

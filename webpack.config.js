@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  entry: path.join(__dirname, 'srcjs', 'reactable.js'),
+  entry: path.join(__dirname, 'srcjs', 'index.js'),
 
   output: {
     filename: 'reactable.js',
