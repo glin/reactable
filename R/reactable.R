@@ -10,7 +10,6 @@ NULL
 #' @param data A data frame or matrix.
 #' @param rownames Show row names? Defaults to `TRUE`.
 #' @param colnames Optional named list of column names.
-#' @param pivotBy Optional character vector of column names to pivot by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
@@ -18,14 +17,17 @@ NULL
 #' @param minRows Minimum number of rows in the table. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
+#' @param pivotBy Optional character vector of column names to pivot by.
+#' @param columns Optional named list of column definitions.
 #' @param width Width in pixels (optional, defaults to automatic sizing).
 #' @param height Height in pixels (optional, defaults to automatic sizing).
 #' @param elementId Optional element ID for the widget.
 #' @return An htmlwidget.
 #' @export
-reactable <- function(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
+reactable <- function(data, rownames = TRUE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       pageSize = 20, minRows = 1, striped = TRUE, highlight = TRUE,
+                      pivotBy = NULL, columns = NULL,
                       width = NULL, height = NULL, elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -34,7 +36,7 @@ reactable <- function(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
 
   cols <- lapply(colnames(data), function(key) {
     column <- list(accessor = key)
-    if (!is.null(colnames[[key]])) {
+    if (key %in% names(colnames)) {
       column$Header <- colnames[[key]]
     } else {
       column$Header <- key
@@ -42,6 +44,9 @@ reactable <- function(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
     # Right-align numbers
     if (is.numeric(data[[key]])) {
       column$style <- list(textAlign = "right")
+    }
+    if (key %in% names(columns)) {
+      column <- mergeLists(column, columns[[key]])
     }
     column
   })

@@ -12,5 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(reactable)
-reactable(iris, pivotBy = "Species", rownames = FALSE, width = "100%")
+
+reactable(
+  iris,
+  rownames = FALSE,
+  pivotBy = "Species",
+  columns = list(
+    Sepal.Width = list(aggregate = "mean"),
+    Petal.Length = list(aggregate = "sum"),
+    Petal.Width = list(aggregate = "count")
+  ),
+  width = "100%"
+)
 ```

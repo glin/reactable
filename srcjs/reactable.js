@@ -5,7 +5,7 @@ import { reactWidget } from 'reactR'
 
 import 'react-table/react-table.css'
 
-import { columnsToRows, round, mean } from './utils'
+import { columnsToRows, aggregators } from './utils'
 
 const Reactable = ({
   data,
@@ -27,8 +27,11 @@ const Reactable = ({
       col.id = col.accessor
       col.accessor = data => data[col.id]
     }
-
-    col.aggregate = vals => round(mean(vals))
+    if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
+      const type = col.aggregate
+      col.aggregate = aggregators[type]
+      col.Aggregated = row => `${row.value} (${type})`
+    }
     return col
   })
 

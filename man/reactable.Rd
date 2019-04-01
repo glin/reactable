@@ -4,9 +4,9 @@
 \alias{reactable}
 \title{Create a data table}
 \usage{
-reactable(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
-  sortable = TRUE, resizable = TRUE, filterable = FALSE,
-  pageSize = 20, minRows = 1, striped = TRUE, highlight = TRUE,
+reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
+  resizable = TRUE, filterable = FALSE, pageSize = 20, minRows = 1,
+  striped = TRUE, highlight = TRUE, pivotBy = NULL, columns = NULL,
   width = NULL, height = NULL, elementId = NULL)
 }
 \arguments{
@@ -15,8 +15,6 @@ reactable(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
 \item{rownames}{Show row names? Defaults to \code{TRUE}.}
 
 \item{colnames}{Optional named list of column names.}
-
-\item{pivotBy}{Optional character vector of column names to pivot by.}
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
@@ -31,6 +29,10 @@ reactable(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
 \item{striped}{Add zebra-striping to table rows? Defaults to \code{TRUE}.}
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
+
+\item{pivotBy}{Optional character vector of column names to pivot by.}
+
+\item{columns}{Optional named list of column definitions.}
 
 \item{width}{Width in pixels (optional, defaults to automatic sizing).}
 

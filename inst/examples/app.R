@@ -11,7 +11,17 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   output$table <- renderReactable({
     pivotBy <- if (input$pivotBySpecies) "Species"
-    reactable(iris, pivotBy = pivotBy, filterable = TRUE)
+    reactable(
+      iris,
+      filterable = TRUE,
+      rownames = FALSE,
+      pivotBy = pivotBy,
+      columns = list(
+        Sepal.Width = list(aggregate = "mean"),
+        Petal.Length = list(aggregate = "sum"),
+        Petal.Width = list(aggregate = "count")
+      )
+    )
   })
 }
 

@@ -21,7 +21,15 @@ reactable(iris, filterable = TRUE)
 
 - [Pivoting](https://glin.github.io/reactable/inst/examples/pivoting.html)
 ```r
-reactable(iris, pivotBy = "Species")
+reactable(
+  iris,
+  pivotBy = "Species",
+  columns = list(
+    Sepal.Width = list(aggregate = "mean"),
+    Petal.Length = list(aggregate = "sum"),
+    Petal.Width = list(aggregate = "count")
+  )
+)
 ```
 
 ## Usage
@@ -30,13 +38,14 @@ reactable(
   data,                # Data frame or matrix
   rownames = TRUE,     # Show row names?
   colnames = NULL,     # Optional named list of column names
-  pivotBy = NULL,      # Optional vector of column names to pivot by
   sortable = TRUE,     # Enable sorting?
   resizable = TRUE,    # Enable column resizing?
   filterable = FALSE,  # Enable column filtering?
   pageSize = 20,       # Default page size
   minRows = 1,         # Minimum number of rows
   striped = TRUE,      # Zebra-stripe rows?
-  highlight = TRUE     # Highlight rows on hover?
+  highlight = TRUE,    # Highlight rows on hover?
+  pivotBy = NULL,      # Optional vector of column names to pivot by
+  columns = NULL       # Optional named list of column definitions
 )
 ```

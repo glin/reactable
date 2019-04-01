@@ -23,3 +23,9 @@ export function mean(arr) {
 export function round(n, digits = 1) {
   return n.toFixed(digits)
 }
+
+export const aggregators = {
+  mean: arr => round(mean(arr)),
+  sum: arr => round(sum(arr)),
+  count: arr => arr.length
+}
