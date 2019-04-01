@@ -49,7 +49,12 @@ reactable <- function(data, rownames = TRUE, colnames = NULL, pivotBy = NULL,
   if (rownames) {
     # Serialize row names with predictable order and ID
     data[["__rowname__"]] <- rownames(data)
-    cols <- c(list(list(accessor = "__rowname__")), cols)
+    col <- list(
+      accessor = "__rowname__",
+      sortable = FALSE,
+      filterable = FALSE
+    )
+    cols <- c(list(col), cols)
   }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)

@@ -11,7 +11,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   output$table <- renderReactable({
     pivotBy <- if (input$pivotBySpecies) "Species"
-    reactable(iris, pivotBy = pivotBy, filterable = TRUE, rownames = FALSE)
+    reactable(iris, pivotBy = pivotBy, filterable = TRUE)
   })
 }
 
