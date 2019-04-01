@@ -14,12 +14,16 @@ devtools::install_github("glin/reactable")
 
 ## Examples
 
-- [Filtering](https://glin.github.io/reactable/inst/examples/filtering.html)
+### Filtering
+https://glin.github.io/reactable/inst/examples/filtering.html
+
 ```r
 reactable(iris, filterable = TRUE)
 ```
 
-- [Pivoting](https://glin.github.io/reactable/inst/examples/pivoting.html)
+### Pivoting
+https://glin.github.io/reactable/inst/examples/pivoting.html
+
 ```r
 reactable(
   iris,
@@ -30,6 +34,27 @@ reactable(
     Petal.Width = list(aggregate = "count")
   )
 )
+```
+
+### Shiny
+https://glin.shinyapps.io/reactable/
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  titlePanel("reactable example"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(iris)
+  })
+}
+
+shinyApp(ui, server)
 ```
 
 ## Usage
