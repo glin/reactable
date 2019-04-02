@@ -30,7 +30,7 @@ const Reactable = ({
     if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
       const type = col.aggregate
       col.aggregate = aggregators[type]
-      col.Aggregated = row => `${row.value} (${type})`
+      col.Aggregated = col.Aggregated || (row => `${row.value} (${type})`)
     }
     return col
   })
