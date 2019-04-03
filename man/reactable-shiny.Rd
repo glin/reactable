@@ -7,7 +7,7 @@
 \alias{reactable_html}
 \title{Shiny bindings for reactable}
 \usage{
-reactableOutput(outputId, width = "100\%", height = "400px")
+reactableOutput(outputId, width = "100\%", height = "100\%")
 
 renderReactable(expr, env = parent.frame(), quoted = FALSE)
 

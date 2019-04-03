@@ -5,9 +5,10 @@
 \title{Create a data table}
 \usage{
 reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
-  resizable = TRUE, filterable = FALSE, pageSize = 20, minRows = 1,
-  striped = TRUE, highlight = TRUE, pivotBy = NULL, columns = NULL,
-  width = NULL, height = NULL, elementId = NULL)
+  resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
+  pageSizeOptions = c(10, 25, 50, 100), minRows = 1, striped = TRUE,
+  highlight = TRUE, pivotBy = NULL, columns = NULL, width = NULL,
+  height = NULL, elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -22,7 +23,9 @@ reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
 
 \item{filterable}{Enable column filtering? Defaults to \code{FALSE}.}
 
-\item{pageSize}{Default page size for the table. Defaults to 20.}
+\item{defaultPageSize}{Default page size for the table. Defaults to 10.}
+
+\item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 

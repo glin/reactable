@@ -15,6 +15,7 @@ const Reactable = ({
   resizable,
   filterable,
   defaultPageSize,
+  pageSizeOptions,
   minRows,
   striped,
   highlight
@@ -46,6 +47,7 @@ const Reactable = ({
       resizable={resizable}
       filterable={filterable}
       defaultPageSize={defaultPageSize}
+      pageSizeOptions={pageSizeOptions}
       minRows={minRows}
       className={className}
     />
@@ -60,6 +62,7 @@ Reactable.propTypes = {
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
   defaultPageSize: PropTypes.number,
+  pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   minRows: PropTypes.number,
   striped: PropTypes.bool,
   highlight: PropTypes.bool

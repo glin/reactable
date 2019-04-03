@@ -60,17 +60,19 @@ shinyApp(ui, server)
 ## Usage
 ```r
 reactable(
-  data,                # Data frame or matrix
-  rownames = TRUE,     # Show row names?
-  colnames = NULL,     # Optional named list of column names
-  sortable = TRUE,     # Enable sorting?
-  resizable = TRUE,    # Enable column resizing?
-  filterable = FALSE,  # Enable column filtering?
-  pageSize = 20,       # Default page size
-  minRows = 1,         # Minimum number of rows to show
-  striped = TRUE,      # Zebra-stripe rows?
-  highlight = TRUE,    # Highlight rows on hover?
-  pivotBy = NULL,      # Optional vector of column names to pivot by
-  columns = NULL       # Optional named list of column definitions
+  data,                  # Data frame or matrix
+  rownames = TRUE,       # Show row names?
+  colnames = NULL,       # Optional named list of column names
+  sortable = TRUE,       # Enable sorting?
+  resizable = TRUE,      # Enable column resizing?
+  filterable = FALSE,    # Enable column filtering?
+  defaultPageSize = 10,  # Default page size
+  pageSizeOptions =      # Page size options
+    c(10, 25, 50, 100),  
+  minRows = 1,           # Minimum number of rows to show
+  striped = TRUE,        # Zebra-stripe rows?
+  highlight = TRUE,      # Highlight rows on hover?
+  pivotBy = NULL,        # Optional vector of column names to pivot by
+  columns = NULL         # Optional named list of column definitions
 )
 ```

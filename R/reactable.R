@@ -13,7 +13,8 @@ NULL
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
-#' @param pageSize Default page size for the table. Defaults to 20.
+#' @param defaultPageSize Default page size for the table. Defaults to 10.
+#' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
@@ -26,7 +27,8 @@ NULL
 #' @export
 reactable <- function(data, rownames = TRUE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
-                      pageSize = 20, minRows = 1, striped = TRUE, highlight = TRUE,
+                      defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
+                      minRows = 1, striped = TRUE, highlight = TRUE,
                       pivotBy = NULL, columns = NULL,
                       width = NULL, height = NULL, elementId = NULL) {
 
@@ -72,7 +74,8 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
-      defaultPageSize = pageSize,
+      defaultPageSize = defaultPageSize,
+      pageSizeOptions = pageSizeOptions,
       minRows = minRows,
       striped = striped,
       highlight = highlight
