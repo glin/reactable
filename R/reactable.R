@@ -38,7 +38,7 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
 
   cols <- lapply(colnames(data), function(key) {
     column <- list(accessor = key)
-    if (key %in% names(colnames)) {
+    if (!is.null(colnames[[key]])) {
       column$Header <- colnames[[key]]
     } else {
       column$Header <- key
@@ -47,7 +47,7 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
     if (is.numeric(data[[key]])) {
       column$style <- list(textAlign = "right")
     }
-    if (key %in% names(columns)) {
+    if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }
     column

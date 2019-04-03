@@ -12,4 +12,8 @@ test_that("mergeLists", {
   a <- list()
   b <- list(a = 1, b = 2)
   expect_equal(mergeLists(a, b), list(a = 1, b = 2))
+
+  a <- list(a = NULL, b = 2)
+  b <- list(a = 1, b = NULL)
+  expect_equal(mergeLists(a, b), list(a = 1, b = 2))
 })
