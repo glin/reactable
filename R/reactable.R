@@ -30,7 +30,7 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       minRows = 1, striped = TRUE, highlight = TRUE,
                       pivotBy = NULL, columns = NULL,
-                      width = NULL, height = NULL, elementId = NULL) {
+                      width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
@@ -109,7 +109,7 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
 #' @name reactable-shiny
 #'
 #' @export
-reactableOutput <- function(outputId, width = "100%", height = "400px") {
+reactableOutput <- function(outputId, width = "auto", height = "auto") {
   htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height, package = "reactable")
 }
 

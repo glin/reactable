@@ -7,8 +7,8 @@
 reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
   pageSizeOptions = c(10, 25, 50, 100), minRows = 1, striped = TRUE,
-  highlight = TRUE, pivotBy = NULL, columns = NULL, width = NULL,
-  height = NULL, elementId = NULL)
+  highlight = TRUE, pivotBy = NULL, columns = NULL, width = "auto",
+  height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}

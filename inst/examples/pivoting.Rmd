@@ -21,7 +21,6 @@ reactable(
     Sepal.Width = list(aggregate = "mean"),
     Petal.Length = list(aggregate = "sum"),
     Petal.Width = list(aggregate = "count")
-  ),
-  width = "100%"
+  )
 )
 ```
