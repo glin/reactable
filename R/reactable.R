@@ -35,7 +35,39 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
   }
-
+  if (!is.logical(rownames)) {
+    stop("`rownames` must be TRUE or FALSE")
+  }
+  if (!is.null(colnames) && !is.character(names(colnames))) {
+    stop("`colnames` must be a named list")
+  }
+  if (!is.logical(sortable)) {
+    stop("`sortable` must be TRUE or FALSE")
+  }
+  if (!is.logical(resizable)) {
+    stop("`resizable` must be TRUE or FALSE")
+  }
+  if (!is.logical(filterable)) {
+    stop("`filterable` must be TRUE or FALSE")
+  }
+  if (!is.numeric(defaultPageSize)) {
+    stop("`defaultPageSize` must be numeric")
+  }
+  if (!is.numeric(pageSizeOptions)) {
+    stop("`pageSizeOptions` must be numeric")
+  }
+  if (!is.numeric(minRows)) {
+    stop("`minRows` must be numeric")
+  }
+  if (!is.logical(striped)) {
+    stop("`striped` must be TRUE or FALSE")
+  }
+  if (!is.logical(highlight)) {
+    stop("`highlight` must be TRUE or FALSE")
+  }
+  if (!is.null(pivotBy) && !all(pivotBy %in% colnames(data))) {
+    stop("`pivotBy` columns must exist in `data`")
+  }
   if (!is.null(columns)) {
     if (!all(sapply(columns, is.colDef)) || !is.character(names(columns))) {
       stop("`columns` must be a named list of column definitions")
