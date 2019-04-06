@@ -18,9 +18,9 @@ reactable(
   rownames = FALSE,
   pivotBy = "Species",
   columns = list(
-    Sepal.Width = list(aggregate = "mean"),
-    Petal.Length = list(aggregate = "sum"),
-    Petal.Width = list(aggregate = "count")
+    Sepal.Width = colDef(aggregate = "mean"),
+    Petal.Length = colDef(aggregate = "sum"),
+    Petal.Width = colDef(aggregate = "count")
   )
 )
 ```

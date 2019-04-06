@@ -36,6 +36,15 @@ reactable <- function(data, rownames = TRUE, colnames = NULL,
     stop("`data` must be a data frame or matrix")
   }
 
+  if (!is.null(columns)) {
+    if (!all(sapply(columns, is.colDef)) || !is.character(names(columns))) {
+      stop("`columns` must be a named list of column definitions")
+    }
+    if (!all(names(columns) %in% colnames(data))) {
+      stop("`columns` names must exist in `data`")
+    }
+  }
+
   cols <- lapply(colnames(data), function(key) {
     column <- list(accessor = key)
     if (!is.null(colnames[[key]])) {

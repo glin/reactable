@@ -10,3 +10,7 @@ mergeLists <- function(a, b) {
   }
   a
 }
+
+is.JS <- function(x) {
+  inherits(x, class(JS("")))
+}

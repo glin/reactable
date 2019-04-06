@@ -17,9 +17,10 @@ server <- function(input, output, session) {
       rownames = FALSE,
       pivotBy = pivotBy,
       columns = list(
-        Sepal.Width = list(aggregate = "mean"),
-        Petal.Length = list(aggregate = "sum"),
-        Petal.Width = list(aggregate = "count")
+        Sepal.Length = colDef(name = "Sepal Length"),
+        Sepal.Width = colDef(name = "Sepal Width", aggregate = "mean"),
+        Petal.Length = colDef(name = "Petal Length", aggregate = "sum"),
+        Petal.Width = colDef(name = "Petal Width", aggregate = "count")
       )
     )
   })
