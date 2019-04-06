@@ -61,7 +61,7 @@ shinyApp(ui, server)
 ```r
 reactable(
   data,                  # Data frame or matrix
-  rownames = TRUE,       # Show row names?
+  rownames = FALSE,      # Show row names?
   colnames = NULL,       # Optional named list of column names
   sortable = TRUE,       # Enable sorting?
   resizable = TRUE,      # Enable column resizing?

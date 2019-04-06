@@ -9,7 +9,7 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
   show = TRUE)
 }
 \arguments{
-\item{name}{Column name}
+\item{name}{Column name.}
 
 \item{aggregate}{Aggregate function name or JS callback.}
 

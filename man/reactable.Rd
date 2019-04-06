@@ -4,7 +4,7 @@
 \alias{reactable}
 \title{Create a data table}
 \usage{
-reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
+reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
   pageSizeOptions = c(10, 25, 50, 100), minRows = 1, striped = TRUE,
   highlight = TRUE, pivotBy = NULL, columns = NULL, width = "auto",
@@ -13,7 +13,7 @@ reactable(data, rownames = TRUE, colnames = NULL, sortable = TRUE,
 \arguments{
 \item{data}{A data frame or matrix.}
 
-\item{rownames}{Show row names? Defaults to \code{TRUE}.}
+\item{rownames}{Show row names? Defaults to \code{FALSE}.}
 
 \item{colnames}{Optional named list of column names.}
 

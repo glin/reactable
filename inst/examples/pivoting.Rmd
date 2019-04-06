@@ -15,7 +15,6 @@ library(reactable)
 
 reactable(
   iris,
-  rownames = FALSE,
   pivotBy = "Species",
   columns = list(
     Sepal.Width = colDef(aggregate = "mean"),

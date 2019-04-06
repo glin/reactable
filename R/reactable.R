@@ -8,7 +8,7 @@ NULL
 #' Create a data table
 #'
 #' @param data A data frame or matrix.
-#' @param rownames Show row names? Defaults to `TRUE`.
+#' @param rownames Show row names? Defaults to `FALSE`.
 #' @param colnames Optional named list of column names.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
@@ -25,7 +25,7 @@ NULL
 #' @param elementId Optional element ID for the widget.
 #' @return An htmlwidget.
 #' @export
-reactable <- function(data, rownames = TRUE, colnames = NULL,
+reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       minRows = 1, striped = TRUE, highlight = TRUE,

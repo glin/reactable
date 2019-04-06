@@ -1,6 +1,6 @@
 #' Column definitions
 #'
-#' @param name Column name
+#' @param name Column name.
 #' @param aggregate Aggregate function name or JS callback.
 #' @param aggregated Render function for aggregated cells.
 #' @param sortable Enable sorting? Overrides the table option.

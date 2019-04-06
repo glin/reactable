@@ -14,7 +14,6 @@ server <- function(input, output, session) {
     reactable(
       iris,
       filterable = TRUE,
-      rownames = FALSE,
       pivotBy = pivotBy,
       columns = list(
         Sepal.Length = colDef(name = "Sepal Length"),

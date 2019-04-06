@@ -12,5 +12,5 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(reactable)
-reactable(iris, filterable = TRUE, rownames = FALSE)
+reactable(iris, filterable = TRUE)
 ```
