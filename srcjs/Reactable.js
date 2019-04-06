@@ -2,10 +2,11 @@ import React from 'react'
 import ReactTable from 'react-table'
 import PropTypes from 'prop-types'
 
-import 'react-table/react-table.css'
-
 import { aggregators } from './aggregators'
 import { columnsToRows } from './utils'
+
+import 'react-table/react-table.css'
+import './assets/reactable.css'
 
 const Reactable = ({
   data,
