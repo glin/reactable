@@ -21,13 +21,13 @@ https://glin.github.io/reactable/inst/examples/filtering.html
 reactable(iris, filterable = TRUE)
 ```
 
-### Pivoting
-https://glin.github.io/reactable/inst/examples/pivoting.html
+### Grouping
+https://glin.github.io/reactable/inst/examples/grouping.html
 
 ```r
 reactable(
   iris,
-  pivotBy = "Species",
+  groupBy = "Species",
   columns = list(
     Sepal.Width = colDef(aggregate = "mean"),
     Petal.Length = colDef(aggregate = "sum"),
@@ -72,7 +72,7 @@ reactable(
   minRows = 1,           # Minimum number of rows to show
   striped = TRUE,        # Zebra-stripe rows?
   highlight = TRUE,      # Highlight rows on hover?
-  pivotBy = NULL,        # Optional vector of column names to pivot by
+  groupBy = NULL,        # Optional vector of column names to group by
   columns = NULL         # Optional named list of column definitions
 )
 ```

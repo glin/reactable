@@ -13,7 +13,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
-  expect_error(reactable(df, pivotBy = c("y", "z")))
+  expect_error(reactable(df, groupBy = c("y", "z")))
   expect_error(reactable(df, columns = "x"))
   expect_error(reactable(df, columns = list(list())))
   expect_error(reactable(df, columns = list(colDef())))
@@ -50,7 +50,7 @@ test_that("reactable", {
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultPageSize = 1, pageSizeOptions = c(1, 2),
                    minRows = 5, striped = FALSE, highlight = FALSE,
-                   pivotBy = "x", width = "400px", height = "100%", elementId = "tbl")
+                   groupBy = "x", width = "400px", height = "100%", elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(x = "a")
   data[["__rowname__"]] <- "1"

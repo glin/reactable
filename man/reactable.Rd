@@ -7,7 +7,7 @@
 reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
   pageSizeOptions = c(10, 25, 50, 100), minRows = 1, striped = TRUE,
-  highlight = TRUE, pivotBy = NULL, columns = NULL, width = "auto",
+  highlight = TRUE, groupBy = NULL, columns = NULL, width = "auto",
   height = "auto", elementId = NULL)
 }
 \arguments{
@@ -33,7 +33,7 @@ reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 
-\item{pivotBy}{Optional character vector of column names to pivot by.}
+\item{groupBy}{Optional character vector of column names to group by.}
 
 \item{columns}{Optional named list of column definitions.}
 

@@ -18,7 +18,7 @@ NULL
 #' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
-#' @param pivotBy Optional character vector of column names to pivot by.
+#' @param groupBy Optional character vector of column names to group by.
 #' @param columns Optional named list of column definitions.
 #' @param width Width in pixels (optional, defaults to automatic sizing).
 #' @param height Height in pixels (optional, defaults to automatic sizing).
@@ -29,7 +29,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       minRows = 1, striped = TRUE, highlight = TRUE,
-                      pivotBy = NULL, columns = NULL,
+                      groupBy = NULL, columns = NULL,
                       width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -65,8 +65,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(highlight)) {
     stop("`highlight` must be TRUE or FALSE")
   }
-  if (!is.null(pivotBy) && !all(pivotBy %in% colnames(data))) {
-    stop("`pivotBy` columns must exist in `data`")
+  if (!is.null(groupBy) && !all(groupBy %in% colnames(data))) {
+    stop("`groupBy` columns must exist in `data`")
   }
   if (!is.null(columns)) {
     if (!all(sapply(columns, is.colDef)) || !isNamedList(columns)) {
@@ -111,7 +111,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     reactR::component("Reactable", list(
       data = data,
       columns = cols,
-      pivotBy = as.list(pivotBy),
+      pivotBy = as.list(groupBy),
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,

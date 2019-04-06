@@ -4,17 +4,17 @@ library(reactable)
 ui <- fluidPage(
   includeCSS("assets/styles.css"),
   titlePanel("reactable example"),
-  checkboxInput("pivotBySpecies", "Pivot by Species"),
+  checkboxInput("groupBySpecies", "Group by Species"),
   reactableOutput("table")
 )
 
 server <- function(input, output, session) {
   output$table <- renderReactable({
-    pivotBy <- if (input$pivotBySpecies) "Species"
+    groupBy <- if (input$groupBySpecies) "Species"
     reactable(
       iris,
       filterable = TRUE,
-      pivotBy = pivotBy,
+      groupBy = groupBy,
       columns = list(
         Sepal.Length = colDef(name = "Sepal Length"),
         Sepal.Width = colDef(name = "Sepal Width", aggregate = "mean"),

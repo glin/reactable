@@ -1,5 +1,5 @@
 ---
-title: "Pivoting"
+title: "Grouping"
 output:
   html_document:
     css: assets/styles.css
@@ -15,7 +15,7 @@ library(reactable)
 
 reactable(
   iris,
-  pivotBy = "Species",
+  groupBy = "Species",
   columns = list(
     Sepal.Width = colDef(aggregate = "mean"),
     Petal.Length = colDef(aggregate = "sum"),
