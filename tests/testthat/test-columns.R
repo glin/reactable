@@ -2,19 +2,24 @@ context("columns")
 
 test_that("colDef", {
   # Default args
-  expect_equal(colDef(), structure(list(Header = NULL, aggregate = NULL, Aggregated = NULL,
-                              sortable = NULL, resizable = NULL, filterable = NULL,
-                              show = TRUE), class = "colDef"))
+  expect_equal(colDef(), structure(list(
+    Header = NULL, aggregate = NULL, Aggregated = NULL,
+    sortable = NULL, resizable = NULL, filterable = NULL,
+    show = TRUE, className = NULL, style = NULL,
+    headerClassName = NULL, headerStyle = NULL), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
                 aggregated = JS("function(row) { return row.value }"),
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
-                show = TRUE)
-  expected <- structure(list(Header = "col", aggregate = "sum",
+                show = TRUE, class = "cell", style = list(color = "a"),
+                headerClass = "hdr", headerStyle = list(height = 10))
+  expected <- structure(list(
+    Header = "col", aggregate = "sum",
     Aggregated = JS("function(row) { return row.value }"),
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
-    show = TRUE), class = "colDef")
+    show = TRUE, className = "cell", style = list(color = "a"),
+    headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
 
   # Invalid args
@@ -25,7 +30,11 @@ test_that("colDef", {
     sortable = list(1, "TRUE"),
     resizable = list(1, "TRUE"),
     filterable = list(0, "FALSE"),
-    show = list(0, "TRUE")
+    show = list(0, "TRUE"),
+    class = list(1, list()),
+    style = list(list("a"), 2),
+    headerClass = list(1, list()),
+    headerStyle = list(list("a"), 2)
   )
   for (arg in names(invalidArgs)) {
     for (val in invalidArgs[[arg]]) {

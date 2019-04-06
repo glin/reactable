@@ -14,3 +14,16 @@ mergeLists <- function(a, b) {
 is.JS <- function(x) {
   inherits(x, class(JS("")))
 }
+
+isNamedList <- function(x) {
+  if (!is.list(x)) {
+    return(FALSE)
+  }
+  if (length(x) >= 1 && is.null(names(x))) {
+    return(FALSE)
+  }
+  if (any(names(x) == "")) {
+    return(FALSE)
+  }
+  TRUE
+}

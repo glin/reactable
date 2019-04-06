@@ -38,7 +38,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(rownames)) {
     stop("`rownames` must be TRUE or FALSE")
   }
-  if (!is.null(colnames) && !is.character(names(colnames))) {
+  if (!is.null(colnames) && !isNamedList(colnames)) {
     stop("`colnames` must be a named list")
   }
   if (!is.logical(sortable)) {
@@ -69,7 +69,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`pivotBy` columns must exist in `data`")
   }
   if (!is.null(columns)) {
-    if (!all(sapply(columns, is.colDef)) || !is.character(names(columns))) {
+    if (!all(sapply(columns, is.colDef)) || !isNamedList(columns)) {
       stop("`columns` must be a named list of column definitions")
     }
     if (!all(names(columns) %in% colnames(data))) {

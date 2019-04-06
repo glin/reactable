@@ -6,7 +6,8 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, aggregated = NULL,
   sortable = NULL, resizable = NULL, filterable = NULL,
-  show = TRUE)
+  show = TRUE, class = NULL, style = NULL, headerClass = NULL,
+  headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -22,6 +23,14 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
 \item{filterable}{Enable column filtering? Overrides the table option.}
 
 \item{show}{Show the column? Defaults to \code{TRUE}.}
+
+\item{class}{Additional CSS classes to apply to cells.}
+
+\item{style}{Named list of inline styles to apply to cells.}
+
+\item{headerClass}{Additional CSS classes to apply to the header.}
+
+\item{headerStyle}{Named list of inline styles to apply to the header.}
 }
 \description{
 Column definitions

@@ -7,10 +7,15 @@
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
 #' @param show Show the column? Defaults to `TRUE`.
+#' @param class Additional CSS classes to apply to cells.
+#' @param style Named list of inline styles to apply to cells.
+#' @param headerClass Additional CSS classes to apply to the header.
+#' @param headerStyle Named list of inline styles to apply to the header.
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
                    sortable = NULL, resizable = NULL, filterable = NULL,
-                   show = TRUE) {
+                   show = TRUE, class = NULL, style = NULL, headerClass = NULL,
+                   headerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character")
@@ -33,6 +38,18 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
   if (!is.null(show) && !is.logical(show)) {
     stop("`show` must be TRUE or FALSE")
   }
+  if (!is.null(class) && !is.character(class)) {
+    stop("`class` must be a character")
+  }
+  if (!is.null(style) && !isNamedList(style)) {
+    stop("`style` must be a named list")
+  }
+  if (!is.null(headerClass) && !is.character(headerClass)) {
+    stop("`headerClass` must be a character")
+  }
+  if (!is.null(headerStyle) && !isNamedList(headerStyle)) {
+    stop("`headerStyle` must be a named list")
+  }
 
   structure(
     list(
@@ -42,7 +59,11 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
-      show = show
+      show = show,
+      className = class,
+      style = style,
+      headerClassName = headerClass,
+      headerStyle = headerStyle
     ),
     class = "colDef"
   )
