@@ -15,6 +15,7 @@ server <- function(input, output, session) {
       iris,
       filterable = TRUE,
       groupBy = groupBy,
+      defaultSortOrder = "desc",
       columns = list(
         Sepal.Length = colDef(name = "Sepal Length"),
         Sepal.Width = colDef(name = "Sepal Width", aggregate = "mean"),

@@ -7,6 +7,8 @@
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
 #' @param show Show the column? Defaults to `TRUE`.
+#' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
+#'   order or `"desc"` for descending order. Overrides the table option.
 #' @param class Additional CSS classes to apply to cells.
 #' @param style Named list of inline styles to apply to cells.
 #' @param headerClass Additional CSS classes to apply to the header.
@@ -14,8 +16,8 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
                    sortable = NULL, resizable = NULL, filterable = NULL,
-                   show = TRUE, class = NULL, style = NULL, headerClass = NULL,
-                   headerStyle = NULL) {
+                   show = TRUE, defaultSortOrder = NULL, class = NULL,
+                   style = NULL, headerClass = NULL, headerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character")
@@ -37,6 +39,9 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
   }
   if (!is.null(show) && !is.logical(show)) {
     stop("`show` must be TRUE or FALSE")
+  }
+  if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
+    stop('`defaultSortOrder` must be "asc" or "desc"')
   }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
@@ -60,6 +65,7 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
       resizable = resizable,
       filterable = filterable,
       show = show,
+      defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       className = class,
       style = style,
       headerClassName = headerClass,
@@ -71,4 +77,12 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
 
 is.colDef <- function(x) {
   inherits(x, "colDef")
+}
+
+isSortOrder <- function(x) {
+  is.character(x) && x %in% c("asc", "desc")
+}
+
+isDescOrder <- function(x) {
+  is.character(x) && x == "desc"
 }

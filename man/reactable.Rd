@@ -5,10 +5,11 @@
 \title{Create a data table}
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
-  resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
-  pageSizeOptions = c(10, 25, 50, 100), minRows = 1, groupBy = NULL,
-  columns = NULL, striped = TRUE, highlight = TRUE, class = NULL,
-  style = NULL, width = "auto", height = "auto", elementId = NULL)
+  resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
+  defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
+  25, 50, 100), minRows = 1, groupBy = NULL, columns = NULL,
+  striped = TRUE, highlight = TRUE, class = NULL, style = NULL,
+  width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -22,6 +23,12 @@ reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
 \item{resizable}{Enable column resizing? Defaults to \code{TRUE}.}
 
 \item{filterable}{Enable column filtering? Defaults to \code{FALSE}.}
+
+\item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
+order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
+
+\item{defaultSorted}{Optional named list of default sorted columns. Values
+should be either \code{"asc"} for ascending order or \code{"desc"} for descending order.}
 
 \item{defaultPageSize}{Default page size for the table. Defaults to 10.}
 

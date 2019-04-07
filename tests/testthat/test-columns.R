@@ -5,21 +5,23 @@ test_that("colDef", {
   expect_equal(colDef(), structure(list(
     Header = NULL, aggregate = NULL, Aggregated = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
-    show = TRUE, className = NULL, style = NULL,
+    show = TRUE, defaultSortDesc = NULL, className = NULL, style = NULL,
     headerClassName = NULL, headerStyle = NULL), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
                 aggregated = JS("function(row) { return row.value }"),
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
-                show = TRUE, class = "cell", style = list(color = "a"),
-                headerClass = "hdr", headerStyle = list(height = 10))
+                show = TRUE, defaultSortOrder = "desc", class = "cell",
+                style = list(color = "a"), headerClass = "hdr",
+                headerStyle = list(height = 10))
   expected <- structure(list(
     Header = "col", aggregate = "sum",
     Aggregated = JS("function(row) { return row.value }"),
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
-    show = TRUE, className = "cell", style = list(color = "a"),
-    headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
+    show = TRUE, defaultSortDesc = TRUE, className = "cell",
+    style = list(color = "a"), headerClassName = "hdr",
+    headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
 
   # Invalid args
@@ -31,6 +33,7 @@ test_that("colDef", {
     resizable = list(1, "TRUE"),
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
+    defaultSortOrder = list(1, TRUE, "ascending"),
     class = list(1, list()),
     style = list(list("a"), 2),
     headerClass = list(1, list()),
@@ -46,4 +49,13 @@ test_that("colDef", {
 test_that("is.colDef", {
   expect_true(is.colDef(colDef()))
   expect_false(is.colDef(list()))
+})
+
+test_that("sort order", {
+  expect_true(isSortOrder("asc"))
+  expect_true(isSortOrder("desc"))
+  expect_false(isSortOrder(FALSE))
+  expect_false(isSortOrder(list("asc")))
+  expect_true(isDescOrder("desc"))
+  expect_false(isDescOrder("asc"))
 })

@@ -13,6 +13,10 @@ NULL
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
+#' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
+#'   order or `"desc"` for descending order. Defaults to `"asc"`.
+#' @param defaultSorted Optional named list of default sorted columns. Values
+#'   should be either `"asc"` for ascending order or `"desc"` for descending order.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
@@ -29,6 +33,7 @@ NULL
 #' @export
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
+                      defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       minRows = 1, groupBy = NULL, columns = NULL, striped = TRUE,
                       highlight = TRUE, class = NULL, style = NULL,
@@ -52,6 +57,20 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
+  if (!isSortOrder(defaultSortOrder)) {
+    stop('`defaultSortOrder` must be "asc" or "desc"')
+  }
+  if (!is.null(defaultSorted)) {
+    if (!isNamedList(defaultSorted)) {
+      stop("`defaultSorted` must be a named list of column orders")
+    }
+    if (!all(sapply(defaultSorted, isSortOrder))) {
+      stop('`defaultSorted` values must be "asc" or "desc"')
+    }
+    if (!all(names(defaultSorted) %in% colnames(data))) {
+      stop("`defaultSorted` names must exist in `data`")
+    }
+  }
   if (!is.numeric(defaultPageSize)) {
     stop("`defaultPageSize` must be numeric")
   }
@@ -61,22 +80,22 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.numeric(minRows)) {
     stop("`minRows` must be numeric")
   }
-  if (!is.logical(striped)) {
-    stop("`striped` must be TRUE or FALSE")
-  }
-  if (!is.logical(highlight)) {
-    stop("`highlight` must be TRUE or FALSE")
-  }
   if (!is.null(groupBy) && !all(groupBy %in% colnames(data))) {
     stop("`groupBy` columns must exist in `data`")
   }
   if (!is.null(columns)) {
-    if (!all(sapply(columns, is.colDef)) || !isNamedList(columns)) {
+    if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
       stop("`columns` must be a named list of column definitions")
     }
     if (!all(names(columns) %in% colnames(data))) {
       stop("`columns` names must exist in `data`")
     }
+  }
+  if (!is.logical(striped)) {
+    stop("`striped` must be TRUE or FALSE")
+  }
+  if (!is.logical(highlight)) {
+    stop("`highlight` must be TRUE or FALSE")
   }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
@@ -123,6 +142,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
+      defaultSortDesc = isDescOrder(defaultSortOrder),
+      defaultSorted = columnSortDefs(defaultSorted),
       defaultPageSize = defaultPageSize,
       pageSizeOptions = pageSizeOptions,
       minRows = minRows,
@@ -141,6 +162,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     package = "reactable",
     elementId = elementId
   )
+}
+
+# Convert named list of column orders to { id, desc } definitions
+columnSortDefs <- function(defaultSorted) {
+  lapply(names(defaultSorted), function(id) {
+    list(id = id, desc = isDescOrder(defaultSorted[[id]]))
+  })
 }
 
 #' Shiny bindings for reactable

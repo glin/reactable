@@ -15,6 +15,8 @@ const Reactable = ({
   sortable,
   resizable,
   filterable,
+  defaultSortDesc,
+  defaultSorted,
   defaultPageSize,
   pageSizeOptions,
   minRows,
@@ -50,6 +52,8 @@ const Reactable = ({
       sortable={sortable}
       resizable={resizable}
       filterable={filterable}
+      defaultSortDesc={defaultSortDesc}
+      defaultSorted={defaultSorted}
       defaultPageSize={defaultPageSize}
       pageSizeOptions={pageSizeOptions}
       minRows={minRows}
@@ -62,10 +66,12 @@ const Reactable = ({
 Reactable.propTypes = {
   data: PropTypes.objectOf(PropTypes.array).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
-  pivotBy: PropTypes.array,
+  pivotBy: PropTypes.arrayOf(PropTypes.string),
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
+  defaultSortDesc: PropTypes.bool,
+  defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   minRows: PropTypes.number,

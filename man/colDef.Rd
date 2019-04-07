@@ -6,8 +6,8 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, aggregated = NULL,
   sortable = NULL, resizable = NULL, filterable = NULL,
-  show = TRUE, class = NULL, style = NULL, headerClass = NULL,
-  headerStyle = NULL)
+  show = TRUE, defaultSortOrder = NULL, class = NULL, style = NULL,
+  headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -23,6 +23,9 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
 \item{filterable}{Enable column filtering? Overrides the table option.}
 
 \item{show}{Show the column? Defaults to \code{TRUE}.}
+
+\item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
+order or \code{"desc"} for descending order. Overrides the table option.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 

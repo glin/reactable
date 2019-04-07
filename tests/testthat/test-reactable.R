@@ -8,6 +8,10 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
+  expect_error(reactable(df, defaultSortOrder = "ascending"))
+  expect_error(reactable(df, defaultSorted = list("x")))
+  expect_error(reactable(df, defaultSorted = list(x = "ascending")))
+  expect_error(reactable(df, defaultSorted = list(y = "asc")))
   expect_error(reactable(df, defaultPageSize = "100"))
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, minRows = "2"))
@@ -36,6 +40,7 @@ test_that("reactable", {
     sortable = TRUE,
     resizable = TRUE,
     filterable = FALSE,
+    defaultSortDesc = FALSE,
     defaultPageSize = 10,
     pageSizeOptions = c(10, 25, 50, 100),
     minRows = 1,
@@ -50,6 +55,7 @@ test_that("reactable", {
   # Table options
   tbl <- reactable(data.frame(x = "a"), rownames = TRUE,
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
+                   defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2),
                    minRows = 5, striped = FALSE, highlight = FALSE,
                    class = "tbl", style = list(color = "red"),
@@ -65,6 +71,8 @@ test_that("reactable", {
     sortable = FALSE,
     resizable = FALSE,
     filterable = TRUE,
+    defaultSortDesc = TRUE,
+    defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 1,
     pageSizeOptions = c(1, 2),
     minRows = 5,
@@ -90,4 +98,10 @@ test_that("reactable", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$sortable, FALSE)
   expect_equal(attribs$columns[[2]]$Header, "Y")
+})
+
+test_that("columnSortDefs", {
+  defaultSorted <- list(x = "asc", y = "desc")
+  expected <- list(list(id = "x", desc = FALSE), list(id = "y", desc = TRUE))
+  expect_equal(columnSortDefs(defaultSorted), expected)
 })
