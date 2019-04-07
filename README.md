@@ -37,6 +37,20 @@ reactable(
 )
 ```
 
+### Sorting
+https://glin.github.io/reactable/inst/examples/sorting.html
+
+```r
+reactable(
+  iris, 
+  defaultSortOrder = "desc",
+  defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
+  columns = list(
+    Species = colDef(defaultSortOrder = "asc")
+  )
+)
+```
+
 ### Shiny
 https://glin.shinyapps.io/reactable/
 

@@ -1,0 +1,24 @@
+---
+title: "Sorting"
+output:
+  html_document:
+    css: assets/styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(reactable)
+reactable(
+  iris, 
+  defaultSortOrder = "desc",
+  defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
+  columns = list(
+    Species = colDef(defaultSortOrder = "asc")
+  )
+)
+```
+
+*NOTE: shift+click to sort multiple columns*
