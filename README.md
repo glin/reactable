@@ -70,9 +70,11 @@ reactable(
   pageSizeOptions =      # Page size options
     c(10, 25, 50, 100),  
   minRows = 1,           # Minimum number of rows to show
+  groupBy = NULL,        # Optional vector of column names to group by
+  columns = NULL,        # Optional named list of column definitions
   striped = TRUE,        # Zebra-stripe rows?
   highlight = TRUE,      # Highlight rows on hover?
-  groupBy = NULL,        # Optional vector of column names to group by
-  columns = NULL         # Optional named list of column definitions
+  class = NULL,          # Additional CSS classes to apply to the table
+  style = NULL           # Named list of inline styles to apply to the table
 )
 ```

@@ -6,9 +6,9 @@
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultPageSize = 10,
-  pageSizeOptions = c(10, 25, 50, 100), minRows = 1, striped = TRUE,
-  highlight = TRUE, groupBy = NULL, columns = NULL, width = "auto",
-  height = "auto", elementId = NULL)
+  pageSizeOptions = c(10, 25, 50, 100), minRows = 1, groupBy = NULL,
+  columns = NULL, striped = TRUE, highlight = TRUE, class = NULL,
+  style = NULL, width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -29,13 +29,17 @@ reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 
+\item{groupBy}{Optional character vector of column names to group by.}
+
+\item{columns}{Optional named list of column definitions.}
+
 \item{striped}{Add zebra-striping to table rows? Defaults to \code{TRUE}.}
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 
-\item{groupBy}{Optional character vector of column names to group by.}
+\item{class}{Additional CSS classes to apply to the table.}
 
-\item{columns}{Optional named list of column definitions.}
+\item{style}{Named list of inline styles to apply to the table.}
 
 \item{width}{Width in pixels (optional, defaults to automatic sizing).}
 

@@ -19,7 +19,9 @@ const Reactable = ({
   pageSizeOptions,
   minRows,
   striped,
-  highlight
+  highlight,
+  className,
+  style
 }) => {
   data = columnsToRows(data)
 
@@ -37,7 +39,8 @@ const Reactable = ({
     return col
   })
 
-  const className = (striped ? '-striped' : '') + (highlight ? ' -highlight' : '')
+  const classes = [className, striped ? '-striped' : '', highlight ? ' -highlight' : '']
+  className = classes.join(' ').trim()
 
   return (
     <ReactTable
@@ -51,6 +54,7 @@ const Reactable = ({
       pageSizeOptions={pageSizeOptions}
       minRows={minRows}
       className={className}
+      style={style}
     />
   )
 }
@@ -66,7 +70,9 @@ Reactable.propTypes = {
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   minRows: PropTypes.number,
   striped: PropTypes.bool,
-  highlight: PropTypes.bool
+  highlight: PropTypes.bool,
+  className: PropTypes.string,
+  style: PropTypes.object
 }
 
 export default Reactable

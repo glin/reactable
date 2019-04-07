@@ -16,10 +16,12 @@ NULL
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
-#' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
-#' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param groupBy Optional character vector of column names to group by.
 #' @param columns Optional named list of column definitions.
+#' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
+#' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
+#' @param class Additional CSS classes to apply to the table.
+#' @param style Named list of inline styles to apply to the table.
 #' @param width Width in pixels (optional, defaults to automatic sizing).
 #' @param height Height in pixels (optional, defaults to automatic sizing).
 #' @param elementId Optional element ID for the widget.
@@ -28,8 +30,8 @@ NULL
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-                      minRows = 1, striped = TRUE, highlight = TRUE,
-                      groupBy = NULL, columns = NULL,
+                      minRows = 1, groupBy = NULL, columns = NULL, striped = TRUE,
+                      highlight = TRUE, class = NULL, style = NULL,
                       width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -76,6 +78,12 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       stop("`columns` names must exist in `data`")
     }
   }
+  if (!is.null(class) && !is.character(class)) {
+    stop("`class` must be a character")
+  }
+  if (!is.null(style) && !isNamedList(style)) {
+    stop("`style` must be a named list")
+  }
 
   cols <- lapply(colnames(data), function(key) {
     column <- list(accessor = key)
@@ -119,7 +127,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       pageSizeOptions = pageSizeOptions,
       minRows = minRows,
       striped = striped,
-      highlight = highlight
+      highlight = highlight,
+      className = class,
+      style = style
     ))
   )
 
