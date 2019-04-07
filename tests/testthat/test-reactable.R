@@ -5,6 +5,7 @@ test_that("reactable handles invalid args", {
   df <- data.frame(x = 1)
   expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, colnames = list("name")))
+  expect_error(reactable(df, colnames = list(y = "asd")))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))

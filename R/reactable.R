@@ -45,8 +45,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(rownames)) {
     stop("`rownames` must be TRUE or FALSE")
   }
-  if (!is.null(colnames) && !isNamedList(colnames)) {
-    stop("`colnames` must be a named list")
+  if (!is.null(colnames)) {
+    if (!isNamedList(colnames)) {
+      stop("`colnames` must be a named list")
+    }
+    if (!all(names(colnames) %in% colnames(data))) {
+      stop("`colnames` names must exist in `data`")
+    }
   }
   if (!is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
