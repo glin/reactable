@@ -6,8 +6,9 @@ export function mean(arr) {
   return sum(arr) / arr.length
 }
 
-export function round(n, digits = 1) {
-  return n.toFixed(digits)
+export function round(n, digits = 3) {
+  const c = Math.pow(10, digits)
+  return Math.round(n * c) / c
 }
 
 export const aggregators = {
