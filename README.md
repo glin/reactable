@@ -26,15 +26,11 @@ reactable(iris, filterable = TRUE)
 https://glin.github.io/reactable/inst/examples/grouping.html
 
 ```r
-reactable(
-  iris,
-  groupBy = "Species",
-  columns = list(
-    Sepal.Width = colDef(aggregate = "mean"),
-    Petal.Length = colDef(aggregate = "sum"),
-    Petal.Width = colDef(aggregate = "count")
-  )
-)
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Width = colDef(aggregate = "mean"),
+  Petal.Length = colDef(aggregate = "sum"),
+  Petal.Width = colDef(aggregate = "count")
+))
 ```
 
 ### Sorting
