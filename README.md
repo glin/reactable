@@ -93,13 +93,13 @@ reactable(
   data,                      # Data frame or matrix
   rownames = FALSE,          # Show row names?
   colnames = NULL,           # Named list of column names
-  columns = NULL,            # Named list of column definitions, see colDef()
-  columnGroups = NULL,       # List of column group definitions, see colGroup()
+  columns = NULL,            # Named list of column definitions. See colDef()
+  columnGroups = NULL,       # List of column group definitions. See colGroup()
   groupBy = NULL,            # Names of columns to group by
   sortable = TRUE,           # Enable sorting?
   resizable = TRUE,          # Enable column resizing?
   filterable = FALSE,        # Enable column filtering?
-  defaultSortOrder = "asc",  # Default sort order, either "asc" or "desc"
+  defaultSortOrder = "asc",  # Default sort order. Either "asc" or "desc"
   defaultSorted = NULL,      # Named list of default sorted columns with "asc" or "desc" order
   defaultPageSize = 10,      # Default page size
   pageSizeOptions =          # Page size options
@@ -109,5 +109,33 @@ reactable(
   highlight = TRUE,          # Highlight rows on hover?
   class = NULL,              # Additional CSS classes to apply to the table
   style = NULL               # Named list of inline styles to apply to the table
+)
+```
+
+### Columns
+```r
+colDef(
+  name = NULL,              # Column name
+  aggregate = NULL,         # Aggregate function name or JS callback
+  aggregated = NULL,        # Render function for aggregated cells
+  sortable = NULL,          # Enable sorting?
+  resizable = NULL,         # Enable column resizing?
+  filterable = NULL,        # Enable column filtering?
+  show = TRUE,              # Show the column?
+  defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
+  class = NULL,             # Additional CSS classes to apply to cells
+  style = NULL,             # Named list of inline styles to apply to cells
+  headerClass = NULL,       # Additional CSS classes to apply to the header
+  headerStyle = NULL        # Named list of inline styles to apply to the header
+)
+```
+
+### Column Groups
+```r
+colGroup(
+  name,                # Column group name
+  columns,             # Names of columns in the group
+  headerClass = NULL,  # Additional CSS classes to apply to the header
+  headerStyle = NULL   # Named list of inline styles to apply to the header
 )
 ```
