@@ -2,6 +2,7 @@
 
 export(JS)
 export(colDef)
+export(colGroup)
 export(reactable)
 export(reactableOutput)
 export(renderReactable)

@@ -3,7 +3,7 @@ import ReactTable from 'react-table'
 import PropTypes from 'prop-types'
 
 import { aggregators } from './aggregators'
-import { columnsToRows } from './utils'
+import { columnsToRows, addColumnGroups } from './columns'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
@@ -11,6 +11,7 @@ import './assets/reactable.css'
 const Reactable = ({
   data,
   columns,
+  columnGroups,
   pivotBy,
   sortable,
   resizable,
@@ -28,9 +29,9 @@ const Reactable = ({
   data = columnsToRows(data)
 
   columns = columns.map(col => {
+    col.id = col.accessor
     if (col.accessor.includes('.')) {
       // Interpret column names with dots as IDs, not paths
-      col.id = col.accessor
       col.accessor = data => data[col.id]
     }
     if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
@@ -40,6 +41,10 @@ const Reactable = ({
     }
     return col
   })
+
+  if (columnGroups) {
+    columns = addColumnGroups(columns, columnGroups)
+  }
 
   const classes = [className, striped ? '-striped' : '', highlight ? ' -highlight' : '']
   className = classes.join(' ').trim()
@@ -66,6 +71,7 @@ const Reactable = ({
 Reactable.propTypes = {
   data: PropTypes.objectOf(PropTypes.array).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columnGroups: PropTypes.arrayOf(PropTypes.object),
   pivotBy: PropTypes.arrayOf(PropTypes.string),
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,

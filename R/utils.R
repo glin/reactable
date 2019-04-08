@@ -11,6 +11,10 @@ mergeLists <- function(a, b) {
   a
 }
 
+filterNulls <- function(x) {
+  mergeLists(list(), x)
+}
+
 is.JS <- function(x) {
   inherits(x, class(JS("")))
 }

@@ -10,6 +10,9 @@ NULL
 #' @param data A data frame or matrix.
 #' @param rownames Show row names? Defaults to `FALSE`.
 #' @param colnames Optional named list of column names.
+#' @param columns Optional named list of column definitions. See `colDef()`.
+#' @param columnGroups Optional list of column group definitions. See `colGroup()`.
+#' @param groupBy Optional character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
@@ -20,8 +23,6 @@ NULL
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
-#' @param groupBy Optional character vector of column names to group by.
-#' @param columns Optional named list of column definitions.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param class Additional CSS classes to apply to the table.
@@ -32,12 +33,13 @@ NULL
 #' @return An htmlwidget.
 #' @export
 reactable <- function(data, rownames = FALSE, colnames = NULL,
+                      groupBy = NULL, columns = NULL, columnGroups = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-                      minRows = 1, groupBy = NULL, columns = NULL, striped = TRUE,
-                      highlight = TRUE, class = NULL, style = NULL,
-                      width = "auto", height = "auto", elementId = NULL) {
+                      minRows = 1, striped = TRUE, highlight = TRUE, class = NULL,
+                      style = NULL, width = "auto", height = "auto",
+                      elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
@@ -52,6 +54,27 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (!all(names(colnames) %in% colnames(data))) {
       stop("`colnames` names must exist in `data`")
     }
+  }
+  if (!is.null(columns)) {
+    if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
+      stop("`columns` must be a named list of column definitions")
+    }
+    if (!all(names(columns) %in% colnames(data))) {
+      stop("`columns` names must exist in `data`")
+    }
+  }
+  if (!is.null(columnGroups)) {
+    if (!all(sapply(columnGroups, is.colGroup))) {
+      stop("`columnGroups` must be a list of column group definitions")
+    }
+    for (group in columnGroups) {
+      if (!all(group$columns %in% colnames(data))) {
+        stop("`columnGroups` columns must exist in `data`")
+      }
+    }
+  }
+  if (!is.null(groupBy) && !all(groupBy %in% colnames(data))) {
+    stop("`groupBy` columns must exist in `data`")
   }
   if (!is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
@@ -84,17 +107,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
   if (!is.numeric(minRows)) {
     stop("`minRows` must be numeric")
-  }
-  if (!is.null(groupBy) && !all(groupBy %in% colnames(data))) {
-    stop("`groupBy` columns must exist in `data`")
-  }
-  if (!is.null(columns)) {
-    if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
-      stop("`columns` must be a named list of column definitions")
-    }
-    if (!all(names(columns) %in% colnames(data))) {
-      stop("`columns` names must exist in `data`")
-    }
   }
   if (!is.logical(striped)) {
     stop("`striped` must be TRUE or FALSE")
@@ -143,6 +155,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     reactR::component("Reactable", list(
       data = data,
       columns = cols,
+      columnGroups = columnGroups,
       pivotBy = as.list(groupBy),
       sortable = sortable,
       resizable = resizable,

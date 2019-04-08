@@ -18,6 +18,11 @@ test_that("mergeLists", {
   expect_equal(mergeLists(a, b), list(a = 1, b = 2))
 })
 
+test_that("filterNulls", {
+  expect_equal(filterNulls(list(a = 1, b = NULL, c = NULL, d = 2)), list(a = 1, d = 2))
+  expect_equal(filterNulls(list(a = 1, b = "b")), list(a = 1, b = "b"))
+})
+
 test_that("isNamedList", {
   expect_true(isNamedList(list()))
   expect_true(isNamedList(list(a = 1, b = 2)))

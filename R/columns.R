@@ -1,6 +1,6 @@
 #' Column definitions
 #'
-#' @param name Column name.
+#' @param name Name of the column.
 #' @param aggregate Aggregate function name or JS callback.
 #' @param aggregated Render function for aggregated cells.
 #' @param sortable Enable sorting? Overrides the table option.
@@ -77,6 +77,28 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
 
 is.colDef <- function(x) {
   inherits(x, "colDef")
+}
+
+#' Column group definitions
+#'
+#' @param name Name of the column group.
+#' @param columns Character vector of column names to group.
+#' @param headerClass Additional CSS classes to apply to the header.
+#' @param headerStyle Named list of inline styles to apply to the header.
+#' @export
+colGroup <- function(name, columns, headerClass = NULL, headerStyle = NULL) {
+  if (!is.character(columns)) {
+    stop("`columns` must be a character vector")
+  }
+  group <- colDef(name = name, headerClass = headerClass, headerStyle = headerStyle)
+  group$columns <- columns
+  group <- filterNulls(group)
+  class(group) <- c(class(group), "colGroup")
+  group
+}
+
+is.colGroup <- function(x) {
+  inherits(x, "colGroup")
 }
 
 isSortOrder <- function(x) {

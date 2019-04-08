@@ -74,6 +74,9 @@ reactable(
   data,                      # Data frame or matrix
   rownames = FALSE,          # Show row names?
   colnames = NULL,           # Named list of column names
+  columns = NULL,            # Named list of column definitions, see colDef()
+  columnGroups = NULL,       # List of column group definitions, see colGroup()
+  groupBy = NULL,            # Names of columns to group by
   sortable = TRUE,           # Enable sorting?
   resizable = TRUE,          # Enable column resizing?
   filterable = FALSE,        # Enable column filtering?
@@ -83,8 +86,6 @@ reactable(
   pageSizeOptions =          # Page size options
     c(10, 25, 50, 100), 
   minRows = 1,               # Minimum number of rows to show
-  groupBy = NULL,            # Vector of column names to group by
-  columns = NULL,            # Named list of column definitions
   striped = TRUE,            # Zebra-stripe rows?
   highlight = TRUE,          # Highlight rows on hover?
   class = NULL,              # Additional CSS classes to apply to the table

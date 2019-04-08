@@ -51,6 +51,33 @@ test_that("is.colDef", {
   expect_false(is.colDef(list()))
 })
 
+test_that("colGroup", {
+  # Default args
+  group <- colGroup("name", c("colA", "colB"))
+  expect_equal(group$Header, "name")
+  expect_equal(group$columns, c("colA", "colB"))
+  expect_null(group$headerStyle)
+  expect_null(group$headerClassName)
+
+  # Valid args
+  group <- colGroup("name", c("colA", "colB"),
+                    headerStyle = list(color = "red"), headerClass = "cls")
+  expect_equal(group$Header, "name")
+  expect_equal(group$columns, c("colA", "colB"))
+  expect_equal(group$headerStyle, list(color = "red"))
+  expect_equal(group$headerClassName, "cls")
+
+  # Invalid args
+  expect_error(colGroup(1, "col"))
+  expect_error(colGroup("name", list("col")))
+  expect_error(colGroup("name", 123))
+})
+
+test_that("is.colGroup", {
+  expect_true(is.colGroup(colGroup("name", "col")))
+  expect_false(is.colGroup(list()))
+})
+
 test_that("sort order", {
   expect_true(isSortOrder("asc"))
   expect_true(isSortOrder("desc"))

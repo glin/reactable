@@ -4,12 +4,13 @@
 \alias{reactable}
 \title{Create a data table}
 \usage{
-reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
+reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
+  columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
-  25, 50, 100), minRows = 1, groupBy = NULL, columns = NULL,
-  striped = TRUE, highlight = TRUE, class = NULL, style = NULL,
-  width = "auto", height = "auto", elementId = NULL)
+  25, 50, 100), minRows = 1, striped = TRUE, highlight = TRUE,
+  class = NULL, style = NULL, width = "auto", height = "auto",
+  elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -17,6 +18,12 @@ reactable(data, rownames = FALSE, colnames = NULL, sortable = TRUE,
 \item{rownames}{Show row names? Defaults to \code{FALSE}.}
 
 \item{colnames}{Optional named list of column names.}
+
+\item{groupBy}{Optional character vector of column names to group by.}
+
+\item{columns}{Optional named list of column definitions. See \code{colDef()}.}
+
+\item{columnGroups}{Optional list of column group definitions. See \code{colGroup()}.}
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
@@ -35,10 +42,6 @@ should be either \code{"asc"} for ascending order or \code{"desc"} for descendin
 \item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
-
-\item{groupBy}{Optional character vector of column names to group by.}
-
-\item{columns}{Optional named list of column definitions.}
 
 \item{striped}{Add zebra-striping to table rows? Defaults to \code{TRUE}.}
 

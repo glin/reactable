@@ -6,6 +6,14 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, colnames = list("name")))
   expect_error(reactable(df, colnames = list(y = "asd")))
+  expect_error(reactable(df, columns = "x"))
+  expect_error(reactable(df, columns = list(list())))
+  expect_error(reactable(df, columns = list(colDef())))
+  expect_error(reactable(df, columns = list(zzzz = colDef())))
+  expect_error(reactable(df, columnGroups = "x"))
+  expect_error(reactable(df, columnGroups = list(colDef())))
+  expect_error(reactable(df, columnGroups = list(colGroup("", "y"))))
+  expect_error(reactable(df, groupBy = c("y", "z")))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
@@ -16,11 +24,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultPageSize = "100"))
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, minRows = "2"))
-  expect_error(reactable(df, groupBy = c("y", "z")))
-  expect_error(reactable(df, columns = "x"))
-  expect_error(reactable(df, columns = list(list())))
-  expect_error(reactable(df, columns = list(colDef())))
-  expect_error(reactable(df, columns = list(zzzz = colDef())))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, class = c(1, 5)))
@@ -55,6 +58,7 @@ test_that("reactable", {
 
   # Table options
   tbl <- reactable(data.frame(x = "a"), rownames = TRUE,
+                   columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2),
@@ -68,6 +72,7 @@ test_that("reactable", {
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
     columns = list(list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE),
                    list(accessor = "x", Header = "x")),
+    columnGroups = list(colGroup("group", "x")),
     pivotBy = list("x"),
     sortable = FALSE,
     resizable = FALSE,
