@@ -38,11 +38,30 @@ https://glin.github.io/reactable/inst/examples/sorting.html
 
 ```r
 reactable(
-  iris, 
+  iris,
   defaultSortOrder = "desc",
   defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
   columns = list(
     Species = colDef(defaultSortOrder = "asc")
+  )
+)
+```
+
+### Column Groups
+https://glin.github.io/reactable/inst/examples/column-groups.html
+
+```r
+reactable(
+  iris,
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
   )
 )
 ```
