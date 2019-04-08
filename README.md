@@ -139,3 +139,6 @@ colGroup(
   headerStyle = NULL   # Named list of inline styles to apply to the header
 )
 ```
+
+## License
+MIT
