@@ -54,18 +54,20 @@ test_that("is.colDef", {
 test_that("colGroup", {
   # Default args
   group <- colGroup("name", c("colA", "colB"))
-  expect_equal(group$Header, "name")
-  expect_equal(group$columns, c("colA", "colB"))
-  expect_null(group$headerStyle)
-  expect_null(group$headerClassName)
+  expect_equal(group, structure(list(
+    Header = "name",
+    columns = c("colA", "colB")
+  ), class = "colGroup"))
 
   # Valid args
   group <- colGroup("name", c("colA", "colB"),
                     headerStyle = list(color = "red"), headerClass = "cls")
-  expect_equal(group$Header, "name")
-  expect_equal(group$columns, c("colA", "colB"))
-  expect_equal(group$headerStyle, list(color = "red"))
-  expect_equal(group$headerClassName, "cls")
+  expect_equal(group, structure(list(
+    Header = "name",
+    headerClassName = "cls",
+    headerStyle = list(color = "red"),
+    columns = c("colA", "colB")
+  ), class = "colGroup"))
 
   # Invalid args
   expect_error(colGroup(1, "col"))

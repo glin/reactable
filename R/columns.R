@@ -93,8 +93,7 @@ colGroup <- function(name, columns, headerClass = NULL, headerStyle = NULL) {
   group <- colDef(name = name, headerClass = headerClass, headerStyle = headerStyle)
   group$columns <- columns
   group <- filterNulls(group)
-  class(group) <- c(class(group), "colGroup")
-  group
+  structure(group, class = "colGroup")
 }
 
 is.colGroup <- function(x) {
