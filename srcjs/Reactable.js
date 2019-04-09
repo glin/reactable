@@ -1,12 +1,17 @@
 import React from 'react'
 import ReactTable from 'react-table'
+import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
-import { aggregators } from './aggregators'
+import { aggregators, DefaultAggregated } from './aggregators'
 import { columnsToRows, addColumnGroups } from './columns'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
+
+Object.assign(ReactTableDefaults, {
+  AggregatedComponent: DefaultAggregated
+})
 
 const Reactable = ({
   data,

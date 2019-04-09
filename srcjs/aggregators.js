@@ -16,3 +16,8 @@ export const aggregators = {
   sum: arr => round(sum(arr)),
   count: arr => arr.length
 }
+
+// Render a blank cell by default, rather than comma-separated values
+export const DefaultAggregated = () => {
+  return ''
+}
