@@ -85,6 +85,9 @@ const Reactable = ({
       defaultPageSize={defaultPageSize}
       pageSizeOptions={pageSizeOptions}
       minRows={minRows}
+      collapseOnSortingChange={false}
+      collapseOnPageChange={false}
+      collapseOnDataChange={false}
       className={className}
       style={style}
     />
