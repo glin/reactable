@@ -2,7 +2,6 @@
 #'
 #' @param name Column name.
 #' @param aggregate Aggregate function name or JS callback.
-#' @param aggregated Render function for aggregated cells.
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
@@ -10,14 +9,15 @@
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param render Render function for standard cells.
+#' @param renderAggregated Render function for aggregated cells.
 #' @param class Additional CSS classes to apply to cells.
 #' @param style Named list of inline styles to apply to cells.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Named list of inline styles to apply to the header.
 #' @export
-colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
-                   sortable = NULL, resizable = NULL, filterable = NULL,
-                   show = TRUE, defaultSortOrder = NULL, render = NULL,
+colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
+                   resizable = NULL, filterable = NULL, show = TRUE,
+                   defaultSortOrder = NULL, render = NULL, renderAggregated = NULL,
                    class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
 
@@ -26,9 +26,6 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
   }
   if (!is.null(aggregate) && !is.character(aggregate) && !is.JS(aggregate)) {
     stop("`aggregate` must be a character or JS callback")
-  }
-  if (!is.null(aggregated) && !is.JS(aggregated)) {
-    stop("`aggregated` must be a JS callback")
   }
   if (!is.null(sortable) && !is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
@@ -48,6 +45,9 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
   if (!is.null(render) && !is.JS(render)) {
     stop("`render` must be a JS callback")
   }
+  if (!is.null(renderAggregated) && !is.JS(renderAggregated)) {
+    stop("`renderAggregated` must be a JS callback")
+  }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
@@ -65,13 +65,13 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
     list(
       Header = name,
       aggregate = aggregate,
-      Aggregated = aggregated,
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       render = render,
+      renderAggregated = renderAggregated,
       className = class,
       style = style,
       headerClassName = headerClass,

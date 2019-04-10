@@ -117,13 +117,13 @@ reactable(
 colDef(
   name = NULL,              # Column name
   aggregate = NULL,         # Aggregate function name or JS callback
-  aggregated = NULL,        # Render function for aggregated cells
   sortable = NULL,          # Enable sorting?
   resizable = NULL,         # Enable column resizing?
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   render = NULL,            # Render function for standard cells
+  renderAggregated = NULL,  # Render function for aggregated cells
   class = NULL,             # Additional CSS classes to apply to cells
   style = NULL,             # Named list of inline styles to apply to cells
   headerClass = NULL,       # Additional CSS classes to apply to the header

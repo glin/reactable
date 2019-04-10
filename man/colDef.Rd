@@ -4,9 +4,9 @@
 \alias{colDef}
 \title{Column definitions}
 \usage{
-colDef(name = NULL, aggregate = NULL, aggregated = NULL,
-  sortable = NULL, resizable = NULL, filterable = NULL,
-  show = TRUE, defaultSortOrder = NULL, render = NULL,
+colDef(name = NULL, aggregate = NULL, sortable = NULL,
+  resizable = NULL, filterable = NULL, show = TRUE,
+  defaultSortOrder = NULL, render = NULL, renderAggregated = NULL,
   class = NULL, style = NULL, headerClass = NULL,
   headerStyle = NULL)
 }
@@ -14,8 +14,6 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
 \item{name}{Column name.}
 
 \item{aggregate}{Aggregate function name or JS callback.}
-
-\item{aggregated}{Render function for aggregated cells.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
 
@@ -29,6 +27,8 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
 order or \code{"desc"} for descending order. Overrides the table option.}
 
 \item{render}{Render function for standard cells.}
+
+\item{renderAggregated}{Render function for aggregated cells.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 

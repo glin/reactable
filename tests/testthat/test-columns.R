@@ -3,24 +3,25 @@ context("columns")
 test_that("colDef", {
   # Default args
   expect_equal(colDef(), structure(list(
-    Header = NULL, aggregate = NULL, Aggregated = NULL,
+    Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
-    show = NULL, defaultSortDesc = NULL, render = NULL, className = NULL,
-    style = NULL, headerClassName = NULL, headerStyle = NULL), class = "colDef"))
+    show = NULL, defaultSortDesc = NULL, render = NULL, renderAggregated = NULL,
+    className = NULL, style = NULL, headerClassName = NULL,
+    headerStyle = NULL), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
-                aggregated = JS("function(row) { return row.value }"),
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
-                render = JS("row => row.value"), class = "cell",
-                style = list(color = "a"), headerClass = "hdr",
+                render = JS("row => row.value"),
+                renderAggregated = JS("function(row) { return row.value }"),
+                class = "cell", style = list(color = "a"), headerClass = "hdr",
                 headerStyle = list(height = 10))
   expected <- structure(list(
     Header = "col", aggregate = "sum",
-    Aggregated = JS("function(row) { return row.value }"),
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, render = JS("row => row.value"),
+    renderAggregated = JS("function(row) { return row.value }"),
     className = "cell", style = list(color = "a"), headerClassName = "hdr",
     headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
@@ -29,13 +30,13 @@ test_that("colDef", {
   invalidArgs <- list(
     name = list(1, FALSE),
     aggregate = list(2, TRUE, function() {}),
-    aggregated = list(1, "row => row.value", TRUE, function(row) row$value),
     sortable = list(1, "TRUE"),
     resizable = list(1, "TRUE"),
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
     render = list("function() {}", function() {}, 5),
+    renderAggregated = list(1, "row => row.value", TRUE, function(row) row$value),
     class = list(1, list()),
     style = list(list("a"), 2),
     headerClass = list(1, list()),
