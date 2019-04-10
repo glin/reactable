@@ -123,6 +123,7 @@ colDef(
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
+  render = NULL,            # Render function for standard cells
   class = NULL,             # Additional CSS classes to apply to cells
   style = NULL,             # Named list of inline styles to apply to cells
   headerClass = NULL,       # Additional CSS classes to apply to the header

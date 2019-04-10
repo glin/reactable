@@ -7,9 +7,9 @@
 colGroup(name, columns, headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
-\item{name}{Name of the column group.}
+\item{name}{Column group name.}
 
-\item{columns}{Character vector of column names to group.}
+\item{columns}{Character vector of column names in the group.}
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
 

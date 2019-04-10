@@ -1,6 +1,6 @@
 #' Column definitions
 #'
-#' @param name Name of the column.
+#' @param name Column name.
 #' @param aggregate Aggregate function name or JS callback.
 #' @param aggregated Render function for aggregated cells.
 #' @param sortable Enable sorting? Overrides the table option.
@@ -9,6 +9,7 @@
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
+#' @param render Render function for standard cells.
 #' @param class Additional CSS classes to apply to cells.
 #' @param style Named list of inline styles to apply to cells.
 #' @param headerClass Additional CSS classes to apply to the header.
@@ -16,8 +17,9 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
                    sortable = NULL, resizable = NULL, filterable = NULL,
-                   show = TRUE, defaultSortOrder = NULL, class = NULL,
-                   style = NULL, headerClass = NULL, headerStyle = NULL) {
+                   show = TRUE, defaultSortOrder = NULL, render = NULL,
+                   class = NULL, style = NULL, headerClass = NULL,
+                   headerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character")
@@ -43,6 +45,9 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
+  if (!is.null(render) && !is.JS(render)) {
+    stop("`render` must be a JS callback")
+  }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
@@ -66,6 +71,7 @@ colDef <- function(name = NULL, aggregate = NULL, aggregated = NULL,
       filterable = filterable,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
+      render = render,
       className = class,
       style = style,
       headerClassName = headerClass,
@@ -81,8 +87,8 @@ is.colDef <- function(x) {
 
 #' Column group definitions
 #'
-#' @param name Name of the column group.
-#' @param columns Character vector of column names to group.
+#' @param name Column group name.
+#' @param columns Character vector of column names in the group.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Named list of inline styles to apply to the header.
 #' @export

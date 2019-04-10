@@ -39,10 +39,22 @@ const Reactable = ({
       // Interpret column names with dots as IDs, not paths
       col.accessor = data => data[col.id]
     }
+
     if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
       const type = col.aggregate
       col.aggregate = aggregators[type]
     }
+
+    if (col.render) {
+      const render = col.render
+      col.Cell = function renderedCell(row) {
+        return <div dangerouslySetInnerHTML={{ __html: render(row) }} />
+      }
+    }
+    // Set a default renderer to prevent the cell renderer from applying
+    // to aggregated cells (without having to check row.aggregated).
+    col.Aggregated = col.Aggregated || (row => row.value)
+
     return col
   })
 

@@ -6,11 +6,12 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, aggregated = NULL,
   sortable = NULL, resizable = NULL, filterable = NULL,
-  show = TRUE, defaultSortOrder = NULL, class = NULL, style = NULL,
-  headerClass = NULL, headerStyle = NULL)
+  show = TRUE, defaultSortOrder = NULL, render = NULL,
+  class = NULL, style = NULL, headerClass = NULL,
+  headerStyle = NULL)
 }
 \arguments{
-\item{name}{Name of the column.}
+\item{name}{Column name.}
 
 \item{aggregate}{Aggregate function name or JS callback.}
 
@@ -26,6 +27,8 @@ colDef(name = NULL, aggregate = NULL, aggregated = NULL,
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}
+
+\item{render}{Render function for standard cells.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 
