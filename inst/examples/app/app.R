@@ -4,23 +4,32 @@ library(reactable)
 ui <- fluidPage(
   includeCSS("assets/styles.css"),
   titlePanel("reactable example"),
-  checkboxInput("groupBySpecies", "Group by Species"),
+  checkboxGroupInput("groupBy", "Group by", choices = c("Species", "Petal.Width")),
   reactableOutput("table")
 )
 
 server <- function(input, output, session) {
   output$table <- renderReactable({
-    groupBy <- if (input$groupBySpecies) "Species"
     reactable(
       iris,
       filterable = TRUE,
-      groupBy = groupBy,
+      groupBy = input$groupBy,
       defaultSortOrder = "desc",
+      defaultSorted = list(Sepal.Width = "desc"),
       columns = list(
         Sepal.Length = colDef(name = "Sepal Length"),
-        Sepal.Width = colDef(name = "Sepal Width", aggregate = "mean"),
+        Sepal.Width = colDef(
+          name = "Sepal Width",
+          aggregate = "mean",
+          renderAggregated = JS("
+            function(row) {
+              return row.value + ' (avg)'
+            }
+          ")
+        ),
         Petal.Length = colDef(name = "Petal Length", aggregate = "sum"),
-        Petal.Width = colDef(name = "Petal Width", aggregate = "count")
+        Petal.Width = colDef(name = "Petal Width", aggregate = "count"),
+        Species = colDef(aggregate = "frequency")
       )
     )
   })
