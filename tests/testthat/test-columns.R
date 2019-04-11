@@ -6,6 +6,7 @@ test_that("colDef", {
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
     show = NULL, defaultSortDesc = NULL, render = NULL, renderAggregated = NULL,
+    minWidth = NULL, maxWidth = NULL, width = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
 
@@ -13,6 +14,7 @@ test_that("colDef", {
   col <- colDef(name = "col", aggregate = "sum",
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
+                minWidth = 100, maxWidth = 250, width = 125,
                 render = JS("row => row.value"),
                 renderAggregated = JS("function(row) { return row.value }"),
                 class = "cell", style = list(color = "a"), headerClass = "hdr",
@@ -22,6 +24,7 @@ test_that("colDef", {
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, render = JS("row => row.value"),
     renderAggregated = JS("function(row) { return row.value }"),
+    minWidth = 100, maxWidth = 250, width = 125,
     className = "cell", style = list(color = "a"), headerClassName = "hdr",
     headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
@@ -37,6 +40,9 @@ test_that("colDef", {
     defaultSortOrder = list(1, TRUE, "ascending"),
     render = list("function() {}", function() {}, 5),
     renderAggregated = list(1, "row => row.value", TRUE, function(row) row$value),
+    minWidth = list("1", FALSE),
+    maxWidth = list("1", FALSE),
+    width = list("1", FALSE),
     class = list(1, list()),
     style = list(list("a"), 2),
     headerClass = list(1, list()),

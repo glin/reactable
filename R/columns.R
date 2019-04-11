@@ -10,6 +10,9 @@
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param render Render function for standard cells.
 #' @param renderAggregated Render function for aggregated cells.
+#' @param minWidth Min width of the column in pixels.
+#' @param maxWidth Max width of the column in pixels.
+#' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
 #' @param class Additional CSS classes to apply to cells.
 #' @param style Named list of inline styles to apply to cells.
 #' @param headerClass Additional CSS classes to apply to the header.
@@ -18,6 +21,7 @@
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, render = NULL, renderAggregated = NULL,
+                   minWidth = NULL, maxWidth = NULL, width = NULL,
                    class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
 
@@ -48,6 +52,15 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(renderAggregated) && !is.JS(renderAggregated)) {
     stop("`renderAggregated` must be a JS callback")
   }
+  if (!is.null(minWidth) && !is.numeric(minWidth)) {
+    stop("`minWidth` must be numeric")
+  }
+  if (!is.null(maxWidth) && !is.numeric(maxWidth)) {
+    stop("`maxWidth` must be numeric")
+  }
+  if (!is.null(width) && !is.numeric(width)) {
+    stop("`width` must be numeric")
+  }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
@@ -72,6 +85,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       render = render,
       renderAggregated = renderAggregated,
+      minWidth = minWidth,
+      maxWidth = maxWidth,
+      width = width,
       className = class,
       style = style,
       headerClassName = headerClass,

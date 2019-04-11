@@ -7,8 +7,8 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, render = NULL, renderAggregated = NULL,
-  class = NULL, style = NULL, headerClass = NULL,
-  headerStyle = NULL)
+  minWidth = NULL, maxWidth = NULL, width = NULL, class = NULL,
+  style = NULL, headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -29,6 +29,12 @@ order or \code{"desc"} for descending order. Overrides the table option.}
 \item{render}{Render function for standard cells.}
 
 \item{renderAggregated}{Render function for aggregated cells.}
+
+\item{minWidth}{Min width of the column in pixels.}
+
+\item{maxWidth}{Max width of the column in pixels.}
+
+\item{width}{Fixed width of the column in pixels. Overrides minWidth and maxWidth.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 
