@@ -11,7 +11,7 @@ export function round(n, digits = 3) {
   return Math.round(n * c) / c
 }
 
-export function count(arr) {
+export function frequency(arr) {
   const counts = {}
   arr.forEach(value => {
     counts[value] = counts[value] || 0
@@ -23,9 +23,14 @@ export function count(arr) {
   return values.join(', ')
 }
 
+export function count(arr) {
+  return arr.length
+}
+
 export const aggregators = {
   mean: arr => round(mean(arr)),
   sum: arr => round(sum(arr)),
+  frequency,
   count
 }
 
