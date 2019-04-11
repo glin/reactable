@@ -19,7 +19,7 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{colnames}{Optional named list of column names.}
 
-\item{groupBy}{Optional character vector of column names to group by.}
+\item{groupBy}{Optional vector of column names to group by.}
 
 \item{columns}{Optional named list of column definitions. See \code{colDef()}.}
 
@@ -34,8 +34,8 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
 
-\item{defaultSorted}{Optional named list of default sorted columns. Values
-should be either \code{"asc"} for ascending order or \code{"desc"} for descending order.}
+\item{defaultSorted}{Optional vector of column names to sort by default.
+Or to customize sort order, a named list with values of \code{"asc"} or \code{"desc"}.}
 
 \item{defaultPageSize}{Default page size for the table. Defaults to 10.}
 

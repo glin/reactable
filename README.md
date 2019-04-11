@@ -100,7 +100,7 @@ reactable(
   resizable = TRUE,          # Enable column resizing?
   filterable = FALSE,        # Enable column filtering?
   defaultSortOrder = "asc",  # Default sort order. Either "asc" or "desc"
-  defaultSorted = NULL,      # Named list of default sorted columns with "asc" or "desc" order
+  defaultSorted = NULL,      # Column names to sort by default. Or a named list with values of "asc" or "desc"
   defaultPageSize = 10,      # Default page size
   pageSizeOptions =          # Page size options
     c(10, 25, 50, 100), 

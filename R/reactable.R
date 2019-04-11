@@ -12,14 +12,14 @@ NULL
 #' @param colnames Optional named list of column names.
 #' @param columns Optional named list of column definitions. See `colDef()`.
 #' @param columnGroups Optional list of column group definitions. See `colGroup()`.
-#' @param groupBy Optional character vector of column names to group by.
+#' @param groupBy Optional vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
-#' @param defaultSorted Optional named list of default sorted columns. Values
-#'   should be either `"asc"` for ascending order or `"desc"` for descending order.
+#' @param defaultSorted Optional vector of column names to sort by default.
+#'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
@@ -89,14 +89,24 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
   if (!is.null(defaultSorted)) {
-    if (!isNamedList(defaultSorted)) {
-      stop("`defaultSorted` must be a named list of column orders")
+    if (!is.character(defaultSorted) && !isNamedList(defaultSorted)) {
+      stop("`defaultSorted` must be a named list or character vector of column names")
+    }
+    if (is.character(defaultSorted)) {
+      orders <- lapply(defaultSorted, function(name) {
+        if (!is.null(columns[[name]]$defaultSortDesc)) {
+          if (columns[[name]]$defaultSortDesc) "desc" else "asc"
+        } else {
+          defaultSortOrder
+        }
+      })
+      defaultSorted <- setNames(orders, defaultSorted)
     }
     if (!all(sapply(defaultSorted, isSortOrder))) {
       stop('`defaultSorted` values must be "asc" or "desc"')
     }
     if (!all(names(defaultSorted) %in% colnames(data))) {
-      stop("`defaultSorted` names must exist in `data`")
+      stop("`defaultSorted` columns must exist in `data`")
     }
   }
   if (!is.numeric(defaultPageSize)) {

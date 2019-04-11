@@ -1,5 +1,7 @@
 context("reactable")
 
+getAttribs <- function(widget) widget$x$tag$attribs
+
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
   df <- data.frame(x = 1)
@@ -18,6 +20,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
+  expect_error(reactable(df, defaultSorted = "y"))
   expect_error(reactable(df, defaultSorted = list("x")))
   expect_error(reactable(df, defaultSorted = list(x = "ascending")))
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
@@ -31,8 +34,6 @@ test_that("reactable handles invalid args", {
 })
 
 test_that("reactable", {
-  getAttribs <- function(widget) widget$x$tag$attribs
-
   # Default args
   tbl <- reactable(data.frame(x = 1, y = "b"))
   attribs <- getAttribs(tbl)
@@ -104,6 +105,40 @@ test_that("reactable", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$sortable, FALSE)
   expect_equal(attribs$columns[[2]]$Header, "Y")
+})
+
+test_that("defaultSorted", {
+  # Column overrides
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultSorted = c("x", "y"),
+                   columns = list(y = colDef(defaultSortOrder = "desc")))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultSorted, list(
+    list(id = "x", desc = FALSE),
+    list(id = "y", desc = TRUE)
+  ))
+
+  # Global defaults w/ column overrides
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultSorted = c("x", "y"),
+                   defaultSortOrder = "desc",
+                   columns = list(y = colDef(defaultSortOrder = "asc")))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultSorted, list(
+    list(id = "x", desc = TRUE),
+    list(id = "y", desc = FALSE)
+  ))
+
+  # Explicit sort orders aren't overridden
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultSorted = list(x = "asc", y = "desc"),
+                   defaultSortOrder = "desc",
+                   columns = list(y = colDef(defaultSortOrder = "asc")))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultSorted, list(
+    list(id = "x", desc = FALSE),
+    list(id = "y", desc = TRUE)
+  ))
 })
 
 test_that("columnSortDefs", {

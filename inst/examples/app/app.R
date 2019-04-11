@@ -14,18 +14,14 @@ server <- function(input, output, session) {
       iris,
       filterable = TRUE,
       groupBy = input$groupBy,
-      defaultSortOrder = "desc",
-      defaultSorted = list(Sepal.Width = "desc"),
+      defaultSorted = "Sepal.Width",
       columns = list(
         Sepal.Length = colDef(name = "Sepal Length"),
         Sepal.Width = colDef(
           name = "Sepal Width",
+          defaultSortOrder = "desc",
           aggregate = "mean",
-          renderAggregated = JS("
-            function(row) {
-              return row.value + ' (avg)'
-            }
-          ")
+          renderAggregated = JS("function(row) { return row.value + ' (avg)' }")
         ),
         Petal.Length = colDef(name = "Petal Length", aggregate = "sum"),
         Petal.Width = colDef(name = "Petal Width", aggregate = "count"),
