@@ -47,19 +47,19 @@ const Reactable = ({
 
     if (col.render) {
       const render = col.render
-      col.Cell = function renderedCell(row) {
-        return <div dangerouslySetInnerHTML={{ __html: render(row) }} />
+      col.Cell = function renderedCell(cell) {
+        return <div dangerouslySetInnerHTML={{ __html: render(cell) }} />
       }
     }
     if (col.renderAggregated) {
       const render = col.renderAggregated
-      col.Aggregated = function renderedCell(row) {
-        return <div dangerouslySetInnerHTML={{ __html: render(row) }} />
+      col.Aggregated = function renderedCell(cell) {
+        return <div dangerouslySetInnerHTML={{ __html: render(cell) }} />
       }
     } else {
       // Set a default renderer to prevent the cell renderer from applying
-      // to aggregated cells (without having to check row.aggregated).
-      col.Aggregated = row => row.value
+      // to aggregated cells (without having to check cell.aggregated).
+      col.Aggregated = cell => cell.value
     }
 
     return col

@@ -16,14 +16,14 @@ test_that("colDef", {
                 show = FALSE, defaultSortOrder = "desc",
                 minWidth = 100, maxWidth = 250, width = 125,
                 render = JS("row => row.value"),
-                renderAggregated = JS("function(row) { return row.value }"),
+                renderAggregated = JS("function(cell) { return cell.value }"),
                 class = "cell", style = list(color = "a"), headerClass = "hdr",
                 headerStyle = list(height = 10))
   expected <- structure(list(
     Header = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, render = JS("row => row.value"),
-    renderAggregated = JS("function(row) { return row.value }"),
+    renderAggregated = JS("function(cell) { return cell.value }"),
     minWidth = 100, maxWidth = 250, width = 125,
     className = "cell", style = list(color = "a"), headerClassName = "hdr",
     headerStyle = list(height = 10)), class = "colDef")
@@ -39,7 +39,7 @@ test_that("colDef", {
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
     render = list("function() {}", function() {}, 5),
-    renderAggregated = list(1, "row => row.value", TRUE, function(row) row$value),
+    renderAggregated = list(1, "cell => cell.value", TRUE, function(cell) cell$value),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
     width = list("1", FALSE),
