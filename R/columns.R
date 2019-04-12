@@ -8,8 +8,8 @@
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
-#' @param render Render function for standard cells.
-#' @param renderAggregated Render function for aggregated cells.
+#' @param render Named list of render functions. Names can be `"cell"` for
+#'   standard cells or `"aggregated"` for aggregated cells.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
@@ -20,7 +20,7 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
-                   defaultSortOrder = NULL, render = NULL, renderAggregated = NULL,
+                   defaultSortOrder = NULL, render = NULL,
                    minWidth = NULL, maxWidth = NULL, width = NULL,
                    class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
@@ -46,11 +46,15 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
-  if (!is.null(render) && !is.JS(render)) {
-    stop("`render` must be a JS callback")
-  }
-  if (!is.null(renderAggregated) && !is.JS(renderAggregated)) {
-    stop("`renderAggregated` must be a JS callback")
+  if (!is.null(render)) {
+    if (!isNamedList(render) || !names(render) %in% c("cell", "aggregated")) {
+      stop('`render` must be a list with names "cell" or "aggregated"')
+    }
+    for (func in render) {
+      if (!is.JS(func)) {
+        stop("render function must be a JS callback")
+      }
+    }
   }
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
     stop("`minWidth` must be numeric")
@@ -84,7 +88,6 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       render = render,
-      renderAggregated = renderAggregated,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,

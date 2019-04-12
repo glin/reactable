@@ -66,6 +66,30 @@ reactable(
 )
 ```
 
+### Custom Renderers
+https://glin.github.io/reactable/inst/examples/custom-renderers.html
+
+```r
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Width = colDef(aggregate = "mean", render = list(
+    aggregated = JS("
+      function(cell) {
+        return cell.value + ' (avg)'
+      }
+    ")
+  )),
+  Petal.Length = colDef(aggregate = "sum", render = list(
+    cell = JS("
+      function(cell) {
+        var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
+        var color = colors[cell.row.Species]
+        return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+      }
+    ")
+  ))
+))
+```
+
 ### Shiny
 https://glin.shinyapps.io/reactable/
 
@@ -122,8 +146,7 @@ colDef(
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
-  render = NULL,            # Render function for standard cells
-  renderAggregated = NULL,  # Render function for aggregated cells
+  render = NULL,            # Named list of render functions. See custom renderers below
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
@@ -141,6 +164,16 @@ colGroup(
   columns,             # Names of columns in the group
   headerClass = NULL,  # Additional CSS classes to apply to the header
   headerStyle = NULL   # Named list of inline styles to apply to the header
+)
+```
+
+### Custom Renderers
+```r
+colDef(
+  render = list(
+    cell = JS("function(cell) { return cell.value }"),       # Standard cells
+    aggregated = JS("function(cell) { return cell.value }")  # Aggregated cells
+  )
 )
 ```
 

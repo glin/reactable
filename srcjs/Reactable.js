@@ -45,16 +45,16 @@ const Reactable = ({
       col.aggregate = aggregators[type]
     }
 
-    if (col.render) {
-      const render = col.render
+    if (col.render && col.render.cell) {
+      const renderCell = col.render.cell
       col.Cell = function renderedCell(cell) {
-        return <div dangerouslySetInnerHTML={{ __html: render(cell) }} />
+        return <div dangerouslySetInnerHTML={{ __html: renderCell(cell) }} />
       }
     }
-    if (col.renderAggregated) {
-      const render = col.renderAggregated
+    if (col.render && col.render.aggregated) {
+      const renderAggregated = col.render.aggregated
       col.Aggregated = function renderedCell(cell) {
-        return <div dangerouslySetInnerHTML={{ __html: render(cell) }} />
+        return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
       }
     } else {
       // Set a default renderer to prevent the cell renderer from applying

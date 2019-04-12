@@ -5,7 +5,7 @@ test_that("colDef", {
   expect_equal(colDef(), structure(list(
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
-    show = NULL, defaultSortDesc = NULL, render = NULL, renderAggregated = NULL,
+    show = NULL, defaultSortDesc = NULL, render = NULL,
     minWidth = NULL, maxWidth = NULL, width = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
@@ -15,15 +15,15 @@ test_that("colDef", {
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
                 minWidth = 100, maxWidth = 250, width = 125,
-                render = JS("row => row.value"),
-                renderAggregated = JS("function(cell) { return cell.value }"),
+                render = list(cell = JS("row => row.value"),
+                              aggregated = JS("row => row.value")),
                 class = "cell", style = list(color = "a"), headerClass = "hdr",
                 headerStyle = list(height = 10))
   expected <- structure(list(
     Header = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
-    show = FALSE, defaultSortDesc = TRUE, render = JS("row => row.value"),
-    renderAggregated = JS("function(cell) { return cell.value }"),
+    show = FALSE, defaultSortDesc = TRUE,
+    render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
     minWidth = 100, maxWidth = 250, width = 125,
     className = "cell", style = list(color = "a"), headerClassName = "hdr",
     headerStyle = list(height = 10)), class = "colDef")
@@ -38,8 +38,7 @@ test_that("colDef", {
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
-    render = list("function() {}", function() {}, 5),
-    renderAggregated = list(1, "cell => cell.value", TRUE, function(cell) cell$value),
+    render = list(JS("function() {}"), list(CELL = JS("")), list(cell = "func")),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
     width = list("1", FALSE),

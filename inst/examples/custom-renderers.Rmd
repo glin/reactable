@@ -1,0 +1,33 @@
+---
+title: "Custom Renderers"
+output:
+  html_document:
+    css: assets/styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(reactable)
+
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Width = colDef(aggregate = "mean", render = list(
+    aggregated = JS("
+      function(cell) {
+        return cell.value + ' (avg)'
+      }
+    ")
+  )),
+  Petal.Length = colDef(aggregate = "sum", render = list(
+    cell = JS("
+      function(cell) {
+        var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
+        var color = colors[cell.row.Species]
+        return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+      }
+    ")
+  ))
+))
+```
