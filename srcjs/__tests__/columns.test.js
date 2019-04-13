@@ -1,4 +1,4 @@
-import { columnsToRows, addColumnGroups } from '../columns'
+import { columnsToRows, addColumnGroups, compareNumbers } from '../columns'
 
 test('columnsToRows', () => {
   const columns = { a: [1, 2, 3], b: ['x', 'y', 'z'] }
@@ -26,5 +26,30 @@ describe('addColumnGroups', () => {
       { id: 'bd', columns: [{ id: 'b' }, { id: 'd' }] },
       { columns: [{ id: 'c' }] }
     ])
+  })
+})
+
+test('compareNumbers', () => {
+  const tests = [
+    [0, 0, 0],
+    [0, 1, -1],
+    [1, 0, 1],
+    [5, 5.01, -1],
+    ['NA', 0, -1],
+    [0, 'NA', 1],
+    ['NA', 'NA', 0],
+    ['Inf', 1, 1],
+    ['-Inf', 1, -1],
+    [1, 'Inf', -1],
+    [-1, '-Inf', 1],
+    ['Inf', 'Inf', 0],
+    ['-Inf', '-Inf', 0],
+    ['NA', 'Inf', -1],
+    ['Inf', 'NA', 1],
+    ['NA', '-Inf', -1],
+    ['-Inf', 'NA', 1]
+  ]
+  tests.forEach(([a, b, order]) => {
+    expect(compareNumbers(a, b)).toEqual(order)
   })
 })

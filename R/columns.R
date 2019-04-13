@@ -132,3 +132,13 @@ isSortOrder <- function(x) {
 isDescOrder <- function(x) {
   is.character(x) && x == "desc"
 }
+
+colType <- function(x) {
+  if (is.numeric(x)) {
+    return("numeric")
+  }
+  if (is.Date(x) || is.POSIXct(x) || is.POSIXlt(x)) {
+    return("Date")
+  }
+  class(x)
+}

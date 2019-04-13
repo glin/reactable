@@ -96,3 +96,14 @@ test_that("sort order", {
   expect_true(isDescOrder("desc"))
   expect_false(isDescOrder("asc"))
 })
+
+test_that("colType", {
+  expect_equal(colType(c(1, 2)), "numeric")
+  expect_equal(colType(1L), "numeric")
+  expect_equal(colType(c("a", "b")), "character")
+  expect_equal(colType(as.factor(c("a", "b"))), "factor")
+  expect_equal(colType(c(TRUE, FALSE)), "logical")
+  expect_equal(colType(as.Date("2018-05-06")), "Date")
+  expect_equal(colType(as.POSIXct("2018-05-06")), "Date")
+  expect_equal(colType(as.POSIXlt("2018-05-06")), "Date")
+})

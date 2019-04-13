@@ -22,3 +22,12 @@ reactable(
 ```
 
 *NOTE: shift+click to sort multiple columns*
+
+### NA/Infinity handling
+
+```{r}
+reactable(data.frame(
+  n = seq(7),
+  x = c(5, 7, NA, NA, 9, -Inf, -20),
+  y = c(1, 2, NA, -Inf, 0, Inf, -5)
+))

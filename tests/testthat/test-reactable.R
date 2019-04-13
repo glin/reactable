@@ -40,8 +40,10 @@ test_that("reactable", {
   data <- data.frame(x = 1, y = "b")
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
-    columns = list(list(accessor = "x", Header = "x", style = list(textAlign = "right")),
-                   list(accessor = "y", Header = "y")),
+    columns = list(
+      list(accessor = "x", Header = "x", type = "numeric", style = list(textAlign = "right")),
+      list(accessor = "y", Header = "y", type = "factor")
+    ),
     sortable = TRUE,
     resizable = TRUE,
     filterable = FALSE,
@@ -71,8 +73,10 @@ test_that("reactable", {
   data[["__rowname__"]] <- "1"
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
-    columns = list(list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE),
-                   list(accessor = "x", Header = "x")),
+    columns = list(
+      list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE),
+      list(accessor = "x", Header = "x", type = "factor")
+    ),
     columnGroups = list(colGroup("group", "x")),
     pivotBy = list("x"),
     sortable = FALSE,
@@ -100,8 +104,10 @@ test_that("reactable", {
   expect_equal(attribs$columns[[2]]$Header, "Y")
 
   # Column overrides
-  tbl <- reactable(data.frame(x = 1, y = "2"),
-                   columns = list(x = colDef(sortable = FALSE), y = colDef(name = "Y")))
+  tbl <- reactable(data.frame(x = 1, y = "2"), columns = list(
+    x = colDef(sortable = FALSE),
+    y = colDef(name = "Y")
+  ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$sortable, FALSE)
   expect_equal(attribs$columns[[2]]$Header, "Y")

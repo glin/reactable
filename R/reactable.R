@@ -138,6 +138,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     } else {
       column$Header <- key
     }
+    column$type <- colType(data[[key]])
     # Right-align numbers
     if (is.numeric(data[[key]])) {
       column$style <- list(textAlign = "right")

@@ -4,7 +4,7 @@ import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
 import { aggregators, DefaultAggregated } from './aggregators'
-import { columnsToRows, addColumnGroups } from './columns'
+import { columnsToRows, addColumnGroups, compareNumbers } from './columns'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
@@ -60,6 +60,10 @@ const Reactable = ({
       // Set a default renderer to prevent the cell renderer from applying
       // to aggregated cells (without having to check cell.aggregated).
       col.Aggregated = cell => cell.value
+    }
+
+    if (col.type === 'numeric') {
+      col.sortMethod = compareNumbers
     }
 
     return col
