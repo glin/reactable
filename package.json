@@ -5,6 +5,7 @@
     "build:watch": "webpack --mode production --watch",
     "dev:watch": "webpack --mode development --watch",
     "test": "jest",
+    "test:cover": "jest --coverage",
     "lint": "eslint ."
   },
   "license": "MIT",

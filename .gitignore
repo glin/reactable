@@ -1,3 +1,4 @@
 .Rprofile
 .Rproj.user/
+coverage/
 node_modules/

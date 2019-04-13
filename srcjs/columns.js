@@ -1,3 +1,7 @@
+import React from 'react'
+
+import { aggregators } from './aggregators'
+
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
 export function columnsToRows(columns) {
@@ -10,6 +14,52 @@ export function columnsToRows(columns) {
     }
   }
   return rows
+}
+
+export function buildColumnDefs(columns, groups) {
+  columns = columns.map(col => {
+    col.id = col.accessor
+    if (col.accessor.includes('.')) {
+      // Interpret column names with dots as IDs, not paths
+      col.accessor = data => data[col.id]
+    }
+
+    if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
+      const type = col.aggregate
+      col.aggregate = aggregators[type]
+    }
+
+    if (col.render && col.render.cell) {
+      const renderCell = col.render.cell
+      col.Cell = function renderedCell(cell) {
+        return <div dangerouslySetInnerHTML={{ __html: renderCell(cell) }} />
+      }
+    }
+    if (col.render && col.render.aggregated) {
+      const renderAggregated = col.render.aggregated
+      col.Aggregated = function renderedCell(cell) {
+        return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
+      }
+    } else {
+      // Set a default renderer to prevent the cell renderer from applying
+      // to aggregated cells (without having to check cell.aggregated).
+      col.Aggregated = cell => cell.value
+    }
+
+    if (col.type === 'numeric') {
+      col.sortMethod = compareNumbers
+      // Right-align numbers by default
+      col.style = { textAlign: 'right', ...col.style }
+    }
+
+    return col
+  })
+
+  if (groups) {
+    columns = addColumnGroups(columns, groups)
+  }
+
+  return columns
 }
 
 // Add groups to an array of column definitions

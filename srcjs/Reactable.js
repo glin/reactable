@@ -3,8 +3,8 @@ import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
-import { aggregators, DefaultAggregated } from './aggregators'
-import { columnsToRows, addColumnGroups, compareNumbers } from './columns'
+import { DefaultAggregated } from './aggregators'
+import { columnsToRows, buildColumnDefs } from './columns'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
@@ -33,47 +33,7 @@ const Reactable = ({
 }) => {
   data = columnsToRows(data)
 
-  columns = columns.map(col => {
-    col.id = col.accessor
-    if (col.accessor.includes('.')) {
-      // Interpret column names with dots as IDs, not paths
-      col.accessor = data => data[col.id]
-    }
-
-    if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
-      const type = col.aggregate
-      col.aggregate = aggregators[type]
-    }
-
-    if (col.render && col.render.cell) {
-      const renderCell = col.render.cell
-      col.Cell = function renderedCell(cell) {
-        return <div dangerouslySetInnerHTML={{ __html: renderCell(cell) }} />
-      }
-    }
-    if (col.render && col.render.aggregated) {
-      const renderAggregated = col.render.aggregated
-      col.Aggregated = function renderedCell(cell) {
-        return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
-      }
-    } else {
-      // Set a default renderer to prevent the cell renderer from applying
-      // to aggregated cells (without having to check cell.aggregated).
-      col.Aggregated = cell => cell.value
-    }
-
-    if (col.type === 'numeric') {
-      col.sortMethod = compareNumbers
-      // Right-align numbers by default
-      col.style = { textAlign: 'right', ...col.style }
-    }
-
-    return col
-  })
-
-  if (columnGroups) {
-    columns = addColumnGroups(columns, columnGroups)
-  }
+  columns = buildColumnDefs(columns, columnGroups)
 
   const classes = [className, striped ? '-striped' : '', highlight ? ' -highlight' : '']
   className = classes.join(' ').trim()
