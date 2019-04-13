@@ -16,6 +16,9 @@ test_that("mergeLists", {
   a <- list(a = NULL, b = 2)
   b <- list(a = 1, b = NULL)
   expect_equal(mergeLists(a, b), list(a = 1, b = 2))
+
+  expect_equal(mergeLists(NULL, list(a = 1, b = 2)), list(a = 1, b = 2))
+  expect_equal(mergeLists(list(a = 1, b = 2), NULL), list(a = 1, b = 2))
 })
 
 test_that("filterNulls", {

@@ -14,9 +14,9 @@ test_that("colDef", {
   col <- colDef(name = "col", aggregate = "sum",
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
-                minWidth = 100, maxWidth = 250, width = 125,
                 render = list(cell = JS("row => row.value"),
                               aggregated = JS("row => row.value")),
+                minWidth = 100, maxWidth = 250, width = 125, align = "right",
                 class = "cell", style = list(color = "a"), headerClass = "hdr",
                 headerStyle = list(height = 10))
   expected <- structure(list(
@@ -25,8 +25,8 @@ test_that("colDef", {
     show = FALSE, defaultSortDesc = TRUE,
     render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
     minWidth = 100, maxWidth = 250, width = 125,
-    className = "cell", style = list(color = "a"), headerClassName = "hdr",
-    headerStyle = list(height = 10)), class = "colDef")
+    className = "cell", style = list(color = "a", textAlign = "right"),
+    headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
 
   # Invalid args
@@ -41,6 +41,7 @@ test_that("colDef", {
     render = list(JS("function() {}"), list(CELL = JS("")), list(cell = "func")),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
+    align = list("a", "RIGHT", 1),
     width = list("1", FALSE),
     class = list(1, list()),
     style = list(list("a"), 2),

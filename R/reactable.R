@@ -139,10 +139,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       column$Header <- key
     }
     column$type <- colType(data[[key]])
-    # Right-align numbers
-    if (is.numeric(data[[key]])) {
-      column$style <- list(textAlign = "right")
-    }
     if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }

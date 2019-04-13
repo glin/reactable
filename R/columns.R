@@ -13,6 +13,7 @@
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
+#' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param class Additional CSS classes to apply to cells.
 #' @param style Named list of inline styles to apply to cells.
 #' @param headerClass Additional CSS classes to apply to the header.
@@ -22,7 +23,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, render = NULL,
                    minWidth = NULL, maxWidth = NULL, width = NULL,
-                   class = NULL, style = NULL, headerClass = NULL,
+                   align = NULL, class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
@@ -76,6 +77,12 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(headerStyle) && !isNamedList(headerStyle)) {
     stop("`headerStyle` must be a named list")
+  }
+  if (!is.null(align)) {
+    if (!isTRUE(align %in% c("left", "right", "center"))) {
+      stop('`align` must be one of "left", "right", "center"')
+    }
+    style <- mergeLists(style, list(textAlign = align))
   }
 
   structure(

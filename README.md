@@ -150,6 +150,7 @@ colDef(
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
+  align = NULL,             # Column alignment. One of "left", "right", "center"
   class = NULL,             # Additional CSS classes to apply to cells
   style = NULL,             # Named list of inline styles to apply to cells
   headerClass = NULL,       # Additional CSS classes to apply to the header

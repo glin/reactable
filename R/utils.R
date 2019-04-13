@@ -3,6 +3,12 @@
 htmlwidgets::JS
 
 mergeLists <- function(a, b) {
+  if (is.null(a)) {
+    a <- list()
+  }
+  if (is.null(b)) {
+    b <- list()
+  }
   for (name in names(b)) {
     if (!is.null(b[[name]])) {
       a[[name]] <- b[[name]]

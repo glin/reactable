@@ -64,6 +64,8 @@ const Reactable = ({
 
     if (col.type === 'numeric') {
       col.sortMethod = compareNumbers
+      // Right-align numbers by default
+      col.style = { textAlign: 'right', ...col.style }
     }
 
     return col

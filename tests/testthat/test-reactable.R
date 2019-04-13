@@ -41,7 +41,7 @@ test_that("reactable", {
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
     columns = list(
-      list(accessor = "x", Header = "x", type = "numeric", style = list(textAlign = "right")),
+      list(accessor = "x", Header = "x", type = "numeric"),
       list(accessor = "y", Header = "y", type = "factor")
     ),
     sortable = TRUE,

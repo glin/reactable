@@ -7,8 +7,8 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, render = NULL, minWidth = NULL,
-  maxWidth = NULL, width = NULL, class = NULL, style = NULL,
-  headerClass = NULL, headerStyle = NULL)
+  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
+  style = NULL, headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -34,6 +34,8 @@ standard cells or \code{"aggregated"} for aggregated cells.}
 \item{maxWidth}{Max width of the column in pixels.}
 
 \item{width}{Fixed width of the column in pixels. Overrides minWidth and maxWidth.}
+
+\item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 
