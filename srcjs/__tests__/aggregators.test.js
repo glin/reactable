@@ -16,6 +16,7 @@ test('round', () => {
   expect(round(2, 0)).toEqual(2)
   expect(round(1)).toEqual(1)
   expect(round(0.1 + 0.2)).toEqual(0.3)
+  expect(round(123.1, -5)).toEqual(123)
 })
 
 test('frequency', () => {

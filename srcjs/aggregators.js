@@ -7,6 +7,7 @@ export function mean(arr) {
 }
 
 export function round(n, digits = 3) {
+  digits = digits > 0 ? digits : 0
   const c = Math.pow(10, digits)
   return Math.round(n * c) / c
 }
