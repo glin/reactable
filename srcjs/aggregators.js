@@ -7,6 +7,9 @@ export function mean(arr) {
 }
 
 export function round(n, digits = 3) {
+  if (!Number.isFinite(n)) {
+    return n
+  }
   digits = digits > 0 ? digits : 0
   const c = Math.pow(10, digits)
   return Math.round(n * c) / c
