@@ -146,6 +146,7 @@ colDef(
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
+  format = NULL,            # Named list of column formatting options. See column formatting below
   render = NULL,            # Named list of render functions. See custom renderers below
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
@@ -168,12 +169,33 @@ colGroup(
 )
 ```
 
+### Column Formatting
+```r
+colDef(
+  format = list(
+    cell = colFormat(),       # Format standard cells
+    aggregated = colFormat()  # Format aggregated cells
+  )
+)
+```
+
+```r
+colFormat(
+  prefix = NULL,       # Prefix string
+  suffix = NULL,       # Suffix string
+  digits = NULL,       # Max number of decimal places to round numbers
+  separators = FALSE,  # Use grouping separators (e.g. thousands) for numbers? Locale-dependent.
+  currency = NULL,     # Currency format. An ISO 4217 currency code, such as "USD", "EUR", "CNY". Locale-dependent.
+  locales = NULL       # Locales to use for number formatting. A vector of BCP 47 languages tags,
+)                      # such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser.
+```
+
 ### Custom Renderers
 ```r
 colDef(
   render = list(
-    cell = JS("function(cell) { return cell.value }"),       # Standard cells
-    aggregated = JS("function(cell) { return cell.value }")  # Aggregated cells
+    cell = JS("function(cell) { return cell.value }"),       # Render standard cells
+    aggregated = JS("function(cell) { return cell.value }")  # Render aggregated cells
   )
 )
 ```

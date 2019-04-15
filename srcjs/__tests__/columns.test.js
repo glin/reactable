@@ -1,6 +1,12 @@
 import React from 'react'
 
-import { columnsToRows, addColumnGroups, compareNumbers, buildColumnDefs } from '../columns'
+import {
+  columnsToRows,
+  addColumnGroups,
+  compareNumbers,
+  buildColumnDefs,
+  formatValue
+} from '../columns'
 import { aggregators } from '../aggregators'
 
 test('columnsToRows', () => {
@@ -27,13 +33,56 @@ describe('buildColumnDefs', () => {
     expect(cols[0].aggregate).toEqual('justastring')
   })
 
+  test('formatters', () => {
+    // Cell
+    let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
+    expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
+    expect(cols[0].Aggregated({ value: 123.12 })).toEqual(123.12)
+
+    // Aggregated
+    cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
+    expect(cols[0].Cell).toEqual(undefined)
+    expect(cols[0].Aggregated({ value: 'xyz' })).toEqual('xyz!')
+  })
+
   test('renderers', () => {
     let cols = buildColumnDefs([{ accessor: 'x', render: { cell: cell => cell.value } }])
     expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
+
     // Default Aggregated
     cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value } }])
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: 'x' }} />
+    )
+  })
+
+  test('formatters applied before renderers', () => {
+    // Cell
+    let cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        format: { cell: { prefix: '@' } },
+        render: { cell: cell => `__${cell.value}__` }
+      }
+    ])
+    expect(cols[0].Cell({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+    )
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
+
+    // Aggregated
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        format: { aggregated: { prefix: '@' } },
+        render: { aggregated: cell => `__${cell.value}__` }
+      }
+    ])
+    expect(cols[0].Cell).toEqual(undefined)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+    )
   })
 
   test('numeric cols', () => {
@@ -99,5 +148,37 @@ test('compareNumbers', () => {
   ]
   tests.forEach(([a, b, order]) => {
     expect(compareNumbers(a, b)).toEqual(order)
+  })
+})
+
+describe('formatValue', () => {
+  test('prefix/suffix', () => {
+    expect(formatValue(123, { prefix: 'a' })).toEqual('a123')
+    expect(formatValue(123, { suffix: 'b' })).toEqual('123b')
+    expect(formatValue('bc', { prefix: 'a', suffix: 'd' })).toEqual('abcd')
+    const options = { prefix: 'amt: ', suffix: ' dollaroos', currency: 'USD', locales: 'en-US' }
+    expect(formatValue(123.1, options)).toEqual('amt: $123.10 dollaroos')
+    // Non-string prefix/suffix
+    expect(formatValue(123, { prefix: 5, suffix: 0 })).toEqual('51230')
+    expect(formatValue(123, { prefix: 0, suffix: true })).toEqual('0123true')
+  })
+
+  test('digits', () => {
+    expect(formatValue(123.125, { digits: 0 })).toEqual(123)
+    expect(formatValue(123.125, { digits: 2 })).toEqual(123.13)
+    expect(formatValue('ignorestring', { digits: 3 })).toEqual('ignorestring')
+  })
+
+  test('separators', () => {
+    expect(formatValue(125253.125, { separators: true, locales: 'en-US' })).toEqual('125,253.125')
+    expect(formatValue(125253.125, { separators: false })).toEqual(125253.125)
+    expect(formatValue(125253.125, {})).toEqual(125253.125)
+  })
+
+  test('currency', () => {
+    expect(formatValue(125253.125, { currency: 'USD', locales: 'en-US' })).toEqual('$125253.13')
+    expect(formatValue(125253.125, { currency: 'USD', separators: true, locales: 'en-US' })).toEqual(
+      '$125,253.13'
+    )
   })
 })

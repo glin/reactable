@@ -8,6 +8,8 @@
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
+#' @param format Named list of column format options. See `colFormat()`. Names
+#'   can be `"cell"` for standard cells or `"aggregated"` for aggregated cells.
 #' @param render Named list of render functions. Names can be `"cell"` for
 #'   standard cells or `"aggregated"` for aggregated cells.
 #' @param minWidth Min width of the column in pixels.
@@ -21,7 +23,7 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
-                   defaultSortOrder = NULL, render = NULL,
+                   defaultSortOrder = NULL, format = NULL, render = NULL,
                    minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
@@ -46,6 +48,16 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
+  }
+  if (!is.null(format)) {
+    if (!isNamedList(format) || !names(format) %in% c("cell", "aggregated")) {
+      stop('`format` must be a list with names "cell" or "aggregated"')
+    }
+    for (opts in format) {
+      if (!is.colFormat(opts)) {
+        stop("`format` must be a list of column formatting options")
+      }
+    }
   }
   if (!is.null(render)) {
     if (!isNamedList(render) || !names(render) %in% c("cell", "aggregated")) {
@@ -94,6 +106,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       filterable = filterable,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
+      format = format,
       render = render,
       minWidth = minWidth,
       maxWidth = maxWidth,
@@ -109,6 +122,14 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
 
 is.colDef <- function(x) {
   inherits(x, "colDef")
+}
+
+isSortOrder <- function(x) {
+  is.character(x) && x %in% c("asc", "desc")
+}
+
+isDescOrder <- function(x) {
+  is.character(x) && x == "desc"
 }
 
 #' Column group definitions
@@ -132,12 +153,60 @@ is.colGroup <- function(x) {
   inherits(x, "colGroup")
 }
 
-isSortOrder <- function(x) {
-  is.character(x) && x %in% c("asc", "desc")
+#' Column formatting options
+#'
+#' @param prefix Prefix string.
+#' @param suffix Suffix string.
+#' @param digits Max number of decimal places to round numbers.
+#' @param separators Whether to use grouping separators for numbers, such as
+#'   thousands separators or thousand/lakh/crore separators. The format is
+#'   locale-dependent. Defaults to `FALSE`.
+#' @param currency Currency format. An ISO 4217 currency code such as `"USD"`
+#'   for the US dollar, `"EUR"` for the euro, or `"CNY"` for the Chinese RMB.
+#'   The format is locale-dependent.
+#' @param locales Locales to use for number formatting. A character vector of
+#'   BCP 47 language tags, such as `"en-US"` for English (United States),
+#'   `"hi"` for Hindi, or `"sv-SE"` for Swedish (Sweden). Defaults to the locale
+#'   of the browser.
+#' @export
+colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
+                      separators = FALSE, currency = NULL, locales = NULL) {
+  if (!is.null(prefix) && !is.character(prefix)) {
+    stop("`prefix` must be a character string")
+  }
+  if (!is.null(suffix) && !is.character(suffix)) {
+    stop("`suffix` must be a character string")
+  }
+  if (!is.null(digits)) {
+    if (!is.numeric(digits) || digits < 0 || digits > 20) {
+      stop("`digits` must be a number between 0 and 20")
+    }
+    digits <- as.integer(digits)
+  }
+  if (!is.logical(separators)) {
+    stop("`separators` must be TRUE or FALSE")
+  }
+  if (!is.null(currency) && !is.character(currency)) {
+    stop("`currency` must be a character string")
+  }
+  if (!is.null(locales) && !is.character(locales)) {
+    stop("`locales` must be a character string")
+  }
+
+  options <- list(
+    prefix = prefix,
+    suffix = suffix,
+    digits = digits,
+    separators = if (separators) TRUE,
+    currency = currency,
+    locales = locales
+  )
+  options <- filterNulls(options)
+  structure(options, class = "colFormat")
 }
 
-isDescOrder <- function(x) {
-  is.character(x) && x == "desc"
+is.colFormat <- function(x) {
+  inherits(x, "colFormat")
 }
 
 colType <- function(x) {

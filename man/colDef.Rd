@@ -6,9 +6,10 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
-  defaultSortOrder = NULL, render = NULL, minWidth = NULL,
-  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
-  style = NULL, headerClass = NULL, headerStyle = NULL)
+  defaultSortOrder = NULL, format = NULL, render = NULL,
+  minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
+  class = NULL, style = NULL, headerClass = NULL,
+  headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -25,6 +26,9 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}
+
+\item{format}{Named list of column format options. See \code{colFormat()}. Names
+can be \code{"cell"} for standard cells or \code{"aggregated"} for aggregated cells.}
 
 \item{render}{Named list of render functions. Names can be \code{"cell"} for
 standard cells or \code{"aggregated"} for aggregated cells.}

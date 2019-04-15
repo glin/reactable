@@ -5,7 +5,7 @@ test_that("colDef", {
   expect_equal(colDef(), structure(list(
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
-    show = NULL, defaultSortDesc = NULL, render = NULL,
+    show = NULL, defaultSortDesc = NULL, format = NULL, render = NULL,
     minWidth = NULL, maxWidth = NULL, width = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
@@ -14,6 +14,7 @@ test_that("colDef", {
   col <- colDef(name = "col", aggregate = "sum",
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
+                format = list(cell = colFormat(), aggregated = colFormat()),
                 render = list(cell = JS("row => row.value"),
                               aggregated = JS("row => row.value")),
                 minWidth = 100, maxWidth = 250, width = 125, align = "right",
@@ -23,6 +24,7 @@ test_that("colDef", {
     Header = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE,
+    format = list(cell = colFormat(), aggregated = colFormat()),
     render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
     minWidth = 100, maxWidth = 250, width = 125,
     className = "cell", style = list(color = "a", textAlign = "right"),
@@ -38,6 +40,7 @@ test_that("colDef", {
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
+    format = list(list(), list(CELL = colFormat()), list(aggregated = list())),
     render = list(JS("function() {}"), list(CELL = JS("")), list(cell = "func")),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
@@ -58,6 +61,15 @@ test_that("colDef", {
 test_that("is.colDef", {
   expect_true(is.colDef(colDef()))
   expect_false(is.colDef(list()))
+})
+
+test_that("sort order", {
+  expect_true(isSortOrder("asc"))
+  expect_true(isSortOrder("desc"))
+  expect_false(isSortOrder(FALSE))
+  expect_false(isSortOrder(list("asc")))
+  expect_true(isDescOrder("desc"))
+  expect_false(isDescOrder("asc"))
 })
 
 test_that("colGroup", {
@@ -89,13 +101,31 @@ test_that("is.colGroup", {
   expect_false(is.colGroup(list()))
 })
 
-test_that("sort order", {
-  expect_true(isSortOrder("asc"))
-  expect_true(isSortOrder("desc"))
-  expect_false(isSortOrder(FALSE))
-  expect_false(isSortOrder(list("asc")))
-  expect_true(isDescOrder("desc"))
-  expect_false(isDescOrder("asc"))
+test_that("colFormat", {
+  # Default args
+  expect_equal(colFormat(), structure(list(), class = "colFormat"))
+
+  # Valid args
+  options <- colFormat(prefix = "a", suffix = "b", digits = 5, separators = TRUE,
+                       currency = "INR", locales = c("en-US", "zh-Hans-CN"))
+  expect_equal(options, structure(list(
+    prefix = "a", suffix = "b", digits = 5, separators = TRUE,
+    currency = "INR", locales = c("en-US", "zh-Hans-CN")
+  ), class = "colFormat"))
+
+  # Invalid args
+  expect_error(colFormat(prefix = 1))
+  expect_error(colFormat(suffix = 1))
+  expect_error(colFormat(digits = -1))
+  expect_error(colFormat(digits = 21))
+  expect_error(colFormat(separators = "sad"))
+  expect_error(colFormat(currency = FALSE))
+  expect_error(colFormat(locales = 123))
+})
+
+test_that("is.colFormat", {
+  expect_true(is.colFormat(colFormat()))
+  expect_false(is.colFormat(list()))
 })
 
 test_that("colType", {
