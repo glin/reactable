@@ -37,7 +37,7 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
     expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
-    expect(cols[0].Aggregated({ value: 123.12 })).toEqual(123.12)
+    expect(cols[0].Aggregated).toEqual(undefined)
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
@@ -46,12 +46,14 @@ describe('buildColumnDefs', () => {
   })
 
   test('renderers', () => {
+    // Cell
     let cols = buildColumnDefs([{ accessor: 'x', render: { cell: cell => cell.value } }])
     expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
+    expect(cols[0].Aggregated).toEqual(undefined)
 
-    // Default Aggregated
+    // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value } }])
+    expect(cols[0].Cell).toEqual(undefined)
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: 'x' }} />
     )
@@ -69,7 +71,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
     )
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
+    expect(cols[0].Aggregated).toEqual(undefined)
 
     // Aggregated
     cols = buildColumnDefs([
@@ -177,8 +179,8 @@ describe('formatValue', () => {
 
   test('currency', () => {
     expect(formatValue(125253.125, { currency: 'USD', locales: 'en-US' })).toEqual('$125253.13')
-    expect(formatValue(125253.125, { currency: 'USD', separators: true, locales: 'en-US' })).toEqual(
-      '$125,253.13'
-    )
+    expect(
+      formatValue(125253.125, { currency: 'USD', separators: true, locales: 'en-US' })
+    ).toEqual('$125,253.13')
   })
 })

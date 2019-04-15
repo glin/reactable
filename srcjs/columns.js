@@ -57,10 +57,6 @@ export function buildColumnDefs(columns, groups) {
         }
         return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
       }
-    } else if (!col.Aggregated) {
-      // Set a default renderer to prevent the cell renderer from applying
-      // to aggregated cells (without having to check cell.aggregated).
-      col.Aggregated = cell => cell.value
     }
 
     if (col.type === 'numeric') {
