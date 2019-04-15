@@ -1,9 +1,13 @@
 export function sum(arr) {
-  return arr.reduce((a, b) => a + b)
+  const result = arr.reduce((a, b) => a + b)
+  // Adjust for precision errors
+  return round(result, 12)
 }
 
 export function mean(arr) {
-  return sum(arr) / arr.length
+  const result = sum(arr) / arr.length
+  // Adjust for precision errors
+  return round(result, 12)
 }
 
 export function round(n, digits = 3) {
@@ -32,8 +36,8 @@ export function count(arr) {
 }
 
 export const aggregators = {
-  mean: arr => round(mean(arr)),
-  sum: arr => round(sum(arr)),
+  mean,
+  sum,
   frequency,
   count
 }

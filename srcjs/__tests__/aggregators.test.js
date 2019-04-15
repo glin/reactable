@@ -3,11 +3,13 @@ import { sum, mean, round, frequency, count, DefaultAggregated } from '../aggreg
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
   expect(sum([1])).toEqual(1)
+  expect(sum([0.1, 0.2])).toEqual(0.3)
 })
 
 test('mean', () => {
   expect(mean([1, 2, 3, 4, 0])).toEqual(2)
   expect(mean([1])).toEqual(1)
+  expect(mean([0.1, 0.2])).toEqual(0.15)
 })
 
 test('round', () => {
