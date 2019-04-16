@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(reactable)
+
 reactable(
   iris, 
   defaultSortOrder = "desc",
@@ -31,3 +32,4 @@ reactable(data.frame(
   x = c(5, 7, NA, NA, 9, -Inf, -20),
   y = c(1, 2, NA, -Inf, 0, Inf, -5)
 ))
+```
