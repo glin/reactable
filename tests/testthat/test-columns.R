@@ -40,8 +40,8 @@ test_that("colDef", {
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
-    format = list(list(), list(CELL = colFormat()), list(aggregated = list())),
-    render = list(JS("function() {}"), list(CELL = JS("")), list(cell = "func")),
+    format = list(23, list(CELL = colFormat()), list(aggregated = list())),
+    render = list("function() {}", list(CELL = JS("")), list(cell = "func")),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
     align = list("a", "RIGHT", 1),
@@ -56,6 +56,21 @@ test_that("colDef", {
       expect_error(do.call(colDef, setNames(list(val), arg)))
     }
   }
+})
+
+test_that("colDef format/render", {
+  format <- colFormat()
+  render <- JS("row => row.value")
+
+  # Default cell format/renderer
+  col <- colDef(format = format, render = render)
+  expect_equal(col$format, list(cell = format))
+  expect_equal(col$render, list(cell = render))
+
+  # Aggregated format/renderer
+  col <- colDef(format = list(aggregated = format), render = list(aggregated = render))
+  expect_equal(col$format, list(aggregated = format))
+  expect_equal(col$render, list(aggregated = render))
 })
 
 test_that("is.colDef", {

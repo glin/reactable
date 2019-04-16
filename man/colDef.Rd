@@ -14,7 +14,7 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 \arguments{
 \item{name}{Column name.}
 
-\item{aggregate}{Aggregate function name or JS callback.}
+\item{aggregate}{Aggregate function name or \code{JS()} function.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
 
@@ -27,11 +27,13 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}
 
-\item{format}{Named list of column format options. See \code{colFormat()}. Names
-can be \code{"cell"} for standard cells or \code{"aggregated"} for aggregated cells.}
+\item{format}{Column formatting options. A \code{colFormat()} object to
+format all cells, or a named list of \code{colFormat()} objects to format standard
+cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
-\item{render}{Named list of render functions. Names can be \code{"cell"} for
-standard cells or \code{"aggregated"} for aggregated cells.}
+\item{render}{Custom column renderer. A \code{JS()} function to render all cells,
+or a named list of \code{JS()} functions to render standard cells (\code{"cell"}) and
+aggregated cells (\code{"aggregated"}) separately.}
 
 \item{minWidth}{Min width of the column in pixels.}
 

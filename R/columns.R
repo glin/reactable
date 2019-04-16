@@ -1,17 +1,19 @@
 #' Column definitions
 #'
 #' @param name Column name.
-#' @param aggregate Aggregate function name or JS callback.
+#' @param aggregate Aggregate function name or `JS()` function.
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
-#' @param format Named list of column format options. See `colFormat()`. Names
-#'   can be `"cell"` for standard cells or `"aggregated"` for aggregated cells.
-#' @param render Named list of render functions. Names can be `"cell"` for
-#'   standard cells or `"aggregated"` for aggregated cells.
+#' @param format Column formatting options. A `colFormat()` object to
+#'   format all cells, or a named list of `colFormat()` objects to format standard
+#'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
+#' @param render Custom column renderer. A `JS()` function to render all cells,
+#'   or a named list of `JS()` functions to render standard cells (`"cell"`) and
+#'   aggregated cells (`"aggregated"`) separately.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
@@ -32,7 +34,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     stop("`name` must be a character")
   }
   if (!is.null(aggregate) && !is.character(aggregate) && !is.JS(aggregate)) {
-    stop("`aggregate` must be a character or JS callback")
+    stop("`aggregate` must be a character or JS function")
   }
   if (!is.null(sortable) && !is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
@@ -50,8 +52,14 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
   if (!is.null(format)) {
-    if (!isNamedList(format) || !names(format) %in% c("cell", "aggregated")) {
-      stop('`format` must be a list with names "cell" or "aggregated"')
+    if (!is.colFormat(format) && !isNamedList(format)) {
+      stop('`format` must be a column formatting option set or named list')
+    }
+    if (is.colFormat(format)) {
+      format <- list(cell = format)
+    }
+    if (any(!names(format) %in% c("cell", "aggregated"))) {
+      stop('`format` must have names "cell" or "aggregated"')
     }
     for (opts in format) {
       if (!is.colFormat(opts)) {
@@ -60,12 +68,18 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     }
   }
   if (!is.null(render)) {
-    if (!isNamedList(render) || !names(render) %in% c("cell", "aggregated")) {
-      stop('`render` must be a list with names "cell" or "aggregated"')
+    if (!is.JS(render) && !isNamedList(render)) {
+      stop("`render` must be a JS function or named list")
+    }
+    if (is.JS(render)) {
+      render <- list(cell = render)
+    }
+    if (any(!names(render) %in% c("cell", "aggregated"))) {
+      stop('`render` must have names "cell" or "aggregated"')
     }
     for (func in render) {
       if (!is.JS(func)) {
-        stop("render function must be a JS callback")
+        stop("render function must be a JS function")
       }
     }
   }

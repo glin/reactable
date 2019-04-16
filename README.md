@@ -117,8 +117,8 @@ reactable(
   data,                      # Data frame or matrix
   rownames = FALSE,          # Show row names?
   colnames = NULL,           # Named list of column names
-  columns = NULL,            # Named list of column definitions. See colDef()
-  columnGroups = NULL,       # List of column group definitions. See colGroup()
+  columns = NULL,            # Named list of column definitions. See column definitions below
+  columnGroups = NULL,       # List of column group definitions. See column groups below
   groupBy = NULL,            # Names of columns to group by
   sortable = TRUE,           # Enable sorting?
   resizable = TRUE,          # Enable column resizing?
@@ -136,18 +136,18 @@ reactable(
 )
 ```
 
-### Columns
+### Column Definitions
 ```r
 colDef(
   name = NULL,              # Column name
-  aggregate = NULL,         # Aggregate function name or JS callback
+  aggregate = NULL,         # Aggregate function name or JS function
   sortable = NULL,          # Enable sorting?
   resizable = NULL,         # Enable column resizing?
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
-  format = NULL,            # Named list of column formatting options. See column formatting below
-  render = NULL,            # Named list of render functions. See custom renderers below
+  format = NULL,            # Column formatting options. See column formatting below
+  render = NULL,            # Custom column renderers. See custom renderers below
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
@@ -170,15 +170,24 @@ colGroup(
 ```
 
 ### Column Formatting
+Format all cells in the column:
+```r
+colDef(
+  format = colFormat()
+)
+```
+
+Format standard and aggregated cells separately:
 ```r
 colDef(
   format = list(
-    cell = colFormat(),       # Format standard cells
-    aggregated = colFormat()  # Format aggregated cells
+    cell = colFormat(),       # Standard cells
+    aggregated = colFormat()  # Aggregated cells
   )
 )
 ```
 
+Formatting options:
 ```r
 colFormat(
   prefix = NULL,       # Prefix string
@@ -191,11 +200,19 @@ colFormat(
 ```
 
 ### Custom Renderers
+Render all cells in the column:
+```r
+colDef(
+  render = JS("function(cell) { return cell.value }")
+)
+```
+
+Render standard and aggregated cells separately:
 ```r
 colDef(
   render = list(
-    cell = JS("function(cell) { return cell.value }"),       # Render standard cells
-    aggregated = JS("function(cell) { return cell.value }")  # Render aggregated cells
+    cell = JS("function(cell) { return cell.value }"),       # Standard cells
+    aggregated = JS("function(cell) { return cell.value }")  # Aggregated cells
   )
 )
 ```
