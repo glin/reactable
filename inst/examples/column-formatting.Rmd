@@ -1,0 +1,51 @@
+---
+title: "Column Formatting"
+output:
+  html_document:
+    css: assets/styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(reactable)
+
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " cm")
+  ),
+  Sepal.Width = colDef(
+    aggregate = "mean",
+    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2)))
+))
+```
+
+### Currency formatting
+
+```{r}
+data <- data.frame(
+  item = letters[1:6],
+  qty = c(12000, 300.15, 3535125, 0, 4344, 12),
+  price_usd = c(12.12, 2141.213, 0.42, NA, 1.55, 34414),
+  price_eur = c(10.68, 1884.27, 0.37, NA, 1.36, 30284.32),
+  price_inr = c(841.73, 148707.24, 29, NA, 107.65, 2390052.3)
+)
+
+reactable(data, columns = list(
+  qty = colDef(format = list(
+    cell = colFormat(separators = TRUE)
+  )),
+  price_usd = colDef(name = "Price (USD)", format = list(
+    cell = colFormat(currency = "USD", separators = TRUE)
+  )),
+  price_eur = colDef(name = "Price (EUR)", format = list(
+    cell = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
+  )),
+  price_inr = colDef(name = "Price (INR)", format = list(
+    cell = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
+  ))
+))
+```

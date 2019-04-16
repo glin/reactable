@@ -21,9 +21,7 @@ server <- function(input, output, session) {
           name = "Sepal Width",
           defaultSortOrder = "desc",
           aggregate = "mean",
-          render = list(
-            aggregated = JS("function(cell) { return cell.value + ' (avg)' }")
-          )
+          format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
         ),
         Petal.Length = colDef(name = "Petal Length", aggregate = "sum"),
         Petal.Width = colDef(name = "Petal Width", aggregate = "count"),

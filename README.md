@@ -66,6 +66,21 @@ reactable(
 )
 ```
 
+### Column Formatting
+https://glin.github.io/reactable/inst/examples/column-formatting.html
+
+```r
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " cm")
+  ),
+  Sepal.Width = colDef(
+    aggregate = "mean",
+    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2)))
+))
+```
+
 ### Custom Renderers
 https://glin.github.io/reactable/inst/examples/custom-renderers.html
 
