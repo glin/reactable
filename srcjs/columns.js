@@ -43,7 +43,7 @@ export function buildColumnDefs(columns, groups) {
       const prevCell = col.Cell
       col.Cell = function renderedCell(cell) {
         if (prevCell) {
-          cell.value = prevCell(cell)
+          cell = { ...cell, value: prevCell(cell) }
         }
         return <div dangerouslySetInnerHTML={{ __html: renderCell(cell) }} />
       }
@@ -53,7 +53,7 @@ export function buildColumnDefs(columns, groups) {
       const prevAggregated = col.Aggregated
       col.Aggregated = function renderedCell(cell) {
         if (prevAggregated) {
-          cell.value = prevAggregated(cell)
+          cell = { ...cell, value: prevAggregated(cell) }
         }
         return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
       }
