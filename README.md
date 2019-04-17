@@ -155,7 +155,7 @@ reactable(
 ```r
 colDef(
   name = NULL,              # Column name
-  aggregate = NULL,         # Aggregate function name or JS function
+  aggregate = NULL,         # Aggregate function. See aggregate functions below
   sortable = NULL,          # Enable sorting?
   resizable = NULL,         # Enable column resizing?
   filterable = NULL,        # Enable column filtering?
@@ -181,6 +181,32 @@ colGroup(
   columns,             # Names of columns in the group
   headerClass = NULL,  # Additional CSS classes to apply to the header
   headerStyle = NULL   # Named list of inline styles to apply to the header
+)
+```
+
+### Aggregate Functions
+Built-in aggregate functions:
+```r
+colDef(aggregate = "sum")        # Sum of numbers
+colDef(aggregate = "mean")       # Mean of numbers
+colDef(aggregate = "count")      # Count of values
+colDef(aggregate = "frequency")  # Frequency of unique values
+```
+
+Custom aggregate functions:
+```r
+colDef(
+  aggregate = JS("
+    function(values, rows) {
+      // input:
+      //  - values: an array of all values in the group
+      //  - rows: an array of all rows in the group
+      //
+      // output:
+      //  - an aggregated value, e.g. a comma-separated list
+      return values.join(', ')
+    }
+  ")
 )
 ```
 
@@ -218,7 +244,16 @@ colFormat(
 Render all cells in the column:
 ```r
 colDef(
-  render = JS("function(cell) { return cell.value }")
+  render = JS("
+    function(cellInfo) {
+      // input:
+      //  - cellInfo, an object containing cell and row info
+      //
+      // output:
+      //  - a cell value, e.g. a string converted to uppercase
+      return cellInfo.value.toUpperCase()
+    }
+  ")
 )
 ```
 
@@ -226,11 +261,14 @@ Render standard and aggregated cells separately:
 ```r
 colDef(
   render = list(
-    cell = JS("function(cell) { return cell.value }"),       # Standard cells
-    aggregated = JS("function(cell) { return cell.value }")  # Aggregated cells
+    cell = JS("function(cellInfo) { return cellInfo.value }"),       # Standard cells
+    aggregated = JS("function(cellInfo) { return cellInfo.value }")  # Aggregated cells
   )
 )
 ```
+
+See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
+on render function arguments.
 
 ## License
 MIT
