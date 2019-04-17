@@ -37,7 +37,7 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
     expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
-    expect(cols[0].Aggregated).toEqual(undefined)
+    expect(cols[0].Aggregated({ value: 123.12 })).toEqual(123.12)
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
@@ -49,7 +49,7 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', render: { cell: cell => cell.value } }])
     expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
-    expect(cols[0].Aggregated).toEqual(undefined)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value } }])
@@ -71,7 +71,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
     )
-    expect(cols[0].Aggregated).toEqual(undefined)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
     // Aggregated
     cols = buildColumnDefs([

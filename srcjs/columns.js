@@ -59,6 +59,12 @@ export function buildColumnDefs(columns, groups) {
       }
     }
 
+    // Set a default renderer to prevent the cell renderer from applying
+    // to aggregated cells (without having to check cell.aggregated).
+    if (!col.Aggregated) {
+      col.Aggregated = cell => cell.value
+    }
+
     if (col.type === 'numeric') {
       col.sortMethod = compareNumbers
       // Right-align numbers by default

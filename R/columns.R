@@ -56,7 +56,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       stop('`format` must be a column formatting option set or named list')
     }
     if (is.colFormat(format)) {
-      format <- list(cell = format)
+      format <- list(cell = format, aggregated = format)
     }
     if (any(!names(format) %in% c("cell", "aggregated"))) {
       stop('`format` must have names "cell" or "aggregated"')
@@ -72,7 +72,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       stop("`render` must be a JS function or named list")
     }
     if (is.JS(render)) {
-      render <- list(cell = render)
+      render <- list(cell = render, aggregated = render)
     }
     if (any(!names(render) %in% c("cell", "aggregated"))) {
       stop('`render` must have names "cell" or "aggregated"')

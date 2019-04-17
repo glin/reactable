@@ -64,13 +64,16 @@ test_that("colDef format/render", {
 
   # Default cell format/renderer
   col <- colDef(format = format, render = render)
-  expect_equal(col$format, list(cell = format))
-  expect_equal(col$render, list(cell = render))
+  expect_equal(col$format, list(cell = format, aggregated = format))
+  expect_equal(col$render, list(cell = render, aggregated = render))
 
-  # Aggregated format/renderer
+  # Separate cell and aggregated format/renderer
   col <- colDef(format = list(aggregated = format), render = list(aggregated = render))
   expect_equal(col$format, list(aggregated = format))
   expect_equal(col$render, list(aggregated = render))
+  col <- colDef(format = list(cell = format), render = list(cell = render))
+  expect_equal(col$format, list(cell = format))
+  expect_equal(col$render, list(cell = render))
 })
 
 test_that("is.colDef", {
