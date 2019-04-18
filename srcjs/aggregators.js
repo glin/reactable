@@ -12,6 +12,16 @@ export function mean(arr) {
   return round(result, 12)
 }
 
+export function max(arr) {
+  arr = toNumbers(arr)
+  return Math.max.apply(null, arr)
+}
+
+export function min(arr) {
+  arr = toNumbers(arr)
+  return Math.min.apply(null, arr)
+}
+
 export function frequency(arr) {
   const counts = {}
   arr.forEach(value => {
@@ -31,6 +41,8 @@ export function count(arr) {
 export const aggregators = {
   mean,
   sum,
+  max,
+  min,
   frequency,
   count
 }

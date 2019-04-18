@@ -1,4 +1,4 @@
-import { sum, mean, round, frequency, count } from '../aggregators'
+import { sum, mean, max, min, round, frequency, count } from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
@@ -16,6 +16,24 @@ test('mean', () => {
   expect(mean([1, 2, 'NA'])).toEqual(1.5)
   expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
   expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
+})
+
+test('max', () => {
+  expect(max([1, 2, 3, 4, 0])).toEqual(4)
+  expect(max([1])).toEqual(1)
+  expect(max([0.1, 0.2])).toEqual(0.2)
+  expect(max([1, 2, 'NA'])).toEqual(2)
+  expect(max([1, 2, 'Inf'])).toEqual(Infinity)
+  expect(max([1, 2, '-Inf'])).toEqual(2)
+})
+
+test('min', () => {
+  expect(min([1, 2, 3, 4, 0])).toEqual(0)
+  expect(min([1])).toEqual(1)
+  expect(min([-0.1, 0.2])).toEqual(-0.1)
+  expect(min([1, 2, 'NA'])).toEqual(1)
+  expect(min([1, 2, 'Inf'])).toEqual(1)
+  expect(min([1, 2, '-Inf'])).toEqual(-Infinity)
 })
 
 test('round', () => {

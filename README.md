@@ -189,6 +189,8 @@ Built-in aggregate functions:
 ```r
 colDef(aggregate = "sum")        # Sum of numbers
 colDef(aggregate = "mean")       # Mean of numbers
+colDef(aggregate = "max")        # Max of numbers
+colDef(aggregate = "min")        # Min of numbers
 colDef(aggregate = "count")      # Count of values
 colDef(aggregate = "frequency")  # Frequency of unique values
 ```
