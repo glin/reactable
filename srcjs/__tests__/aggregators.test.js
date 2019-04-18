@@ -4,12 +4,18 @@ test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
   expect(sum([1])).toEqual(1)
   expect(sum([0.1, 0.2])).toEqual(0.3)
+  expect(sum([1, 2, 'NA'])).toEqual(3)
+  expect(sum([1, 2, 'Inf'])).toEqual(Infinity)
+  expect(sum([1, 2, '-Inf'])).toEqual(-Infinity)
 })
 
 test('mean', () => {
   expect(mean([1, 2, 3, 4, 0])).toEqual(2)
   expect(mean([1])).toEqual(1)
   expect(mean([0.1, 0.2])).toEqual(0.15)
+  expect(mean([1, 2, 'NA'])).toEqual(1.5)
+  expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
+  expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
 })
 
 test('round', () => {

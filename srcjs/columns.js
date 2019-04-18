@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { aggregators, round } from './aggregators'
+import { aggregators, round, normalizeNumber } from './aggregators'
 
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
@@ -146,19 +146,6 @@ export function compareNumbers(a, b) {
     return -1
   }
   return 0
-}
-
-function normalizeNumber(n) {
-  if (n === null || n === undefined || n === 'NA') {
-    n = null
-  }
-  if (n === 'Inf') {
-    n = Infinity
-  }
-  if (n === '-Inf') {
-    n = -Infinity
-  }
-  return n
 }
 
 export function formatValue(value, { prefix, suffix, digits, separators, currency, locales }) {

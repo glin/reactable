@@ -1,22 +1,15 @@
 export function sum(arr) {
+  arr = toNumbers(arr)
   const result = arr.reduce((a, b) => a + b)
   // Adjust for precision errors
   return round(result, 12)
 }
 
 export function mean(arr) {
+  arr = toNumbers(arr)
   const result = sum(arr) / arr.length
   // Adjust for precision errors
   return round(result, 12)
-}
-
-export function round(n, digits = 3) {
-  if (!Number.isFinite(n)) {
-    return n
-  }
-  digits = digits > 0 ? digits : 0
-  const c = Math.pow(10, digits)
-  return Math.round(n * c) / c
 }
 
 export function frequency(arr) {
@@ -40,6 +33,32 @@ export const aggregators = {
   sum,
   frequency,
   count
+}
+
+export function round(n, digits = 3) {
+  if (!Number.isFinite(n)) {
+    return n
+  }
+  digits = digits > 0 ? digits : 0
+  const c = Math.pow(10, digits)
+  return Math.round(n * c) / c
+}
+
+function toNumbers(arr) {
+  return arr.map(normalizeNumber).filter(n => typeof n === 'number')
+}
+
+export function normalizeNumber(n) {
+  if (n === null || n === undefined || n === 'NA') {
+    n = null
+  }
+  if (n === 'Inf') {
+    n = Infinity
+  }
+  if (n === '-Inf') {
+    n = -Infinity
+  }
+  return n
 }
 
 // Render a blank cell by default, rather than comma-separated values
