@@ -60,8 +60,3 @@ export function normalizeNumber(n) {
   }
   return n
 }
-
-// Render a blank cell by default, rather than comma-separated values
-export const DefaultAggregated = () => {
-  return ''
-}

@@ -1,4 +1,4 @@
-import { sum, mean, round, frequency, count, DefaultAggregated } from '../aggregators'
+import { sum, mean, round, frequency, count } from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
@@ -40,8 +40,4 @@ test('frequency', () => {
 test('count', () => {
   expect(count([])).toEqual(0)
   expect(count([1, 2, 3])).toEqual(3)
-})
-
-test('defaultAggregated', () => {
-  expect(DefaultAggregated()).toEqual('')
 })
