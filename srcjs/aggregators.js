@@ -1,12 +1,14 @@
 export function sum(arr) {
   arr = toNumbers(arr)
-  const result = arr.reduce((a, b) => a + b)
+  if (arr.length === 0) return ''
+  const result = arr.reduce((a, b) => a + b, 0)
   // Adjust for precision errors
   return round(result, 12)
 }
 
 export function mean(arr) {
   arr = toNumbers(arr)
+  if (arr.length === 0) return ''
   const result = sum(arr) / arr.length
   // Adjust for precision errors
   return round(result, 12)
@@ -14,11 +16,13 @@ export function mean(arr) {
 
 export function max(arr) {
   arr = toNumbers(arr)
+  if (arr.length === 0) return ''
   return Math.max.apply(null, arr)
 }
 
 export function min(arr) {
   arr = toNumbers(arr)
+  if (arr.length === 0) return ''
   return Math.min.apply(null, arr)
 }
 

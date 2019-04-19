@@ -7,6 +7,7 @@ test('sum', () => {
   expect(sum([1, 2, 'NA'])).toEqual(3)
   expect(sum([1, 2, 'Inf'])).toEqual(Infinity)
   expect(sum([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(sum([])).toEqual('')
 })
 
 test('mean', () => {
@@ -16,6 +17,7 @@ test('mean', () => {
   expect(mean([1, 2, 'NA'])).toEqual(1.5)
   expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
   expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(mean([])).toEqual('')
 })
 
 test('max', () => {
@@ -25,6 +27,7 @@ test('max', () => {
   expect(max([1, 2, 'NA'])).toEqual(2)
   expect(max([1, 2, 'Inf'])).toEqual(Infinity)
   expect(max([1, 2, '-Inf'])).toEqual(2)
+  expect(max([])).toEqual('')
 })
 
 test('min', () => {
@@ -34,6 +37,7 @@ test('min', () => {
   expect(min([1, 2, 'NA'])).toEqual(1)
   expect(min([1, 2, 'Inf'])).toEqual(1)
   expect(min([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(min([])).toEqual('')
 })
 
 test('round', () => {
