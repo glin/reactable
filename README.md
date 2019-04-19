@@ -22,8 +22,8 @@ https://glin.github.io/reactable/inst/examples/filtering.html
 reactable(iris, filterable = TRUE)
 ```
 
-### Grouping
-https://glin.github.io/reactable/inst/examples/grouping.html
+### Grouping and Aggregation
+https://glin.github.io/reactable/inst/examples/grouping-aggregation.html
 
 ```r
 reactable(iris, groupBy = "Species", columns = list(

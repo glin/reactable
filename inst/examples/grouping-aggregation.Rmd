@@ -1,5 +1,5 @@
 ---
-title: "Grouping"
+title: "Grouping and Aggregation"
 output:
   html_document:
     css: assets/styles.css
