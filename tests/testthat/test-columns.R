@@ -34,7 +34,7 @@ test_that("colDef", {
   # Invalid args
   invalidArgs <- list(
     name = list(1, FALSE),
-    aggregate = list(2, TRUE, function() {}),
+    aggregate = list(2, TRUE, function() {}, "fn", "SUM"),
     sortable = list(1, "TRUE"),
     resizable = list(1, "TRUE"),
     filterable = list(0, "FALSE"),

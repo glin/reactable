@@ -14,7 +14,9 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 \arguments{
 \item{name}{Column name.}
 
-\item{aggregate}{Aggregate function name or \code{JS()} function.}
+\item{aggregate}{Aggregate function. The name of a built-in aggregate
+function or a custom \code{JS()} aggregate function. Built-in aggregate functions
+include: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"frequency"}, \code{"count"}.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
 
