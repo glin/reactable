@@ -5,7 +5,8 @@
 \title{Column formatting options}
 \usage{
 colFormat(prefix = NULL, suffix = NULL, digits = NULL,
-  separators = FALSE, currency = NULL, locales = NULL)
+  separators = FALSE, percent = FALSE, currency = NULL,
+  locales = NULL)
 }
 \arguments{
 \item{prefix}{Prefix string.}
@@ -17,6 +18,8 @@ colFormat(prefix = NULL, suffix = NULL, digits = NULL,
 \item{separators}{Whether to use grouping separators for numbers, such as
 thousands separators or thousand/lakh/crore separators. The format is
 locale-dependent. Defaults to \code{FALSE}.}
+
+\item{percent}{Format as a percentage?}
 
 \item{currency}{Currency format. An ISO 4217 currency code such as \code{"USD"}
 for the US dollar, \code{"EUR"} for the euro, or \code{"CNY"} for the Chinese RMB.

@@ -237,6 +237,7 @@ colFormat(
   suffix = NULL,       # Suffix string
   digits = NULL,       # Max number of decimal places to round numbers
   separators = FALSE,  # Use grouping separators (e.g. thousands) for numbers? Locale-dependent.
+  percent = FALSE,     # Format as a percentage?
   currency = NULL,     # Currency format. An ISO 4217 currency code, such as "USD", "EUR", "CNY". Locale-dependent.
   locales = NULL       # Locales to use for number formatting. A vector of BCP 47 languages tags,
 )                      # such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser.

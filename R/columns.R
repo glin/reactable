@@ -175,6 +175,7 @@ is.colGroup <- function(x) {
 #' @param separators Whether to use grouping separators for numbers, such as
 #'   thousands separators or thousand/lakh/crore separators. The format is
 #'   locale-dependent. Defaults to `FALSE`.
+#' @param percent Format as a percentage?
 #' @param currency Currency format. An ISO 4217 currency code such as `"USD"`
 #'   for the US dollar, `"EUR"` for the euro, or `"CNY"` for the Chinese RMB.
 #'   The format is locale-dependent.
@@ -184,7 +185,9 @@ is.colGroup <- function(x) {
 #'   of the browser.
 #' @export
 colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
-                      separators = FALSE, currency = NULL, locales = NULL) {
+                      separators = FALSE, percent = FALSE, currency = NULL,
+                      locales = NULL) {
+
   if (!is.null(prefix) && !is.character(prefix)) {
     stop("`prefix` must be a character string")
   }
@@ -200,6 +203,9 @@ colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
   if (!is.logical(separators)) {
     stop("`separators` must be TRUE or FALSE")
   }
+  if (!is.logical(percent)) {
+    stop("`percent` must be TRUE or FALSE")
+  }
   if (!is.null(currency) && !is.character(currency)) {
     stop("`currency` must be a character string")
   }
@@ -212,6 +218,7 @@ colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
     suffix = suffix,
     digits = digits,
     separators = if (separators) TRUE,
+    percent = if (percent) TRUE,
     currency = currency,
     locales = locales
   )

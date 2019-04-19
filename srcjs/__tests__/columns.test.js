@@ -177,6 +177,13 @@ describe('formatValue', () => {
     expect(formatValue(125253.125, {})).toEqual(125253.125)
   })
 
+  test('percent', () => {
+    expect(formatValue(0.951, { percent: true })).toEqual('95.1%')
+    expect(formatValue(0.95123, { percent: true, digits: 2 })).toEqual('95.12%')
+    expect(formatValue(10.356, { percent: true, separators: true, digits: 0 })).toEqual('1,036%')
+    expect(formatValue(0.33, { percent: true, suffix: '_' })).toEqual('33%_')
+  })
+
   test('currency', () => {
     expect(formatValue(125253.125, { currency: 'USD', locales: 'en-US' })).toEqual('$125253.13')
     expect(

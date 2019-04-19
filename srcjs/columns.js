@@ -148,8 +148,13 @@ export function compareNumbers(a, b) {
   return 0
 }
 
-export function formatValue(value, { prefix, suffix, digits, separators, currency, locales }) {
+export function formatValue(value, options) {
+  let { prefix, suffix, digits, separators, percent, currency, locales } = options
   if (typeof value === 'number') {
+    if (percent) {
+      value = value * 100
+      suffix = '%' + (suffix || '')
+    }
     if (digits != null) {
       value = round(value, digits)
     }
