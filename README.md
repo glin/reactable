@@ -86,23 +86,19 @@ reactable(iris, groupBy = "Species", columns = list(
 https://glin.github.io/reactable/inst/examples/custom-renderers.html
 
 ```r
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Width = colDef(aggregate = "mean", render = list(
-    aggregated = JS("
-      function(cell) {
-        return cell.value + ' (avg)'
-      }
-    ")
-  )),
-  Petal.Length = colDef(aggregate = "sum", render = list(
-    cell = JS("
-      function(cell) {
-        var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
-        var color = colors[cell.row.Species]
-        return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
-      }
-    ")
-  ))
+reactable(iris, columns = list(
+  Petal.Length = colDef(render = JS("
+    function(cell) {
+      var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
+      var color = colors[cell.row.Species]
+      return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+    }
+  ")),
+  Species = colDef(render = JS("
+    function(cell) {
+      return cell.value.toUpperCase()
+    }
+  "))
 ))
 ```
 
