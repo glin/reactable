@@ -23,7 +23,7 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
-### Currency formatting
+### Currency Formatting
 
 ```{r}
 data <- data.frame(
@@ -35,17 +35,20 @@ data <- data.frame(
 )
 
 reactable(data, columns = list(
-  qty = colDef(format = list(
-    cell = colFormat(separators = TRUE)
-  )),
-  price_usd = colDef(name = "Price (USD)", format = list(
-    cell = colFormat(currency = "USD", separators = TRUE)
-  )),
-  price_eur = colDef(name = "Price (EUR)", format = list(
-    cell = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
-  )),
-  price_inr = colDef(name = "Price (INR)", format = list(
-    cell = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
-  ))
+  qty = colDef(
+    format = colFormat(separators = TRUE)
+  ),
+  price_usd = colDef(
+    name = "USD",
+    format = colFormat(currency = "USD", separators = TRUE)
+  ),
+  price_eur = colDef(
+    name = "EUR",
+    format = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
+  ),
+  price_inr = colDef(
+    name = "INR",
+    format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
+  )
 ))
 ```
