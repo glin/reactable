@@ -27,9 +27,10 @@ https://glin.github.io/reactable/inst/examples/grouping-aggregation.html
 
 ```r
 reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(aggregate = "count"),
   Sepal.Width = colDef(aggregate = "mean"),
   Petal.Length = colDef(aggregate = "sum"),
-  Petal.Width = colDef(aggregate = "frequency")
+  Petal.Width = colDef(aggregate = "max")
 ))
 ```
 
