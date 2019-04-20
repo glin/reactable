@@ -190,4 +190,16 @@ describe('formatValue', () => {
       formatValue(125253.125, { currency: 'USD', separators: true, locales: 'en-US' })
     ).toEqual('$125,253.13')
   })
+
+  test('datetime', () => {
+    const date = '2018-03-22 13:22:49'
+    expect(formatValue(date, { datetime: true, locales: 'en-US' })).toEqual('3/22/2018, 1:22:49 PM')
+    expect(formatValue(date, { date: true, locales: 'en-US' })).toEqual('3/22/2018')
+    expect(formatValue(date, { time: true, locales: 'en-US' })).toEqual('1:22:49 PM')
+    expect(formatValue(date, { datetime: true, hour12: false, locales: 'en-US' })).toEqual(
+      '3/22/2018, 13:22:49'
+    )
+    expect(formatValue(date, { time: true, hour12: false, locales: 'en-US' })).toEqual('13:22:49')
+    expect(formatValue(date, { time: true, hour12: null, locales: 'en-US' })).toEqual('1:22:49 PM')
+  })
 })

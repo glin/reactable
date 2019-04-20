@@ -125,11 +125,13 @@ test_that("colFormat", {
 
   # Valid args
   options <- colFormat(prefix = "a", suffix = "b", digits = 5, separators = TRUE,
-                       percent = TRUE, currency = "INR",
+                       percent = TRUE, currency = "INR", datetime = TRUE,
+                       date = TRUE, time = TRUE, hour12 = FALSE,
                        locales = c("en-US", "zh-Hans-CN"))
   expect_equal(options, structure(list(
     prefix = "a", suffix = "b", digits = 5, separators = TRUE, percent = TRUE,
-    currency = "INR", locales = c("en-US", "zh-Hans-CN")
+    currency = "INR", datetime = TRUE, date = TRUE, time = TRUE, hour12 = FALSE,
+    locales = c("en-US", "zh-Hans-CN")
   ), class = "colFormat"))
 
   # Invalid args
@@ -140,6 +142,10 @@ test_that("colFormat", {
   expect_error(colFormat(separators = "sad"))
   expect_error(colFormat(percent = "true"))
   expect_error(colFormat(currency = FALSE))
+  expect_error(colFormat(datetime = "false"))
+  expect_error(colFormat(date = "false"))
+  expect_error(colFormat(time = "false"))
+  expect_error(colFormat(hour12 = 24))
   expect_error(colFormat(locales = 123))
 })
 

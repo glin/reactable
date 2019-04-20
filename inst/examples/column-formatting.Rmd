@@ -23,6 +23,27 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
+### Date Formatting
+
+```{r}
+datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-10-22 14:20:00"))
+data <- data.frame(
+  datetime = datetimes,
+  date = datetimes,
+  time = datetimes,
+  time_24h = datetimes,
+  datetime_pt_BR = datetimes
+)
+
+reactable(data, columns = list(
+  datetime = colDef(format = colFormat(datetime = TRUE)),
+  date = colDef(format = colFormat(date = TRUE)),
+  time = colDef(format = colFormat(time = TRUE)),
+  time_24h = colDef(format = colFormat(time = TRUE, hour12 = FALSE)),
+  datetime_pt_BR = colDef(format = colFormat(datetime = TRUE, locales = "pt-BR"))
+))
+```
+
 ### Currency Formatting
 
 ```{r}

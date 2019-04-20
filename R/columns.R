@@ -182,18 +182,24 @@ is.colGroup <- function(x) {
 #' @param digits Max number of decimal places to round numbers.
 #' @param separators Whether to use grouping separators for numbers, such as
 #'   thousands separators or thousand/lakh/crore separators. The format is
-#'   locale-dependent. Defaults to `FALSE`.
+#'   locale-dependent.
 #' @param percent Format as a percentage?
 #' @param currency Currency format. An ISO 4217 currency code such as `"USD"`
 #'   for the US dollar, `"EUR"` for the euro, or `"CNY"` for the Chinese RMB.
 #'   The format is locale-dependent.
-#' @param locales Locales to use for number formatting. A character vector of
-#'   BCP 47 language tags, such as `"en-US"` for English (United States),
+#' @param datetime Format as a locale-dependent date-time?
+#' @param date Format as a locale-dependent date?
+#' @param time Format as a locale-dependent time?
+#' @param hour12 Whether to use 12-hour time (`TRUE`) or 24-hour time (`FALSE`).
+#'   The default time convention is locale-dependent.
+#' @param locales Locales to use for number and date/time formatting. A character
+#'   vector of BCP 47 language tags, such as `"en-US"` for English (United States),
 #'   `"hi"` for Hindi, or `"sv-SE"` for Swedish (Sweden). Defaults to the locale
 #'   of the browser.
 #' @export
 colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
                       separators = FALSE, percent = FALSE, currency = NULL,
+                      datetime = FALSE, date = FALSE, time = FALSE, hour12 = NULL,
                       locales = NULL) {
 
   if (!is.null(prefix) && !is.character(prefix)) {
@@ -217,6 +223,18 @@ colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
   if (!is.null(currency) && !is.character(currency)) {
     stop("`currency` must be a character string")
   }
+  if (!is.logical(datetime)) {
+    stop("`datetime` must be TRUE or FALSE")
+  }
+  if (!is.logical(date)) {
+    stop("`date` must be TRUE or FALSE")
+  }
+  if (!is.logical(time)) {
+    stop("`time` must be TRUE or FALSE")
+  }
+  if (!is.null(hour12) && !is.logical(hour12)) {
+    stop("`hour12` must be TRUE or FALSE")
+  }
   if (!is.null(locales) && !is.character(locales)) {
     stop("`locales` must be a character string")
   }
@@ -228,6 +246,10 @@ colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
     separators = if (separators) TRUE,
     percent = if (percent) TRUE,
     currency = currency,
+    datetime = if (datetime) TRUE,
+    date = if (date) TRUE,
+    time = if (time) TRUE,
+    hour12 = hour12,
     locales = locales
   )
   options <- filterNulls(options)

@@ -149,7 +149,19 @@ export function compareNumbers(a, b) {
 }
 
 export function formatValue(value, options) {
-  let { prefix, suffix, digits, separators, percent, currency, locales } = options
+  let {
+    prefix,
+    suffix,
+    digits,
+    separators,
+    percent,
+    currency,
+    datetime,
+    date,
+    time,
+    hour12,
+    locales
+  } = options
   if (typeof value === 'number') {
     if (percent) {
       value = value * 100
@@ -167,6 +179,20 @@ export function formatValue(value, options) {
         options.maximumFractionDigits = 20
       }
       value = value.toLocaleString(locales || undefined, options)
+    }
+  }
+  if (datetime || date || time) {
+    locales = locales || undefined
+    const options = {}
+    if (hour12 != null) {
+      options.hour12 = hour12
+    }
+    if (datetime) {
+      value = new Date(value).toLocaleString(locales, options)
+    } else if (date) {
+      value = new Date(value).toLocaleDateString(locales, options)
+    } else if (time) {
+      value = new Date(value).toLocaleTimeString(locales, options)
     }
   }
   if (prefix != null) {

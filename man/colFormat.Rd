@@ -6,6 +6,7 @@
 \usage{
 colFormat(prefix = NULL, suffix = NULL, digits = NULL,
   separators = FALSE, percent = FALSE, currency = NULL,
+  datetime = FALSE, date = FALSE, time = FALSE, hour12 = NULL,
   locales = NULL)
 }
 \arguments{
@@ -17,7 +18,7 @@ colFormat(prefix = NULL, suffix = NULL, digits = NULL,
 
 \item{separators}{Whether to use grouping separators for numbers, such as
 thousands separators or thousand/lakh/crore separators. The format is
-locale-dependent. Defaults to \code{FALSE}.}
+locale-dependent.}
 
 \item{percent}{Format as a percentage?}
 
@@ -25,8 +26,17 @@ locale-dependent. Defaults to \code{FALSE}.}
 for the US dollar, \code{"EUR"} for the euro, or \code{"CNY"} for the Chinese RMB.
 The format is locale-dependent.}
 
-\item{locales}{Locales to use for number formatting. A character vector of
-BCP 47 language tags, such as \code{"en-US"} for English (United States),
+\item{datetime}{Format as a locale-dependent date-time?}
+
+\item{date}{Format as a locale-dependent date?}
+
+\item{time}{Format as a locale-dependent time?}
+
+\item{hour12}{Whether to use 12-hour time (\code{TRUE}) or 24-hour time (\code{FALSE}).
+The default time convention is locale-dependent.}
+
+\item{locales}{Locales to use for number and date/time formatting. A character
+vector of BCP 47 language tags, such as \code{"en-US"} for English (United States),
 \code{"hi"} for Hindi, or \code{"sv-SE"} for Swedish (Sweden). Defaults to the locale
 of the browser.}
 }
