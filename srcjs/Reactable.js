@@ -29,6 +29,7 @@ const Reactable = ({
   defaultSorted,
   defaultPageSize,
   pageSizeOptions,
+  showPagination,
   minRows,
   striped,
   highlight,
@@ -54,6 +55,7 @@ const Reactable = ({
       defaultSorted={defaultSorted}
       defaultPageSize={defaultPageSize}
       pageSizeOptions={pageSizeOptions}
+      showPagination={showPagination}
       minRows={minRows}
       collapseOnSortingChange={false}
       collapseOnPageChange={false}
@@ -76,6 +78,7 @@ Reactable.propTypes = {
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
+  showPagination: PropTypes.bool,
   minRows: PropTypes.number,
   striped: PropTypes.bool,
   highlight: PropTypes.bool,

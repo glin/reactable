@@ -26,6 +26,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
   expect_error(reactable(df, defaultPageSize = "100"))
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
+  expect_error(reactable(df, showPagination = "true"))
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
@@ -50,6 +51,7 @@ test_that("reactable", {
     defaultSortDesc = FALSE,
     defaultPageSize = 10,
     pageSizeOptions = c(10, 25, 50, 100),
+    showPagination = FALSE,
     minRows = 1,
     striped = TRUE,
     highlight = TRUE
@@ -64,7 +66,7 @@ test_that("reactable", {
                    columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
-                   defaultPageSize = 1, pageSizeOptions = c(1, 2),
+                   defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
                    minRows = 5, striped = FALSE, highlight = FALSE,
                    class = "tbl", style = list(color = "red"),
                    groupBy = "x", width = "400px", height = "100%", elementId = "tbl")
@@ -86,6 +88,7 @@ test_that("reactable", {
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 1,
     pageSizeOptions = c(1, 2),
+    showPagination = FALSE,
     minRows = 5,
     striped = FALSE,
     highlight = FALSE,
@@ -145,6 +148,29 @@ test_that("defaultSorted", {
     list(id = "x", desc = FALSE),
     list(id = "y", desc = TRUE)
   ))
+})
+
+test_that("showPagination defaults", {
+  # Table that fits
+  tbl <- reactable(data.frame(x = rep(0, 10)),
+                   defaultPageSize = 10,
+                   pageSizeOptions = c(10, 20))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, FALSE)
+
+  # Table that doesn't fit (defaultPageSize)
+  tbl <- reactable(data.frame(x = rep(0, 10)),
+                   defaultPageSize = 9,
+                   pageSizeOptions = c(10, 20))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, TRUE)
+
+  # Table that doesn't fit (pageSizeOptions)
+  tbl <- reactable(data.frame(x = rep(0, 10)),
+                   defaultPageSize = 10,
+                   pageSizeOptions = c(10, 20, 9))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, TRUE)
 })
 
 test_that("columnSortDefs", {

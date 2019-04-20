@@ -22,6 +22,8 @@ NULL
 #'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
+#' @param showPagination Show pagination? Defaults to `TRUE` unless the table
+#'   fits on all page sizes.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
@@ -37,9 +39,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-                      minRows = 1, striped = TRUE, highlight = TRUE, class = NULL,
-                      style = NULL, width = "auto", height = "auto",
-                      elementId = NULL) {
+                      showPagination = NULL, minRows = 1, striped = TRUE,
+                      highlight = TRUE, class = NULL, style = NULL,
+                      width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
@@ -115,6 +117,11 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.numeric(pageSizeOptions)) {
     stop("`pageSizeOptions` must be numeric")
   }
+  if (is.null(showPagination)) {
+    showPagination <- nrow(data) > min(defaultPageSize, pageSizeOptions)
+  } else if (!is.logical(showPagination)) {
+    stop("`showPagination` must be TRUE or FALSE")
+  }
   if (!is.numeric(minRows)) {
     stop("`minRows` must be numeric")
   }
@@ -171,6 +178,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       defaultSorted = columnSortDefs(defaultSorted),
       defaultPageSize = defaultPageSize,
       pageSizeOptions = pageSizeOptions,
+      showPagination = showPagination,
       minRows = minRows,
       striped = striped,
       highlight = highlight,

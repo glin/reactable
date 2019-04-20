@@ -8,9 +8,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
-  25, 50, 100), minRows = 1, striped = TRUE, highlight = TRUE,
-  class = NULL, style = NULL, width = "auto", height = "auto",
-  elementId = NULL)
+  25, 50, 100), showPagination = NULL, minRows = 1, striped = TRUE,
+  highlight = TRUE, class = NULL, style = NULL, width = "auto",
+  height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -40,6 +40,9 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 \item{defaultPageSize}{Default page size for the table. Defaults to 10.}
 
 \item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
+
+\item{showPagination}{Show pagination? Defaults to \code{TRUE} unless the table
+fits on all page sizes.}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 

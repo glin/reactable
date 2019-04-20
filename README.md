@@ -139,7 +139,8 @@ reactable(
   defaultSorted = NULL,      # Column names to sort by default. Or a named list with values of "asc" or "desc"
   defaultPageSize = 10,      # Default page size
   pageSizeOptions =          # Page size options
-    c(10, 25, 50, 100), 
+    c(10, 25, 50, 100),
+  showPagination = NULL,     # Show pagination? Defaults to TRUE unless the table fits on all page sizes
   minRows = 1,               # Minimum number of rows to show
   striped = TRUE,            # Zebra-stripe rows?
   highlight = TRUE,          # Highlight rows on hover?
