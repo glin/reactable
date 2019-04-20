@@ -1,3 +1,13 @@
 .ReactTable .rt-thead {
   font-weight: 600;
 }
+
+.ReactTable .rt-thead.-header {
+  box-shadow: inherit;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ReactTable .-pagination {
+  box-shadow: inherit;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
