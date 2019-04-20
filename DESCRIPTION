@@ -2,7 +2,10 @@ Package: reactable
 Type: Package
 Title: R Interface to the React Table Library
 Version: 0.1.0
-Authors@R: person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre"))
+Authors@R: c(
+    person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
+    person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library")
+    )
 Description: R interface to the React Table JavaScript library.
 License: MIT
 Depends:
