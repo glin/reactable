@@ -102,7 +102,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
           defaultSortOrder
         }
       })
-      defaultSorted <- setNames(orders, defaultSorted)
+      defaultSorted <- stats::setNames(orders, defaultSorted)
     }
     if (!all(sapply(defaultSorted, isSortOrder))) {
       stop('`defaultSorted` values must be "asc" or "desc"')

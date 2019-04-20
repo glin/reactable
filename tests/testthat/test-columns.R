@@ -55,7 +55,7 @@ test_that("colDef", {
   )
   for (arg in names(invalidArgs)) {
     for (val in invalidArgs[[arg]]) {
-      expect_error(do.call(colDef, setNames(list(val), arg)))
+      expect_error(do.call(colDef, stats::setNames(list(val), arg)))
     }
   }
 })
