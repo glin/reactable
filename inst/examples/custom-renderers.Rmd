@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 
 reactable(iris, columns = list(
-  Petal.Length = colDef(render = JS("
+  Petal.Length = colDef(html = TRUE, render = JS("
     function(cell) {
       var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
       var color = colors[cell.row.Species]

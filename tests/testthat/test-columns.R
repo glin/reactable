@@ -6,7 +6,7 @@ test_that("colDef", {
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
     show = NULL, defaultSortDesc = NULL, format = NULL, render = NULL,
-    minWidth = NULL, maxWidth = NULL, width = NULL,
+    html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
 
@@ -17,16 +17,17 @@ test_that("colDef", {
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 render = list(cell = JS("row => row.value"),
                               aggregated = JS("row => row.value")),
-                minWidth = 100, maxWidth = 250, width = 125, align = "right",
-                class = "cell", style = list(color = "a"), headerClass = "hdr",
-                headerStyle = list(height = 10))
+                html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
+                align = "right", class = "cell", style = list(color = "a"),
+                headerClass = "hdr", headerStyle = list(height = 10))
+
   expected <- structure(list(
     Header = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
     render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
-    minWidth = 100, maxWidth = 250, width = 125,
+    html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
     className = "cell", style = list(color = "a", textAlign = "right"),
     headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
@@ -42,6 +43,7 @@ test_that("colDef", {
     defaultSortOrder = list(1, TRUE, "ascending"),
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     render = list("function() {}", list(CELL = JS("")), list(cell = "func")),
+    html = list("false", NA),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
     align = list("a", "RIGHT", 1),

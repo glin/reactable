@@ -41,22 +41,20 @@ describe('buildColumnDefs', () => {
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
-    expect(cols[0].Cell).toEqual(undefined)
+    expect(cols[0].Cell({ value: 'xyz' })).toEqual('xyz')
     expect(cols[0].Aggregated({ value: 'xyz' })).toEqual('xyz!')
   })
 
   test('renderers', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', render: { cell: cell => cell.value } }])
-    expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
+    expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
     // Aggregated
-    cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value } }])
-    expect(cols[0].Cell).toEqual(undefined)
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: 'x' }} />
-    )
+    cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value + '!!' } }])
+    expect(cols[0].Cell({ value: 'x' })).toEqual('x')
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
   })
 
   test('formatters applied before renderers', () => {
@@ -68,9 +66,7 @@ describe('buildColumnDefs', () => {
         render: { cell: cell => `__${cell.value}__` }
       }
     ])
-    expect(cols[0].Cell({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
-    )
+    expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
     // Aggregated
@@ -81,9 +77,44 @@ describe('buildColumnDefs', () => {
         render: { aggregated: cell => `__${cell.value}__` }
       }
     ])
-    expect(cols[0].Cell).toEqual(undefined)
+    expect(cols[0].Cell({ value: 'x' })).toEqual('x')
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual('__@x__')
+  })
+
+  test('html', () => {
+    let cols = buildColumnDefs([{ accessor: 'x', html: true }])
+    expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: 'x' }} />
+    )
+
+    // render html
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        render: { cell: cell => cell.value + '!', aggregated: cell => cell.value + '!!' },
+        html: true
+      }
+    ])
+    expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x!' }} />)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: 'x!!' }} />
+    )
+
+    // format html
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        format: { cell: { prefix: '@' }, aggregated: { prefix: '$' } },
+        render: { cell: cell => `__${cell.value}__`, aggregated: cell => `__${cell.value}__` },
+        html: true
+      }
+    ])
+    expect(cols[0].Cell({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+    )
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '__$x__' }} />
     )
   })
 

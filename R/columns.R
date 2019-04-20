@@ -16,6 +16,7 @@
 #' @param render Custom column renderer. A `JS()` function to render all cells,
 #'   or a named list of `JS()` functions to render standard cells (`"cell"`) and
 #'   aggregated cells (`"aggregated"`) separately.
+#' @param html Render cells as raw HTML? HTML strings are escaped by default.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
@@ -28,7 +29,7 @@
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, format = NULL, render = NULL,
-                   minWidth = NULL, maxWidth = NULL, width = NULL,
+                   html = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
 
@@ -53,7 +54,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(filterable) && !is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
-  if (!is.null(show) && !is.logical(show)) {
+  if (!is.logical(show)) {
     stop("`show` must be TRUE or FALSE")
   }
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
@@ -90,6 +91,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
         stop("render function must be a JS function")
       }
     }
+  }
+  if (!is.logical(html)) {
+    stop("`html` must be TRUE or FALSE")
   }
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
     stop("`minWidth` must be numeric")
@@ -130,6 +134,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       format = format,
       render = render,
+      html = if (html) TRUE,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,

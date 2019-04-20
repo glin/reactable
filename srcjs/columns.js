@@ -29,40 +29,36 @@ export function buildColumnDefs(columns, groups) {
       col.aggregate = aggregators[type]
     }
 
-    // Column formatters
-    if (col.format && col.format.cell) {
-      col.Cell = cell => formatValue(cell.value, col.format.cell)
-    }
-    if (col.format && col.format.aggregated) {
-      col.Aggregated = cell => formatValue(cell.value, col.format.aggregated)
-    }
-
-    // Column renderers
-    if (col.render && col.render.cell) {
-      const renderCell = col.render.cell
-      const prevCell = col.Cell
-      col.Cell = function renderedCell(cell) {
-        if (prevCell) {
-          cell = { ...cell, value: prevCell(cell) }
-        }
-        return <div dangerouslySetInnerHTML={{ __html: renderCell(cell) }} />
+    col.Cell = function renderedCell(cell) {
+      let value = cell.value
+      if (col.format && col.format.cell) {
+        value = formatValue(value, col.format.cell)
       }
-    }
-    if (col.render && col.render.aggregated) {
-      const renderAggregated = col.render.aggregated
-      const prevAggregated = col.Aggregated
-      col.Aggregated = function renderedCell(cell) {
-        if (prevAggregated) {
-          cell = { ...cell, value: prevAggregated(cell) }
-        }
-        return <div dangerouslySetInnerHTML={{ __html: renderAggregated(cell) }} />
+      if (col.render && col.render.cell) {
+        value = col.render.cell({ ...cell, value })
+      }
+      if (col.html) {
+        return <div dangerouslySetInnerHTML={{ __html: value }} />
+      } else {
+        return value
       }
     }
 
-    // Set a default renderer to prevent the cell renderer from applying
-    // to aggregated cells (without having to check cell.aggregated).
-    if (!col.Aggregated) {
-      col.Aggregated = cell => cell.value
+    col.Aggregated = function renderedCell(cell) {
+      let value = cell.value
+      if (col.format && col.format.aggregated) {
+        value = formatValue(value, col.format.aggregated)
+      }
+      if (col.render && col.render.aggregated) {
+        value = col.render.aggregated({ ...cell, value })
+      }
+      if (col.html) {
+        return <div dangerouslySetInnerHTML={{ __html: value }} />
+      } else {
+        // Set a default renderer to prevent the cell renderer from applying
+        // to aggregated cells (without having to check cell.aggregated).
+        return value
+      }
     }
 
     if (col.type === 'numeric') {

@@ -87,7 +87,7 @@ https://glin.github.io/reactable/inst/examples/custom-renderers.html
 
 ```r
 reactable(iris, columns = list(
-  Petal.Length = colDef(render = JS("
+  Petal.Length = colDef(html = TRUE, render = JS("
     function(cell) {
       var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
       var color = colors[cell.row.Species]
@@ -161,6 +161,7 @@ colDef(
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   format = NULL,            # Column formatting options. See column formatting below
   render = NULL,            # Custom column renderers. See custom renderers below
+  html = FALSE,             # Render cells as raw HTML?
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
