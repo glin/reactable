@@ -118,6 +118,22 @@ describe('buildColumnDefs', () => {
     )
   })
 
+  test('pivoted cells render the same as regular cells', () => {
+    let cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        format: { cell: { prefix: '@' } },
+        render: { cell: cell => `__${cell.value}__` }
+      }
+    ])
+    expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
+    expect(cols[0].PivotValue({ value: 'x', subRows: [{}, {}] })).toEqual(
+      <span>
+        {'__@x__'} {'(2)'}
+      </span>
+    )
+  })
+
   test('numeric cols', () => {
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
     expect(cols[0].sortMethod).toEqual(compareNumbers)

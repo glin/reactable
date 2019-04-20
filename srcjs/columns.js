@@ -44,6 +44,16 @@ export function buildColumnDefs(columns, groups) {
       }
     }
 
+    // Render pivoted values the same as regular cells
+    col.PivotValue = function renderedCell(cell) {
+      const value = col.Cell(cell)
+      return (
+        <span>
+          {value} {cell.subRows && `(${cell.subRows.length})`}
+        </span>
+      )
+    }
+
     col.Aggregated = function renderedCell(cell) {
       let value = cell.value
       if (col.format && col.format.aggregated) {
