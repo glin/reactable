@@ -79,5 +79,8 @@ export function normalizeNumber(n) {
   if (n === '-Inf') {
     n = -Infinity
   }
+  if (typeof n === 'string') {
+    n = Number(n)
+  }
   return n
 }

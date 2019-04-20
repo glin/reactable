@@ -1,4 +1,15 @@
-import { sum, mean, max, min, round, count, unique, frequency, aggregators } from '../aggregators'
+import {
+  sum,
+  mean,
+  max,
+  min,
+  round,
+  count,
+  unique,
+  frequency,
+  aggregators,
+  normalizeNumber
+} from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
@@ -77,4 +88,17 @@ test('frequency', () => {
   expect(frequency(['a', 'b', 'a'])).toEqual('a (2), b')
   expect(frequency(['x', 'y', 'y', 'z', 'z', 'x'])).toEqual('x (2), y (2), z (2)')
   expect(aggregators.frequency).toEqual(frequency)
+})
+
+test('normalizeNumber', () => {
+  expect(normalizeNumber(1)).toEqual(1)
+  expect(normalizeNumber(0)).toEqual(0)
+  expect(normalizeNumber(-1)).toEqual(-1)
+  expect(normalizeNumber(null)).toEqual(null)
+  expect(normalizeNumber(undefined)).toEqual(null)
+  expect(normalizeNumber('NA')).toEqual(null)
+  expect(normalizeNumber('Inf')).toEqual(Infinity)
+  expect(normalizeNumber('-Inf')).toEqual(-Infinity)
+  expect(normalizeNumber('12')).toEqual(12)
+  expect(normalizeNumber('-12')).toEqual(-12)
 })

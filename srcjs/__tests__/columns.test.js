@@ -193,7 +193,8 @@ test('compareNumbers', () => {
     ['NA', 'Inf', -1],
     ['Inf', 'NA', 1],
     ['NA', '-Inf', -1],
-    ['-Inf', 'NA', 1]
+    ['-Inf', 'NA', 1],
+    ['2', '10', -1]
   ]
   tests.forEach(([a, b, order]) => {
     expect(compareNumbers(a, b)).toEqual(order)
