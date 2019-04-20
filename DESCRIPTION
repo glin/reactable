@@ -7,7 +7,7 @@ Authors@R: c(
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library")
     )
 Description: R interface to the React Table JavaScript library.
-License: MIT
+License: MIT + file LICENSE
 Depends:
     R (>= 3.1)
 Imports: 
