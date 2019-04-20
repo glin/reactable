@@ -26,6 +26,14 @@ export function min(arr) {
   return Math.min.apply(null, arr)
 }
 
+export function count(arr) {
+  return arr.length
+}
+
+export function unique(arr) {
+  return [...new Set(arr)].join(', ')
+}
+
 export function frequency(arr) {
   const counts = {}
   arr.forEach(value => {
@@ -38,17 +46,14 @@ export function frequency(arr) {
   return values.join(', ')
 }
 
-export function count(arr) {
-  return arr.length
-}
-
 export const aggregators = {
   mean,
   sum,
   max,
   min,
-  frequency,
-  count
+  count,
+  unique,
+  frequency
 }
 
 export function round(n, digits = 3) {

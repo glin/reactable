@@ -1,4 +1,4 @@
-import { sum, mean, max, min, round, frequency, count } from '../aggregators'
+import { sum, mean, max, min, round, count, unique, frequency, aggregators } from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
@@ -8,6 +8,7 @@ test('sum', () => {
   expect(sum([1, 2, 'Inf'])).toEqual(Infinity)
   expect(sum([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(sum([])).toEqual('')
+  expect(aggregators.sum).toEqual(sum)
 })
 
 test('mean', () => {
@@ -18,6 +19,7 @@ test('mean', () => {
   expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
   expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(mean([])).toEqual('')
+  expect(aggregators.mean).toEqual(mean)
 })
 
 test('max', () => {
@@ -28,6 +30,7 @@ test('max', () => {
   expect(max([1, 2, 'Inf'])).toEqual(Infinity)
   expect(max([1, 2, '-Inf'])).toEqual(2)
   expect(max([])).toEqual('')
+  expect(aggregators.max).toEqual(max)
 })
 
 test('min', () => {
@@ -38,6 +41,7 @@ test('min', () => {
   expect(min([1, 2, 'Inf'])).toEqual(1)
   expect(min([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(min([])).toEqual('')
+  expect(aggregators.min).toEqual(min)
 })
 
 test('round', () => {
@@ -52,14 +56,25 @@ test('round', () => {
   expect(round(null, 3)).toEqual(null)
 })
 
+test('count', () => {
+  expect(count([])).toEqual(0)
+  expect(count([1, 2, 3])).toEqual(3)
+  expect(aggregators.count).toEqual(count)
+})
+
+test('unique', () => {
+  expect(unique([])).toEqual('')
+  expect(unique([1])).toEqual('1')
+  expect(unique([1, 2, 3])).toEqual('1, 2, 3')
+  expect(unique(['a', 'b', 'a'])).toEqual('a, b')
+  expect(unique(['x', 'y', 'y', 'z', 'z', 'x'])).toEqual('x, y, z')
+  expect(aggregators.unique).toEqual(unique)
+})
+
 test('frequency', () => {
   expect(frequency([1])).toEqual('1')
   expect(frequency([1, 2, 3])).toEqual('1, 2, 3')
   expect(frequency(['a', 'b', 'a'])).toEqual('a (2), b')
   expect(frequency(['x', 'y', 'y', 'z', 'z', 'x'])).toEqual('x (2), y (2), z (2)')
-})
-
-test('count', () => {
-  expect(count([])).toEqual(0)
-  expect(count([1, 2, 3])).toEqual(3)
+  expect(aggregators.frequency).toEqual(frequency)
 })

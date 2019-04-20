@@ -191,6 +191,7 @@ colDef(aggregate = "mean")       # Mean of numbers
 colDef(aggregate = "max")        # Max of numbers
 colDef(aggregate = "min")        # Min of numbers
 colDef(aggregate = "count")      # Count of values
+colDef(aggregate = "unique")     # Comma-separated list of unique values
 colDef(aggregate = "frequency")  # Frequency of unique values
 ```
 
