@@ -1,7 +1,50 @@
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-.ReactTable .rt-thead {
+.main {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.sidebar {
+  min-width: 300px;
+}
+
+.content {
+  width: 960px;
+}
+
+.title {
+  margin: 0 1rem 1rem 0;
+  font-size: 2.5rem;
+}
+
+.tag {
+  display: inline-flex;
+  padding: 0.15rem 2rem;
+  min-width: 6rem;
+  border-radius: 30px;
   font-weight: 600;
+  background-color: #eee;
+}
+
+.num-high {
+  color: hsl(121, 33%, 23%);
+  background-color: hsl(121, 33%, 86%);
+}
+
+.num-med {
+  color: hsl(50, 81%, 20%);
+  background-color: hsl(50, 81%, 87%);
+}
+
+.num-low {
+  color: hsl(0, 75%, 32%);
+  background-color: hsl(0, 75%, 92%);
 }
