@@ -41,8 +41,7 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
 
-\item{showPagination}{Show pagination? Defaults to \code{TRUE} unless the table
-fits on all page sizes.}
+\item{showPagination}{Show pagination? Defaults to \code{TRUE} if the table fits on one page.}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 

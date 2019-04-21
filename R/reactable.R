@@ -22,8 +22,7 @@ NULL
 #'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
-#' @param showPagination Show pagination? Defaults to `TRUE` unless the table
-#'   fits on all page sizes.
+#' @param showPagination Show pagination? Defaults to `TRUE` if the table fits on one page.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.

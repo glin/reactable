@@ -140,7 +140,7 @@ reactable(
   defaultPageSize = 10,      # Default page size
   pageSizeOptions =          # Page size options
     c(10, 25, 50, 100),
-  showPagination = NULL,     # Show pagination? Defaults to TRUE unless the table fits on all page sizes
+  showPagination = NULL,     # Show pagination? Defaults to TRUE if the table fits on one page
   minRows = 1,               # Minimum number of rows to show
   striped = TRUE,            # Zebra-stripe rows?
   highlight = TRUE,          # Highlight rows on hover?
