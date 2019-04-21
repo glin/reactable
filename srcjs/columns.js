@@ -55,7 +55,8 @@ export function buildColumnDefs(columns, groups) {
     }
 
     col.Aggregated = function renderedCell(cell) {
-      let value = cell.value
+      // Default to empty string to avoid string conversion of undefined/null
+      let value = cell.value != null ? cell.value : ''
       if (col.format && col.format.aggregated) {
         value = formatValue(value, col.format.aggregated)
       }
@@ -66,7 +67,8 @@ export function buildColumnDefs(columns, groups) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
       } else {
         // Set a default renderer to prevent the cell renderer from applying
-        // to aggregated cells (without having to check cell.aggregated).
+        // to aggregated cells (without having to check cell.aggregated),
+        // and also to override the default format of comma-separated values.
         return value
       }
     }

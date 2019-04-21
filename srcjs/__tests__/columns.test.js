@@ -31,6 +31,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].aggregate).toEqual(aggregators.mean)
     cols = buildColumnDefs([{ accessor: 'x', aggregate: 'justastring' }])
     expect(cols[0].aggregate).toEqual('justastring')
+    expect(cols[0].Aggregated({ value: undefined })).toEqual('')
   })
 
   test('formatters', () => {

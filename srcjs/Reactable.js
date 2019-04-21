@@ -1,21 +1,11 @@
 import React from 'react'
 import ReactTable from 'react-table'
-import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
 import { columnsToRows, buildColumnDefs } from './columns'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
-
-// Render a blank cell by default, rather than comma-separated values
-const DefaultAggregated = () => {
-  return ''
-}
-
-Object.assign(ReactTableDefaults, {
-  AggregatedComponent: DefaultAggregated
-})
 
 const Reactable = ({
   data,
