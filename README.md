@@ -78,7 +78,8 @@ reactable(iris, groupBy = "Species", columns = list(
   ),
   Sepal.Width = colDef(
     aggregate = "mean",
-    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2)))
+    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
+  )
 ))
 ```
 
