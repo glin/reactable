@@ -48,3 +48,8 @@ body {
   color: hsl(0, 75%, 32%);
   background-color: hsl(0, 75%, 92%);
 }
+
+.sort-tip {
+  margin-top: 1rem;
+  font-style: italic;
+}
