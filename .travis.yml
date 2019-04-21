@@ -2,9 +2,12 @@ matrix:
   include:
     - node_js: node
       language: node_js
+      script: npm run test:cover
       cache:
         directories:
           - node_modules
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
     - r: oldrel
       language: r
       cache: packages
