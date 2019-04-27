@@ -12,6 +12,16 @@
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  padding: 7px 8px;
+}
+
+.ReactTable .rt-thead .rt-th,
+.ReactTable .rt-thead .rt-td {
+  padding: 6px 8px;
+}
+
 /* Column alignment */
 .ReactTable .rt-col-left {
   text-align: left;
