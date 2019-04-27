@@ -181,6 +181,7 @@ colDef(
 colGroup(
   name,                # Column group name
   columns,             # Names of columns in the group
+  align = NULL,        # Column group header alignment. One of "left", "right", "center"
   headerClass = NULL,  # Additional CSS classes to apply to the header
   headerStyle = NULL   # Named list of inline styles to apply to the header
 )

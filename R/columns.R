@@ -163,14 +163,20 @@ isDescOrder <- function(x) {
 #'
 #' @param name Column group name.
 #' @param columns Character vector of column names in the group.
+#' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Named list of inline styles to apply to the header.
 #' @export
-colGroup <- function(name, columns, headerClass = NULL, headerStyle = NULL) {
+colGroup <- function(name, columns, align = NULL, headerClass = NULL, headerStyle = NULL) {
   if (!is.character(columns)) {
     stop("`columns` must be a character vector")
   }
-  group <- colDef(name = name, headerClass = headerClass, headerStyle = headerStyle)
+  group <- colDef(
+    name = name,
+    align = align,
+    headerClass = headerClass,
+    headerStyle = headerStyle
+  )
   group$columns <- columns
   group <- filterNulls(group)
   structure(group, class = "colGroup")

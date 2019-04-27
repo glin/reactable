@@ -101,10 +101,11 @@ test_that("colGroup", {
   ), class = "colGroup"))
 
   # Valid args
-  group <- colGroup("name", c("colA", "colB"),
+  group <- colGroup("name", c("colA", "colB"), align = "right",
                     headerStyle = list(color = "red"), headerClass = "cls")
   expect_equal(group, structure(list(
     Header = "name",
+    align = "right",
     headerClassName = "cls",
     headerStyle = list(color = "red"),
     columns = c("colA", "colB")
@@ -114,6 +115,7 @@ test_that("colGroup", {
   expect_error(colGroup(1, "col"))
   expect_error(colGroup("name", list("col")))
   expect_error(colGroup("name", 123))
+  expect_error(colGroup("name", "col", align = "CENTER"))
 })
 
 test_that("is.colGroup", {

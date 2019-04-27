@@ -169,18 +169,42 @@ describe('buildColumnDefs', () => {
     expect(cols[0].headerClassName).toEqual('rt-col-right')
 
     // Center
-    cols = buildColumnDefs([{ accessor: 'x', align: 'center' }])
+    cols = buildColumnDefs([
+      { accessor: 'x', align: 'center', className: 'col', headerClassName: 'hdr' }
+    ])
     expect(cols[0].align).toEqual('center')
-    expect(cols[0].className).toEqual('rt-col-center')
-    expect(cols[0].headerClassName).toEqual('rt-col-center')
+    expect(cols[0].className).toEqual('rt-col-center col')
+    expect(cols[0].headerClassName).toEqual('rt-col-center hdr')
   })
 
   test('column groups', () => {
-    const groups = [{ Header: 'xy', columns: ['x', 'y'] }]
-    const cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols.length).toEqual(1)
     expect(cols[0].Header).toEqual('xy')
     expect(cols[0].columns.map(col => col.id)).toEqual(['x', 'y'])
+  })
+
+  test('column group alignment', () => {
+    // Default: center
+    let groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerClassName).toEqual('rt-col-center')
+
+    // Left
+    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'left' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerClassName).toEqual('rt-col-left')
+
+    // Right
+    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'right', headerClassName: 'hdr' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerClassName).toEqual('rt-col-right hdr')
+
+    // Center
+    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'center' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerClassName).toEqual('rt-col-center')
   })
 })
 

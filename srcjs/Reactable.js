@@ -19,7 +19,7 @@ const getTheadThProps = (state, rowInfo, column) => {
 }
 
 const getTheadGroupThProps = (state, rowInfo, column) => {
-  // Mark actual column header groups
+  // Mark actual column group headers
   if (column.Header) {
     return { className: '-headerGroup' }
   }

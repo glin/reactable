@@ -90,6 +90,10 @@ export function buildColumnDefs(columns, groups) {
 
   if (groups) {
     columns = addColumnGroups(columns, groups)
+    columns.forEach(col => {
+      col.align = col.align || 'center'
+      col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
+    })
   }
 
   return columns

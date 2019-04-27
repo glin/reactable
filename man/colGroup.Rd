@@ -4,12 +4,15 @@
 \alias{colGroup}
 \title{Column group definitions}
 \usage{
-colGroup(name, columns, headerClass = NULL, headerStyle = NULL)
+colGroup(name, columns, align = NULL, headerClass = NULL,
+  headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column group name.}
 
 \item{columns}{Character vector of column names in the group.}
+
+\item{align}{Column group header alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
 
