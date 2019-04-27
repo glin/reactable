@@ -9,7 +9,7 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
   25, 50, 100), showPagination = NULL, minRows = 1, outlined = FALSE,
-  bordered = TRUE, striped = TRUE, highlight = TRUE, class = NULL,
+  bordered = TRUE, striped = FALSE, highlight = TRUE, class = NULL,
   style = NULL, width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
@@ -49,7 +49,7 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{bordered}{Add horizontal borders between table rows? Defaults to \code{TRUE}.}
 
-\item{striped}{Add zebra-striping to table rows? Defaults to \code{TRUE}.}
+\item{striped}{Add zebra-striping to table rows? Defaults to \code{FALSE}.}
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 

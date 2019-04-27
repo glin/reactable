@@ -26,7 +26,7 @@ NULL
 #' @param minRows Minimum number of rows to show. Defaults to 1.
 #' @param outlined Add an outline around the table? Defaults to `FALSE`.
 #' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
-#' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
+#' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Named list of inline styles to apply to the table.
@@ -41,7 +41,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       showPagination = NULL, minRows = 1, outlined = FALSE,
-                      bordered = TRUE, striped = TRUE, highlight = TRUE,
+                      bordered = TRUE, striped = FALSE, highlight = TRUE,
                       class = NULL, style = NULL,
                       width = "auto", height = "auto", elementId = NULL) {
 

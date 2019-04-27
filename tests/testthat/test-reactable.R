@@ -57,7 +57,7 @@ test_that("reactable", {
     minRows = 1,
     outlined = FALSE,
     bordered = TRUE,
-    striped = TRUE,
+    striped = FALSE,
     highlight = TRUE
   )
   expect_equal(attribs, expected)
@@ -71,7 +71,7 @@ test_that("reactable", {
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
-                   minRows = 5, outlined = TRUE, bordered = FALSE, striped = FALSE,
+                   minRows = 5, outlined = TRUE, bordered = FALSE, striped = TRUE,
                    highlight = FALSE, class = "tbl", style = list(color = "red"),
                    groupBy = "x", width = "400px", height = "100%", elementId = "tbl")
   attribs <- getAttribs(tbl)
@@ -96,7 +96,7 @@ test_that("reactable", {
     minRows = 5,
     outlined = TRUE,
     bordered = FALSE,
-    striped = FALSE,
+    striped = TRUE,
     highlight = FALSE,
     className = "tbl",
     style = list(color = "red")

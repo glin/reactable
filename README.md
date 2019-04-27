@@ -145,7 +145,7 @@ reactable(
   minRows = 1,               # Minimum number of rows to show
   outlined = FALSE,          # Add an outline around the table?
   bordered = TRUE,           # Add horizontal borders between table rows?
-  striped = TRUE,            # Zebra-stripe rows?
+  striped = FALSE,           # Zebra-stripe rows?
   highlight = TRUE,          # Highlight rows on hover?
   class = NULL,              # Additional CSS classes to apply to the table
   style = NULL               # Named list of inline styles to apply to the table
