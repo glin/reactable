@@ -24,6 +24,8 @@ NULL
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param showPagination Show pagination? Defaults to `TRUE` if the table fits on one page.
 #' @param minRows Minimum number of rows to show. Defaults to 1.
+#' @param outlined Add an outline around the table? Defaults to `FALSE`.
+#' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
 #' @param striped Add zebra-striping to table rows? Defaults to `TRUE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param class Additional CSS classes to apply to the table.
@@ -38,8 +40,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-                      showPagination = NULL, minRows = 1, striped = TRUE,
-                      highlight = TRUE, class = NULL, style = NULL,
+                      showPagination = NULL, minRows = 1, outlined = FALSE,
+                      bordered = TRUE, striped = TRUE, highlight = TRUE,
+                      class = NULL, style = NULL,
                       width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -124,6 +127,12 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.numeric(minRows)) {
     stop("`minRows` must be numeric")
   }
+  if (!is.logical(outlined)) {
+    stop("`outlined` must be TRUE or FALSE")
+  }
+  if (!is.logical(bordered)) {
+    stop("`bordered` must be TRUE or FALSE")
+  }
   if (!is.logical(striped)) {
     stop("`striped` must be TRUE or FALSE")
   }
@@ -179,6 +188,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       pageSizeOptions = pageSizeOptions,
       showPagination = showPagination,
       minRows = minRows,
+      outlined = outlined,
+      bordered = bordered,
       striped = striped,
       highlight = highlight,
       className = class,

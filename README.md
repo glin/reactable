@@ -143,6 +143,8 @@ reactable(
     c(10, 25, 50, 100),
   showPagination = NULL,     # Show pagination? Defaults to TRUE if the table fits on one page
   minRows = 1,               # Minimum number of rows to show
+  outlined = FALSE,          # Add an outline around the table?
+  bordered = TRUE,           # Add horizontal borders between table rows?
   striped = TRUE,            # Zebra-stripe rows?
   highlight = TRUE,          # Highlight rows on hover?
   class = NULL,              # Additional CSS classes to apply to the table

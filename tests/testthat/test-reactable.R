@@ -28,6 +28,8 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, showPagination = "true"))
   expect_error(reactable(df, minRows = "2"))
+  expect_error(reactable(df, outlined = "true"))
+  expect_error(reactable(df, bordered = NULL))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, class = c(1, 5)))
@@ -53,6 +55,8 @@ test_that("reactable", {
     pageSizeOptions = c(10, 25, 50, 100),
     showPagination = FALSE,
     minRows = 1,
+    outlined = FALSE,
+    bordered = TRUE,
     striped = TRUE,
     highlight = TRUE
   )
@@ -67,8 +71,8 @@ test_that("reactable", {
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
-                   minRows = 5, striped = FALSE, highlight = FALSE,
-                   class = "tbl", style = list(color = "red"),
+                   minRows = 5, outlined = TRUE, bordered = FALSE, striped = FALSE,
+                   highlight = FALSE, class = "tbl", style = list(color = "red"),
                    groupBy = "x", width = "400px", height = "100%", elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(x = "a")
@@ -90,6 +94,8 @@ test_that("reactable", {
     pageSizeOptions = c(1, 2),
     showPagination = FALSE,
     minRows = 5,
+    outlined = TRUE,
+    bordered = FALSE,
     striped = FALSE,
     highlight = FALSE,
     className = "tbl",

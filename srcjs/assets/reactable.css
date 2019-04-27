@@ -24,3 +24,39 @@
 .ReactTable .rt-col-center {
   text-align: center;
 }
+
+/* Table borders */
+.ReactTable {
+  border: none;
+}
+
+.ReactTable.-outlined {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Cell borders */
+.ReactTable .rt-thead .rt-th,
+.ReactTable .rt-thead .rt-td {
+  border-right: none;
+}
+
+.ReactTable.-outlined .rt-thead .rt-th,
+.ReactTable.-outlined .rt-thead .rt-td {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ReactTable .rt-tbody .rt-td {
+  border-right: none;
+}
+
+.ReactTable.-outlined .rt-tbody .rt-td {
+  border-right: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: none;
+}
+
+.ReactTable.-bordered .rt-tbody .rt-tr-group {
+  border-bottom: solid 1px rgba(0, 0, 0, 0.05);
+}

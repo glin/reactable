@@ -3,6 +3,7 @@ import ReactTable from 'react-table'
 import PropTypes from 'prop-types'
 
 import { columnsToRows, buildColumnDefs } from './columns'
+import { classNames } from './utils'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
@@ -31,6 +32,8 @@ const Reactable = ({
   pageSizeOptions,
   showPagination,
   minRows,
+  outlined,
+  bordered,
   striped,
   highlight,
   className,
@@ -40,8 +43,13 @@ const Reactable = ({
 
   columns = buildColumnDefs(columns, columnGroups)
 
-  const classes = [className, striped ? '-striped' : '', highlight ? ' -highlight' : '']
-  className = classes.join(' ').trim()
+  className = classNames(
+    className,
+    outlined ? '-outlined' : '',
+    bordered ? '-bordered' : '',
+    striped ? '-striped' : '',
+    highlight ? ' -highlight' : ''
+  )
 
   return (
     <ReactTable
@@ -81,6 +89,8 @@ Reactable.propTypes = {
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   showPagination: PropTypes.bool,
   minRows: PropTypes.number,
+  outlined: PropTypes.bool,
+  bordered: PropTypes.bool,
   striped: PropTypes.bool,
   highlight: PropTypes.bool,
   className: PropTypes.string,
