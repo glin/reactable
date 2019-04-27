@@ -1,15 +1,6 @@
+/* Table headers */
 .ReactTable .rt-thead {
   font-weight: 600;
-}
-
-.ReactTable .rt-thead.-header {
-  box-shadow: inherit;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.ReactTable .-pagination {
-  box-shadow: inherit;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .ReactTable .rt-th,
@@ -20,6 +11,12 @@
 .ReactTable .rt-thead .rt-th,
 .ReactTable .rt-thead .rt-td {
   padding: 6px 8px;
+}
+
+/* Pagination */
+.ReactTable .-pagination {
+  box-shadow: inherit;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Column alignment */
@@ -35,7 +32,9 @@
   text-align: center;
 }
 
-/* Table borders */
+/* Bordered/outlined styles */
+
+/* Table */
 .ReactTable {
   border: none;
 }
@@ -44,7 +43,17 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Cell borders */
+/* Headers */
+.ReactTable .rt-thead.-header {
+  box-shadow: inherit;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.ReactTable.-striped .rt-thead.-header {
+  border-bottom-width: 1px;
+}
+
+/* Cells */
 .ReactTable .rt-thead .rt-th,
 .ReactTable .rt-thead .rt-td {
   border-right: none;
