@@ -138,10 +138,41 @@ describe('buildColumnDefs', () => {
   test('numeric cols', () => {
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
     expect(cols[0].sortMethod).toEqual(compareNumbers)
-    expect(cols[0].style.textAlign).toEqual('right')
-    // Text align override
-    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', style: { textAlign: 'left' } }])
-    expect(cols[0].style.textAlign).toEqual('left')
+    expect(cols[0].align).toEqual('right')
+    expect(cols[0].className).toEqual('rt-col-right')
+    expect(cols[0].headerClassName).toEqual('rt-col-right')
+    // Align override
+    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
+    expect(cols[0].sortMethod).toEqual(compareNumbers)
+    expect(cols[0].align).toEqual('left')
+    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].headerClassName).toEqual('rt-col-left')
+  })
+
+  test('column alignment', () => {
+    // Default: left
+    let cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].align).toEqual('left')
+    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].headerClassName).toEqual('rt-col-left')
+
+    // Left
+    cols = buildColumnDefs([{ accessor: 'x', align: 'left' }])
+    expect(cols[0].align).toEqual('left')
+    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].headerClassName).toEqual('rt-col-left')
+
+    // Right
+    cols = buildColumnDefs([{ accessor: 'x', align: 'right' }])
+    expect(cols[0].align).toEqual('right')
+    expect(cols[0].className).toEqual('rt-col-right')
+    expect(cols[0].headerClassName).toEqual('rt-col-right')
+
+    // Center
+    cols = buildColumnDefs([{ accessor: 'x', align: 'center' }])
+    expect(cols[0].align).toEqual('center')
+    expect(cols[0].className).toEqual('rt-col-center')
+    expect(cols[0].headerClassName).toEqual('rt-col-center')
   })
 
   test('column groups', () => {

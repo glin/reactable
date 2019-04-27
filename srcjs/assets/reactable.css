@@ -11,3 +11,16 @@
   box-shadow: inherit;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
+
+/* Column alignment */
+.ReactTable .rt-col-left {
+  text-align: left;
+}
+
+.ReactTable .rt-col-right {
+  text-align: right;
+}
+
+.ReactTable .rt-col-center {
+  text-align: center;
+}

@@ -6,7 +6,7 @@ test_that("colDef", {
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
     show = NULL, defaultSortDesc = NULL, format = NULL, render = NULL,
-    html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL,
+    html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
 
@@ -28,7 +28,7 @@ test_that("colDef", {
     format = list(cell = colFormat(), aggregated = colFormat()),
     render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
     html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
-    className = "cell", style = list(color = "a", textAlign = "right"),
+    align = "right", className = "cell", style = list(color = "a"),
     headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
   expect_equal(col, expected)
 

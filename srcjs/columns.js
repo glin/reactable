@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { aggregators, round, normalizeNumber } from './aggregators'
+import { classNames } from './utils'
 
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
@@ -76,8 +77,13 @@ export function buildColumnDefs(columns, groups) {
     if (col.type === 'numeric') {
       col.sortMethod = compareNumbers
       // Right-align numbers by default
-      col.style = { textAlign: 'right', ...col.style }
+      col.align = col.align || 'right'
+    } else {
+      col.align = col.align || 'left'
     }
+
+    col.className = classNames(`rt-col-${col.align}`, col.className)
+    col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
 
     return col
   })

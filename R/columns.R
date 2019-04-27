@@ -104,6 +104,11 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(width) && !is.numeric(width)) {
     stop("`width` must be numeric")
   }
+  if (!is.null(align)) {
+    if (!isTRUE(align %in% c("left", "right", "center"))) {
+      stop('`align` must be one of "left", "right", "center"')
+    }
+  }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
@@ -115,12 +120,6 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(headerStyle) && !isNamedList(headerStyle)) {
     stop("`headerStyle` must be a named list")
-  }
-  if (!is.null(align)) {
-    if (!isTRUE(align %in% c("left", "right", "center"))) {
-      stop('`align` must be one of "left", "right", "center"')
-    }
-    style <- mergeLists(style, list(textAlign = align))
   }
 
   structure(
@@ -138,6 +137,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,
+      align = align,
       className = class,
       style = style,
       headerClassName = headerClass,
