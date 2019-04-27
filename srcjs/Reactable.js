@@ -7,6 +7,16 @@ import { columnsToRows, buildColumnDefs } from './columns'
 import 'react-table/react-table.css'
 import './assets/reactable.css'
 
+const getTheadThProps = (state, rowInfo, column) => {
+  // Add aria-sort to column headers
+  if (state.sortable) {
+    const sort = state.sorted.find(d => d.id === column.id)
+    const order = sort ? (sort.desc ? 'descending' : 'ascending') : 'none'
+    return { 'aria-sort': order }
+  }
+  return {}
+}
+
 const Reactable = ({
   data,
   columns,
@@ -52,6 +62,7 @@ const Reactable = ({
       collapseOnDataChange={false}
       className={className}
       style={style}
+      getTheadThProps={getTheadThProps}
     />
   )
 }
