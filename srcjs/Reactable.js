@@ -18,6 +18,14 @@ const getTheadThProps = (state, rowInfo, column) => {
   return {}
 }
 
+const getTheadGroupThProps = (state, rowInfo, column) => {
+  // Mark actual column header groups
+  if (column.Header) {
+    return { className: '-headerGroup' }
+  }
+  return {}
+}
+
 const Reactable = ({
   data,
   columns,
@@ -71,6 +79,7 @@ const Reactable = ({
       className={className}
       style={style}
       getTheadThProps={getTheadThProps}
+      getTheadGroupThProps={getTheadGroupThProps}
     />
   )
 }

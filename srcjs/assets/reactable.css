@@ -70,3 +70,26 @@
 .ReactTable.-bordered .rt-tbody .rt-tr-group {
   border-bottom: solid 1px rgba(0, 0, 0, 0.05);
 }
+
+/* Column header groups */
+.ReactTable .rt-thead.-headerGroups {
+  background: inherit;
+  border-bottom: inherit;
+}
+
+.ReactTable .rt-th.-headerGroup:after {
+  content: '';
+  position: absolute;
+  margin: auto;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.ReactTable.-outlined .rt-th.-headerGroup:after {
+  left: 0;
+  right: 0;
+}
