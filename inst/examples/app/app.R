@@ -41,11 +41,12 @@ ui <- fluidPage(
               Resizable = "resizable",
               "Default Sorted" = "defaultSorted",
               Pagination = "showPagination",
+              Outlined = "outlined",
+              Bordered = "bordered",
               Striped = "striped",
               Highlight = "highlight"
             ),
-            selected = c("filterable", "sortable", "resizable", "showPagination",
-                         "striped", "highlight")
+            selected = c("sortable", "resizable", "showPagination", "bordered", "highlight")
           ),
 
           checkboxGroupInput(
@@ -93,6 +94,8 @@ server <- function(input, output, session) {
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
       showPagination = "showPagination" %in% input$options,
+      outlined = "outlined" %in% input$options,
+      bordered = "bordered" %in% input$options,
       striped = "striped" %in% input$options,
       highlight = "highlight" %in% input$options
     )
@@ -139,6 +142,8 @@ server <- function(input, output, session) {
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
       showPagination = .(opts$showPagination),
+      outlined = .(opts$outlined),
+      bordered = .(opts$bordered),
       striped = .(opts$striped),
       highlight = .(opts$highlight),
       groupBy = .(opts$groupBy),
