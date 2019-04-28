@@ -10,7 +10,7 @@ import './assets/reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
   // Add aria-sort to column headers
-  if (state.sortable) {
+  if (state.sortable || column.sortable) {
     const sort = state.sorted.find(d => d.id === column.id)
     const order = sort ? (sort.desc ? 'descending' : 'ascending') : 'none'
     return { 'aria-sort': order }
