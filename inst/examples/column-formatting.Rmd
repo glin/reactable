@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(reactable)
 
-reactable(iris, groupBy = "Species", columns = list(
+reactable(iris, groupBy = "Species", striped = TRUE, columns = list(
   Sepal.Length = colDef(
     aggregate = "sum",
     format = colFormat(suffix = " cm")
