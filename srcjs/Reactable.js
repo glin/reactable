@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactTable from 'react-table'
+import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
 import { columnsToRows, buildColumnDefs } from './columns'
@@ -19,12 +20,41 @@ const getTheadThProps = (state, rowInfo, column) => {
 }
 
 const getTheadGroupThProps = (state, rowInfo, column) => {
+  let props = {}
+  // When ungrouped columns or columns in different groups are pivoted,
+  // the group header is hardcoded to <strong>Pivoted</strong> and not easily
+  // configurable. Work around this by overriding the default ThComponent to
+  // render a custom HeaderPivoted component instead.
+  if (column.columns.some(col => col.pivoted)) {
+    const pivotColumns = column.columns
+    const pivotParentColumn = pivotColumns.reduce(
+      (prev, current) => prev && prev === current.parentColumn && current.parentColumn,
+      pivotColumns[0].parentColumn
+    )
+    if (!pivotParentColumn.Header) {
+      props.HeaderPivoted = 'Grouped'
+    }
+  }
+
   // Mark actual column group headers
   if (column.Header) {
-    return { className: '-headerGroup' }
+    props.className = classNames('-headerGroup', column.className)
   }
-  return {}
+
+  return props
 }
+
+// Render column group headers with a custom HeaderPivoted component instead
+// of the default "Pivoted" header.
+const DefaultThComponent = ReactTableDefaults.ThComponent
+Object.assign(ReactTableDefaults, {
+  ThComponent({ HeaderPivoted, children, ...rest }) {
+    if (HeaderPivoted) {
+      children = HeaderPivoted
+    }
+    return DefaultThComponent({ ...rest, children })
+  }
+})
 
 const Reactable = ({
   data,
