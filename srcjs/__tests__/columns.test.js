@@ -177,6 +177,48 @@ describe('buildColumnDefs', () => {
     expect(cols[0].headerClassName).toEqual('rt-col-center hdr')
   })
 
+  test('header sort icons', () => {
+    // No sort
+    let cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }])
+    expect(cols[0].Header).toEqual('xy')
+    cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }], null, { sortable: false })
+    expect(cols[0].Header).toEqual('xy')
+
+    // Table sort
+    cols = buildColumnDefs([{ Header: 'x', accessor: 'x' }], null, { sortable: true })
+    expect(cols[0].Header()).toEqual(
+      <React.Fragment>
+        {'x'}
+        <span className="-sort-right" />
+      </React.Fragment>
+    )
+
+    cols = buildColumnDefs([{ Header: 'x', accessor: 'x', align: 'right' }], null, {
+      sortable: true
+    })
+    expect(cols[0].Header()).toEqual(
+      <React.Fragment>
+        <span className="-sort-left" />
+        {'x'}
+      </React.Fragment>
+    )
+
+    // Column sort override
+    cols = buildColumnDefs(
+      [{ Header: 'xy', accessor: 'x', align: 'center', sortable: true }],
+      null,
+      {
+        sortable: false
+      }
+    )
+    expect(cols[0].Header()).toEqual(
+      <React.Fragment>
+        {'xy'}
+        <span className="-sort-right" />
+      </React.Fragment>
+    )
+  })
+
   test('column groups', () => {
     let groups = [{ Header: 'xy', columns: ['x', 'y'] }]
     let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)

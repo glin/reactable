@@ -102,3 +102,30 @@
   left: 0;
   right: 0;
 }
+
+/* Sort icons */
+.ReactTable .-sort-desc {
+  box-shadow: none !important;
+}
+
+.ReactTable .-sort-asc {
+  box-shadow: none !important;
+}
+
+.ReactTable .rt-th[aria-sort] .-sort-left:after {
+  padding-right: 5px;
+}
+
+.ReactTable .rt-th[aria-sort] .-sort-right:after {
+  padding-left: 5px;
+}
+
+.ReactTable .rt-th[aria-sort=ascending] .-sort-left:after,
+.ReactTable .rt-th[aria-sort=ascending] .-sort-right:after {
+  content: "\2191";
+}
+
+.ReactTable .rt-th[aria-sort=descending] .-sort-left:after,
+.ReactTable .rt-th[aria-sort=descending] .-sort-right:after {
+  content: "\2193";
+}

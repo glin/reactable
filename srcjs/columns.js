@@ -17,7 +17,9 @@ export function columnsToRows(columns) {
   return rows
 }
 
-export function buildColumnDefs(columns, groups) {
+export function buildColumnDefs(columns, groups, tableOptions = {}) {
+  const { sortable } = tableOptions
+
   columns = columns.map(col => {
     col.id = col.accessor
     if (col.accessor.includes('.')) {
@@ -84,6 +86,28 @@ export function buildColumnDefs(columns, groups) {
 
     col.className = classNames(`rt-col-${col.align}`, col.className)
     col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
+
+    // Add sort icon to column header
+    if (sortable || col.sortable) {
+      const header = col.Header
+      col.Header = function renderedHeader() {
+        if (col.align === 'right') {
+          return (
+            <React.Fragment>
+              <span className="-sort-left" />
+              {header}
+            </React.Fragment>
+          )
+        } else {
+          return (
+            <React.Fragment>
+              {header}
+              <span className="-sort-right" />
+            </React.Fragment>
+          )
+        }
+      }
+    }
 
     return col
   })

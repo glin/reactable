@@ -49,7 +49,7 @@ const Reactable = ({
 }) => {
   data = columnsToRows(data)
 
-  columns = buildColumnDefs(columns, columnGroups)
+  columns = buildColumnDefs(columns, columnGroups, { sortable })
 
   className = classNames(
     className,
