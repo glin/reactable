@@ -10,5 +10,8 @@
     "node": true,
     "es6": true
   },
+  "globals": {
+    "Shiny": true
+  },
   "plugins": ["react"]
 }

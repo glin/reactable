@@ -20,7 +20,8 @@ export function columnsToRows(columns) {
 export function buildColumnDefs(columns, groups, tableOptions = {}) {
   const { sortable } = tableOptions
 
-  columns = columns.map(col => {
+  columns = columns.map(column => {
+    let col = { ...column }
     col.id = col.accessor
     if (col.accessor.includes('.')) {
       // Interpret column names with dots as IDs, not paths
@@ -126,6 +127,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
 // Add groups to an array of column definitions
 export function addColumnGroups(columns, groups) {
   groups.forEach(group => {
+    group = { ...group }
     const groupIds = group.columns
     group.columns = []
     columns = columns.reduce((newCols, col) => {

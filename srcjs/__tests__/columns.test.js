@@ -248,6 +248,15 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-col-center')
   })
+
+  test("columns and groups aren't mutated", () => {
+    const groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    const columns = [{ accessor: 'x' }, { accessor: 'y' }]
+    let cols = buildColumnDefs(columns, groups)
+    expect(cols[0].Header).toEqual('xy')
+    expect(columns).toEqual([{ accessor: 'x' }, { accessor: 'y' }])
+    expect(groups).toEqual([{ Header: 'xy', columns: ['x', 'y'] }])
+  })
 })
 
 describe('addColumnGroups', () => {

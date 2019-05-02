@@ -13,6 +13,22 @@
   padding: 6px 8px;
 }
 
+/* Selectable cells */
+.ReactTable .rt-td.rt-select,
+.ReactTable .rt-th.rt-select {
+  padding: 0;
+}
+
+.ReactTable .rt-th-select-label {
+  padding: 5px 8px;
+  margin: 0;
+}
+
+.ReactTable .rt-td-select-label {
+  padding: 7px 8px;
+  margin: 0;
+}
+
 /* Pagination */
 .ReactTable .-pagination {
   box-shadow: inherit;

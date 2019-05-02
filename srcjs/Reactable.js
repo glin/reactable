@@ -3,6 +3,7 @@ import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
+import selectTableHOC from './selectTable'
 import { columnsToRows, buildColumnDefs } from './columns'
 import { classNames } from './utils'
 
@@ -56,62 +57,130 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
-const Reactable = ({
-  data,
-  columns,
-  columnGroups,
-  pivotBy,
-  sortable,
-  resizable,
-  filterable,
-  defaultSortDesc,
-  defaultSorted,
-  defaultPageSize,
-  pageSizeOptions,
-  showPagination,
-  minRows,
-  outlined,
-  bordered,
-  striped,
-  highlight,
-  className,
-  style
-}) => {
-  data = columnsToRows(data)
+const SelectTable = selectTableHOC(ReactTable)
 
-  columns = buildColumnDefs(columns, columnGroups, { sortable })
+class Reactable extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      selection: new Set()
+    }
+    this.toggleSelection = this.toggleSelection.bind(this)
+    this.toggleAll = this.toggleAll.bind(this)
+    this.isSelected = this.isSelected.bind(this)
+  }
 
-  className = classNames(
-    className,
-    outlined ? '-outlined' : '',
-    bordered ? '-bordered' : '',
-    striped ? '-striped' : '',
-    highlight ? ' -highlight' : ''
-  )
+  isSelected(index) {
+    return this.state.selection.has(index)
+  }
 
-  return (
-    <ReactTable
-      data={data}
-      columns={columns}
-      pivotBy={pivotBy || []}
-      sortable={sortable}
-      resizable={resizable}
-      filterable={filterable}
-      defaultSortDesc={defaultSortDesc}
-      defaultSorted={defaultSorted}
-      defaultPageSize={defaultPageSize}
-      pageSizeOptions={pageSizeOptions}
-      showPagination={showPagination}
-      minRows={minRows}
-      collapseOnSortingChange={false}
-      collapseOnPageChange={true}
-      collapseOnDataChange={false}
-      className={className}
-      style={style}
-      getTheadThProps={getTheadThProps}
-      getTheadGroupThProps={getTheadGroupThProps}
-    />
-  )
+  toggleSelection(index) {
+    const selection = new Set(this.state.selection)
+    if (this.state.selection.has(index)) {
+      selection.delete(index)
+    } else {
+      if (this.props.selectionType === 'single') {
+        selection.clear()
+      }
+      selection.add(index)
+    }
+    this.setState({ selection })
+  }
+
+  toggleAll(indices, checked) {
+    const selection = new Set(this.state.selection)
+    if (checked) {
+      indices.forEach(i => selection.add(i))
+    } else {
+      indices.forEach(i => selection.delete(i))
+    }
+    this.setState({ selection })
+  }
+
+  componentDidUpdate() {
+    const { selectable, selectionId } = this.props
+    if (selectable) {
+      // Convert to R's 1-based indices
+      const selection = [...this.state.selection].map(i => i + 1)
+      if (window.Shiny && selectionId) {
+        Shiny.onInputChange(selectionId, selection)
+      }
+    }
+  }
+
+  render() {
+    let {
+      data,
+      columns,
+      columnGroups,
+      pivotBy,
+      sortable,
+      resizable,
+      filterable,
+      selectable,
+      selectionType,
+      defaultSortDesc,
+      defaultSorted,
+      defaultPageSize,
+      pageSizeOptions,
+      showPagination,
+      minRows,
+      outlined,
+      bordered,
+      striped,
+      highlight,
+      className,
+      style
+    } = this.props
+
+    data = columnsToRows(data)
+    columns = buildColumnDefs(columns, columnGroups, { sortable })
+
+    className = classNames(
+      className,
+      outlined ? '-outlined' : '',
+      bordered ? '-bordered' : '',
+      striped ? '-striped' : '',
+      highlight ? ' -highlight' : ''
+    )
+
+    let Table = ReactTable
+    let selectProps = {}
+    if (selectable) {
+      Table = SelectTable
+      selectProps = {
+        isSelected: this.isSelected,
+        toggleSelection: this.toggleSelection,
+        toggleAll: this.toggleAll,
+        selectType: selectionType === 'multiple' ? 'checkbox' : 'radio'
+      }
+    }
+
+    return (
+      <Table
+        data={data}
+        columns={columns}
+        pivotBy={pivotBy || []}
+        sortable={sortable}
+        resizable={resizable}
+        filterable={filterable}
+        defaultSortDesc={defaultSortDesc}
+        defaultSorted={defaultSorted}
+        defaultPageSize={defaultPageSize}
+        pageSizeOptions={pageSizeOptions}
+        showPagination={showPagination}
+        minRows={minRows}
+        collapseOnSortingChange={false}
+        collapseOnPageChange={true}
+        collapseOnDataChange={false}
+        className={className}
+        style={style}
+        getTheadThProps={getTheadThProps}
+        getTheadGroupThProps={getTheadGroupThProps}
+        {...selectProps}
+      />
+    )
+  }
 }
 
 Reactable.propTypes = {
@@ -122,6 +191,9 @@ Reactable.propTypes = {
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
+  selectable: PropTypes.string,
+  selectionType: PropTypes.oneOf(['multiple', 'single']),
+  selectionId: PropTypes.string,
   defaultSortDesc: PropTypes.bool,
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,

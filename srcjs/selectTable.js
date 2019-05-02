@@ -1,24 +1,39 @@
-// selectTable HOC from https://github.com/tannerlinsley/react-table/blob/v6/src/hoc/selectTable/index.js
-
-/* eslint-disable */
+// selectTable HOC adapted from
+// https://github.com/tannerlinsley/react-table/blob/v6/src/hoc/selectTable/index.js
 
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const defaultSelectInputComponent = props => {
+const DefaultSelectInputComponent = props => {
   return (
     <input
       type={props.selectType || 'checkbox'}
-      aria-label={`${props.checked ? 'Un-select' : 'Select'} row with id:${props.id}`}
+      aria-label={`${props.checked ? 'Deselect' : 'Select'} ${props.label || ''}`}
       checked={props.checked}
-      id={props.id}
       onClick={e => {
-        const { shiftKey } = e
         e.stopPropagation()
-        props.onClick(props.id, shiftKey, props.row)
+        if (props.rows) {
+          // Select all
+          const indices = props.rows.map(row => row._index)
+          props.onClick(indices, !props.checked)
+        } else if (props.row) {
+          // Select single
+          const index = props.row._index
+          props.onClick(index)
+        }
       }}
       onChange={() => {}}
     />
   )
+}
+
+DefaultSelectInputComponent.propTypes = {
+  selectType: PropTypes.oneOf(['checkbox', 'radio']),
+  checked: PropTypes.bool,
+  label: PropTypes.string,
+  onClick: PropTypes.func,
+  row: PropTypes.object,
+  rows: PropTypes.arrayOf(PropTypes.object)
 }
 
 export default (Component, options) => {
@@ -27,75 +42,79 @@ export default (Component, options) => {
       super(props)
     }
 
-    // rowSelector(row) {
     rowSelector(cellInfo) {
-      const row = cellInfo.original
-
-      // if (!row || !row.hasOwnProperty(this.props.keyField)) return null
-
-      if (!row) return null
-      // const { toggleSelection, selectType, keyField } = this.props
-      const { toggleSelection, selectType } = this.props
-      
-      // const checked = this.props.isSelected(row[this.props.keyField])
-      const checked = this.props.isSelected(cellInfo.index)
-
+      const { isSelected, toggleSelection, selectType, SelectInputComponent } = this.props
+      const checked = isSelected(cellInfo.index)
       const inputProps = {
         checked,
         onClick: toggleSelection,
         selectType,
-        row,
-        // id: `select-${row[keyField]}`
-        // id: row[keyField]
-        id: cellInfo.index
+        row: cellInfo.row,
+        label: `row ${cellInfo.index + 1}`
       }
-      return React.createElement(this.props.SelectInputComponent, inputProps)
+      return React.createElement(SelectInputComponent, inputProps)
     }
 
-    headSelector(row) {
-      const { selectType } = this.props
+    subRowSelector(cellInfo) {
+      const { isSelected, toggleAll, selectType, SelectInputComponent } = this.props
       if (selectType === 'radio') return null
-
-      const { toggleAll, selectAll: checked, SelectAllInputComponent } = this.props
+      const rows = cellInfo.subRows
+      // Don't support selecting aggregated cells for now
+      if (!rows || rows.some(row => row._aggregated)) {
+        return null
+      }
+      const checked = rows.every(row => isSelected(row._index))
       const inputProps = {
         checked,
         onClick: toggleAll,
         selectType,
-        id: 'select-all'
+        rows,
+        label: `all rows in the group`
       }
+      return React.createElement(SelectInputComponent, inputProps)
+    }
 
+    headSelector(cellInfo) {
+      const { isSelected, selectType, toggleAll, SelectAllInputComponent } = this.props
+      if (selectType === 'radio') return null
+      const rows = cellInfo.data
+      // Don't support selecting aggregated cells for now
+      if (rows.length === 0 || rows.some(row => row._aggregated)) {
+        return null
+      }
+      const checked = rows.every(row => isSelected(row._index))
+      const inputProps = {
+        checked,
+        onClick: toggleAll,
+        selectType,
+        rows,
+        label: 'all rows'
+      }
       return React.createElement(SelectAllInputComponent, inputProps)
     }
 
-    // this is so we can expose the underlying ReactTable to get at the sortedData for selectAll
-    getWrappedInstance() {
-      if (!this.wrappedInstance) console.warn('RTSelectTable - No wrapped instance')
-      if (this.wrappedInstance.getWrappedInstance) return this.wrappedInstance.getWrappedInstance()
-      else return this.wrappedInstance
-    }
-
     render() {
-      const {
-        columns: originalCols,
-        isSelected,
-        toggleSelection,
-        toggleAll,
-        // keyField,
-        selectAll,
-        selectType,
-        selectWidth,
-        SelectAllInputComponent,
-        SelectInputComponent,
-        ...rest
-      } = this.props
+      const { columns: originalCols, selectWidth, ...rest } = this.props
       const select = {
         id: '_selector',
-        accessor: () => 'x', // this value is not important
-        Header: this.headSelector.bind(this),
-        Cell: ci => {
-          // return this.rowSelector.bind(this)(ci.original)
-          return this.rowSelector.bind(this)(ci)
+        accessor: () => '', // this value is not important
+        Header: cellInfo => {
+          return (
+            <label className="rt-th-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
+          )
         },
+        Cell: cellInfo => {
+          return (
+            <label className="rt-td-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
+          )
+        },
+        Aggregated: cellInfo => {
+          return (
+            <label className="rt-td-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
+          )
+        },
+        className: 'rt-select',
+        headerClassName: 'rt-select',
         width: selectWidth || 30,
         filterable: false,
         sortable: false,
@@ -110,26 +129,27 @@ export default (Component, options) => {
       const extra = {
         columns
       }
-      return <Component {...rest} {...extra} ref={r => (this.wrappedInstance = r)} />
+
+      RTSelectTable.propTypes = {
+        selectType: PropTypes.oneOf(['checkbox', 'radio']).isRequired,
+        SelectInputComponent: PropTypes.func.isRequired,
+        SelectAllInputComponent: PropTypes.func.isRequired,
+        isSelected: PropTypes.func.isRequired,
+        toggleSelection: PropTypes.func.isRequired,
+        toggleAll: PropTypes.func.isRequired,
+        selectWidth: PropTypes.number,
+        columns: PropTypes.array.isRequired
+      }
+
+      return <Component {...rest} {...extra} />
     }
   }
 
   wrapper.displayName = 'RTSelectTable'
   wrapper.defaultProps = {
-    // keyField: '_id',
-    isSelected: key => {
-      console.log('No isSelected handler provided:', { key })
-    },
-    selectAll: false,
-    toggleSelection: (key, shift, row) => {
-      console.log('No toggleSelection handler provided:', { key, shift, row })
-    },
-    toggleAll: () => {
-      console.log('No toggleAll handler provided.')
-    },
     selectType: 'checkbox',
-    SelectInputComponent: defaultSelectInputComponent,
-    SelectAllInputComponent: defaultSelectInputComponent
+    SelectInputComponent: DefaultSelectInputComponent,
+    SelectAllInputComponent: DefaultSelectInputComponent
   }
 
   return wrapper

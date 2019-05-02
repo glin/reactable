@@ -8,9 +8,11 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
-  25, 50, 100), showPagination = NULL, minRows = 1, outlined = FALSE,
-  bordered = TRUE, striped = FALSE, highlight = TRUE, class = NULL,
-  style = NULL, width = "auto", height = "auto", elementId = NULL)
+  25, 50, 100), showPagination = NULL, minRows = 1,
+  selectable = FALSE, selectionType = "multiple", selectionId = NULL,
+  outlined = FALSE, bordered = TRUE, striped = FALSE,
+  highlight = TRUE, class = NULL, style = NULL, width = "auto",
+  height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -44,6 +46,13 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 \item{showPagination}{Show pagination? Defaults to \code{TRUE} if the table fits on one page.}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
+
+\item{selectable}{Enable row selection? Defaults to \code{FALSE}.}
+
+\item{selectionType}{Row selection type. One of \code{"multiple"} (the default) or \code{"single"}.}
+
+\item{selectionId}{Shiny input ID for the row selection. The row selection is
+returned as a vector of row indices, or \code{NULL} if no rows are selected.}
 
 \item{outlined}{Add an outline around the table? Defaults to \code{FALSE}.}
 
