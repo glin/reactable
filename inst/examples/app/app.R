@@ -35,11 +35,13 @@ ui <- fluidPage(
             "options",
             "Table Options",
             choices = c(
-              "Column Groups" = "columnGroups",
+              "Column groups" = "columnGroups",
               Filterable = "filterable",
               Sortable = "sortable",
               Resizable = "resizable",
-              "Default Sorted" = "defaultSorted",
+              "Default sorted" = "defaultSorted",
+              Selectable = "selectable",
+              "Select single rows" = "selectSingleRows",
               Pagination = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
@@ -54,7 +56,7 @@ ui <- fluidPage(
             "Column Options",
             choices = c(
               Formatting = "format",
-              "Custom Renderer" = "render",
+              "Custom renderer" = "render",
               HTML = "html"
             ),
             selected = c("format", "render", "html")
@@ -68,7 +70,13 @@ ui <- fluidPage(
             tabPanel(
               "Table",
               reactableOutput("table"),
-              tags$div(class = "sort-tip", "Tip: shift+click to sort multiple columns")
+              tags$div(class = "sort-tip", "Tip: shift+click to sort multiple columns"),
+              conditionalPanel(
+                "input.options.indexOf('selectable') >= 0",
+                hr(),
+                "selection:",
+                verbatimTextOutput("selection")
+              )
             ),
             tabPanel(
               "Code",
@@ -93,6 +101,9 @@ server <- function(input, output, session) {
       resizable = "resizable" %in% input$options,
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
+      selectable = "selectable" %in% input$options,
+      selectionType = if ("selectSingleRows" %in% input$options) "single" else "multiple",
+      selectionId = if ("selectable" %in% input$options) "selection",
       showPagination = "showPagination" %in% input$options,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
@@ -141,6 +152,9 @@ server <- function(input, output, session) {
       filterable = .(opts$filterable),
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
+      selectable = .(opts$selectable),
+      selectionType = .(opts$selectionType),
+      selectionId = .(opts$selectionId),
       showPagination = .(opts$showPagination),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
@@ -205,6 +219,10 @@ server <- function(input, output, session) {
 
   output$table <- renderReactable({
     eval(parse(text = code()))
+  })
+
+  output$selection <- renderPrint({
+    print(input$selection)
   })
 
   outputOptions(output, "code", suspendWhenHidden = FALSE)
