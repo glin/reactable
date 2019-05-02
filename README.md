@@ -127,28 +127,31 @@ shinyApp(ui, server)
 ## Usage
 ```r
 reactable(
-  data,                      # Data frame or matrix
-  rownames = FALSE,          # Show row names?
-  colnames = NULL,           # Named list of column names
-  columns = NULL,            # Named list of column definitions. See column definitions below
-  columnGroups = NULL,       # List of column group definitions. See column groups below
-  groupBy = NULL,            # Names of columns to group by
-  sortable = TRUE,           # Enable sorting?
-  resizable = TRUE,          # Enable column resizing?
-  filterable = FALSE,        # Enable column filtering?
-  defaultSortOrder = "asc",  # Default sort order. Either "asc" or "desc"
-  defaultSorted = NULL,      # Column names to sort by default. Or a named list with values of "asc" or "desc"
-  defaultPageSize = 10,      # Default page size
-  pageSizeOptions =          # Page size options
+  data,                       # Data frame or matrix
+  rownames = FALSE,           # Show row names?
+  colnames = NULL,            # Named list of column names
+  columns = NULL,             # Named list of column definitions. See column definitions below
+  columnGroups = NULL,        # List of column group definitions. See column groups below
+  groupBy = NULL,             # Names of columns to group by
+  sortable = TRUE,            # Enable sorting?
+  resizable = TRUE,           # Enable column resizing?
+  filterable = FALSE,         # Enable column filtering?
+  defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"
+  defaultSorted = NULL,       # Column names to sort by default. Or a named list with values of "asc" or "desc"
+  defaultPageSize = 10,       # Default page size
+  pageSizeOptions =           # Page size options
     c(10, 25, 50, 100),
-  showPagination = NULL,     # Show pagination? Defaults to TRUE if the table fits on one page
-  minRows = 1,               # Minimum number of rows to show
-  outlined = FALSE,          # Add an outline around the table?
-  bordered = TRUE,           # Add horizontal borders between table rows?
-  striped = FALSE,           # Zebra-stripe rows?
-  highlight = TRUE,          # Highlight rows on hover?
-  class = NULL,              # Additional CSS classes to apply to the table
-  style = NULL               # Named list of inline styles to apply to the table
+  showPagination = NULL,      # Show pagination? Defaults to TRUE if the table fits on one page
+  minRows = 1,                # Minimum number of rows to show
+  selectable = FALSE,         # Enable row selection?
+  selectionType = "multiple", # Row selection type. Either "multiple" or "single" 
+  selectionId = NULL,         # Shiny input ID for the row selection
+  outlined = FALSE,           # Add an outline around the table?
+  bordered = TRUE,            # Add horizontal borders between table rows?
+  striped = FALSE,            # Zebra-stripe rows?
+  highlight = TRUE,           # Highlight rows on hover?
+  class = NULL,               # Additional CSS classes to apply to the table
+  style = NULL                # Named list of inline styles to apply to the table
 )
 ```
 
