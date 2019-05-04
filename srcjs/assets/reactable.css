@@ -1,3 +1,7 @@
+.ReactTable.-inline {
+  display: inline-flex;
+}
+
 /* Table headers */
 .ReactTable .rt-thead {
   font-weight: 600;

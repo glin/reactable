@@ -130,7 +130,8 @@ class Reactable extends React.Component {
       striped,
       highlight,
       className,
-      style
+      style,
+      inline
     } = this.props
 
     data = columnsToRows(data)
@@ -141,7 +142,8 @@ class Reactable extends React.Component {
       outlined ? '-outlined' : '',
       bordered ? '-bordered' : '',
       striped ? '-striped' : '',
-      highlight ? ' -highlight' : ''
+      highlight ? ' -highlight' : '',
+      inline ? ' -inline' : ''
     )
 
     let Table = ReactTable
@@ -205,7 +207,8 @@ Reactable.propTypes = {
   striped: PropTypes.bool,
   highlight: PropTypes.bool,
   className: PropTypes.string,
-  style: PropTypes.object
+  style: PropTypes.object,
+  inline: PropTypes.bool
 }
 
 export default Reactable

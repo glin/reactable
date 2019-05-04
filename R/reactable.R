@@ -34,6 +34,9 @@ NULL
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Named list of inline styles to apply to the table.
+#' @param inline Display the table as an inline element, which shrinks to fit
+#'   its contents? By default, the table is displayed as a block element, which
+#'   expands to fit its parent container.
 #' @param width Width in pixels (optional, defaults to automatic sizing).
 #' @param height Height in pixels (optional, defaults to automatic sizing).
 #' @param elementId Optional element ID for the widget.
@@ -47,7 +50,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       showPagination = NULL, minRows = 1,
                       selectable = FALSE, selectionType = "multiple", selectionId = NULL,
                       outlined = FALSE, bordered = TRUE, striped = FALSE,
-                      highlight = TRUE, class = NULL, style = NULL,
+                      highlight = TRUE, class = NULL, style = NULL, inline = FALSE,
                       width = "auto", height = "auto", elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -159,6 +162,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(style) && !isNamedList(style)) {
     stop("`style` must be a named list")
   }
+  if (!is.null(inline) && !is.logical(inline)) {
+    stop("`inline` must be TRUE or FALSE")
+  }
 
   cols <- lapply(colnames(data), function(key) {
     column <- list(accessor = key)
@@ -210,7 +216,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       striped = striped,
       highlight = highlight,
       className = class,
-      style = style
+      style = style,
+      inline = if (inline) inline
     ))
   )
 

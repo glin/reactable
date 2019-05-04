@@ -151,7 +151,8 @@ reactable(
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
   class = NULL,               # Additional CSS classes to apply to the table
-  style = NULL                # Named list of inline styles to apply to the table
+  style = NULL,               # Named list of inline styles to apply to the table
+  inline = FALSE              # Display the table as an inline element, which shrinks to fit its contents?
 )
 ```
 

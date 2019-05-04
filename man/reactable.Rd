@@ -11,8 +11,8 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   25, 50, 100), showPagination = NULL, minRows = 1,
   selectable = FALSE, selectionType = "multiple", selectionId = NULL,
   outlined = FALSE, bordered = TRUE, striped = FALSE,
-  highlight = TRUE, class = NULL, style = NULL, width = "auto",
-  height = "auto", elementId = NULL)
+  highlight = TRUE, class = NULL, style = NULL, inline = FALSE,
+  width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -65,6 +65,10 @@ returned as a vector of row indices, or \code{NULL} if no rows are selected.}
 \item{class}{Additional CSS classes to apply to the table.}
 
 \item{style}{Named list of inline styles to apply to the table.}
+
+\item{inline}{Display the table as an inline element, which shrinks to fit
+its contents? By default, the table is displayed as a block element, which
+expands to fit its parent container.}
 
 \item{width}{Width in pixels (optional, defaults to automatic sizing).}
 

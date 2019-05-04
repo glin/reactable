@@ -37,6 +37,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, class = c(1, 5)))
   expect_error(reactable(df, style = "color: red;"))
+  expect_error(reactable(df, inline = "yes"))
 })
 
 test_that("reactable", {
@@ -80,7 +81,8 @@ test_that("reactable", {
                    selectable = TRUE, selectionType = "single", selectionId = "sel",
                    outlined = TRUE, bordered = FALSE, striped = TRUE,
                    highlight = FALSE, class = "tbl", style = list(color = "red"),
-                   groupBy = "x", width = "400px", height = "100%", elementId = "tbl")
+                   inline = TRUE, groupBy = "x", width = "400px", height = "100%",
+                   elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(x = "a")
   data[["__rowname__"]] <- "1"
@@ -109,7 +111,8 @@ test_that("reactable", {
     striped = TRUE,
     highlight = FALSE,
     className = "tbl",
-    style = list(color = "red")
+    style = list(color = "red"),
+    inline = TRUE
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "400px")
