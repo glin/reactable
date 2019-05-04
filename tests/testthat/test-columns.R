@@ -125,7 +125,7 @@ test_that("is.colGroup", {
 
 test_that("colFormat", {
   # Default args
-  expect_equal(colFormat(), structure(list(), class = "colFormat"))
+  expect_equal(colFormat(), structure(list(), .Names = character(0), class = "colFormat"))
 
   # Valid args
   options <- colFormat(prefix = "a", suffix = "b", digits = 5, separators = TRUE,
