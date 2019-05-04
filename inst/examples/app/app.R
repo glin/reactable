@@ -46,7 +46,8 @@ ui <- fluidPage(
               Outlined = "outlined",
               Bordered = "bordered",
               Striped = "striped",
-              Highlight = "highlight"
+              Highlight = "highlight",
+              Inline = "inline"
             ),
             selected = c("sortable", "resizable", "showPagination", "bordered", "highlight")
           ),
@@ -108,7 +109,8 @@ server <- function(input, output, session) {
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
       striped = "striped" %in% input$options,
-      highlight = "highlight" %in% input$options
+      highlight = "highlight" %in% input$options,
+      inline = "inline" %in% input$options
     )
   })
 
@@ -160,6 +162,7 @@ server <- function(input, output, session) {
       bordered = .(opts$bordered),
       striped = .(opts$striped),
       highlight = .(opts$highlight),
+      inline = .(opts$inline),
       groupBy = .(opts$groupBy),
       defaultSorted = .(opts$defaultSorted),
       columns = list(
