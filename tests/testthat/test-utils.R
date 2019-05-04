@@ -19,11 +19,21 @@ test_that("mergeLists", {
 
   expect_equal(mergeLists(NULL, list(a = 1, b = 2)), list(a = 1, b = 2))
   expect_equal(mergeLists(list(a = 1, b = 2), NULL), list(a = 1, b = 2))
+
+  a <- list(a = NULL, b = 2, 3)
+  b <- list(a = 1, b = NULL, 4)
+  expect_equal(mergeLists(a, b), list(a = 1, b = 2, 3, 4))
+
+  a <- list(a = NULL, b = 2)
+  b <- list(1, 2, 3)
+  expect_equal(mergeLists(a, b), list(a = NULL, b = 2, 1, 2, 3))
 })
 
 test_that("filterNulls", {
   expect_equal(filterNulls(list(a = 1, b = NULL, c = NULL, d = 2)), list(a = 1, d = 2))
   expect_equal(filterNulls(list(a = 1, b = "b")), list(a = 1, b = "b"))
+  expect_equal(filterNulls(list(a = 1, 2, b = NULL)), list(a = 1, 2))
+  expect_equal(filterNulls(list(1, NULL, 2)), list(1, 2))
 })
 
 test_that("isNamedList", {

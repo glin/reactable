@@ -9,16 +9,19 @@ mergeLists <- function(a, b) {
   if (is.null(b)) {
     b <- list()
   }
-  for (name in names(b)) {
-    if (!is.null(b[[name]])) {
-      a[[name]] <- b[[name]]
+  for (i in seq_along(b)) {
+    name <- names(b[i])
+    if (is.null(name) || name == "") {
+      a <- c(a, b[i])
+    } else if (!is.null(b[[i]])) {
+      a[[name]] <- b[[i]]
     }
   }
   a
 }
 
 filterNulls <- function(x) {
-  mergeLists(list(), x)
+  Filter(Negate(is.null), x)
 }
 
 is.JS <- function(x) {
