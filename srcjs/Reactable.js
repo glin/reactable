@@ -196,7 +196,7 @@ Reactable.propTypes = {
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
-  selectable: PropTypes.string,
+  selectable: PropTypes.bool,
   selectionType: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
   defaultSortDesc: PropTypes.bool,
