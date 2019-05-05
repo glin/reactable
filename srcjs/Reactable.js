@@ -214,4 +214,8 @@ Reactable.propTypes = {
   inline: PropTypes.bool
 }
 
+Reactable.defaultProps = {
+  selectionType: 'multiple'
+}
+
 export default Reactable
