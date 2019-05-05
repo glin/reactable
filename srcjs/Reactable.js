@@ -4,6 +4,7 @@ import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 
 import selectTableHOC from './selectTable'
+import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
 import { classNames } from './utils'
 
@@ -56,6 +57,8 @@ Object.assign(ReactTableDefaults, {
     return DefaultThComponent({ ...rest, children })
   }
 })
+
+ReactTable.propTypes = fixedReactTablePropTypes
 
 const SelectTable = selectTableHOC(ReactTable)
 
