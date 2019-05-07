@@ -6,8 +6,9 @@
 ^\.eslintrc\.json$
 ^\.prettierrc\.json$
 ^coverage$
+^jest.config\.js$
 ^node_modules$
-^srcjs$
 ^package\.json$
+^srcjs$
 ^webpack\.config\.js$
 ^yarn\.lock$
