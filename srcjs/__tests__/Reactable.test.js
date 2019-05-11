@@ -219,4 +219,21 @@ describe('row details', () => {
     fireEvent.click(expanders[0])
     expect(getByText('row details: 1')).toBeTruthy()
   })
+
+  it('handles Shiny elements in content', () => {
+    window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
+    const details = {
+      render: ['row details: 1']
+    }
+    const { container } = render(<Reactable {...props} details={details} />)
+    const expanders = container.querySelectorAll('.rt-expander')
+    expect(expanders).toHaveLength(1)
+    fireEvent.click(expanders[0])
+    expect(window.Shiny.bindAll).toHaveBeenCalledTimes(1)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(0)
+    fireEvent.click(expanders[0])
+    expect(window.Shiny.bindAll).toHaveBeenCalledTimes(1)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(1)
+    delete window.Shiny
+  })
 })
