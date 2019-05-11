@@ -29,8 +29,6 @@ ui <- fluidPage(
       div(class = "sidebar",
           h1("reactable demo", class = "title"),
 
-          checkboxGroupInput("groupBy", "Group By", choices = c("Species", "Petal.Width")),
-
           checkboxGroupInput(
             "options",
             "Table Options",
@@ -40,8 +38,6 @@ ui <- fluidPage(
               Sortable = "sortable",
               Resizable = "resizable",
               "Default sorted" = "defaultSorted",
-              Selectable = "selectable",
-              "Select single rows" = "selectSingleRows",
               Pagination = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
@@ -50,6 +46,27 @@ ui <- fluidPage(
               Inline = "inline"
             ),
             selected = c("sortable", "resizable", "showPagination", "bordered", "highlight")
+          ),
+
+          checkboxGroupInput("groupBy", "Group By", choices = c("Species", "Petal.Width")),
+
+          checkboxGroupInput(
+            "rowDetails",
+            "Row Details",
+            choices = c(
+              "Show row details" = "showRowDetails",
+              "Column header" = "columnHeader"
+            )
+          ),
+
+          radioButtons(
+            "rowSelection",
+            "Row Selection",
+            choices = c(
+              "None" = "none",
+              "Single selection" = "single",
+              "Multiple selection" = "multiple"
+            )
           ),
 
           checkboxGroupInput(
@@ -73,7 +90,7 @@ ui <- fluidPage(
               reactableOutput("table"),
               tags$div(class = "sort-tip", "Tip: shift+click to sort multiple columns"),
               conditionalPanel(
-                "input.options.indexOf('selectable') >= 0",
+                "input.rowSelection !== 'none'",
                 hr(),
                 "selection:",
                 verbatimTextOutput("selection")
@@ -102,9 +119,9 @@ server <- function(input, output, session) {
       resizable = "resizable" %in% input$options,
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
-      selectable = "selectable" %in% input$options,
-      selectionType = if ("selectSingleRows" %in% input$options) "single" else "multiple",
-      selectionId = if ("selectable" %in% input$options) "selection",
+      selectable = input$rowSelection != "none",
+      selectionType = if (input$rowSelection != "none") input$rowSelection else "single",
+      selectionId = if (input$rowSelection != "none") "selection",
       showPagination = "showPagination" %in% input$options,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
@@ -127,19 +144,43 @@ server <- function(input, output, session) {
           quote(list(aggregated = colFormat(suffix = " (avg)", digits = 2)))
         },
         render = if ("render" %in% input$colOptions) {
-          quote(list(cell = JS("
+          quote(list(cell = JS('
                   function (cell) {
                     let classes
                     if (cell.value >= 3.3) {
-                      classes = 'tag num-high'
+                      classes = "tag num-high"
                     } else if (cell.value >= 3) {
-                      classes = 'tag num-med'
+                      classes = "tag num-med"
                     } else {
-                      classes = 'tag num-low'
+                      classes = "tag num-low"
                     }
-                    return `<span class=\"${classes}\">${cell.value}</span>`
-                  }")))
+                    return `<span class="${classes}">${cell.value}</span>`
+                  }')))
         }
+      )
+    )
+  })
+
+  rowDetailsOptions <- reactive({
+    if (!"showRowDetails" %in% input$rowDetails) {
+      return(NULL)
+    }
+
+    bquote(
+      rowDetails(
+        function(index) {
+          if (index == 3) {
+            tabsetPanel(
+              tabPanel("plot", plotOutput("plot")),
+              tabPanel("subtable", reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")),
+                                          inline = TRUE))
+            )
+          } else if (index == 5) {
+            div(paste("Details for row:", index))
+          }
+        },
+        name = .(if ("columnHeader" %in% input$rowDetails) "More"),
+        width = .(if ("columnHeader" %in% input$rowDetails) 50)
       )
     )
   })
@@ -190,7 +231,8 @@ server <- function(input, output, session) {
         Species = colDef(
           aggregate = "frequency"
         )
-      )
+      ),
+      details = .(rowDetailsOptions())
     ))
 
     # Omit default reactable args
@@ -212,6 +254,14 @@ server <- function(input, output, session) {
       }
     }
 
+    # Omit default rowDetails args
+    defaultArgs <- formals(rowDetails)
+    for (argname in names(call$rowDetails)) {
+      if (argname != "" && identical(call$rowDetails[[argname]], defaultArgs[[argname]])) {
+        call$rowDetails[[argname]] <- NULL
+      }
+    }
+
     code <- gsub("\\n", "\n", deparse(call, control = "useSource"), fixed = TRUE)
     paste(code, collapse = "\n")
   })
@@ -226,6 +276,10 @@ server <- function(input, output, session) {
 
   output$selection <- renderPrint({
     print(input$selection)
+  })
+
+  output$plot <- renderPlot({
+    plot(runif(50))
   })
 
   outputOptions(output, "code", suspendWhenHidden = FALSE)
