@@ -157,9 +157,8 @@ reactable(
     c(10, 25, 50, 100),
   showPagination = NULL,      # Show pagination? Defaults to TRUE if the table fits on one page
   minRows = 1,                # Minimum number of rows to show
-  selectable = FALSE,         # Enable row selection?
-  selectionType = "multiple", # Row selection type. Either "multiple" or "single" 
-  selectionId = NULL,         # Shiny input ID for the row selection
+  selection = NULL,           # Enable row selection? Either "multiple" or "single"
+  selectionId = NULL,         # Shiny input ID for the selected rows
   details = NULL,             # Additional content to display when expanding a row. See row details below
   outlined = FALSE,           # Add an outline around the table?
   bordered = TRUE,            # Add horizontal borders between table rows?

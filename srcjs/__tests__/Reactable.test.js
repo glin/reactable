@@ -66,6 +66,14 @@ test('table styles', () => {
 })
 
 describe('row selection', () => {
+  beforeEach(() => {
+    window.Shiny = { onInputChange: jest.fn() }
+  })
+
+  afterEach(() => {
+    delete window.Shiny
+  })
+
   const props = {
     data: { a: [1, 2] },
     columns: [{ Header: 'a', accessor: 'a' }]
@@ -78,7 +86,9 @@ describe('row selection', () => {
   })
 
   it('multiple select', () => {
-    const { container, getByLabelText } = render(<Reactable {...props} selectable />)
+    const { container, getByLabelText } = render(
+      <Reactable {...props} selection="multiple" selectionId="selected" />
+    )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     const selectAllCheckbox = getByLabelText('Select all rows')
     const selectRow1Checkbox = getByLabelText('Select row 1')
@@ -88,16 +98,18 @@ describe('row selection', () => {
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
 
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
   })
 
   it('single select', () => {
     const { container, getByLabelText } = render(
-      <Reactable {...props} selectable selectionType="single" />
+      <Reactable {...props} selection="single" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
     const selectRow1Radio = getByLabelText('Select row 1')
@@ -106,14 +118,33 @@ describe('row selection', () => {
     fireEvent.click(selectRow1Radio)
     expect(selectRow1Radio.checked).toEqual(true)
     expect(selectRow2Radio.checked).toEqual(false)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
 
     fireEvent.click(selectRow2Radio)
     expect(selectRow1Radio.checked).toEqual(false)
     expect(selectRow2Radio.checked).toEqual(true)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2])
 
     fireEvent.click(selectRow2Radio)
     expect(selectRow1Radio.checked).toEqual(false)
     expect(selectRow2Radio.checked).toEqual(false)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+  })
+
+  it('works without Shiny', () => {
+    delete window.Shiny
+    const { container, getByLabelText } = render(
+      <Reactable {...props} selection="multiple" selectionId="selected" />
+    )
+    expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
+    const selectAllCheckbox = getByLabelText('Select all rows')
+    const selectRow1Checkbox = getByLabelText('Select row 1')
+    const selectRow2Checkbox = getByLabelText('Select row 2')
+
+    fireEvent.click(selectAllCheckbox)
+    expect(selectAllCheckbox.checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
   })
 })
 
@@ -129,9 +160,7 @@ describe('row details', () => {
       name: 'more',
       width: 50
     }
-    const { container, getByText, queryByText } = render(
-      <Reactable {...props} details={details} />
-    )
+    const { container, getByText, queryByText } = render(<Reactable {...props} details={details} />)
     expect(getByText('more')).toBeTruthy()
     const expanders = container.querySelectorAll('.rt-expander')
     expect(expanders).toHaveLength(2)
@@ -182,9 +211,7 @@ describe('row details', () => {
     const details = {
       render: ['row details: 1', null]
     }
-    const { container, getByText, queryByText } = render(
-      <Reactable {...props} details={details} />
-    )
+    const { container, getByText, queryByText } = render(<Reactable {...props} details={details} />)
     const expanders = container.querySelectorAll('.rt-expander')
     expect(expanders).toHaveLength(1)
 

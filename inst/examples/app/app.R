@@ -64,8 +64,8 @@ ui <- fluidPage(
             "Row Selection",
             choices = c(
               "None" = "none",
-              "Single selection" = "single",
-              "Multiple selection" = "multiple"
+              "Single" = "single",
+              "Multiple" = "multiple"
             )
           ),
 
@@ -92,8 +92,8 @@ ui <- fluidPage(
               conditionalPanel(
                 "input.rowSelection !== 'none'",
                 hr(),
-                "selection:",
-                verbatimTextOutput("selection")
+                "Selected rows:",
+                verbatimTextOutput("selected")
               )
             ),
             tabPanel(
@@ -119,9 +119,8 @@ server <- function(input, output, session) {
       resizable = "resizable" %in% input$options,
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
-      selectable = input$rowSelection != "none",
-      selectionType = if (input$rowSelection != "none") input$rowSelection else "single",
-      selectionId = if (input$rowSelection != "none") "selection",
+      selection = if (input$rowSelection != "none") input$rowSelection,
+      selectionId = if (input$rowSelection != "none") "selected",
       showPagination = "showPagination" %in% input$options,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
@@ -195,8 +194,7 @@ server <- function(input, output, session) {
       filterable = .(opts$filterable),
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
-      selectable = .(opts$selectable),
-      selectionType = .(opts$selectionType),
+      selection = .(opts$selection),
       selectionId = .(opts$selectionId),
       showPagination = .(opts$showPagination),
       outlined = .(opts$outlined),
@@ -274,8 +272,8 @@ server <- function(input, output, session) {
     eval(parse(text = code()))
   })
 
-  output$selection <- renderPrint({
-    print(input$selection)
+  output$selected <- renderPrint({
+    print(input$selected)
   })
 
   output$plot <- renderPlot({

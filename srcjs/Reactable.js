@@ -97,7 +97,7 @@ class Reactable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selection: new Set()
+      selected: new Set()
     }
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleAll = this.toggleAll.bind(this)
@@ -105,39 +105,39 @@ class Reactable extends React.Component {
   }
 
   isSelected(index) {
-    return this.state.selection.has(index)
+    return this.state.selected.has(index)
   }
 
   toggleSelection(index) {
-    const selection = new Set(this.state.selection)
-    if (this.state.selection.has(index)) {
-      selection.delete(index)
+    const selected = new Set(this.state.selected)
+    if (this.state.selected.has(index)) {
+      selected.delete(index)
     } else {
-      if (this.props.selectionType === 'single') {
-        selection.clear()
+      if (this.props.selection === 'single') {
+        selected.clear()
       }
-      selection.add(index)
+      selected.add(index)
     }
-    this.setState({ selection })
+    this.setState({ selected })
   }
 
   toggleAll(indices, checked) {
-    const selection = new Set(this.state.selection)
+    const selected = new Set(this.state.selected)
     if (checked) {
-      indices.forEach(i => selection.add(i))
+      indices.forEach(i => selected.add(i))
     } else {
-      indices.forEach(i => selection.delete(i))
+      indices.forEach(i => selected.delete(i))
     }
-    this.setState({ selection })
+    this.setState({ selected })
   }
 
   componentDidUpdate() {
-    const { selectable, selectionId } = this.props
-    if (selectable) {
+    const { selection, selectionId } = this.props
+    if (selection) {
       // Convert to R's 1-based indices
-      const selection = [...this.state.selection].map(i => i + 1)
+      const selected = [...this.state.selected].map(i => i + 1)
       if (window.Shiny && selectionId) {
-        Shiny.onInputChange(selectionId, selection)
+        Shiny.onInputChange(selectionId, selected)
       }
     }
   }
@@ -157,8 +157,7 @@ class Reactable extends React.Component {
       pageSizeOptions,
       showPagination,
       minRows,
-      selectable,
-      selectionType,
+      selection,
       details,
       outlined,
       bordered,
@@ -183,13 +182,13 @@ class Reactable extends React.Component {
 
     let Table = ReactTable
     let selectProps = {}
-    if (selectable) {
+    if (selection) {
       Table = SelectTable
       selectProps = {
         isSelected: this.isSelected,
         toggleSelection: this.toggleSelection,
         toggleAll: this.toggleAll,
-        selectType: selectionType === 'multiple' ? 'checkbox' : 'radio'
+        selectType: selection === 'multiple' ? 'checkbox' : 'radio'
       }
     }
 
@@ -306,8 +305,7 @@ Reactable.propTypes = {
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   showPagination: PropTypes.bool,
   minRows: PropTypes.number,
-  selectable: PropTypes.bool,
-  selectionType: PropTypes.oneOf(['multiple', 'single']),
+  selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
   details: PropTypes.shape({
     render: PropTypes.oneOfType([PropTypes.func, PropTypes.array]),
@@ -322,10 +320,6 @@ Reactable.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   inline: PropTypes.bool
-}
-
-Reactable.defaultProps = {
-  selectionType: 'multiple'
 }
 
 export default Reactable

@@ -28,8 +28,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, showPagination = "true"))
   expect_error(reactable(df, minRows = "2"))
-  expect_error(reactable(df, selectable = "true"))
-  expect_error(reactable(df, selectionType = "none"))
+  expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
   expect_error(reactable(df, details = list()))
   expect_error(reactable(df, outlined = "true"))
@@ -60,8 +59,6 @@ test_that("reactable", {
     pageSizeOptions = c(10, 25, 50, 100),
     showPagination = FALSE,
     minRows = 1,
-    selectable = FALSE,
-    selectionType = "multiple",
     outlined = FALSE,
     bordered = TRUE,
     striped = FALSE,
@@ -78,8 +75,7 @@ test_that("reactable", {
                    sortable = FALSE, resizable = FALSE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
-                   minRows = 5,
-                   selectable = TRUE, selectionType = "single", selectionId = "sel",
+                   minRows = 5, selection = "single", selectionId = "sel",
                    details = rowDetails(function(i) i),
                    outlined = TRUE, bordered = FALSE, striped = TRUE,
                    highlight = FALSE, class = "tbl", style = list(color = "red"),
@@ -105,8 +101,7 @@ test_that("reactable", {
     pageSizeOptions = c(1, 2),
     showPagination = FALSE,
     minRows = 5,
-    selectable = TRUE,
-    selectionType = "single",
+    selection = "single",
     selectionId = "sel",
     details = structure(list(render = list(1)), class = "rowDetails"),
     outlined = TRUE,

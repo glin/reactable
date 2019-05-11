@@ -8,11 +8,10 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
-  25, 50, 100), showPagination = NULL, minRows = 1,
-  selectable = FALSE, selectionType = "multiple", selectionId = NULL,
-  details = NULL, outlined = FALSE, bordered = TRUE,
-  striped = FALSE, highlight = TRUE, class = NULL, style = NULL,
-  inline = FALSE, width = "auto", height = "auto",
+  25, 50, 100), showPagination = NULL, minRows = 1, selection = NULL,
+  selectionId = NULL, details = NULL, outlined = FALSE,
+  bordered = TRUE, striped = FALSE, highlight = TRUE, class = NULL,
+  style = NULL, inline = FALSE, width = "auto", height = "auto",
   elementId = NULL)
 }
 \arguments{
@@ -48,12 +47,11 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 
-\item{selectable}{Enable row selection? Defaults to \code{FALSE}.}
+\item{selection}{Enable row selection? Either \code{"multiple"} or \code{"single"} for
+multiple or single row selection.}
 
-\item{selectionType}{Row selection type. One of \code{"multiple"} (the default) or \code{"single"}.}
-
-\item{selectionId}{Shiny input ID for the row selection. The row selection is
-returned as a vector of row indices, or \code{NULL} if no rows are selected.}
+\item{selectionId}{Shiny input ID for the selected rows. The selected rows are
+represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 
 \item{details}{Additional content to display when expanding a row. See \code{rowDetails()}.}
 
