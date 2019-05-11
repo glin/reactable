@@ -171,8 +171,7 @@ server <- function(input, output, session) {
           if (index == 3) {
             tabsetPanel(
               tabPanel("plot", plotOutput("plot")),
-              tabPanel("subtable", reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")),
-                                          inline = TRUE))
+              tabPanel("subtable", reactable(iris[1:3, 1:2], inline = TRUE))
             )
           } else if (index == 5) {
             div(paste("Details for row:", index))
@@ -277,7 +276,7 @@ server <- function(input, output, session) {
   })
 
   output$plot <- renderPlot({
-    plot(runif(50))
+    hist(iris$Sepal.Length)
   })
 
   outputOptions(output, "code", suspendWhenHidden = FALSE)
