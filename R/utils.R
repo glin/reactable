@@ -52,3 +52,84 @@ is.POSIXct <- function(x) {
 is.POSIXlt <- function(x) {
   inherits(x, "POSIXlt")
 }
+
+is.tag <- function(x) {
+  inherits(x, "shiny.tag")
+}
+
+is.htmlwidget <- function(x) {
+  inherits(x, "htmlwidget")
+}
+
+# Test both shiny.tag.list and regular lists of tags
+isTagList <- function(x) {
+  is.list(x) && all(sapply(x, is.tag))
+}
+
+asReactTag <- function(x) {
+  if (is.htmlwidget(x)) {
+    return(asReactTag(x$x$tag))
+  }
+  if (!is.tag(x)) {
+    return(x)
+  }
+  # Unnest tag lists for proper hydration
+  if (is.list(x$children) && any(sapply(x$children, isTagList))) {
+    x$children <- unlist(x$children, recursive = FALSE)
+  }
+  x$children <- lapply(x$children, asReactTag)
+  # Filter null elements for proper hydration
+  x$children <- filterNulls(x$children)
+  x$attribs <- asReactAttributes(x$attribs)
+  x
+}
+
+asReactAttributes <- function(attribs) {
+  reactAttribs <- list(
+    autofocus = "autoFocus",
+    autocomplete = "autoComplete",
+    checked = "defaultChecked",
+    class = "className",
+    colspan = "colSpan",
+    "for" = "htmlFor",
+    formaction = "formAction",
+    formenctype = "formEncType",
+    formmethod = "formMethod",
+    formnovalidate = "formNoValidate",
+    formtarget = "formTarget",
+    frameborder = "frameBorder",
+    maxlength = "maxLength",
+    minlength = "minLength",
+    radiogroup = "radioGroup",
+    readonly = "readOnly",
+    rowspan = "rowSpan",
+    spellcheck = "spellCheck",
+    tabindex = "tabIndex",
+    value = "defaultValue"
+  )
+
+  for (name in names(attribs)) {
+    if (!is.null(reactAttribs[[name]])) {
+      attribs[[reactAttribs[[name]]]] <- attribs[[name]]
+      attribs[[name]] <- NULL
+    }
+  }
+
+  style <- attribs$style
+  if (!is.null(style) && is.character(style)) {
+    props <- strsplit(unlist(strsplit(style, ";")), ":")
+    if (length(props) > 0) {
+      names <- trimws(vapply(props, "[[", 1, FUN.VALUE = character(1)))
+      values <- lapply(props, function(p) trimws(p[[2]]))
+      attribs$style <- setNames(values, names)
+    }
+  }
+
+  attribs
+}
+
+# Backport for R 3.1
+trimws <- function(x) {
+  x <- sub("[ \t\r\n]+$", "", x, perl = TRUE)
+  sub("^[ \t\r\n]+", "", x, perl = TRUE)
+}
