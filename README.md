@@ -168,7 +168,7 @@ colDef(
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   format = NULL,            # Column formatting options. See column formatting below
   render = NULL,            # Custom column renderers. See custom renderers below
-  html = FALSE,             # Render cells as raw HTML?
+  html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth

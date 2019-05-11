@@ -16,7 +16,7 @@
 #' @param render Custom column renderer. A `JS()` function to render all cells,
 #'   or a named list of `JS()` functions to render standard cells (`"cell"`) and
 #'   aggregated cells (`"aggregated"`) separately.
-#' @param html Render cells as raw HTML? HTML strings are escaped by default.
+#' @param html Render cells as HTML? HTML strings are escaped by default.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
