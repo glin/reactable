@@ -46,7 +46,7 @@ test_that("isNamedList", {
 })
 
 test_that("is.tag", {
-  expect_true(is.tag(shiny::tags$div()))
+  expect_true(is.tag(htmltools::tags$div()))
   expect_false(is.tag(list()))
 })
 
