@@ -37,7 +37,7 @@ cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 or a named list of \code{JS()} functions to render standard cells (\code{"cell"}) and
 aggregated cells (\code{"aggregated"}) separately.}
 
-\item{html}{Render cells as raw HTML? HTML strings are escaped by default.}
+\item{html}{Render cells as HTML? HTML strings are escaped by default.}
 
 \item{minWidth}{Min width of the column in pixels.}
 

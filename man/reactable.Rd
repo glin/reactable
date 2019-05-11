@@ -10,9 +10,10 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
   25, 50, 100), showPagination = NULL, minRows = 1,
   selectable = FALSE, selectionType = "multiple", selectionId = NULL,
-  outlined = FALSE, bordered = TRUE, striped = FALSE,
-  highlight = TRUE, class = NULL, style = NULL, inline = FALSE,
-  width = "auto", height = "auto", elementId = NULL)
+  details = NULL, outlined = FALSE, bordered = TRUE,
+  striped = FALSE, highlight = TRUE, class = NULL, style = NULL,
+  inline = FALSE, width = "auto", height = "auto",
+  elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -53,6 +54,8 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{selectionId}{Shiny input ID for the row selection. The row selection is
 returned as a vector of row indices, or \code{NULL} if no rows are selected.}
+
+\item{details}{Additional content to display when expanding a row. See \code{rowDetails()}.}
 
 \item{outlined}{Add an outline around the table? Defaults to \code{FALSE}.}
 

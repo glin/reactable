@@ -28,6 +28,7 @@ NULL
 #' @param selectionType Row selection type. One of `"multiple"` (the default) or `"single"`.
 #' @param selectionId Shiny input ID for the row selection. The row selection is
 #'   returned as a vector of row indices, or `NULL` if no rows are selected.
+#' @param details Additional content to display when expanding a row. See `rowDetails()`.
 #' @param outlined Add an outline around the table? Defaults to `FALSE`.
 #' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
 #' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
@@ -49,9 +50,10 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       showPagination = NULL, minRows = 1,
                       selectable = FALSE, selectionType = "multiple", selectionId = NULL,
-                      outlined = FALSE, bordered = TRUE, striped = FALSE,
-                      highlight = TRUE, class = NULL, style = NULL, inline = FALSE,
-                      width = "auto", height = "auto", elementId = NULL) {
+                      details = NULL, outlined = FALSE, bordered = TRUE,
+                      striped = FALSE, highlight = TRUE, class = NULL, style = NULL,
+                      inline = FALSE, width = "auto", height = "auto",
+                      elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
@@ -144,6 +146,15 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(selectionId) && !is.character(selectionId)) {
     stop("`selectionId` must be a character")
   }
+  if (!is.null(details)) {
+    if (!is.rowDetails(details)) {
+      stop("`details` must be a row details definition")
+    }
+    if (is.function(details$render)) {
+      content <- lapply(seq_len(nrow(data)), details$render)
+      details$render <- lapply(content, asReactTag)
+    }
+  }
   if (!is.logical(outlined)) {
     stop("`outlined` must be TRUE or FALSE")
   }
@@ -193,42 +204,80 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
 
-  component <- reactR::reactMarkup(
-    reactR::component("Reactable", list(
-      data = data,
-      columns = cols,
-      columnGroups = columnGroups,
-      pivotBy = as.list(groupBy),
-      sortable = sortable,
-      resizable = resizable,
-      filterable = filterable,
-      defaultSortDesc = isDescOrder(defaultSortOrder),
-      defaultSorted = columnSortDefs(defaultSorted),
-      defaultPageSize = defaultPageSize,
-      pageSizeOptions = pageSizeOptions,
-      showPagination = showPagination,
-      minRows = minRows,
-      selectable = selectable,
-      selectionType = selectionType,
-      selectionId = selectionId,
-      outlined = outlined,
-      bordered = bordered,
-      striped = striped,
-      highlight = highlight,
-      className = class,
-      style = style,
-      inline = if (inline) inline
-    ))
-  )
+  component <- reactR::component("Reactable", list(
+    data = data,
+    columns = cols,
+    columnGroups = columnGroups,
+    pivotBy = as.list(groupBy),
+    sortable = sortable,
+    resizable = resizable,
+    filterable = filterable,
+    defaultSortDesc = isDescOrder(defaultSortOrder),
+    defaultSorted = columnSortDefs(defaultSorted),
+    defaultPageSize = defaultPageSize,
+    pageSizeOptions = pageSizeOptions,
+    showPagination = showPagination,
+    minRows = minRows,
+    selectable = selectable,
+    selectionType = selectionType,
+    selectionId = selectionId,
+    details = details,
+    outlined = outlined,
+    bordered = bordered,
+    striped = striped,
+    highlight = highlight,
+    className = class,
+    style = style,
+    inline = if (inline) inline
+  ))
 
   htmlwidgets::createWidget(
     name = "reactable",
-    component,
+    reactR::reactMarkup(component),
     width = width,
     height = height,
     package = "reactable",
     elementId = elementId
   )
+}
+
+#' Row details definitions
+#'
+#' @param render Content renderer. A function that takes a row index argument
+#'   or a `JS()` function that takes a row info object as an argument.
+#' @param html Render content as HTML? HTML strings are escaped by default.
+#' @param name Expander column name.
+#' @param width Expander column width in pixels.
+#' @export
+rowDetails <- function(render, html = FALSE, name = NULL, width = NULL) {
+  if (!is.function(render) && !is.JS(render) && !is.list(render)) {
+    stop("`render` must be a function or JS function")
+  }
+  if (is.function(render) && length(formals(render)) != 1) {
+    stop("`render` functions should take a single argument for the row index")
+  }
+  if (!is.logical(html)) {
+    stop("`html` must be TRUE or FALSE")
+  }
+  if (!is.null(name) && !is.character(name)) {
+    stop("`name` must be a character")
+  }
+  if (!is.null(width) && !is.numeric(width)) {
+    stop("`width` must be numeric")
+  }
+  structure(
+    filterNulls(list(
+      render = render,
+      html = if (html) html,
+      name = name,
+      width = width
+    )),
+    class = "rowDetails"
+  )
+}
+
+is.rowDetails <- function(x) {
+  inherits(x, "rowDetails")
 }
 
 # Convert named list of column orders to { id, desc } definitions

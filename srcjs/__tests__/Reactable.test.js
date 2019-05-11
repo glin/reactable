@@ -1,7 +1,11 @@
 import React from 'react'
+import reactR from 'reactR'
 import Reactable from '../Reactable'
 import { render, fireEvent, cleanup } from 'react-testing-library'
 import 'jest-dom/extend-expect'
+
+jest.mock('reactR')
+reactR.hydrate = (components, tag) => tag
 
 afterEach(cleanup)
 
@@ -110,5 +114,82 @@ describe('row selection', () => {
     fireEvent.click(selectRow2Radio)
     expect(selectRow1Radio.checked).toEqual(false)
     expect(selectRow2Radio.checked).toEqual(false)
+  })
+})
+
+describe('row details', () => {
+  const props = {
+    data: { a: [1, 2] },
+    columns: [{ Header: 'a', accessor: 'a' }]
+  }
+
+  it('render function', () => {
+    const details = {
+      render: rowInfo => `row details: ${rowInfo.row.a}`,
+      name: 'more',
+      width: 50
+    }
+    const { container, getByText, queryByText } = render(
+      <Reactable {...props} details={details} />
+    )
+    expect(getByText('more')).toBeTruthy()
+    const expanders = container.querySelectorAll('.rt-expander')
+    expect(expanders).toHaveLength(2)
+
+    expect(queryByText('row details: 1')).toEqual(null)
+    fireEvent.click(expanders[0])
+    expect(getByText('row details: 1')).toBeTruthy()
+
+    expect(queryByText('row details: 2')).toEqual(null)
+    fireEvent.click(expanders[1])
+    expect(getByText('row details: 2')).toBeTruthy()
+  })
+
+  it('render function to html', () => {
+    const details = {
+      render: rowInfo => `<span class="row-details">row details: ${rowInfo.row.a}</span>`,
+      html: true
+    }
+    const { container } = render(<Reactable {...props} details={details} />)
+    const expanders = container.querySelectorAll('.rt-expander')
+    fireEvent.click(expanders[0])
+    fireEvent.click(expanders[1])
+    const content = container.querySelectorAll('span.row-details')
+    expect(content).toHaveLength(2)
+    expect(content[0].innerHTML).toEqual('row details: 1')
+    expect(content[1].innerHTML).toEqual('row details: 2')
+  })
+
+  it('render content html', () => {
+    const details = {
+      render: [
+        '<span class="row-details">row details: 1</span>',
+        '<span class="row-details">row details: 2</span>'
+      ],
+      html: true
+    }
+    const { container } = render(<Reactable {...props} details={details} />)
+    const expanders = container.querySelectorAll('.rt-expander')
+    fireEvent.click(expanders[0])
+    fireEvent.click(expanders[1])
+    const content = container.querySelectorAll('span.row-details')
+    expect(content).toHaveLength(2)
+    expect(content[0].innerHTML).toEqual('row details: 1')
+    expect(content[1].innerHTML).toEqual('row details: 2')
+  })
+
+  it('render content conditional expanders', () => {
+    const details = {
+      render: ['row details: 1', null]
+    }
+    const { container, getByText, queryByText } = render(
+      <Reactable {...props} details={details} />
+    )
+    const expanders = container.querySelectorAll('.rt-expander')
+    expect(expanders).toHaveLength(1)
+
+    expect(queryByText('row details: 1')).toEqual(null)
+    fireEvent.click(expanders[0])
+    expect(getByText('row details: 1')).toBeTruthy()
   })
 })

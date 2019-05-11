@@ -2,6 +2,7 @@ import React from 'react'
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
+import { hydrate } from 'reactR'
 
 import selectTableHOC from './selectTable'
 import fixedReactTablePropTypes from './propTypes'
@@ -62,6 +63,36 @@ ReactTable.propTypes = fixedReactTablePropTypes
 
 const SelectTable = selectTableHOC(ReactTable)
 
+class RowDetails extends React.Component {
+  componentDidMount() {
+    if (window.Shiny) {
+      Shiny.bindAll(this.el)
+    }
+  }
+
+  componentWillUnmount() {
+    if (window.Shiny) {
+      Shiny.unbindAll(this.el)
+    }
+  }
+
+  render() {
+    const { children, html } = this.props
+    let props = { ref: el => (this.el = el) }
+    if (html) {
+      props = { ...props, dangerouslySetInnerHTML: { __html: html } }
+    } else {
+      props = { ...props, children }
+    }
+    return <div {...props} />
+  }
+}
+
+RowDetails.propTypes = {
+  children: PropTypes.node,
+  html: PropTypes.string
+}
+
 class Reactable extends React.Component {
   constructor(props) {
     super(props)
@@ -120,14 +151,15 @@ class Reactable extends React.Component {
       sortable,
       resizable,
       filterable,
-      selectable,
-      selectionType,
       defaultSortDesc,
       defaultSorted,
       defaultPageSize,
       pageSizeOptions,
       showPagination,
       minRows,
+      selectable,
+      selectionType,
+      details,
       outlined,
       bordered,
       striped,
@@ -161,6 +193,76 @@ class Reactable extends React.Component {
       }
     }
 
+    let SubComponent, colProps, getTdProps
+    if (details) {
+      const { render, html, name, width } = details
+      if (typeof render === 'function') {
+        SubComponent = row => {
+          let content = render(row)
+          if (html) {
+            return <RowDetails html={content} />
+          }
+          return <RowDetails>{content}</RowDetails>
+        }
+      } else if (render instanceof Array) {
+        SubComponent = row => {
+          let content = render[row.index]
+          if (!content) {
+            return null
+          }
+          if (html) {
+            return <RowDetails html={content} />
+          }
+          return <RowDetails>{hydrate({ Reactable }, content)}</RowDetails>
+        }
+
+        colProps = {
+          Expander: props => {
+            if (!render[props.index]) {
+              return null
+            }
+            return ReactTableDefaults.ExpanderComponent(props)
+          },
+          getProps: (state, rowInfo) => {
+            if (!rowInfo) return {}
+            // Disable expander on rows without content
+            if (!render[rowInfo.index]) {
+              return { onClick: () => {}, className: 'rt-expand-disabled' }
+            }
+            return {}
+          }
+        }
+
+        getTdProps = (state, rowInfo, column) => {
+          if (!rowInfo) return {}
+          let props = {
+            onClick: (e, handleOriginal) => {
+              if (handleOriginal) {
+                handleOriginal()
+              }
+            }
+          }
+          // Disable expander on rows without content
+          if (!rowInfo.aggregated && column.pivoted && !render[rowInfo.index]) {
+            props = { ...props, className: 'rt-expand-disabled' }
+          }
+          return props
+        }
+      }
+
+      const expanderCol = {
+        expander: true,
+        Header: name,
+        width: width || 35,
+        headerClassName: 'rt-col-left',
+        ...colProps
+      }
+      columns = [expanderCol, ...columns]
+    } else {
+      // SubComponent must have a value (not undefined) to properly update on rerenders
+      SubComponent = null
+    }
+
     return (
       <Table
         data={data}
@@ -182,6 +284,8 @@ class Reactable extends React.Component {
         style={style}
         getTheadThProps={getTheadThProps}
         getTheadGroupThProps={getTheadGroupThProps}
+        getTdProps={getTdProps}
+        SubComponent={SubComponent}
         {...selectProps}
       />
     )
@@ -196,15 +300,21 @@ Reactable.propTypes = {
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
-  selectable: PropTypes.bool,
-  selectionType: PropTypes.oneOf(['multiple', 'single']),
-  selectionId: PropTypes.string,
   defaultSortDesc: PropTypes.bool,
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   showPagination: PropTypes.bool,
   minRows: PropTypes.number,
+  selectable: PropTypes.bool,
+  selectionType: PropTypes.oneOf(['multiple', 'single']),
+  selectionId: PropTypes.string,
+  details: PropTypes.shape({
+    render: PropTypes.oneOfType([PropTypes.func, PropTypes.array]),
+    html: PropTypes.bool,
+    name: PropTypes.string,
+    width: PropTypes.number
+  }),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,
   striped: PropTypes.bool,

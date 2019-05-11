@@ -31,6 +31,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, selectable = "true"))
   expect_error(reactable(df, selectionType = "none"))
   expect_error(reactable(df, selectionId = 123))
+  expect_error(reactable(df, details = list()))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
   expect_error(reactable(df, striped = "true"))
@@ -79,6 +80,7 @@ test_that("reactable", {
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
                    minRows = 5,
                    selectable = TRUE, selectionType = "single", selectionId = "sel",
+                   details = rowDetails(function(i) i),
                    outlined = TRUE, bordered = FALSE, striped = TRUE,
                    highlight = FALSE, class = "tbl", style = list(color = "red"),
                    inline = TRUE, groupBy = "x", width = "400px", height = "100%",
@@ -106,6 +108,7 @@ test_that("reactable", {
     selectable = TRUE,
     selectionType = "single",
     selectionId = "sel",
+    details = structure(list(render = list(1)), class = "rowDetails"),
     outlined = TRUE,
     bordered = FALSE,
     striped = TRUE,
@@ -190,6 +193,35 @@ test_that("showPagination defaults", {
                    pageSizeOptions = c(10, 20, 9))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$showPagination, TRUE)
+})
+
+test_that("rowDetails", {
+  # Default args
+  details <- rowDetails(JS("row => row.value"))
+  expected <- structure(list(render = JS("row => row.value")), class = "rowDetails")
+  expect_equal(details, expected)
+
+  # rowDetails options
+  details <- rowDetails(function(i) i, html = TRUE, name = "more", width = 50)
+  expected <- structure(list(render = function(i) i, html = TRUE, name = "more", width = 50),
+                        class = "rowDetails")
+  expect_equal(details, expected)
+
+  details <- rowDetails(list(1, 2, 3), html = FALSE)
+  expected <- structure(list(render = list(1, 2, 3)), class = "rowDetails")
+  expect_equal(details, expected)
+
+  # Invalid args
+  expect_error(rowDetails("content"))
+  expect_error(rowDetails(function() {}))
+  expect_error(rowDetails(function(i) {}, html = 0))
+  expect_error(rowDetails(function(i) {}, name = 0))
+  expect_error(rowDetails(function(i) {}, width = ""))
+})
+
+test_that("is.rowDetails", {
+  expect_true(is.rowDetails(rowDetails(function(i) {})))
+  expect_false(is.rowDetails(list()))
 })
 
 test_that("columnSortDefs", {

@@ -149,3 +149,8 @@
 .ReactTable .rt-th[aria-sort=descending] .-sort-right:after {
   content: "\2193";
 }
+
+/* Conditional expanders */
+.ReactTable .rt-expandable.rt-expand-disabled {
+  cursor: unset;
+}
