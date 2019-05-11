@@ -15,13 +15,6 @@ devtools::install_github("glin/reactable")
 
 ## Examples
 
-### Filtering
-https://glin.github.io/reactable/inst/examples/filtering.html
-
-```r
-reactable(iris, filterable = TRUE)
-```
-
 ### Grouping and Aggregation
 https://glin.github.io/reactable/inst/examples/grouping-aggregation.html
 
@@ -32,6 +25,27 @@ reactable(iris, groupBy = "Species", columns = list(
   Petal.Length = colDef(aggregate = "sum"),
   Petal.Width = colDef(aggregate = "max")
 ))
+```
+
+### Row Details
+https://glin.github.io/reactable/inst/examples/row-details.html
+
+```r
+reactable(iris, details = rowDetails(
+  function(index) {
+    htmltools::div(
+      htmltools::h4(paste("Details for row:", index)),
+      reactable(iris[index, ], inline = TRUE)
+    )
+  }
+))
+```
+
+### Filtering
+https://glin.github.io/reactable/inst/examples/filtering.html
+
+```r
+reactable(iris, filterable = TRUE)
 ```
 
 ### Sorting
@@ -146,6 +160,7 @@ reactable(
   selectable = FALSE,         # Enable row selection?
   selectionType = "multiple", # Row selection type. Either "multiple" or "single" 
   selectionId = NULL,         # Shiny input ID for the row selection
+  details = NULL,             # Additional content to display when expanding a row. See row details below
   outlined = FALSE,           # Add an outline around the table?
   bordered = TRUE,            # Add horizontal borders between table rows?
   striped = FALSE,            # Zebra-stripe rows?
@@ -284,6 +299,50 @@ colDef(
 
 See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
 on render function arguments.
+
+### Row Details
+```r
+rowDetails(
+  render,        # Content render function, see below for details
+  html = FALSE,  # Render content as HTML? HTML strings are escaped by default
+  name = NULL,   # Expander column name
+  width = NULL   # Expander column width in pixels
+)
+```
+
+The render function can be an R function:
+```r
+rowDetails(
+  function(index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag or subtable), or NULL to hide details for the row
+    htmltools::div(
+      paste("Details for row:", index),
+      reactable(data[index, ])
+    )
+  }
+)
+```
+
+Or a `JS()` function:
+```r
+rowDetails(
+  JS("
+    function(rowInfo) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + JSON.stringify(rowInfo) + '</div>'
+    }
+  "),
+  html = TRUE
+)
+```
 
 ## License
 MIT
