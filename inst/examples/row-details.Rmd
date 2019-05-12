@@ -52,7 +52,9 @@ reactable(by_species, details = rowDetails(
     species <- by_species[index, "Species"]
     htmltools::div(
       htmltools::h4(paste("Species:", species)),
-      reactable(iris[iris$Species == species, ])
+      reactable(iris[iris$Species == species, ], details = rowDetails(
+        JS("function(rowInfo) { return 'Species: ' + rowInfo.row.Species }")
+      ))
     )
   }
 ))
