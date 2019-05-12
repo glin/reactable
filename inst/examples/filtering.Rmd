@@ -12,5 +12,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(reactable)
 
-reactable(iris, filterable = TRUE, striped = TRUE)
+reactable(iris, filterable = TRUE)
+```
+
+```{r}
+data <- data.frame(
+  city = c("Hà N\u1ed9i", "Zürich", "Saint-Étienne", "São Gonçalo"),
+  country = c("Vietnam", "Switzerland", "France", "Brazil"),
+  area = c(3328.9, 87.88, 79.97, 249.142),
+  capital = c(TRUE, FALSE, FALSE, FALSE),
+  stringsAsFactors = FALSE
+)
+
+reactable(data, filterable = TRUE)
 ```
