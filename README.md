@@ -117,6 +117,9 @@ reactable(iris, columns = list(
 ))
 ```
 
+### 100k Rows
+https://glin.github.io/reactable/inst/examples/100k-rows.html
+
 ### Shiny
 https://glin.shinyapps.io/reactable/
 
