@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { aggregators, round, normalizeNumber } from './aggregators'
-import { classNames } from './utils'
+import { classNames, getStrIncludesLocale, strIncludes } from './utils'
 
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
@@ -108,6 +108,18 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
           )
         }
       }
+    }
+
+    // Default column filters
+    //  - string columns: locale-sensitive, case-insensitive substring
+    //  - numeric columns: string starts with (the default)
+    //  - other columns: case-insensitive substring
+    if (col.type === 'character' || col.type === 'factor') {
+      col.filterAll = true
+      col.filterMethod = filterRowsLocaleSubstring
+    } else if (col.type !== 'numeric') {
+      col.filterAll = true
+      col.filterMethod = filterRowsSubstring
     }
 
     return col
@@ -246,4 +258,33 @@ export function formatValue(value, options) {
     value = value + String(suffix)
   }
   return value
+}
+
+function filterRowsSubstring(filter, rows) {
+  const id = filter.pivotId || filter.id
+  return rows.filter(row => {
+    if (row[id] === undefined) {
+      return true
+    }
+    const value = String(row[id])
+    return strIncludes(value, filter.value)
+  })
+}
+
+function filterRowsLocaleSubstring(filter, rows) {
+  const id = filter.pivotId || filter.id
+  const strIncludesLocale = getStrIncludesLocale()
+  const noLocale = new RegExp(/^[\w-.\s,]*$/)
+  return rows.filter(row => {
+    if (row[id] === undefined) {
+      return true
+    }
+    const value = String(row[id])
+    // Ignore alphanumeric strings that don't need the (significantly) slower
+    // locale-sensitive string comparison.
+    if (noLocale.test(value)) {
+      return strIncludes(value, filter.value)
+    }
+    return strIncludesLocale(value, filter.value)
+  })
 }

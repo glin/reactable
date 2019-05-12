@@ -43,6 +43,131 @@ describe('sorting', () => {
   })
 })
 
+describe('filtering', () => {
+  it('enables filtering', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let filters = container.querySelectorAll('.rt-thead.-filters input')
+    expect(filters).toHaveLength(0)
+    rerender(<Reactable {...props} filterable />)
+    filters = container.querySelectorAll('.rt-thead.-filters input')
+    expect(filters).toHaveLength(2)
+  })
+
+  it('filters numeric columns', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ a: [111, 115, 32.11] }}
+        columns={[{ Header: 'a', accessor: 'a', type: 'numeric' }]}
+        filterable
+        minRows={1}
+      />
+    )
+    const filter = container.querySelector('.rt-thead.-filters input')
+
+    fireEvent.change(filter, { target: { value: '11' } })
+    let rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(2)
+    expect(getByText('111')).toBeTruthy()
+    expect(getByText('115')).toBeTruthy()
+
+    // No matches
+    fireEvent.change(filter, { target: { value: '5' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear filter
+    fireEvent.change(filter, { target: { value: '' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(3)
+  })
+
+  it('filters string columns', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
+        columns={[
+          { Header: 'a', accessor: 'a', type: 'factor' },
+          { Header: 'b', accessor: 'b', type: 'character' }
+        ]}
+        filterable
+        minRows={1}
+      />
+    )
+    const filters = container.querySelectorAll('.rt-thead.-filters input')
+
+    // Case-insensitive
+    fireEvent.change(filters[0], { target: { value: 'Bb' } })
+    let rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    // Substring matches
+    fireEvent.change(filters[0], { target: { value: 'c' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(2)
+    expect(getByText('aaac')).toBeTruthy()
+    expect(getByText('CCC')).toBeTruthy()
+
+    // No matches
+    fireEvent.change(filters[0], { target: { value: 'cccc' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear filter
+    fireEvent.change(filters[0], { target: { value: '' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(3)
+
+    // Locale-sensitive
+    fireEvent.change(filters[1], { target: { value: 'a' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(2)
+    expect(getByText('ááád')).toBeTruthy()
+    expect(getByText('bAb')).toBeTruthy()
+  })
+
+  it('filters other columns', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
+        columns={[{ Header: 'a', accessor: 'a' }]}
+        filterable
+        minRows={1}
+      />
+    )
+    const filter = container.querySelector('.rt-thead.-filters input')
+
+    // Case-insensitive
+    fireEvent.change(filter, { target: { value: 'acc' } })
+    let rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('acCC')).toBeTruthy()
+
+    // Substring matches
+    fireEvent.change(filter, { target: { value: '03-05' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('2018-03-05')).toBeTruthy()
+
+    // Not locale-sensitive
+    fireEvent.change(filter, { target: { value: 'aaa' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(1)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear filter
+    fireEvent.change(filter, { target: { value: '' } })
+    rows = container.querySelectorAll('.rt-tr-group')
+    expect(rows).toHaveLength(4)
+  })
+})
+
 test('table styles', () => {
   const props = { data: { a: [1, 2] }, columns: [{ Header: 'a', accessor: 'a' }] }
   const { container, rerender } = render(<Reactable {...props} />)
