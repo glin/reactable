@@ -35,11 +35,11 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    headerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
-    stop("`name` must be a character")
+    stop("`name` must be a character string")
   }
   if (!is.null(aggregate)) {
     if (!is.character(aggregate) && !is.JS(aggregate)) {
-      stop("`aggregate` must be a character or JS function")
+      stop("`aggregate` must be a character string or JS function")
     }
     aggregators <- c("mean", "sum", "max", "min", "count", "unique", "frequency")
     if (is.character(aggregate) && !aggregate %in% aggregators) {
@@ -111,13 +111,13 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     }
   }
   if (!is.null(class) && !is.character(class)) {
-    stop("`class` must be a character")
+    stop("`class` must be a character string")
   }
   if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
     stop("`style` must be a named list or character string")
   }
   if (!is.null(headerClass) && !is.character(headerClass)) {
-    stop("`headerClass` must be a character")
+    stop("`headerClass` must be a character string")
   }
   if (!is.null(headerStyle) && !isNamedList(headerStyle) && !is.character(headerStyle)) {
     stop("`headerStyle` must be a named list or character string")
