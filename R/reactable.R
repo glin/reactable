@@ -34,7 +34,7 @@ NULL
 #' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param class Additional CSS classes to apply to the table.
-#' @param style Named list of inline styles to apply to the table.
+#' @param style Inline styles to apply to the table. A named list or character string.
 #' @param inline Display the table as an inline element, which shrinks to fit
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
@@ -167,8 +167,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
-  if (!is.null(style) && !isNamedList(style)) {
-    stop("`style` must be a named list")
+  if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
+    stop("`style` must be a named list or character string")
   }
   if (!is.null(inline) && !is.logical(inline)) {
     stop("`inline` must be TRUE or FALSE")
@@ -223,7 +223,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     striped = striped,
     highlight = highlight,
     className = class,
-    style = style,
+    style = asReactStyle(style),
     inline = if (inline) inline
   ))
 

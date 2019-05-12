@@ -16,7 +16,8 @@ colGroup(name, columns, align = NULL, headerClass = NULL,
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
 
-\item{headerStyle}{Named list of inline styles to apply to the header.}
+\item{headerStyle}{Inline styles to apply to the header. A named list or
+character string.}
 }
 \description{
 Column group definitions

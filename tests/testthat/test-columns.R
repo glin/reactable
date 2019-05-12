@@ -78,6 +78,13 @@ test_that("colDef format/render", {
   expect_equal(col$render, list(cell = render))
 })
 
+test_that("colDef style", {
+  col <- colDef(style = " border-bottom: 1px solid; top: 50px",
+                headerStyle = " border: 1px solid; top: 25px;;df")
+  expect_equal(col$style, list("border-bottom" = "1px solid", top = "50px"))
+  expect_equal(col$headerStyle, list("border" = "1px solid", top = "25px"))
+})
+
 test_that("is.colDef", {
   expect_true(is.colDef(colDef()))
   expect_false(is.colDef(list()))
@@ -110,6 +117,12 @@ test_that("colGroup", {
     headerStyle = list(color = "red"),
     columns = c("colA", "colB")
   ), class = "colGroup"))
+
+  # Style
+  test_that("colDef style", {
+    group <- colGroup("grp", "col", headerStyle = " border: 1px solid; top: 25px;;df")
+    expect_equal(group$headerStyle, list("border" = "1px solid", top = "25px"))
+  })
 
   # Invalid args
   expect_error(colGroup(1, "col"))

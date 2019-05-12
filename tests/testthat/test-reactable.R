@@ -36,7 +36,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, class = c(1, 5)))
-  expect_error(reactable(df, style = "color: red;"))
+  expect_error(reactable(df, style = 555))
   expect_error(reactable(df, inline = "yes"))
 })
 
@@ -131,6 +131,11 @@ test_that("reactable", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$sortable, FALSE)
   expect_equal(attribs$columns[[2]]$Header, "Y")
+
+  # Style
+  tbl <- reactable(data.frame(), style = " border-bottom: 1px solid; top: 50px")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$style, list("border-bottom" = "1px solid", top = "50px"))
 })
 
 test_that("defaultSorted", {

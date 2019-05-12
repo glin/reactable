@@ -165,7 +165,7 @@ reactable(
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
   class = NULL,               # Additional CSS classes to apply to the table
-  style = NULL,               # Named list of inline styles to apply to the table
+  style = NULL,               # Inline styles to apply to the table. A named list or character string
   inline = FALSE              # Display the table as an inline element, which shrinks to fit its contents?
 )
 ```
@@ -188,9 +188,9 @@ colDef(
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
   align = NULL,             # Column alignment. One of "left", "right", "center"
   class = NULL,             # Additional CSS classes to apply to cells
-  style = NULL,             # Named list of inline styles to apply to cells
+  style = NULL,             # Inline styles to apply to cells. A named list or character string
   headerClass = NULL,       # Additional CSS classes to apply to the header
-  headerStyle = NULL        # Named list of inline styles to apply to the header
+  headerStyle = NULL        # Inline styles to apply to the header. A named list or character string
 )
 ```
 
@@ -201,7 +201,7 @@ colGroup(
   columns,             # Names of columns in the group
   align = NULL,        # Column group header alignment. One of "left", "right", "center"
   headerClass = NULL,  # Additional CSS classes to apply to the header
-  headerStyle = NULL   # Named list of inline styles to apply to the header
+  headerStyle = NULL   # Inline styles to apply to the header. A named list or character string
 )
 ```
 

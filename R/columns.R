@@ -22,9 +22,10 @@
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param class Additional CSS classes to apply to cells.
-#' @param style Named list of inline styles to apply to cells.
+#' @param style Inline styles to apply to cells. A named list or character string.
 #' @param headerClass Additional CSS classes to apply to the header.
-#' @param headerStyle Named list of inline styles to apply to the header.
+#' @param headerStyle Inline styles to apply to the header. A named list or
+#'   character string.
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
@@ -112,14 +113,14 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
-  if (!is.null(style) && !isNamedList(style)) {
-    stop("`style` must be a named list")
+  if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
+    stop("`style` must be a named list or character string")
   }
   if (!is.null(headerClass) && !is.character(headerClass)) {
     stop("`headerClass` must be a character")
   }
-  if (!is.null(headerStyle) && !isNamedList(headerStyle)) {
-    stop("`headerStyle` must be a named list")
+  if (!is.null(headerStyle) && !isNamedList(headerStyle) && !is.character(headerStyle)) {
+    stop("`headerStyle` must be a named list or character string")
   }
 
   structure(
@@ -139,9 +140,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       width = width,
       align = align,
       className = class,
-      style = style,
+      style = asReactStyle(style),
       headerClassName = headerClass,
-      headerStyle = headerStyle
+      headerStyle = asReactStyle(headerStyle)
     ),
     class = "colDef"
   )
@@ -165,7 +166,8 @@ isDescOrder <- function(x) {
 #' @param columns Character vector of column names in the group.
 #' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param headerClass Additional CSS classes to apply to the header.
-#' @param headerStyle Named list of inline styles to apply to the header.
+#' @param headerStyle Inline styles to apply to the header. A named list or
+#'   character string.
 #' @export
 colGroup <- function(name, columns, align = NULL, headerClass = NULL, headerStyle = NULL) {
   if (!is.character(columns)) {

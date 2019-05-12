@@ -99,8 +99,23 @@ test_that("asReactAttributes", {
   expected <- list(style = list(border = "none", color = "red", "text-align" = "left"))
   expect_equal(asReactAttributes(attribs), expected)
 
+  attribs <- list(style = list(border = "none"))
+  expected <- list(style = list(border = "none"))
+  expect_equal(asReactAttributes(attribs), expected)
+
   # Non-converted attributes
   expect_equal(asReactAttributes(list("data-attr" = "t")), list("data-attr" = "t"))
+})
+
+test_that("asReactStyle", {
+  expect_equal(asReactStyle("color: red"), list(color = "red"))
+  expect_equal(asReactStyle("color: red;"), list(color = "red"))
+  expect_equal(asReactStyle("  color: red; margin-bottom:55px ;"),
+               list(color = "red", "margin-bottom" = "55px"))
+  expect_equal(asReactStyle("  color: red ;; margin-bott"),
+               list(color = "red"))
+  expect_equal(asReactStyle("color"), list())
+  expect_equal(asReactStyle(list(height = 0)), list(height = 0))
 })
 
 test_that("trimws", {

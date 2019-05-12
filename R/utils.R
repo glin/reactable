@@ -117,15 +117,28 @@ asReactAttributes <- function(attribs) {
 
   style <- attribs$style
   if (!is.null(style) && is.character(style)) {
-    props <- strsplit(unlist(strsplit(style, ";")), ":")
-    if (length(props) > 0) {
-      names <- trimws(vapply(props, "[[", 1, FUN.VALUE = character(1)))
-      values <- lapply(props, function(p) trimws(p[[2]]))
-      attribs$style <- setNames(values, names)
-    }
+    attribs$style <- asReactStyle(style)
   }
 
   attribs
+}
+
+asReactStyle <- function(style) {
+  if (!is.character(style)) {
+    return(style)
+  }
+  pairs <- strsplit(unlist(strsplit(style, ";")), ":")
+  if (length(pairs) > 0) {
+    pairs <- Reduce(function(props, pair) {
+      if (length(pair) == 2) {
+        name <- trimws(pair[[1]])
+        value <- trimws(pair[[2]])
+        props[[name]] <- value
+      }
+      props
+    }, pairs, list())
+  }
+  pairs
 }
 
 # Backport for R 3.1

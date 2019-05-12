@@ -65,7 +65,7 @@ represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 
 \item{class}{Additional CSS classes to apply to the table.}
 
-\item{style}{Named list of inline styles to apply to the table.}
+\item{style}{Inline styles to apply to the table. A named list or character string.}
 
 \item{inline}{Display the table as an inline element, which shrinks to fit
 its contents? By default, the table is displayed as a block element, which

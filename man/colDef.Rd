@@ -49,11 +49,12 @@ aggregated cells (\code{"aggregated"}) separately.}
 
 \item{class}{Additional CSS classes to apply to cells.}
 
-\item{style}{Named list of inline styles to apply to cells.}
+\item{style}{Inline styles to apply to cells. A named list or character string.}
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
 
-\item{headerStyle}{Named list of inline styles to apply to the header.}
+\item{headerStyle}{Inline styles to apply to the header. A named list or
+character string.}
 }
 \description{
 Column definitions
