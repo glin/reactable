@@ -12,11 +12,33 @@ afterEach(cleanup)
 test('basic table rendering', () => {
   const { getAllByText } = render(
     <Reactable
-      data={{ a: [123, 246, 369], b: ['aa', 'bb', 'cc'] }}
-      columns={[{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]}
+      data={{
+        a: [123, 246, -369],
+        b: ['aa', 'bb', 'cc'],
+        c: [true, false, null],
+        d: ['2019-03-04', '1955-12-12', '2000-01-30']
+      }}
+      columns={[
+        { Header: 'num', accessor: 'a', type: 'numeric' },
+        { Header: 'str', accessor: 'b', type: 'character' },
+        { Header: 'bool', accessor: 'c', type: 'logical' },
+        { Header: 'date', accessor: 'd', type: 'date' }
+      ]}
     />
   )
-  const cellContent = ['123', '246', '369', 'aa', 'bb', 'cc']
+  const cellContent = [
+    '123',
+    '246',
+    '-369',
+    'aa',
+    'bb',
+    'cc',
+    'true',
+    'false',
+    '2019-03-04',
+    '1955-12-12',
+    '2000-01-30'
+  ]
   cellContent.forEach(content => {
     expect(getAllByText(content)).toHaveLength(1)
   })

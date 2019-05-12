@@ -44,7 +44,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       if (col.html) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
       } else {
-        return value
+        return value != null ? String(value) : ''
       }
     }
 
