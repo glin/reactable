@@ -23,7 +23,6 @@ reactable(
   columnGroups = list(
     colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
     colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
-  ),
-  striped = TRUE
+  )
 )
 ```
