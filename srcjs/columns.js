@@ -89,7 +89,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
 
     // Add sort icon to column header
-    if (sortable || col.sortable) {
+    if (col.sortable || sortable) {
       const header = col.Header
       col.Header = function renderedHeader() {
         if (col.align === 'right') {
