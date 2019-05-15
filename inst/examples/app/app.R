@@ -38,6 +38,7 @@ ui <- fluidPage(
               Sortable = "sortable",
               Resizable = "resizable",
               "Default sorted" = "defaultSorted",
+              "Show sortable" = "showSortable",
               Pagination = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
@@ -126,6 +127,7 @@ server <- function(input, output, session) {
       bordered = "bordered" %in% input$options,
       striped = "striped" %in% input$options,
       highlight = "highlight" %in% input$options,
+      showSortable = "showSortable" %in% input$options,
       inline = "inline" %in% input$options
     )
   })
@@ -200,6 +202,7 @@ server <- function(input, output, session) {
       bordered = .(opts$bordered),
       striped = .(opts$striped),
       highlight = .(opts$highlight),
+      showSortable = .(opts$showSortable),
       inline = .(opts$inline),
       groupBy = .(opts$groupBy),
       defaultSorted = .(opts$defaultSorted),

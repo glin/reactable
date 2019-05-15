@@ -33,3 +33,12 @@ reactable(data.frame(
   y = c(1, 2, NA, -Inf, 0, Inf, -5)
 ))
 ```
+
+### Show sortable columns
+
+```{r}
+reactable(iris, sortable = FALSE, showSortable = TRUE, columns = list(
+  Petal.Width = colDef(sortable = TRUE),
+  Petal.Length = colDef(sortable = TRUE)
+))
+```
