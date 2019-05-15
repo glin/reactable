@@ -7,14 +7,15 @@ import { hydrate } from 'reactR'
 import selectTableHOC from './selectTable'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
-import { classNames } from './utils'
+import { classNames, getFirstDefined } from './utils'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
   // Add aria-sort to column headers
-  if (column.sortable || state.sortable) {
+  const isSortable = getFirstDefined(column.sortable, state.sortable)
+  if (isSortable) {
     const sort = state.sorted.find(d => d.id === column.id)
     const order = sort ? (sort.desc ? 'descending' : 'ascending') : 'none'
     return { 'aria-sort': order }
@@ -320,6 +321,10 @@ Reactable.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   inline: PropTypes.bool
+}
+
+Reactable.defaultProps = {
+  sortable: true
 }
 
 export default Reactable

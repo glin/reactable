@@ -1,10 +1,17 @@
-import { classNames, getStrIncludesLocale, strIncludes } from '../utils'
+import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from '../utils'
 
 test('classNames', () => {
   expect(classNames('')).toEqual('')
   expect(classNames('a', 'b', 'c')).toEqual('a b c')
   expect(classNames('a', '', 'b')).toEqual('a b')
   expect(classNames(null, 'a', undefined, 'b', '', 'c', 'd')).toEqual('a b c d')
+})
+
+test('getFirstDefined', () => {
+  expect(getFirstDefined()).toEqual(undefined)
+  expect(getFirstDefined(1, 2)).toEqual(1)
+  expect(getFirstDefined(undefined, 2, 3)).toEqual(2)
+  expect(getFirstDefined(null, undefined, false, true)).toEqual(false)
 })
 
 test('strIncludes', () => {

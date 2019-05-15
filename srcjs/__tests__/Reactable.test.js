@@ -48,20 +48,42 @@ describe('sorting', () => {
   it('sets aria-sort attributes', () => {
     const { container } = render(
       <Reactable
-        data={{ a: [1, 2, 3], b: ['aa', 'bb', 'cc'] }}
-        columns={[{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]}
+        data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
+        columns={[
+          { Header: 'colA', accessor: 'a' },
+          { Header: 'colB', accessor: 'b' },
+          { Header: 'colC', accessor: 'c', sortable: false }
+        ]}
       />
     )
     const headers = container.querySelectorAll('[aria-sort]')
     expect(headers.length).toEqual(2)
     expect(headers[0]).toHaveAttribute('aria-sort', 'none')
     expect(headers[1]).toHaveAttribute('aria-sort', 'none')
+    expect(headers[0]).toHaveTextContent('colA')
+    expect(headers[1]).toHaveTextContent('colB')
 
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'ascending')
 
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'descending')
+  })
+
+  it('shows sort indicators', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
+        columns={[
+          { Header: 'colA', accessor: 'a', type: 'numeric' },
+          { Header: 'colB', accessor: 'b' }
+        ]}
+      />
+    )
+    const numericSortIndicator = container.querySelectorAll('.rt-th .-sort-left')
+    expect(numericSortIndicator).toHaveLength(1)
+    const defaultSortIndicator = container.querySelectorAll('.rt-th .-sort-right')
+    expect(defaultSortIndicator).toHaveLength(1)
   })
 })
 

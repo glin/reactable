@@ -2,6 +2,10 @@ export function classNames(...classes) {
   return classes.filter(cls => cls).join(' ')
 }
 
+export function getFirstDefined(...args) {
+  return args.find(x => x != null)
+}
+
 // Case-insensitive string includes
 export function strIncludes(string, substring) {
   return string.toUpperCase().indexOf(substring.toUpperCase()) >= 0

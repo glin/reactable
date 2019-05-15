@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { aggregators, round, normalizeNumber } from './aggregators'
-import { classNames, getStrIncludesLocale, strIncludes } from './utils'
+import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
 
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
@@ -89,7 +89,8 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
 
     // Add sort icon to column header
-    if (col.sortable || sortable) {
+    const isSortable = getFirstDefined(col.sortable, sortable)
+    if (isSortable) {
       const header = col.Header
       col.Header = function renderedHeader() {
         if (col.align === 'right') {
