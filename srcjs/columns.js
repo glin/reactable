@@ -18,7 +18,7 @@ export function columnsToRows(columns) {
 }
 
 export function buildColumnDefs(columns, groups, tableOptions = {}) {
-  const { sortable } = tableOptions
+  const { sortable, showSortable } = tableOptions
 
   columns = columns.map(column => {
     let col = { ...column }
@@ -93,10 +93,11 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     if (isSortable) {
       const header = col.Header
       col.Header = function renderedHeader() {
+        const sortClass = showSortable ? '-sort' : ''
         if (col.align === 'right') {
           return (
             <React.Fragment>
-              <span className="-sort-left" />
+              <span className={classNames(sortClass, '-sort-left')} />
               {header}
             </React.Fragment>
           )
@@ -104,7 +105,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
           return (
             <React.Fragment>
               {header}
-              <span className="-sort-right" />
+              <span className={classNames(sortClass, '-sort-right')} />
             </React.Fragment>
           )
         }

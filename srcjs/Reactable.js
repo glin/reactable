@@ -164,13 +164,14 @@ class Reactable extends React.Component {
       bordered,
       striped,
       highlight,
+      showSortable,
       className,
       style,
       inline
     } = this.props
 
     data = columnsToRows(data)
-    columns = buildColumnDefs(columns, columnGroups, { sortable })
+    columns = buildColumnDefs(columns, columnGroups, { sortable, showSortable })
 
     className = classNames(
       className,
@@ -318,6 +319,7 @@ Reactable.propTypes = {
   bordered: PropTypes.bool,
   striped: PropTypes.bool,
   highlight: PropTypes.bool,
+  showSortable: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
   inline: PropTypes.bool

@@ -217,6 +217,28 @@ describe('buildColumnDefs', () => {
         <span className="-sort-right" />
       </React.Fragment>
     )
+
+    // showSortable
+    cols = buildColumnDefs(
+      [{ Header: 'x', accessor: 'x', align: 'right' }, { Header: 'y', accessor: 'y' }],
+      null,
+      {
+        sortable: true,
+        showSortable: true
+      }
+    )
+    expect(cols[0].Header()).toEqual(
+      <React.Fragment>
+        <span className="-sort -sort-left" />
+        {'x'}
+      </React.Fragment>
+    )
+    expect(cols[1].Header()).toEqual(
+      <React.Fragment>
+        {'y'}
+        <span className="-sort -sort-right" />
+      </React.Fragment>
+    )
   })
 
   test('column groups', () => {

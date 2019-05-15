@@ -167,6 +167,7 @@ reactable(
   bordered = TRUE,            # Add horizontal borders between table rows?
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
+  showSortable = FALSE,       # Show an indicator on sortable columns?
   class = NULL,               # Additional CSS classes to apply to the table
   style = NULL,               # Inline styles to apply to the table. A named list or character string
   inline = FALSE              # Display the table as an inline element, which shrinks to fit its contents?

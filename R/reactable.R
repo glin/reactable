@@ -33,6 +33,7 @@ NULL
 #' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
 #' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
+#' @param showSortable Show an indicator on sortable columns? Defaults to `FALSE`.
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
 #' @param inline Display the table as an inline element, which shrinks to fit
@@ -51,7 +52,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       showPagination = NULL, minRows = 1,
                       selection = NULL, selectionId = NULL,
                       details = NULL, outlined = FALSE, bordered = TRUE,
-                      striped = FALSE, highlight = TRUE, class = NULL, style = NULL,
+                      striped = FALSE, highlight = TRUE, showSortable = FALSE,
+                      class = NULL, style = NULL,
                       inline = FALSE, width = "auto", height = "auto",
                       elementId = NULL) {
 
@@ -164,6 +166,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(highlight)) {
     stop("`highlight` must be TRUE or FALSE")
   }
+  if (!is.logical(showSortable)) {
+    stop("`showSortable` must be TRUE or FALSE")
+  }
   if (!is.null(class) && !is.character(class)) {
     stop("`class` must be a character")
   }
@@ -222,6 +227,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     bordered = bordered,
     striped = striped,
     highlight = highlight,
+    showSortable = if (showSortable) showSortable,
     className = class,
     style = asReactStyle(style),
     inline = if (inline) inline
