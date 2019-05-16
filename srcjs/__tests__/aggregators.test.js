@@ -65,6 +65,10 @@ test('round', () => {
   expect(round(Infinity, 3)).toEqual(Infinity)
   expect(round('NA', 3)).toEqual('NA')
   expect(round(null, 3)).toEqual(null)
+  expect(round(-1.123)).toEqual(-1.123)
+  expect(round(-1.15, 1)).toEqual(-1.2)
+  expect(round(-1.1, 0)).toEqual(-1)
+  expect(round(-1.5, 0)).toEqual(-2)
 })
 
 test('count', () => {

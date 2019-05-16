@@ -62,7 +62,8 @@ export function round(n, digits = 3) {
   }
   digits = digits > 0 ? digits : 0
   const c = Math.pow(10, digits)
-  return Math.round(n * c) / c
+  // Round away from zero rather than up (Math.round rounds -1.5 to -1)
+  return Math.sign(n) * Math.round(Math.abs(n) * c) / c
 }
 
 function toNumbers(arr) {
