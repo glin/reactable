@@ -64,7 +64,10 @@ test_that("isTagList", {
 
 test_that("asReactTag", {
   expect_equal(asReactTag("text"), "text")
+  expect_equal(asReactTag(NULL), NULL)
   expect_equal(asReactTag(list("text")), list("text"))
+  expect_equal(asReactTag(123), "123")
+  expect_equal(asReactTag(TRUE), "TRUE")
 
   # HTMLWidgets
   expect_true(is.tag(asReactTag(reactable(data.frame()))))
@@ -83,7 +86,7 @@ test_that("asReactTag", {
   expect_equal(asReactTag(nestedTag), expected)
 
   # Null elements
-  expect_equal(asReactTag(htmltools::div(1, NULL, 3)), htmltools::div(1, 3))
+  expect_equal(asReactTag(htmltools::div(1, NULL, 3)), htmltools::div("1", "3"))
 
   # Attributes
   expect_equal(asReactTag(htmltools::div(style = "color: red", class = "cls")),

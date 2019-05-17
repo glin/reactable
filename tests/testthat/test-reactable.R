@@ -105,7 +105,7 @@ test_that("reactable", {
     minRows = 5,
     selection = "single",
     selectionId = "sel",
-    details = structure(list(render = list(1)), class = "rowDetails"),
+    details = structure(list(render = list("1")), class = "rowDetails"),
     outlined = TRUE,
     bordered = FALSE,
     striped = TRUE,

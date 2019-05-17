@@ -71,15 +71,19 @@ asReactTag <- function(x) {
     return(asReactTag(x$x$tag))
   }
   if (!is.tag(x)) {
+    # Nodes should be strings to hydrate properly
+    if (is.numeric(x) || is.logical(x)) {
+      x <- as.character(x)
+    }
     return(x)
   }
   # Unnest tag lists for proper hydration
   if (is.list(x$children) && any(sapply(x$children, isTagList))) {
     x$children <- unlist(x$children, recursive = FALSE)
   }
-  x$children <- lapply(x$children, asReactTag)
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
+  x$children <- lapply(x$children, asReactTag)
   x$attribs <- asReactAttributes(x$attribs)
   x
 }
