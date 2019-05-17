@@ -59,6 +59,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
+  } else if (is.matrix(data)) {
+    data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
   if (!is.logical(rownames)) {
     stop("`rownames` must be TRUE or FALSE")

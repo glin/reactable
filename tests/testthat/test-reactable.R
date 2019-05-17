@@ -141,6 +141,20 @@ test_that("reactable", {
   expect_equal(attribs$style, list("border-bottom" = "1px solid", top = "50px"))
 })
 
+test_that("data can be a matrix", {
+  data <- matrix(c(1, 2, 3, 4), nrow = 2)
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"V1":[1,2],"V2":[3,4]}')
+  expect_length(attribs$columns, 2)
+
+  data <- matrix(c("a", "b", "c", "d"), nrow = 2, dimnames = list(NULL, c("x", "y")))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":["a","b"],"y":["c","d"]}')
+  expect_length(attribs$columns, 2)
+})
+
 test_that("defaultSorted", {
   # Column overrides
   tbl <- reactable(data.frame(x = 1, y = "2"),
