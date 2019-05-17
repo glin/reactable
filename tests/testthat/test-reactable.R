@@ -210,6 +210,10 @@ test_that("rowDetails", {
                         class = "rowDetails")
   expect_equal(details, expected)
 
+  details <- rowDetails(function() "x")
+  expected <- structure(list(render = function() "x"), class = "rowDetails")
+  expect_equal(details, expected)
+
   details <- rowDetails(list(1, 2, 3), html = FALSE)
   expected <- structure(list(render = list(1, 2, 3)), class = "rowDetails")
   expect_equal(details, expected)

@@ -150,7 +150,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       stop("`details` must be a row details definition")
     }
     if (is.function(details$render)) {
-      content <- lapply(seq_len(nrow(data)), details$render)
+      content <- lapply(seq_len(nrow(data)), function(index) {
+        callFunc(details$render, index)
+      })
       details$render <- lapply(content, asReactTag)
     }
   }

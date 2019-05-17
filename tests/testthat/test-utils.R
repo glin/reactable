@@ -127,3 +127,12 @@ test_that("trimws", {
   expect_equal(trimws("abd "), "abd")
   expect_equal(trimws("   xvz "), "xvz")
 })
+
+test_that("callFunc", {
+  expect_equal(callFunc(function(x) x, 5), 5)
+  expect_equal(callFunc(function(x) x, 5, "a", "b"), 5)
+  expect_equal(callFunc(function(x, y) x + y, 5, 1), 6)
+  expect_equal(callFunc(function(x, y) x + y, 5, 1), 6)
+  expect_equal(callFunc(function(x) x), NULL)
+  expect_equal(callFunc(function(x, y) y, "x"), NULL)
+})

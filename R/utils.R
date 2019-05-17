@@ -150,3 +150,11 @@ trimws <- function(x) {
   x <- sub("[ \t\r\n]+$", "", x, perl = TRUE)
   sub("^[ \t\r\n]+", "", x, perl = TRUE)
 }
+
+# Call function with a variable number of args.
+# Args default to NULL if not supplied.
+callFunc <- function(func, ...) {
+  args <- list(...)
+  numArgs <- length(formals(func))
+  do.call(func, args[seq_len(numArgs)])
+}
