@@ -1,4 +1,5 @@
 import React from 'react'
+import reactR from 'reactR'
 
 import {
   columnsToRows,
@@ -8,6 +9,9 @@ import {
   formatValue
 } from '../columns'
 import { aggregators } from '../aggregators'
+
+jest.mock('reactR')
+reactR.hydrate = (components, tag) => tag
 
 test('columnsToRows', () => {
   const columns = { a: [1, 2, 3], b: ['x', 'y', 'z'] }
@@ -51,6 +55,13 @@ describe('buildColumnDefs', () => {
     let cols = buildColumnDefs([{ accessor: 'x', render: { cell: cell => cell.value } }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
+
+    cols = buildColumnDefs([
+      { accessor: 'x', render: { cell: ['X', 2, React.createElement('div', null, 'Z')] } }
+    ])
+    expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual('X')
+    expect(cols[0].Cell({ value: 'y', index: 1 })).toEqual('2')
+    expect(cols[0].Cell({ value: 'z', index: 2 })).toEqual(React.createElement('div', null, 'Z'))
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', render: { aggregated: cell => cell.value + '!!' } }])

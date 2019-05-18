@@ -194,6 +194,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }
+    if (is.function(column$render$cell)) {
+      content <- lapply(seq_len(nrow(data)), function(index) {
+        value <- data[index, key]
+        callFunc(column$render$cell, value, index)
+      })
+      column$render$cell <- lapply(content, asReactTag)
+    }
     column
   })
 
@@ -258,9 +265,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 rowDetails <- function(render, html = FALSE, name = NULL, width = NULL) {
   if (!is.function(render) && !is.JS(render) && !is.list(render)) {
     stop("`render` must be a function or JS function")
-  }
-  if (is.function(render) && length(formals(render)) != 1) {
-    stop("`render` functions should take a single argument for the row index")
   }
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")

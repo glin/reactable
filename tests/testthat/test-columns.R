@@ -62,20 +62,29 @@ test_that("colDef", {
 
 test_that("colDef format/render", {
   format <- colFormat()
-  render <- JS("row => row.value")
+  renderJS <- JS("row => row.value")
 
   # Default cell format/renderer
-  col <- colDef(format = format, render = render)
+  col <- colDef(format = format, render = renderJS)
   expect_equal(col$format, list(cell = format, aggregated = format))
-  expect_equal(col$render, list(cell = render, aggregated = render))
+  expect_equal(col$render, list(cell = renderJS, aggregated = renderJS))
 
   # Separate cell and aggregated format/renderer
-  col <- colDef(format = list(aggregated = format), render = list(aggregated = render))
+  col <- colDef(format = list(aggregated = format), render = list(aggregated = renderJS))
   expect_equal(col$format, list(aggregated = format))
-  expect_equal(col$render, list(aggregated = render))
-  col <- colDef(format = list(cell = format), render = list(cell = render))
+  expect_equal(col$render, list(aggregated = renderJS))
+  col <- colDef(format = list(cell = format), render = list(cell = renderJS))
   expect_equal(col$format, list(cell = format))
-  expect_equal(col$render, list(cell = render))
+  expect_equal(col$render, list(cell = renderJS))
+
+  # R renderer
+  renderR <- function(value, index) value
+  col <- colDef(render = renderR)
+  expect_equal(col$render, list(cell = renderR))
+  col <- colDef(render = list(cell = renderR))
+  expect_equal(col$render, list(cell = renderR))
+  col <- colDef(render = list(cell = renderR, aggregated = renderJS))
+  expect_equal(col$render, list(cell = renderR, aggregated = renderJS))
 })
 
 test_that("colDef style", {

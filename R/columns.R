@@ -78,19 +78,22 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     }
   }
   if (!is.null(render)) {
-    if (!is.JS(render) && !isNamedList(render)) {
-      stop("`render` must be a JS function or named list")
+    if (!is.JS(render) && !is.function(render) && !isNamedList(render)) {
+      stop("`render` must be a JS function, R function, or named list")
     }
     if (is.JS(render)) {
       render <- list(cell = render, aggregated = render)
+    } else if (is.function(render)) {
+      render <- list(cell = render)
     }
     if (any(!names(render) %in% c("cell", "aggregated"))) {
       stop('`render` must have names "cell" or "aggregated"')
     }
-    for (func in render) {
-      if (!is.JS(func)) {
-        stop("render function must be a JS function")
-      }
+    if (!is.null(render$cell) && !is.JS(render$cell) && !is.function(render$cell)) {
+      stop("cell renderer must be a JS or R function")
+    }
+    if (!is.null(render$aggregated) && !is.JS(render$aggregated)) {
+      stop("aggregated cell renderer must be a JS function")
     }
   }
   if (!is.logical(html)) {

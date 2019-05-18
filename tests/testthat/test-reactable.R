@@ -212,6 +212,21 @@ test_that("showPagination defaults", {
   expect_equal(attribs$showPagination, TRUE)
 })
 
+test_that("column renderers", {
+  data <- data.frame(x = c(1, 2), y = c("a", "b"), z = c(TRUE, FALSE))
+  tbl <- reactable(data, columns = list(
+    x = colDef(render = function(value) value + 1),
+    y = colDef(render = function(value, index) index),
+    z = colDef(render = list(cell = function(value, index) paste0("_", value)))
+  ))
+
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$render$cell, list("2", "3"))
+  expect_equal(attribs$columns[[2]]$render$cell, list("1", "2"))
+  expect_equal(attribs$columns[[3]]$render$cell, list("_TRUE", "_FALSE"))
+  expect_true(is.null(attribs$columns[[3]]$render$aggregated))
+})
+
 test_that("rowDetails", {
   # Default args
   details <- rowDetails(JS("row => row.value"))
@@ -234,7 +249,6 @@ test_that("rowDetails", {
 
   # Invalid args
   expect_error(rowDetails("content"))
-  expect_error(rowDetails(function() {}))
   expect_error(rowDetails(function(i) {}, html = 0))
   expect_error(rowDetails(function(i) {}, name = 0))
   expect_error(rowDetails(function(i) {}, width = ""))

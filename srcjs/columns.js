@@ -1,4 +1,5 @@
 import React from 'react'
+import { hydrate } from 'reactR'
 
 import { aggregators, round, normalizeNumber } from './aggregators'
 import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
@@ -39,10 +40,21 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
         value = formatValue(value, col.format.cell)
       }
       if (col.render && col.render.cell) {
-        value = col.render.cell({ ...cell, value })
+        if (typeof col.render.cell === 'function') {
+          value = col.render.cell({ ...cell, value })
+        }
+        // Make sure we don't render aggregated cells for R renderers
+        if (col.render.cell instanceof Array && !cell.aggregated) {
+          value = col.render.cell[cell.index]
+          if (value) {
+            value = hydrate({}, col.render.cell[cell.index])
+          }
+        }
       }
       if (col.html) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
+      } else if (React.isValidElement(value)) {
+        return value
       } else {
         return value != null ? String(value) : ''
       }

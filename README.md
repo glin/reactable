@@ -274,7 +274,7 @@ colFormat(
 ```
 
 ### Custom Renderers
-Render all cells in the column:
+The render function can be a Javascript function:
 ```r
 colDef(
   render = JS("
@@ -290,7 +290,22 @@ colDef(
 )
 ```
 
-Render standard and aggregated cells separately:
+Or an R function:
+```r
+colDef(
+  render = function(value, index) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag)
+    htmltools::div(style = "color: red", toupper(value))
+  }
+)
+```
+
+To render standard and aggregated cells separately:
 ```r
 colDef(
   render = list(
@@ -301,7 +316,7 @@ colDef(
 ```
 
 See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
-on render function arguments.
+on JS render function arguments.
 
 ### Row Details
 ```r
@@ -330,7 +345,7 @@ rowDetails(
 )
 ```
 
-Or a `JS()` function:
+Or a Javascript function:
 ```r
 rowDetails(
   JS("
