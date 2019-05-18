@@ -389,6 +389,17 @@ describe('row details', () => {
     expect(getByText('row details: 1')).toBeTruthy()
   })
 
+  it('renders empty row details', () => {
+    const details = {
+      render: ['', '']
+    }
+    const { container } = render(<Reactable {...props} details={details} />)
+    const expanders = container.querySelectorAll('.rt-expander')
+    expect(expanders).toHaveLength(2)
+    fireEvent.click(expanders[0])
+    fireEvent.click(expanders[1])
+  })
+
   it('handles Shiny elements in content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
     const details = {

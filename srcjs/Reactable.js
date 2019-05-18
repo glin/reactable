@@ -208,7 +208,7 @@ class Reactable extends React.Component {
       } else if (render instanceof Array) {
         SubComponent = row => {
           let content = render[row.index]
-          if (!content) {
+          if (content == null) {
             return null
           }
           if (html) {
@@ -219,7 +219,7 @@ class Reactable extends React.Component {
 
         colProps = {
           Expander: props => {
-            if (!render[props.index]) {
+            if (render[props.index] == null) {
               return null
             }
             return ReactTableDefaults.ExpanderComponent(props)
@@ -227,7 +227,7 @@ class Reactable extends React.Component {
           getProps: (state, rowInfo) => {
             if (!rowInfo) return {}
             // Disable expander on rows without content
-            if (!render[rowInfo.index]) {
+            if (render[rowInfo.index] == null) {
               return { onClick: () => {}, className: 'rt-expand-disabled' }
             }
             return {}
@@ -244,7 +244,7 @@ class Reactable extends React.Component {
             }
           }
           // Disable expander on rows without content
-          if (!rowInfo.aggregated && column.pivoted && !render[rowInfo.index]) {
+          if (!rowInfo.aggregated && column.pivoted && render[rowInfo.index] == null) {
             props = { ...props, className: 'rt-expand-disabled' }
           }
           return props
