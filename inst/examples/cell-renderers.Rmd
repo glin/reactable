@@ -1,5 +1,5 @@
 ---
-title: "Custom Renderers"
+title: "Cell Renderers"
 output:
   html_document:
     css: assets/styles.css
@@ -8,8 +8,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-### Standard cell renderers
 
 ```{r}
 library(reactable)
@@ -30,7 +28,7 @@ reactable(iris, columns = list(
 ))
 ```
 
-### Aggregated cell renderers
+### Aggregated cells
 
 ```{r}
 reactable(iris, groupBy = "Species", columns = list(

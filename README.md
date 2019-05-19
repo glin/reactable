@@ -97,8 +97,8 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
-### Custom Renderers
-https://glin.github.io/reactable/inst/examples/custom-renderers.html
+### Cell Renderers
+https://glin.github.io/reactable/inst/examples/cell-renderers.html
 
 ```r
 reactable(iris, columns = list(
