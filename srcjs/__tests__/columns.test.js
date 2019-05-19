@@ -68,6 +68,12 @@ describe('buildColumnDefs', () => {
       <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
     )
 
+    // React elements and HTML rendering don't clash
+    cols = buildColumnDefs([
+      { accessor: 'x', cell: [React.createElement('div', null, 'Z')], html: true }
+    ])
+    expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(React.createElement('div', null, 'Z'))
+
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cell => cell.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
@@ -84,6 +90,12 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Footer()).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
     )
+
+    // React elements and HTML rendering don't clash
+    cols = buildColumnDefs([
+      { accessor: 'x', footer: React.createElement('div', null, 'footer'), html: true }
+    ])
+    expect(cols[0].Footer()).toEqual(React.createElement('div', null, 'footer'))
   })
 
   test('formatters applied before renderers', () => {

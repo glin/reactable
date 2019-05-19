@@ -51,10 +51,10 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
           }
         }
       }
-      if (col.html) {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />
-      } else if (React.isValidElement(value)) {
+      if (React.isValidElement(value)) {
         return value
+      } else if (col.html) {
+        return <div dangerouslySetInnerHTML={{ __html: value }} />
       } else {
         return value != null ? String(value) : ''
       }
