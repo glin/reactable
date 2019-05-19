@@ -201,6 +201,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       })
       column$cell <- lapply(content, asReactTag)
     }
+    if (is.function(column$footer)) {
+      values <- data[[key]]
+      footer <- callFunc(column$footer, values, key)
+      column$footer <- asReactTag(footer)
+    } else if (!is.null(column$footer)) {
+      column$footer <- asReactTag(column$footer)
+    }
     column
   })
 

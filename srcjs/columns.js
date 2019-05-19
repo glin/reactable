@@ -89,6 +89,34 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       }
     }
 
+    if (col.footer) {
+      col.Footer = function Footer(colInfo) {
+        let footer
+        if (typeof col.footer === 'function') {
+          footer = col.footer(colInfo)
+        } else {
+          footer = hydrate({}, col.footer)
+        }
+        if (React.isValidElement(footer)) {
+          return footer
+        } else if (col.html) {
+          return <div dangerouslySetInnerHTML={{ __html: footer }} />
+        } else {
+          return footer != null ? String(footer) : ''
+        }
+      }
+
+      // Workaround for bug in react-table >= 6.7.0 where footerClassName
+      // and footerStyle are not passed through.
+      // https://github.com/tannerlinsley/react-table/issues/598
+      col.getFooterProps = () => {
+        return {
+          className: col.footerClassName,
+          style: col.footerStyle
+        }
+      }
+    }
+
     if (col.type === 'numeric') {
       col.sortMethod = compareNumbers
       // Right-align numbers by default

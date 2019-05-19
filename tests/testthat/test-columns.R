@@ -6,10 +6,11 @@ test_that("colDef", {
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
     show = NULL, defaultSortDesc = NULL, format = NULL,
-    cell = NULL, aggregated = NULL,
+    cell = NULL, aggregated = NULL, footer = NULL,
     html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
-    headerStyle = NULL), class = "colDef"))
+    headerStyle = NULL, footerClassName = NULL, footerStyle = NULL
+  ), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
@@ -17,9 +18,11 @@ test_that("colDef", {
                 show = FALSE, defaultSortOrder = "desc",
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 cell = JS("row => row.value"), aggregated = JS("row => row.value"),
+                footer = "footer",
                 html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
-                headerClass = "hdr", headerStyle = list(height = 10))
+                headerClass = "hdr", headerStyle = list(height = 10),
+                footerClass = "ftr", footerStyle = "color:blue")
 
   expected <- structure(list(
     Header = "col", aggregate = "sum",
@@ -27,9 +30,12 @@ test_that("colDef", {
     show = FALSE, defaultSortDesc = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
     cell = JS("row => row.value"), aggregated = JS("row => row.value"),
+    footer = "footer",
     html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
-    headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
+    headerClassName = "hdr", headerStyle = list(height = 10),
+    footerClassName = "ftr", footerStyle = list(color = "blue")
+  ), class = "colDef")
   expect_equal(col, expected)
 
   # Invalid args
@@ -88,13 +94,23 @@ test_that("colDef renderers", {
   # Aggregated renderer
   col <- colDef(aggregated = renderJS)
   expect_equal(col$aggregated, renderJS)
+
+  # Footer renderer
+  col <- colDef(footer = "footer")
+  expect_equal(col$footer, "footer")
+  col <- colDef(footer = renderJS)
+  expect_equal(col$footer, renderJS)
+  col <- colDef(footer = renderR)
+  expect_equal(col$footer, renderR)
 })
 
 test_that("colDef style", {
   col <- colDef(style = " border-bottom: 1px solid; top: 50px",
-                headerStyle = " border: 1px solid; top: 25px;;df")
+                headerStyle = " border: 1px solid; top: 25px;;df",
+                footerStyle = " border: 1px solid; top: 25px;;df")
   expect_equal(col$style, list("border-bottom" = "1px solid", top = "50px"))
   expect_equal(col$headerStyle, list("border" = "1px solid", top = "25px"))
+  expect_equal(col$footerStyle, list("border" = "1px solid", top = "25px"))
 })
 
 test_that("is.colDef", {

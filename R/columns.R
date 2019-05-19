@@ -18,6 +18,9 @@
 #'   argument.
 #' @param aggregated Custom aggregated cell renderer. A `JS()` function that takes
 #'   a cell info object as an argument.
+#' @param footer Footer content or render function. Render functions can be an
+#'   R function that takes two arguments, the column values and column name, or a
+#'   `JS()` function that takes one argument, a column info object.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
@@ -28,14 +31,17 @@
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
+#' @param footerClass Additional CSS classes to apply to the footer.
+#' @param footerStyle Inline styles to apply to the footer. A named list or
+#'   character string.
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, format = NULL,
-                   cell = NULL, aggregated = NULL,
+                   cell = NULL, aggregated = NULL, footer = NULL,
                    html = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
-                   headerStyle = NULL) {
+                   headerStyle = NULL, footerClass = NULL, footerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
@@ -115,6 +121,12 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(headerStyle) && !isNamedList(headerStyle) && !is.character(headerStyle)) {
     stop("`headerStyle` must be a named list or character string")
   }
+  if (!is.null(footerClass) && !is.character(footerClass)) {
+    stop("`footerClass` must be a character string")
+  }
+  if (!is.null(footerStyle) && !isNamedList(footerStyle) && !is.character(footerStyle)) {
+    stop("`footerStyle` must be a named list or character string")
+  }
 
   structure(
     list(
@@ -128,6 +140,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       format = format,
       cell = cell,
       aggregated = aggregated,
+      footer = footer,
       html = if (html) TRUE,
       minWidth = minWidth,
       maxWidth = maxWidth,
@@ -136,7 +149,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       className = class,
       style = asReactStyle(style),
       headerClassName = headerClass,
-      headerStyle = asReactStyle(headerStyle)
+      headerStyle = asReactStyle(headerStyle),
+      footerClassName = footerClass,
+      footerStyle = asReactStyle(footerStyle)
     ),
     class = "colDef"
   )

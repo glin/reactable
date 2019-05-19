@@ -117,6 +117,25 @@ reactable(iris, columns = list(
 ))
 ```
 
+### Footers
+https://glin.github.io/reactable/inst/examples/footers.html
+
+```r
+reactable(iris, columns = list(
+  Sepal.Length = colDef(
+    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
+  ),
+  Sepal.Width = colDef(footer = function(values, key) {
+    htmltools::span(htmltools::tags$b("Total: "), sum(values))
+  }),
+  Petal.Length = colDef(html = TRUE, footer = JS("
+    function(colInfo) {
+      return '<b>Rows: </b>' + colInfo.data.length
+    }
+  "))
+))
+```
+
 ### 100k Rows
 https://glin.github.io/reactable/inst/examples/100k-rows.html
 
@@ -185,8 +204,9 @@ colDef(
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   format = NULL,            # Column formatting options. See column formatting below
-  cell = NULL,              # Custom cell renderer. See custom renderers below
-  aggregated = NULL,        # Custom aggregated cell renderer. See custom renderers below
+  cell = NULL,              # Custom cell renderer. See cell renderers below
+  aggregated = NULL,        # Custom aggregated cell renderer. See cell renderers below
+  footer = NULL,            # Footer content or renderer. See footers below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
@@ -195,7 +215,9 @@ colDef(
   class = NULL,             # Additional CSS classes to apply to cells
   style = NULL,             # Inline styles to apply to cells. A named list or character string
   headerClass = NULL,       # Additional CSS classes to apply to the header
-  headerStyle = NULL        # Inline styles to apply to the header. A named list or character string
+  headerStyle = NULL,       # Inline styles to apply to the header. A named list or character string
+  footerClass = NULL,       # Additional CSS classes to apply to the footer
+  footerStyle = NULL        # Inline styles to apply to the footer. A named list or character string
 )
 ```
 
@@ -274,7 +296,7 @@ colFormat(
 )                      # tags, such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser.
 ```
 
-### Custom Renderers
+### Cell Renderers
 Cell rendering can be customized using a Javascript function:
 ```r
 colDef(
@@ -309,6 +331,45 @@ colDef(
 
 See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
 on JS render function arguments.
+
+### Footers
+Footer content can be a cell value or HTML tag:
+```r
+colDef(footer = "Total: 5")
+colDef(footer = htmltools::div("Total: 5"))
+```
+
+Or an R render function:
+```r
+colDef(
+  footer = function(values, name) {
+    # input:
+    #   - values, the column values
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag)
+    htmltools::div(paste("Total:", sum(values)))
+  }
+)
+```
+
+Or a Javascript render function:
+```r
+colDef(
+  footer = JS("
+    function(colInfo) {
+      // input:
+      //  - colInfo, an object containing column info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>Rows: ' + colInfo.data.length + '</div>'
+    }
+  "),
+  html = TRUE
+)
+```
 
 ### Row Details
 ```r

@@ -7,9 +7,10 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, format = NULL, cell = NULL,
-  aggregated = NULL, html = FALSE, minWidth = NULL,
+  aggregated = NULL, footer = NULL, html = FALSE, minWidth = NULL,
   maxWidth = NULL, width = NULL, align = NULL, class = NULL,
-  style = NULL, headerClass = NULL, headerStyle = NULL)
+  style = NULL, headerClass = NULL, headerStyle = NULL,
+  footerClass = NULL, footerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -40,6 +41,10 @@ argument.}
 \item{aggregated}{Custom aggregated cell renderer. A \code{JS()} function that takes
 a cell info object as an argument.}
 
+\item{footer}{Footer content or render function. Render functions can be an
+R function that takes two arguments, the column values and column name, or a
+\code{JS()} function that takes one argument, a column info object.}
+
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
 
 \item{minWidth}{Min width of the column in pixels.}
@@ -57,6 +62,11 @@ a cell info object as an argument.}
 \item{headerClass}{Additional CSS classes to apply to the header.}
 
 \item{headerStyle}{Inline styles to apply to the header. A named list or
+character string.}
+
+\item{footerClass}{Additional CSS classes to apply to the footer.}
+
+\item{footerStyle}{Inline styles to apply to the footer. A named list or
 character string.}
 }
 \description{

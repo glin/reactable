@@ -417,3 +417,38 @@ describe('row details', () => {
     delete window.Shiny
   })
 })
+
+describe('footer rendering', () => {
+  const data = { a: [1, 2] }
+
+  it('renders a basic footer', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        footer: 'my-footer',
+        footerClassName: 'my-footer',
+        footerStyle: { color: 'red' }
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const footer = getByText('my-footer')
+    expect(footer).toHaveClass('my-footer')
+    expect(footer).toHaveStyle('color: red;')
+  })
+
+  it('render function', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        footer: colInfo => `rows: ${colInfo.data.length}`
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const footer = getByText('rows: 2')
+    expect(footer).toBeTruthy()
+  })
+})

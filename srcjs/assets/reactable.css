@@ -63,7 +63,7 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Headers */
+/* Headers and footers */
 .ReactTable .rt-thead.-header {
   box-shadow: inherit;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
@@ -74,9 +74,15 @@
   border-bottom-width: 1px;
 }
 
+.ReactTable .rt-tfoot {
+  box-shadow: inherit;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 /* Cells */
 .ReactTable .rt-thead .rt-th,
-.ReactTable .rt-thead .rt-td {
+.ReactTable .rt-thead .rt-td,
+.ReactTable .rt-tfoot .rt-td {
   border-right: none;
 }
 
@@ -89,7 +95,8 @@
   border-right: none;
 }
 
-.ReactTable.-outlined .rt-tbody .rt-td {
+.ReactTable.-outlined .rt-tbody .rt-td,
+.ReactTable.-outlined .rt-tfoot .rt-td {
   border-right: 1px solid rgba(0, 0, 0, 0.02);
 }
 

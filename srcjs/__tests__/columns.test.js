@@ -72,6 +72,18 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cell => cell.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
+
+    // Footer
+    cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].Footer).toEqual(undefined)
+    cols = buildColumnDefs([{ accessor: 'x', footer: () => 'footer' }])
+    expect(cols[0].Footer()).toEqual('footer')
+    cols = buildColumnDefs([{ accessor: 'x', footer: React.createElement('div', null, 'footer') }])
+    expect(cols[0].Footer()).toEqual(React.createElement('div', null, 'footer'))
+    cols = buildColumnDefs([{ accessor: 'x', html: true, footer: '<div>footer</div>' }])
+    expect(cols[0].Footer()).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
+    )
   })
 
   test('formatters applied before renderers', () => {
