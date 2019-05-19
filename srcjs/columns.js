@@ -34,20 +34,20 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       col.aggregate = aggregators[type]
     }
 
-    col.Cell = function renderedCell(cell) {
+    col.Cell = function Cell(cell) {
       let value = cell.value
       if (col.format && col.format.cell) {
         value = formatValue(value, col.format.cell)
       }
-      if (col.render && col.render.cell) {
-        if (typeof col.render.cell === 'function') {
-          value = col.render.cell({ ...cell, value })
+      if (col.cell) {
+        if (typeof col.cell === 'function') {
+          value = col.cell({ ...cell, value })
         }
         // Make sure we don't render aggregated cells for R renderers
-        if (col.render.cell instanceof Array && !cell.aggregated) {
-          value = col.render.cell[cell.index]
+        if (col.cell instanceof Array && !cell.aggregated) {
+          value = col.cell[cell.index]
           if (value) {
-            value = hydrate({}, col.render.cell[cell.index])
+            value = hydrate({}, col.cell[cell.index])
           }
         }
       }
@@ -61,7 +61,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     }
 
     // Render pivoted values the same as regular cells
-    col.PivotValue = function renderedCell(cell) {
+    col.PivotValue = function PivotValue(cell) {
       const value = col.Cell(cell)
       return (
         <span>
@@ -70,14 +70,14 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       )
     }
 
-    col.Aggregated = function renderedCell(cell) {
+    col.Aggregated = function Aggregated(cell) {
       // Default to empty string to avoid string conversion of undefined/null
       let value = cell.value != null ? cell.value : ''
       if (col.format && col.format.aggregated) {
         value = formatValue(value, col.format.aggregated)
       }
-      if (col.render && col.render.aggregated) {
-        value = col.render.aggregated({ ...cell, value })
+      if (col.aggregated) {
+        value = col.aggregated({ ...cell, value })
       }
       if (col.html) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
@@ -104,7 +104,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     const isSortable = getFirstDefined(col.sortable, sortable)
     if (isSortable) {
       const header = col.Header
-      col.Header = function renderedHeader() {
+      col.Header = function Header() {
         const sortClass = showSortable ? '-sort' : ''
         if (col.align === 'right') {
           return (

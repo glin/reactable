@@ -5,7 +5,8 @@ test_that("colDef", {
   expect_equal(colDef(), structure(list(
     Header = NULL, aggregate = NULL,
     sortable = NULL, resizable = NULL, filterable = NULL,
-    show = NULL, defaultSortDesc = NULL, format = NULL, render = NULL,
+    show = NULL, defaultSortDesc = NULL, format = NULL,
+    cell = NULL, aggregated = NULL,
     html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
     className = NULL, style = NULL, headerClassName = NULL,
     headerStyle = NULL), class = "colDef"))
@@ -15,8 +16,7 @@ test_that("colDef", {
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc",
                 format = list(cell = colFormat(), aggregated = colFormat()),
-                render = list(cell = JS("row => row.value"),
-                              aggregated = JS("row => row.value")),
+                cell = JS("row => row.value"), aggregated = JS("row => row.value"),
                 html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
                 headerClass = "hdr", headerStyle = list(height = 10))
@@ -26,7 +26,7 @@ test_that("colDef", {
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
-    render = list(cell = JS("row => row.value"), aggregated = JS("row => row.value")),
+    cell = JS("row => row.value"), aggregated = JS("row => row.value"),
     html = TRUE, minWidth = 100, maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
     headerClassName = "hdr", headerStyle = list(height = 10)), class = "colDef")
@@ -42,7 +42,8 @@ test_that("colDef", {
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
-    render = list("function() {}", list(CELL = JS("")), list(cell = "func")),
+    cell = list("function() {}"),
+    aggregated = list(function() {}),
     html = list("false", NA),
     minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
@@ -60,31 +61,33 @@ test_that("colDef", {
   }
 })
 
-test_that("colDef format/render", {
+test_that("colDef format", {
   format <- colFormat()
-  renderJS <- JS("row => row.value")
 
-  # Default cell format/renderer
-  col <- colDef(format = format, render = renderJS)
+  # Default cell format
+  col <- colDef(format = format)
   expect_equal(col$format, list(cell = format, aggregated = format))
-  expect_equal(col$render, list(cell = renderJS, aggregated = renderJS))
 
   # Separate cell and aggregated format/renderer
-  col <- colDef(format = list(aggregated = format), render = list(aggregated = renderJS))
+  col <- colDef(format = list(aggregated = format))
   expect_equal(col$format, list(aggregated = format))
-  expect_equal(col$render, list(aggregated = renderJS))
-  col <- colDef(format = list(cell = format), render = list(cell = renderJS))
+  col <- colDef(format = list(cell = format))
   expect_equal(col$format, list(cell = format))
-  expect_equal(col$render, list(cell = renderJS))
+})
 
-  # R renderer
+test_that("colDef renderers", {
+  renderJS <- JS("row => row.value")
   renderR <- function(value, index) value
-  col <- colDef(render = renderR)
-  expect_equal(col$render, list(cell = renderR))
-  col <- colDef(render = list(cell = renderR))
-  expect_equal(col$render, list(cell = renderR))
-  col <- colDef(render = list(cell = renderR, aggregated = renderJS))
-  expect_equal(col$render, list(cell = renderR, aggregated = renderJS))
+
+  # Cell renderer
+  col <- colDef(cell = renderJS)
+  expect_equal(col$cell, renderJS)
+  col <- colDef(cell = renderR)
+  expect_equal(col$cell, renderR)
+
+  # Aggregated renderer
+  col <- colDef(aggregated = renderJS)
+  expect_equal(col$aggregated, renderJS)
 })
 
 test_that("colDef style", {

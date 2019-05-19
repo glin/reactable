@@ -6,10 +6,10 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
-  defaultSortOrder = NULL, format = NULL, render = NULL,
-  html = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
-  align = NULL, class = NULL, style = NULL, headerClass = NULL,
-  headerStyle = NULL)
+  defaultSortOrder = NULL, format = NULL, cell = NULL,
+  aggregated = NULL, html = FALSE, minWidth = NULL,
+  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
+  style = NULL, headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -33,9 +33,12 @@ order or \code{"desc"} for descending order. Overrides the table option.}
 format all cells, or a named list of \code{colFormat()} objects to format standard
 cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
-\item{render}{Custom column renderer. A \code{JS()} function to render all cells,
-or a named list of \code{JS()} functions to render standard cells (\code{"cell"}) and
-aggregated cells (\code{"aggregated"}) separately.}
+\item{cell}{Custom cell renderer. A function that takes the cell value and row
+index as arguments, or a \code{JS()} function that takes a cell info object as an
+argument.}
+
+\item{aggregated}{Custom aggregated cell renderer. A \code{JS()} function that takes
+a cell info object as an argument.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
 

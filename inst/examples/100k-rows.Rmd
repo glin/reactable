@@ -26,7 +26,7 @@ data <- data.frame(
 )
 
 reactable(data, filterable = TRUE, columns = list(
-  state = colDef(render = JS('
+  state = colDef(cell = JS('
     function(cell) {
       return `<a href="https://wikipedia.org/wiki/${cell.value}" target="_blank">${cell.value}</a>`
     }

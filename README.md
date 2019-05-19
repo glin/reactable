@@ -102,18 +102,18 @@ https://glin.github.io/reactable/inst/examples/custom-renderers.html
 
 ```r
 reactable(iris, columns = list(
-  Petal.Length = colDef(html = TRUE, render = JS("
+  Petal.Length = colDef(html = TRUE, cell = JS("
     function(cell) {
       var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
       var color = colors[cell.row.Species]
       return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
     }
   ")),
-  Species = colDef(render = JS("
-    function(cell) {
-      return cell.value.toUpperCase()
-    }
-  "))
+  Petal.Width = colDef(cell = function(value, index) {
+    colors <- c(setosa = "red", versicolor = "green", virginica = "navy")
+    color <- colors[iris[index, "Species"]]
+    htmltools::span(style = paste("color:", color), value)
+  })
 ))
 ```
 
@@ -185,7 +185,8 @@ colDef(
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   format = NULL,            # Column formatting options. See column formatting below
-  render = NULL,            # Custom column renderers. See custom renderers below
+  cell = NULL,              # Custom cell renderer. See custom renderers below
+  aggregated = NULL,        # Custom aggregated cell renderer. See custom renderers below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
@@ -274,10 +275,10 @@ colFormat(
 ```
 
 ### Custom Renderers
-The render function can be a Javascript function:
+Cell rendering can be customized using a Javascript function:
 ```r
 colDef(
-  render = JS("
+  cell = JS("
     function(cellInfo) {
       // input:
       //  - cellInfo, an object containing cell and row info
@@ -286,14 +287,15 @@ colDef(
       //  - a cell value, e.g. a string converted to uppercase
       return cellInfo.value.toUpperCase()
     }
-  ")
+  "),
+  aggregated = JS("function(cellInfo) { return cellInfo.value }")
 )
 ```
 
-Or an R function:
+Standard cell renderers can also be an R function (not supported for aggregated cells):
 ```r
 colDef(
-  render = function(value, index) {
+  cell = function(value, index) {
     # input:
     #   - value, the cell value
     #   - index, the row index (optional)
@@ -302,16 +304,6 @@ colDef(
     #   - content to render (e.g. an HTML tag)
     htmltools::div(style = "color: red", toupper(value))
   }
-)
-```
-
-To render standard and aggregated cells separately:
-```r
-colDef(
-  render = list(
-    cell = JS("function(cellInfo) { return cellInfo.value }"),       # Standard cells
-    aggregated = JS("function(cellInfo) { return cellInfo.value }")  # Aggregated cells
-  )
 )
 ```
 

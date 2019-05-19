@@ -13,9 +13,11 @@
 #' @param format Column formatting options. A `colFormat()` object to
 #'   format all cells, or a named list of `colFormat()` objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
-#' @param render Custom column renderer. A `JS()` function to render all cells,
-#'   or a named list of `JS()` functions to render standard cells (`"cell"`) and
-#'   aggregated cells (`"aggregated"`) separately.
+#' @param cell Custom cell renderer. A function that takes the cell value and row
+#'   index as arguments, or a `JS()` function that takes a cell info object as an
+#'   argument.
+#' @param aggregated Custom aggregated cell renderer. A `JS()` function that takes
+#'   a cell info object as an argument.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
@@ -29,7 +31,8 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
-                   defaultSortOrder = NULL, format = NULL, render = NULL,
+                   defaultSortOrder = NULL, format = NULL,
+                   cell = NULL, aggregated = NULL,
                    html = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL) {
@@ -77,24 +80,11 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       }
     }
   }
-  if (!is.null(render)) {
-    if (!is.JS(render) && !is.function(render) && !isNamedList(render)) {
-      stop("`render` must be a JS function, R function, or named list")
-    }
-    if (is.JS(render)) {
-      render <- list(cell = render, aggregated = render)
-    } else if (is.function(render)) {
-      render <- list(cell = render)
-    }
-    if (any(!names(render) %in% c("cell", "aggregated"))) {
-      stop('`render` must have names "cell" or "aggregated"')
-    }
-    if (!is.null(render$cell) && !is.JS(render$cell) && !is.function(render$cell)) {
-      stop("cell renderer must be a JS or R function")
-    }
-    if (!is.null(render$aggregated) && !is.JS(render$aggregated)) {
-      stop("aggregated cell renderer must be a JS function")
-    }
+  if (!is.null(cell) && !is.JS(cell) && !is.function(cell)) {
+    stop("`cell` renderer must be a JS or R function")
+  }
+  if (!is.null(aggregated) && !is.JS(aggregated)) {
+    stop("`aggregated` renderer must be a JS function")
   }
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
@@ -136,7 +126,8 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       format = format,
-      render = render,
+      cell = cell,
+      aggregated = aggregated,
       html = if (html) TRUE,
       minWidth = minWidth,
       maxWidth = maxWidth,

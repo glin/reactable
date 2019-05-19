@@ -194,12 +194,12 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }
-    if (is.function(column$render$cell)) {
+    if (is.function(column$cell)) {
       content <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(column$render$cell, value, index)
+        callFunc(column$cell, value, index)
       })
-      column$render$cell <- lapply(content, asReactTag)
+      column$cell <- lapply(content, asReactTag)
     }
     column
   })

@@ -9,21 +9,38 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### Standard cell renderers
+
 ```{r}
 library(reactable)
 
 reactable(iris, columns = list(
-  Petal.Length = colDef(html = TRUE, render = JS("
+  Petal.Length = colDef(html = TRUE, cell = JS("
     function(cell) {
       var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
       var color = colors[cell.row.Species]
       return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
     }
   ")),
-  Species = colDef(render = JS("
-    function(cell) {
-      return cell.value.toUpperCase()
-    }
-  "))
+  Petal.Width = colDef(cell = function(value, index) {
+    colors <- c(setosa = "red", versicolor = "green", virginica = "navy")
+    color <- colors[iris[index, "Species"]]
+    htmltools::span(style = paste("color:", color), value)
+  })
+))
+```
+
+### Aggregated cell renderers
+
+```{r}
+reactable(iris, groupBy = "Species", columns = list(
+  Petal.Length = colDef(
+    aggregate = "mean",
+    aggregated = JS("
+      function(cell) {
+        return cell.value + ' (avg)'
+      }
+    ")
+  )
 ))
 ```
