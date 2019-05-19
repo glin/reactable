@@ -63,6 +63,11 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'y', index: 1 })).toEqual('2')
     expect(cols[0].Cell({ value: 'z', index: 2 })).toEqual(React.createElement('div', null, 'Z'))
 
+    cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>footer</div>'] }])
+    expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
+    )
+
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cell => cell.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
