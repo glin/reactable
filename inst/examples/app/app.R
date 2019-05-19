@@ -34,6 +34,7 @@ ui <- fluidPage(
             "Table Options",
             choices = c(
               "Column groups" = "columnGroups",
+              "Footer" = "footer",
               Filterable = "filterable",
               Sortable = "sortable",
               Resizable = "resizable",
@@ -75,10 +76,9 @@ ui <- fluidPage(
             "Column Options",
             choices = c(
               Formatting = "format",
-              "Custom renderer" = "render",
-              HTML = "html"
+              "Custom cell renderer" = "cell"
             ),
-            selected = c("format", "render", "html")
+            selected = c("format", "cell")
           ),
 
           tags$a(href = "https://github.com/glin/reactable/tree/master/inst/examples/app",
@@ -140,23 +140,25 @@ server <- function(input, output, session) {
         }
       ),
       Sepal.Width = list(
-        html = "html" %in% input$colOptions,
         format = if ("format" %in% input$colOptions) {
           quote(list(aggregated = colFormat(suffix = " (avg)", digits = 2)))
         },
-        render = if ("render" %in% input$colOptions) {
-          quote(list(cell = JS('
-                  function (cell) {
-                    let classes
-                    if (cell.value >= 3.3) {
-                      classes = "tag num-high"
-                    } else if (cell.value >= 3) {
-                      classes = "tag num-med"
-                    } else {
-                      classes = "tag num-low"
-                    }
-                    return `<span class="${classes}">${cell.value}</span>`
-                  }')))
+        cell = if ("cell" %in% input$colOptions) {
+          function(value) {
+            if (value >= 3.3) {
+              classes <- "tag num-high"
+            } else if (value >= 3) {
+              classes <- "tag num-med"
+            } else {
+              classes <- "tag num-low"
+            }
+            span(class = classes, value)
+          }
+        },
+        footer = if ("footer" %in% input$options) {
+          function(values) {
+            div(tags$b("Average: "), round(mean(values), 1))
+          }
         }
       )
     )
@@ -216,9 +218,9 @@ server <- function(input, output, session) {
           name = .(if (is.null(opts$columnGroups)) "Sepal Width" else "Width"),
           defaultSortOrder = "desc",
           aggregate = "mean",
-          html = .(colOpts$Sepal.Width$html),
           format = .(colOpts$Sepal.Width$format),
-          render = .(colOpts$Sepal.Width$render)
+          cell = .(colOpts$Sepal.Width$cell),
+          footer = .(colOpts$Sepal.Width$footer)
         ),
         Petal.Length = colDef(
           name = .(if (is.null(opts$columnGroups)) "Petal Length" else "Length"),
