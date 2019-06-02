@@ -242,7 +242,26 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]]$footer, "123")
 })
 
-test_that("rowDetails", {
+test_that("row details", {
+  data <- data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE)
+
+  # R renderer
+  tbl <- reactable(data, details = function(i) data[i, "y"])
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$details, rowDetails(list("a", "b")))
+
+  # JS renderer
+  tbl <- reactable(data, details = JS("rowInfo => rowInfo.y"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$details, rowDetails(JS("rowInfo => rowInfo.y")))
+
+  # Row details definition
+  tbl <- reactable(data, details = rowDetails(function(i) data[i, "y"]))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$details, rowDetails(list("a", "b")))
+})
+
+test_that("rowDetails definitions", {
   # Default args
   details <- rowDetails(JS("row => row.value"))
   expected <- structure(list(render = JS("row => row.value")), class = "rowDetails")

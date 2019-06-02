@@ -27,18 +27,16 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
-### Row Details
+### Expandable Row Details
 https://glin.github.io/reactable/inst/examples/row-details.html
 
 ```r
-reactable(iris, details = rowDetails(
-  function(index) {
-    htmltools::div(
-      htmltools::h4(paste("Details for row:", index)),
-      reactable(iris[index, ], inline = TRUE)
-    )
-  }
-))
+reactable(iris, details = function(index) {
+  htmltools::div(
+    htmltools::h4(paste("Details for row:", index)),
+    reactable(iris[index, ], inline = TRUE)
+  )
+})
 ```
 
 ### Filtering
@@ -371,20 +369,11 @@ colDef(
 )
 ```
 
-### Row Details
+### Expandable Row Details
+Rows can be expanded with additional content by specifying an R render function:
 ```r
-rowDetails(
-  render,        # Content render function, see below for details
-  html = FALSE,  # Render content as HTML? HTML strings are escaped by default
-  name = NULL,   # Expander column name
-  width = NULL   # Expander column width in pixels
-)
-```
-
-The render function can be an R function:
-```r
-rowDetails(
-  function(index) {
+reactable(
+  details = function(index) {
     # input:
     #   - index, the row index
     #
@@ -398,10 +387,10 @@ rowDetails(
 )
 ```
 
-Or a Javascript function:
+Or a Javascript render function:
 ```r
-rowDetails(
-  JS("
+reactable(
+  details = JS("
     function(rowInfo) {
       // input:
       //  - rowInfo, an object containing row info
@@ -410,8 +399,17 @@ rowDetails(
       //  - content to render (e.g. an HTML string)
       return '<div>' + JSON.stringify(rowInfo) + '</div>'
     }
-  "),
-  html = TRUE
+  ")
+)
+```
+
+Or for additional customization, a row details definition:
+```r
+rowDetails(
+  render,        # Content render function
+  html = FALSE,  # Render content as HTML? HTML strings are escaped by default
+  name = NULL,   # Expander column name
+  width = NULL   # Expander column width in pixels
 )
 ```
 

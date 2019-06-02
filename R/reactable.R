@@ -28,7 +28,8 @@ NULL
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   represented as a vector of row indices, or `NULL` if no rows are selected.
-#' @param details Additional content to display when expanding a row. See `rowDetails()`.
+#' @param details Additional content to display when expanding a row. A row details
+#'   definition or content renderer. See `rowDetails()`.
 #' @param outlined Add an outline around the table? Defaults to `FALSE`.
 #' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
 #' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
@@ -148,8 +149,10 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`selectionId` must be a character")
   }
   if (!is.null(details)) {
-    if (!is.rowDetails(details)) {
-      stop("`details` must be a row details definition")
+    if (is.function(details) || is.JS(details)) {
+      details <- rowDetails(details)
+    } else if (!is.rowDetails(details)) {
+      stop("`details` must be a row details definition or content renderer")
     }
     if (is.function(details$render)) {
       content <- lapply(seq_len(nrow(data)), function(index) {
