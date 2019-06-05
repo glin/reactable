@@ -57,6 +57,8 @@ test_that("is.htmlwidget", {
 
 test_that("isTagList", {
   expect_true(isTagList(htmltools::tagList()))
+  expect_true(isTagList(htmltools::tagList("a")))
+  expect_true(isTagList(htmltools::tagList(1, htmltools::div())))
   expect_true(isTagList(list(htmltools::div(), htmltools::span())))
   expect_false(isTagList(htmltools::div()))
   expect_false(isTagList(list(htmltools::div(), list())))
@@ -83,6 +85,10 @@ test_that("asReactTag", {
     htmltools::div(),
     htmltools::div(htmltools::div())
   )
+  expect_equal(asReactTag(nestedTag), expected)
+
+  nestedTag <- htmltools::div(htmltools::tagList("a", htmltools::div()))
+  expected <- htmltools::div("a", htmltools::div())
   expect_equal(asReactTag(nestedTag), expected)
 
   # Null elements

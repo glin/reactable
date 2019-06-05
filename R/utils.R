@@ -63,7 +63,7 @@ is.htmlwidget <- function(x) {
 
 # Test both shiny.tag.list and regular lists of tags
 isTagList <- function(x) {
-  is.list(x) && all(sapply(x, is.tag))
+  inherits(x, "shiny.tag.list") || (is.list(x) && all(sapply(x, is.tag)))
 }
 
 asReactTag <- function(x) {
