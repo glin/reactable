@@ -19,6 +19,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
+  expect_error(reactable(df, defaultColDef))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
   expect_error(reactable(df, defaultSorted = "y"))
   expect_error(reactable(df, defaultSorted = list("x")))
@@ -153,6 +154,35 @@ test_that("data can be a matrix", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":["a","b"],"y":["c","d"]}')
   expect_length(attribs$columns, 2)
+})
+
+test_that("defaultColDef", {
+  # Defaults applied
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultColDef = colDef(width = 22),
+                   columns = list(y = colDef(class = "cls")))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$width, 22)
+  expect_equal(attribs$columns[[2]]$width, 22)
+  expect_equal(attribs$columns[[2]]$class, "cls")
+
+  # Defaults can be overrided
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultColDef = colDef(width = 22, class = "default-cls"),
+                   columns = list(y = colDef(width = 44)))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$width, 22)
+  expect_equal(attribs$columns[[2]]$width, 44)
+  expect_equal(attribs$columns[[2]]$class, "default-cls")
+
+  # Defaults apply to row name column
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultColDef = colDef(show = FALSE),
+                   rownames = TRUE)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$show, FALSE)
+  expect_equal(attribs$columns[[2]]$show, FALSE)
+  expect_equal(attribs$columns[[3]]$show, FALSE)
 })
 
 test_that("defaultSorted", {

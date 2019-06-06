@@ -172,6 +172,7 @@ reactable(
   sortable = TRUE,            # Enable sorting?
   resizable = TRUE,           # Enable column resizing?
   filterable = FALSE,         # Enable column filtering?
+  defaultColDef = NULL,       # Default column definition used by every column. See column definitions below
   defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"
   defaultSorted = NULL,       # Column names to sort by default. Or a named list with values of "asc" or "desc"
   defaultPageSize = 10,       # Default page size

@@ -6,9 +6,10 @@
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
-  resizable = TRUE, filterable = FALSE, defaultSortOrder = "asc",
-  defaultSorted = NULL, defaultPageSize = 10, pageSizeOptions = c(10,
-  25, 50, 100), showPagination = NULL, minRows = 1, selection = NULL,
+  resizable = TRUE, filterable = FALSE, defaultColDef = NULL,
+  defaultSortOrder = "asc", defaultSorted = NULL,
+  defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
+  showPagination = NULL, minRows = 1, selection = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
   bordered = TRUE, striped = FALSE, highlight = TRUE,
   showSortable = FALSE, class = NULL, style = NULL, inline = FALSE,
@@ -33,6 +34,8 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{filterable}{Enable column filtering? Defaults to \code{FALSE}.}
 
+\item{defaultColDef}{Default column definition used by every column. See \code{colDef()}.}
+
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
 
@@ -53,7 +56,8 @@ multiple or single row selection.}
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
 represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 
-\item{details}{Additional content to display when expanding a row. See \code{rowDetails()}.}
+\item{details}{Additional content to display when expanding a row. A row details
+definition or content renderer. See \code{rowDetails()}.}
 
 \item{outlined}{Add an outline around the table? Defaults to \code{FALSE}.}
 

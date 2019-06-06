@@ -16,6 +16,7 @@ NULL
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing? Defaults to `TRUE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
+#' @param defaultColDef Default column definition used by every column. See `colDef()`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
 #' @param defaultSorted Optional vector of column names to sort by default.
@@ -48,7 +49,7 @@ NULL
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
                       sortable = TRUE, resizable = TRUE, filterable = FALSE,
-                      defaultSortOrder = "asc", defaultSorted = NULL,
+                      defaultColDef = NULL, defaultSortOrder = "asc", defaultSorted = NULL,
                       defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
                       showPagination = NULL, minRows = 1,
                       selection = NULL, selectionId = NULL,
@@ -103,6 +104,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
+  }
+  if (!is.null(defaultColDef) && !is.colDef(defaultColDef)) {
+    stop("`defaultColDef` must be a column definition")
   }
   if (!isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
@@ -187,7 +191,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
 
   cols <- lapply(colnames(data), function(key) {
-    column <- list(accessor = key)
+    column <- mergeLists(defaultColDef, list(accessor = key))
     if (!is.null(colnames[[key]])) {
       column$Header <- colnames[[key]]
     } else {
@@ -217,11 +221,11 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (rownames) {
     # Serialize row names with predictable order and ID
     data[["__rowname__"]] <- rownames(data)
-    col <- list(
+    col <- mergeLists(defaultColDef, list(
       accessor = "__rowname__",
       sortable = FALSE,
       filterable = FALSE
-    )
+    ))
     cols <- c(list(col), cols)
   }
 
