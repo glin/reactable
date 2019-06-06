@@ -2,15 +2,7 @@ context("columns")
 
 test_that("colDef", {
   # Default args
-  expect_equal(colDef(), structure(list(
-    Header = NULL, aggregate = NULL,
-    sortable = NULL, resizable = NULL, filterable = NULL,
-    show = NULL, defaultSortDesc = NULL, format = NULL,
-    cell = NULL, aggregated = NULL, footer = NULL,
-    html = NULL, minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
-    className = NULL, style = NULL, headerClassName = NULL,
-    headerStyle = NULL, footerClassName = NULL, footerStyle = NULL
-  ), class = "colDef"))
+  expect_equal(colDef(), structure(list(), .Names = character(0), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",

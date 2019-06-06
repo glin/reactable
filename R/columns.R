@@ -129,7 +129,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
 
   structure(
-    list(
+    filterNulls(list(
       Header = name,
       aggregate = aggregate,
       sortable = sortable,
@@ -152,7 +152,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       headerStyle = asReactStyle(headerStyle),
       footerClassName = footerClass,
       footerStyle = asReactStyle(footerStyle)
-    ),
+    )),
     class = "colDef"
   )
 }
