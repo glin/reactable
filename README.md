@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/glin/reactable.svg?branch=master)](https://travis-ci.com/glin/reactable)
 [![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://codecov.io/gh/glin/reactable)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 R interface to the [React Table](https://github.com/tannerlinsley/react-table) library,
 made with [reactR](https://github.com/react-R/reactR).
