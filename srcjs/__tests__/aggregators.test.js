@@ -101,6 +101,7 @@ test('normalizeNumber', () => {
   expect(normalizeNumber(null)).toEqual(null)
   expect(normalizeNumber(undefined)).toEqual(null)
   expect(normalizeNumber('NA')).toEqual(null)
+  expect(normalizeNumber('NaN')).toEqual(null)
   expect(normalizeNumber('Inf')).toEqual(Infinity)
   expect(normalizeNumber('-Inf')).toEqual(-Infinity)
   expect(normalizeNumber('12')).toEqual(12)

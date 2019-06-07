@@ -71,7 +71,7 @@ function toNumbers(arr) {
 }
 
 export function normalizeNumber(n) {
-  if (n === null || n === undefined || n === 'NA') {
+  if (n === null || n === undefined || n === 'NA' || n === 'NaN') {
     n = null
   }
   if (n === 'Inf') {
