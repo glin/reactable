@@ -382,6 +382,9 @@ describe('formatValue', () => {
     // Non-string prefix/suffix
     expect(formatValue(123, { prefix: 5, suffix: 0 })).toEqual('51230')
     expect(formatValue(123, { prefix: 0, suffix: true })).toEqual('0123true')
+    // Prefix/suffix with null value
+    expect(formatValue(null, { prefix: 'a', suffix: 'b' })).toEqual('ab')
+    expect(formatValue(undefined, { suffix: 'b' })).toEqual('b')
   })
 
   test('digits', () => {

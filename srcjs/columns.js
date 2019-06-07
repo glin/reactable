@@ -260,6 +260,7 @@ export function formatValue(value, options) {
     hour12,
     locales
   } = options
+
   if (typeof value === 'number') {
     if (percent) {
       value = value * 100
@@ -294,9 +295,11 @@ export function formatValue(value, options) {
     }
   }
   if (prefix != null) {
+    value = value != null ? value : ''
     value = String(prefix) + value
   }
   if (suffix != null) {
+    value = value != null ? value : ''
     value = value + String(suffix)
   }
   return value
