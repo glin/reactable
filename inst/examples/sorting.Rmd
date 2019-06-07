@@ -24,14 +24,19 @@ reactable(
 
 *NOTE: shift+click to sort multiple columns*
 
-### NA/Infinity handling
+### NA and Infinity handling
 
 ```{r}
-reactable(data.frame(
-  n = seq(7),
-  x = c(5, 7, NA, NA, 9, -Inf, -20),
-  y = c(1, 2, NA, -Inf, 0, Inf, -5)
-))
+reactable(
+  data.frame(
+    n = seq(7),
+    x = c(5, 7, NA, NaN, 9, 0, -20),
+    y = c(1, NA, NA, -Inf, 0, Inf, -5)
+  ),
+  columns = list(
+    x = colDef(showNA = TRUE)
+  )
+)
 ```
 
 ### Show sortable columns

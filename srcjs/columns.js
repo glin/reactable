@@ -1,7 +1,7 @@
 import React from 'react'
 import { hydrate } from 'reactR'
 
-import { aggregators, round, normalizeNumber } from './aggregators'
+import { aggregators, round, normalizeNumber, isNA } from './aggregators'
 import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
 
 // Convert column-based data to rows
@@ -36,6 +36,10 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
 
     col.Cell = function Cell(cell) {
       let value = cell.value
+      // Render NAs and NaNs as blank cells
+      if (!col.showNA && col.type === 'numeric' && isNA(value)) {
+        value = null
+      }
       if (col.format && col.format.cell) {
         value = formatValue(value, col.format.cell)
       }

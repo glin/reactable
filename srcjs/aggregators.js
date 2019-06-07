@@ -71,7 +71,7 @@ function toNumbers(arr) {
 }
 
 export function normalizeNumber(n) {
-  if (n === null || n === undefined || n === 'NA' || n === 'NaN') {
+  if (n == null || n === undefined || isNA(n)) {
     n = null
   }
   if (n === 'Inf') {
@@ -84,4 +84,8 @@ export function normalizeNumber(n) {
     n = Number(n)
   }
   return n
+}
+
+export function isNA(n) {
+  return n === 'NA' || n === 'NaN'
 }

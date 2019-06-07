@@ -7,10 +7,10 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, format = NULL, cell = NULL,
-  aggregated = NULL, footer = NULL, html = FALSE, minWidth = NULL,
-  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
-  style = NULL, headerClass = NULL, headerStyle = NULL,
-  footerClass = NULL, footerStyle = NULL)
+  aggregated = NULL, footer = NULL, html = FALSE, showNA = FALSE,
+  minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
+  class = NULL, style = NULL, headerClass = NULL,
+  headerStyle = NULL, footerClass = NULL, footerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -46,6 +46,9 @@ R function that takes two arguments, the column values and column name, or a
 \code{JS()} function that takes one argument, a column info object.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
+
+\item{showNA}{Show NA values? If \code{FALSE}, NA values will be left as empty cells.
+Defaults to \code{FALSE}.}
 
 \item{minWidth}{Min width of the column in pixels.}
 

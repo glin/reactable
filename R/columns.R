@@ -22,6 +22,8 @@
 #'   R function that takes two arguments, the column values and column name, or a
 #'   `JS()` function that takes one argument, a column info object.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
+#' @param showNA Show NA values? If `FALSE`, NA values will be left as empty cells.
+#'   Defaults to `FALSE`.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
@@ -38,8 +40,8 @@
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, format = NULL,
-                   cell = NULL, aggregated = NULL, footer = NULL,
-                   html = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
+                   cell = NULL, aggregated = NULL, footer = NULL, html = FALSE,
+                   showNA = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
                    headerStyle = NULL, footerClass = NULL, footerStyle = NULL) {
 
@@ -95,6 +97,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
+  if (!is.logical(showNA)) {
+    stop("`showNA` must be TRUE or FALSE")
+  }
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
     stop("`minWidth` must be numeric")
   }
@@ -142,6 +147,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       aggregated = aggregated,
       footer = footer,
       html = if (html) TRUE,
+      showNA = if (showNA) TRUE,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,

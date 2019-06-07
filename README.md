@@ -209,6 +209,7 @@ colDef(
   aggregated = NULL,        # Custom aggregated cell renderer. See cell renderers below
   footer = NULL,            # Footer content or renderer. See footers below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
+  showNA = FALSE,           # Show NA values? If FALSE, NA values will be left as empty cells
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth

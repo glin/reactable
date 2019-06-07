@@ -177,12 +177,41 @@ describe('buildColumnDefs', () => {
     )
   })
 
+  test('NA and NaN rendering', () => {
+    // Default rendering
+    let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('')
+
+    // Render NAs
+    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', showNA: true }])
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('NA')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('NaN')
+
+    // Works with formatters and renderers
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        type: 'numeric',
+        format: { cell: { prefix: '@' } },
+        cell: cell => `__${cell.value ? cell.value : ''}__`
+      }
+    ])
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('__@__')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('__@__')
+  })
+
   test('numeric cols', () => {
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    expect(cols[0].Cell({ value: 123 })).toEqual('123')
+    expect(cols[0].Cell({ value: 0 })).toEqual('0')
+    expect(cols[0].Cell({ value: 'Inf' })).toEqual('Inf')
+    expect(cols[0].Cell({ value: '-Inf' })).toEqual('-Inf')
     expect(cols[0].sortMethod).toEqual(compareNumbers)
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
+
     // Align override
     cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
     expect(cols[0].sortMethod).toEqual(compareNumbers)
