@@ -10,6 +10,8 @@
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
+#' @param sortMethod Custom sort method. Specify `"naLast"` to always sort NAs
+#'   to the bottom.
 #' @param format Column formatting options. A `colFormat()` object to
 #'   format all cells, or a named list of `colFormat()` objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
@@ -39,7 +41,7 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
-                   defaultSortOrder = NULL, format = NULL,
+                   defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
                    cell = NULL, aggregated = NULL, footer = NULL, html = FALSE,
                    showNA = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
                    align = NULL, class = NULL, style = NULL, headerClass = NULL,
@@ -71,6 +73,12 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
+  }
+  if (!is.null(sortMethod)) {
+    methods <- "naLast"
+    if (!sortMethod %in% methods) {
+      stop(paste("`sortMethod` must be one of:", paste(shQuote(methods)), collapse = ", "))
+    }
   }
   if (!is.null(format)) {
     if (!is.colFormat(format) && !isNamedList(format)) {
@@ -142,6 +150,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       filterable = filterable,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
+      sortMethod = sortMethod,
       format = format,
       cell = cell,
       aggregated = aggregated,

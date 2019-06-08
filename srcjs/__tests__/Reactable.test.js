@@ -85,6 +85,33 @@ describe('sorting', () => {
     const defaultSortIndicator = container.querySelectorAll('.rt-th .-sort-right')
     expect(defaultSortIndicator).toHaveLength(1)
   })
+
+  it('sorts NAs to the bottom', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [2, 'NA', 1, 3], b: ['aa', null, null, 'BB'] }}
+        columns={[
+          { Header: 'colA', accessor: 'a', type: 'numeric', sortMethod: 'naLast', className: 'col-a' },
+          { Header: 'colB', accessor: 'b', sortMethod: 'naLast', className: 'col-b' }
+        ]}
+        minRows={4}
+      />
+    )
+    const headers = container.querySelectorAll('[aria-sort]')
+    expect(headers.length).toEqual(2)
+
+    fireEvent.click(headers[0])
+    const colA = container.querySelectorAll('.col-a')
+    expect([...colA].map(el => el.textContent)).toEqual(['1', '2', '3', ''])
+    fireEvent.click(headers[0])
+    expect([...colA].map(el => el.textContent)).toEqual(['3', '2', '1', ''])
+
+    fireEvent.click(headers[1])
+    const colB = container.querySelectorAll('.col-b')
+    expect([...colB].map(el => el.textContent)).toEqual(['aa', 'BB', '', ''])
+    fireEvent.click(headers[1])
+    expect([...colB].map(el => el.textContent)).toEqual(['BB', 'aa', '', ''])
+  })
 })
 
 describe('filtering', () => {

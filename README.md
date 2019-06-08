@@ -204,6 +204,7 @@ colDef(
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
+  sortMethod = NULL,        # Custom sort method. Specify "naLast" to always sort NAs to the bottom
   format = NULL,            # Column formatting options. See column formatting below
   cell = NULL,              # Custom cell renderer. See cell renderers below
   aggregated = NULL,        # Custom aggregated cell renderer. See cell renderers below

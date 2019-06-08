@@ -6,10 +6,10 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
-  defaultSortOrder = NULL, format = NULL, cell = NULL,
-  aggregated = NULL, footer = NULL, html = FALSE, showNA = FALSE,
-  minWidth = NULL, maxWidth = NULL, width = NULL, align = NULL,
-  class = NULL, style = NULL, headerClass = NULL,
+  defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
+  cell = NULL, aggregated = NULL, footer = NULL, html = FALSE,
+  showNA = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
+  align = NULL, class = NULL, style = NULL, headerClass = NULL,
   headerStyle = NULL, footerClass = NULL, footerStyle = NULL)
 }
 \arguments{
@@ -29,6 +29,9 @@ are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"count"}, \c
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}
+
+\item{sortMethod}{Custom sort method. Specify \code{"naLast"} to always sort NAs
+to the bottom.}
 
 \item{format}{Column formatting options. A \code{colFormat()} object to
 format all cells, or a named list of \code{colFormat()} objects to format standard

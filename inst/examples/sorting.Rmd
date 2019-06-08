@@ -9,6 +9,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### Default sorting
+
 ```{r}
 library(reactable)
 
@@ -36,6 +38,20 @@ reactable(
   columns = list(
     x = colDef(showNA = TRUE)
   )
+)
+```
+
+### Sort NAs to the bottom
+
+```{r}
+reactable(
+  data.frame(
+    n = c(1, 2, 3, 4, 5),
+    x = c(2, 3, 1, NA, NA),
+    y = c(4, 5, 6, NA, NA)
+  ),
+  defaultColDef = colDef(sortMethod = "naLast"),
+  defaultSorted = "x"
 )
 ```
 

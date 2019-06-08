@@ -4,7 +4,7 @@ import reactR from 'reactR'
 import {
   columnsToRows,
   addColumnGroups,
-  compareNumbers,
+  createCompareFunction,
   buildColumnDefs,
   formatValue
 } from '../columns'
@@ -201,20 +201,34 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('__@__')
   })
 
+  test('sort method', () => {
+    // Non-numeric sort
+    let cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].sortMethod('a', 'B')).toEqual(-1)
+
+    // Numeric sort
+    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    expect(cols[0].sortMethod(111, 2)).toEqual(1)
+    expect(cols[0].sortMethod(111, 'Inf')).toEqual(-1)
+
+    // Custom sort methods
+    cols = buildColumnDefs([{ accessor: 'x', sortMethod: 'naLast' }])
+    expect(cols[0].sortMethod(null, 'x', true)).toEqual(-1)
+    expect(cols[0].sortMethod(null, 'x', false)).toEqual(1)
+  })
+
   test('numeric cols', () => {
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
     expect(cols[0].Cell({ value: 123 })).toEqual('123')
     expect(cols[0].Cell({ value: 0 })).toEqual('0')
     expect(cols[0].Cell({ value: 'Inf' })).toEqual('Inf')
     expect(cols[0].Cell({ value: '-Inf' })).toEqual('-Inf')
-    expect(cols[0].sortMethod).toEqual(compareNumbers)
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
 
     // Align override
     cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
-    expect(cols[0].sortMethod).toEqual(compareNumbers)
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
@@ -375,29 +389,85 @@ describe('addColumnGroups', () => {
   })
 })
 
-test('compareNumbers', () => {
-  const tests = [
-    [0, 0, 0],
-    [0, 1, -1],
-    [1, 0, 1],
-    [5, 5.01, -1],
-    ['NA', 0, -1],
-    [0, 'NA', 1],
-    ['NA', 'NA', 0],
-    ['Inf', 1, 1],
-    ['-Inf', 1, -1],
-    [1, 'Inf', -1],
-    [-1, '-Inf', 1],
-    ['Inf', 'Inf', 0],
-    ['-Inf', '-Inf', 0],
-    ['NA', 'Inf', -1],
-    ['Inf', 'NA', 1],
-    ['NA', '-Inf', -1],
-    ['-Inf', 'NA', 1],
-    ['2', '10', -1]
-  ]
-  tests.forEach(([a, b, order]) => {
-    expect(compareNumbers(a, b)).toEqual(order)
+describe('createCompareFunction', () => {
+  test('compare values', () => {
+    const compareNumbers = createCompareFunction()
+    const tests = [
+      ['aa', 'aa', 0],
+      ['AAA', 'aaa', 0],
+      ['a', 'b', -1],
+      ['b', 'a', 1],
+      ['aaa', 'aaab', -1],
+      ['xyz', null, 1],
+      [null, 'Z', -1],
+      [null, null, 0],
+      [null, 'Inf', -1],
+      [true, false, 1],
+      [false, true, -1],
+      [true, true, 0]
+    ]
+    tests.forEach(([a, b, order]) => {
+      expect(compareNumbers(a, b)).toEqual(order)
+    })
+  })
+
+  test('compare values with naLast', () => {
+    const compareNumbers = createCompareFunction({ naLast: true })
+    const tests = [
+      [null, 'a', true, -1],
+      [null, 'gh', false, 1],
+      ['agh', null, true, 1],
+      ['augh', null, false, -1],
+      [null, null, true, 0],
+      [null, null, false, 0]
+    ]
+    tests.forEach(([a, b, desc, order]) => {
+      expect(compareNumbers(a, b, desc)).toEqual(order)
+    })
+  })
+
+  test('compare numbers', () => {
+    const compareNumbers = createCompareFunction({ type: 'numeric' })
+    const tests = [
+      [0, 0, 0],
+      [0, 1, -1],
+      [1, 0, 1],
+      [5, 5.01, -1],
+      ['NA', 0, -1],
+      [0, 'NA', 1],
+      ['NA', 'NA', 0],
+      ['Inf', 1, 1],
+      ['-Inf', 1, -1],
+      [1, 'Inf', -1],
+      [-1, '-Inf', 1],
+      ['Inf', 'Inf', 0],
+      ['-Inf', '-Inf', 0],
+      ['NA', 'Inf', -1],
+      ['Inf', 'NA', 1],
+      ['NA', '-Inf', -1],
+      ['-Inf', 'NA', 1],
+      ['2', '10', -1]
+    ]
+    tests.forEach(([a, b, order]) => {
+      expect(compareNumbers(a, b)).toEqual(order)
+    })
+  })
+
+  test('compare numbers with naLast', () => {
+    const compareNumbers = createCompareFunction({ type: 'numeric', naLast: true })
+    const tests = [
+      ['NA', 0, true, -1],
+      ['NA', 0, false, 1],
+      [0, 'NA', true, 1],
+      [0, 'NA', false, -1],
+      ['NA', '-Inf', true, -1],
+      ['-Inf', 'NA', false, -1],
+      ['NA', 'NA', true, 0],
+      ['NA', 'NA', false, 0]
+    ]
+    tests.forEach(([a, b, desc, order]) => {
+      expect(compareNumbers(a, b, desc)).toEqual(order)
+    })
   })
 })
 

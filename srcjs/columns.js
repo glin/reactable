@@ -121,8 +121,9 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       }
     }
 
+    col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortMethod === 'naLast' })
+
     if (col.type === 'numeric') {
-      col.sortMethod = compareNumbers
       // Right-align numbers by default
       col.align = col.align || 'right'
     } else {
@@ -226,28 +227,36 @@ export function addColumnGroups(columns, groups) {
   return columns
 }
 
-// Compare function that handles handles NAs and Inf/-Inf
-export function compareNumbers(a, b) {
-  a = normalizeNumber(a)
-  b = normalizeNumber(b)
-  a = typeof a === 'string' ? a.toLowerCase() : a
-  b = typeof b === 'string' ? b.toLowerCase() : b
-  if (a === b) {
+// Compare function that handles numbers (NAs and Inf/-Inf) and optionally
+// sorts NAs/NaNs/nulls last
+export function createCompareFunction({ type, naLast } = {}) {
+  return function compare(a, b, desc) {
+    if (type === 'numeric') {
+      a = normalizeNumber(a)
+      b = normalizeNumber(b)
+    } else {
+      a = typeof a === 'string' ? a.toLowerCase() : a
+      b = typeof b === 'string' ? b.toLowerCase() : b
+    }
+    if (a === b) {
+      return 0
+    }
+    if (a == null) {
+      if (naLast) return desc ? -1 : 1
+      return -1
+    }
+    if (b == null) {
+      if (naLast) return desc ? 1 : -1
+      return 1
+    }
+    if (a > b) {
+      return 1
+    }
+    if (a < b) {
+      return -1
+    }
     return 0
   }
-  if (a == null) {
-    return -1
-  }
-  if (b == null) {
-    return 1
-  }
-  if (a > b) {
-    return 1
-  }
-  if (a < b) {
-    return -1
-  }
-  return 0
 }
 
 export function formatValue(value, options) {
