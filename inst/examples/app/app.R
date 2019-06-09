@@ -40,7 +40,7 @@ ui <- fluidPage(
               Resizable = "resizable",
               "Default sorted" = "defaultSorted",
               "Show sortable" = "showSortable",
-              Pagination = "showPagination",
+              "Show pagination" = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
               Striped = "striped",
