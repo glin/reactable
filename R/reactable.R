@@ -14,7 +14,7 @@ NULL
 #' @param columnGroups Optional list of column group definitions. See `colGroup()`.
 #' @param groupBy Optional vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
-#' @param resizable Enable column resizing? Defaults to `TRUE`.
+#' @param resizable Enable column resizing? Defaults to `FALSE`.
 #' @param filterable Enable column filtering? Defaults to `FALSE`.
 #' @param defaultColDef Default column definition used by every column. See `colDef()`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
@@ -49,7 +49,7 @@ NULL
 #' @export
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
-                      sortable = TRUE, resizable = TRUE, filterable = FALSE,
+                      sortable = TRUE, resizable = FALSE, filterable = FALSE,
                       defaultColDef = NULL, defaultSortOrder = "asc", defaultSorted = NULL,
                       paging = TRUE, defaultPageSize = 10,
                       pageSizeOptions = c(10, 25, 50, 100), showPagination = NULL,

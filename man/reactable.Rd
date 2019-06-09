@@ -6,7 +6,7 @@
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
-  resizable = TRUE, filterable = FALSE, defaultColDef = NULL,
+  resizable = FALSE, filterable = FALSE, defaultColDef = NULL,
   defaultSortOrder = "asc", defaultSorted = NULL, paging = TRUE,
   defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
   showPagination = NULL, minRows = 1, selection = NULL,
@@ -30,7 +30,7 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
-\item{resizable}{Enable column resizing? Defaults to \code{TRUE}.}
+\item{resizable}{Enable column resizing? Defaults to \code{FALSE}.}
 
 \item{filterable}{Enable column filtering? Defaults to \code{FALSE}.}
 

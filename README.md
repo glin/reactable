@@ -170,7 +170,7 @@ reactable(
   columnGroups = NULL,        # List of column group definitions. See column groups below
   groupBy = NULL,             # Names of columns to group by
   sortable = TRUE,            # Enable sorting?
-  resizable = TRUE,           # Enable column resizing?
+  resizable = FALSE,          # Enable column resizing?
   filterable = FALSE,         # Enable column filtering?
   defaultColDef = NULL,       # Default column definition used by every column. See column definitions below
   defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"

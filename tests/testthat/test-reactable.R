@@ -55,7 +55,7 @@ test_that("reactable", {
       list(accessor = "y", Header = "y", type = "factor")
     ),
     sortable = TRUE,
-    resizable = TRUE,
+    resizable = FALSE,
     filterable = FALSE,
     defaultSortDesc = FALSE,
     defaultPageSize = 10,
@@ -75,7 +75,7 @@ test_that("reactable", {
   # Table options
   tbl <- reactable(data.frame(x = "a"), rownames = TRUE,
                    columnGroups = list(colGroup("group", "x")),
-                   sortable = FALSE, resizable = FALSE, filterable = TRUE,
+                   sortable = FALSE, resizable = TRUE, filterable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
                    minRows = 5, selection = "single", selectionId = "sel",
@@ -97,7 +97,7 @@ test_that("reactable", {
     columnGroups = list(colGroup("group", "x")),
     pivotBy = list("x"),
     sortable = FALSE,
-    resizable = FALSE,
+    resizable = TRUE,
     filterable = TRUE,
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
