@@ -19,7 +19,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
-  expect_error(reactable(df, defaultColDef))
+  expect_error(reactable(df, defaultColDef = list()))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
   expect_error(reactable(df, defaultSorted = "y"))
   expect_error(reactable(df, defaultSorted = list("x")))
