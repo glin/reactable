@@ -7,7 +7,7 @@
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = TRUE, filterable = FALSE, defaultColDef = NULL,
-  defaultSortOrder = "asc", defaultSorted = NULL,
+  defaultSortOrder = "asc", defaultSorted = NULL, paging = TRUE,
   defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
   showPagination = NULL, minRows = 1, selection = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
@@ -41,6 +41,8 @@ order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
 
 \item{defaultSorted}{Optional vector of column names to sort by default.
 Or to customize sort order, a named list with values of \code{"asc"} or \code{"desc"}.}
+
+\item{paging}{Enable pagination? Defaults to \code{TRUE}.}
 
 \item{defaultPageSize}{Default page size for the table. Defaults to 10.}
 

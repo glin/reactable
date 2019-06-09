@@ -25,6 +25,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list("x")))
   expect_error(reactable(df, defaultSorted = list(x = "ascending")))
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
+  expect_error(reactable(df, paging = "yes"))
   expect_error(reactable(df, defaultPageSize = "100"))
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, showPagination = "true"))
@@ -217,6 +218,27 @@ test_that("defaultSorted", {
     list(id = "x", desc = FALSE),
     list(id = "y", desc = TRUE)
   ))
+})
+
+test_that("paging", {
+  # Enable paging
+  tbl <- reactable(data.frame(x = rep(0, 10)), defaultPageSize = 1, paging = TRUE)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, TRUE)
+  expect_equal(attribs$defaultPageSize, 1)
+
+  # Disable paging
+  tbl <- reactable(data.frame(x = rep(0, 4)), paging = FALSE)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, FALSE)
+  expect_equal(attribs$defaultPageSize, 4)
+
+  # paging = FALSE should override other paging options
+  tbl <- reactable(data.frame(x = rep(0, 10)), paging = FALSE,
+                   showPagination = TRUE, defaultPageSize = 25)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$showPagination, FALSE)
+  expect_equal(attribs$defaultPageSize, 10)
 })
 
 test_that("showPagination defaults", {
