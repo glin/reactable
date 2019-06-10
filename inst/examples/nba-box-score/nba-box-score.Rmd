@@ -1,0 +1,220 @@
+---
+title: 'Box Score – Raptors vs. Warriors: <a class="game-date" href="https://stats.nba.com/game/0041800403">Jun 5, 2019</a>'
+output:
+  html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r code, echo=FALSE}
+library(reactable)
+library(htmltools)
+
+player_stats <- read.csv("player_stats.csv", stringsAsFactors = FALSE)
+team_stats <- read.csv("team_stats.csv", stringsAsFactors = FALSE)
+line_score <- read.csv("line_score.csv", stringsAsFactors = FALSE)
+
+line_score_tbl <- function(line_score, teams) {
+  cols <- c("TEAM_ID", "TEAM_CITY_NAME", "TEAM_NICKNAME", "TEAM_WINS_LOSSES",
+            "PTS_QTR1", "PTS_QTR2", "PTS_QTR3", "PTS_QTR4", "PTS")
+  score <- line_score[match(teams, line_score$TEAM_ABBREVIATION), cols]
+
+  reactable(
+    score,
+    sortable = FALSE,
+    highlight = FALSE,
+    bordered = FALSE,
+    class = "line-score-tbl",
+    defaultColDef = colDef(headerClass = "line-score-header"),
+    columns = list(
+      TEAM_ID = colDef(show = FALSE),
+      TEAM_CITY_NAME = colDef(
+        name = "",
+        minWidth = 250,
+        cell = function(value, index) {
+          team_url <- sprintf("https://stats.nba.com/team/%s/traditional", score[index, "TEAM_ID"])
+          team_name <- paste(value, score[index, "TEAM_NICKNAME"])
+          team_record <- score[index, "TEAM_WINS_LOSSES"]
+          div(
+            tags$a(class = "team-name", href = team_url, team_name),
+            span(class = "team-record", team_record)
+          )
+        }
+      ),
+      TEAM_NICKNAME = colDef(show = FALSE),
+      TEAM_WINS_LOSSES = colDef(show = FALSE),
+      PTS_QTR1 = colDef(name = "Q1", align = "center", width = 50),
+      PTS_QTR2 = colDef(name = "Q2", align = "center", width = 50),
+      PTS_QTR3 = colDef(name = "Q3", align = "center", width = 50),
+      PTS_QTR4 = colDef(name = "Q4", align = "center", width = 50),
+      PTS = colDef(name = "Total", align = "center", width = 50, style = "font-weight: 600")
+    )
+  )
+}
+
+box_score_tbl <- function(player_stats, team_stats, team) {
+  # Convert M:SS strings to datetimes for proper sorting
+  player_stats$MIN_STR <- player_stats$MIN
+  player_stats$MIN <- strptime(player_stats$MIN, format = "%M:%S")
+
+  cols <- c("PLAYER_ID", "PLAYER_NAME", "START_POSITION", "MIN", "MIN_STR",
+          "FGM", "FGA", "FG_PCT", "FG3M", "FG3A", "FG3_PCT", "FTM", "FTA",
+          "FT_PCT", "OREB", "DREB", "REB", "AST", "STL", "BLK", "TO", "PF",
+          "PTS", "PLUS_MINUS")
+  stats <- player_stats[player_stats$TEAM_ABBREVIATION == team, cols]
+  team_stats <- team_stats[team_stats$TEAM_ABBREVIATION == team, ]
+
+  reactable(
+    stats,
+    paging = FALSE,
+    striped = TRUE,
+    defaultSortOrder = "desc",
+    class = "box-score-tbl",
+    defaultColDef = colDef(
+      sortMethod = "naLast",
+      minWidth = 45,
+      headerClass = "box-score-header",
+      footer = function(values, name) {
+        value <- team_stats[[name]]
+        # Format shots made-attempted
+        if (name %in% c("FGM", "FG3M", "FTM")) {
+          attempted_name <- c(FGM = "FGA", FG3M = "FG3A", FTM = "FTA")[name]
+          value <- sprintf("%s-%s", value, team_stats[[attempted_name]])
+        }
+        # Format percentages
+        if (name %in% c("FG_PCT", "FG3_PCT", "FT_PCT")) {
+          value <- paste0(value * 100, "%")
+        }
+        # Format +/-
+        if (name == "PLUS_MINUS") {
+          value <- sprintf("%+d", value)
+        }
+        value
+      }
+    ),
+    columns = list(
+      PLAYER_ID = colDef(show = FALSE),
+      PLAYER_NAME = colDef(
+        name = "Player",
+        defaultSortOrder = "asc",
+        width = 130,
+        cell = function(value, index) {
+          player_id <- stats[index, "PLAYER_ID"]
+          player_url <- sprintf("https://stats.nba.com/player/%s", player_id)
+          start_position <- stats[index, "START_POSITION"]
+          if (start_position != "") {
+            value <- tagList(value, " ", tags$sup(start_position))
+          }
+          tags$a(href = player_url, value)
+        },
+        footer = tags$b("Totals")
+      ),
+      START_POSITION = colDef(show = FALSE),
+      MIN = colDef(name = "Min", minWidth = 60, align = "right", cell = function(value, index) {
+        if (!is.na(value)) stats[index, "MIN_STR"] else "DNP"
+      }),
+      MIN_STR = colDef(show = FALSE),
+      FGM = colDef(name = "FG", minWidth = 55, cell = function(value, index) {
+        if (!is.na(value)) sprintf("%s-%s", value, stats[index, "FGA"])
+      }),
+      FGA = colDef(show = FALSE),
+      FG_PCT = colDef(name = "FG%", minWidth = 55, format = colFormat(percent = TRUE)),
+      FG3M = colDef(name = "3P", minWidth = 55, cell = function(value, index) {
+        if (!is.na(value)) sprintf("%s-%s", value, stats[index, "FG3A"])
+      }),
+      FG3A = colDef(name = "3PA", show = FALSE),
+      FG3_PCT = colDef(name = "3P%", minWidth = 55, format = colFormat(percent = TRUE)),
+      FTM = colDef(name = "FT", minWidth = 55, cell = function(value, index) {
+        if (!is.na(value)) sprintf("%s-%s", value, stats[index, "FTA"])
+      }),
+      FTA = colDef(show = FALSE),
+      FT_PCT = colDef(name = "FT%", minWidth = 55, format = colFormat(percent = TRUE)),
+      OREB = colDef(name = "ORB"),
+      DREB = colDef(name = "DRB"),
+      PLUS_MINUS = colDef(name = "+/-", cell = function(value) {
+        if (is.na(value)) "" else sprintf("%+d", value)
+      })
+    )
+  )
+}
+
+div(class = "line-score", line_score_tbl(line_score, c("TOR", "GSW")))
+
+h2(class = "heading", "Toronto Raptors")
+box_score_tbl(player_stats, team_stats, "TOR")
+
+h2(class = "heading", "Golden State Warriors")
+box_score_tbl(player_stats, team_stats, "GSW")
+```
+
+---
+
+Data sourced from [NBA.com](https://stats.nba.com/game/0041800403)
+
+Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.csv), [`team_stats.csv`](team_stats.csv)
+
+```{r ref.label="code", eval=FALSE}
+```
+
+```{css}
+body {
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+.main-container {
+  max-width: 1024px !important;
+}
+
+h1.title {
+  text-align: center;
+  font-size: 18px;
+}
+
+.game-date {
+  font-size: 14px;
+}
+
+.heading {
+  margin-top: 24px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.line-score {
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.line-score-tbl {
+  margin-top: 24px;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.line-score-header {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.team-name {
+  font-weight: 600;
+}
+
+.team-record {
+  margin-left: 6px;
+  color: hsl(0, 0%, 45%);
+  font-size: 11px;
+}
+
+.box-score-tbl {
+  font-size: 11px;
+}
+
+.box-score-header {
+  background-color: hsl(208, 57%, 32%);
+  color: hsl(0, 0%, 98%);
+  font-weight: 400;
+}
+```

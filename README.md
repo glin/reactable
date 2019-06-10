@@ -160,6 +160,9 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+### Complete Examples
+- [NBA Box Score](https://glin.github.io/reactable/inst/examples/nba-box-score/nba-box-score.html)
+
 ## Usage
 ```r
 reactable(
