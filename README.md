@@ -289,15 +289,15 @@ colFormat(
   prefix = NULL,       # Prefix string
   suffix = NULL,       # Suffix string
   digits = NULL,       # Max number of decimal places to round numbers
-  separators = FALSE,  # Use grouping separators (e.g. thousands) for numbers? Locale-dependent.
-  percent = FALSE,     # Format as a percentage?
-  currency = NULL,     # Currency format. An ISO 4217 currency code, such as "USD", "EUR", "CNY". Locale-dependent.
+  separators = FALSE,  # Use grouping separators (e.g. thousands) for numbers? Locale-dependent
+  percent = FALSE,     # Format number as a percentage? Locale-dependent
+  currency = NULL,     # Currency format. An ISO 4217 currency code, such as "USD", "EUR", "CNY". Locale-dependent
   datetime = FALSE,    # Format as a locale-dependent date-time?
   date = FALSE,        # Format as a locale-dependent date?
   time = FALSE,        # Format as a locale-dependent time?
-  hour12 = NULL,       # Whether to use 12-hour time or 24-hour time. The default convention is locale-dependent.
+  hour12 = NULL,       # Whether to use 12-hour time or 24-hour time. The default convention is locale-dependent
   locales = NULL       # Locales to use for number and date/time formatting. A vector of BCP 47 language
-)                      # tags, such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser.
+)                      # tags, such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser
 ```
 
 ### Cell Renderers

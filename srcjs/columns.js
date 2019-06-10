@@ -275,15 +275,14 @@ export function formatValue(value, options) {
   } = options
 
   if (typeof value === 'number') {
-    if (percent) {
-      value = value * 100
-      suffix = '%' + (suffix || '')
-    }
     if (digits != null) {
       value = round(value, digits)
     }
-    if (separators || currency) {
+    if (separators || percent || currency) {
       const options = { useGrouping: separators ? true : false }
+      if (percent) {
+        options.style = 'percent'
+      }
       if (currency) {
         options.style = 'currency'
         options.currency = currency

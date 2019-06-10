@@ -220,7 +220,7 @@ is.colGroup <- function(x) {
 #' @param separators Whether to use grouping separators for numbers, such as
 #'   thousands separators or thousand/lakh/crore separators. The format is
 #'   locale-dependent.
-#' @param percent Format as a percentage?
+#' @param percent Format number as a percentage? The format is locale-dependent.
 #' @param currency Currency format. An ISO 4217 currency code such as `"USD"`
 #'   for the US dollar, `"EUR"` for the euro, or `"CNY"` for the Chinese RMB.
 #'   The format is locale-dependent.

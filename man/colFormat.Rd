@@ -20,7 +20,7 @@ colFormat(prefix = NULL, suffix = NULL, digits = NULL,
 thousands separators or thousand/lakh/crore separators. The format is
 locale-dependent.}
 
-\item{percent}{Format as a percentage?}
+\item{percent}{Format number as a percentage? The format is locale-dependent.}
 
 \item{currency}{Currency format. An ISO 4217 currency code such as \code{"USD"}
 for the US dollar, \code{"EUR"} for the euro, or \code{"CNY"} for the Chinese RMB.
