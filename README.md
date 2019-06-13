@@ -291,7 +291,7 @@ Formatting options:
 colFormat(
   prefix = NULL,       # Prefix string
   suffix = NULL,       # Suffix string
-  digits = NULL,       # Max number of decimal places to round numbers
+  digits = NULL,       # Number of decimal digits to use for numbers
   separators = FALSE,  # Use grouping separators (e.g. thousands) for numbers? Locale-dependent
   percent = FALSE,     # Format number as a percentage? Locale-dependent
   currency = NULL,     # Currency format. An ISO 4217 currency code, such as "USD", "EUR", "CNY". Locale-dependent

@@ -14,7 +14,7 @@ colFormat(prefix = NULL, suffix = NULL, digits = NULL,
 
 \item{suffix}{Suffix string.}
 
-\item{digits}{Max number of decimal places to round numbers.}
+\item{digits}{Number of decimal digits to use for numbers.}
 
 \item{separators}{Whether to use grouping separators for numbers, such as
 thousands separators or thousand/lakh/crore separators. The format is

@@ -216,7 +216,7 @@ is.colGroup <- function(x) {
 #'
 #' @param prefix Prefix string.
 #' @param suffix Suffix string.
-#' @param digits Max number of decimal places to round numbers.
+#' @param digits Number of decimal digits to use for numbers.
 #' @param separators Whether to use grouping separators for numbers, such as
 #'   thousands separators or thousand/lakh/crore separators. The format is
 #'   locale-dependent.

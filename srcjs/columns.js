@@ -1,7 +1,7 @@
 import React from 'react'
 import { hydrate } from 'reactR'
 
-import { aggregators, round, normalizeNumber, isNA } from './aggregators'
+import { aggregators, normalizeNumber, isNA } from './aggregators'
 import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
 
 // Convert column-based data to rows
@@ -275,10 +275,7 @@ export function formatValue(value, options) {
   } = options
 
   if (typeof value === 'number') {
-    if (digits != null) {
-      value = round(value, digits)
-    }
-    if (separators || percent || currency) {
+    if (separators || percent || currency || digits != null) {
       const options = { useGrouping: separators ? true : false }
       if (percent) {
         options.style = 'percent'
@@ -286,6 +283,9 @@ export function formatValue(value, options) {
       if (currency) {
         options.style = 'currency'
         options.currency = currency
+      } else if (digits != null) {
+        options.minimumFractionDigits = digits
+        options.maximumFractionDigits = digits
       } else {
         options.maximumFractionDigits = 20
       }

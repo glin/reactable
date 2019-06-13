@@ -487,8 +487,10 @@ describe('formatValue', () => {
   })
 
   test('digits', () => {
-    expect(formatValue(123.125, { digits: 0 })).toEqual(123)
-    expect(formatValue(123.125, { digits: 2 })).toEqual(123.13)
+    expect(formatValue(123.125, { digits: 0 })).toEqual('123')
+    expect(formatValue(123.125, { digits: 2 })).toEqual('123.13')
+    expect(formatValue(123.1, { digits: 3 })).toEqual('123.100')
+    expect(formatValue(24, { digits: 1 })).toEqual('24.0')
     expect(formatValue('ignorestring', { digits: 3 })).toEqual('ignorestring')
   })
 
@@ -500,9 +502,10 @@ describe('formatValue', () => {
 
   test('percent', () => {
     expect(formatValue(0.951, { percent: true })).toEqual('95.1%')
-    expect(formatValue(0.95123, { percent: true, digits: 4 })).toEqual('95.12%')
+    expect(formatValue(0.95123, { percent: true, digits: 2 })).toEqual('95.12%')
+    // Shouldn't be any precision errors (0.569 * 100)
     expect(formatValue(0.569, { percent: true })).toEqual('56.9%')
-    expect(formatValue(10.356, { percent: true, separators: true, digits: 0 })).toEqual('1,000%')
+    expect(formatValue(10.356, { percent: true, separators: true, digits: 0 })).toEqual('1,036%')
     expect(formatValue(0.33, { percent: true, suffix: '_' })).toEqual('33%_')
   })
 
