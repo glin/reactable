@@ -8,7 +8,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r code, echo=FALSE}
+```{r box_score, echo=FALSE}
 library(reactable)
 library(htmltools)
 
@@ -151,11 +151,11 @@ box_score_tbl(player_stats, team_stats, "GSW")
 
 ---
 
-Data sourced from [NBA.com](https://stats.nba.com/game/0041800403)
+Source: [NBA.com](https://stats.nba.com/game/0041800403)
 
 Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.csv), [`team_stats.csv`](team_stats.csv)
 
-```{r ref.label="code", eval=FALSE}
+```{r ref.label="box_score", eval=FALSE}
 ```
 
 ```{css}
