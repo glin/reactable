@@ -87,11 +87,11 @@ test_that("reactable", {
                    elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(x = "a")
-  data[["__rowname__"]] <- "1"
+  data[["__rowname__"]] <- 1
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
     columns = list(
-      list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE),
+      list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE, type = "numeric"),
       list(accessor = "x", Header = "x", type = "factor")
     ),
     columnGroups = list(colGroup("group", "x")),

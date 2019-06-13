@@ -227,13 +227,16 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
   if (rownames) {
     # Serialize row names with predictable order and ID
-    data[["__rowname__"]] <- rownames(data)
-    col <- mergeLists(defaultColDef, list(
+    # Use attribute to get integer row names, if present
+    data[["__rowname__"]] <- attr(data, "row.names")
+
+    column <- mergeLists(defaultColDef, list(
       accessor = "__rowname__",
       sortable = FALSE,
       filterable = FALSE
     ))
-    cols <- c(list(col), cols)
+    column$type <- colType(data[["__rowname__"]])
+    cols <- c(list(column), cols)
   }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
