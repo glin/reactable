@@ -86,12 +86,12 @@ test_that("reactable", {
                    inline = TRUE, groupBy = "x", width = "400px", height = "100%",
                    elementId = "tbl")
   attribs <- getAttribs(tbl)
-  data <- data.frame(x = "a")
-  data[["__rowname__"]] <- 1
+  data <- data.frame(.rownames = 1, x = "a")
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
     columns = list(
-      list(accessor = "__rowname__", sortable = FALSE, filterable = FALSE, type = "numeric"),
+      list(accessor = ".rownames", Header = "", type = "numeric",
+           sortable = FALSE, filterable = FALSE),
       list(accessor = "x", Header = "x", type = "factor")
     ),
     columnGroups = list(colGroup("group", "x")),
@@ -155,6 +155,47 @@ test_that("data can be a matrix", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":["a","b"],"y":["c","d"]}')
   expect_length(attribs$columns, 2)
+})
+
+test_that("rownames", {
+  # Integer row names
+  data <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)
+  attribs <- getAttribs(data)
+  expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".rownames", Header = "",  type = "numeric",
+    sortable = FALSE, filterable = FALSE
+  ))
+
+  # Character row names
+  data <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")), rownames = TRUE)
+  attribs <- getAttribs(data)
+  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".rownames", Header = "",  type = "character",
+    sortable = FALSE, filterable = FALSE
+  ))
+
+  # Custom rownames colDef
+  data <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columns = list(
+    .rownames = colDef(name = "N", sortable = TRUE, headerClass = "hdr")
+  ))
+  attribs <- getAttribs(data)
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".rownames", Header = "N",  type = "numeric",
+    sortable = TRUE, filterable = FALSE, headerClassName = "hdr"
+  ))
+
+  # Row names can be part of column groups
+  data <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columnGroups = list(
+    colGroup("group", c(".rownames", "x"))
+  ))
+  attribs <- getAttribs(data)
+  expect_equal(attribs$columnGroups[[1]]$columns, c(".rownames", "x"))
+
+  # Can't use rownames column without rownames
+  expect_error(reactable(df, columns = list(.rownames = colDef())))
+  expect_error(reactable(df, columnGroups = list(colGroup("", ".rownames"))))
 })
 
 test_that("defaultColDef", {

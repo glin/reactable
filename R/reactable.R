@@ -67,6 +67,20 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
   if (!is.logical(rownames)) {
     stop("`rownames` must be TRUE or FALSE")
+  } else if (rownames) {
+    rownamesKey <- ".rownames"
+    # Use attribute to get integer row names, if present
+    data <- cbind(
+      setNames(list(attr(data, "row.names")), rownamesKey),
+      data,
+      stringsAsFactors = FALSE
+    )
+    defaultColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE)
+    if (rownamesKey %in% names(columns)) {
+      columns[[rownamesKey]] <- mergeLists(defaultColumn, columns[[rownamesKey]])
+    } else {
+      columns <- c(setNames(list(defaultColumn), rownamesKey), columns)
+    }
   }
   if (!is.null(colnames)) {
     if (!isNamedList(colnames)) {
@@ -224,20 +238,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     }
     column
   })
-
-  if (rownames) {
-    # Serialize row names with predictable order and ID
-    # Use attribute to get integer row names, if present
-    data[["__rowname__"]] <- attr(data, "row.names")
-
-    column <- mergeLists(defaultColDef, list(
-      accessor = "__rowname__",
-      sortable = FALSE,
-      filterable = FALSE
-    ))
-    column$type <- colType(data[["__rowname__"]])
-    cols <- c(list(column), cols)
-  }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
 
