@@ -136,7 +136,7 @@ server <- function(input, output, session) {
     list(
       Sepal.Length = list(
         format = if ("format" %in% input$colOptions) {
-          quote(colFormat(suffix = " cm"))
+          quote(colFormat(suffix = " cm", digits = 1))
         }
       ),
       Sepal.Width = list(
@@ -152,6 +152,7 @@ server <- function(input, output, session) {
             } else {
               classes <- "tag num-low"
             }
+            value <- format(value, nsmall = 1)
             span(class = classes, value)
           }
         },
