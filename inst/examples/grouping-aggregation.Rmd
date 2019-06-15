@@ -23,7 +23,7 @@ reactable(iris, groupBy = "Species", columns = list(
 ### Multiple Groups
 
 ```{r}
-reactable(iris, groupBy = c("Species", "Petal.Width"), striped = TRUE, columns = list(
+reactable(iris, groupBy = c("Species", "Petal.Width"), columns = list(
   Sepal.Length = colDef(
     aggregate = "sum",
     format = list(aggregated = colFormat(suffix = " (total)"))
