@@ -58,7 +58,8 @@ ui <- fluidPage(
             choices = c(
               "Show row details" = "showRowDetails",
               "Column header" = "columnHeader"
-            )
+            ),
+            selected = "showRowDetails"
           ),
 
           radioButtons(
