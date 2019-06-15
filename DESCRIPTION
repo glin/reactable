@@ -17,6 +17,7 @@ Imports:
     reactR
 Suggests:
     covr,
+    rmarkdown,
     testthat
 Encoding: UTF-8
 LazyData: true
