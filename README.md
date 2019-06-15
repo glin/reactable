@@ -136,6 +136,13 @@ reactable(iris, columns = list(
 ))
 ```
 
+### Table Styles
+https://glin.github.io/reactable/inst/examples/table-styles.html
+
+```r
+reactable(iris, striped = TRUE, outlined = TRUE, bordered = FALSE)
+```
+
 ### 100k Rows
 https://glin.github.io/reactable/inst/examples/100k-rows.html
 
