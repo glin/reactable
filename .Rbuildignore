@@ -6,9 +6,12 @@
 ^\.eslintrc\.json$
 ^\.prettierrc\.json$
 ^coverage$
+^docs$
 ^jest.config\.js$
 ^node_modules$
 ^package\.json$
+^pkgdown$
 ^srcjs$
+^vignettes$
 ^webpack\.config\.js$
 ^yarn\.lock$

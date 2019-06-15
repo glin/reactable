@@ -14,15 +14,13 @@ matrix:
     - r: release
       language: r
       cache: packages
+      before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
       after_success:
         - Rscript -e 'covr::codecov()'
         - R CMD INSTALL ${PKG_TARBALL}
-        - >
-          Rscript -e 'for (f in list.files("inst/examples", pattern = ".Rmd", full.names = TRUE, recursive = TRUE))
-            rmarkdown::render(f, encoding = "UTF-8")'
+        - Rscript -e 'pkgdown::build_site()'
       deploy:
         provider: pages
+        local_dir: docs
         skip_cleanup: true
         github_token: $GITHUB_TOKEN
-        on:
-          branch: master

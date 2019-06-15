@@ -1,5 +1,6 @@
 .Rprofile
 .Rproj.user/
 coverage/
+docs/
 node_modules/
 rsconnect/

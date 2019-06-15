@@ -1,0 +1,18 @@
+navbar:
+  structure:
+    left: [home, reference, examples, demos]
+    right: [github]
+  components:
+    articles: ~
+    examples:
+      text: Examples
+      href: articles/examples.html
+    demos:
+      text: Demos
+      menu:
+      - text: NBA Box Score
+        href: articles/nba-box-score/nba-box-score.html
+      - text: 100k Rows
+        href: articles/100k-rows.html
+      - text: Shiny
+        href: https://glin.shinyapps.io/reactable

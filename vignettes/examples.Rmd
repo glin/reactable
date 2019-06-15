@@ -1,0 +1,370 @@
+---
+title: "Examples"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+## Grouping and Aggregation
+
+```{r}
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(aggregate = "count"),
+  Sepal.Width = colDef(aggregate = "mean"),
+  Petal.Length = colDef(aggregate = "sum"),
+  Petal.Width = colDef(aggregate = "max")
+))
+```
+
+### Multiple Groups
+
+```{r}
+reactable(iris, groupBy = c("Species", "Petal.Width"), columns = list(
+  Sepal.Length = colDef(
+    aggregate = "sum",
+    format = list(aggregated = colFormat(suffix = " (total)"))
+  ),
+  Sepal.Width = colDef(
+    aggregate = "mean",
+    format = list(aggregated = colFormat(digits = 1, suffix = " (avg)"))
+  ),
+  Petal.Width = colDef(
+    aggregate = "unique"
+  ),
+  Petal.Length = colDef(
+    aggregate = "min",
+    format = list(aggregated = colFormat(suffix = " (min)"))
+  )
+))
+```
+
+
+## Expandable Row Details
+
+#### R render function
+```{r}
+reactable(iris, details = function(index) {
+  htmltools::div(
+    paste("Details for row:", index),
+    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
+  )
+})
+```
+
+#### JS render function
+```{r}
+reactable(iris, details = rowDetails(
+  JS("
+    function(rowInfo) {
+      return 'Details for row: ' + rowInfo.index +
+        '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+    }
+  "),
+  html = TRUE,
+  name = "More",
+  width = 50
+))
+```
+
+### Subtables
+
+> NOTE: only supported by R render functions
+
+```{r}
+by_species <- aggregate(iris[, 1:4], by = list(Species = iris$Species), FUN = mean)
+
+reactable(by_species, details = function(index) {
+  species <- by_species[index, "Species"]
+  htmltools::div(
+    paste("Species:", species),
+    reactable(iris[iris$Species == species, ])
+  )
+})
+```
+
+### Conditional row details
+
+> NOTE: only supported by R render functions
+
+```{r}
+reactable(iris, details = function(index) {
+  if (index %in% c(3, 5)) {
+    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
+  }
+})
+```
+
+
+## Sorting
+
+### Default sorting
+
+```{r}
+reactable(
+  iris,
+  defaultSortOrder = "desc",
+  defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
+  columns = list(
+    Species = colDef(defaultSortOrder = "asc")
+  )
+)
+```
+
+*NOTE: shift+click to sort multiple columns*
+
+### NA and Infinity handling
+
+```{r}
+reactable(
+  data.frame(
+    n = seq(7),
+    x = c(5, 7, NA, NaN, 9, 0, -20),
+    y = c(1, NA, NA, -Inf, 0, Inf, -5)
+  ),
+  columns = list(
+    x = colDef(showNA = TRUE)
+  )
+)
+```
+
+### Always sort NAs to the bottom
+
+```{r}
+reactable(
+  data.frame(
+    n = c(1, 2, 3, 4, 5),
+    x = c(2, 3, 1, NA, NA),
+    y = c(4, 5, 6, NA, NA)
+  ),
+  defaultColDef = colDef(sortMethod = "naLast"),
+  defaultSorted = "x"
+)
+```
+
+### Show sortable columns
+
+```{r}
+reactable(iris, sortable = FALSE, showSortable = TRUE, columns = list(
+  Petal.Width = colDef(sortable = TRUE),
+  Petal.Length = colDef(sortable = TRUE)
+))
+```
+
+
+## Filtering
+
+```{r}
+reactable(iris, filterable = TRUE)
+```
+
+```{r}
+data <- data.frame(
+  city = c("Hà N\u1ed9i", "Zürich", "Saint-Étienne", "São Gonçalo"),
+  country = c("Vietnam", "Switzerland", "France", "Brazil"),
+  area = c(3328.9, 87.88, 79.97, 249.142),
+  capital = c(TRUE, FALSE, FALSE, FALSE),
+  stringsAsFactors = FALSE
+)
+
+reactable(data, filterable = TRUE)
+```
+
+
+## Column Groups
+
+```{r}
+reactable(
+  iris,
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
+```
+
+
+## Column Formatting
+
+```{r}
+reactable(iris, groupBy = "Species", striped = TRUE, columns = list(
+  Sepal.Length = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " cm")
+  ),
+  Sepal.Width = colDef(
+    aggregate = "mean",
+    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
+  )
+))
+```
+
+### Date Formatting
+
+```{r}
+datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-10-22 14:20:00"))
+data <- data.frame(
+  datetime = datetimes,
+  date = datetimes,
+  time = datetimes,
+  time_24h = datetimes,
+  datetime_pt_BR = datetimes
+)
+
+reactable(data, columns = list(
+  datetime = colDef(format = colFormat(datetime = TRUE)),
+  date = colDef(format = colFormat(date = TRUE)),
+  time = colDef(format = colFormat(time = TRUE)),
+  time_24h = colDef(format = colFormat(time = TRUE, hour12 = FALSE)),
+  datetime_pt_BR = colDef(format = colFormat(datetime = TRUE, locales = "pt-BR"))
+))
+```
+
+### Currency Formatting
+
+```{r}
+data <- data.frame(
+  item = letters[1:6],
+  qty = c(12000, 300.15, 3535125, 0, 4344, 12),
+  price_usd = c(12.12, 2141.213, 0.42, NA, 1.55, 34414),
+  price_eur = c(10.68, 1884.27, 0.37, NA, 1.36, 30284.32),
+  price_inr = c(841.73, 148707.24, 29, NA, 107.65, 2390052.3)
+)
+
+reactable(data, columns = list(
+  qty = colDef(
+    format = colFormat(separators = TRUE)
+  ),
+  price_usd = colDef(
+    name = "USD",
+    format = colFormat(currency = "USD", separators = TRUE)
+  ),
+  price_eur = colDef(
+    name = "EUR",
+    format = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
+  ),
+  price_inr = colDef(
+    name = "INR",
+    format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
+  )
+))
+```
+
+
+## Cell Renderers
+
+```{r}
+reactable(iris, columns = list(
+  Petal.Length = colDef(html = TRUE, cell = JS("
+    function(cell) {
+      var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
+      var color = colors[cell.row.Species]
+      return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+    }
+  ")),
+  Petal.Width = colDef(cell = function(value, index) {
+    colors <- c(setosa = "red", versicolor = "green", virginica = "navy")
+    color <- colors[iris[index, "Species"]]
+    htmltools::span(style = paste("color:", color), value)
+  })
+))
+```
+
+### Aggregated cells
+
+```{r}
+reactable(iris, groupBy = "Species", columns = list(
+  Petal.Length = colDef(
+    aggregate = "mean",
+    aggregated = JS("
+      function(cell) {
+        return cell.value + ' (avg)'
+      }
+    ")
+  )
+))
+```
+
+
+## Footers
+
+```{r}
+reactable(iris, columns = list(
+  Sepal.Length = colDef(
+    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
+  ),
+  Sepal.Width = colDef(footer = function(values, key) {
+    htmltools::span(htmltools::tags$b("Total: "), sum(values))
+  }),
+  Petal.Length = colDef(html = TRUE, footer = JS("
+    function(colInfo) {
+      return '<b>Rows: </b>' + colInfo.data.length
+    }
+  "))
+))
+```
+
+
+## Table Styles
+
+### Default
+
+```{r}
+reactable(iris[1:5, ])
+```
+
+### Borderless
+
+```{r}
+reactable(iris[1:5, ], bordered = FALSE)
+```
+
+### Striped
+
+```{r}
+reactable(iris[1:5, ], striped = TRUE)
+```
+
+### Outlined
+
+```{r}
+reactable(iris[1:5, ], outlined = TRUE)
+```
+
+### Outlined + striped
+
+```{r}
+reactable(iris[1:5, ], outlined = TRUE, striped = TRUE)
+```
+
+### Outlined + borderless
+
+```{r}
+reactable(iris[1:5, ], outlined = TRUE, bordered = FALSE)
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+```

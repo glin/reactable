@@ -1,8 +1,6 @@
 ---
 title: "100k Rows"
-output:
-  html_document:
-    css: assets/styles.css
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -32,4 +30,17 @@ reactable(data, filterable = TRUE, columns = list(
     }
   '), html = TRUE)
 ))
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
 ```
