@@ -71,7 +71,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     rownamesKey <- ".rownames"
     # Use attribute to get integer row names, if present
     data <- cbind(
-      setNames(list(attr(data, "row.names")), rownamesKey),
+      stats::setNames(list(attr(data, "row.names")), rownamesKey),
       data,
       stringsAsFactors = FALSE
     )
@@ -79,7 +79,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (rownamesKey %in% names(columns)) {
       columns[[rownamesKey]] <- mergeLists(defaultColumn, columns[[rownamesKey]])
     } else {
-      columns <- c(setNames(list(defaultColumn), rownamesKey), columns)
+      columns <- c(stats::setNames(list(defaultColumn), rownamesKey), columns)
     }
   }
   if (!is.null(colnames)) {
