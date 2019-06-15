@@ -143,9 +143,6 @@ https://glin.github.io/reactable/inst/examples/table-styles.html
 reactable(iris, striped = TRUE, outlined = TRUE, bordered = FALSE)
 ```
 
-### 100k Rows
-https://glin.github.io/reactable/inst/examples/100k-rows.html
-
 ### Shiny
 https://glin.shinyapps.io/reactable/
 
@@ -167,8 +164,9 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-### Complete Examples
+### More Examples
 - [NBA Box Score](https://glin.github.io/reactable/inst/examples/nba-box-score/nba-box-score.html)
+- [100k Rows](https://glin.github.io/reactable/inst/examples/100k-rows.html)
 
 ## Usage
 ```r
