@@ -107,6 +107,14 @@ reactable(iris, details = function(index) {
 
 ### Default sorting
 
+Sort columns by default:
+
+```{r}
+reactable(iris, defaultSorted = c("Species", "Petal.Length"))
+```
+
+Set default sort order for the table, specific columns, or default sorted columns:
+
 ```{r}
 reactable(
   iris,
@@ -118,7 +126,7 @@ reactable(
 )
 ```
 
-*NOTE: shift+click to sort multiple columns*
+> Tip: shift+click to sort multiple columns
 
 ### NA and Infinity handling
 
