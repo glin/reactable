@@ -18,7 +18,7 @@ devtools::install_github("glin/reactable")
 ## Examples
 
 ### Grouping and Aggregation
-https://glin.github.io/reactable/inst/examples/grouping-aggregation.html
+https://glin.github.io/reactable/articles/examples.html#grouping-and-aggregation
 
 ```r
 reactable(iris, groupBy = "Species", columns = list(
@@ -30,7 +30,7 @@ reactable(iris, groupBy = "Species", columns = list(
 ```
 
 ### Expandable Row Details
-https://glin.github.io/reactable/inst/examples/row-details.html
+https://glin.github.io/reactable/articles/examples.html#expandable-row-details
 
 ```r
 reactable(iris, details = function(index) {
@@ -41,15 +41,8 @@ reactable(iris, details = function(index) {
 })
 ```
 
-### Filtering
-https://glin.github.io/reactable/inst/examples/filtering.html
-
-```r
-reactable(iris, filterable = TRUE)
-```
-
 ### Sorting
-https://glin.github.io/reactable/inst/examples/sorting.html
+https://glin.github.io/reactable/articles/examples.html#sorting
 
 ```r
 reactable(
@@ -62,8 +55,15 @@ reactable(
 )
 ```
 
+### Filtering
+https://glin.github.io/reactable/articles/examples.html#filtering
+
+```r
+reactable(iris, filterable = TRUE)
+```
+
 ### Column Groups
-https://glin.github.io/reactable/inst/examples/column-groups.html
+https://glin.github.io/reactable/articles/examples.html#column-groups
 
 ```r
 reactable(
@@ -82,7 +82,7 @@ reactable(
 ```
 
 ### Column Formatting
-https://glin.github.io/reactable/inst/examples/column-formatting.html
+https://glin.github.io/reactable/articles/examples.html#column-formatting
 
 ```r
 reactable(iris, groupBy = "Species", columns = list(
@@ -98,7 +98,7 @@ reactable(iris, groupBy = "Species", columns = list(
 ```
 
 ### Cell Renderers
-https://glin.github.io/reactable/inst/examples/cell-renderers.html
+https://glin.github.io/reactable/articles/examples.html#cell-renderers
 
 ```r
 reactable(iris, columns = list(
@@ -118,7 +118,7 @@ reactable(iris, columns = list(
 ```
 
 ### Footers
-https://glin.github.io/reactable/inst/examples/footers.html
+https://glin.github.io/reactable/articles/examples.html#footers
 
 ```r
 reactable(iris, columns = list(
@@ -137,7 +137,7 @@ reactable(iris, columns = list(
 ```
 
 ### Table Styles
-https://glin.github.io/reactable/inst/examples/table-styles.html
+https://glin.github.io/reactable/articles/examples.html#table-styles
 
 ```r
 reactable(iris, striped = TRUE, outlined = TRUE, bordered = FALSE)
@@ -165,8 +165,8 @@ shinyApp(ui, server)
 ```
 
 ### More Examples
-- [NBA Box Score](https://glin.github.io/reactable/inst/examples/nba-box-score/nba-box-score.html)
-- [100k Rows](https://glin.github.io/reactable/inst/examples/100k-rows.html)
+- [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
+- [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
 
 ## Usage
 ```r
