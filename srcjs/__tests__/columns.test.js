@@ -217,26 +217,36 @@ describe('buildColumnDefs', () => {
     expect(cols[0].sortMethod(null, 'x', false)).toEqual(1)
   })
 
-  test('classes and styles', () => {
-    const cols = buildColumnDefs([
+  test('className', () => {
+    let cols = buildColumnDefs([
       {
         accessor: 'x',
         className: 'cell',
         headerClassName: 'hdr',
-        footerClassName: 'ftr',
+        footerClassName: 'ftr'
+      }
+    ])
+    // Cell className should be overrided since it applies to footers
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left cell') // Cell
+    expect(cols[0].getProps(null, null).className).toEqual(undefined) // Footer
+    expect(cols[0].headerClassName).toEqual('rt-col-left hdr')
+    expect(cols[0].footerClassName).toEqual('rt-col-left ftr')
+  })
+
+  test('style', () => {
+    const cols = buildColumnDefs([
+      {
+        accessor: 'x',
         style: 'cell-style',
         headerStyle: 'hdr-style',
         footerStyle: 'ftr-style'
       }
     ])
-    // Cell className should be overrided
-    expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left cell')
-    expect(cols[0].headerClassName).toEqual('rt-col-left hdr')
-    expect(cols[0].footerClassName).toEqual('rt-col-left ftr')
-    // Cell style should be overrided
+    // Cell style should be overrided since it applies to footers
     expect(cols[0].style).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).style).toEqual('cell-style')
+    expect(cols[0].getProps(null, { index: 0 }).style).toEqual('cell-style') // Cell
+    expect(cols[0].getProps(null, null).style).toEqual(undefined) // Footer
     expect(cols[0].headerStyle).toEqual('hdr-style')
     expect(cols[0].footerStyle).toEqual('ftr-style')
   })
