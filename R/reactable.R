@@ -174,7 +174,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`selectionId` must be a character")
   }
   if (!is.null(details)) {
-    if (is.function(details) || is.JS(details)) {
+    if (!is.rowDetails(details) && (is.function(details) || is.JS(details) || is.list(details))) {
       details <- rowDetails(details)
     } else if (!is.rowDetails(details)) {
       stop("`details` must be a row details definition or content renderer")

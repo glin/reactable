@@ -32,7 +32,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
-  expect_error(reactable(df, details = list()))
+  expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
   expect_error(reactable(df, striped = "true"))
@@ -347,6 +347,11 @@ test_that("row details", {
   tbl <- reactable(data, details = JS("rowInfo => rowInfo.y"))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$details, rowDetails(JS("rowInfo => rowInfo.y")))
+
+  # List
+  tbl <- reactable(data, details = list("a", "b"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$details, rowDetails(list("a", "b")))
 
   # Row details definition
   tbl <- reactable(data, details = rowDetails(function(i) data[i, "y"]))
