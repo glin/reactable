@@ -132,6 +132,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
 
     col.className = classNames(`rt-col-${col.align}`, col.className)
     col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
+    col.footerClassName = classNames(`rt-col-${col.align}`, col.footerClassName)
 
     // Add sort icon to column header
     const isSortable = getFirstDefined(col.sortable, sortable)
@@ -169,6 +170,23 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       col.filterMethod = filterRowsSubstring
     }
 
+    // Prevent react-table from applying cell classes and styles to footers by default.
+    // Override this behavior with our own footerClass and footerStyle.
+    const cellClass = col.className
+    const cellStyle = col.style
+    col.className = undefined
+    col.style = undefined
+    col.getProps = (table, rowInfo, column) => {
+      let props = {}
+      if (!rowInfo) return props
+      if (cellClass) {
+        props.className = cellClass
+      }
+      if (cellStyle) {
+        props.style = cellStyle
+      }
+      return props
+    }
     return col
   })
 

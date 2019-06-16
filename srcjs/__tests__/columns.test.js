@@ -217,6 +217,30 @@ describe('buildColumnDefs', () => {
     expect(cols[0].sortMethod(null, 'x', false)).toEqual(1)
   })
 
+  test('classes and styles', () => {
+    const cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        className: 'cell',
+        headerClassName: 'hdr',
+        footerClassName: 'ftr',
+        style: 'cell-style',
+        headerStyle: 'hdr-style',
+        footerStyle: 'ftr-style'
+      }
+    ])
+    // Cell className should be overrided
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left cell')
+    expect(cols[0].headerClassName).toEqual('rt-col-left hdr')
+    expect(cols[0].footerClassName).toEqual('rt-col-left ftr')
+    // Cell style should be overrided
+    expect(cols[0].style).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).style).toEqual('cell-style')
+    expect(cols[0].headerStyle).toEqual('hdr-style')
+    expect(cols[0].footerStyle).toEqual('ftr-style')
+  })
+
   test('numeric cols', () => {
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
     expect(cols[0].Cell({ value: 123 })).toEqual('123')
@@ -224,42 +248,60 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'Inf' })).toEqual('Inf')
     expect(cols[0].Cell({ value: '-Inf' })).toEqual('-Inf')
     expect(cols[0].align).toEqual('right')
-    expect(cols[0].className).toEqual('rt-col-right')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
+    expect(cols[0].footerClassName).toEqual('rt-col-right')
 
     // Align override
     cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
     expect(cols[0].align).toEqual('left')
-    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
+    expect(cols[0].footerClassName).toEqual('rt-col-left')
   })
 
   test('column alignment', () => {
     // Default: left
     let cols = buildColumnDefs([{ accessor: 'x' }])
     expect(cols[0].align).toEqual('left')
-    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
+    expect(cols[0].footerClassName).toEqual('rt-col-left')
 
     // Left
     cols = buildColumnDefs([{ accessor: 'x', align: 'left' }])
     expect(cols[0].align).toEqual('left')
-    expect(cols[0].className).toEqual('rt-col-left')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
+    expect(cols[0].footerClassName).toEqual('rt-col-left')
 
     // Right
     cols = buildColumnDefs([{ accessor: 'x', align: 'right' }])
     expect(cols[0].align).toEqual('right')
-    expect(cols[0].className).toEqual('rt-col-right')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
+    expect(cols[0].footerClassName).toEqual('rt-col-right')
 
     // Center
     cols = buildColumnDefs([
-      { accessor: 'x', align: 'center', className: 'col', headerClassName: 'hdr' }
+      {
+        accessor: 'x',
+        align: 'center',
+        className: 'col',
+        headerClassName: 'hdr',
+        footerClassName: 'ftr'
+      }
     ])
     expect(cols[0].align).toEqual('center')
-    expect(cols[0].className).toEqual('rt-col-center col')
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-center col')
     expect(cols[0].headerClassName).toEqual('rt-col-center hdr')
+    expect(cols[0].footerClassName).toEqual('rt-col-center ftr')
   })
 
   test('header sort icons', () => {

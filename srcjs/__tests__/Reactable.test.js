@@ -478,4 +478,21 @@ describe('footer rendering', () => {
     const footer = getByText('rows: 2')
     expect(footer).toBeTruthy()
   })
+
+  it('does not apply cell classes and styles to footers', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        footer: 'my-footer',
+        className: 'cell',
+        style: { color: 'red' }
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const footer = getByText('my-footer')
+    expect(footer).not.toHaveClass('cell')
+    expect(footer).not.toHaveStyle('color: red;')
+  })
 })
