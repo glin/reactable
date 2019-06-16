@@ -97,7 +97,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     }
   }
   if (!is.null(cell) && !is.JS(cell) && !is.function(cell)) {
-    stop("`cell` renderer must be a JS or R function")
+    stop("`cell` renderer must be a JS function or R function")
   }
   if (!is.null(aggregated) && !is.JS(aggregated)) {
     stop("`aggregated` renderer must be a JS function")

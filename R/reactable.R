@@ -288,7 +288,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 #' @export
 rowDetails <- function(render, html = FALSE, name = NULL, width = NULL) {
   if (!is.function(render) && !is.JS(render) && !is.list(render)) {
-    stop("`render` must be a function or JS function")
+    stop("`render` must be an R function or JS function")
   }
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
