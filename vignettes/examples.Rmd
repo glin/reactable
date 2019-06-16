@@ -362,6 +362,10 @@ reactable(iris[1:5, ], outlined = TRUE, bordered = FALSE)
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
+.main-container blockquote {
+  font-size: inherit;
+}
+
 /* pkgdown articles */
 .contents {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
