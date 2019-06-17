@@ -91,7 +91,13 @@ describe('sorting', () => {
       <Reactable
         data={{ a: [2, 'NA', 1, 3], b: ['aa', null, null, 'BB'] }}
         columns={[
-          { Header: 'colA', accessor: 'a', type: 'numeric', sortMethod: 'naLast', className: 'col-a' },
+          {
+            Header: 'colA',
+            accessor: 'a',
+            type: 'numeric',
+            sortMethod: 'naLast',
+            className: 'col-a'
+          },
           { Header: 'colB', accessor: 'b', sortMethod: 'naLast', className: 'col-b' }
         ]}
         minRows={4}
@@ -494,5 +500,71 @@ describe('footer rendering', () => {
     const footer = getByText('my-footer')
     expect(footer).not.toHaveClass('cell')
     expect(footer).not.toHaveStyle('color: red;')
+  })
+})
+
+describe('column classes and styles', () => {
+  const data = { a: ['cellA', 'cellB'] }
+
+  it('applies fixed classes and styles', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        className: 'my-cell',
+        style: { backgroundColor: 'red' }
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const cell = getByText('cellA')
+    expect(cell).toHaveClass('my-cell')
+    expect(cell).toHaveStyle('background-color: red;')
+  })
+
+  it('applies conditional classes and styles from JS callbacks', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        className: (rowInfo, state) => {
+          if (rowInfo.index === 0 && state.page === 0) {
+            return 'my-cell'
+          }
+        },
+        style: (rowInfo, state) => {
+          if (rowInfo.index === 0 && state.page === 0) {
+            return { backgroundColor: 'red' }
+          }
+        }
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const cellA = getByText('cellA')
+    expect(cellA).toHaveClass('my-cell')
+    expect(cellA).toHaveStyle('background-color: red;')
+    const cellB = getByText('cellB')
+    expect(cellB).not.toHaveClass('my-cell')
+    expect(cellB).not.toHaveStyle('background-color: red;')
+  })
+
+  it('applies conditional classes and styles from R callbacks', () => {
+    const columns = [
+      {
+        Header: 'a',
+        accessor: 'a',
+        className: ['my-cell', null],
+        style: [{ backgroundColor: 'red' }, null]
+      }
+    ]
+    const props = { data, columns }
+    const { getByText } = render(<Reactable {...props} />)
+    const cellA = getByText('cellA')
+    expect(cellA).toHaveClass('my-cell')
+    expect(cellA).toHaveStyle('background-color: red;')
+    const cellB = getByText('cellB')
+    expect(cellB).not.toHaveClass('my-cell')
+    expect(cellB).not.toHaveStyle('background-color: red;')
   })
 })

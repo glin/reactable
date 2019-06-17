@@ -30,8 +30,14 @@
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
-#' @param class Additional CSS classes to apply to cells.
+#' @param class Additional CSS classes to apply to cells. Can also be a `JS()`
+#'   function that takes a row info object and table state object as arguments,
+#'   or an R function that takes the cell value and row index as arguments.
+#'   Note that R functions cannot apply classes to aggregated cells.
 #' @param style Inline styles to apply to cells. A named list or character string.
+#'   Can also be a function that takes the cell value and row index as arguments,
+#'   or a `JS()` function that takes a row info object and table state object as
+#'   arguments. Note that R functions cannot apply styles to aggregated cells.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
@@ -122,11 +128,12 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       stop('`align` must be one of "left", "right", "center"')
     }
   }
-  if (!is.null(class) && !is.character(class)) {
-    stop("`class` must be a character string")
+  if (!is.null(class) && !is.character(class) && !is.JS(class) && !is.function(class)) {
+    stop("`class` must be a character string, JS function, or R function")
   }
-  if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
-    stop("`style` must be a named list or character string")
+  if (!is.null(style) && !isNamedList(style) && !is.character(style) &&
+      !is.JS(style) && !is.function(style)) {
+    stop("`style` must be a named list, character string, JS function, or R function")
   }
   if (!is.null(headerClass) && !is.character(headerClass)) {
     stop("`headerClass` must be a character string")
@@ -162,7 +169,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       width = width,
       align = align,
       className = class,
-      style = asReactStyle(style),
+      style = if (is.function(style) || is.JS(style)) style else asReactStyle(style),
       headerClassName = headerClass,
       headerStyle = asReactStyle(headerStyle),
       footerClassName = footerClass,

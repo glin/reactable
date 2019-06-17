@@ -130,9 +130,9 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
       col.align = col.align || 'left'
     }
 
-    col.className = classNames(`rt-col-${col.align}`, col.className)
-    col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
-    col.footerClassName = classNames(`rt-col-${col.align}`, col.footerClassName)
+    const colAlignClass = `rt-col-${col.align}`
+    col.headerClassName = classNames(colAlignClass, col.headerClassName)
+    col.footerClassName = classNames(colAlignClass, col.footerClassName)
 
     // Add sort icon to column header
     const isSortable = getFirstDefined(col.sortable, sortable)
@@ -176,14 +176,33 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     const cellStyle = col.style
     col.className = undefined
     col.style = undefined
-    col.getProps = (table, rowInfo, column) => {
+    col.getProps = (state, rowInfo) => {
       let props = {}
+      // Ignore footers
       if (!rowInfo) return props
-      if (cellClass) {
-        props.className = cellClass
+      // Set cell class
+      let className
+      if (typeof cellClass === 'function') {
+        className = cellClass(rowInfo, state)
+      } else if (cellClass instanceof Array) {
+        className = cellClass[rowInfo.index]
+      } else {
+        className = cellClass
       }
+      props.className = classNames(colAlignClass, className)
+      // Set cell style
       if (cellStyle) {
-        props.style = cellStyle
+        let style
+        if (typeof cellStyle === 'function') {
+          style = cellStyle(rowInfo, state)
+        } else if (cellStyle instanceof Array) {
+          style = cellStyle[rowInfo.index]
+        } else {
+          style = cellStyle
+        }
+        if (style) {
+          props.style = style
+        }
       }
       return props
     }

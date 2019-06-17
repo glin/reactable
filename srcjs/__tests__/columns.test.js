@@ -232,10 +232,38 @@ describe('buildColumnDefs', () => {
     expect(cols[0].getProps(null, null).className).toEqual(undefined) // Footer
     expect(cols[0].headerClassName).toEqual('rt-col-left hdr')
     expect(cols[0].footerClassName).toEqual('rt-col-left ftr')
+
+    // JS callback
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        className: (rowInfo, table) => {
+          if (rowInfo.index === 1) {
+            return `${rowInfo.index}-${table.page}-cls`
+          }
+        }
+      }
+    ])
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps({ page: 3 }, { index: 0 }).className).toEqual('rt-col-left')
+    expect(cols[0].getProps({ page: 3 }, { index: 1 }).className).toEqual('rt-col-left 1-3-cls')
+
+    // R callback
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        className: ['a-cls', 'b-cls', null],
+        align: 'right'
+      }
+    ])
+    expect(cols[0].className).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right a-cls')
+    expect(cols[0].getProps(null, { index: 1 }).className).toEqual('rt-col-right b-cls')
+    expect(cols[0].getProps(null, { index: 2 }).className).toEqual('rt-col-right')
   })
 
   test('style', () => {
-    const cols = buildColumnDefs([
+    let cols = buildColumnDefs([
       {
         accessor: 'x',
         style: 'cell-style',
@@ -249,6 +277,33 @@ describe('buildColumnDefs', () => {
     expect(cols[0].getProps(null, null).style).toEqual(undefined) // Footer
     expect(cols[0].headerStyle).toEqual('hdr-style')
     expect(cols[0].footerStyle).toEqual('ftr-style')
+
+    // JS callback
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        style: (rowInfo, table) => {
+          if (rowInfo.index === 1 && table.page === 1) {
+            return { color: 'red' }
+          }
+        }
+      }
+    ])
+    expect(cols[0].style).toEqual(undefined)
+    expect(cols[0].getProps({ page: 0 }, { index: 0 }).style).toEqual(undefined)
+    expect(cols[0].getProps({ page: 1 }, { index: 1 }).style).toEqual({ color: 'red' })
+
+    // R callback
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        style: [{ color: 'red' }, { width: '100px' }, null]
+      }
+    ])
+    expect(cols[0].style).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }).style).toEqual({ color: 'red' })
+    expect(cols[0].getProps(null, { index: 1 }).style).toEqual({ width: '100px' })
+    expect(cols[0].getProps(null, { index: 2 }).style).toEqual(undefined)
   })
 
   test('numeric cols', () => {

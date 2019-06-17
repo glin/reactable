@@ -222,6 +222,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }
+
     if (is.function(column$cell)) {
       content <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
@@ -229,6 +230,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       })
       column$cell <- lapply(content, asReactTag)
     }
+
     if (is.function(column$footer)) {
       values <- data[[key]]
       footer <- callFunc(column$footer, values, key)
@@ -236,6 +238,23 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     } else if (!is.null(column$footer)) {
       column$footer <- asReactTag(column$footer)
     }
+
+    if (is.function(column$className)) {
+      classes <- lapply(seq_len(nrow(data)), function(index) {
+        value <- data[index, key]
+        callFunc(column$className, value, index)
+      })
+      column$className <- classes
+    }
+
+    if (is.function(column$style)) {
+      style <- lapply(seq_len(nrow(data)), function(index) {
+        value <- data[index, key]
+        callFunc(column$style, value, index)
+      })
+      column$style <- lapply(style, asReactStyle)
+    }
+
     column
   })
 

@@ -335,6 +335,59 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]]$footer, "123")
 })
 
+test_that("column class callbacks", {
+  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
+  tbl <- reactable(data, columns = list(
+    x = colDef(class = function(value) if (value != "a") paste0(value, "-cls")),
+    y = colDef(class = function(value, index) paste0(index, "-cls"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$className, list(NULL, "b-cls", "c-cls"))
+  expect_equal(attribs$columns[[2]]$className, list("1-cls", "2-cls", "3-cls"))
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(class = JS("rowInfo => 'cls'"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$className, JS("rowInfo => 'cls'"))
+})
+
+test_that("column class callbacks", {
+  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
+  tbl <- reactable(data, columns = list(
+    x = colDef(class = function(value) if (value != "a") paste0(value, "-cls")),
+    y = colDef(class = function(value, index) paste0(index, "-cls"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$className, list(NULL, "b-cls", "c-cls"))
+  expect_equal(attribs$columns[[2]]$className, list("1-cls", "2-cls", "3-cls"))
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(class = JS("rowInfo => 'cls'"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$className, JS("rowInfo => 'cls'"))
+})
+
+test_that("column style callbacks", {
+  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
+  tbl <- reactable(data, columns = list(
+    x = colDef(style = function(value) if (value != "a") "background-color: red"),
+    y = colDef(style = function(value, index) if (index < 3) list(color = "red"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$style,
+               list(NULL, list("background-color" = "red"), list("background-color" = "red")))
+  expect_equal(attribs$columns[[2]]$style,
+               list(list(color = "red"), list(color = "red"), NULL))
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(style = JS("rowInfo => ({ backgroundColor: 'red' })"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$style, JS("rowInfo => ({ backgroundColor: 'red' })"))
+})
+
 test_that("row details", {
   data <- data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE)
 

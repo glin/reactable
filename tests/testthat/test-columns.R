@@ -98,6 +98,17 @@ test_that("colDef renderers", {
   expect_equal(col$footer, renderR)
 })
 
+test_that("colDef class", {
+  col <- colDef(class = "cell")
+  expect_equal(col$className, "cell")
+
+  col <- colDef(class = JS("rowInfo => 'cell'"))
+  expect_equal(col$className, JS("rowInfo => 'cell'"))
+
+  col <- colDef(class = function(value, index) "cell")
+  expect_equal(col$className, function(value, index) "cell")
+})
+
 test_that("colDef style", {
   col <- colDef(style = " border-bottom: 1px solid; top: 50px",
                 headerStyle = " border: 1px solid; top: 25px;;df",
@@ -105,6 +116,12 @@ test_that("colDef style", {
   expect_equal(col$style, list("border-bottom" = "1px solid", top = "50px"))
   expect_equal(col$headerStyle, list("border" = "1px solid", top = "25px"))
   expect_equal(col$footerStyle, list("border" = "1px solid", top = "25px"))
+
+  col <- colDef(style = JS("rowInfo => ({ backgroundColor: 'red' })"))
+  expect_equal(col$style, JS("rowInfo => ({ backgroundColor: 'red' })"))
+
+  col <- colDef(style = function(value, index) "background-color: red")
+  expect_equal(col$style, function(value, index) "background-color: red")
 })
 
 test_that("is.colDef", {

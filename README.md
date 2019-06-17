@@ -224,8 +224,9 @@ colDef(
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
   align = NULL,             # Column alignment. One of "left", "right", "center"
-  class = NULL,             # Additional CSS classes to apply to cells
-  style = NULL,             # Inline styles to apply to cells. A named list or character string
+  class = NULL,             # Additional CSS classes to apply to cells. Also see conditional styling below
+  style = NULL,             # Inline styles to apply to cells. A named list or character string.
+                            # Also see conditional styling below
   headerClass = NULL,       # Additional CSS classes to apply to the header
   headerStyle = NULL,       # Inline styles to apply to the header. A named list or character string
   footerClass = NULL,       # Additional CSS classes to apply to the footer
@@ -424,6 +425,60 @@ rowDetails(
   html = FALSE,  # Render content as HTML? HTML strings are escaped by default
   name = NULL,   # Expander column name
   width = NULL   # Expander column width in pixels
+)
+```
+
+### Conditional Styling
+Cell classes and styles can be conditionally applied using a Javascript function:
+```r
+colDef(
+  style = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - a style object with camelCased properties
+      return { backgroundColor: 'gray' }
+    }
+  "),
+  class = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - CSS class names
+      return 'cell-class'
+    }
+  ")
+)
+```
+
+Or using an R function (not applied to aggregated cells):
+```r
+colDef(
+  style = function(value, index) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #
+    # output:
+    #   - an inline style string or named list
+    if (index == 1) "color: red; margin-left: 30px;"
+    else list(color = "red", marginLeft = "30px")
+  },
+  class = function(value, index) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #
+    # output:
+    #   - CSS class names
+    "cell-class"
+  }
 )
 ```
 

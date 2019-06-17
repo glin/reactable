@@ -61,9 +61,15 @@ Defaults to \code{FALSE}.}
 
 \item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
-\item{class}{Additional CSS classes to apply to cells.}
+\item{class}{Additional CSS classes to apply to cells. Can also be a \code{JS()}
+function that takes a row info object and table state object as arguments,
+or an R function that takes the cell value and row index as arguments.
+Note that R functions cannot apply classes to aggregated cells.}
 
-\item{style}{Inline styles to apply to cells. A named list or character string.}
+\item{style}{Inline styles to apply to cells. A named list or character string.
+Can also be a function that takes the cell value and row index as arguments,
+or a \code{JS()} function that takes a row info object and table state object as
+arguments. Note that R functions cannot apply styles to aggregated cells.}
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
 
