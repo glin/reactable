@@ -260,9 +260,9 @@ server <- function(input, output, session) {
 
     # Omit default rowDetails args
     defaultArgs <- formals(rowDetails)
-    for (argname in names(call$rowDetails)) {
-      if (argname != "" && identical(call$rowDetails[[argname]], defaultArgs[[argname]])) {
-        call$rowDetails[[argname]] <- NULL
+    for (argname in names(call$details)) {
+      if (argname != "" && identical(call$details[[argname]], defaultArgs[[argname]])) {
+        call$details[[argname]] <- NULL
       }
     }
 
