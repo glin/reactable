@@ -140,7 +140,7 @@ reactable(iris, columns = list(
 https://glin.github.io/reactable/articles/examples.html#table-styles
 
 ```r
-reactable(iris, striped = TRUE, outlined = TRUE, bordered = FALSE)
+reactable(iris, striped = TRUE, outlined = TRUE, bordered = TRUE, borderless = TRUE)
 ```
 
 ### Shiny
@@ -192,8 +192,9 @@ reactable(
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows
   details = NULL,             # Additional content to display when expanding a row. See row details below
-  outlined = FALSE,           # Add an outline around the table?
-  bordered = TRUE,            # Add horizontal borders between table rows?
+  outlined = FALSE,           # Add borders around the table?
+  bordered = FALSE,           # Add borders around the table and every cell?
+  borderless = FALSE,         # Remove inner borders from table?
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
   showSortable = FALSE,       # Show an indicator on sortable columns?

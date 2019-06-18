@@ -334,16 +334,16 @@ reactable(iris, columns = list(
 reactable(iris[1:5, ])
 ```
 
+### Bordered
+
+```{r}
+reactable(iris[1:5, ], bordered = TRUE)
+```
+
 ### Borderless
 
 ```{r}
-reactable(iris[1:5, ], bordered = FALSE)
-```
-
-### Striped
-
-```{r}
-reactable(iris[1:5, ], striped = TRUE)
+reactable(iris[1:5, ], borderless = TRUE)
 ```
 
 ### Outlined
@@ -352,16 +352,22 @@ reactable(iris[1:5, ], striped = TRUE)
 reactable(iris[1:5, ], outlined = TRUE)
 ```
 
-### Outlined + striped
+### Striped
 
 ```{r}
-reactable(iris[1:5, ], outlined = TRUE, striped = TRUE)
+reactable(iris[1:5, ], striped = TRUE)
+```
+
+### Bordered + striped
+
+```{r}
+reactable(iris[1:5, ], bordered = TRUE, striped = TRUE)
 ```
 
 ### Outlined + borderless
 
 ```{r}
-reactable(iris[1:5, ], outlined = TRUE, bordered = FALSE)
+reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 ```
 
 ```{css echo=FALSE}

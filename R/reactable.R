@@ -8,14 +8,14 @@ NULL
 #' Create a data table
 #'
 #' @param data A data frame or matrix.
-#' @param rownames Show row names? Defaults to `FALSE`.
+#' @param rownames Show row names?
 #' @param colnames Optional named list of column names.
 #' @param columns Optional named list of column definitions. See `colDef()`.
 #' @param columnGroups Optional list of column group definitions. See `colGroup()`.
 #' @param groupBy Optional vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
-#' @param resizable Enable column resizing? Defaults to `FALSE`.
-#' @param filterable Enable column filtering? Defaults to `FALSE`.
+#' @param resizable Enable column resizing?
+#' @param filterable Enable column filtering?
 #' @param defaultColDef Default column definition used by every column. See `colDef()`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
@@ -32,11 +32,12 @@ NULL
 #'   represented as a vector of row indices, or `NULL` if no rows are selected.
 #' @param details Additional content to display when expanding a row. A row details
 #'   definition or content renderer. See `rowDetails()`.
-#' @param outlined Add an outline around the table? Defaults to `FALSE`.
-#' @param bordered Add horizontal borders between table rows? Defaults to `TRUE`.
-#' @param striped Add zebra-striping to table rows? Defaults to `FALSE`.
+#' @param outlined Add borders around the table?
+#' @param bordered Add borders around the table and every cell?
+#' @param borderless Remove inner borders from table?
+#' @param striped Add zebra-striping to table rows?
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
-#' @param showSortable Show an indicator on sortable columns? Defaults to `FALSE`.
+#' @param showSortable Show an indicator on sortable columns?
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
 #' @param inline Display the table as an inline element, which shrinks to fit
@@ -54,7 +55,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       paging = TRUE, defaultPageSize = 10,
                       pageSizeOptions = c(10, 25, 50, 100), showPagination = NULL,
                       minRows = 1, selection = NULL, selectionId = NULL,
-                      details = NULL, outlined = FALSE, bordered = TRUE,
+                      details = NULL, outlined = FALSE, bordered = FALSE, borderless = FALSE,
                       striped = FALSE, highlight = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL,
                       inline = FALSE, width = "auto", height = "auto",
@@ -192,6 +193,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(bordered)) {
     stop("`bordered` must be TRUE or FALSE")
   }
+  if (!is.logical(borderless)) {
+    stop("`borderless` must be TRUE or FALSE")
+  }
   if (!is.logical(striped)) {
     stop("`striped` must be TRUE or FALSE")
   }
@@ -279,6 +283,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     details = details,
     outlined = outlined,
     bordered = bordered,
+    borderless = borderless,
     striped = striped,
     highlight = highlight,
     showSortable = if (showSortable) showSortable,

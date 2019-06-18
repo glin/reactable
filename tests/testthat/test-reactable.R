@@ -35,6 +35,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
+  expect_error(reactable(df, borderless = NULL))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, showSortable = "true"))
@@ -63,7 +64,8 @@ test_that("reactable", {
     showPagination = FALSE,
     minRows = 1,
     outlined = FALSE,
-    bordered = TRUE,
+    bordered = FALSE,
+    borderless = FALSE,
     striped = FALSE,
     highlight = TRUE
   )
@@ -80,7 +82,7 @@ test_that("reactable", {
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), showPagination = FALSE,
                    minRows = 5, selection = "single", selectionId = "sel",
                    details = rowDetails(function(i) i),
-                   outlined = TRUE, bordered = FALSE, striped = TRUE,
+                   outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    highlight = FALSE, showSortable = TRUE, class = "tbl",
                    style = list(color = "red"),
                    inline = TRUE, groupBy = "x", width = "400px", height = "100%",
@@ -109,7 +111,8 @@ test_that("reactable", {
     selectionId = "sel",
     details = structure(list(render = list("1")), class = "rowDetails"),
     outlined = TRUE,
-    bordered = FALSE,
+    bordered = TRUE,
+    borderless = TRUE,
     striped = TRUE,
     highlight = FALSE,
     showSortable = TRUE,

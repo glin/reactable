@@ -162,6 +162,7 @@ class Reactable extends React.Component {
       details,
       outlined,
       bordered,
+      borderless,
       striped,
       highlight,
       showSortable,
@@ -177,6 +178,7 @@ class Reactable extends React.Component {
       className,
       outlined ? '-outlined' : '',
       bordered ? '-bordered' : '',
+      borderless ? '-borderless' : '',
       striped ? '-striped' : '',
       highlight ? ' -highlight' : '',
       inline ? ' -inline' : ''
@@ -317,6 +319,7 @@ Reactable.propTypes = {
   }),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,
+  borderless: PropTypes.bool,
   striped: PropTypes.bool,
   highlight: PropTypes.bool,
   showSortable: PropTypes.bool,

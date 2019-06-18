@@ -43,11 +43,12 @@ ui <- fluidPage(
               "Show pagination" = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
+              Borderless = "borderless",
               Striped = "striped",
               Highlight = "highlight",
               Inline = "inline"
             ),
-            selected = c("sortable", "resizable", "showPagination", "bordered", "highlight")
+            selected = c("sortable", "resizable", "showPagination", "highlight")
           ),
 
           checkboxGroupInput("groupBy", "Group By", choices = c("Species", "Petal.Width")),
@@ -126,6 +127,7 @@ server <- function(input, output, session) {
       showPagination = "showPagination" %in% input$options,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
+      borderless = "borderless" %in% input$options,
       striped = "striped" %in% input$options,
       highlight = "highlight" %in% input$options,
       showSortable = "showSortable" %in% input$options,
@@ -204,6 +206,7 @@ server <- function(input, output, session) {
       showPagination = .(opts$showPagination),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
+      borderless = .(opts$borderless),
       striped = .(opts$striped),
       highlight = .(opts$highlight),
       showSortable = .(opts$showSortable),

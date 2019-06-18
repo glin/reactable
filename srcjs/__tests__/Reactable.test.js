@@ -249,13 +249,23 @@ test('table styles', () => {
   const props = { data: { a: [1, 2] }, columns: [{ Header: 'a', accessor: 'a' }] }
   const { container, rerender } = render(<Reactable {...props} />)
   const table = container.querySelector('.ReactTable')
-  expect(table).not.toHaveClass('-outlined', '-bordered', '-striped', '-highlight', '-inline')
+  expect(table).not.toHaveClass(
+    '-outlined',
+    '-bordered',
+    '-borderless',
+    '-striped',
+    '-highlight',
+    '-inline'
+  )
 
   rerender(<Reactable {...props} outlined />)
   expect(table).toHaveClass('-outlined')
 
   rerender(<Reactable {...props} bordered />)
   expect(table).toHaveClass('-bordered')
+
+  rerender(<Reactable {...props} borderless />)
+  expect(table).toHaveClass('-borderless')
 
   rerender(<Reactable {...props} striped />)
   expect(table).toHaveClass('-striped')
@@ -265,6 +275,9 @@ test('table styles', () => {
 
   rerender(<Reactable {...props} inline />)
   expect(table).toHaveClass('-inline')
+
+  rerender(<Reactable {...props} outlined bordered borderless striped highlight inline />)
+  expect(table).toHaveClass('-outlined -bordered -borderless -striped -highlight -inline')
 })
 
 describe('row selection', () => {

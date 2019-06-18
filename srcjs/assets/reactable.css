@@ -63,7 +63,8 @@
   border: none;
 }
 
-.ReactTable.-outlined {
+.ReactTable.-outlined,
+.ReactTable.-bordered {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -74,7 +75,8 @@
 }
 
 .ReactTable.-striped .rt-thead.-header,
-.ReactTable.-outlined .rt-thead.-header {
+.ReactTable.-outlined .rt-thead.-header,
+.ReactTable.-bordered .rt-thead.-header {
   border-bottom-width: 1px;
 }
 
@@ -84,32 +86,30 @@
 }
 
 /* Cells */
-.ReactTable .rt-thead .rt-th,
-.ReactTable .rt-thead .rt-td,
-.ReactTable .rt-tfoot .rt-td {
-  border-right: none;
-}
-
-.ReactTable.-outlined .rt-thead .rt-th,
-.ReactTable.-outlined .rt-thead .rt-td {
+.ReactTable.-bordered .rt-thead .rt-th,
+.ReactTable.-bordered .rt-thead .rt-td,
+.ReactTable.-bordered .rt-tbody .rt-td,
+.ReactTable.-bordered .rt-tfoot .rt-td {
   border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.ReactTable .rt-tbody .rt-td {
+.ReactTable .rt-thead .rt-th,
+.ReactTable .rt-thead .rt-td,
+.ReactTable .rt-tbody .rt-td,
+.ReactTable .rt-tfoot .rt-td,
+.ReactTable.-borderless .rt-thead .rt-th,
+.ReactTable.-borderless .rt-tbody .rt-td,
+.ReactTable.-borderless .rt-thead .rt-td,
+.ReactTable.-borderless .rt-tfoot .rt-td {
   border-right: none;
 }
 
-.ReactTable.-outlined .rt-tbody .rt-td,
-.ReactTable.-outlined .rt-tfoot .rt-td {
-  border-right: 1px solid rgba(0, 0, 0, 0.02);
+.ReactTable .rt-tbody .rt-tr-group:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.ReactTable .rt-tbody .rt-tr-group {
+.ReactTable.-borderless .rt-tbody .rt-tr-group {
   border-bottom: none;
-}
-
-.ReactTable.-bordered .rt-tbody .rt-tr-group:not(:last-child) {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.05);
 }
 
 /* Column group headers */

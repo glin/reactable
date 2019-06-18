@@ -11,14 +11,15 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
   showPagination = NULL, minRows = 1, selection = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
-  bordered = TRUE, striped = FALSE, highlight = TRUE,
-  showSortable = FALSE, class = NULL, style = NULL, inline = FALSE,
-  width = "auto", height = "auto", elementId = NULL)
+  bordered = FALSE, borderless = FALSE, striped = FALSE,
+  highlight = TRUE, showSortable = FALSE, class = NULL,
+  style = NULL, inline = FALSE, width = "auto", height = "auto",
+  elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
 
-\item{rownames}{Show row names? Defaults to \code{FALSE}.}
+\item{rownames}{Show row names?}
 
 \item{colnames}{Optional named list of column names.}
 
@@ -30,9 +31,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
-\item{resizable}{Enable column resizing? Defaults to \code{FALSE}.}
+\item{resizable}{Enable column resizing?}
 
-\item{filterable}{Enable column filtering? Defaults to \code{FALSE}.}
+\item{filterable}{Enable column filtering?}
 
 \item{defaultColDef}{Default column definition used by every column. See \code{colDef()}.}
 
@@ -61,15 +62,17 @@ represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 \item{details}{Additional content to display when expanding a row. A row details
 definition or content renderer. See \code{rowDetails()}.}
 
-\item{outlined}{Add an outline around the table? Defaults to \code{FALSE}.}
+\item{outlined}{Add borders around the table?}
 
-\item{bordered}{Add horizontal borders between table rows? Defaults to \code{TRUE}.}
+\item{bordered}{Add borders around the table and every cell?}
 
-\item{striped}{Add zebra-striping to table rows? Defaults to \code{FALSE}.}
+\item{borderless}{Remove inner borders from table?}
+
+\item{striped}{Add zebra-striping to table rows?}
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 
-\item{showSortable}{Show an indicator on sortable columns? Defaults to \code{FALSE}.}
+\item{showSortable}{Show an indicator on sortable columns?}
 
 \item{class}{Additional CSS classes to apply to the table.}
 
