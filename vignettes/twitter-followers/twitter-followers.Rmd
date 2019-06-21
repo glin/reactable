@@ -1,0 +1,176 @@
+---
+title: "Twitter Followers"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div class="followers-container">
+
+<div class="title">
+<h2>Candidates whose followers are loyal only to them</h2>
+Share of each 2020 candidate’s followers who don’t follow any other candidates
+</div>
+
+```{r table, echo=FALSE}
+library(reactable)
+library(htmltools)
+
+data <- read.csv("twitter_followers.csv", stringsAsFactors = FALSE)
+
+reactable(
+  data,
+  paging = FALSE,
+  defaultSorted = "exclusive_followers_pct",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    account = colDef(
+      cell = function(value) {
+        url <- paste0("https://twitter.com/", value)
+        tags$a(href = url, target = "_blank", paste0("@", value))
+      },
+      width = 150
+    ),
+    followers = colDef(
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        value <- format(value, big.mark = ",")
+        value <- format(value, width = 9, justify = "right")
+        bar <- div(
+          class = "bar-chart",
+          style = list(marginRight = "6px"),
+          div(class = "bar", style = list(width = width, backgroundColor = "#3fc1c9"))
+        )
+        div(class = "bar-cell", span(class = "number", value), bar)
+      }
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      format = colFormat(percent = TRUE, digits = 1),
+      cell = JS('function(cellInfo) {
+        let value = cellInfo.value
+        // Show % on first row only
+        if (cellInfo.viewIndex > 0) {
+          value = value.replace("%", " ")
+        }
+        // Pad single-digit numbers
+        if (value.length < 5) {
+          value = " " + value
+        }
+        const width = cellInfo.value
+        return `
+          <div class="bar-cell">
+            <span class="number">${value}</span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: ${width}; background-color: #fc5185"></div>
+            </div>
+          </div>
+        `
+      }'),
+      html = TRUE
+    )
+  ),
+  highlight = FALSE,
+  compact = TRUE,
+  class = "followers-tbl"
+)
+```
+
+</div>
+
+---
+
+Source: [FiveThirtyEight](https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/)
+
+Raw data: [`twitter_followers.csv`](twitter_followers.csv)
+
+```{r ref.label="table", eval=FALSE}
+```
+
+```{html}
+<link href="https://fonts.googleapis.com/css?family=Fira+Mono&display=swap" rel="stylesheet">
+```
+
+```{css}
+.followers-container {
+  margin: 0 auto;
+  width: 575px;
+  font-family: Verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.title {
+  margin: 18px 0;
+}
+
+.title h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.followers-tbl {
+  font-size: 13px;
+}
+
+.followers-tbl a {
+  color: inherit;
+}
+
+.ReactTable .rt-thead.-header {
+  border-bottom: 2px solid #555;
+}
+
+.header {
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.header:hover {
+  background-color: #eee;
+}
+
+.bar-cell {
+  display: flex;
+  align-items: center;
+}
+
+.number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 14px;
+  white-space: pre;
+}
+
+.bar-chart {
+  flex-grow: 1;
+  margin-left: 6px;
+  height: 14px;
+}
+
+.bar {
+  height: 100%;
+}
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  max-width: 1024px !important;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+h1.title {
+  text-align: center;
+  font-size: 18px;
+}
+
+/* pkgdown articles */
+.contents {
+  width: inherit;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+```
