@@ -12,9 +12,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   showPagination = NULL, minRows = 1, selection = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
   bordered = FALSE, borderless = FALSE, striped = FALSE,
-  highlight = TRUE, showSortable = FALSE, class = NULL,
-  style = NULL, inline = FALSE, width = "auto", height = "auto",
-  elementId = NULL)
+  highlight = TRUE, compact = FALSE, showSortable = FALSE,
+  class = NULL, style = NULL, inline = FALSE, width = "auto",
+  height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -71,6 +71,8 @@ definition or content renderer. See \code{rowDetails()}.}
 \item{striped}{Add zebra-striping to table rows?}
 
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
+
+\item{compact}{Make tables more compact?}
 
 \item{showSortable}{Show an indicator on sortable columns?}
 

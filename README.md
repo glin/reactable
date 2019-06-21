@@ -140,7 +140,7 @@ reactable(iris, columns = list(
 https://glin.github.io/reactable/articles/examples.html#table-styles
 
 ```r
-reactable(iris, striped = TRUE, outlined = TRUE, bordered = TRUE, borderless = TRUE)
+reactable(iris, striped = TRUE, outlined = TRUE, bordered = TRUE)
 ```
 
 ### Shiny
@@ -197,6 +197,7 @@ reactable(
   borderless = FALSE,         # Remove inner borders from table?
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
+  compact = FALSE,            # Make tables more compact?
   showSortable = FALSE,       # Show an indicator on sortable columns?
   class = NULL,               # Additional CSS classes to apply to the table
   style = NULL,               # Inline styles to apply to the table. A named list or character string

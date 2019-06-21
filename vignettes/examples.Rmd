@@ -386,3 +386,9 @@ reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
   font-size: 14px;
 }
 ```
+
+### Compact
+
+```{r}
+reactable(iris[1:5, ], compact = TRUE)
+```

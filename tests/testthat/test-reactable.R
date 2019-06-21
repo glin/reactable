@@ -38,6 +38,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, borderless = NULL))
   expect_error(reactable(df, striped = "true"))
   expect_error(reactable(df, highlight = "true"))
+  expect_error(reactable(df, compact = "true"))
   expect_error(reactable(df, showSortable = "true"))
   expect_error(reactable(df, class = c(1, 5)))
   expect_error(reactable(df, style = 555))
@@ -67,7 +68,8 @@ test_that("reactable", {
     bordered = FALSE,
     borderless = FALSE,
     striped = FALSE,
-    highlight = TRUE
+    highlight = TRUE,
+    compact = FALSE
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "auto")
@@ -83,7 +85,7 @@ test_that("reactable", {
                    minRows = 5, selection = "single", selectionId = "sel",
                    details = rowDetails(function(i) i),
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
-                   highlight = FALSE, showSortable = TRUE, class = "tbl",
+                   highlight = FALSE, compact = TRUE, showSortable = TRUE, class = "tbl",
                    style = list(color = "red"),
                    inline = TRUE, groupBy = "x", width = "400px", height = "100%",
                    elementId = "tbl")
@@ -115,6 +117,7 @@ test_that("reactable", {
     borderless = TRUE,
     striped = TRUE,
     highlight = FALSE,
+    compact = TRUE,
     showSortable = TRUE,
     className = "tbl",
     style = list(color = "red"),

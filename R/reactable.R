@@ -37,6 +37,7 @@ NULL
 #' @param borderless Remove inner borders from table?
 #' @param striped Add zebra-striping to table rows?
 #' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
+#' @param compact Make tables more compact?
 #' @param showSortable Show an indicator on sortable columns?
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
@@ -56,7 +57,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       pageSizeOptions = c(10, 25, 50, 100), showPagination = NULL,
                       minRows = 1, selection = NULL, selectionId = NULL,
                       details = NULL, outlined = FALSE, bordered = FALSE, borderless = FALSE,
-                      striped = FALSE, highlight = TRUE, showSortable = FALSE,
+                      striped = FALSE, highlight = TRUE, compact = FALSE, showSortable = FALSE,
                       class = NULL, style = NULL,
                       inline = FALSE, width = "auto", height = "auto",
                       elementId = NULL) {
@@ -202,6 +203,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(highlight)) {
     stop("`highlight` must be TRUE or FALSE")
   }
+  if (!is.logical(compact)) {
+    stop("`compact` must be TRUE or FALSE")
+  }
   if (!is.logical(showSortable)) {
     stop("`showSortable` must be TRUE or FALSE")
   }
@@ -286,6 +290,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     borderless = borderless,
     striped = striped,
     highlight = highlight,
+    compact = compact,
     showSortable = if (showSortable) showSortable,
     className = class,
     style = asReactStyle(style),
