@@ -37,7 +37,7 @@ line_score_tbl <- function(line_score, teams) {
           team_name <- paste(value, score[index, "TEAM_NICKNAME"])
           team_record <- score[index, "TEAM_WINS_LOSSES"]
           div(
-            tags$a(class = "team-name", href = team_url, team_name),
+            tags$a(class = "team-name", href = team_url, target = "_blank", team_name),
             span(class = "team-record", team_record)
           )
         }
@@ -48,7 +48,7 @@ line_score_tbl <- function(line_score, teams) {
       PTS_QTR2 = colDef(name = "Q2", align = "center", width = 50),
       PTS_QTR3 = colDef(name = "Q3", align = "center", width = 50),
       PTS_QTR4 = colDef(name = "Q4", align = "center", width = 50),
-      PTS = colDef(name = "Total", align = "center", width = 50, style = "font-weight: 600")
+      PTS = colDef(name = "Total", align = "center", width = 50, class = "line-score-total")
     )
   )
 }
@@ -68,9 +68,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
   reactable(
     stats,
     paging = FALSE,
-    striped = TRUE,
     defaultSortOrder = "desc",
-    class = "box-score-tbl",
     defaultColDef = colDef(
       sortMethod = "naLast",
       minWidth = 45,
@@ -106,9 +104,9 @@ box_score_tbl <- function(player_stats, team_stats, team) {
           if (start_position != "") {
             value <- tagList(value, " ", tags$sup(start_position))
           }
-          tags$a(href = player_url, value)
+          tags$a(href = player_url, target = "_blank", value)
         },
-        footer = tags$b("Totals")
+        footer = span(class = "box-score-total", "Totals")
       ),
       START_POSITION = colDef(show = FALSE),
       MIN = colDef(name = "Min", minWidth = 60, align = "right", cell = function(value, index) {
@@ -135,20 +133,24 @@ box_score_tbl <- function(player_stats, team_stats, team) {
       PLUS_MINUS = colDef(name = "+/-", cell = function(value) {
         if (is.na(value)) "" else sprintf("%+d", value)
       })
-    )
+    ),
+    striped = TRUE,
+    class = "box-score-tbl"
   )
 }
 
-h2(class = "header", "Raptors vs. Warriors:", 
-   tags$a(class = "game-date", href="https://stats.nba.com/game/0041800403", "Jun 5, 2019"))
+div(class = "box-score",
+  h2(class = "header", "Raptors vs. Warriors:",
+     tags$a(class = "game-date", href="https://stats.nba.com/game/0041800403", target = "_blank", "Jun 5, 2019")),
 
-div(class = "line-score", line_score_tbl(line_score, c("TOR", "GSW")))
+  div(class = "line-score", line_score_tbl(line_score, c("TOR", "GSW"))),
 
-h2(class = "heading", "Toronto Raptors")
-box_score_tbl(player_stats, team_stats, "TOR")
+  div(class = "box-score-title", "Toronto Raptors"),
+  box_score_tbl(player_stats, team_stats, "TOR"),
 
-h2(class = "heading", "Golden State Warriors")
-box_score_tbl(player_stats, team_stats, "GSW")
+  div(class = "box-score-title", "Golden State Warriors"),
+  box_score_tbl(player_stats, team_stats, "GSW")
+)
 ```
 
 ---
@@ -160,20 +162,26 @@ Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.
 ```{r ref.label="box_score", eval=FALSE}
 ```
 
+```{r}
+tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display=fallback", rel = "stylesheet")
+```
+
 ```{css}
+.box-score {
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+.box-score a:hover {
+  text-decoration: none;
+}
+
 .header {
   text-align: center;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .game-date {
-  font-size: 14px;
-}
-
-.heading {
-  margin-top: 24px;
   font-size: 16px;
-  font-weight: 600;
 }
 
 .line-score {
@@ -184,32 +192,58 @@ Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.
 .line-score-tbl {
   margin-top: 24px;
   margin-left: auto;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .line-score-header {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
 }
 
+.line-score-total {
+  font-weight: 500;
+}
+
 .team-name {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .team-record {
   margin-left: 6px;
   color: hsl(0, 0%, 45%);
-  font-size: 11px;
+  font-size: 12px;
+}
+
+.box-score-title {
+  margin-top: 24px;
+  padding: 8px;
+  background-color: hsl(205, 100%, 36%);
+  color: hsl(0, 0%, 98%);
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .box-score-tbl {
-  font-size: 11px;
+  font-size: 12px;
+  letter-spacing: 0.2px;
 }
 
 .box-score-header {
-  background-color: hsl(208, 57%, 32%);
+  padding: 8px !important;
+  background-color: hsl(205, 93%, 16%);
   color: hsl(0, 0%, 98%);
   font-weight: 400;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.box-score-header:hover {
+  background-color: hsl(205, 100%, 36%);
+}
+
+.box-score-total {
+  font-size: 13px;
+  font-weight: 500;
 }
 ```
 

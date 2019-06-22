@@ -7,12 +7,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<div class="followers-container">
-
-<div class="title">
-<h2>Candidates whose followers are loyal only to them</h2>
-Share of each 2020 candidate’s followers who don’t follow any other candidates
-</div>
 
 ```{r table, echo=FALSE}
 library(reactable)
@@ -20,7 +14,7 @@ library(htmltools)
 
 data <- read.csv("twitter_followers.csv", stringsAsFactors = FALSE)
 
-reactable(
+tbl <- reactable(
   data,
   paging = FALSE,
   defaultSorted = "exclusive_followers_pct",
@@ -78,9 +72,15 @@ reactable(
   compact = TRUE,
   class = "followers-tbl"
 )
-```
 
-</div>
+div(class = "twitter-followers",
+  div(class = "title",
+    h2("Candidates whose followers are loyal only to them"),
+    "Share of each 2020 candidate's followers who don't follow any other candidates"
+  ),
+  tbl
+)
+```
 
 ---
 
@@ -91,28 +91,31 @@ Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 ```{r ref.label="table", eval=FALSE}
 ```
 
-```{html}
-<link href="https://fonts.googleapis.com/css?family=Fira+Mono&display=swap" rel="stylesheet">
+```{r}
+tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
+          rel = "stylesheet")
 ```
 
 ```{css}
-.followers-container {
+.twitter-followers {
   margin: 0 auto;
   width: 575px;
-  font-family: Verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .title {
   margin: 18px 0;
+  font-size: 16px;
 }
 
 .title h2 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
 }
 
 .followers-tbl {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 18px;
 }
 
 .followers-tbl a {
@@ -124,9 +127,8 @@ Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 }
 
 .header {
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 400;
-  letter-spacing: 0.2px;
   text-transform: uppercase;
 }
 
@@ -141,7 +143,7 @@ Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 
 .number {
   font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 14px;
+  font-size: 13.5px;
   white-space: pre;
 }
 
