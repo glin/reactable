@@ -16,5 +16,5 @@ navbar:
         href: articles/twitter-followers/twitter-followers.html
       - text: 100k Rows
         href: articles/100k-rows.html
-      - text: Shiny
-        href: https://glin.shinyapps.io/reactable
+      - text: Shiny Demo
+        href: articles/shiny-demo.html
