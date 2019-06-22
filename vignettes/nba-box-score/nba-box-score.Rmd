@@ -217,17 +217,14 @@ Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.
 /* rmarkdown html documents */
 .main-container {
   max-width: 1024px !important;
-  font-family: Verdana, Helvetica, Arial, sans-serif;
 }
 
 h1.title {
-  text-align: center;
-  font-size: 18px;
+  display: none;
 }
 
 /* pkgdown articles */
 .contents {
   width: inherit;
-  font-family: Verdana, Helvetica, Arial, sans-serif;
 }
 ```

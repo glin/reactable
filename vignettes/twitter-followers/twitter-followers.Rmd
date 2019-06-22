@@ -158,17 +158,7 @@ Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */
-.main-container {
-  font-family: Verdana, Helvetica, Arial, sans-serif;
-}
-
 h1.title {
-  text-align: center;
-  font-size: 18px;
-}
-
-/* pkgdown articles */
-.contents {
-  font-family: Verdana, Helvetica, Arial, sans-serif;
+  display: none;
 }
 ```
