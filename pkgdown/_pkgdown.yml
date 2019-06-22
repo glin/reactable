@@ -1,8 +1,9 @@
 navbar:
   structure:
-    left: [home, reference, examples, demos]
+    left: [reference, examples, demos]
     right: [github]
   components:
+    home: ~
     articles: ~
     examples:
       text: Examples
