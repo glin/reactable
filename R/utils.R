@@ -67,25 +67,43 @@ isTagList <- function(x) {
 }
 
 asReactTag <- function(x) {
+  # Extract tag for subtables
   if (is.htmlwidget(x)) {
     return(asReactTag(x$x$tag))
   }
+  # Wrap tag lists in fragment for proper hydration
+  if (isTagList(x)) {
+    # Unnest tag lists for proper hydration
+    x <- unnestTagList(x)
+    x <- lapply(x, asReactTag)
+    return(do.call(reactR::React$Fragment, x))
+  }
   if (!is.tag(x)) {
-    # Nodes should be strings to hydrate properly
+    # Nodes should be strings for proper hydration
     if (is.numeric(x) || is.logical(x)) {
       x <- as.character(x)
     }
     return(x)
   }
   # Unnest tag lists for proper hydration
-  if (is.list(x$children) && any(sapply(x$children, isTagList))) {
-    x$children <- unlist(x$children, recursive = FALSE)
-  }
+  x$children <- unnestTagList(x$children)
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
   x$children <- lapply(x$children, asReactTag)
   x$attribs <- asReactAttributes(x$attribs)
   x
+}
+
+# Recursively unnest tag lists
+unnestTagList <- function(x) {
+  if (is.tag(x) || is.htmlwidget(x) || !is.list(x)) {
+    return(x)
+  }
+  Reduce(function(a, b) {
+    b <- unnestTagList(b)
+    b <- if (is.tag(b) || is.htmlwidget(b)) list(b) else b
+    c(a, b)
+  }, x, list())
 }
 
 asReactAttributes <- function(attribs) {

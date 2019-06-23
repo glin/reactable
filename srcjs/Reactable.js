@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import ReactTable from 'react-table'
 import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
@@ -218,7 +218,7 @@ class Reactable extends React.Component {
           if (html) {
             return <RowDetails html={content} />
           }
-          return <RowDetails>{hydrate({ Reactable }, content)}</RowDetails>
+          return <RowDetails>{hydrate({ Reactable, Fragment }, content)}</RowDetails>
         }
 
         colProps = {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { hydrate } from 'reactR'
 
 import { aggregators, normalizeNumber, isNA } from './aggregators'
@@ -51,7 +51,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
         if (col.cell instanceof Array && !cell.aggregated) {
           value = col.cell[cell.index]
           if (value) {
-            value = hydrate({}, col.cell[cell.index])
+            value = hydrate({ Fragment }, col.cell[cell.index])
           }
         }
       }
@@ -99,7 +99,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
         if (typeof col.footer === 'function') {
           footer = col.footer(colInfo)
         } else {
-          footer = hydrate({}, col.footer)
+          footer = hydrate({ Fragment }, col.footer)
         }
         if (React.isValidElement(footer)) {
           return footer

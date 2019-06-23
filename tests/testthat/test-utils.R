@@ -71,10 +71,20 @@ test_that("asReactTag", {
   expect_equal(asReactTag(123), "123")
   expect_equal(asReactTag(TRUE), "TRUE")
 
-  # HTMLWidgets
+  # Tags should be extracted from htmlwidgets
   expect_true(is.tag(asReactTag(reactable(data.frame()))))
 
-  # Nested tags
+  # Tag lists should be wrapped in fragments
+  tag <- htmltools::tagList(htmltools::div(), "x")
+  expect_equal(asReactTag(tag), reactR::React$Fragment(htmltools::div(), "x"))
+  # htmlwidgets in tag lists
+  tag <- htmltools::tagList(reactable(data.frame()), "y")
+  converted <- asReactTag(tag)
+  expect_equal(length(converted$children), 2)
+  expect_true(is.tag(converted$children[[1]]))
+  expect_equal(converted$children[[2]], "y")
+
+  # Nested tags should be unnested
   nestedTag <- htmltools::div(
     list(
       htmltools::div(),
@@ -87,14 +97,29 @@ test_that("asReactTag", {
   )
   expect_equal(asReactTag(nestedTag), expected)
 
-  nestedTag <- htmltools::div(htmltools::tagList("a", htmltools::div()))
-  expected <- htmltools::div("a", htmltools::div())
+  nestedTag <- htmltools::div(
+    htmltools::tagList("a", htmltools::div(
+      htmltools::tagList("b", htmltools::span("c", class = "c"))
+    ))
+  )
+  expected <- htmltools::div("a", htmltools::div("b", htmltools::span("c", className = "c")))
   expect_equal(asReactTag(nestedTag), expected)
 
-  # Null elements
+  nestedTagList <- htmltools::tagList(
+    htmltools::div(class = "a"),
+    htmltools::tagList(
+      htmltools::div(),
+      htmltools::tagList("x", htmltools::span("y", class = "y"))
+    )
+  )
+  expected <- reactR::React$Fragment(htmltools::div(className = "a"),
+                                     htmltools::div(), "x", htmltools::span("y", className = "y"))
+  expect_equal(asReactTag(nestedTagList), expected)
+
+  # Null elements should be pruned
   expect_equal(asReactTag(htmltools::div(1, NULL, 3)), htmltools::div("1", "3"))
 
-  # Attributes
+  # Attributes should be converted
   expect_equal(asReactTag(htmltools::div(style = "color: red", class = "cls")),
                htmltools::div(style = list(color = "red"), className = "cls"))
 })
