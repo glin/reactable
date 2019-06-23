@@ -177,7 +177,6 @@
   content: "\2193";
 }
 
-.ReactTable .rt-th[aria-sort=none] .-sort:after,
 .ReactTable .rt-th[aria-sort=none] .-sort:after {
   content: "\2195";
   opacity: 0.4;
