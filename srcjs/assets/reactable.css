@@ -145,7 +145,8 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.ReactTable.-outlined .rt-th.-headerGroup:after {
+.ReactTable.-outlined .rt-th.-headerGroup:after,
+.ReactTable.-bordered .rt-th.-headerGroup:after {
   left: 0;
   right: 0;
 }
