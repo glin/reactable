@@ -36,7 +36,7 @@ line_score_tbl <- function(line_score, teams) {
           team_url <- sprintf("https://stats.nba.com/team/%s/traditional", score[index, "TEAM_ID"])
           team_name <- paste(value, score[index, "TEAM_NICKNAME"])
           team_record <- score[index, "TEAM_WINS_LOSSES"]
-          div(
+          tagList(
             tags$a(class = "team-name", href = team_url, target = "_blank", team_name),
             span(class = "team-record", team_record)
           )
