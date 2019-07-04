@@ -191,7 +191,7 @@
   padding: 4px;
 }
 
-.ReactTable .rt-pagination-left :not(:last-child) {
+.ReactTable .rt-pagination-info :not(:last-child) {
   margin-right: 16px;
 }
 
@@ -202,6 +202,7 @@
 }
 
 .ReactTable .rt-page-size {
+  display: inline-block;
   margin: 0 8px;
 }
 
@@ -284,6 +285,7 @@
 }
 
 .ReactTable .rt-page-numbers {
+  display: inline-block;
   margin: 0 8px;
   white-space: nowrap;
 }

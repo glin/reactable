@@ -303,7 +303,7 @@ class Reactable extends React.Component {
         getTdProps={getTdProps}
         SubComponent={SubComponent}
         {...selectProps}
-        pageJumpText="jump to page"
+        pageJumpText="go to page"
         rowsSelectorText="rows per page"
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}

@@ -712,12 +712,15 @@ describe('pagination', () => {
 
     // First page: previous button should be disabled
     expect(prevButton).toHaveAttribute('disabled')
+    expect(prevButton).toHaveAttribute('aria-disabled', 'true')
     fireEvent.click(prevButton)
     expect(pageNumbers).toHaveTextContent('1 of 3')
 
     fireEvent.click(nextButton)
     expect(pageNumbers).toHaveTextContent('2 of 3')
     expect(prevButton).not.toHaveAttribute('disabled')
+    expect(prevButton).not.toHaveAttribute('aria-disabled')
+    expect(nextButton).not.toHaveAttribute('aria-disabled')
 
     fireEvent.click(nextButton)
     expect(pageNumbers).toHaveTextContent('3 of 3')
@@ -727,6 +730,7 @@ describe('pagination', () => {
     fireEvent.click(nextButton)
     expect(pageNumbers).toHaveTextContent('3 of 3')
     expect(nextButton).toHaveAttribute('disabled')
+    expect(nextButton).toHaveAttribute('aria-disabled', 'true')
 
     fireEvent.click(prevButton)
     expect(pageNumbers).toHaveTextContent('2 of 3')
@@ -743,13 +747,22 @@ describe('pagination', () => {
     let pageButtons = [...getPageButtons(container)]
     const pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
     expect(pageNumberBtns).toHaveLength(5)
-    pageNumberBtns.forEach((btn, i) => expect(btn).toHaveTextContent(i + 1))
+    pageNumberBtns.forEach((btn, i) => {
+      const page = i + 1
+      expect(btn).toHaveTextContent(page)
+      if (page === 1) {
+        expect(btn).toHaveAttribute('aria-label', `Page 1, current page`)
+      } else {
+        expect(btn).toHaveAttribute('aria-label', `Page ${page}`)
+      }
+    })
 
     fireEvent.click(pageNumberBtns[1])
     const pageInfo = getPageInfo(container)
     expect(pageInfo).toHaveTextContent('2-2 of 5 rows')
     expect(pageNumberBtns[0]).not.toHaveClass('rt-page-button-active')
     expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[1]).toHaveAttribute('aria-current', 'page')
 
     // Changing to the same page should be a no-op
     fireEvent.click(pageNumberBtns[1])

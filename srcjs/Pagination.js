@@ -102,7 +102,7 @@ export default class Pagination extends React.Component {
   renderPageSizeOptions(props) {
     const { pageSize, pageSizeOptions, onPageSizeChange, rowsSelectorText, showText } = props
     return (
-      <span className="rt-page-size">
+      <div className="rt-page-size">
         {showText}
         <select
           aria-label={rowsSelectorText}
@@ -115,7 +115,7 @@ export default class Pagination extends React.Component {
             </option>
           ))}
         </select>
-      </span>
+      </div>
     )
   }
 
@@ -171,7 +171,12 @@ export default class Pagination extends React.Component {
       canNext,
       className,
       style,
-      ofText
+      ofText,
+      pageText,
+      previousText,
+      nextText,
+      paginationLabel,
+      currentPageLabel
     } = this.props
 
     if (autoHidePagination) {
@@ -195,31 +200,37 @@ export default class Pagination extends React.Component {
     if (paginationType === 'numbers') {
       let pageButtons = []
       visiblePages.forEach((page, index) => {
+        const isActive = currentPage === page
         const pageButton = (
           <PageButton
             key={page}
-            isActive={currentPage === page}
+            isActive={isActive}
             onClick={this.changePage.bind(null, page)}
+            aria-label={`${pageText} ${page}` + (isActive ? `, ${currentPageLabel}` : '')}
+            aria-current={isActive ? 'page' : null}
           >
             {page}
           </PageButton>
         )
         if (page - visiblePages[index - 1] > 1) {
-          pageButtons.push(<span className="rt-page-ellipsis" key={`ellipsis-${page}`}>...</span>)
+          pageButtons.push(
+            <span className="rt-page-ellipsis" key={`ellipsis-${page}`} role="separator">
+              ...
+            </span>
+          )
         }
         pageButtons.push(pageButton)
       })
       pageNumbers = pageButtons
     } else {
-      const pageStart =
-        paginationType === 'jump'
-          ? this.renderPageJump(this.getPageJumpProperties())
-          : currentPage
+      const page =
+        paginationType === 'jump' ? this.renderPageJump(this.getPageJumpProperties()) : currentPage
       const totalPages = Math.max(pages, 1)
       pageNumbers = (
-        <span className="rt-page-numbers">
-          {pageStart} {ofText} {totalPages}
-        </span>
+        <div className="rt-page-numbers">
+          {page}
+          {` ${ofText} ${totalPages}`}
+        </div>
       )
     }
 
@@ -231,8 +242,10 @@ export default class Pagination extends React.Component {
           this.changePage(currentPage - 1)
         }}
         disabled={!canPrevious}
+        aria-disabled={!canPrevious ? 'true' : null}
+        aria-label={`${previousText} ${pageText}`}
       >
-        {this.props.previousText}
+        {previousText}
       </PageButton>
     )
 
@@ -244,23 +257,25 @@ export default class Pagination extends React.Component {
           this.changePage(currentPage + 1)
         }}
         disabled={!canNext}
+        aria-disabled={!canNext ? 'true' : null}
+        aria-label={`${nextText} ${pageText}`}
       >
-        {this.props.nextText}
+        {nextText}
       </PageButton>
     )
 
     return (
       <div className={classNames(className, 'rt-pagination')} style={style}>
-        <div className="rt-pagination-left">
+        <div className="rt-pagination-info">
           {pageInfo}
           {pageSizeOptions}
         </div>
 
-        <div className="rt-pagination-right">
+        <nav className="rt-pagination-nav" aria-label={paginationLabel}>
           {prevButton}
           {pageNumbers}
           {nextButton}
-        </div>
+        </nav>
       </div>
     )
   }
@@ -274,12 +289,16 @@ Pagination.propTypes = {
   paginationType: PropTypes.oneOf(['numbers', 'jump', 'simple']),
   autoHidePagination: PropTypes.bool,
   showPageInfo: PropTypes.bool,
-  showText: PropTypes.string
+  showText: PropTypes.string,
+  paginationLabel: PropTypes.string,
+  currentPageLabel: PropTypes.string
 }
 
 Pagination.defaultProps = {
   paginationType: 'numbers',
   autoHidePagination: true,
   showPageInfo: true,
-  showText: 'Show'
+  showText: 'Show',
+  paginationLabel: 'pagination',
+  currentPageLabel: 'current page'
 }
