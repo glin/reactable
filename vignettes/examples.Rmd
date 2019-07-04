@@ -376,6 +376,32 @@ reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 reactable(iris[1:5, ], compact = TRUE)
 ```
 
+
+## Pagination
+
+### Page size options
+```{r}
+reactable(iris, defaultPageSize = 4, pageSizeOptions = c(4, 8, 12))
+```
+
+### Alternative pagination types
+
+#### Page jump
+```{r}
+reactable(iris, paginationType = "jump", defaultPageSize = 4)
+```
+
+#### Simple
+```{r}
+reactable(iris, paginationType = "simple", defaultPageSize = 4)
+```
+
+### Hide pagination elements
+```{r}
+reactable(iris, showPageSizeOptions = FALSE, defaultPageSize = 4)
+reactable(iris, showPageInfo = FALSE, defaultPageSize = 4)
+```
+
 ```{css echo=FALSE}
 /* rmarkdown html documents */
 .main-container {

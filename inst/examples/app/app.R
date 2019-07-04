@@ -40,7 +40,6 @@ ui <- fluidPage(
               Resizable = "resizable",
               "Default sorted" = "defaultSorted",
               "Show sortable" = "showSortable",
-              "Show pagination" = "showPagination",
               Outlined = "outlined",
               Bordered = "bordered",
               Borderless = "borderless",
@@ -49,8 +48,21 @@ ui <- fluidPage(
               Compact = "compact",
               Inline = "inline"
             ),
-            selected = c("sortable", "resizable", "showPagination", "highlight")
+            selected = c("sortable", "resizable", "highlight")
           ),
+
+          checkboxGroupInput(
+            "pagination",
+            "Pagination",
+            choices = c(
+              "Show pagination" = "showPagination",
+              "Show page size options" = "showPageSizeOptions",
+              "Show page info" = "showPageInfo"
+            ),
+            selected = c("showPagination", "showPageSizeOptions", "showPageInfo")
+          ),
+          selectInput("paginationType", NULL, selectize = FALSE, width = 150,
+                      choices = c("page numbers" = "numbers", "page jump" = "jump", "simple")),
 
           checkboxGroupInput("groupBy", "Group By", choices = c("Species", "Petal.Width")),
 
@@ -125,7 +137,10 @@ server <- function(input, output, session) {
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
       selection = if (input$rowSelection != "none") input$rowSelection,
       selectionId = if (input$rowSelection != "none") "selected",
-      showPagination = "showPagination" %in% input$options,
+      paginationType = input$paginationType,
+      showPagination = if (!"showPagination" %in% input$pagination) FALSE,
+      showPageSizeOptions = "showPageSizeOptions" %in% input$pagination,
+      showPageInfo = "showPageInfo" %in% input$pagination,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
       borderless = "borderless" %in% input$options,
@@ -205,7 +220,10 @@ server <- function(input, output, session) {
       resizable = .(opts$resizable),
       selection = .(opts$selection),
       selectionId = .(opts$selectionId),
+      paginationType = .(opts$paginationType),
       showPagination = .(opts$showPagination),
+      showPageSizeOptions = .(opts$showPageSizeOptions),
+      showPageInfo = .(opts$showPageInfo),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
       borderless = .(opts$borderless),
