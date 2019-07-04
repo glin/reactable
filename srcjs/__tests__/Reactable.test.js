@@ -255,6 +255,7 @@ test('table styles', () => {
     '-borderless',
     '-striped',
     '-highlight',
+    '-compact',
     '-inline'
   )
 
@@ -272,6 +273,9 @@ test('table styles', () => {
 
   rerender(<Reactable {...props} highlight />)
   expect(table).toHaveClass('-highlight')
+
+  rerender(<Reactable {...props} compact />)
+  expect(table).toHaveClass('-compact')
 
   rerender(<Reactable {...props} inline />)
   expect(table).toHaveClass('-inline')
