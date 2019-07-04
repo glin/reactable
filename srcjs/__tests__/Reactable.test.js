@@ -583,6 +583,7 @@ describe('column classes and styles', () => {
 })
 
 describe('pagination', () => {
+  const getRows = container => container.querySelectorAll('.rt-tr-group')
   const getPagination = container => container.querySelector('.rt-pagination')
   const getPageInfo = container => container.querySelector('.rt-page-info')
   const getPageSizeOptions = container => container.querySelector('.rt-page-size')
@@ -591,6 +592,22 @@ describe('pagination', () => {
   const getPageNumbers = container => container.querySelector('.rt-page-numbers')
   const getPageButtons = container => container.querySelectorAll('.rt-page-button')
   const getPageJump = container => container.querySelector('.rt-page-jump')
+
+  it('default page size', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5, 6, 7] },
+      columns: [{ Header: 'a', accessor: 'a' }],
+      defaultPageSize: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(2)
+
+    // Should rerender if default page size changes
+    rerender(<Reactable {...props} defaultPageSize={3} />)
+    expect(getRows(container)).toHaveLength(3)
+    rerender(<Reactable {...props} defaultPageSize={7} />)
+    expect(getRows(container)).toHaveLength(7)
+  })
 
   it('shows or hides pagination', () => {
     const props = {
@@ -660,7 +677,7 @@ describe('pagination', () => {
       pageSizeOptions: [2, 4, 6]
     }
     const { container, rerender } = render(<Reactable {...props} />)
-    let pageSizeOptions = getPageSizeOptions(container)
+    const pageSizeOptions = getPageSizeOptions(container)
     expect(pageSizeOptions).toHaveTextContent('Show')
 
     // Options
@@ -671,13 +688,12 @@ describe('pagination', () => {
 
     // Change page size
     fireEvent.change(pageSizeSelect, { target: { value: 4 } })
-    let pageInfo = getPageInfo(container)
-    expect(pageInfo).toHaveTextContent('1-4 of 5 rows')
+    expect(getRows(container)).toHaveLength(4)
+    expect(getPageInfo(container)).toHaveTextContent('1-4 of 5 rows')
 
     // Hide page size options
     rerender(<Reactable {...props} showPageSizeOptions={false} />)
-    pageSizeOptions = getPageSizeOptions(container)
-    expect(pageSizeOptions).toEqual(null)
+    expect(getPageSizeOptions(container)).toEqual(null)
   })
 
   it('simple page navigation', () => {

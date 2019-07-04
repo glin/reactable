@@ -305,6 +305,8 @@ class Reactable extends React.Component {
         {...selectProps}
         pageJumpText="jump to page"
         rowsSelectorText="rows per page"
+        // Force ReactTable to rerender when default page size changes
+        key={`${defaultPageSize}`}
       />
     )
   }
