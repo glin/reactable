@@ -218,6 +218,7 @@ server <- function(input, output, session) {
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
       pagination = .(opts$pagination),
+      paginationType = .(opts$paginationType),
       showPageSizeOptions = .(opts$showPageSizeOptions),
       showPageInfo = .(opts$showPageInfo),
       selection = .(opts$selection),
