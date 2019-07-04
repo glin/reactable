@@ -94,17 +94,13 @@ ui <- fluidPage(
               "Custom cell renderer" = "cell"
             ),
             selected = c("format", "cell")
-          ),
-
-          tags$a(href = "https://github.com/glin/reactable/tree/master/inst/examples/app",
-                 span(icon("github"), "Source code"))
+          )
       ),
       div(class = "content",
           tabsetPanel(
             tabPanel(
               "Table",
               reactableOutput("table"),
-              tags$div(class = "sort-tip", "Tip: shift+click to sort multiple columns"),
               conditionalPanel(
                 "input.rowSelection !== 'none'",
                 hr(),

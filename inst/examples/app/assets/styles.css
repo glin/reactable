@@ -15,7 +15,7 @@ body {
 .main {
   display: flex;
   justify-content: center;
-  padding: 4rem 1rem;
+  padding: 2rem 1rem;
 }
 
 .sidebar {
