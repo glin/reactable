@@ -188,7 +188,10 @@ reactable(
   defaultPageSize = 10,       # Default page size
   pageSizeOptions =           # Page size options
     c(10, 25, 50, 100),
-  showPagination = NULL,      # Show pagination? Defaults to TRUE if the table fits on one page
+  paginationType = "numbers", # Pagination control to use. Either "numbers" (the default), "jump", or "simple"
+  showPagination = NULL,      # Show pagination? Defaults to TRUE if the table has more than one page
+  showPageSizeOptions = TRUE, # Show page size options?
+  showPageInfo = TRUE,        # Show page info?
   minRows = 1,                # Minimum number of rows to show
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows

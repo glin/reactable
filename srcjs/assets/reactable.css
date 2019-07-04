@@ -48,16 +48,6 @@
   margin: 0;
 }
 
-/* Pagination */
-.ReactTable .-pagination {
-  box-shadow: inherit;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.ReactTable .-pagination .-center {
-  flex-wrap: nowrap;
-}
-
 /* Column alignment */
 .ReactTable .rt-col-left {
   text-align: left;
@@ -168,22 +158,137 @@
   padding-left: 5px;
 }
 
-.ReactTable .rt-th[aria-sort=ascending] .-sort-left:after,
-.ReactTable .rt-th[aria-sort=ascending] .-sort-right:after {
-  content: "\2191";
+.ReactTable .rt-th[aria-sort='ascending'] .-sort-left:after,
+.ReactTable .rt-th[aria-sort='ascending'] .-sort-right:after {
+  content: '\2191';
 }
 
-.ReactTable .rt-th[aria-sort=descending] .-sort-left:after,
-.ReactTable .rt-th[aria-sort=descending] .-sort-right:after {
-  content: "\2193";
+.ReactTable .rt-th[aria-sort='descending'] .-sort-left:after,
+.ReactTable .rt-th[aria-sort='descending'] .-sort-right:after {
+  content: '\2193';
 }
 
-.ReactTable .rt-th[aria-sort=none] .-sort:after {
-  content: "\2195";
+.ReactTable .rt-th[aria-sort='none'] .-sort:after {
+  content: '\2195';
   opacity: 0.4;
 }
 
 /* Conditional expanders */
 .ReactTable .rt-expandable.rt-expand-disabled {
   cursor: unset;
+}
+
+/* Pagination */
+.ReactTable .pagination-bottom .rt-pagination {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ReactTable .rt-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 4px;
+}
+
+.ReactTable .rt-pagination-left :not(:last-child) {
+  margin-right: 16px;
+}
+
+.ReactTable .rt-page-info {
+  display: inline-block;
+  margin: 6px 8px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.ReactTable .rt-page-size {
+  margin: 0 8px;
+}
+
+.ReactTable .rt-page-size select {
+  margin-left: 8px;
+}
+
+.ReactTable .rt-pagination select,
+.ReactTable .rt-pagination input,
+.ReactTable .rt-pagination button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.ReactTable .rt-pagination select,
+.ReactTable .rt-pagination input {
+  background: #fff;
+  padding: 3px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Restyle native select on Firefox */
+@supports (-moz-appearance: none) {
+  .ReactTable .rt-pagination select {
+    -moz-appearance: none !important;
+    padding-right: 12px;
+    background: transparent url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==') right center no-repeat !important;
+    background-position: right 6px center !important;
+  }
+}
+
+.ReactTable .rt-page-button {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.ReactTable .rt-page-button:disabled {
+  color: rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.ReactTable .rt-page-button:hover:disabled {
+  background-color: transparent;
+}
+
+.ReactTable .rt-page-button-content {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+.ReactTable .rt-page-button:not(:disabled):hover>.rt-page-button-content {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ReactTable .rt-page-button:not(:disabled):active>.rt-page-button-content {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.ReactTable .rt-page-button:focus>.rt-page-button-content {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ReactTable .rt-page-button:focus,
+.ReactTable .rt-page-button-content:focus {
+  outline: none;
+}
+
+.ReactTable .rt-page-button-active>.rt-page-button-content {
+  font-weight: bold;
+}
+
+.ReactTable .rt-page-ellipsis {
+  margin: 0 4px;
+  pointer-events: none;
+}
+
+.ReactTable .rt-page-numbers {
+  margin: 0 8px;
+  white-space: nowrap;
+}
+
+.ReactTable .rt-page-jump {
+  width: 70px;
+  text-align: center;
 }

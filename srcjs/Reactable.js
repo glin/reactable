@@ -4,6 +4,7 @@ import { ReactTableDefaults } from 'react-table'
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
 
+import Pagination from './Pagination'
 import selectTableHOC from './selectTable'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
@@ -156,7 +157,10 @@ class Reactable extends React.Component {
       defaultSorted,
       defaultPageSize,
       pageSizeOptions,
+      paginationType,
       showPagination,
+      showPageSizeOptions,
+      showPageInfo,
       minRows,
       selection,
       details,
@@ -197,6 +201,8 @@ class Reactable extends React.Component {
         selectType: selection === 'multiple' ? 'checkbox' : 'radio'
       }
     }
+
+    const autoHidePagination = showPagination == null
 
     let SubComponent, colProps, getTdProps
     if (details) {
@@ -281,6 +287,11 @@ class Reactable extends React.Component {
         defaultPageSize={defaultPageSize}
         pageSizeOptions={pageSizeOptions}
         showPagination={showPagination}
+        showPageSizeOptions={showPageSizeOptions}
+        PaginationComponent={Pagination}
+        paginationType={paginationType}
+        autoHidePagination={autoHidePagination}
+        showPageInfo={showPageInfo}
         minRows={minRows}
         collapseOnSortingChange={false}
         collapseOnPageChange={true}
@@ -292,6 +303,8 @@ class Reactable extends React.Component {
         getTdProps={getTdProps}
         SubComponent={SubComponent}
         {...selectProps}
+        pageJumpText="jump to page"
+        rowsSelectorText="rows per page"
       />
     )
   }
@@ -309,7 +322,10 @@ Reactable.propTypes = {
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
+  paginationType: Pagination.propTypes.paginationType,
   showPagination: PropTypes.bool,
+  showPageSizeOptions: PropTypes.bool,
+  showPageInfo: Pagination.propTypes.showPageInfo,
   minRows: PropTypes.number,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,

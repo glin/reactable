@@ -581,3 +581,220 @@ describe('column classes and styles', () => {
     expect(cellB).not.toHaveStyle('background-color: red;')
   })
 })
+
+describe('pagination', () => {
+  const getPagination = container => container.querySelector('.rt-pagination')
+  const getPageInfo = container => container.querySelector('.rt-page-info')
+  const getPageSizeOptions = container => container.querySelector('.rt-page-size')
+  const getPrevButton = container => container.querySelector('.rt-prev-button')
+  const getNextButton = container => container.querySelector('.rt-next-button')
+  const getPageNumbers = container => container.querySelector('.rt-page-numbers')
+  const getPageButtons = container => container.querySelectorAll('.rt-page-button')
+  const getPageJump = container => container.querySelector('.rt-page-jump')
+
+  it('shows or hides pagination', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]
+    }
+
+    // Auto hidden if table always fits on one page
+    const { container, rerender } = render(<Reactable {...props} defaultPageSize={2} />)
+    let pagination = getPagination(container)
+    expect(pagination).toEqual(null)
+
+    // Auto shown if default page size causes paging
+    rerender(<Reactable {...props} defaultPageSize={1} pageSizeOptions={[10, 20]} />)
+    pagination = getPagination(container)
+    expect(pagination).toBeTruthy()
+
+    // Auto shown if page size option causes paging
+    rerender(<Reactable {...props} defaultPageSize={20} pageSizeOptions={[1, 20]} />)
+    pagination = getPagination(container)
+    expect(pagination).toBeTruthy()
+
+    // Force show pagination
+    rerender(<Reactable {...props} showPagination defaultPageSize={2} pageSizeOptions={[2]} />)
+    pagination = getPagination(container)
+    expect(pagination).toBeTruthy()
+
+    // Force hide pagination
+    rerender(<Reactable {...props} defaultPageSize={1} pageSizeOptions={[10, 20]} />)
+    pagination = getPagination(container)
+    expect(pagination).toBeTruthy()
+  })
+
+  it('page info', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5], b: ['a', 'b', 'c', 'd', 'e'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      defaultPageSize: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let pageInfo = getPageInfo(container)
+    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+
+    const nextButton = getNextButton(container)
+    fireEvent.click(nextButton)
+    expect(pageInfo).toHaveTextContent('3-4 of 5 rows')
+    fireEvent.click(nextButton)
+    expect(pageInfo).toHaveTextContent('5-5 of 5 rows')
+
+    // Updates on filtering
+    rerender(<Reactable {...props} filterable />)
+    const filter = container.querySelector('.rt-thead.-filters input')
+    fireEvent.change(filter, { target: { value: '11' } })
+    expect(pageInfo).toHaveTextContent('0-0 of 0 rows')
+
+    // Hide page info
+    rerender(<Reactable {...props} showPageInfo={false} />)
+    pageInfo = getPageInfo(container)
+    expect(pageInfo).toEqual(null)
+  })
+
+  it('page size options', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      defaultPageSize: 2,
+      pageSizeOptions: [2, 4, 6]
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let pageSizeOptions = getPageSizeOptions(container)
+    expect(pageSizeOptions).toHaveTextContent('Show')
+
+    // Options
+    const pageSizeSelect = pageSizeOptions.querySelector('select')
+    const options = pageSizeSelect.querySelectorAll('option')
+    expect(options).toHaveLength(3)
+    options.forEach((option, i) => expect(option).toHaveTextContent(props.pageSizeOptions[i]))
+
+    // Change page size
+    fireEvent.change(pageSizeSelect, { target: { value: 4 } })
+    let pageInfo = getPageInfo(container)
+    expect(pageInfo).toHaveTextContent('1-4 of 5 rows')
+
+    // Hide page size options
+    rerender(<Reactable {...props} showPageSizeOptions={false} />)
+    pageSizeOptions = getPageSizeOptions(container)
+    expect(pageSizeOptions).toEqual(null)
+  })
+
+  it('simple page navigation', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      defaultPageSize: 2,
+      paginationType: 'simple'
+    }
+    const { container, queryByText } = render(<Reactable {...props} />)
+    const pageNumbers = getPageNumbers(container)
+    const prevButton = getPrevButton(container)
+    const nextButton = getNextButton(container)
+    expect(pageNumbers).toHaveTextContent('1 of 3')
+    expect(queryByText('_e5')).toEqual(null)
+
+    // First page: previous button should be disabled
+    expect(prevButton).toHaveAttribute('disabled')
+    fireEvent.click(prevButton)
+    expect(pageNumbers).toHaveTextContent('1 of 3')
+
+    fireEvent.click(nextButton)
+    expect(pageNumbers).toHaveTextContent('2 of 3')
+    expect(prevButton).not.toHaveAttribute('disabled')
+
+    fireEvent.click(nextButton)
+    expect(pageNumbers).toHaveTextContent('3 of 3')
+    expect(queryByText('_e5')).toBeTruthy()
+
+    // Last page: next button should be disabled
+    fireEvent.click(nextButton)
+    expect(pageNumbers).toHaveTextContent('3 of 3')
+    expect(nextButton).toHaveAttribute('disabled')
+
+    fireEvent.click(prevButton)
+    expect(pageNumbers).toHaveTextContent('2 of 3')
+  })
+
+  it('page number buttons', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      defaultPageSize: 1,
+      paginationType: 'numbers'
+    }
+    const { container, rerender, queryAllByText } = render(<Reactable {...props} />)
+    let pageButtons = [...getPageButtons(container)]
+    const pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
+    expect(pageNumberBtns).toHaveLength(5)
+    pageNumberBtns.forEach((btn, i) => expect(btn).toHaveTextContent(i + 1))
+
+    fireEvent.click(pageNumberBtns[1])
+    const pageInfo = getPageInfo(container)
+    expect(pageInfo).toHaveTextContent('2-2 of 5 rows')
+    expect(pageNumberBtns[0]).not.toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
+
+    // Changing to the same page should be a no-op
+    fireEvent.click(pageNumberBtns[1])
+    expect(pageInfo).toHaveTextContent('2-2 of 5 rows')
+    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
+
+    fireEvent.click(pageNumberBtns[4])
+    expect(pageInfo).toHaveTextContent('5-5 of 5 rows')
+
+    // Should update on external page changes
+    const prevButton = getPrevButton(container)
+    fireEvent.click(prevButton)
+    expect(pageNumberBtns[3]).toHaveClass('rt-page-button-active')
+
+    // Pages with ellipses
+    const data = { a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }
+    rerender(<Reactable {...props} data={data} />)
+    let ellipses = queryAllByText('...')
+    expect(ellipses).toHaveLength(1)
+    pageButtons = [...getPageButtons(container)]
+    fireEvent.click(pageButtons[5]) // page 5
+    ellipses = queryAllByText('...')
+    expect(ellipses).toHaveLength(2)
+  })
+
+  it('page jump', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      defaultPageSize: 2,
+      paginationType: 'jump'
+    }
+    const { container } = render(<Reactable {...props} />)
+    const pageJump = getPageJump(container)
+    const pageNumbers = getPageNumbers(container)
+    expect(pageJump).toHaveAttribute('value', '1')
+    expect(pageNumbers).toHaveTextContent('of 3')
+
+    const pageInfo = getPageInfo(container)
+    fireEvent.change(pageJump, { target: { value: 2 } })
+    // Shouldn't change page yet
+    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+    // Should change page on unfocus
+    fireEvent.blur(pageJump)
+    expect(pageInfo).toHaveTextContent('3-4 of 5 rows')
+    fireEvent.change(pageJump, { target: { value: 1 } })
+    // Should change page on enter keypress
+    fireEvent.keyPress(pageJump, { key: 'Enter', code: 13, charCode: 13 })
+    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+
+    // Should update on external page changes
+    const nextButton = getNextButton(container)
+    fireEvent.click(nextButton)
+    expect(pageJump).toHaveAttribute('value', '2')
+
+    // Invalid and blank values should be reset
+    fireEvent.change(pageJump, { target: { value: '' } })
+    fireEvent.blur(pageJump)
+    expect(pageJump).toHaveAttribute('value', '2')
+    fireEvent.change(pageJump, { target: { value: 'asdf' } })
+    fireEvent.blur(pageJump)
+    expect(pageJump).toHaveAttribute('value', '2')
+  })
+})

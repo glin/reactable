@@ -9,12 +9,13 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   resizable = FALSE, filterable = FALSE, defaultColDef = NULL,
   defaultSortOrder = "asc", defaultSorted = NULL, paging = TRUE,
   defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-  showPagination = NULL, minRows = 1, selection = NULL,
-  selectionId = NULL, details = NULL, outlined = FALSE,
-  bordered = FALSE, borderless = FALSE, striped = FALSE,
-  highlight = TRUE, compact = FALSE, showSortable = FALSE,
-  class = NULL, style = NULL, inline = FALSE, width = "auto",
-  height = "auto", elementId = NULL)
+  paginationType = "numbers", showPagination = NULL,
+  showPageSizeOptions = TRUE, showPageInfo = TRUE, minRows = 1,
+  selection = NULL, selectionId = NULL, details = NULL,
+  outlined = FALSE, bordered = FALSE, borderless = FALSE,
+  striped = FALSE, highlight = TRUE, compact = FALSE,
+  showSortable = FALSE, class = NULL, style = NULL, inline = FALSE,
+  width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -49,7 +50,16 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
 
-\item{showPagination}{Show pagination? Defaults to \code{TRUE} if the table fits on one page.}
+\item{paginationType}{Pagination control to use. Either \code{"numbers"} for page
+number buttons (the default), \code{"jump"} for a page jump, or \code{"simple"} to show
+'Previous' and 'Next' buttons only.}
+
+\item{showPagination}{Show pagination? Defaults to \code{TRUE} if the table has more
+than one page.}
+
+\item{showPageSizeOptions}{Show page size options?}
+
+\item{showPageInfo}{Show page info?}
 
 \item{minRows}{Minimum number of rows to show. Defaults to 1.}
 
