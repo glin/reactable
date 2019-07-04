@@ -16,7 +16,7 @@ data <- read.csv("twitter_followers.csv", stringsAsFactors = FALSE)
 
 tbl <- reactable(
   data,
-  paging = FALSE,
+  pagination = FALSE,
   defaultSorted = "exclusive_followers_pct",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(

@@ -21,7 +21,7 @@ NULL
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
 #' @param defaultSorted Optional vector of column names to sort by default.
 #'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
-#' @param paging Enable pagination? Defaults to `TRUE`.
+#' @param pagination Enable pagination? Defaults to `TRUE`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param paginationType Pagination control to use. Either `"numbers"` for page
@@ -59,7 +59,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
                       defaultColDef = NULL, defaultSortOrder = "asc", defaultSorted = NULL,
-                      paging = TRUE, defaultPageSize = 10,
+                      pagination = TRUE, defaultPageSize = 10,
                       pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
                       showPagination = NULL, showPageSizeOptions = TRUE, showPageInfo = TRUE,
                       minRows = 1, selection = NULL, selectionId = NULL,
@@ -156,9 +156,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       stop("`defaultSorted` columns must exist in `data`")
     }
   }
-  if (!is.logical(paging)) {
-    stop("`paging` must be TRUE or FALSE")
-  } else if (!paging) {
+  if (!is.logical(pagination)) {
+    stop("`pagination` must be TRUE or FALSE")
+  } else if (!pagination) {
     defaultPageSize <- nrow(data)
     showPagination <- FALSE
   }

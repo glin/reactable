@@ -67,7 +67,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
 
   reactable(
     stats,
-    paging = FALSE,
+    pagination = FALSE,
     defaultSortOrder = "desc",
     defaultColDef = colDef(
       sortMethod = "naLast",

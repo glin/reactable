@@ -184,7 +184,7 @@ reactable(
   defaultColDef = NULL,       # Default column definition used by every column. See column definitions below
   defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"
   defaultSorted = NULL,       # Column names to sort by default. Or a named list with values of "asc" or "desc"
-  paging = TRUE,              # Enable pagination?
+  pagination = TRUE,          # Enable pagination?
   defaultPageSize = 10,       # Default page size
   pageSizeOptions =           # Page size options
     c(10, 25, 50, 100),

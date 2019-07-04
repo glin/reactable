@@ -55,14 +55,17 @@ ui <- fluidPage(
             "pagination",
             "Pagination",
             choices = c(
-              "Show pagination" = "showPagination",
+              "Enable pagination" = "pagination",
               "Show page size options" = "showPageSizeOptions",
               "Show page info" = "showPageInfo"
             ),
-            selected = c("showPagination", "showPageSizeOptions", "showPageInfo")
+            selected = c("pagination", "showPageSizeOptions", "showPageInfo")
           ),
-          selectInput("paginationType", NULL, selectize = FALSE, width = 150,
-                      choices = c("page numbers" = "numbers", "page jump" = "jump", "simple")),
+          radioButtons(
+            "paginationType",
+            "Pagination type",
+            choices = c("page numbers" = "numbers", "page jump" = "jump", "simple")
+          ),
 
           checkboxGroupInput("groupBy", "Group By", choices = c("Species", "Petal.Width")),
 
@@ -133,8 +136,8 @@ server <- function(input, output, session) {
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
       selection = if (input$rowSelection != "none") input$rowSelection,
       selectionId = if (input$rowSelection != "none") "selected",
+      pagination = "pagination" %in% input$pagination,
       paginationType = input$paginationType,
-      showPagination = if (!"showPagination" %in% input$pagination) FALSE,
       showPageSizeOptions = "showPageSizeOptions" %in% input$pagination,
       showPageInfo = "showPageInfo" %in% input$pagination,
       outlined = "outlined" %in% input$options,
@@ -214,12 +217,11 @@ server <- function(input, output, session) {
       filterable = .(opts$filterable),
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
-      selection = .(opts$selection),
-      selectionId = .(opts$selectionId),
-      paginationType = .(opts$paginationType),
-      showPagination = .(opts$showPagination),
+      pagination = .(opts$pagination),
       showPageSizeOptions = .(opts$showPageSizeOptions),
       showPageInfo = .(opts$showPageInfo),
+      selection = .(opts$selection),
+      selectionId = .(opts$selectionId),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
       borderless = .(opts$borderless),
