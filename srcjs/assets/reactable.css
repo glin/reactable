@@ -91,10 +91,10 @@
 }
 
 /* Cells */
-.ReactTable.-bordered .rt-thead .rt-th,
-.ReactTable.-bordered .rt-thead .rt-td,
-.ReactTable.-bordered .rt-tbody .rt-td,
-.ReactTable.-bordered .rt-tfoot .rt-td {
+.ReactTable.-bordered .rt-thead .rt-th:not(:last-child),
+.ReactTable.-bordered .rt-thead .rt-td:not(:last-child),
+.ReactTable.-bordered .rt-tbody .rt-td:not(:last-child),
+.ReactTable.-bordered .rt-tfoot .rt-td:not(:last-child) {
   border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
