@@ -10,7 +10,7 @@ output: html_document
 ```{css echo=FALSE}
 .iframe-container {
   position: relative;
-  height: 100vh;
+  height: calc(100vh - 50px);
   padding-top: 56.25%;
   overflow: hidden;
 }
