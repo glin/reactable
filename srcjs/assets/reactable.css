@@ -119,8 +119,8 @@
 
 /* Column group headers */
 .ReactTable .rt-thead.-headerGroups {
-  background: inherit;
-  border-bottom: inherit;
+  background: transparent;
+  border-bottom: none;
 }
 
 .ReactTable .rt-th.-headerGroup:after {
