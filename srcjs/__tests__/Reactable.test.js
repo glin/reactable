@@ -682,7 +682,7 @@ describe('pagination', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     const pageSizeOptions = getPageSizeOptions(container)
-    expect(pageSizeOptions).toHaveTextContent('Show')
+    expect(pageSizeOptions).toHaveTextContent(/^Show 246$/)
 
     // Options
     const pageSizeSelect = pageSizeOptions.querySelector('select')
@@ -698,6 +698,10 @@ describe('pagination', () => {
     // Hide page size options
     rerender(<Reactable {...props} showPageSizeOptions={false} />)
     expect(getPageSizeOptions(container)).toEqual(null)
+
+    // No page info shown
+    rerender(<Reactable {...props} showPageInfo={false} />)
+    expect(getPageSizeOptions(container)).toHaveTextContent(/^Show 246 rows$/)
   })
 
   it('simple page navigation', () => {

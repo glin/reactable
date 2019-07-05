@@ -186,7 +186,7 @@
 .ReactTable .rt-pagination {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   flex-wrap: wrap;
   padding: 4px;
 }
@@ -207,7 +207,7 @@
 }
 
 .ReactTable .rt-page-size select {
-  margin-left: 8px;
+  margin: 0 2px;
 }
 
 .ReactTable .rt-pagination select,

@@ -100,10 +100,19 @@ export default class Pagination extends React.Component {
   }
 
   renderPageSizeOptions(props) {
-    const { pageSize, pageSizeOptions, onPageSizeChange, rowsSelectorText, showText } = props
+    const {
+      pageSize,
+      pageSizeOptions,
+      onPageSizeChange,
+      rowsSelectorText,
+      showPageInfo,
+      rowsText,
+      showText
+    } = props
+
     return (
       <div className="rt-page-size">
-        {showText}
+        {`${showText} `}
         <select
           aria-label={rowsSelectorText}
           onChange={e => onPageSizeChange(Number(e.target.value))}
@@ -115,6 +124,7 @@ export default class Pagination extends React.Component {
             </option>
           ))}
         </select>
+        {!showPageInfo ? ` ${rowsText}` : null}
       </div>
     )
   }
