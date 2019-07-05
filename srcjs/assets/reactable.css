@@ -68,8 +68,8 @@
   border: none;
 }
 
-.ReactTable.-outlined,
-.ReactTable.-bordered {
+.ReactTable.-outlined .rt-table,
+.ReactTable.-bordered .rt-table {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -183,12 +183,17 @@
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.ReactTable.-outlined .pagination-bottom .rt-pagination,
+.ReactTable.-bordered .pagination-bottom .rt-pagination {
+  border-top: none;
+}
+
 .ReactTable .rt-pagination {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
-  padding: 4px;
+  padding: 6px 4px;
 }
 
 .ReactTable .rt-pagination-info :not(:last-child) {
