@@ -129,8 +129,14 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
-  if (!is.null(defaultColDef) && !is.colDef(defaultColDef)) {
-    stop("`defaultColDef` must be a column definition")
+  if (!is.null(defaultColDef)) {
+    if (!is.colDef(defaultColDef)) {
+      stop("`defaultColDef` must be a column definition")
+    }
+    columns <- lapply(colnames(data), function(name) {
+      mergeLists(defaultColDef, columns[[name]])
+    })
+    columns <- stats::setNames(columns, colnames(data))
   }
   if (!isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
@@ -234,7 +240,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
 
   cols <- lapply(colnames(data), function(key) {
-    column <- mergeLists(defaultColDef, list(accessor = key))
+    column <- list(accessor = key)
     if (!is.null(colnames[[key]])) {
       column$Header <- colnames[[key]]
     } else {

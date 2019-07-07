@@ -274,6 +274,13 @@ test_that("defaultSorted", {
     list(id = "x", desc = FALSE),
     list(id = "y", desc = TRUE)
   ))
+
+  # Works with defaultColDef
+  tbl <- reactable(data.frame(x = 1, y = "2"),
+                   defaultSorted = "x",
+                   defaultColDef = colDef(defaultSortOrder = "desc"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultSorted, list(list(id = "x", desc = TRUE)))
 })
 
 test_that("pagination", {
