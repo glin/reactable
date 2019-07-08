@@ -85,7 +85,7 @@ reactable(by_species, details = function(index) {
   species <- by_species[index, "Species"]
   htmltools::div(
     paste("Species:", species),
-    reactable(iris[iris$Species == species, ])
+    reactable(iris[iris$Species == species, ], outlined = TRUE)
   )
 })
 ```
