@@ -826,7 +826,17 @@ describe('pagination', () => {
     fireEvent.click(nextButton)
     expect(pageJump).toHaveAttribute('value', '2')
 
-    // Invalid and blank values should be reset
+    // Values out of range should be reset to nearest valid value
+    fireEvent.change(pageJump, { target: { value: '9' } })
+    fireEvent.blur(pageJump)
+    expect(pageJump).toHaveAttribute('value', '3')
+    fireEvent.change(pageJump, { target: { value: '0' } })
+    fireEvent.blur(pageJump)
+    expect(pageJump).toHaveAttribute('value', '1')
+
+    // Invalid and blank values should be reset to last value
+    fireEvent.change(pageJump, { target: { value: '2' } })
+    fireEvent.blur(pageJump)
     fireEvent.change(pageJump, { target: { value: '' } })
     fireEvent.blur(pageJump)
     expect(pageJump).toHaveAttribute('value', '2')
