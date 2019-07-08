@@ -122,11 +122,8 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   color: inherit;
 }
 
-.ReactTable .rt-thead.-header {
-  border-bottom: 2px solid #555;
-}
-
 .header {
+  border-bottom: 2px solid #555;
   font-size: 13px;
   font-weight: 400;
   text-transform: uppercase;
