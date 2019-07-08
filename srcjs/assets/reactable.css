@@ -142,18 +142,13 @@
   border-top: 1px solid hsl(0, 0%, 90%);
 }
 
-.rt-td,
-.rt-th {
+.-bordered .rt-td,
+.-bordered .rt-th {
   border-left: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.rt-td:first-child,
-.rt-th:first-child {
-  border-left: none;
-}
-
-.ReactTable:not(.-bordered) .rt-td,
-.ReactTable:not(.-bordered) .rt-th {
+.-bordered .rt-td:first-child,
+.-bordered .rt-th:first-child {
   border-left: none;
 }
 
