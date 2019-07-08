@@ -61,69 +61,115 @@
   text-align: center;
 }
 
-/* Bordered/outlined styles */
-
-/* Table */
+/* Outer table borders */
 .ReactTable {
-  border: none;
+  /* Remove default style */
+  border: inherit;
 }
 
-.ReactTable.-outlined .rt-table,
-.ReactTable.-bordered .rt-table {
-  border: 1px solid rgba(0, 0, 0, 0.1);
+.-outlined .rt-table,
+.-bordered .rt-table {
+  border: 1px solid hsl(0, 0%, 90%);
 }
 
-/* Headers and footers */
+/* Header borders */
 .ReactTable .rt-thead.-header {
+  /* Remove default style */
   box-shadow: inherit;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-.ReactTable.-striped .rt-thead.-header,
-.ReactTable.-outlined .rt-thead.-header,
-.ReactTable.-bordered .rt-thead.-header {
+.rt-th {
+  border-bottom: 2px solid hsl(0, 0%, 90%);
+}
+
+.-striped .rt-th,
+.-outlined .rt-th,
+.-bordered .rt-th {
   border-bottom-width: 1px;
 }
 
-.ReactTable .rt-tfoot {
-  box-shadow: inherit;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+/* Header filter borders */
+.ReactTable .rt-thead.-filters {
+  /* Remove default style */
+  border-bottom: none;
 }
 
-/* Cells */
-.ReactTable.-bordered .rt-thead .rt-th:not(:last-child),
-.ReactTable.-bordered .rt-thead .rt-td:not(:last-child),
-.ReactTable.-bordered .rt-tbody .rt-td:not(:last-child),
-.ReactTable.-bordered .rt-tfoot .rt-td:not(:last-child) {
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+.ReactTable .rt-thead.-filters .rt-th {
+  /* Remove default style */
+  border-right: inherit;
+}
+
+.-filters .rt-th {
+  border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+.-borderless .-filters .rt-th {
+  border-bottom: none;
+}
+
+/* Cell and footer borders */
+.ReactTable .rt-tbody .rt-tr-group {
+  /* Remove default style */
+  border-bottom: inherit;
 }
 
 .ReactTable .rt-thead .rt-th,
 .ReactTable .rt-thead .rt-td,
 .ReactTable .rt-tbody .rt-td,
-.ReactTable .rt-tfoot .rt-td,
-.ReactTable.-borderless .rt-thead .rt-th,
-.ReactTable.-borderless .rt-tbody .rt-td,
-.ReactTable.-borderless .rt-thead .rt-td,
-.ReactTable.-borderless .rt-tfoot .rt-td {
-  border-right: none;
+.ReactTable .rt-tfoot .rt-td {
+  /* Remove default style */
+  border-right: inherit;
 }
 
-.ReactTable .rt-tbody .rt-tr-group:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+.ReactTable .rt-tfoot {
+  /* Remove default style */
+  box-shadow: inherit;
 }
 
-.ReactTable.-borderless .rt-tbody .rt-tr-group {
+.rt-td {
+  border-top: 1px solid hsl(0, 0%, 95%);
+}
+
+.rt-tr-group:first-child .rt-td {
+  border-top: none;
+}
+
+.-borderless .rt-td {
+  border-top: none;
+}
+
+.rt-tfoot .rt-td {
+  border-top: 1px solid hsl(0, 0%, 90%);
+}
+
+.rt-td,
+.rt-th {
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rt-td:first-child,
+.rt-th:first-child {
+  border-left: none;
+}
+
+.ReactTable:not(.-bordered) .rt-td,
+.ReactTable:not(.-bordered) .rt-th {
+  border-left: none;
+}
+
+/* Header group borders */
+.ReactTable .rt-thead.-headerGroups {
+  /* Remove default style */
+  background: inherit;
   border-bottom: none;
 }
 
-/* Column group headers */
-.ReactTable .rt-thead.-headerGroups {
-  background: transparent;
+.-headerGroups .rt-th {
   border-bottom: none;
 }
 
 .ReactTable .rt-th.-headerGroup:after {
+  /* Custom borders with spacing */
   content: '';
   position: absolute;
   margin: auto;
@@ -137,6 +183,7 @@
 
 .ReactTable.-outlined .rt-th.-headerGroup:after,
 .ReactTable.-bordered .rt-th.-headerGroup:after {
+  /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
 }
