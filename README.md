@@ -165,8 +165,9 @@ shinyApp(ui, server)
 ```
 
 ### More Examples
-- [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
 - [Twitter Followers](https://glin.github.io/reactable/articles/twitter-followers/twitter-followers.html)
+- [Women's World Cup Predictions](https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html)
+- [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
 - [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
 
 ## Usage

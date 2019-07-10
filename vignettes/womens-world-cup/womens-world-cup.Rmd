@@ -1,0 +1,275 @@
+---
+title: "Women's World Cup Predictions"
+output: html_document
+resource_files:
+  - images
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r table, echo=FALSE}
+library(reactable)
+library(htmltools)
+
+rating_cols <- c("spi", "global_o", "global_d")
+group_cols <- c("group_1", "group_2", "group_3")
+knockout_cols <- c("make_round_of_16", "make_quarters", "make_semis", "make_final", "win_league")
+
+forecasts <- read.csv("wwc_forecasts.csv", stringsAsFactors = FALSE)
+forecasts <- forecasts[, c("team", "points", "group", rating_cols, group_cols, knockout_cols)]
+
+format_pct <- function(value) {
+  if (value == 0) "  \u2013 "    # en dash
+  else if (value == 1) "\u2713"  # checkmark
+  else if (value < 0.01) " <1%"
+  else if (value > 0.99) ">99%"
+  else formatC(paste0(round(value * 100), "%"), width = 4)
+}
+
+hex_color_ramp <- function(colors, bias = 1) {
+  get_color <- colorRamp(colors, bias = bias)
+  function(x) rgb(get_color(x), maxColorValue = 255)
+}
+
+off_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 1.3)
+def_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 0.6)
+knockout_pct_color <- hex_color_ramp(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"), bias = 2)
+
+rating_column <- function(maxWidth = 45, ...) {
+  colDef(maxWidth = maxWidth, align = "center", class = "number", ...)
+}
+
+group_column <- function(class = NULL, ...) {
+  colDef(cell = format_pct, maxWidth = 70, align = "center", class = paste("number", class), ...)
+}
+
+knockout_column <- function(maxWidth = 70, class = NULL, ...) {
+  colDef(
+    cell = format_pct,
+    maxWidth = maxWidth,
+    class = paste("number", class),
+    style = function(value) {
+      if (value < 0.01) {
+        list(color = "#aaa")
+      } else {
+        list(color = "#111", background = knockout_pct_color(value))
+      }
+    },
+    ...
+  )
+}
+
+tbl <- reactable(
+  forecasts,
+  pagination = FALSE,
+  defaultSorted = "win_league",
+  defaultSortOrder = "desc",
+  defaultColGroup = colGroup(headerClass = "header"),
+  columnGroups = list(
+    colGroup(name = "Team Rating", columns = rating_cols),
+    colGroup(name = "Chance of Finishing Group Stage In ...", columns = group_cols),
+    colGroup(name = "Knockout Stage Chances", columns = knockout_cols)
+  ),
+  defaultColDef = colDef(headerClass = "header col-header"),
+  columns = list(
+    team = colDef(
+      defaultSortOrder = "asc",
+      minWidth = 200,
+      headerStyle = list(fontWeight = 700), 
+      cell = function(value, index) {
+        div(
+          class = "team",
+          img(class = "flag", src = sprintf("images/%s.png", value)),
+          div(class = "team-name", value),
+          div(class = "record", sprintf("%s pts.", forecasts[index, "points"]))
+        )
+      }
+    ),
+    points = colDef(show = FALSE),
+    group = colDef(defaultSortOrder = "asc", align = "center", class = "group", headerStyle = list(fontWeight = 700)),
+    spi = rating_column(format = colFormat(digits = 1), maxWidth = 55),
+    global_o = rating_column(
+      name = "Off.",
+      cell = function(value) {
+        scaled <- (value - min(forecasts$global_o)) / (max(forecasts$global_o) - min(forecasts$global_o))
+        color <- off_rating_color(scaled)
+        value <- format(round(value, 1), nsmall = 1)
+        div(class = "spi-rating", style = list(background = color), value)
+      }
+    ),
+    global_d = rating_column(
+      name = "Def.", 
+      defaultSortOrder = "asc",
+      cell = function(value) {
+        scaled <- 1 - (value - min(forecasts$global_d)) / (max(forecasts$global_d) - min(forecasts$global_d))
+        color <- def_rating_color(scaled)
+        value <- format(round(value, 1), nsmall = 1)
+        div(class = "spi-rating", style = list(background = color), value)
+      }
+    ),
+    group_1 = group_column(name = "1st Place", class = "border-left"),
+    group_2 = group_column(name = "2nd Place"),
+    group_3 = group_column(name = "3rd Place"),
+    make_round_of_16 = knockout_column(name = "Make Round of 16", class = "border-left"),
+    make_quarters = knockout_column(name = "Make Qtr-Finals"),
+    make_semis = knockout_column(name = "Make Semifinals", maxWidth = 85),
+    make_final = knockout_column(name = "Make Final"),
+    win_league = knockout_column(name = "Win World Cup")
+  ),
+  rowClass = JS("
+    function(rowInfo, state) {
+      // Add horizontal separators between groups when sorting by group
+      const firstSorted = state.sorted[0]
+      if (firstSorted && firstSorted.id === 'group') {
+        const nextRow = state.sortedData[rowInfo.viewIndex + 1]
+        if (nextRow && rowInfo.row.group !== nextRow.group) {
+          return 'group-last'
+        }
+      }
+    }"
+  ),
+  highlight = FALSE,
+  borderless = TRUE,
+  class = "standings-table"
+)
+
+div(class = "standings",
+  div(class = "title",
+    h2("2019 Women's World Cup Predictions"),
+    "Soccer Power Index (SPI) ratings and chances of advancing for every team"
+  ),
+  tbl,
+  "Forecast from before 3rd group matches"
+)
+```
+
+---
+
+Source: [FiveThirtyEight](https://projects.fivethirtyeight.com/2019-womens-world-cup-predictions/)
+
+Raw data: [`wwc_forecasts.csv`](wwc_forecasts.csv)
+
+```{r ref.label="table", eval=FALSE}
+```
+
+```{r}
+tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
+```
+
+```{css}
+.standings {
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.title {
+  margin: 18px 0;
+  font-size: 16px;
+}
+
+.title h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.standings-table {
+  margin-bottom: 20px;
+}
+
+.standings-table .header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  white-space: normal;
+}
+
+.col-header {
+  border-bottom-color: #555;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.col-header:hover {
+  background-color: #eee;
+}
+
+.border-left {
+  border-left: 2px solid #555;
+}
+
+.standings-table .rt-td {
+  /* Use box-shadow to show horizontal borders behind vertical borders */
+  box-shadow: inset 0 -1px 0 hsl(0, 0%, 85%);
+}
+
+.group-last .rt-td {
+  box-shadow: inset 0 -2px 0 #555;
+}
+
+.team {
+  display: flex;
+  align-items: baseline;
+}
+
+.record {
+  margin-left: 5px;
+  color: #999;
+  font-size: 13px;
+}
+
+.team-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.flag {
+  margin-right: 8px;
+  height: 21px;
+  border: 1px solid #f0f0f0;
+}
+
+.group {
+  font-size: 19px;
+}
+
+.standings-table .number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 16px;
+  line-height: 30px;
+  white-space: pre;
+}
+
+.spi-rating {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 50%;
+  color: #000;
+  font-size: 13px;
+  letter-spacing: -2px;
+}
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  max-width: 1054px !important;
+}
+
+h1.title {
+  display: none;
+}
+
+/* pkgdown articles */
+.contents {
+  width: inherit;
+}
+
+.page-header {
+  display: none;
+}
+```
