@@ -126,8 +126,8 @@ server <- function(input, output, session) {
       groupBy = input$groupBy,
       columnGroups = if ("columnGroups" %in% input$options) {
         quote(list(
-          colGroup("Sepal", c("Sepal.Length", "Sepal.Width")),
-          colGroup("Petal", c("Petal.Length", "Petal.Width"))
+          colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+          colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
         ))
       },
       filterable = "filterable" %in% input$options,
