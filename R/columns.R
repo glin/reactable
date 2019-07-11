@@ -200,9 +200,18 @@ isDescOrder <- function(x) {
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
 #' @export
-colGroup <- function(name, columns, align = NULL, headerClass = NULL, headerStyle = NULL) {
-  if (!is.character(columns)) {
-    stop("`columns` must be a character vector")
+colGroup <- function(name = NULL, columns = NULL, align = NULL, headerClass = NULL,
+                     headerStyle = NULL) {
+  if (!is.null(name) && !is.character(name)) {
+    stop("`name` must be a character string")
+  }
+  if (!is.null(columns)) {
+    if (!is.character(columns)) {
+      stop("`columns` must be a character vector")
+    } else {
+      # Ensure column IDs are serialized as an array
+      columns <- as.list(columns)
+    }
   }
   group <- colDef(
     name = name,

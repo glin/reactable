@@ -17,6 +17,8 @@ NULL
 #' @param resizable Enable column resizing?
 #' @param filterable Enable column filtering?
 #' @param defaultColDef Default column definition used by every column. See `colDef()`.
+#' @param defaultColGroup Default column group definition used by every column group.
+#'   See `colGroup()`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
 #' @param defaultSorted Optional vector of column names to sort by default.
@@ -58,7 +60,8 @@ NULL
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
-                      defaultColDef = NULL, defaultSortOrder = "asc", defaultSorted = NULL,
+                      defaultColDef = NULL, defaultColGroup = NULL,
+                      defaultSortOrder = "asc", defaultSorted = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
                       showPagination = NULL, showPageSizeOptions = TRUE, showPageInfo = TRUE,
@@ -112,6 +115,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       stop("`columnGroups` must be a list of column group definitions")
     }
     for (group in columnGroups) {
+      if (length(group$columns) == 0) {
+        stop("`columnGroups` groups must contain at least one column")
+      }
       if (!all(group$columns %in% colnames(data))) {
         stop("`columnGroups` columns must exist in `data`")
       }
@@ -137,6 +143,14 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       mergeLists(defaultColDef, columns[[name]])
     })
     columns <- stats::setNames(columns, colnames(data))
+  }
+  if (!is.null(defaultColGroup)) {
+    if (!is.colGroup(defaultColGroup)) {
+      stop("`defaultColGroup` must be a column group definition")
+    }
+    columnGroups <- lapply(columnGroups, function(group) {
+      mergeLists(defaultColGroup, group)
+    })
   }
   if (!isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')

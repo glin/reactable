@@ -14,12 +14,14 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, columns = list(zzzz = colDef())))
   expect_error(reactable(df, columnGroups = "x"))
   expect_error(reactable(df, columnGroups = list(colDef())))
-  expect_error(reactable(df, columnGroups = list(colGroup("", "y"))))
+  expect_error(reactable(df, columnGroups = list(colGroup(name = "", columns = "y"))))
+  expect_error(reactable(df, columnGroups = list(colGroup(name = ""))))
   expect_error(reactable(df, groupBy = c("y", "z")))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
   expect_error(reactable(df, defaultColDef = list()))
+  expect_error(reactable(df, defaultColGroup = list()))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
   expect_error(reactable(df, defaultSorted = "y"))
   expect_error(reactable(df, defaultSorted = list("x")))
@@ -206,7 +208,7 @@ test_that("rownames", {
     colGroup("group", c(".rownames", "x"))
   ))
   attribs <- getAttribs(data)
-  expect_equal(attribs$columnGroups[[1]]$columns, c(".rownames", "x"))
+  expect_equal(attribs$columnGroups[[1]]$columns, list(".rownames", "x"))
 
   # Can't use rownames column without rownames
   expect_error(reactable(df, columns = list(.rownames = colDef())))
@@ -240,6 +242,61 @@ test_that("defaultColDef", {
   expect_equal(attribs$columns[[1]]$show, FALSE)
   expect_equal(attribs$columns[[2]]$show, FALSE)
   expect_equal(attribs$columns[[3]]$show, FALSE)
+})
+
+test_that("defaultColGroup", {
+  # Defaults applied
+  tbl <- reactable(
+    data.frame(x = 1, y = "2"),
+    defaultColGroup = colGroup(
+      name = "group",
+      columns = "x",
+      align = "left",
+      headerClass = "cls",
+      headerStyle = list(color = "blue")
+    ),
+    columnGroups = list(
+      colGroup(columns = "x"),
+      colGroup(name = "y", columns = "y")
+    )
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups[[1]]$Header, "group")
+  expect_equal(attribs$columnGroups[[1]]$columns, list("x"))
+  expect_equal(attribs$columnGroups[[1]]$align, "left")
+  expect_equal(attribs$columnGroups[[1]]$headerClass, "cls")
+  expect_equal(attribs$columnGroups[[1]]$headerStyle, list(color = "blue"))
+  expect_equal(attribs$columnGroups[[2]]$Header, "y")
+  expect_equal(attribs$columnGroups[[2]]$columns, list("y"))
+  expect_equal(attribs$columnGroups[[2]]$align, "left")
+  expect_equal(attribs$columnGroups[[2]]$headerClass, "cls")
+  expect_equal(attribs$columnGroups[[2]]$headerStyle, list(color = "blue"))
+
+  # Defaults can be overrided
+  tbl <- reactable(
+    data.frame(x = 1, y = "2"),
+    defaultColGroup = colGroup(
+      align = "left",
+      headerClass = "cls",
+      headerStyle = list(color = "blue")
+    ),
+    columnGroups = list(colGroup(
+      name = "xy",
+      columns = c("x", "y"),
+      align = "right",
+      headerClass = "xy",
+      headerStyle = list(color = "red")
+    ))
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups[[1]]$align, "right")
+  expect_equal(attribs$columnGroups[[1]]$headerClass, "xy")
+  expect_equal(attribs$columnGroups[[1]]$headerStyle, list(color = "red"))
+
+  # defaultColGroup should still be valid without column groups
+  tbl <- reactable(data.frame(x = 1, y = "2"), defaultColGroup = colGroup(headerClass = "cls"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups, NULL)
 })
 
 test_that("defaultSorted", {

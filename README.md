@@ -182,6 +182,7 @@ reactable(
   resizable = FALSE,          # Enable column resizing?
   filterable = FALSE,         # Enable column filtering?
   defaultColDef = NULL,       # Default column definition used by every column. See column definitions below
+  defaultColGroup = NULL,     # Default column group definition used by every column group. See column groups below
   defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"
   defaultSorted = NULL,       # Column names to sort by default. Or a named list with values of "asc" or "desc"
   pagination = TRUE,          # Enable pagination?

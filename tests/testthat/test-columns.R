@@ -140,21 +140,17 @@ test_that("sort order", {
 
 test_that("colGroup", {
   # Default args
-  group <- colGroup("name", c("colA", "colB"))
-  expect_equal(group, structure(list(
-    Header = "name",
-    columns = c("colA", "colB")
-  ), class = "colGroup"))
+  expect_equal(colGroup(), structure(list(), .Names = character(0), class = "colGroup"))
 
   # Valid args
-  group <- colGroup("name", c("colA", "colB"), align = "right",
+  group <- colGroup(name = "name", columns = c("colA", "colB"), align = "right",
                     headerStyle = list(color = "red"), headerClass = "cls")
   expect_equal(group, structure(list(
     Header = "name",
     align = "right",
     headerClassName = "cls",
     headerStyle = list(color = "red"),
-    columns = c("colA", "colB")
+    columns = list("colA", "colB")
   ), class = "colGroup"))
 
   # Style
@@ -164,10 +160,10 @@ test_that("colGroup", {
   })
 
   # Invalid args
-  expect_error(colGroup(1, "col"))
-  expect_error(colGroup("name", list("col")))
-  expect_error(colGroup("name", 123))
-  expect_error(colGroup("name", "col", align = "CENTER"))
+  expect_error(colGroup(name = 1, columns = "col"))
+  expect_error(colGroup(name = "name", columns = list("col")))
+  expect_error(colGroup(name = "name", columns = 123))
+  expect_error(colGroup(name = "name", columns = "col", align = "CENTER"))
 })
 
 test_that("is.colGroup", {
