@@ -47,6 +47,8 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, showSortable = "true"))
   expect_error(reactable(df, class = c(1, 5)))
   expect_error(reactable(df, style = 555))
+  expect_error(reactable(df, rowClass = 123))
+  expect_error(reactable(df, rowStyle = 555))
   expect_error(reactable(df, inline = "yes"))
 })
 
@@ -449,6 +451,30 @@ test_that("column style callbacks", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$style, JS("rowInfo => ({ backgroundColor: 'red' })"))
+})
+
+test_that("rowClass and rowStyle", {
+  # rowClass
+  tbl <- reactable(data.frame(), rowClass = "cls")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowClassName, "cls")
+
+  tbl <- reactable(data.frame(), rowClass = JS("(rowInfo, state) => 'cls'"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowClassName, JS("(rowInfo, state) => 'cls'"))
+
+  # rowStyle
+  tbl <- reactable(data.frame(), rowStyle = " border-bottom: 1px solid; top: 50px")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowStyle, list("border-bottom" = "1px solid", top = "50px"))
+
+  tbl <- reactable(data.frame(), rowStyle = list(color = "red"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowStyle, list(color = "red"))
+
+  tbl <- reactable(data.frame(), rowStyle = JS("(rowInfo, state) => ({ color: 'red' })"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowStyle, JS("(rowInfo, state) => ({ color: 'red' })"))
 })
 
 test_that("row details", {

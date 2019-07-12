@@ -206,6 +206,9 @@ reactable(
   showSortable = FALSE,       # Show an indicator on sortable columns?
   class = NULL,               # Additional CSS classes to apply to the table
   style = NULL,               # Inline styles to apply to the table. A named list or character string
+  rowClass = NULL,            # Additional CSS classes to apply to table rows. Also see conditional styling below
+  rowStyle = NULL,            # Inline styles to apply to table rows. A named list or character string.
+                              # Also see conditional styling below
   inline = FALSE              # Display the table as an inline element, which shrinks to fit its contents?
 )
 ```
@@ -436,7 +439,7 @@ rowDetails(
 ```
 
 ### Conditional Styling
-Cell classes and styles can be conditionally applied using a Javascript function:
+Cells can be conditionally styled using a Javascript function:
 ```r
 colDef(
   style = JS("
@@ -458,7 +461,7 @@ colDef(
       //
       // output:
       //  - CSS class names
-      return 'cell-class'
+      return 'class1 class2'
     }
   ")
 )
@@ -484,8 +487,36 @@ colDef(
     #
     # output:
     #   - CSS class names
-    "cell-class"
+    "class1 class2"
   }
+)
+```
+
+Rows can also be conditionally styled using a Javascript function:
+```r
+reactable(
+  rowStyle = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - a style object with camelCased properties
+      return { backgroundColor: 'gray' }
+    }
+  "),
+  rowClass = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - CSS class names
+      return 'class1 class2'
+    }
+  ")
 )
 ```
 

@@ -173,6 +173,8 @@ class Reactable extends React.Component {
       showSortable,
       className,
       style,
+      rowClassName,
+      rowStyle,
       inline
     } = this.props
 
@@ -203,6 +205,28 @@ class Reactable extends React.Component {
     }
 
     const autoHidePagination = showPagination == null
+
+    let getTrProps
+    if (rowClassName || rowStyle) {
+      getTrProps = (state, rowInfo) => {
+        let props = {}
+        if (rowClassName) {
+          if (typeof rowClassName === 'function') {
+            props.className = rowClassName(rowInfo, state)
+          } else {
+            props.className = rowClassName
+          }
+        }
+        if (rowStyle) {
+          if (typeof rowStyle === 'function') {
+            props.style = rowStyle(rowInfo, state)
+          } else {
+            props.style = rowStyle
+          }
+        }
+        return props
+      }
+    }
 
     let SubComponent, colProps, getTdProps
     if (details) {
@@ -301,6 +325,7 @@ class Reactable extends React.Component {
         getTheadThProps={getTheadThProps}
         getTheadGroupThProps={getTheadGroupThProps}
         getTdProps={getTdProps}
+        getTrProps={getTrProps}
         SubComponent={SubComponent}
         {...selectProps}
         pageJumpText="go to page"
@@ -346,6 +371,8 @@ Reactable.propTypes = {
   showSortable: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
+  rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  rowStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   inline: PropTypes.bool
 }
 

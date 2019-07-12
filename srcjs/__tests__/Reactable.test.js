@@ -586,8 +586,66 @@ describe('column classes and styles', () => {
   })
 })
 
+describe('row classes and styles', () => {
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+
+  it('applies fixed classes and styles', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      rowClassName: 'my-row',
+      rowStyle: { backgroundColor: 'red' }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach(row => {
+      expect(row).toHaveClass('my-row')
+      expect(row).toHaveStyle('background-color: red;')
+    })
+  })
+
+  it('applies conditional classes and styles from JS callbacks', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      minRows: 5,
+      rowClassName: (rowInfo, state) => {
+        if (!rowInfo) {
+          return 'pad-row'
+        }
+        if (rowInfo.index === 0 && state.page === 0) {
+          return 'my-row'
+        }
+      },
+      rowStyle: (rowInfo, state) => {
+        if (!rowInfo) {
+          return { backgroundColor: 'black' }
+        }
+        if (rowInfo.index === 0 && state.page === 0) {
+          return { backgroundColor: 'red' }
+        }
+      }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach((row, i) => {
+      if (i === 0) {
+        expect(row).toHaveClass('my-row')
+        expect(row).toHaveStyle('background-color: red;')
+      } else if (i < 3) {
+        expect(row).not.toHaveClass('my-row')
+        expect(row).not.toHaveStyle('background-color: red;')
+      } else {
+        // Padding rows
+        expect(row).toHaveClass('pad-row')
+        expect(row).toHaveStyle('background-color: black;')
+      }
+    })
+  })
+})
+
 describe('pagination', () => {
-  const getRows = container => container.querySelectorAll('.rt-tr-group')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getPagination = container => container.querySelector('.rt-pagination')
   const getPageInfo = container => container.querySelector('.rt-page-info')
   const getPageSizeOptions = container => container.querySelector('.rt-page-size')

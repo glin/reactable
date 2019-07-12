@@ -49,6 +49,12 @@ NULL
 #' @param showSortable Show an indicator on sortable columns?
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
+#' @param rowClass Additional CSS classes to apply to table rows. A character
+#'   string or `JS()` function that takes a row info object and table state object
+#'   as arguments.
+#' @param rowStyle Inline styles to apply to table rows. A named list, character
+#'   string, or `JS()` function that takes a row info object and table state object
+#'   as arguments.
 #' @param inline Display the table as an inline element, which shrinks to fit
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
@@ -68,7 +74,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       minRows = 1, selection = NULL, selectionId = NULL,
                       details = NULL, outlined = FALSE, bordered = FALSE, borderless = FALSE,
                       striped = FALSE, highlight = TRUE, compact = FALSE, showSortable = FALSE,
-                      class = NULL, style = NULL,
+                      class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
                       inline = FALSE, width = "auto", height = "auto",
                       elementId = NULL) {
 
@@ -249,6 +255,17 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
     stop("`style` must be a named list or character string")
   }
+  if (!is.null(rowClass) && !is.character(rowClass) && !is.JS(rowClass)) {
+    stop("`rowClass` must be a character or JS function")
+  }
+  if (!is.null(rowStyle)) {
+    if (!isNamedList(rowStyle) && !is.character(rowStyle) && !is.JS(rowStyle)) {
+      stop("`rowStyle` must be a named list, character string, or JS function")
+    }
+    if (!is.JS(rowStyle)) {
+      rowStyle <- asReactStyle(rowStyle)
+    }
+  }
   if (!is.null(inline) && !is.logical(inline)) {
     stop("`inline` must be TRUE or FALSE")
   }
@@ -331,6 +348,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     showSortable = if (showSortable) showSortable,
     className = class,
     style = asReactStyle(style),
+    rowClassName = rowClass,
+    rowStyle = rowStyle,
     inline = if (inline) inline
   ))
 
