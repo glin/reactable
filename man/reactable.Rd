@@ -96,12 +96,12 @@ definition or content renderer. See \code{rowDetails()}.}
 \item{style}{Inline styles to apply to the table. A named list or character string.}
 
 \item{rowClass}{Additional CSS classes to apply to table rows. A character
-string or \code{JS()} function that takes a row info object and table state object
-as arguments.}
+string, a \code{JS()} function that takes a row info object and table state object
+as arguments, or an R function that takes a row index argument.}
 
 \item{rowStyle}{Inline styles to apply to table rows. A named list, character
-string, or \code{JS()} function that takes a row info object and table state object
-as arguments.}
+string, \code{JS()} function that takes a row info object and table state object
+as arguments, or an R function that takes a row index argument.}
 
 \item{inline}{Display the table as an inline element, which shrinks to fit
 its contents? By default, the table is displayed as a block element, which

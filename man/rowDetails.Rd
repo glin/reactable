@@ -7,7 +7,7 @@
 rowDetails(render, html = FALSE, name = NULL, width = NULL)
 }
 \arguments{
-\item{render}{Content renderer. A function that takes a row index argument
+\item{render}{Content renderer. An R function that takes a row index argument
 or a \code{JS()} function that takes a row info object as an argument.}
 
 \item{html}{Render content as HTML? HTML strings are escaped by default.}

@@ -477,7 +477,7 @@ colDef(
     #   - index, the row index (optional)
     #
     # output:
-    #   - an inline style string or named list
+    #   - an inline style string or named list of camelCased properties
     if (index == 1) "color: red; margin-left: 30px;"
     else list(color = "red", marginLeft = "30px")
   },
@@ -518,6 +518,29 @@ reactable(
       return 'class1 class2'
     }
   ")
+)
+```
+
+Or using an R function (not applied to aggregated rows):
+```r
+reactable(
+  rowStyle = function(index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - an inline style string or named list of camelCased properties
+    if (index == 1) "color: red; margin-left: 30px;"
+    else list(color = "red", marginLeft = "30px")
+  },
+  rowClass = function(value, index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - CSS class names
+    "class1 class2"
+  }
 )
 ```
 

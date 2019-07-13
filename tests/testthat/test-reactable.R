@@ -470,6 +470,11 @@ test_that("rowClass and rowStyle", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowClassName, JS("(rowInfo, state) => 'cls'"))
 
+  tbl <- reactable(data.frame(x = c("a", "b", "c")),
+                   rowClass = function(index) paste0("row-", index))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowClassName, list("row-1", "row-2", "row-3"))
+
   # rowStyle
   tbl <- reactable(data.frame(), rowStyle = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
@@ -482,6 +487,17 @@ test_that("rowClass and rowStyle", {
   tbl <- reactable(data.frame(), rowStyle = JS("(rowInfo, state) => ({ color: 'red' })"))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle, JS("(rowInfo, state) => ({ color: 'red' })"))
+
+  tbl <- reactable(
+    data.frame(x = c("a", "b", "c")),
+    rowStyle = function(index) {
+      if (index == 1) "background-color: red;"
+      else if (index == 2) list(color = "red")
+    }
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$rowStyle,
+               list(list("background-color" = "red"), list(color = "red"), NULL))
 })
 
 test_that("row details", {

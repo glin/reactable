@@ -213,6 +213,9 @@ class Reactable extends React.Component {
         if (rowClassName) {
           if (typeof rowClassName === 'function') {
             props.className = rowClassName(rowInfo, state)
+          } else if (rowClassName instanceof Array) {
+            // Ignore padding rows
+            props.className = rowInfo && rowClassName[rowInfo.index]
           } else {
             props.className = rowClassName
           }
@@ -220,6 +223,9 @@ class Reactable extends React.Component {
         if (rowStyle) {
           if (typeof rowStyle === 'function') {
             props.style = rowStyle(rowInfo, state)
+          } else if (rowStyle instanceof Array) {
+            // Ignore padding rows
+            props.style = rowInfo && rowStyle[rowInfo.index]
           } else {
             props.style = rowStyle
           }
@@ -371,8 +377,8 @@ Reactable.propTypes = {
   showSortable: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
-  rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  rowStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.array]),
+  rowStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.array]),
   inline: PropTypes.bool
 }
 

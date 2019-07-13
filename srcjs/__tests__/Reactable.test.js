@@ -642,6 +642,33 @@ describe('row classes and styles', () => {
       }
     })
   })
+
+  it('applies conditional classes and styles from R callbacks', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      minRows: 5,
+      rowClassName: ['row1', 'row2', null],
+      rowStyle: [{ backgroundColor: 'red' }, { backgroundColor: 'black' }, null]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach((row, i) => {
+      if (i === 0) {
+        expect(row).toHaveClass('row1')
+        expect(row).toHaveStyle('background-color: red;')
+      } else if (i  === 1) {
+        expect(row).toHaveClass('row2')
+        expect(row).toHaveStyle('background-color: black;')
+      } else {
+        // Unstyled row and padding rows (ignored)
+        expect(row).not.toHaveClass('row1')
+        expect(row).not.toHaveClass('row2')
+        expect(row).not.toHaveStyle('background-color: red;')
+        expect(row).not.toHaveStyle('background-color: black;')
+      }
+    })
+  })
 })
 
 describe('pagination', () => {

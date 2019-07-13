@@ -50,11 +50,11 @@ NULL
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
 #' @param rowClass Additional CSS classes to apply to table rows. A character
-#'   string or `JS()` function that takes a row info object and table state object
-#'   as arguments.
+#'   string, a `JS()` function that takes a row info object and table state object
+#'   as arguments, or an R function that takes a row index argument.
 #' @param rowStyle Inline styles to apply to table rows. A named list, character
-#'   string, or `JS()` function that takes a row info object and table state object
-#'   as arguments.
+#'   string, `JS()` function that takes a row info object and table state object
+#'   as arguments, or an R function that takes a row index argument.
 #' @param inline Display the table as an inline element, which shrinks to fit
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
@@ -255,14 +255,25 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(style) && !isNamedList(style) && !is.character(style)) {
     stop("`style` must be a named list or character string")
   }
-  if (!is.null(rowClass) && !is.character(rowClass) && !is.JS(rowClass)) {
-    stop("`rowClass` must be a character or JS function")
+  if (!is.null(rowClass)) {
+    if (!is.character(rowClass) && !is.JS(rowClass) && !is.function(rowClass)) {
+      stop("`rowClass` must be a character, JS function, or R function")
+    }
+    if (is.function(rowClass)) {
+      rowClass <- lapply(seq_len(nrow(data)), function(index) {
+        callFunc(rowClass, index)
+      })
+    }
   }
   if (!is.null(rowStyle)) {
-    if (!isNamedList(rowStyle) && !is.character(rowStyle) && !is.JS(rowStyle)) {
-      stop("`rowStyle` must be a named list, character string, or JS function")
+    if (!isNamedList(rowStyle) && !is.character(rowStyle) && !is.JS(rowStyle) && !is.function(rowStyle)) {
+      stop("`rowStyle` must be a named list, character string, JS function, or R function")
     }
-    if (!is.JS(rowStyle)) {
+    if (is.function(rowStyle)) {
+      rowStyle <- lapply(seq_len(nrow(data)), function(index) {
+        asReactStyle(callFunc(rowStyle, index))
+      })
+    } else if (is.character(rowStyle) && !is.JS(rowStyle)) {
       rowStyle <- asReactStyle(rowStyle)
     }
   }
@@ -365,7 +376,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
 #' Row details definitions
 #'
-#' @param render Content renderer. A function that takes a row index argument
+#' @param render Content renderer. An R function that takes a row index argument
 #'   or a `JS()` function that takes a row info object as an argument.
 #' @param html Render content as HTML? HTML strings are escaped by default.
 #' @param name Expander column name.
