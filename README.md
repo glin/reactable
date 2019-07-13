@@ -17,6 +17,13 @@ devtools::install_github("glin/reactable")
 
 ## Examples
 
+### Demos
+- [Twitter Followers](https://glin.github.io/reactable/articles/twitter-followers/twitter-followers.html)
+- [Women's World Cup Predictions](https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html)
+- [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
+- [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
+- [Shiny Demo](https://glin.github.io/reactable/articles/shiny-demo.html)
+
 ### Grouping and Aggregation
 https://glin.github.io/reactable/articles/examples.html#grouping-and-aggregation
 
@@ -136,6 +143,24 @@ reactable(iris, columns = list(
 ))
 ```
 
+### Conditional Styling
+https://glin.github.io/reactable/articles/examples.html#conditional-styling
+
+```r
+reactable(sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
+))
+```
+
 ### Table Styles
 https://glin.github.io/reactable/articles/examples.html#table-styles
 
@@ -163,12 +188,6 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-### More Examples
-- [Twitter Followers](https://glin.github.io/reactable/articles/twitter-followers/twitter-followers.html)
-- [Women's World Cup Predictions](https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html)
-- [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
-- [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
 
 ## Usage
 ```r

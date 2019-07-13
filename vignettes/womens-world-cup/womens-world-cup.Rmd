@@ -13,11 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 library(htmltools)
 
+forecasts <- read.csv("wwc_forecasts.csv", stringsAsFactors = FALSE)
+
 rating_cols <- c("spi", "global_o", "global_d")
 group_cols <- c("group_1", "group_2", "group_3")
 knockout_cols <- c("make_round_of_16", "make_quarters", "make_semis", "make_final", "win_league")
-
-forecasts <- read.csv("wwc_forecasts.csv", stringsAsFactors = FALSE)
 forecasts <- forecasts[, c("team", "points", "group", rating_cols, group_cols, knockout_cols)]
 
 format_pct <- function(value) {

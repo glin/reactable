@@ -326,57 +326,6 @@ reactable(iris, columns = list(
 ```
 
 
-## Table Styles
-
-### Default
-
-```{r}
-reactable(iris[1:5, ])
-```
-
-### Bordered
-
-```{r}
-reactable(iris[1:5, ], bordered = TRUE)
-```
-
-### Borderless
-
-```{r}
-reactable(iris[1:5, ], borderless = TRUE)
-```
-
-### Outlined
-
-```{r}
-reactable(iris[1:5, ], outlined = TRUE)
-```
-
-### Striped
-
-```{r}
-reactable(iris[1:5, ], striped = TRUE)
-```
-
-### Bordered + striped
-
-```{r}
-reactable(iris[1:5, ], bordered = TRUE, striped = TRUE)
-```
-
-### Outlined + borderless
-
-```{r}
-reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
-```
-
-### Compact
-
-```{r}
-reactable(iris[1:5, ], compact = TRUE)
-```
-
-
 ## Conditional Styling
 
 ### Cell styling
@@ -458,6 +407,58 @@ reactable(
   ")
 )
 ```
+
+
+## Table Styles
+
+### Default
+
+```{r}
+reactable(iris[1:5, ])
+```
+
+### Bordered
+
+```{r}
+reactable(iris[1:5, ], bordered = TRUE)
+```
+
+### Borderless
+
+```{r}
+reactable(iris[1:5, ], borderless = TRUE)
+```
+
+### Outlined
+
+```{r}
+reactable(iris[1:5, ], outlined = TRUE)
+```
+
+### Striped
+
+```{r}
+reactable(iris[1:5, ], striped = TRUE)
+```
+
+### Bordered + striped
+
+```{r}
+reactable(iris[1:5, ], bordered = TRUE, striped = TRUE)
+```
+
+### Outlined + borderless
+
+```{r}
+reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
+```
+
+### Compact
+
+```{r}
+reactable(iris[1:5, ], compact = TRUE)
+```
+
 
 ## Pagination
 
