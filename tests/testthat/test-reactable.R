@@ -176,6 +176,13 @@ test_that("data can be a matrix", {
   expect_length(attribs$columns, 2)
 })
 
+test_that("data is serialized with max precision", {
+  data <- data.frame(x = 0.123456789012345)  # 16 digits
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[0.123456789012345]}')
+})
+
 test_that("rownames", {
   # Integer row names
   data <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)

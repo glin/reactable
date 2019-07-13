@@ -317,7 +317,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     column
   })
 
-  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE, digits = NA)
 
   component <- reactR::component("Reactable", list(
     data = data,
