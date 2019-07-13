@@ -7,15 +7,17 @@
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
   resizable = FALSE, filterable = FALSE, defaultColDef = NULL,
-  defaultSortOrder = "asc", defaultSorted = NULL, pagination = TRUE,
-  defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-  paginationType = "numbers", showPagination = NULL,
-  showPageSizeOptions = TRUE, showPageInfo = TRUE, minRows = 1,
-  selection = NULL, selectionId = NULL, details = NULL,
-  outlined = FALSE, bordered = FALSE, borderless = FALSE,
-  striped = FALSE, highlight = TRUE, compact = FALSE,
-  showSortable = FALSE, class = NULL, style = NULL, inline = FALSE,
-  width = "auto", height = "auto", elementId = NULL)
+  defaultColGroup = NULL, defaultSortOrder = "asc",
+  defaultSorted = NULL, pagination = TRUE, defaultPageSize = 10,
+  pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
+  showPagination = NULL, showPageSizeOptions = TRUE,
+  showPageInfo = TRUE, minRows = 1, selection = NULL,
+  selectionId = NULL, details = NULL, outlined = FALSE,
+  bordered = FALSE, borderless = FALSE, striped = FALSE,
+  highlight = TRUE, compact = FALSE, showSortable = FALSE,
+  class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
+  inline = FALSE, width = "auto", height = "auto",
+  elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -37,6 +39,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 \item{filterable}{Enable column filtering?}
 
 \item{defaultColDef}{Default column definition used by every column. See \code{colDef()}.}
+
+\item{defaultColGroup}{Default column group definition used by every column group.
+See \code{colGroup()}.}
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
@@ -89,6 +94,14 @@ definition or content renderer. See \code{rowDetails()}.}
 \item{class}{Additional CSS classes to apply to the table.}
 
 \item{style}{Inline styles to apply to the table. A named list or character string.}
+
+\item{rowClass}{Additional CSS classes to apply to table rows. A character
+string or \code{JS()} function that takes a row info object and table state object
+as arguments.}
+
+\item{rowStyle}{Inline styles to apply to table rows. A named list, character
+string, or \code{JS()} function that takes a row info object and table state object
+as arguments.}
 
 \item{inline}{Display the table as an inline element, which shrinks to fit
 its contents? By default, the table is displayed as a block element, which

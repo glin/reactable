@@ -4,8 +4,8 @@
 \alias{colGroup}
 \title{Column group definitions}
 \usage{
-colGroup(name, columns, align = NULL, headerClass = NULL,
-  headerStyle = NULL)
+colGroup(name = NULL, columns = NULL, align = NULL,
+  headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
 \item{name}{Column group name.}
