@@ -5,7 +5,7 @@
 #' @name reactable-package
 NULL
 
-#' Create a data table
+#' Create a reactable widget
 #'
 #' @param data A data frame or matrix.
 #' @param rownames Show row names?
@@ -420,9 +420,9 @@ columnSortDefs <- function(defaultSorted) {
 #' Shiny bindings for reactable
 #'
 #' Output and render functions for using reactable within Shiny
-#' applications and interactive Rmd documents.
+#' applications and interactive R Markdown documents.
 #'
-#' @param outputId output variable to read from
+#' @param outputId Output variable to read from.
 #' @param width,height Must be a valid CSS unit (like \code{'100\%'},
 #'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
 #'   string and have \code{'px'} appended.
@@ -435,8 +435,25 @@ columnSortDefs <- function(defaultSorted) {
 #'   is useful if you want to save an expression in a variable.
 #'
 #' @name reactable-shiny
-#'
 #' @export
+#' @examples
+#' \dontrun{
+#' library(shiny)
+#' library(reactable)
+#'
+#' ui <- fluidPage(
+#'   titlePanel("reactable example"),
+#'   reactableOutput("table")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$table <- renderReactable({
+#'     reactable(iris)
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
 reactableOutput <- function(outputId, width = NULL, height = NULL, inline = FALSE) {
   htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
                                  inline = inline, package = "reactable")
@@ -450,7 +467,7 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 }
 
 
-#' Called by HTMLWidgets to produce the widget's root element.
+#' Called by HTMLWidgets to produce the widget's root element
 #'
 #' @param id Element ID.
 #' @param style Element style.

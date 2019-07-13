@@ -2,7 +2,7 @@
 % Please edit documentation in R/reactable.R
 \name{reactable}
 \alias{reactable}
-\title{Create a data table}
+\title{Create a reactable widget}
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
@@ -117,5 +117,5 @@ expands to fit its parent container.}
 An htmlwidget.
 }
 \description{
-Create a data table
+Create a reactable widget
 }

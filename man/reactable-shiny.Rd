@@ -15,7 +15,7 @@ renderReactable(expr, env = parent.frame(), quoted = FALSE)
 reactable_html(id, style, class, ...)
 }
 \arguments{
-\item{outputId}{output variable to read from}
+\item{outputId}{Output variable to read from.}
 
 \item{width, height}{Must be a valid CSS unit (like \code{'100\%'},
 \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
@@ -42,5 +42,24 @@ is useful if you want to save an expression in a variable.}
 }
 \description{
 Output and render functions for using reactable within Shiny
-applications and interactive Rmd documents.
+applications and interactive R Markdown documents.
+}
+\examples{
+\dontrun{
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  titlePanel("reactable example"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(iris)
+  })
+}
+
+shinyApp(ui, server)
+}
 }
