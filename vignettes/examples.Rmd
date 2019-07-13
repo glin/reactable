@@ -377,6 +377,88 @@ reactable(iris[1:5, ], compact = TRUE)
 ```
 
 
+## Conditional Styling
+
+### Cell styling
+```{r}
+reactable(sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
+))
+```
+
+```{r}
+reactable(sleep, columns = list(
+  extra = colDef(style = JS("
+    function(rowInfo) {
+      var value = rowInfo.row.extra
+      if (value > 0) {
+        var color = 'green'
+      } else if (value < 0) {
+        var color = 'red'
+      } else {
+        var color = '#777'
+      }
+      return { color: color, fontWeight: 'bold' }
+    }
+  "))
+))
+```
+
+### Row styling
+```{r row_styling, eval=FALSE}
+reactable(
+  sleep, 
+  rowStyle = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      list(backgroundColor = "#ffd08a")
+    }
+  },
+  rowClass = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      "bold"
+    }
+  }
+)
+```
+
+```{css}
+.bold {
+  font-weight: bold;
+}
+```
+
+```{r ref.label="row_styling", echo=FALSE}
+```
+
+```{r}
+reactable(
+  sleep,
+  rowStyle = JS("
+    function(rowInfo) {
+      if (rowInfo.row.extra < -1) {
+        return { backgroundColor: '#ffd08a' }
+      }
+    }
+  "),
+  rowClass = JS("
+    function(rowInfo) {
+      if (rowInfo.row.extra < -1) {
+        return 'bold'
+      }
+    }
+  ")
+)
+```
+
 ## Pagination
 
 ### Page size options
