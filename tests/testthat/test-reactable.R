@@ -510,8 +510,8 @@ test_that("row details", {
 
 test_that("rowDetails definitions", {
   # Default args
-  details <- rowDetails(JS("row => row.value"))
-  expected <- structure(list(render = JS("row => row.value")), class = "rowDetails")
+  details <- rowDetails(JS("rowInfo => rowInfo.row.value"))
+  expected <- structure(list(render = JS("rowInfo => rowInfo.row.value")), class = "rowDetails")
   expect_equal(details, expected)
 
   # rowDetails options

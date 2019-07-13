@@ -9,7 +9,7 @@ test_that("colDef", {
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc", sortMethod = "naLast",
                 format = list(cell = colFormat(), aggregated = colFormat()),
-                cell = JS("row => row.value"), aggregated = JS("row => row.value"),
+                cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
                 footer = "footer", html = TRUE, showNA = TRUE,
                 minWidth = 100, maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
@@ -21,7 +21,7 @@ test_that("colDef", {
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, sortMethod = "naLast",
     format = list(cell = colFormat(), aggregated = colFormat()),
-    cell = JS("row => row.value"), aggregated = JS("row => row.value"),
+    cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
     footer = "footer", html = TRUE, showNA = TRUE,
     minWidth = 100, maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
@@ -76,7 +76,7 @@ test_that("colDef format", {
 })
 
 test_that("colDef renderers", {
-  renderJS <- JS("row => row.value")
+  renderJS <- JS("cell => cell.value")
   renderR <- function(value, index) value
 
   # Cell renderer

@@ -232,16 +232,16 @@ class Reactable extends React.Component {
     if (details) {
       const { render, html, name, width } = details
       if (typeof render === 'function') {
-        SubComponent = row => {
-          let content = render(row)
+        SubComponent = rowInfo => {
+          let content = render(rowInfo)
           if (html) {
             return <RowDetails html={content} />
           }
           return <RowDetails>{content}</RowDetails>
         }
       } else if (render instanceof Array) {
-        SubComponent = row => {
-          let content = render[row.index]
+        SubComponent = rowInfo => {
+          let content = render[rowInfo.index]
           if (content == null) {
             return null
           }
