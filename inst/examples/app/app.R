@@ -309,7 +309,6 @@ server <- function(input, output, session) {
     hist(iris$Sepal.Length)
   })
 
-  outputOptions(output, "code", suspendWhenHidden = FALSE)
   outputOptions(output, "table", suspendWhenHidden = FALSE)
 }
 
