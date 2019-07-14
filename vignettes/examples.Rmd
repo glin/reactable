@@ -53,7 +53,7 @@ reactable(iris, groupBy = c("Species", "Petal.Width"), columns = list(
 ```{r}
 reactable(iris, details = function(index) {
   htmltools::div(
-    paste("Details for row:", index),
+    htmltools::h4("Details for row: ", index),
     htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
   )
 })
@@ -79,13 +79,12 @@ reactable(iris, details = rowDetails(
 > NOTE: only supported by R render functions
 
 ```{r}
-by_species <- aggregate(iris[, 1:4], by = list(Species = iris$Species), FUN = mean)
+data <- unique(CO2[, c("Plant", "Type")])
 
-reactable(by_species, details = function(index) {
-  species <- by_species[index, "Species"]
-  htmltools::div(
-    paste("Species:", species),
-    reactable(iris[iris$Species == species, ], outlined = TRUE)
+reactable(data, details = function(index) {
+  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
+  htmltools::div(style = "padding: 16px",
+    reactable(subset, outlined = TRUE)
   )
 })
 ```
@@ -274,52 +273,63 @@ reactable(data, columns = list(
 
 ## Cell Renderers
 
+#### R render function
 ```{r}
-reactable(iris, columns = list(
-  Petal.Length = colDef(html = TRUE, cell = JS("
-    function(cell) {
-      var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
-      var color = colors[cell.row.Species]
-      return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, columns = list(
+  Model = colDef(cell = function(value, index) {
+    # Render as a link
+    url <- sprintf("https://wikipedia.org/wiki/%s_%s", data[index, "Manufacturer"], value)
+    htmltools::tags$a(href = url, target = "_blank", as.character(value))
+  }),
+  AirBags = colDef(cell = function(value) {
+    # Render as ✘ or ✓
+    if (value == "None") "\u2718" else "\u2713"
+  }),
+  Price = colDef(cell = function(value) {
+    # Render as currency
+    paste0("$", format(value * 1000, big.mark = ","))
+  })
+))
+```
+
+#### JS render function
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, columns = list(
+  Model = colDef(html = TRUE, cell = JS("
+    function(cellInfo) {
+      var url = 'https://wikipedia.org/wiki/' + cellInfo.row.Manufacturer + '_' + cellInfo.value
+      return '<a href=\"' + url + '\" target=\"_blank\">' + cellInfo.value + '</a>'
     }
   ")),
-  Petal.Width = colDef(cell = function(value, index) {
-    colors <- c(setosa = "red", versicolor = "green", virginica = "navy")
-    color <- colors[iris[index, "Species"]]
-    htmltools::span(style = paste("color:", color), value)
-  })
+  AirBags = colDef(cell = JS("
+    function(cellInfo) {
+      return cellInfo.value === 'None' ? '\u2718' : '\u2713'
+    }
+  ")),
+  Price = colDef(cell = JS("
+    function(cellInfo) {
+      return '$' + (cellInfo.value * 1000).toLocaleString()
+    }
+  "))
 ))
 ```
 
 ### Aggregated cells
 
 ```{r}
-reactable(iris, groupBy = "Species", columns = list(
-  Petal.Length = colDef(
-    aggregate = "mean",
-    aggregated = JS("
-      function(cell) {
-        return cell.value + ' (avg)'
-      }
-    ")
-  )
-))
-```
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
-
-## Footers
-
-```{r}
-reactable(iris, columns = list(
-  Sepal.Length = colDef(
-    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
-  ),
-  Sepal.Width = colDef(footer = function(values, key) {
-    htmltools::span(htmltools::tags$b("Total: "), sum(values))
-  }),
-  Petal.Length = colDef(html = TRUE, footer = JS("
-    function(colInfo) {
-      return '<b>Rows: </b>' + colInfo.data.length
+reactable(data, groupBy = "Manufacturer", columns = list(
+  Model = colDef(name = "Models", aggregate = "count"),
+  Type = colDef(aggregate = "unique"),
+  Price = colDef(align = "left", html = TRUE, aggregate = "mean", aggregated = JS("
+    function(cellInfo) {
+      var value = '$' + Math.round(cellInfo.value * 1000).toLocaleString()
+      return '<span style=\"margin-right: 4px; color: #999\">Avg</span> ' + value
     }
   "))
 ))
@@ -330,7 +340,7 @@ reactable(iris, columns = list(
 
 ### Cell styling
 ```{r}
-reactable(sleep, columns = list(
+reactable(datasets::sleep, columns = list(
   extra = colDef(style = function(value) {
     if (value > 0) {
       color <- "green"
@@ -345,7 +355,7 @@ reactable(sleep, columns = list(
 ```
 
 ```{r}
-reactable(sleep, columns = list(
+reactable(datasets::sleep, columns = list(
   extra = colDef(style = JS("
     function(rowInfo) {
       var value = rowInfo.row.extra
@@ -364,8 +374,7 @@ reactable(sleep, columns = list(
 
 ### Row styling
 ```{r row_styling, eval=FALSE}
-reactable(
-  sleep, 
+reactable(datasets::sleep, 
   rowStyle = function(index) {
     if (sleep[index, "extra"] < -1) {
       list(backgroundColor = "#ffd08a")
@@ -389,8 +398,7 @@ reactable(
 ```
 
 ```{r}
-reactable(
-  sleep,
+reactable(datasets::sleep,
   rowStyle = JS("
     function(rowInfo) {
       if (rowInfo.row.extra < -1) {
@@ -406,6 +414,25 @@ reactable(
     }
   ")
 )
+```
+
+
+## Footers
+
+```{r}
+reactable(iris, columns = list(
+  Sepal.Length = colDef(
+    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
+  ),
+  Sepal.Width = colDef(footer = function(values, key) {
+    htmltools::span(htmltools::tags$b("Total: "), sum(values))
+  }),
+  Petal.Length = colDef(html = TRUE, footer = JS("
+    function(colInfo) {
+      return '<b>Rows: </b>' + colInfo.data.length
+    }
+  "))
+))
 ```
 
 

@@ -36,14 +36,16 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
-### Expandable Row Details
+### Expandable Rows and Subtables
 https://glin.github.io/reactable/articles/examples.html#expandable-row-details
 
 ```r
-reactable(iris, details = function(index) {
-  htmltools::div(
-    htmltools::h4(paste("Details for row:", index)),
-    reactable(iris[index, ], inline = TRUE)
+data <- unique(CO2[, c("Plant", "Type")])
+
+reactable(data, details = function(index) {
+  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
+  htmltools::div(style = "padding: 16px",
+    reactable(subset, outlined = TRUE)
   )
 })
 ```
@@ -108,18 +110,39 @@ reactable(iris, groupBy = "Species", columns = list(
 https://glin.github.io/reactable/articles/examples.html#cell-renderers
 
 ```r
-reactable(iris, columns = list(
-  Petal.Length = colDef(html = TRUE, cell = JS("
-    function(cell) {
-      var colors = { setosa: 'red', versicolor: 'green', virginica: 'navy' }
-      var color = colors[cell.row.Species]
-      return '<span style=\"color: ' + color + ';\">' + cell.value + '</span>'
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, columns = list(
+  Model = colDef(cell = function(value, index) {
+    # Render as a link
+    url <- sprintf("https://wikipedia.org/wiki/%s_%s", data[index, "Manufacturer"], value)
+    htmltools::tags$a(href = url, target = "_blank", as.character(value))
+  }),
+  AirBags = colDef(cell = function(value) {
+    # Render as ✘ or ✓
+    if (value == "None") "\u2718" else "\u2713"
+  }),
+  Price = colDef(cell = function(value) {
+    # Render as currency
+    paste0("$", format(value * 1000, big.mark = ","))
+  })
+))
+```
+
+### Conditional Styling
+https://glin.github.io/reactable/articles/examples.html#conditional-styling
+
+```r
+reactable(datasets::sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
     }
-  ")),
-  Petal.Width = colDef(cell = function(value, index) {
-    colors <- c(setosa = "red", versicolor = "green", virginica = "navy")
-    color <- colors[iris[index, "Species"]]
-    htmltools::span(style = paste("color:", color), value)
+    list(color = color, fontWeight = "bold")
   })
 ))
 ```
@@ -140,24 +163,6 @@ reactable(iris, columns = list(
       return '<b>Rows: </b>' + colInfo.data.length
     }
   "))
-))
-```
-
-### Conditional Styling
-https://glin.github.io/reactable/articles/examples.html#conditional-styling
-
-```r
-reactable(sleep, columns = list(
-  extra = colDef(style = function(value) {
-    if (value > 0) {
-      color <- "green"
-    } else if (value < 0) {
-      color <- "red"
-    } else {
-      color <- "#777"
-    }
-    list(color = color, fontWeight = "bold")
-  })
 ))
 ```
 
