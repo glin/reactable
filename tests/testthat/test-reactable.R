@@ -176,11 +176,18 @@ test_that("data can be a matrix", {
   expect_length(attribs$columns, 2)
 })
 
-test_that("data is serialized with max precision", {
+test_that("numbers are serialized with max precision", {
   data <- data.frame(x = 0.123456789012345)  # 16 digits
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[0.123456789012345]}')
+})
+
+test_that("dates/datetimes are serialized in ISO 8601", {
+  data <- data.frame(x = as.POSIXct("2019-05-06 3:22:15"), y = as.Date("2010-12-30"))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":["2019-05-06T03:22:15"],"y":["2010-12-30"]}')
 })
 
 test_that("rownames", {

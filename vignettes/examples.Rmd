@@ -223,7 +223,7 @@ reactable(iris, groupBy = "Species", striped = TRUE, columns = list(
 ### Date Formatting
 
 ```{r}
-datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-10-22 14:20:00"))
+datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-09-22 14:20:00"))
 data <- data.frame(
   datetime = datetimes,
   date = datetimes,
