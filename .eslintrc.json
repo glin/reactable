@@ -3,7 +3,8 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "env": {
     "browser": true,
@@ -13,5 +14,8 @@
   "globals": {
     "Shiny": true
   },
-  "plugins": ["react"]
+  "plugins": ["react", "jsx-a11y"],
+  "rules": {
+    "jsx-a11y/no-onchange": "off"
+  }
 }
