@@ -2,7 +2,7 @@ matrix:
   include:
     - node_js: node
       language: node_js
-      script: npm run test:cover
+      script: npm run test:cover && npm run lint
       cache:
         directories:
           - node_modules
