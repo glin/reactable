@@ -33,20 +33,21 @@
   padding: 0;
 }
 
-.ReactTable .rt-th-select-label {
-  padding: 5px 8px;
+.rt-select-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  height: 100%;
+}
+
+.rt-select-label input[type=checkbox],
+.rt-select-label input[type=radio] {
   margin: 0;
 }
 
-.ReactTable .rt-td-select-label {
-  padding: 7px 8px;
-  margin: 0;
-}
-
-.ReactTable.-compact .rt-td-select-label,
-.ReactTable.-compact .rt-th-select-label {
-  padding: 3px 6px;
-  margin: 0;
+.rt-th.rt-select div {
+  height: 100%;
 }
 
 /* Column alignment */

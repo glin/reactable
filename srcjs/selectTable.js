@@ -100,17 +100,17 @@ export default (Component, options) => {
         accessor: () => '', // this value is not important
         Header: cellInfo => {
           return (
-            <label className="rt-th-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
+            <label className="rt-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
           )
         },
         Cell: cellInfo => {
           return (
-            <label className="rt-td-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
+            <label className="rt-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
           )
         },
         Aggregated: cellInfo => {
           return (
-            <label className="rt-td-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
+            <label className="rt-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
           )
         },
         className: 'rt-select',
