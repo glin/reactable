@@ -207,7 +207,7 @@ reactable(
 ## Column Formatting
 
 ```{r}
-reactable(iris, groupBy = "Species", striped = TRUE, columns = list(
+reactable(iris, groupBy = "Species", columns = list(
   Sepal.Length = colDef(
     aggregate = "sum",
     format = colFormat(suffix = " cm")
