@@ -14,7 +14,8 @@
 
 .ReactTable .rt-thead .rt-th,
 .ReactTable .rt-thead .rt-td {
-  padding: 6px 8px;
+  /* Override default */
+  padding: 7px 8px;
 }
 
 .ReactTable.-compact .rt-th,
