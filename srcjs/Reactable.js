@@ -323,7 +323,7 @@ class Reactable extends React.Component {
         autoHidePagination={autoHidePagination}
         showPageInfo={showPageInfo}
         minRows={minRows}
-        collapseOnSortingChange={false}
+        collapseOnSortingChange={true}
         collapseOnPageChange={true}
         collapseOnDataChange={false}
         className={className}
