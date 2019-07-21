@@ -2,8 +2,8 @@
   display: inline-flex;
 }
 
-/* Table headers */
-.ReactTable .rt-thead {
+/* Table cells/headers */
+.rt-thead {
   font-weight: 600;
 }
 
