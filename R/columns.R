@@ -15,9 +15,9 @@
 #' @param format Column formatting options. A `colFormat()` object to
 #'   format all cells, or a named list of `colFormat()` objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
-#' @param cell Custom cell renderer. A function that takes the cell value and row
-#'   index as arguments, or a `JS()` function that takes a cell info object as an
-#'   argument.
+#' @param cell Custom cell renderer. An R function that takes the cell value and
+#'   row index as arguments, or a `JS()` function that takes a cell info object as
+#'   an argument.
 #' @param aggregated Custom aggregated cell renderer. A `JS()` function that takes
 #'   a cell info object as an argument.
 #' @param footer Footer content or render function. Render functions can be an
@@ -103,7 +103,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     }
   }
   if (!is.null(cell) && !is.JS(cell) && !is.function(cell)) {
-    stop("`cell` renderer must be a JS function or R function")
+    stop("`cell` renderer must be an R function or JS function")
   }
   if (!is.null(aggregated) && !is.JS(aggregated)) {
     stop("`aggregated` renderer must be a JS function")
