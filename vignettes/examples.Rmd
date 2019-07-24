@@ -53,7 +53,7 @@ reactable(iris, groupBy = c("Species", "Petal.Width"), columns = list(
 ```{r}
 reactable(iris, details = function(index) {
   htmltools::div(
-    htmltools::h4("Details for row: ", index),
+    "Details for row: ", index,
     htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
   )
 })
@@ -61,15 +61,15 @@ reactable(iris, details = function(index) {
 
 #### JS render function
 ```{r}
-reactable(iris, details = rowDetails(
-  JS("
+reactable(iris, details = colDef(
+  name = "More",
+  details = JS("
     function(rowInfo) {
       return 'Details for row: ' + rowInfo.index +
         '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
     }
   "),
   html = TRUE,
-  name = "More",
   width = 50
 ))
 ```
@@ -94,11 +94,33 @@ reactable(data, details = function(index) {
 > NOTE: only supported by R render functions
 
 ```{r}
-reactable(iris, details = function(index) {
+reactable(head(iris, 10), details = function(index) {
   if (index %in% c(3, 5)) {
     reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
   }
 })
+```
+
+### Multiple row details
+
+```{r}
+reactable(head(iris, 10), 
+  details = function(index) {
+    if (index %in% c(3, 5)) {
+      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
+    }
+  },
+  columns = list(
+    Petal.Length = colDef(details = function(index) {
+      paste("Petal.Length: ", iris[index, "Petal.Length"])
+    }),
+    Sepal.Length = colDef(details = JS("
+    function(rowInfo) {
+      return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
+    }
+  "))
+  )
+)
 ```
 
 

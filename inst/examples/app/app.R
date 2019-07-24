@@ -74,6 +74,7 @@ ui <- fluidPage(
             "Row Details",
             choices = c(
               "Show row details" = "showRowDetails",
+              "Multiple row details" = "multiRowDetails",
               "Column header" = "columnHeader"
             ),
             selected = "showRowDetails"
@@ -179,32 +180,46 @@ server <- function(input, output, session) {
           function(values) {
             div(tags$b("Average: "), round(mean(values), 1))
           }
+        },
+        details = if ("multiRowDetails" %in% input$rowDetails) {
+          function(index) {
+            tagList(
+              paste("Details for row:", index),
+              pre(paste(capture.output(iris[index, ]), collapse = "\n"))
+            )
+          }
         }
       )
     )
   })
 
   rowDetailsOptions <- reactive({
-    if (!"showRowDetails" %in% input$rowDetails) {
+    if (!any(c("showRowDetails", "multiRowDetails") %in% input$rowDetails)) {
       return(NULL)
     }
 
-    bquote(
-      rowDetails(
-        function(index) {
-          if (index == 3) {
-            tabsetPanel(
-              tabPanel("plot", plotOutput("plot")),
-              tabPanel("subtable", reactable(iris[1:3, 1:2], inline = TRUE))
-            )
-          } else if (index == 5) {
-            div(paste("Details for row:", index))
-          }
-        },
-        name = .(if ("columnHeader" %in% input$rowDetails) "More"),
-        width = .(if ("columnHeader" %in% input$rowDetails) 50)
+    details <- function(index) {
+      if (index == 3) {
+        tabsetPanel(
+          tabPanel("plot", plotOutput("plot")),
+          tabPanel("subtable", reactable(iris[1:3, 1:2], inline = TRUE))
+        )
+      } else if (index == 5) {
+        paste("Details for row:", index)
+      }
+    }
+
+    if (!"columnHeader" %in% input$rowDetails) {
+      details
+    } else {
+      bquote(
+        colDef(
+          details = .(details),
+          name = "More",
+          width = 50
+        )
       )
-    )
+    }
   })
 
   code <- reactive({
@@ -245,7 +260,8 @@ server <- function(input, output, session) {
           aggregate = "mean",
           format = .(colOpts$Sepal.Width$format),
           cell = .(colOpts$Sepal.Width$cell),
-          footer = .(colOpts$Sepal.Width$footer)
+          footer = .(colOpts$Sepal.Width$footer),
+          details = .(colOpts$Sepal.Width$details)
         ),
         Petal.Length = colDef(
           name = .(if (is.null(opts$columnGroups)) "Petal Length" else "Length"),
@@ -278,14 +294,6 @@ server <- function(input, output, session) {
         if (argname != "" && identical(col[[argname]], defaultArgs[[argname]])) {
           call$columns[[colname]][[argname]] <- NULL
         }
-      }
-    }
-
-    # Omit default rowDetails args
-    defaultArgs <- formals(rowDetails)
-    for (argname in names(call$details)) {
-      if (argname != "" && identical(call$details[[argname]], defaultArgs[[argname]])) {
-        call$details[[argname]] <- NULL
       }
     }
 
