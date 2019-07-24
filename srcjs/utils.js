@@ -25,3 +25,32 @@ export function getStrIncludesLocale(locales, options = { sensitivity: 'base' })
     return false
   }
 }
+
+// Get value at nested path (e.g. [1, 0, 3])
+export function get(obj, path) {
+  return path.reduce((value, key) => {
+    if (!(value instanceof Object) || value === undefined) {
+      return undefined
+    }
+    return value[key]
+  }, obj)
+}
+
+// Set value at nested path (e.g. [1, 0, 3])
+export function set(obj, path, value) {
+  let newObj = { ...obj }
+  let subObj = newObj
+  path.forEach((key, index) => {
+    if (index === path.length - 1) {
+      if (value === undefined) {
+        delete subObj[key]
+      } else {
+        subObj[key] = value
+      }
+    } else {
+      subObj[key] = { ...subObj[key] }
+      subObj = subObj[key]
+    }
+  })
+  return newObj
+}

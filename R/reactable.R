@@ -38,8 +38,9 @@ NULL
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   represented as a vector of row indices, or `NULL` if no rows are selected.
-#' @param details Additional content to display when expanding a row. A row details
-#'   definition or content renderer. See `rowDetails()`.
+#' @param details Additional content to display when expanding a row. An R function
+#'   that takes a row index argument or a `JS()` function that takes a row info object
+#'   as an argument. Can also be a `colDef()` to customize the details expander column.
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?
 #' @param borderless Remove inner borders from table?
@@ -129,8 +130,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       }
     }
   }
-  if (!is.null(groupBy) && !all(groupBy %in% colnames(data))) {
-    stop("`groupBy` columns must exist in `data`")
+  if (!is.null(groupBy)) {
+    if (!all(groupBy %in% colnames(data))) {
+      stop("`groupBy` columns must exist in `data`")
+    }
+    if (any(sapply(columns[groupBy], function(col) !is.null(col$details)))) {
+      stop("`details` cannot be used on a grouping column")
+    }
   }
   if (!is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
@@ -141,14 +147,26 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
+  columnKeys <- colnames(data)
+  if (!is.null(details)) {
+    detailsKey <- ".details"
+    columnKeys <- c(detailsKey, columnKeys)
+    detailsColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE, width = 35)
+    if (is.colDef(details)) {
+      detailsColumn <- mergeLists(detailsColumn, details)
+    } else {
+      detailsColumn <- mergeLists(detailsColumn, colDef(details = details))
+    }
+    columns <- c(stats::setNames(list(detailsColumn), detailsKey), columns)
+  }
   if (!is.null(defaultColDef)) {
     if (!is.colDef(defaultColDef)) {
       stop("`defaultColDef` must be a column definition")
     }
-    columns <- lapply(colnames(data), function(name) {
+    columns <- lapply(columnKeys, function(name) {
       mergeLists(defaultColDef, columns[[name]])
     })
-    columns <- stats::setNames(columns, colnames(data))
+    columns <- stats::setNames(columns, columnKeys)
   }
   if (!is.null(defaultColGroup)) {
     if (!is.colGroup(defaultColGroup)) {
@@ -215,19 +233,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(selectionId) && !is.character(selectionId)) {
     stop("`selectionId` must be a character")
   }
-  if (!is.null(details)) {
-    if (!is.rowDetails(details) && (is.function(details) || is.JS(details) || is.list(details))) {
-      details <- rowDetails(details)
-    } else if (!is.rowDetails(details)) {
-      stop("`details` must be a row details definition or content renderer")
-    }
-    if (is.function(details$render)) {
-      content <- lapply(seq_len(nrow(data)), function(index) {
-        callFunc(details$render, index)
-      })
-      details$render <- lapply(content, asReactTag)
-    }
-  }
   if (!is.logical(outlined)) {
     stop("`outlined` must be TRUE or FALSE")
   }
@@ -281,7 +286,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`inline` must be TRUE or FALSE")
   }
 
-  cols <- lapply(colnames(data), function(key) {
+  cols <- lapply(columnKeys, function(key) {
     column <- list(accessor = key)
     if (!is.null(colnames[[key]])) {
       column$Header <- colnames[[key]]
@@ -307,6 +312,13 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       column$footer <- asReactTag(footer)
     } else if (!is.null(column$footer)) {
       column$footer <- asReactTag(column$footer)
+    }
+
+    if (is.function(column$details)) {
+      details <- lapply(seq_len(nrow(data)), function(index) {
+        callFunc(column$details, index)
+      })
+      column$details <- lapply(details, asReactTag)
     }
 
     if (is.function(column$className)) {
@@ -350,7 +362,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     minRows = minRows,
     selection = selection,
     selectionId = selectionId,
-    details = details,
     outlined = outlined,
     bordered = bordered,
     borderless = borderless,
@@ -373,42 +384,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     package = "reactable",
     elementId = elementId
   )
-}
-
-#' Row details definitions
-#'
-#' @param render Content renderer. An R function that takes a row index argument
-#'   or a `JS()` function that takes a row info object as an argument.
-#' @param html Render content as HTML? HTML strings are escaped by default.
-#' @param name Expander column name.
-#' @param width Expander column width in pixels.
-#' @export
-rowDetails <- function(render, html = FALSE, name = NULL, width = NULL) {
-  if (!is.function(render) && !is.JS(render) && !is.list(render)) {
-    stop("`render` must be an R function or JS function")
-  }
-  if (!is.logical(html)) {
-    stop("`html` must be TRUE or FALSE")
-  }
-  if (!is.null(name) && !is.character(name)) {
-    stop("`name` must be a character")
-  }
-  if (!is.null(width) && !is.numeric(width)) {
-    stop("`width` must be numeric")
-  }
-  structure(
-    filterNulls(list(
-      render = render,
-      html = if (html) html,
-      name = name,
-      width = width
-    )),
-    class = "rowDetails"
-  )
-}
-
-is.rowDetails <- function(x) {
-  inherits(x, "rowDetails")
 }
 
 # Convert named list of column orders to { id, desc } definitions

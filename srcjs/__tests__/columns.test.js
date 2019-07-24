@@ -228,8 +228,8 @@ describe('buildColumnDefs', () => {
     ])
     // Cell className should be overrided since it applies to footers
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left cell') // Cell
-    expect(cols[0].getProps(null, null).className).toEqual(undefined) // Footer
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-left cell') // Cell
+    expect(cols[0].getProps(null, null, {}).className).toEqual(undefined) // Footer
     expect(cols[0].headerClassName).toEqual('rt-col-left hdr')
     expect(cols[0].footerClassName).toEqual('rt-col-left ftr')
 
@@ -245,8 +245,8 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps({ page: 3 }, { index: 0 }).className).toEqual('rt-col-left')
-    expect(cols[0].getProps({ page: 3 }, { index: 1 }).className).toEqual('rt-col-left 1-3-cls')
+    expect(cols[0].getProps({ page: 3 }, { index: 0 }, {}).className).toEqual('rt-col-left')
+    expect(cols[0].getProps({ page: 3 }, { index: 1 }, {}).className).toEqual('rt-col-left 1-3-cls')
 
     // R callback
     cols = buildColumnDefs([
@@ -257,9 +257,9 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right a-cls')
-    expect(cols[0].getProps(null, { index: 1 }).className).toEqual('rt-col-right b-cls')
-    expect(cols[0].getProps(null, { index: 2 }).className).toEqual('rt-col-right')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-right a-cls')
+    expect(cols[0].getProps(null, { index: 1 }, {}).className).toEqual('rt-col-right b-cls')
+    expect(cols[0].getProps(null, { index: 2 }, {}).className).toEqual('rt-col-right')
   })
 
   test('style', () => {
@@ -273,8 +273,8 @@ describe('buildColumnDefs', () => {
     ])
     // Cell style should be overrided since it applies to footers
     expect(cols[0].style).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).style).toEqual('cell-style') // Cell
-    expect(cols[0].getProps(null, null).style).toEqual(undefined) // Footer
+    expect(cols[0].getProps(null, { index: 0 }, {}).style).toEqual('cell-style') // Cell
+    expect(cols[0].getProps(null, null, {}).style).toEqual(undefined) // Footer
     expect(cols[0].headerStyle).toEqual('hdr-style')
     expect(cols[0].footerStyle).toEqual('ftr-style')
 
@@ -290,8 +290,8 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].style).toEqual(undefined)
-    expect(cols[0].getProps({ page: 0 }, { index: 0 }).style).toEqual(undefined)
-    expect(cols[0].getProps({ page: 1 }, { index: 1 }).style).toEqual({ color: 'red' })
+    expect(cols[0].getProps({ page: 0 }, { index: 0 }, {}).style).toEqual(undefined)
+    expect(cols[0].getProps({ page: 1 }, { index: 1 }, {}).style).toEqual({ color: 'red' })
 
     // R callback
     cols = buildColumnDefs([
@@ -301,9 +301,9 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].style).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).style).toEqual({ color: 'red' })
-    expect(cols[0].getProps(null, { index: 1 }).style).toEqual({ width: '100px' })
-    expect(cols[0].getProps(null, { index: 2 }).style).toEqual(undefined)
+    expect(cols[0].getProps(null, { index: 0 }, {}).style).toEqual({ color: 'red' })
+    expect(cols[0].getProps(null, { index: 1 }, {}).style).toEqual({ width: '100px' })
+    expect(cols[0].getProps(null, { index: 2 }, {}).style).toEqual(undefined)
   })
 
   test('numeric cols', () => {
@@ -314,7 +314,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: '-Inf' })).toEqual('-Inf')
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
     expect(cols[0].footerClassName).toEqual('rt-col-right')
 
@@ -322,7 +322,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
     expect(cols[0].footerClassName).toEqual('rt-col-left')
   })
@@ -332,7 +332,7 @@ describe('buildColumnDefs', () => {
     let cols = buildColumnDefs([{ accessor: 'x' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
     expect(cols[0].footerClassName).toEqual('rt-col-left')
 
@@ -340,7 +340,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', align: 'left' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-left')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-left')
     expect(cols[0].headerClassName).toEqual('rt-col-left')
     expect(cols[0].footerClassName).toEqual('rt-col-left')
 
@@ -348,7 +348,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', align: 'right' }])
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-right')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-right')
     expect(cols[0].headerClassName).toEqual('rt-col-right')
     expect(cols[0].footerClassName).toEqual('rt-col-right')
 
@@ -364,7 +364,7 @@ describe('buildColumnDefs', () => {
     ])
     expect(cols[0].align).toEqual('center')
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps(null, { index: 0 }).className).toEqual('rt-col-center col')
+    expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-col-center col')
     expect(cols[0].headerClassName).toEqual('rt-col-center hdr')
     expect(cols[0].footerClassName).toEqual('rt-col-center ftr')
   })

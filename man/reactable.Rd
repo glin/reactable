@@ -74,8 +74,9 @@ multiple or single row selection.}
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
 represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 
-\item{details}{Additional content to display when expanding a row. A row details
-definition or content renderer. See \code{rowDetails()}.}
+\item{details}{Additional content to display when expanding a row. An R function
+that takes a row index argument or a \code{JS()} function that takes a row info object
+as an argument. Can also be a \code{colDef()} to customize the details expander column.}
 
 \item{outlined}{Add borders around the table?}
 

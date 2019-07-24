@@ -23,6 +23,9 @@
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes two arguments, the column values and column name, or a
 #'   `JS()` function that takes one argument, a column info object.
+#' @param details Additional content to display when expanding a row. An R function
+#'   that takes a row index argument or a `JS()` function that takes a row info object
+#'   as an argument. Cannot be used on a grouping column.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
 #' @param showNA Show NA values? If `FALSE`, NA values will be left as empty cells.
 #'   Defaults to `FALSE`.
@@ -48,10 +51,11 @@
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
-                   cell = NULL, aggregated = NULL, footer = NULL, html = FALSE,
-                   showNA = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
-                   align = NULL, class = NULL, style = NULL, headerClass = NULL,
-                   headerStyle = NULL, footerClass = NULL, footerStyle = NULL) {
+                   cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
+                   html = FALSE, showNA = FALSE, minWidth = NULL, maxWidth = NULL,
+                   width = NULL, align = NULL, class = NULL, style = NULL,
+                   headerClass = NULL, headerStyle = NULL,
+                   footerClass = NULL, footerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
@@ -108,6 +112,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(aggregated) && !is.JS(aggregated)) {
     stop("`aggregated` renderer must be a JS function")
   }
+  if (!is.null(details) && !is.function(details) && !is.JS(details) && !is.list(details)) {
+    stop("`details` renderer must be an R function or JS function")
+  }
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
@@ -162,6 +169,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       cell = cell,
       aggregated = aggregated,
       footer = footer,
+      details = details,
       html = if (html) TRUE,
       showNA = if (showNA) TRUE,
       minWidth = minWidth,

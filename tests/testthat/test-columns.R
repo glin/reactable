@@ -10,7 +10,7 @@ test_that("colDef", {
                 show = FALSE, defaultSortOrder = "desc", sortMethod = "naLast",
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
-                footer = "footer", html = TRUE, showNA = TRUE,
+                footer = "footer", details = function(i) i, html = TRUE, showNA = TRUE,
                 minWidth = 100, maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
                 headerClass = "hdr", headerStyle = list(height = 10),
@@ -22,7 +22,7 @@ test_that("colDef", {
     show = FALSE, defaultSortDesc = TRUE, sortMethod = "naLast",
     format = list(cell = colFormat(), aggregated = colFormat()),
     cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
-    footer = "footer", html = TRUE, showNA = TRUE,
+    footer = "footer", details = function(i) i, html = TRUE, showNA = TRUE,
     minWidth = 100, maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
     headerClassName = "hdr", headerStyle = list(height = 10),
@@ -43,6 +43,7 @@ test_that("colDef", {
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     cell = list("function() {}"),
     aggregated = list(function() {}),
+    details = list("function() {}", NA),
     html = list("false", NA),
     showNA = list("false", NA),
     minWidth = list("1", FALSE),
@@ -96,6 +97,14 @@ test_that("colDef renderers", {
   expect_equal(col$footer, renderJS)
   col <- colDef(footer = renderR)
   expect_equal(col$footer, renderR)
+
+  # Details renderer
+  col <- colDef(details = JS("rowInfo => rowInfo.row.value"))
+  expect_equal(col$details, JS("rowInfo => rowInfo.row.value"))
+  col <- colDef(details = function(i) i)
+  expect_equal(col$details, function(i) i)
+  col <- colDef(details = list(1, 2, 3))
+  expect_equal(col$details, list(1, 2, 3))
 })
 
 test_that("colDef class", {

@@ -368,20 +368,18 @@ describe('row selection', () => {
 })
 
 describe('row details', () => {
+  const getExpanders = container => container.querySelectorAll('.rt-expander')
   const props = {
-    data: { a: [1, 2] },
-    columns: [{ Header: 'a', accessor: 'a' }]
+    data: { a: [1, 2], b: ['a', 'b'] }
   }
 
   it('render function', () => {
-    const details = {
-      render: rowInfo => `row details: ${rowInfo.row.a}`,
-      name: 'more',
-      width: 50
-    }
-    const { container, getByText, queryByText } = render(<Reactable {...props} details={details} />)
-    expect(getByText('more')).toBeTruthy()
-    const expanders = container.querySelectorAll('.rt-expander')
+    const columns = [
+      { Header: 'a', accessor: 'a' },
+      { Header: 'b', accessor: 'b', details: rowInfo => `row details: ${rowInfo.row.a}` }
+    ]
+    const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
 
     expect(queryByText('row details: 1')).toEqual(null)
@@ -394,12 +392,17 @@ describe('row details', () => {
   })
 
   it('render function to html', () => {
-    const details = {
-      render: rowInfo => `<span class="row-details">row details: ${rowInfo.row.a}</span>`,
-      html: true
-    }
-    const { container } = render(<Reactable {...props} details={details} />)
-    const expanders = container.querySelectorAll('.rt-expander')
+    const columns = [
+      { Header: 'a', accessor: 'a' },
+      {
+        Header: 'b',
+        accessor: 'b',
+        html: true,
+        details: rowInfo => `<span class="row-details">row details: ${rowInfo.row.a}</span>`
+      }
+    ]
+    const { container } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
     fireEvent.click(expanders[0])
     fireEvent.click(expanders[1])
     const content = container.querySelectorAll('span.row-details')
@@ -408,16 +411,21 @@ describe('row details', () => {
     expect(content[1].innerHTML).toEqual('row details: 2')
   })
 
-  it('render content html', () => {
-    const details = {
-      render: [
-        '<span class="row-details">row details: 1</span>',
-        '<span class="row-details">row details: 2</span>'
-      ],
-      html: true
-    }
-    const { container } = render(<Reactable {...props} details={details} />)
-    const expanders = container.querySelectorAll('.rt-expander')
+  it('render content to html', () => {
+    const columns = [
+      { Header: 'a', accessor: 'a' },
+      {
+        Header: 'b',
+        accessor: 'b',
+        html: true,
+        details: [
+          '<span class="row-details">row details: 1</span>',
+          '<span class="row-details">row details: 2</span>'
+        ]
+      }
+    ]
+    const { container } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
     fireEvent.click(expanders[0])
     fireEvent.click(expanders[1])
     const content = container.querySelectorAll('span.row-details')
@@ -426,12 +434,13 @@ describe('row details', () => {
     expect(content[1].innerHTML).toEqual('row details: 2')
   })
 
-  it('render content conditional expanders', () => {
-    const details = {
-      render: ['row details: 1', null]
-    }
-    const { container, getByText, queryByText } = render(<Reactable {...props} details={details} />)
-    const expanders = container.querySelectorAll('.rt-expander')
+  it('render content with conditional expanders', () => {
+    const columns = [
+      { Header: 'a', accessor: 'a' },
+      { Header: 'b', accessor: 'b', details: ['row details: 1', null] }
+    ]
+    const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
     expect(expanders).toHaveLength(1)
 
     expect(queryByText('row details: 1')).toEqual(null)
@@ -440,31 +449,157 @@ describe('row details', () => {
   })
 
   it('renders empty row details', () => {
-    const details = {
-      render: ['', '']
-    }
-    const { container } = render(<Reactable {...props} details={details} />)
-    const expanders = container.querySelectorAll('.rt-expander')
+    const columns = [
+      { Header: 'a', accessor: 'a' },
+      { Header: 'b', accessor: 'b', details: ['', ''] }
+    ]
+    const { container } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     fireEvent.click(expanders[0])
     fireEvent.click(expanders[1])
   })
 
+  it('renders multiple row details', () => {
+    const columns = [
+      { Header: 'a', accessor: 'a', details: ['detail-a1', 'detail-a2'] },
+      { Header: 'b', accessor: 'b', details: ['detail-b1', 'detail-b2'] }
+    ]
+    const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
+    expect(expanders).toHaveLength(4)
+
+    fireEvent.click(expanders[0])
+    expect(getByText('detail-a1')).toBeTruthy()
+    expect(queryByText('detail-b1')).toEqual(null)
+
+    // Row 1, col b
+    fireEvent.click(expanders[1])
+    expect(getByText('detail-b1')).toBeTruthy()
+    expect(queryByText('detail-a1')).toEqual(null)
+
+    // Row 2, col a
+    fireEvent.click(expanders[2])
+    expect(getByText('detail-a2')).toBeTruthy()
+    expect(queryByText('detail-b2')).toEqual(null)
+
+    // Row 2, col b
+    fireEvent.click(expanders[3])
+    expect(getByText('detail-b2')).toBeTruthy()
+    expect(queryByText('detail-a2')).toEqual(null)
+  })
+
   it('handles Shiny elements in content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
-    const details = {
-      render: ['row details: 1']
-    }
-    const { container } = render(<Reactable {...props} details={details} />)
-    const expanders = container.querySelectorAll('.rt-expander')
-    expect(expanders).toHaveLength(1)
+    const columns = [
+      { Header: 'a', accessor: 'a', details: ['row details: a'] },
+      { Header: 'b', accessor: 'b', details: ['row details: b'] }
+    ]
+    const { container } = render(<Reactable {...props} columns={columns} />)
+    const expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
     fireEvent.click(expanders[0])
     expect(window.Shiny.bindAll).toHaveBeenCalledTimes(1)
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(0)
     fireEvent.click(expanders[0])
     expect(window.Shiny.bindAll).toHaveBeenCalledTimes(1)
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(1)
+
+    // Content should update properly when expanding another column while one
+    // column is already expanded.
+    fireEvent.click(expanders[0])
+    expect(window.Shiny.bindAll).toHaveBeenCalledTimes(2)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(1)
+    fireEvent.click(expanders[1])
+    expect(window.Shiny.bindAll).toHaveBeenCalledTimes(3)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(2)
+    fireEvent.click(expanders[0])
+    expect(window.Shiny.bindAll).toHaveBeenCalledTimes(4)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(3)
+
     delete window.Shiny
+  })
+
+  it('details are collapsed on pagination, sorting, and filtering', () => {
+    const columns = [
+      { Header: 'col-a', accessor: 'a', filterable: true, details: ['row-details', 'row-details'] },
+      { Header: 'col-b', accessor: 'b' }
+    ]
+    const { container, getByText, queryByText } = render(
+      <Reactable {...props} columns={columns} defaultPageSize={1} />
+    )
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(1)
+
+    // Pagination
+    fireEvent.click(expanders[0])
+    expect(getByText('row-details')).toBeTruthy()
+    fireEvent.click(container.querySelector('.rt-next-button'))
+    expect(queryByText('row-details')).toEqual(null)
+
+    // Sorting
+    expanders = getExpanders(container)
+    fireEvent.click(expanders[0])
+    expect(getByText('row-details')).toBeTruthy()
+    fireEvent.click(getByText('col-b'))
+    expect(queryByText('row-details')).toEqual(null)
+
+    // Filtering
+    expanders = getExpanders(container)
+    fireEvent.click(expanders[0])
+    expect(getByText('row-details')).toBeTruthy()
+    const filter = container.querySelector('.rt-thead.-filters input')
+    fireEvent.change(filter, { target: { value: '1' } })
+    expect(queryByText('row-details')).toEqual(null)
+    expect(getExpanders(container)).toHaveLength(1)
+  })
+
+  it('pivoting still works with custom expanders', () => {
+    const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+    const columns = [{ Header: 'col-a', accessor: 'a' }, { Header: 'col-b', accessor: 'b' }]
+    const { container } = render(
+      <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
+    )
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    // Expand pivoted cell
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(3)
+  })
+
+  it('pivoting works with row details', () => {
+    const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+    const getCells = container => container.querySelectorAll('.rt-td')
+    const columns = [
+      { Header: 'col-a', accessor: 'a', details: ['row-details', 'row-details'] },
+      { Header: 'col-b', accessor: 'b' }
+    ]
+    const { container, getByText } = render(
+      <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
+    )
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    // Expand pivoted cell
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(3)
+
+    // Expand details
+    expanders = getExpanders(container)
+    expect(expanders).toHaveLength(3)
+    fireEvent.click(expanders[1])
+    expect(getByText('row-details')).toBeTruthy()
+
+    // Empty cells under pivoted cells should not be clickable
+    const cells = getCells(container)
+    const pivotedChildCell = cells[2]
+    expect(pivotedChildCell).toHaveTextContent('')
+    expect(pivotedChildCell).toHaveClass('rt-expand-disabled')
+    fireEvent.click(pivotedChildCell)
+    expect(getByText('row-details')).toBeTruthy()
   })
 })
 
@@ -657,7 +792,7 @@ describe('row classes and styles', () => {
       if (i === 0) {
         expect(row).toHaveClass('row1')
         expect(row).toHaveStyle('background-color: red;')
-      } else if (i  === 1) {
+      } else if (i === 1) {
         expect(row).toHaveClass('row2')
         expect(row).toHaveStyle('background-color: black;')
       } else {

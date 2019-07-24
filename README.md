@@ -253,6 +253,7 @@ colDef(
   cell = NULL,              # Custom cell renderer. See cell renderers below
   aggregated = NULL,        # Custom aggregated cell renderer. See cell renderers below
   footer = NULL,            # Footer content or renderer. See footers below
+  details = NULL,           # Additional content to display when expanding a row. See row details below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
   showNA = FALSE,           # Show NA values? If FALSE, NA values will be left as empty cells
   minWidth = NULL,          # Min width of the column in pixels
@@ -453,13 +454,26 @@ reactable(
 )
 ```
 
-Or for additional customization, a row details definition:
+Columns can also have row details. Multiple row details are supported:
 ```r
-rowDetails(
-  render,        # Content render function
-  html = FALSE,  # Render content as HTML? HTML strings are escaped by default
-  name = NULL,   # Expander column name
-  width = NULL   # Expander column width in pixels
+reactable(
+  details = function(index) { ... },
+  columns = list(
+    colA = colDef(details = function(index) { ... }),
+    colB = colDef(details = function(index) { ... })
+  )
+)
+```
+
+To customize the table-level row details column, provide a column definition:
+```r
+reactable(
+  details = colDef(
+    name = "More",
+    details = JS("function(rowInfo) { return '<div>details</div>' }"),
+    html = TRUE,
+    width = 50
+  )
 )
 ```
 

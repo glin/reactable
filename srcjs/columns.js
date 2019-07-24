@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import { ReactTableDefaults } from 'react-table'
 import { hydrate } from 'reactR'
 
 import { aggregators, normalizeNumber, isNA } from './aggregators'
@@ -18,8 +19,8 @@ export function columnsToRows(columns) {
   return rows
 }
 
-export function buildColumnDefs(columns, groups, tableOptions = {}) {
-  const { sortable, showSortable } = tableOptions
+export function buildColumnDefs(columns, groups, tableProps = {}) {
+  const { sortable, showSortable, isExpanded, onExpanderClick } = tableProps
 
   columns = columns.map(column => {
     let col = { ...column }
@@ -55,13 +56,35 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
           }
         }
       }
+
+      let content
       if (React.isValidElement(value)) {
-        return value
+        content = value
       } else if (col.html) {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />
+        content = <div dangerouslySetInnerHTML={{ __html: value }} />
       } else {
-        return value != null ? String(value) : ''
+        content = value != null ? String(value) : ''
       }
+
+      // Render expander for custom row details
+      let expander
+      if (col.details) {
+        if (col.details instanceof Array && col.details[cell.index] == null) {
+          // Don't expand rows without content
+        } else {
+          expander = ReactTableDefaults.ExpanderComponent({ ...cell, isExpanded: isExpanded(cell) })
+        }
+      }
+
+      if (expander) {
+        return (
+          <React.Fragment>
+            {expander}
+            {content}
+          </React.Fragment>
+        )
+      }
+      return content
     }
 
     // Render pivoted values the same as regular cells
@@ -176,7 +199,7 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
     const cellStyle = col.style
     col.className = undefined
     col.style = undefined
-    col.getProps = (state, rowInfo) => {
+    col.getProps = (state, rowInfo, column) => {
       let props = {}
       // Ignore footers
       if (!rowInfo) return props
@@ -204,8 +227,28 @@ export function buildColumnDefs(columns, groups, tableOptions = {}) {
           props.style = style
         }
       }
+
+      if (column.details) {
+        if (column.details instanceof Array && column.details[rowInfo.index] == null) {
+          // Don't expand rows without content
+        } else {
+          props.className = classNames('rt-expandable', props.className)
+          props.onClick = (e, handleOriginal) => {
+            onExpanderClick(rowInfo, column)
+            if (handleOriginal) {
+              handleOriginal()
+            }
+          }
+        }
+      } else if (column.pivoted && !rowInfo.aggregated) {
+        // Disable expansion on child rows under pivoted columns
+        props.onClick = () => {}
+        props.className = classNames('rt-expand-disabled', props.className)
+      }
+
       return props
     }
+
     return col
   })
 

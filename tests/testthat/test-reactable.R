@@ -38,6 +38,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
   expect_error(reactable(df, details = "details"))
+  expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
   expect_error(reactable(df, borderless = NULL))
@@ -93,7 +94,7 @@ test_that("reactable", {
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), paginationType = "simple",
                    showPagination = FALSE, showPageSizeOptions = FALSE, showPageInfo = FALSE,
                    minRows = 5, selection = "single", selectionId = "sel",
-                   details = rowDetails(function(i) i),
+                   details = function(i) i,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    highlight = FALSE, compact = TRUE, showSortable = TRUE, class = "tbl",
                    style = list(color = "red"),
@@ -104,6 +105,8 @@ test_that("reactable", {
   expected <- list(
     data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
     columns = list(
+      list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
+           filterable = FALSE,  width = 35, details = list("1")),
       list(accessor = ".rownames", Header = "", type = "numeric",
            sortable = FALSE, filterable = FALSE),
       list(accessor = "x", Header = "x", type = "factor")
@@ -124,7 +127,6 @@ test_that("reactable", {
     minRows = 5,
     selection = "single",
     selectionId = "sel",
-    details = structure(list(render = list("1")), class = "rowDetails"),
     outlined = TRUE,
     bordered = TRUE,
     borderless = TRUE,
@@ -414,6 +416,53 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]]$footer, "123")
 })
 
+test_that("row details", {
+  data <- data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE)
+
+  # R renderer
+  tbl <- reactable(data, details = function(i) data[i, "y"])
+  attribs <- getAttribs(tbl)
+  expected <- list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
+                   filterable = FALSE,  width = 35, details = list("a", "b"))
+  expect_equal(attribs$columns[[1]], expected)
+
+  # JS renderer
+  tbl <- reactable(data, details = JS("rowInfo => rowInfo.y"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$details, JS("rowInfo => rowInfo.y"))
+
+  # List
+  tbl <- reactable(data, details = list("a", "b"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$details, list("a", "b"))
+
+  # Custom details column definition
+  tbl <- reactable(data, details = colDef(details = function(i) data[i, "y"],
+                                          width = 125, class = "my-details"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$details, list("a", "b"))
+  expect_equal(attribs$columns[[1]]$width, 125)
+  expect_equal(attribs$columns[[1]]$className, "my-details")
+
+  # Details column definition works with defaultColDef
+  tbl <- reactable(
+    data,
+    defaultColDef = colDef(headerClass = "header", sortable = TRUE, filterable = TRUE),
+    details = colDef(details = function(i) data[i, "y"], class = "my-details")
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$details, list("a", "b"))
+  expect_equal(attribs$columns[[1]]$className, "my-details")
+  expect_equal(attribs$columns[[1]]$headerClass, "header")
+  expect_equal(attribs$columns[[1]]$sortable, FALSE)
+  expect_equal(attribs$columns[[1]]$filterable, FALSE)
+
+  # Column row details
+  tbl <- reactable(data, columns = list(y = colDef(details = function(i) data[i, "y"])))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[2]]$details, list("a", "b"))
+})
+
 test_that("column class callbacks", {
   data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
   tbl <- reactable(data, columns = list(
@@ -505,62 +554,6 @@ test_that("rowClass and rowStyle", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle,
                list(list("background-color" = "red"), list(color = "red"), NULL))
-})
-
-test_that("row details", {
-  data <- data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE)
-
-  # R renderer
-  tbl <- reactable(data, details = function(i) data[i, "y"])
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$details, rowDetails(list("a", "b")))
-
-  # JS renderer
-  tbl <- reactable(data, details = JS("rowInfo => rowInfo.y"))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$details, rowDetails(JS("rowInfo => rowInfo.y")))
-
-  # List
-  tbl <- reactable(data, details = list("a", "b"))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$details, rowDetails(list("a", "b")))
-
-  # Row details definition
-  tbl <- reactable(data, details = rowDetails(function(i) data[i, "y"]))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$details, rowDetails(list("a", "b")))
-})
-
-test_that("rowDetails definitions", {
-  # Default args
-  details <- rowDetails(JS("rowInfo => rowInfo.row.value"))
-  expected <- structure(list(render = JS("rowInfo => rowInfo.row.value")), class = "rowDetails")
-  expect_equal(details, expected)
-
-  # rowDetails options
-  details <- rowDetails(function(i) i, html = TRUE, name = "more", width = 50)
-  expected <- structure(list(render = function(i) i, html = TRUE, name = "more", width = 50),
-                        class = "rowDetails")
-  expect_equal(details, expected)
-
-  details <- rowDetails(function() "x")
-  expected <- structure(list(render = function() "x"), class = "rowDetails")
-  expect_equal(details, expected)
-
-  details <- rowDetails(list(1, 2, 3), html = FALSE)
-  expected <- structure(list(render = list(1, 2, 3)), class = "rowDetails")
-  expect_equal(details, expected)
-
-  # Invalid args
-  expect_error(rowDetails("content"))
-  expect_error(rowDetails(function(i) {}, html = 0))
-  expect_error(rowDetails(function(i) {}, name = 0))
-  expect_error(rowDetails(function(i) {}, width = ""))
-})
-
-test_that("is.rowDetails", {
-  expect_true(is.rowDetails(rowDetails(function(i) {})))
-  expect_false(is.rowDetails(list()))
 })
 
 test_that("columnSortDefs", {

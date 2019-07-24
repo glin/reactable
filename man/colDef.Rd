@@ -7,10 +7,11 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
-  cell = NULL, aggregated = NULL, footer = NULL, html = FALSE,
-  showNA = FALSE, minWidth = NULL, maxWidth = NULL, width = NULL,
-  align = NULL, class = NULL, style = NULL, headerClass = NULL,
-  headerStyle = NULL, footerClass = NULL, footerStyle = NULL)
+  cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
+  html = FALSE, showNA = FALSE, minWidth = NULL, maxWidth = NULL,
+  width = NULL, align = NULL, class = NULL, style = NULL,
+  headerClass = NULL, headerStyle = NULL, footerClass = NULL,
+  footerStyle = NULL)
 }
 \arguments{
 \item{name}{Column name.}
@@ -37,9 +38,9 @@ to the bottom.}
 format all cells, or a named list of \code{colFormat()} objects to format standard
 cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
-\item{cell}{Custom cell renderer. A function that takes the cell value and row
-index as arguments, or a \code{JS()} function that takes a cell info object as an
-argument.}
+\item{cell}{Custom cell renderer. An R function that takes the cell value and
+row index as arguments, or a \code{JS()} function that takes a cell info object as
+an argument.}
 
 \item{aggregated}{Custom aggregated cell renderer. A \code{JS()} function that takes
 a cell info object as an argument.}
@@ -47,6 +48,10 @@ a cell info object as an argument.}
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a
 \code{JS()} function that takes one argument, a column info object.}
+
+\item{details}{Additional content to display when expanding a row. An R function
+that takes a row index argument or a \code{JS()} function that takes a row info object
+as an argument. Cannot be used on a grouping column.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
 

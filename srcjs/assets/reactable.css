@@ -217,7 +217,7 @@
   opacity: 0.4;
 }
 
-/* Conditional expanders */
+/* Expanders */
 .ReactTable .rt-expandable.rt-expand-disabled {
   cursor: unset;
 }

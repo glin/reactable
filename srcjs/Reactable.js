@@ -8,7 +8,7 @@ import Pagination from './Pagination'
 import selectTableHOC from './selectTable'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
-import { classNames, getFirstDefined } from './utils'
+import { classNames, getFirstDefined, get, set } from './utils'
 
 import 'react-table/react-table.css'
 import './assets/reactable.css'
@@ -99,11 +99,14 @@ class Reactable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selected: new Set()
+      selected: new Set(),
+      expanded: {}
     }
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleAll = this.toggleAll.bind(this)
     this.isSelected = this.isSelected.bind(this)
+    this.handleExpanderClick = this.handleExpanderClick.bind(this)
+    this.isExpanded = this.isExpanded.bind(this)
   }
 
   isSelected(index) {
@@ -131,6 +134,22 @@ class Reactable extends React.Component {
       indices.forEach(i => selected.delete(i))
     }
     this.setState({ selected })
+  }
+
+  handleExpanderClick(rowInfo, column) {
+    let expanded = { ...this.state.expanded }
+    const expandedId = get(expanded, rowInfo.nestingPath)
+    if (expandedId && expandedId === column.id) {
+      expanded = set(expanded, rowInfo.nestingPath, undefined)
+    } else {
+      expanded = set(expanded, rowInfo.nestingPath, column.id)
+    }
+    this.setState({ expanded })
+  }
+
+  isExpanded(cellInfo) {
+    const expanded = get(this.state.expanded, cellInfo.nestingPath)
+    return expanded && expanded === cellInfo.column.id
   }
 
   componentDidUpdate() {
@@ -163,7 +182,6 @@ class Reactable extends React.Component {
       showPageInfo,
       minRows,
       selection,
-      details,
       outlined,
       bordered,
       borderless,
@@ -179,7 +197,12 @@ class Reactable extends React.Component {
     } = this.props
 
     data = columnsToRows(data)
-    columns = buildColumnDefs(columns, columnGroups, { sortable, showSortable })
+    columns = buildColumnDefs(columns, columnGroups, {
+      sortable,
+      showSortable,
+      isExpanded: this.isExpanded,
+      onExpanderClick: this.handleExpanderClick
+    })
 
     className = classNames(
       className,
@@ -234,74 +257,51 @@ class Reactable extends React.Component {
       }
     }
 
-    let SubComponent, colProps, getTdProps
-    if (details) {
-      const { render, html, name, width } = details
-      if (typeof render === 'function') {
-        SubComponent = rowInfo => {
-          let content = render(rowInfo)
+    // Row details
+    let SubComponent
+    if (columns.some(col => col.details)) {
+      SubComponent = rowInfo => {
+        const expandedId = get(this.state.expanded, rowInfo.nestingPath)
+        const column = columns.find(col => col.id === expandedId)
+        const { details, html } = column
+        let props = {}
+        if (typeof details === 'function') {
+          let content = details(rowInfo)
           if (html) {
-            return <RowDetails html={content} />
+            props.html = content
           }
-          return <RowDetails>{content}</RowDetails>
-        }
-      } else if (render instanceof Array) {
-        SubComponent = rowInfo => {
-          let content = render[rowInfo.index]
+          props.children = content
+        } else if (details instanceof Array) {
+          let content = details[rowInfo.index]
           if (content == null) {
+            // No content to render, although we should never get here since
+            // the expander isn't rendered for this row.
             return null
           }
           if (html) {
-            return <RowDetails html={content} />
+            props.html = content
           }
-          return <RowDetails>{hydrate({ Reactable, Fragment }, content)}</RowDetails>
+          props.children = hydrate({ Reactable, Fragment }, content)
         }
-
-        colProps = {
-          Expander: props => {
-            if (render[props.index] == null) {
-              return null
-            }
-            return ReactTableDefaults.ExpanderComponent(props)
-          },
-          getProps: (state, rowInfo) => {
-            if (!rowInfo) return {}
-            // Disable expander on rows without content
-            if (render[rowInfo.index] == null) {
-              return { onClick: () => {}, className: 'rt-expand-disabled' }
-            }
-            return {}
-          }
-        }
-
-        getTdProps = (state, rowInfo, column) => {
-          if (!rowInfo) return {}
-          let props = {
-            onClick: (e, handleOriginal) => {
-              if (handleOriginal) {
-                handleOriginal()
-              }
-            }
-          }
-          // Disable expander on rows without content
-          if (!rowInfo.aggregated && column.pivoted && render[rowInfo.index] == null) {
-            props = { ...props, className: 'rt-expand-disabled' }
-          }
-          return props
-        }
+        // Set a key to force updates when expanding a different column
+        return <RowDetails key={expandedId} {...props} />
       }
 
-      const expanderCol = {
-        expander: true,
-        Header: name,
-        width: width || 35,
-        headerClassName: 'rt-col-left',
-        ...colProps
-      }
-      columns = [expanderCol, ...columns]
+      // Add a dummy expander column to prevent react-table from adding one
+      // automatically, which won't work with our custom expanders.
+      columns = [{ expander: true, show: false }, ...columns]
     } else {
       // SubComponent must have a value (not undefined) to properly update on rerenders
       SubComponent = null
+    }
+
+    // Expanded state is controlled, so we have to handle expanding of pivoted cells
+    const onExpandedChange = newExpanded => {
+      this.setState({ expanded: newExpanded })
+    }
+    // And also handle collapsing on page/sorting/filter change
+    const collapseDetails = () => {
+      this.setState({ expanded: {} })
     }
 
     return (
@@ -328,9 +328,13 @@ class Reactable extends React.Component {
         collapseOnDataChange={false}
         className={className}
         style={style}
+        expanded={this.state.expanded}
+        onExpandedChange={onExpandedChange}
+        onPageChange={collapseDetails}
+        onSortedChange={collapseDetails}
+        onFilteredChange={collapseDetails}
         getTheadThProps={getTheadThProps}
         getTheadGroupThProps={getTheadGroupThProps}
-        getTdProps={getTdProps}
         getTrProps={getTrProps}
         SubComponent={SubComponent}
         {...selectProps}
@@ -362,12 +366,6 @@ Reactable.propTypes = {
   minRows: PropTypes.number,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
-  details: PropTypes.shape({
-    render: PropTypes.oneOfType([PropTypes.func, PropTypes.array]),
-    html: PropTypes.bool,
-    name: PropTypes.string,
-    width: PropTypes.number
-  }),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,
   borderless: PropTypes.bool,
