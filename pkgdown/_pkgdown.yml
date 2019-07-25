@@ -17,6 +17,8 @@ navbar:
         href: articles/womens-world-cup/womens-world-cup.html
       - text: NBA Box Score
         href: articles/nba-box-score/nba-box-score.html
+      - text: CRAN Packages
+        href: articles/cran-packages/cran-packages.html
       - text: 100k Rows
         href: articles/100k-rows.html
       - text: Shiny Demo
