@@ -114,11 +114,11 @@ reactable(head(iris, 10),
     Petal.Length = colDef(details = function(index) {
       paste("Petal.Length: ", iris[index, "Petal.Length"])
     }),
-    Sepal.Length = colDef(details = JS("
-    function(rowInfo) {
-      return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
-    }
-  "))
+    Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
+      function(rowInfo) {
+        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
+      }
+    "))
   )
 )
 ```
