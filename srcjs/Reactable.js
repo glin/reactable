@@ -301,7 +301,9 @@ class Reactable extends React.Component {
     }
     // And also handle collapsing on page/sorting/filter change
     const collapseDetails = () => {
-      this.setState({ expanded: {} })
+      if (Object.keys(this.state.expanded).length > 0) {
+        this.setState({ expanded: {} })
+      }
     }
 
     return (
