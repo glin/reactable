@@ -19,6 +19,8 @@
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.7",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
@@ -28,8 +30,6 @@
     "eslint-plugin-react": "^7.12.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.5.0",
-    "jest-dom": "^3.1.4",
-    "react-testing-library": "^7.0.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
