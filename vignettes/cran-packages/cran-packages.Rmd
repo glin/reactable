@@ -90,7 +90,7 @@ tbl <- reactable(
 )
 
 div(class = "cran-packages",
-  div(class = "title", "Top 100 CRAN Packages,", span(class = "year", "2019")),
+  div(class = "title", "Top CRAN Packages of 2019"),
   tbl
 )
 ```
@@ -117,10 +117,6 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600&display
   font-size: 22px;
 }
 
-.year {
-  font-size: 20px;
-}
-
 .packages-table {
   border: 1px solid hsl(213, 33%, 93%);
   border-radius: 4px;
@@ -145,7 +141,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600&display
 
 .units {
   margin-left: 2px;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .package-title {
