@@ -601,6 +601,22 @@ describe('row details', () => {
     fireEvent.click(pivotedChildCell)
     expect(getByText('row-details')).toBeTruthy()
   })
+
+  it('row details work with column groups', () => {
+    const columns = [
+      { Header: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+      { Header: 'col-b', accessor: 'b' }
+    ]
+    const { container, getByText } = render(
+      <Reactable {...props} columns={columns} columnGroups={[{ columns: ['a', 'b'] }]} />
+    )
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    fireEvent.click(expanders[0])
+    expect(getByText('row-details-1')).toBeTruthy()
+    fireEvent.click(expanders[1])
+    expect(getByText('row-details-2')).toBeTruthy()
+  })
 })
 
 describe('footer rendering', () => {

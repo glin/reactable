@@ -259,10 +259,13 @@ class Reactable extends React.Component {
 
     // Row details
     let SubComponent
-    if (columns.some(col => col.details)) {
+    const dataColumns = columns.reduce((cols, col) => {
+      return cols.concat(col.columns ? col.columns : col)
+    }, [])
+    if (dataColumns.some(col => col.details)) {
       SubComponent = rowInfo => {
         const expandedId = get(this.state.expanded, rowInfo.nestingPath)
-        const column = columns.find(col => col.id === expandedId)
+        const column = dataColumns.find(col => col.id === expandedId)
         const { details, html } = column
         let props = {}
         if (typeof details === 'function') {
