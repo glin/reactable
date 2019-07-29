@@ -58,12 +58,14 @@ test_that("reactable", {
   tbl <- reactable(data.frame(x = 1, y = "b"))
   attribs <- getAttribs(tbl)
   data <- data.frame(x = 1, y = "b")
+  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+  columns <- list(
+    list(accessor = "x", Header = "x", type = "numeric"),
+    list(accessor = "y", Header = "y", type = "factor")
+  )
   expected <- list(
-    data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
-    columns = list(
-      list(accessor = "x", Header = "x", type = "numeric"),
-      list(accessor = "y", Header = "y", type = "factor")
-    ),
+    data = data,
+    columns = columns,
     sortable = TRUE,
     resizable = FALSE,
     filterable = FALSE,
@@ -79,7 +81,8 @@ test_that("reactable", {
     borderless = FALSE,
     striped = FALSE,
     highlight = TRUE,
-    compact = FALSE
+    compact = FALSE,
+    dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "auto")
@@ -102,15 +105,17 @@ test_that("reactable", {
                    elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(.rownames = 1, x = "a")
+  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+  columns <- list(
+    list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
+         filterable = FALSE,  width = 35, details = list("1")),
+    list(accessor = ".rownames", Header = "", type = "numeric",
+         sortable = FALSE, filterable = FALSE),
+    list(accessor = "x", Header = "x", type = "factor")
+  )
   expected <- list(
-    data = jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE),
-    columns = list(
-      list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
-           filterable = FALSE,  width = 35, details = list("1")),
-      list(accessor = ".rownames", Header = "", type = "numeric",
-           sortable = FALSE, filterable = FALSE),
-      list(accessor = "x", Header = "x", type = "factor")
-    ),
+    data = data,
+    columns = columns,
     columnGroups = list(colGroup("group", "x")),
     pivotBy = list("x"),
     sortable = FALSE,
@@ -136,7 +141,8 @@ test_that("reactable", {
     showSortable = TRUE,
     className = "tbl",
     style = list(color = "red"),
-    inline = TRUE
+    inline = TRUE,
+    dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "400px")

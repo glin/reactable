@@ -373,7 +373,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     style = asReactStyle(style),
     rowClassName = rowClass,
     rowStyle = rowStyle,
-    inline = if (inline) inline
+    inline = if (inline) inline,
+    dataKey = digest::digest(list(data, cols))
   ))
 
   htmlwidgets::createWidget(

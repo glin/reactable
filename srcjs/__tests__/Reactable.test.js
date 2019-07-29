@@ -1081,3 +1081,40 @@ describe('pagination', () => {
     expect(pageJump).toHaveAttribute('value', '2')
   })
 })
+
+describe('table updates correctly when data props change', () => {
+  const props = {
+    data: { a: ['a-1', 'a-2'] },
+    columns: [{ Header: 'a', accessor: 'a' }]
+  }
+
+  it('updates without data key', () => {
+    const { getByText, rerender } = render(<Reactable {...props} />)
+    expect(getByText('a-1')).toBeTruthy()
+    rerender(<Reactable {...props} data={{ a: ['b-1', 'b-2'] }} />)
+    expect(getByText('b-1')).toBeTruthy()
+  })
+
+  it('updates with data key', () => {
+    const { getByText, queryByText, rerender } = render(<Reactable {...props} dataKey="a12" />)
+    expect(getByText('a-1')).toBeTruthy()
+
+    // Same data key: should not update
+    rerender(<Reactable {...props} dataKey="a12" data={{ a: ['b-1', 'b-2'] }} />)
+    expect(getByText('a-1')).toBeTruthy()
+    expect(queryByText('b-2')).toEqual(null)
+
+    // Different data key: should update
+    rerender(<Reactable {...props} dataKey="b12" data={{ a: ['b-1', 'b-2'] }} />)
+    expect(getByText('b-1')).toBeTruthy()
+    expect(queryByText('a-1')).toEqual(null)
+  })
+
+  it('updates when pivotBy changes', () => {
+    const { getByText, queryByText, rerender } = render(<Reactable {...props} pivotBy={['a']} />)
+    expect(getByText('a-1 (1)')).toBeTruthy()
+    rerender(<Reactable {...props} pivotBy={undefined} />)
+    expect(queryByText('a-1 (1)')).toEqual(null)
+    expect(getByText('a-1')).toBeTruthy()
+  })
+})

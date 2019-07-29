@@ -63,6 +63,25 @@ Object.assign(ReactTableDefaults, {
 
 ReactTable.propTypes = fixedReactTablePropTypes
 
+// Prevent unnecessary data updates on table rerenders by doing a deep comparison
+// of data props rather than a === comparison. Kind of ugly, but significantly
+// increases performance when selecting or expanding rows in a very large table.
+ReactTable.prototype.oldComponentWillReceiveProps = ReactTable.prototype.componentWillReceiveProps
+ReactTable.prototype.componentWillReceiveProps = function(newProps, newState) {
+  newProps = { ...newProps }
+  if (this.props.dataKey && this.props.dataKey === newProps.dataKey) {
+    newProps.data = this.props.data
+    newProps.columns = this.props.columns
+  }
+  const dataUpdateProps = ['pivotBy', 'sorted', 'filtered']
+  dataUpdateProps.forEach(name => {
+    if (JSON.stringify(this.props[name]) === JSON.stringify(newProps[name])) {
+      newProps[name] = this.props[name]
+    }
+  })
+  return this.oldComponentWillReceiveProps(newProps, newState)
+}
+
 const SelectTable = selectTableHOC(ReactTable)
 
 class RowDetails extends React.Component {
@@ -193,7 +212,8 @@ class Reactable extends React.Component {
       style,
       rowClassName,
       rowStyle,
-      inline
+      inline,
+      dataKey
     } = this.props
 
     data = columnsToRows(data)
@@ -347,6 +367,8 @@ class Reactable extends React.Component {
         rowsSelectorText="rows per page"
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}
+        // Used to deep compare data and columns props
+        dataKey={dataKey}
       />
     )
   }
@@ -382,7 +404,8 @@ Reactable.propTypes = {
   style: PropTypes.object,
   rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.array]),
   rowStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.array]),
-  inline: PropTypes.bool
+  inline: PropTypes.bool,
+  dataKey: PropTypes.string
 }
 
 Reactable.defaultProps = {

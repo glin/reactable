@@ -11,7 +11,8 @@ License: MIT + file LICENSE
 URL: https://github.com/glin/reactable
 Depends:
     R (>= 3.1)
-Imports: 
+Imports:
+    digest,
     htmltools,
     htmlwidgets,
     jsonlite,
