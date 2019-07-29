@@ -63,12 +63,10 @@ reactable(iris, details = function(index) {
 ```{r}
 reactable(iris, details = colDef(
   name = "More",
-  details = JS("
-    function(rowInfo) {
-      return 'Details for row: ' + rowInfo.index +
-        '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
-    }
-  "),
+  details = JS("function(rowInfo) {
+    return 'Details for row: ' + rowInfo.index +
+      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+  }"),
   html = TRUE,
   width = 50
 ))
@@ -323,17 +321,20 @@ data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 reactable(data, columns = list(
   Model = colDef(html = TRUE, cell = JS("
     function(cellInfo) {
+      // Render as a link
       var url = 'https://wikipedia.org/wiki/' + cellInfo.row.Manufacturer + '_' + cellInfo.value
       return '<a href=\"' + url + '\" target=\"_blank\">' + cellInfo.value + '</a>'
     }
   ")),
   AirBags = colDef(cell = JS("
     function(cellInfo) {
+      // Render as ✘ or ✓ 
       return cellInfo.value === 'None' ? '\u2718' : '\u2713'
     }
   ")),
   Price = colDef(cell = JS("
     function(cellInfo) {
+      // Render as currency
       return '$' + (cellInfo.value * 1000).toLocaleString()
     }
   "))
@@ -421,20 +422,16 @@ reactable(datasets::sleep,
 
 ```{r}
 reactable(datasets::sleep,
-  rowStyle = JS("
-    function(rowInfo) {
-      if (rowInfo.row.extra < -1) {
-        return { backgroundColor: '#ffd08a' }
-      }
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return { backgroundColor: '#ffd08a' }
     }
-  "),
-  rowClass = JS("
-    function(rowInfo) {
-      if (rowInfo.row.extra < -1) {
-        return 'bold'
-      }
+  }"),
+  rowClass = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return 'bold'
     }
-  ")
+  }")
 )
 ```
 
