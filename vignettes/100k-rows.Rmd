@@ -23,13 +23,22 @@ data <- data.frame(
   stringsAsFactors = FALSE
 )
 
-reactable(data, filterable = TRUE, columns = list(
-  state = colDef(cell = JS("
+reactable(
+  data,
+  filterable = TRUE,
+  columns = list(
+    state = colDef(cell = JS("
     function(cell) {
       return '<a href=\"https://wikipedia.org/wiki/' + cell.value + '\">' + cell.value + '</a>'
     }
   "), html = TRUE)
-))
+  ),
+  details = colDef(html = TRUE, details = JS("
+    function(rowInfo) {
+      return '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+    }
+  "))
+)
 ```
 
 ```{css echo=FALSE}
