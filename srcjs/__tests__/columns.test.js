@@ -65,7 +65,10 @@ describe('buildColumnDefs', () => {
 
     cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>footer</div>'] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
+      <div
+        style={{ display: 'inline-block' }}
+        dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }}
+      />
     )
 
     // React elements and HTML rendering don't clash
@@ -124,7 +127,9 @@ describe('buildColumnDefs', () => {
 
   test('html', () => {
     let cols = buildColumnDefs([{ accessor: 'x', html: true }])
-    expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x' }} />)
+    expect(cols[0].Cell({ value: 'x' })).toEqual(
+      <div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: 'x' }} />
+    )
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: 'x' }} />
     )
@@ -138,7 +143,9 @@ describe('buildColumnDefs', () => {
         html: true
       }
     ])
-    expect(cols[0].Cell({ value: 'x' })).toEqual(<div dangerouslySetInnerHTML={{ __html: 'x!' }} />)
+    expect(cols[0].Cell({ value: 'x' })).toEqual(
+      <div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: 'x!' }} />
+    )
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: 'x!!' }} />
     )
@@ -154,7 +161,7 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+      <div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: '__@x__' }} />
     )
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '__$x__' }} />

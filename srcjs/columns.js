@@ -61,7 +61,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (React.isValidElement(value)) {
         content = value
       } else if (col.html) {
-        content = <div dangerouslySetInnerHTML={{ __html: value }} />
+        // Render inline to align with the expander
+        content = (
+          <div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: value }} />
+        )
       } else {
         content = value != null ? String(value) : ''
       }
