@@ -410,16 +410,24 @@ test_that("column renderers", {
     y = colDef(footer = function(values, name) name)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$footer, "1 2")
-  expect_equal(attribs$columns[[2]]$footer, "y")
+  expect_equal(attribs$columns[[1]][["footer"]], "1 2")
+  expect_equal(attribs$columns[[2]][["footer"]], "y")
 
   tbl <- reactable(data, columns = list(
     x = colDef(footer = htmltools::div("footer")),
     y = colDef(footer = 123)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$footer, htmltools::div("footer"))
-  expect_equal(attribs$columns[[2]]$footer, "123")
+  expect_equal(attribs$columns[[1]][["footer"]], htmltools::div("footer"))
+  expect_equal(attribs$columns[[2]][["footer"]], "123")
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(footer = JS("colInfo => 'footer'"), footerClass = "footer"),
+    y = colDef(footerClass = "no-footer")
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["footer"]], JS("colInfo => 'footer'"))
+  expect_equal(attribs$columns[[2]][["footer"]], NULL)
 })
 
 test_that("row details", {

@@ -134,7 +134,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     if (!all(groupBy %in% colnames(data))) {
       stop("`groupBy` columns must exist in `data`")
     }
-    if (any(sapply(columns[groupBy], function(col) !is.null(col$details)))) {
+    if (any(sapply(columns[groupBy], function(col) !is.null(col[["details"]])))) {
       stop("`details` cannot be used on a grouping column")
     }
   }
@@ -298,41 +298,46 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       column <- mergeLists(column, columns[[key]])
     }
 
-    if (is.function(column$cell)) {
+    cell <- column[["cell"]]
+    if (is.function(cell)) {
       content <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(column$cell, value, index)
+        callFunc(cell, value, index)
       })
       column$cell <- lapply(content, asReactTag)
     }
 
-    if (is.function(column$footer)) {
-      values <- data[[key]]
-      footer <- callFunc(column$footer, values, key)
+    footer <- column[["footer"]]
+    if (!is.null(footer)) {
+      if (is.function(footer)) {
+        values <- data[[key]]
+        footer <- callFunc(footer, values, key)
+      }
       column$footer <- asReactTag(footer)
-    } else if (!is.null(column$footer)) {
-      column$footer <- asReactTag(column$footer)
     }
 
-    if (is.function(column$details)) {
+    details <- column[["details"]]
+    if (is.function(details)) {
       details <- lapply(seq_len(nrow(data)), function(index) {
-        callFunc(column$details, index)
+        callFunc(details, index)
       })
       column$details <- lapply(details, asReactTag)
     }
 
-    if (is.function(column$className)) {
+    className <- column[["className"]]
+    if (is.function(className)) {
       classes <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(column$className, value, index)
+        callFunc(className, value, index)
       })
       column$className <- classes
     }
 
-    if (is.function(column$style)) {
+    style <- column[["style"]]
+    if (is.function(style)) {
       style <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(column$style, value, index)
+        callFunc(style, value, index)
       })
       column$style <- lapply(style, asReactStyle)
     }
