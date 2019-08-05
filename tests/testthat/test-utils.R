@@ -1,5 +1,7 @@
 context("utils")
 
+library(htmltools)
+
 test_that("mergeLists", {
   a <- list(a = 1, b = "b", c = 3)
   b <- list(a = 2, c = 4, d = "d")
@@ -46,22 +48,22 @@ test_that("isNamedList", {
 })
 
 test_that("is.tag", {
-  expect_true(is.tag(htmltools::tags$div()))
+  expect_true(is.tag(tags$div()))
   expect_false(is.tag(list()))
 })
 
 test_that("is.htmlwidget", {
   expect_true(is.htmlwidget(reactable(data.frame())))
-  expect_false(is.htmlwidget(htmltools::div()))
+  expect_false(is.htmlwidget(div()))
 })
 
 test_that("isTagList", {
-  expect_true(isTagList(htmltools::tagList()))
-  expect_true(isTagList(htmltools::tagList("a")))
-  expect_true(isTagList(htmltools::tagList(1, htmltools::div())))
-  expect_true(isTagList(list(htmltools::div(), htmltools::span())))
-  expect_false(isTagList(htmltools::div()))
-  expect_false(isTagList(list(htmltools::div(), list())))
+  expect_true(isTagList(tagList()))
+  expect_true(isTagList(tagList("a")))
+  expect_true(isTagList(tagList(1, div())))
+  expect_true(isTagList(list(div(), span())))
+  expect_false(isTagList(div()))
+  expect_false(isTagList(list(div(), list())))
 })
 
 test_that("asReactTag", {
@@ -74,54 +76,61 @@ test_that("asReactTag", {
   # Tags should be extracted from htmlwidgets
   expect_true(is.tag(asReactTag(reactable(data.frame()))))
 
-  # Tag lists should be wrapped in fragments
-  tag <- htmltools::tagList(htmltools::div(), "x")
-  expect_equal(asReactTag(tag), reactR::React$Fragment(htmltools::div(), "x"))
+  # Tag lists should be unnested
+  tag <- tagList(div("x"))
+  expect_equal(asReactTag(tag), div("x"))
+  # Multiple elements should be wrapped in a fragment
+  tag <- tagList(div(), "x")
+  expect_equal(asReactTag(tag), reactR::React$Fragment(div(), "x"))
   # htmlwidgets in tag lists
-  tag <- htmltools::tagList(reactable(data.frame()), "y")
+  tag <- tagList(reactable(data.frame()), "y")
   converted <- asReactTag(tag)
   expect_equal(length(converted$children), 2)
   expect_true(is.tag(converted$children[[1]]))
   expect_equal(converted$children[[2]], "y")
 
   # Nested tags should be unnested
-  nestedTag <- htmltools::div(
+  nestedTag <- div(
     list(
-      htmltools::div(),
-      htmltools::div(list(htmltools::div()))
+      div(),
+      div(list(div()))
     )
   )
-  expected <- htmltools::div(
-    htmltools::div(),
-    htmltools::div(htmltools::div())
+  expected <- div(
+    div(),
+    div(div())
   )
   expect_equal(asReactTag(nestedTag), expected)
 
-  nestedTag <- htmltools::div(
-    htmltools::tagList("a", htmltools::div(
-      htmltools::tagList("b", htmltools::span("c", class = "c"))
+  nestedTag <- div(
+    tagList("a", div(
+      tagList("b", span("c", class = "c"))
     ))
   )
-  expected <- htmltools::div("a", htmltools::div("b", htmltools::span("c", className = "c")))
+  expected <- div("a", div("b", span("c", className = "c")))
   expect_equal(asReactTag(nestedTag), expected)
 
-  nestedTagList <- htmltools::tagList(
-    htmltools::div(class = "a"),
-    htmltools::tagList(
-      htmltools::div(),
-      htmltools::tagList("x", htmltools::span("y", class = "y"))
+  nestedTagList <- tagList(
+    div(class = "a"),
+    tagList(
+      div(),
+      tagList("x", span("y", class = "y"))
     )
   )
-  expected <- reactR::React$Fragment(htmltools::div(className = "a"),
-                                     htmltools::div(), "x", htmltools::span("y", className = "y"))
+  expected <- reactR::React$Fragment(
+    div(className = "a"),
+    div(),
+    "x",
+    span("y", className = "y")
+  )
   expect_equal(asReactTag(nestedTagList), expected)
 
   # Null elements should be pruned
-  expect_equal(asReactTag(htmltools::div(1, NULL, 3)), htmltools::div("1", "3"))
+  expect_equal(asReactTag(div(1, NULL, 3)), div("1", "3"))
 
   # Attributes should be converted
-  expect_equal(asReactTag(htmltools::div(style = "color: red", class = "cls")),
-               htmltools::div(style = list(color = "red"), className = "cls"))
+  expect_equal(asReactTag(div(style = "color: red", class = "cls")),
+               div(style = list(color = "red"), className = "cls"))
 })
 
 test_that("asReactAttributes", {
