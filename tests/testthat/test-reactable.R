@@ -1,5 +1,7 @@
 context("reactable")
 
+library(htmltools)
+
 getAttribs <- function(widget) widget$x$tag$attribs
 
 test_that("reactable handles invalid args", {
@@ -414,11 +416,11 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]][["footer"]], "y")
 
   tbl <- reactable(data, columns = list(
-    x = colDef(footer = htmltools::div("footer")),
+    x = colDef(footer = div("footer")),
     y = colDef(footer = 123)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]][["footer"]], htmltools::div("footer"))
+  expect_equal(attribs$columns[[1]][["footer"]], div("footer"))
   expect_equal(attribs$columns[[2]][["footer"]], "123")
 
   tbl <- reactable(data, columns = list(
