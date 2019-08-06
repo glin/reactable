@@ -71,13 +71,17 @@ asReactTag <- function(x) {
   if (is.htmlwidget(x)) {
     return(asReactTag(x$x$tag))
   }
-  # Wrap tag lists in fragment for proper hydration
+
+  # Unnest and wrap tag lists in fragments for proper hydration
   if (isTagList(x)) {
-    # Unnest tag lists for proper hydration
     x <- unnestTagList(x)
+    # Preserve html dependencies
+    deps <- htmltools::htmlDependencies(x)
     x <- lapply(x, asReactTag)
-    return(do.call(reactR::React$Fragment, x))
+    x <- do.call(reactR::React$Fragment, x)
+    return(htmltools::attachDependencies(x, deps))
   }
+
   if (!is.tag(x)) {
     # Nodes should be strings for proper hydration
     if (is.numeric(x) || is.logical(x)) {
@@ -85,8 +89,12 @@ asReactTag <- function(x) {
     }
     return(x)
   }
+
   # Unnest tag lists for proper hydration
   x$children <- unnestTagList(x$children)
+  # Preserve html dependencies
+  deps <- htmltools::htmlDependencies(x$children)
+  x <- htmltools::attachDependencies(x, deps, append = TRUE)
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
   x$children <- lapply(x$children, asReactTag)
@@ -99,11 +107,24 @@ unnestTagList <- function(x) {
   if (is.tag(x) || is.htmlwidget(x) || !is.list(x)) {
     return(x)
   }
-  Reduce(function(a, b) {
-    b <- unnestTagList(b)
+
+  # Preserve html dependencies of tag lists
+  htmlDeps <- htmltools::htmlDependencies(x)
+
+  tags <- Reduce(function(a, b) {
+    if (isTagList(b)) {
+      # Preserve html dependencies of nested tag lists
+      deps <- htmltools::htmlDependencies(b)
+      if (!is.null(deps)) {
+        htmlDeps <<- c(htmlDeps, deps)
+      }
+      b <- unnestTagList(b)
+    }
     b <- if (is.tag(b) || is.htmlwidget(b)) list(b) else b
-    c(a, b)
+    tags <- c(a, b)
   }, x, list())
+
+  htmltools::attachDependencies(tags, htmlDeps)
 }
 
 asReactAttributes <- function(attribs) {
