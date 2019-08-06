@@ -286,6 +286,15 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`inline` must be TRUE or FALSE")
   }
 
+  dependencies <- list()
+  addDependencies <- function(x) {
+    # Dedupe dependencies
+    for (dep in htmltools::findDependencies(x)) {
+      dependencies[[sprintf("%s-%s", dep$name, dep$version)]] <<- dep
+    }
+    dependencies <<- htmltools::resolveDependencies(dependencies)
+  }
+
   cols <- lapply(columnKeys, function(key) {
     column <- list(accessor = key)
     if (!is.null(colnames[[key]])) {
@@ -305,6 +314,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
         callFunc(cell, value, index)
       })
       column$cell <- lapply(content, asReactTag)
+      addDependencies(column$cell)
     }
 
     footer <- column[["footer"]]
@@ -314,6 +324,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
         footer <- callFunc(footer, values, key)
       }
       column$footer <- asReactTag(footer)
+      addDependencies(column$footer)
     }
 
     details <- column[["details"]]
@@ -322,6 +333,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
         callFunc(details, index)
       })
       column$details <- lapply(details, asReactTag)
+      addDependencies(column$details)
     }
 
     className <- column[["className"]]
@@ -388,6 +400,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     width = width,
     height = height,
     package = "reactable",
+    dependencies = dependencies,
     elementId = elementId
   )
 }

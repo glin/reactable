@@ -479,6 +479,51 @@ test_that("row details", {
   expect_equal(attribs$columns[[2]]$details, list("a", "b"))
 })
 
+
+test_that("html dependencies from rendered content are passed through", {
+  dep <- htmlDependency("dep", "0.1.0", "/path/to/dep")
+  dep2 <- htmlDependency("dep2", "0.5.0", "/path/to/dep2")
+
+  # Cell renderers
+  data <- data.frame(x = c(1, 2), y = c("a", "b"))
+  tbl <- reactable(data, columns = list(
+    x = colDef(cell = function(value) {
+      attachDependencies(div(value), dep)
+    }),
+    y = colDef(cell = function(value, index) {
+      attachDependencies(tagList(value), dep2)
+    })
+  ))
+  expect_equal(tbl$dependencies, list(dep, dep2))
+
+  # Footer renderers
+  tbl <- reactable(data, columns = list(
+    x = colDef(footer = function(values) {
+      attachDependencies(div("x"), dep)
+    }),
+    y = colDef(footer = attachDependencies(tagList(), dep2))
+  ))
+  expect_equal(tbl$dependencies, list(dep, dep2))
+
+  # Details column definition works with defaultColDef
+  tbl <- reactable(
+    data,
+    details = colDef(details = function(i) {
+      attachDependencies(div(i), dep2)
+    }),
+    columns = list(
+      x = colDef(details = function(i) {
+        attachDependencies(tagList(i), dep)
+      })
+    )
+  )
+  expect_equal(tbl$dependencies, list(dep2, dep))
+
+  # No dependencies
+  tbl <- reactable(data)
+  expect_equal(tbl$dependencies, list())
+})
+
 test_that("column class callbacks", {
   data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
   tbl <- reactable(data, columns = list(
