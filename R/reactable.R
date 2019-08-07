@@ -309,8 +309,10 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
     cell <- column[["cell"]]
     if (is.function(cell)) {
+      # [[ subsetting doesn't work well with POSIXlt objects
+      subsetter <- if (is.POSIXlt(data[[key]])) `[` else `[[`
       content <- lapply(seq_len(nrow(data)), function(index) {
-        value <- data[[index, key]]
+        value <- subsetter(data, index, key)
         callFunc(cell, value, index)
       })
       column$cell <- lapply(content, asReactTag)

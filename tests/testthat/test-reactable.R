@@ -412,6 +412,14 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]]$cell, list("1", "2"))
   expect_equal(attribs$columns[[3]]$cell, list("3 1", "3 2"))
 
+  # POSIXlt objects should be handled
+  data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"))
+  tbl <- reactable(data, columns = list(
+    p = colDef(cell = function(value) value)
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[4]]$cell, list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01")))
+
   # Footer renderers
   tbl <- reactable(data, columns = list(
     x = colDef(footer = function(values) paste(values, collapse = " ")),
