@@ -6,6 +6,7 @@ import { hydrate } from 'reactR'
 
 import Pagination from './Pagination'
 import selectTableHOC from './selectTable'
+import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
 import { classNames, getFirstDefined, get, set } from './utils'
@@ -87,13 +88,13 @@ const SelectTable = selectTableHOC(ReactTable)
 class RowDetails extends React.Component {
   componentDidMount() {
     if (window.Shiny) {
-      Shiny.bindAll(this.el)
+      window.Shiny.bindAll(this.el)
     }
   }
 
   componentWillUnmount() {
     if (window.Shiny) {
-      Shiny.unbindAll(this.el)
+      window.Shiny.unbindAll(this.el)
     }
   }
 
@@ -304,7 +305,7 @@ class Reactable extends React.Component {
           if (html) {
             props.html = content
           }
-          props.children = hydrate({ Reactable, Fragment }, content)
+          props.children = hydrate({ Reactable, Fragment, WidgetContainer }, content)
         }
         // Set a key to force updates when expanding a different column
         return <RowDetails key={expandedId} {...props} />

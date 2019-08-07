@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import { ReactTableDefaults } from 'react-table'
 import { hydrate } from 'reactR'
 
+import WidgetContainer from './WidgetContainer'
 import { aggregators, normalizeNumber, isNA } from './aggregators'
 import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
 
@@ -52,7 +53,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (col.cell instanceof Array && !cell.aggregated) {
           value = col.cell[cell.index]
           if (value) {
-            value = hydrate({ Fragment }, col.cell[cell.index])
+            value = hydrate({ Fragment, WidgetContainer }, col.cell[cell.index])
           }
         }
       }
@@ -125,7 +126,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (typeof col.footer === 'function') {
           footer = col.footer(colInfo)
         } else {
-          footer = hydrate({ Fragment }, col.footer)
+          footer = hydrate({ Fragment, WidgetContainer }, col.footer)
         }
         if (React.isValidElement(footer)) {
           return footer

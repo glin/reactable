@@ -1,8 +1,9 @@
 import React from 'react'
 import reactR from 'reactR'
-import Reactable from '../Reactable'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
+
+import Reactable from '../Reactable'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag

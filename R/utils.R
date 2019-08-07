@@ -67,9 +67,17 @@ isTagList <- function(x) {
 }
 
 asReactTag <- function(x) {
-  # Extract tag for subtables
   if (is.htmlwidget(x)) {
-    return(asReactTag(x$x$tag))
+    if (inherits(x, "reactable")) {
+      # Extract tag for subtables
+      return(asReactTag(x$x$tag))
+    } else {
+      tags <- htmltools::as.tags(x)
+      tags <- asReactTag(tags)
+      # Add a key for proper widget rerenders
+      tags <- reactR::React$WidgetContainer(tags, key = digest::digest(x))
+      return(tags)
+    }
   }
 
   # Unnest and wrap tag lists in fragments for proper hydration

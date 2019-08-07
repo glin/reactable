@@ -73,8 +73,18 @@ test_that("asReactTag", {
   expect_equal(asReactTag(123), "123")
   expect_equal(asReactTag(TRUE), "TRUE")
 
-  # Tags should be extracted from htmlwidgets
+  # Tags should be extracted from subtables
   expect_true(is.tag(asReactTag(reactable(data.frame()))))
+
+  # All other htmlwidgets should be converted to tags
+  tbl <- reactable(data.frame())
+  class(tbl) <- c("my-widget", "htmlwidget")
+  tag <- asReactTag(tbl)
+  expect_equal(tag$name, "WidgetContainer")
+  expect_equal(tag$attribs, list(key = digest::digest(tbl)))
+  expect_equal(findDependencies(tag), findDependencies(tbl))
+  expect_equal(length(tag$children), 1)
+  expect_equal(tag$children[[1]]$name, "Fragment")
 
   # Tag lists should be unnested and wrapped in fragments
   expect_equal(asReactTag(tagList()), reactR::React$Fragment())
