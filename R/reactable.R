@@ -310,7 +310,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     cell <- column[["cell"]]
     if (is.function(cell)) {
       content <- lapply(seq_len(nrow(data)), function(index) {
-        value <- data[index, key]
+        value <- data[[index, key]]
         callFunc(cell, value, index)
       })
       column$cell <- lapply(content, asReactTag)

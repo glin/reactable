@@ -395,25 +395,33 @@ test_that("pagination", {
 })
 
 test_that("column renderers", {
+  data <- data.frame(
+    x = c(1, 2),
+    y = c("a", "b"),
+    z = I(list(list(1,2,3), list(4,5,6)))
+  )
+
   # Cell renderers
-  data <- data.frame(x = c(1, 2), y = c("a", "b"))
   tbl <- reactable(data, columns = list(
     x = colDef(cell = function(value) value + 1),
-    y = colDef(cell = function(value, index) index)
+    y = colDef(cell = function(value, index) index),
+    z = colDef(cell = function(values, index) paste(length(values), index))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$cell, list("2", "3"))
   expect_equal(attribs$columns[[2]]$cell, list("1", "2"))
+  expect_equal(attribs$columns[[3]]$cell, list("3 1", "3 2"))
 
   # Footer renderers
-  data <- data.frame(x = c(1, 2), y = c("a", "b"))
   tbl <- reactable(data, columns = list(
     x = colDef(footer = function(values) paste(values, collapse = " ")),
-    y = colDef(footer = function(values, name) name)
+    y = colDef(footer = function(values, name) name),
+    z = colDef(footer = function(values) paste(length(values), sum(unlist(values))))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]][["footer"]], "1 2")
   expect_equal(attribs$columns[[2]][["footer"]], "y")
+  expect_equal(attribs$columns[[3]][["footer"]], "2 21")
 
   tbl <- reactable(data, columns = list(
     x = colDef(footer = div("footer")),
