@@ -63,9 +63,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         content = value
       } else if (col.html) {
         // Render inline to align with the expander
-        content = (
-          <div style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: value }} />
-        )
+        content = <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: value }} />
       } else {
         content = value != null ? String(value) : ''
       }
