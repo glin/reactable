@@ -61,6 +61,10 @@ is.htmlwidget <- function(x) {
   inherits(x, "htmlwidget")
 }
 
+is.htmlDependency <- function(x) {
+  inherits(x, "html_dependency")
+}
+
 # Test both shiny.tag.list and regular lists of tags
 isTagList <- function(x) {
   inherits(x, "shiny.tag.list") || (is.list(x) && all(sapply(x, is.tag)))
@@ -85,6 +89,12 @@ asReactTag <- function(x) {
     x <- unnestTagList(x)
     # Preserve html dependencies
     deps <- htmltools::htmlDependencies(x)
+    # Collect inline html dependencies
+    inlineDeps <- sapply(x, is.htmlDependency)
+    if (any(inlineDeps)) {
+      deps <- c(deps, x[inlineDeps])
+      x[inlineDeps] <- NULL
+    }
     x <- lapply(x, asReactTag)
     x <- do.call(reactR::React$Fragment, x)
     return(htmltools::attachDependencies(x, deps))
@@ -102,6 +112,12 @@ asReactTag <- function(x) {
   x$children <- unnestTagList(x$children)
   # Preserve html dependencies
   deps <- htmltools::htmlDependencies(x$children)
+  # Collect inline html dependencies
+  inlineDeps <- sapply(x$children, is.htmlDependency)
+  if (any(inlineDeps)) {
+    deps <- c(deps, x$children[inlineDeps])
+    x$children[inlineDeps] <- NULL
+  }
   x <- htmltools::attachDependencies(x, deps, append = TRUE)
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
@@ -112,7 +128,7 @@ asReactTag <- function(x) {
 
 # Recursively unnest tag lists
 unnestTagList <- function(x) {
-  if (is.tag(x) || is.htmlwidget(x) || !is.list(x)) {
+  if (is.tag(x) || is.htmlwidget(x) || is.htmlDependency(x) || !is.list(x)) {
     return(x)
   }
 
@@ -128,7 +144,7 @@ unnestTagList <- function(x) {
       }
       b <- unnestTagList(b)
     }
-    b <- if (is.tag(b) || is.htmlwidget(b)) list(b) else b
+    b <- if (is.tag(b) || is.htmlwidget(b) || is.htmlDependency(b)) list(b) else b
     tags <- c(a, b)
   }, x, list())
 

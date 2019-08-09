@@ -57,6 +57,12 @@ test_that("is.htmlwidget", {
   expect_false(is.htmlwidget(div()))
 })
 
+test_that("is.htmlDependency", {
+  dep <- htmlDependency("dep", "0.1.0", "/path/to/dep")
+  expect_true(is.htmlDependency(dep))
+  expect_false(is.htmlDependency(div()))
+})
+
 test_that("isTagList", {
   expect_true(isTagList(tagList()))
   expect_true(isTagList(tagList("a")))
@@ -170,6 +176,18 @@ test_that("asReactTag", {
   # Tag w/ nested tag list deps
   tag <- div(attachDependencies(tagList(div("x")), dep), div("y"))
   expect_equal(findDependencies(asReactTag(tag)), list(dep))
+
+  # HTML dependency objects
+  tag <- tagList("x", "y", dep)
+  expect_equal(asReactTag(tag), attachDependencies(reactR::React$Fragment("x", "y"), dep))
+  tag <- div("x", div(), dep, dep2, "z")
+  expect_equal(asReactTag(tag), attachDependencies(div("x", div(), "z"), list(dep, dep2)))
+
+  # Nested HTML dependency objects
+  tag <- tagList("x", div(dep), span("y"))
+  expect_equal(asReactTag(tag), reactR::React$Fragment("x", attachDependencies(div(), dep), span("y")))
+  tag <- div("x", tagList(dep), span("y"))
+  expect_equal(asReactTag(tag), attachDependencies(div("x", span("y")), dep))
 })
 
 test_that("asReactAttributes", {
