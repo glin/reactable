@@ -130,6 +130,31 @@ reactable(data, columns = list(
 ))
 ```
 
+### Embedding HTML Widgets
+https://glin.github.io/reactable/articles/examples.html#embedding-html-widgets
+
+```r
+library(dplyr)
+library(sparkline)
+
+data <- chickwts %>%
+  group_by(feed) %>%
+  summarise(weight = list(weight)) %>%
+  mutate(boxplot = NA, sparkline = NA)
+
+reactable(data, columns = list(
+  weight = colDef(cell = function(values) {
+    sparkline(values, type = "bar")
+  }),
+  boxplot = colDef(cell = function(value, index) {
+    sparkline(data$weight[[index]], type = "box")
+  }),
+  sparkline = colDef(cell = function(value, index) {
+    sparkline(data$weight[[index]])
+  })
+))
+```
+
 ### Conditional Styling
 https://glin.github.io/reactable/articles/examples.html#conditional-styling
 

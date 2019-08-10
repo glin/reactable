@@ -359,6 +359,31 @@ reactable(data, groupBy = "Manufacturer", columns = list(
 ```
 
 
+## Embedding HTML Widgets
+
+```{r message=FALSE}
+library(dplyr)
+library(sparkline)
+
+data <- chickwts %>%
+  group_by(feed) %>%
+  summarise(weight = list(weight)) %>%
+  mutate(boxplot = NA, sparkline = NA)
+
+reactable(data, highlight = FALSE, columns = list(
+  weight = colDef(cell = function(values) {
+    sparkline(values, type = "bar")
+  }),
+  boxplot = colDef(cell = function(value, index) {
+    sparkline(data$weight[[index]], type = "box")
+  }),
+  sparkline = colDef(cell = function(value, index) {
+    sparkline(data$weight[[index]])
+  })
+))
+```
+
+
 ## Conditional Styling
 
 ### Cell styling

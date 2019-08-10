@@ -19,7 +19,9 @@ Imports:
     reactR
 Suggests:
     covr,
+    dplyr,
     rmarkdown,
+    sparkline,
     testthat
 Encoding: UTF-8
 LazyData: true
