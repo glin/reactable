@@ -43,3 +43,16 @@ of the browser.}
 \description{
 Column formatting options
 }
+\examples{
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " cm")
+  ),
+  Sepal.Width = colDef(
+    aggregate = "mean",
+    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
+  )
+))
+
+}

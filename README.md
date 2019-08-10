@@ -260,7 +260,10 @@ reactable(
   rowClass = NULL,            # Additional CSS classes to apply to table rows. Also see conditional styling below
   rowStyle = NULL,            # Inline styles to apply to table rows. A named list or character string.
                               # Also see conditional styling below
-  inline = FALSE              # Display the table as an inline element, which shrinks to fit its contents?
+  inline = FALSE,             # Display the table as an inline element, which shrinks to fit its contents?
+  width = "auto",             # Width in pixels. Defaults to automatic sizing
+  height = "auto",            # Height in pixels. Defaults to automatic sizing
+  elementId = NULL            # Element ID for the widget
 )
 ```
 

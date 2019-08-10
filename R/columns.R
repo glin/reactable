@@ -2,7 +2,7 @@
 #'
 #' @param name Column name.
 #' @param aggregate Aggregate function. The name of a built-in aggregate
-#'   function or a custom `JS()` aggregate function. Built-in aggregate functions
+#'   function or a custom [JS()] aggregate function. Built-in aggregate functions
 #'   are: `"mean"`, `"sum"`, `"max"`, `"min"`, `"count"`, `"unique"`, `"frequency"`.
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
@@ -12,19 +12,19 @@
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param sortMethod Custom sort method. Specify `"naLast"` to always sort NAs
 #'   to the bottom.
-#' @param format Column formatting options. A `colFormat()` object to
-#'   format all cells, or a named list of `colFormat()` objects to format standard
+#' @param format Column formatting options. A [colFormat()] object to
+#'   format all cells, or a named list of [colFormat()] objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
 #' @param cell Custom cell renderer. An R function that takes the cell value and
-#'   row index as arguments, or a `JS()` function that takes a cell info object as
+#'   row index as arguments, or a [JS()] function that takes a cell info object as
 #'   an argument.
-#' @param aggregated Custom aggregated cell renderer. A `JS()` function that takes
+#' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
 #'   a cell info object as an argument.
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes two arguments, the column values and column name, or a
-#'   `JS()` function that takes one argument, a column info object.
+#'   [JS()] function that takes one argument, a column info object.
 #' @param details Additional content to display when expanding a row. An R function
-#'   that takes a row index argument or a `JS()` function that takes a row info object
+#'   that takes a row index argument or a [JS()] function that takes a row info object
 #'   as an argument. Cannot be used on a grouping column.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
 #' @param showNA Show NA values? If `FALSE`, NA values will be left as empty cells.
@@ -33,13 +33,13 @@
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
-#' @param class Additional CSS classes to apply to cells. Can also be a `JS()`
+#' @param class Additional CSS classes to apply to cells. Can also be a [JS()]
 #'   function that takes a row info object and table state object as arguments,
 #'   or an R function that takes the cell value and row index as arguments.
 #'   Note that R functions cannot apply classes to aggregated cells.
 #' @param style Inline styles to apply to cells. A named list or character string.
 #'   Can also be a function that takes the cell value and row index as arguments,
-#'   or a `JS()` function that takes a row info object and table state object as
+#'   or a [JS()] function that takes a row info object and table state object as
 #'   arguments. Note that R functions cannot apply styles to aggregated cells.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
@@ -207,6 +207,22 @@ isDescOrder <- function(x) {
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
+#'
+#' @examples
+#' reactable(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = colDef(name = "Length"),
+#'     Sepal.Width = colDef(name = "Width"),
+#'     Petal.Length = colDef(name = "Length"),
+#'     Petal.Width = colDef(name = "Width")
+#'   ),
+#'   columnGroups = list(
+#'     colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+#'     colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+#'   )
+#' )
+#'
 #' @export
 colGroup <- function(name = NULL, columns = NULL, align = NULL, headerClass = NULL,
                      headerStyle = NULL) {
@@ -257,6 +273,19 @@ is.colGroup <- function(x) {
 #'   vector of BCP 47 language tags, such as `"en-US"` for English (United States),
 #'   `"hi"` for Hindi, or `"sv-SE"` for Swedish (Sweden). Defaults to the locale
 #'   of the browser.
+#'
+#' @examples
+#' reactable(iris, groupBy = "Species", columns = list(
+#'   Sepal.Length = colDef(
+#'     aggregate = "sum",
+#'     format = colFormat(suffix = " cm")
+#'   ),
+#'   Sepal.Width = colDef(
+#'     aggregate = "mean",
+#'     format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
+#'   )
+#' ))
+#'
 #' @export
 colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
                       separators = FALSE, percent = FALSE, currency = NULL,

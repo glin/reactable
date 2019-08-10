@@ -22,3 +22,19 @@ character string.}
 \description{
 Column group definitions
 }
+\examples{
+reactable(
+  iris,
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
+
+}

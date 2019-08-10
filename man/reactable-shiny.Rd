@@ -17,9 +17,9 @@ reactable_html(id, style, class, ...)
 \arguments{
 \item{outputId}{Output variable to read from.}
 
-\item{width, height}{Must be a valid CSS unit (like \code{'100\%'},
-\code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
-string and have \code{'px'} appended.}
+\item{width, height}{Must be a valid CSS unit (like \code{"100\%"},
+\code{"400px"}, \code{"auto"}) or a number, which will be coerced to a
+string and have \code{"px"} appended.}
 
 \item{inline}{Display the table as an inline element, which shrinks to fit
 its contents? By default, the table is displayed as a block element, which
@@ -44,6 +44,10 @@ is useful if you want to save an expression in a variable.}
 Output and render functions for using reactable within Shiny
 applications and interactive R Markdown documents.
 }
+\note{
+See the \href{https://glin.github.io/reactable/articles/shiny-demo.html}{online demo}
+for additional examples of using reactable in Shiny.
+}
 \examples{
 \dontrun{
 library(shiny)
@@ -62,4 +66,5 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 }
+
 }

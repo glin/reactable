@@ -2,7 +2,7 @@
 % Please edit documentation in R/reactable.R
 \name{reactable}
 \alias{reactable}
-\title{Create a reactable widget}
+\title{Create a reactable HTML widget}
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
@@ -24,13 +24,13 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{rownames}{Show row names?}
 
-\item{colnames}{Optional named list of column names.}
+\item{colnames}{Named list of column names.}
 
-\item{groupBy}{Optional vector of column names to group by.}
+\item{groupBy}{Character vector of column names to group by.}
 
-\item{columns}{Optional named list of column definitions. See \code{colDef()}.}
+\item{columns}{Named list of column definitions. See \code{\link[=colDef]{colDef()}}.}
 
-\item{columnGroups}{Optional list of column group definitions. See \code{colGroup()}.}
+\item{columnGroups}{List of column group definitions. See \code{\link[=colGroup]{colGroup()}}.}
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
@@ -38,10 +38,10 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 
 \item{filterable}{Enable column filtering?}
 
-\item{defaultColDef}{Default column definition used by every column. See \code{colDef()}.}
+\item{defaultColDef}{Default column definition used by every column. See \code{\link[=colDef]{colDef()}}.}
 
 \item{defaultColGroup}{Default column group definition used by every column group.
-See \code{colGroup()}.}
+See \code{\link[=colGroup]{colGroup()}}.}
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
@@ -75,8 +75,9 @@ multiple or single row selection.}
 represented as a vector of row indices, or \code{NULL} if no rows are selected.}
 
 \item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument or a \code{JS()} function that takes a row info object
-as an argument. Can also be a \code{colDef()} to customize the details expander column.}
+that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes
+a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to customize the
+details expander column.}
 
 \item{outlined}{Add borders around the table?}
 
@@ -97,26 +98,68 @@ as an argument. Can also be a \code{colDef()} to customize the details expander 
 \item{style}{Inline styles to apply to the table. A named list or character string.}
 
 \item{rowClass}{Additional CSS classes to apply to table rows. A character
-string, a \code{JS()} function that takes a row info object and table state object
+string, a \code{\link[=JS]{JS()}} function that takes a row info object and table state object
 as arguments, or an R function that takes a row index argument.}
 
 \item{rowStyle}{Inline styles to apply to table rows. A named list, character
-string, \code{JS()} function that takes a row info object and table state object
+string, \code{\link[=JS]{JS()}} function that takes a row info object and table state object
 as arguments, or an R function that takes a row index argument.}
 
 \item{inline}{Display the table as an inline element, which shrinks to fit
 its contents? By default, the table is displayed as a block element, which
 expands to fit its parent container.}
 
-\item{width}{Width in pixels (optional, defaults to automatic sizing).}
+\item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
-\item{height}{Height in pixels (optional, defaults to automatic sizing).}
+\item{height}{Height in pixels Defaults to \code{"auto"} for automatic sizing.}
 
-\item{elementId}{Optional element ID for the widget.}
+\item{elementId}{Element ID for the widget.}
 }
 \value{
-An htmlwidget.
+A reactable HTML widget.
 }
 \description{
-Create a reactable widget
+Creates a data table HTML widget using the React Table library.
+}
+\note{
+See the \href{https://glin.github.io/reactable}{online documentation} for
+additional details and examples.
+}
+\examples{
+reactable(iris)
+
+# Grouping and aggregation
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(aggregate = "count"),
+  Sepal.Width = colDef(aggregate = "mean"),
+  Petal.Length = colDef(aggregate = "sum"),
+  Petal.Width = colDef(aggregate = "max")
+))
+
+# Row details
+reactable(iris, details = function(index) {
+  htmltools::div(
+    "Details for row: ", index,
+    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\\n"))
+  )
+})
+
+# Conditional styling
+reactable(sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
+))
+
+}
+\seealso{
+\code{\link[=renderReactable]{renderReactable()}} and \code{\link[=reactableOutput]{reactableOutput()}} for using reactable
+in Shiny applications or interactive R Markdown documents.
 }

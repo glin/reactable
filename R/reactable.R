@@ -5,20 +5,22 @@
 #' @name reactable-package
 NULL
 
-#' Create a reactable widget
+#' Create a reactable HTML widget
+#'
+#' Creates a data table HTML widget using the React Table library.
 #'
 #' @param data A data frame or matrix.
 #' @param rownames Show row names?
-#' @param colnames Optional named list of column names.
-#' @param columns Optional named list of column definitions. See `colDef()`.
-#' @param columnGroups Optional list of column group definitions. See `colGroup()`.
-#' @param groupBy Optional vector of column names to group by.
+#' @param colnames Named list of column names.
+#' @param columns Named list of column definitions. See [colDef()].
+#' @param columnGroups List of column group definitions. See [colGroup()].
+#' @param groupBy Character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
 #' @param filterable Enable column filtering?
-#' @param defaultColDef Default column definition used by every column. See `colDef()`.
+#' @param defaultColDef Default column definition used by every column. See [colDef()].
 #' @param defaultColGroup Default column group definition used by every column group.
-#'   See `colGroup()`.
+#'   See [colGroup()].
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
 #' @param defaultSorted Optional vector of column names to sort by default.
@@ -39,8 +41,9 @@ NULL
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   represented as a vector of row indices, or `NULL` if no rows are selected.
 #' @param details Additional content to display when expanding a row. An R function
-#'   that takes a row index argument or a `JS()` function that takes a row info object
-#'   as an argument. Can also be a `colDef()` to customize the details expander column.
+#'   that takes a row index argument or a [JS()] function that takes
+#'   a row info object as an argument. Can also be a [colDef()] to customize the
+#'   details expander column.
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?
 #' @param borderless Remove inner borders from table?
@@ -51,18 +54,59 @@ NULL
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
 #' @param rowClass Additional CSS classes to apply to table rows. A character
-#'   string, a `JS()` function that takes a row info object and table state object
+#'   string, a [JS()] function that takes a row info object and table state object
 #'   as arguments, or an R function that takes a row index argument.
 #' @param rowStyle Inline styles to apply to table rows. A named list, character
-#'   string, `JS()` function that takes a row info object and table state object
+#'   string, [JS()] function that takes a row info object and table state object
 #'   as arguments, or an R function that takes a row index argument.
 #' @param inline Display the table as an inline element, which shrinks to fit
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
-#' @param width Width in pixels (optional, defaults to automatic sizing).
-#' @param height Height in pixels (optional, defaults to automatic sizing).
-#' @param elementId Optional element ID for the widget.
-#' @return An htmlwidget.
+#' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
+#' @param height Height in pixels Defaults to `"auto"` for automatic sizing.
+#' @param elementId Element ID for the widget.
+#' @return A reactable HTML widget.
+#'
+#' @note
+#' See the [online documentation](https://glin.github.io/reactable) for
+#' additional details and examples.
+#'
+#' @seealso [renderReactable()] and [reactableOutput()] for using reactable
+#'   in Shiny applications or interactive R Markdown documents.
+#'
+#' @examples
+#' reactable(iris)
+#'
+#' # Grouping and aggregation
+#' reactable(iris, groupBy = "Species", columns = list(
+#'   Sepal.Length = colDef(aggregate = "count"),
+#'   Sepal.Width = colDef(aggregate = "mean"),
+#'   Petal.Length = colDef(aggregate = "sum"),
+#'   Petal.Width = colDef(aggregate = "max")
+#' ))
+#'
+#' # Row details
+#' reactable(iris, details = function(index) {
+#'   htmltools::div(
+#'     "Details for row: ", index,
+#'     htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
+#'   )
+#' })
+#'
+#' # Conditional styling
+#' reactable(sleep, columns = list(
+#'   extra = colDef(style = function(value) {
+#'     if (value > 0) {
+#'       color <- "green"
+#'     } else if (value < 0) {
+#'       color <- "red"
+#'     } else {
+#'       color <- "#777"
+#'     }
+#'     list(color = color, fontWeight = "bold")
+#'   })
+#' ))
+#'
 #' @export
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
@@ -420,19 +464,23 @@ columnSortDefs <- function(defaultSorted) {
 #' applications and interactive R Markdown documents.
 #'
 #' @param outputId Output variable to read from.
-#' @param width,height Must be a valid CSS unit (like \code{'100\%'},
-#'   \code{'400px'}, \code{'auto'}) or a number, which will be coerced to a
-#'   string and have \code{'px'} appended.
+#' @param width,height Must be a valid CSS unit (like `"100%"`,
+#'   `"400px"`, `"auto"`) or a number, which will be coerced to a
+#'   string and have `"px"` appended.
 #' @param inline Display the table as an inline element, which shrinks to fit
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
 #' @param expr An expression that generates a reactable.
-#' @param env The environment in which to evaluate \code{expr}.
-#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#' @param env The environment in which to evaluate `expr`.
+#' @param quoted Is `expr` a quoted expression (with `quote()`)? This
 #'   is useful if you want to save an expression in a variable.
 #'
 #' @name reactable-shiny
-#' @export
+#'
+#' @note
+#' See the [online demo](https://glin.github.io/reactable/articles/shiny-demo.html)
+#' for additional examples of using reactable in Shiny.
+#'
 #' @examples
 #' \dontrun{
 #' library(shiny)
@@ -451,6 +499,8 @@ columnSortDefs <- function(defaultSorted) {
 #'
 #' shinyApp(ui, server)
 #' }
+#'
+#' @export
 reactableOutput <- function(outputId, width = NULL, height = NULL, inline = FALSE) {
   htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
                                  inline = inline, package = "reactable")

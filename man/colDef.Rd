@@ -17,7 +17,7 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 \item{name}{Column name.}
 
 \item{aggregate}{Aggregate function. The name of a built-in aggregate
-function or a custom \code{JS()} aggregate function. Built-in aggregate functions
+function or a custom \code{\link[=JS]{JS()}} aggregate function. Built-in aggregate functions
 are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"count"}, \code{"unique"}, \code{"frequency"}.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
@@ -34,23 +34,23 @@ order or \code{"desc"} for descending order. Overrides the table option.}
 \item{sortMethod}{Custom sort method. Specify \code{"naLast"} to always sort NAs
 to the bottom.}
 
-\item{format}{Column formatting options. A \code{colFormat()} object to
-format all cells, or a named list of \code{colFormat()} objects to format standard
+\item{format}{Column formatting options. A \code{\link[=colFormat]{colFormat()}} object to
+format all cells, or a named list of \code{\link[=colFormat]{colFormat()}} objects to format standard
 cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
 \item{cell}{Custom cell renderer. An R function that takes the cell value and
-row index as arguments, or a \code{JS()} function that takes a cell info object as
+row index as arguments, or a \code{\link[=JS]{JS()}} function that takes a cell info object as
 an argument.}
 
-\item{aggregated}{Custom aggregated cell renderer. A \code{JS()} function that takes
+\item{aggregated}{Custom aggregated cell renderer. A \code{\link[=JS]{JS()}} function that takes
 a cell info object as an argument.}
 
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a
-\code{JS()} function that takes one argument, a column info object.}
+\code{\link[=JS]{JS()}} function that takes one argument, a column info object.}
 
 \item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument or a \code{JS()} function that takes a row info object
+that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes a row info object
 as an argument. Cannot be used on a grouping column.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
@@ -66,14 +66,14 @@ Defaults to \code{FALSE}.}
 
 \item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
-\item{class}{Additional CSS classes to apply to cells. Can also be a \code{JS()}
+\item{class}{Additional CSS classes to apply to cells. Can also be a \code{\link[=JS]{JS()}}
 function that takes a row info object and table state object as arguments,
 or an R function that takes the cell value and row index as arguments.
 Note that R functions cannot apply classes to aggregated cells.}
 
 \item{style}{Inline styles to apply to cells. A named list or character string.
 Can also be a function that takes the cell value and row index as arguments,
-or a \code{JS()} function that takes a row info object and table state object as
+or a \code{\link[=JS]{JS()}} function that takes a row info object and table state object as
 arguments. Note that R functions cannot apply styles to aggregated cells.}
 
 \item{headerClass}{Additional CSS classes to apply to the header.}
