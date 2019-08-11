@@ -61,12 +61,13 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
     stop("`name` must be a character string")
   }
   if (!is.null(aggregate)) {
-    if (!is.character(aggregate) && !is.JS(aggregate)) {
+    if (is.character(aggregate) && !is.JS(aggregate)) {
+      aggregators <- c("mean", "sum", "max", "min", "count", "unique", "frequency")
+      if (!aggregate %in% aggregators) {
+        stop("`aggregate` must be a valid aggregate function")
+      }
+    } else if (!is.JS(aggregate)) {
       stop("`aggregate` must be a character string or JS function")
-    }
-    aggregators <- c("mean", "sum", "max", "min", "count", "unique", "frequency")
-    if (is.character(aggregate) && !aggregate %in% aggregators) {
-      stop("`aggregate` must be a valid aggregate function")
     }
   }
   if (!is.null(sortable) && !is.logical(sortable)) {

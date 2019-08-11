@@ -62,6 +62,15 @@ test_that("colDef", {
   }
 })
 
+test_that("colDef aggregate function", {
+  aggregators <- list(JS("function(values, rows) { return 1 }"),
+                      "mean", "sum", "max", "min", "count", "unique", "frequency")
+  for (func in aggregators) {
+    col <- colDef(aggregate = func)
+    expect_equal(col$aggregate, func)
+  }
+})
+
 test_that("colDef format", {
   format <- colFormat()
 
