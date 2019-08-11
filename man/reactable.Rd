@@ -111,7 +111,7 @@ expands to fit its parent container.}
 
 \item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
-\item{height}{Height in pixels Defaults to \code{"auto"} for automatic sizing.}
+\item{height}{Height in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
 \item{elementId}{Element ID for the widget.}
 }

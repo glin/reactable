@@ -63,7 +63,7 @@ NULL
 #'   its contents? By default, the table is displayed as a block element, which
 #'   expands to fit its parent container.
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
-#' @param height Height in pixels Defaults to `"auto"` for automatic sizing.
+#' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param elementId Element ID for the widget.
 #' @return A reactable HTML widget.
 #'

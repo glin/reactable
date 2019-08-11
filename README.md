@@ -329,7 +329,7 @@ colDef(
     function(values, rows) {
       // input:
       //  - values: an array of all values in the group
-      //  - rows: an array of all rows in the group
+      //  - rows: an array of row info objects for all rows in the group
       //
       // output:
       //  - an aggregated value, e.g. a comma-separated list

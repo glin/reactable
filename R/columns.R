@@ -22,7 +22,7 @@
 #'   a cell info object as an argument.
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes two arguments, the column values and column name, or a
-#'   [JS()] function that takes one argument, a column info object.
+#'   [JS()] function that takes a column info object as an argument.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes a row index argument or a [JS()] function that takes a row info object
 #'   as an argument. Cannot be used on a grouping column.
@@ -88,7 +88,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(sortMethod)) {
     methods <- "naLast"
     if (!sortMethod %in% methods) {
-      stop(paste("`sortMethod` must be one of:", paste(shQuote(methods)), collapse = ", "))
+      stop(paste("`sortMethod` must be one of:", paste(dQuote(methods)), collapse = ", "))
     }
   }
   if (!is.null(format)) {

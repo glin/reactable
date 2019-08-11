@@ -47,7 +47,7 @@ a cell info object as an argument.}
 
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a
-\code{\link[=JS]{JS()}} function that takes one argument, a column info object.}
+\code{\link[=JS]{JS()}} function that takes a column info object as an argument.}
 
 \item{details}{Additional content to display when expanding a row. An R function
 that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes a row info object
