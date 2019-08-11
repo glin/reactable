@@ -227,14 +227,42 @@ reactable(
 ## Column Formatting
 
 ```{r}
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Length = colDef(
-    aggregate = "sum",
-    format = colFormat(suffix = " cm")
+data <- data.frame(
+  price_USD = c(123456.56, 132, 5650.12),
+  price_INR = c(350, 23208.552, 1773156.4),
+  temp = c(22, NA, 31),
+  percent = c(0.9525556, 0.5, 0.112),
+  date = as.Date(c("2019-01-02", "2019-03-15", "2019-09-22"))
+)
+
+reactable(data, columns = list(
+  price_USD = colDef(format = colFormat(prefix = "$", separators = TRUE, digits = 2)),
+  price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")),
+  temp = colDef(format = colFormat(suffix = " °C")),
+  percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
+  date = colDef(format = colFormat(date = TRUE, locale = "en-GB"))
+))
+```
+
+### Formatting aggregated cells
+
+```{r}
+data <- data.frame(
+  States = state.name,
+  Region = state.region,
+  Area = state.area
+)
+
+reactable(data, groupBy = "Region", columns = list(
+  States = colDef(
+    aggregate = "count",
+    format = list(
+      aggregated = colFormat(suffix = " states")
+    )
   ),
-  Sepal.Width = colDef(
-    aggregate = "mean",
-    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
+  Area = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " mi²", separators = TRUE)
   )
 ))
 ```
@@ -264,28 +292,28 @@ reactable(data, columns = list(
 
 ```{r}
 data <- data.frame(
-  item = letters[1:6],
-  qty = c(12000, 300.15, 3535125, 0, 4344, 12),
-  price_usd = c(12.12, 2141.213, 0.42, NA, 1.55, 34414),
-  price_eur = c(10.68, 1884.27, 0.37, NA, 1.36, 30284.32),
-  price_inr = c(841.73, 148707.24, 29, NA, 107.65, 2390052.3)
+  USD = c(12.12, 2141.213, 0.42, 1.55, 34414),
+  EUR = c(10.68, 1884.27, 0.37, 1.36, 30284.32),
+  INR = c(861.07, 152122.48, 29.84, 110, 2444942.63),
+  JPY = c(1280, 226144, 44.36, 164, 3634634.61),
+  MAD = c(115.78, 20453.94, 4.01, 15, 328739.73)
 )
 
 reactable(data, columns = list(
-  qty = colDef(
-    format = colFormat(separators = TRUE)
+  USD = colDef(
+    format = colFormat(currency = "USD", separators = TRUE, locale = "en-US")
   ),
-  price_usd = colDef(
-    name = "USD",
-    format = colFormat(currency = "USD", separators = TRUE)
-  ),
-  price_eur = colDef(
-    name = "EUR",
+  EUR = colDef(
     format = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
   ),
-  price_inr = colDef(
-    name = "INR",
+  INR = colDef(
     format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
+  ),
+  JPY = colDef(
+    format = colFormat(currency = "JPY", separators = TRUE, locale = "ja-JP")
+  ),
+  MAD = colDef(
+    format = colFormat(currency = "MAD", separators = TRUE, locale = "ar-MA")
   )
 ))
 ```

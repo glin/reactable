@@ -95,15 +95,20 @@ reactable(
 https://glin.github.io/reactable/articles/examples.html#column-formatting
 
 ```r
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Length = colDef(
-    aggregate = "sum",
-    format = colFormat(suffix = " cm")
-  ),
-  Sepal.Width = colDef(
-    aggregate = "mean",
-    format = list(aggregated = colFormat(suffix = " (avg)", digits = 2))
-  )
+data <- data.frame(
+  price_USD = c(123456.56, 132, 5650.12),
+  price_INR = c(350, 23208.552, 1773156.4),
+  temp = c(22, NA, 31),
+  percent = c(0.9525556, 0.5, 0.112),
+  date = as.Date(c("2019-01-02", "2019-03-15", "2019-09-22"))
+)
+
+reactable(data, columns = list(
+  price_USD = colDef(format = colFormat(prefix = "$", separators = TRUE, digits = 2)),
+  price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")),
+  temp = colDef(format = colFormat(suffix = " °C")),
+  percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
+  date = colDef(format = colFormat(date = TRUE, locale = "en-GB"))
 ))
 ```
 
