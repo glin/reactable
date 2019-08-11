@@ -203,23 +203,23 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('---')
     expect(cols[1].Cell({ value: null })).toEqual('missing')
 
-    // Works with formatters and renderers
+    // Works with renderers, ignored by formatters
     cols = buildColumnDefs([
       {
         accessor: 'x',
         type: 'numeric',
-        format: { cell: { prefix: '@' } },
-        cell: cell => `__${cell.value ? cell.value : ''}__`
+        format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
+        cell: cell => `__${cell.value ? cell.value : 'missing'}__`
       },
       {
         accessor: 'y',
-        format: { cell: { prefix: '@' } },
-        cell: cell => `__${cell.value ? cell.value : ''}__`
+        format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
+        cell: cell => `__${cell.value ? cell.value : 'missing'}__`
       }
     ])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('__@__')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('__@__')
-    expect(cols[1].Cell({ value: null })).toEqual('__@__')
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('__missing__')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('__missing__')
+    expect(cols[1].Cell({ value: null })).toEqual('__missing__')
   })
 
   test('sort method', () => {

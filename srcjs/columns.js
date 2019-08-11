@@ -38,13 +38,16 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
     col.Cell = function Cell(cell) {
       let value = cell.value
-      // Render missing values (NAs and NaNs) as blank cells
-      if (value == null || (col.type === 'numeric' && isNA(value))) {
+
+      const isMissingValue = value == null || (col.type === 'numeric' && isNA(value))
+      if (isMissingValue) {
         value = col.na
       }
-      if (col.format && col.format.cell) {
+
+      if (!isMissingValue && col.format && col.format.cell) {
         value = formatValue(value, col.format.cell)
       }
+
       if (col.cell) {
         if (typeof col.cell === 'function') {
           value = col.cell({ ...cell, value })
