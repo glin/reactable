@@ -23,3 +23,6 @@ navbar:
         href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
+
+development:
+  mode: unreleased
