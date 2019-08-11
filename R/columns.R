@@ -27,8 +27,8 @@
 #'   that takes a row index argument or a [JS()] function that takes a row info object
 #'   as an argument. Cannot be used on a grouping column.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
-#' @param showNA Show NA values? If `FALSE`, NA values will be left as empty cells.
-#'   Defaults to `FALSE`.
+#' @param na String to display for missing (`NA` or `NaN`) values.
+#'   By default, missing values are displayed as blank cells.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
@@ -52,7 +52,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
                    cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
-                   html = FALSE, showNA = FALSE, minWidth = NULL, maxWidth = NULL,
+                   html = FALSE, na = NULL, minWidth = NULL, maxWidth = NULL,
                    width = NULL, align = NULL, class = NULL, style = NULL,
                    headerClass = NULL, headerStyle = NULL,
                    footerClass = NULL, footerStyle = NULL) {
@@ -119,8 +119,8 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
-  if (!is.logical(showNA)) {
-    stop("`showNA` must be TRUE or FALSE")
+  if (!is.null(na) && !is.character(na)) {
+    stop("`na` must be a character string")
   }
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
     stop("`minWidth` must be numeric")
@@ -172,7 +172,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       footer = footer,
       details = details,
       html = if (html) TRUE,
-      showNA = if (showNA) TRUE,
+      na = na,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,

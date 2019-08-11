@@ -185,15 +185,23 @@ describe('buildColumnDefs', () => {
   })
 
   test('NA and NaN rendering', () => {
-    // Default rendering
+    // Default rendering of numeric NAs
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('')
 
-    // Render NAs
-    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', showNA: true }])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('NA')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('NaN')
+    // Default rendering of non-numeric NAs (serialized as nulls)
+    cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].Cell({ value: null })).toEqual('')
+
+    // Custom NA strings
+    cols = buildColumnDefs([
+      { accessor: 'x', type: 'numeric', na: '---' },
+      { accessor: 'y', na: 'missing' }
+    ])
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('---')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('---')
+    expect(cols[1].Cell({ value: null })).toEqual('missing')
 
     // Works with formatters and renderers
     cols = buildColumnDefs([
@@ -202,10 +210,16 @@ describe('buildColumnDefs', () => {
         type: 'numeric',
         format: { cell: { prefix: '@' } },
         cell: cell => `__${cell.value ? cell.value : ''}__`
+      },
+      {
+        accessor: 'y',
+        format: { cell: { prefix: '@' } },
+        cell: cell => `__${cell.value ? cell.value : ''}__`
       }
     ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('__@__')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('__@__')
+    expect(cols[1].Cell({ value: null })).toEqual('__@__')
   })
 
   test('sort method', () => {

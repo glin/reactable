@@ -157,7 +157,7 @@ reactable(
     y = c(1, NA, NA, -Inf, 0, Inf, -5)
   ),
   columns = list(
-    x = colDef(showNA = TRUE)
+    y = colDef(na = "NA")
   )
 )
 ```
@@ -169,7 +169,7 @@ reactable(
   data.frame(
     n = c(1, 2, 3, 4, 5),
     x = c(2, 3, 1, NA, NA),
-    y = c(4, 5, 6, NA, NA)
+    y = c("aa", "cc", "bb", NA, NA)
   ),
   defaultColDef = colDef(sortMethod = "naLast"),
   defaultSorted = "x"

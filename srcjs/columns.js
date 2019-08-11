@@ -38,9 +38,9 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
     col.Cell = function Cell(cell) {
       let value = cell.value
-      // Render NAs and NaNs as blank cells
-      if (!col.showNA && col.type === 'numeric' && isNA(value)) {
-        value = null
+      // Render missing values (NAs and NaNs) as blank cells
+      if (value == null || (col.type === 'numeric' && isNA(value))) {
+        value = col.na
       }
       if (col.format && col.format.cell) {
         value = formatValue(value, col.format.cell)

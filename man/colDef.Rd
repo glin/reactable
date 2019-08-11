@@ -8,7 +8,7 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
   cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
-  html = FALSE, showNA = FALSE, minWidth = NULL, maxWidth = NULL,
+  html = FALSE, na = NULL, minWidth = NULL, maxWidth = NULL,
   width = NULL, align = NULL, class = NULL, style = NULL,
   headerClass = NULL, headerStyle = NULL, footerClass = NULL,
   footerStyle = NULL)
@@ -55,8 +55,8 @@ as an argument. Cannot be used on a grouping column.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
 
-\item{showNA}{Show NA values? If \code{FALSE}, NA values will be left as empty cells.
-Defaults to \code{FALSE}.}
+\item{na}{String to display for missing (\code{NA} or \code{NaN}) values.
+By default, missing values are displayed as blank cells.}
 
 \item{minWidth}{Min width of the column in pixels.}
 
