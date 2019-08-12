@@ -1,3 +1,7 @@
+.ReactTable {
+  height: 100%;
+}
+
 .ReactTable.-inline {
   display: inline-flex;
 }
