@@ -164,7 +164,7 @@ reactable(data, columns = list(
 https://glin.github.io/reactable/articles/examples.html#conditional-styling
 
 ```r
-reactable(datasets::sleep, columns = list(
+reactable(sleep, columns = list(
   extra = colDef(style = function(value) {
     if (value > 0) {
       color <- "green"

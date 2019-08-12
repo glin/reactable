@@ -51,7 +51,7 @@ reactable(iris, groupBy = c("Species", "Petal.Width"), columns = list(
 
 #### R render function
 ```{r}
-reactable(iris, details = function(index) {
+reactable(iris[1:50, ], details = function(index) {
   htmltools::div(
     "Details for row: ", index,
     htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
@@ -61,7 +61,7 @@ reactable(iris, details = function(index) {
 
 #### JS render function
 ```{r}
-reactable(iris, details = colDef(
+reactable(iris[1:50, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
     return 'Details for row: ' + rowInfo.index +
@@ -92,7 +92,7 @@ reactable(data, details = function(index) {
 > NOTE: only supported by R render functions
 
 ```{r}
-reactable(head(iris, 10), details = function(index) {
+reactable(iris[1:5, ], details = function(index) {
   if (index %in% c(3, 5)) {
     reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
   }
@@ -102,7 +102,7 @@ reactable(head(iris, 10), details = function(index) {
 ### Multiple row details
 
 ```{r}
-reactable(head(iris, 10), 
+reactable(iris[1:5, ],
   details = function(index) {
     if (index %in% c(3, 5)) {
       reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
@@ -179,7 +179,7 @@ reactable(
 ### Show sortable columns
 
 ```{r}
-reactable(iris, sortable = FALSE, showSortable = TRUE, columns = list(
+reactable(iris[1:50, ], sortable = FALSE, showSortable = TRUE, columns = list(
   Petal.Width = colDef(sortable = TRUE),
   Petal.Length = colDef(sortable = TRUE)
 ))
@@ -209,12 +209,12 @@ reactable(data, filterable = TRUE)
 
 ```{r}
 reactable(
-  iris,
-  columns = list(
-    Sepal.Length = colDef(name = "Length"),
-    Sepal.Width = colDef(name = "Width"),
-    Petal.Length = colDef(name = "Length"),
-    Petal.Width = colDef(name = "Width")
+  iris[1:50, ],
+  colnames = list(
+    Sepal.Length = "Length",
+    Sepal.Width = "Width",
+    Petal.Length = "Length",
+    Petal.Width = "Width"
   ),
   columnGroups = list(
     colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
@@ -416,7 +416,7 @@ reactable(data, highlight = FALSE, columns = list(
 
 ### Cell styling
 ```{r}
-reactable(datasets::sleep, columns = list(
+reactable(sleep, columns = list(
   extra = colDef(style = function(value) {
     if (value > 0) {
       color <- "green"
@@ -431,7 +431,7 @@ reactable(datasets::sleep, columns = list(
 ```
 
 ```{r}
-reactable(datasets::sleep, columns = list(
+reactable(sleep, columns = list(
   extra = colDef(style = JS("
     function(rowInfo) {
       var value = rowInfo.row.extra
@@ -450,7 +450,7 @@ reactable(datasets::sleep, columns = list(
 
 ### Row styling
 ```{r row_styling, eval=FALSE}
-reactable(datasets::sleep, 
+reactable(sleep, 
   rowStyle = function(index) {
     if (sleep[index, "extra"] < -1) {
       list(backgroundColor = "#ffd08a")
@@ -474,7 +474,7 @@ reactable(datasets::sleep,
 ```
 
 ```{r}
-reactable(datasets::sleep,
+reactable(sleep,
   rowStyle = JS("function(rowInfo) {
     if (rowInfo.row.extra < -1) {
       return { backgroundColor: '#ffd08a' }
@@ -492,7 +492,7 @@ reactable(datasets::sleep,
 ## Footers
 
 ```{r}
-reactable(iris, columns = list(
+reactable(iris[1:50, ], columns = list(
   Sepal.Length = colDef(
     footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
   ),
@@ -563,25 +563,35 @@ reactable(iris[1:5, ], compact = TRUE)
 
 ### Page size options
 ```{r}
-reactable(iris, defaultPageSize = 4, pageSizeOptions = c(4, 8, 12))
+reactable(iris[1:50, ], defaultPageSize = 4, pageSizeOptions = c(4, 8, 12))
 ```
 
 ### Alternative pagination types
 
 #### Page jump
 ```{r}
-reactable(iris, paginationType = "jump", defaultPageSize = 4)
+reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
 ```
 
 #### Simple
 ```{r}
-reactable(iris, paginationType = "simple", defaultPageSize = 4)
+reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
 ```
 
 ### Hide pagination elements
 ```{r}
-reactable(iris, showPageSizeOptions = FALSE, defaultPageSize = 4)
-reactable(iris, showPageInfo = FALSE, defaultPageSize = 4)
+reactable(iris[1:50, ], showPageSizeOptions = FALSE, defaultPageSize = 4)
+reactable(iris[1:50, ], showPageInfo = FALSE, defaultPageSize = 4)
+```
+
+### Minimum rows per page
+```{r}
+reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4)
+```
+
+### No pagination
+```{r}
+reactable(iris[1:50, ], pagination = FALSE, height = 300)
 ```
 
 ```{css echo=FALSE}
