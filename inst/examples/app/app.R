@@ -148,7 +148,8 @@ server <- function(input, output, session) {
       highlight = "highlight" %in% input$options,
       compact = "compact" %in% input$options,
       showSortable = "showSortable" %in% input$options,
-      inline = "inline" %in% input$options
+      inline = "inline" %in% input$options,
+      height = if ("pagination" %in% input$pagination) "auto" else 500
     )
   })
 
@@ -245,9 +246,10 @@ server <- function(input, output, session) {
       highlight = .(opts$highlight),
       compact = .(opts$compact),
       showSortable = .(opts$showSortable),
-      inline = .(opts$inline),
       groupBy = .(opts$groupBy),
       defaultSorted = .(opts$defaultSorted),
+      inline = .(opts$inline),
+      height = .(opts$height),
       columns = list(
         Sepal.Length = colDef(
           name = .(if (is.null(opts$columnGroups)) "Sepal Length" else "Length"),
