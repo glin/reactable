@@ -53,6 +53,8 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, rowClass = 123))
   expect_error(reactable(df, rowStyle = 555))
   expect_error(reactable(df, inline = "yes"))
+  expect_error(reactable(df, width = "asd"))
+  expect_error(reactable(df, height = "asd"))
 })
 
 test_that("reactable", {
@@ -144,6 +146,8 @@ test_that("reactable", {
     className = "tbl",
     style = list(color = "red"),
     inline = TRUE,
+    width = "400px",
+    height = "100%",
     dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)

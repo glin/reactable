@@ -214,6 +214,8 @@ class Reactable extends React.Component {
       rowClassName,
       rowStyle,
       inline,
+      width,
+      height,
       dataKey
     } = this.props
 
@@ -235,6 +237,8 @@ class Reactable extends React.Component {
       compact ? '-compact' : '',
       inline ? ' -inline' : ''
     )
+
+    style = { width, height, ...style }
 
     let Table = ReactTable
     let selectProps = {}
@@ -406,6 +410,8 @@ Reactable.propTypes = {
   rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.array]),
   rowStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.array]),
   inline: PropTypes.bool,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   dataKey: PropTypes.string
 }
 

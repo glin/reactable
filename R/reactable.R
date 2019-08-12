@@ -329,6 +329,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(inline) && !is.logical(inline)) {
     stop("`inline` must be TRUE or FALSE")
   }
+  width <- htmltools::validateCssUnit(width)
+  height <- htmltools::validateCssUnit(height)
 
   dependencies <- list()
   addDependencies <- function(x) {
@@ -437,6 +439,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     rowClassName = rowClass,
     rowStyle = rowStyle,
     inline = if (inline) inline,
+    width = if (width != "auto") width,
+    height = if (height != "auto") height,
     dataKey = digest::digest(list(data, cols))
   ))
 
