@@ -14,6 +14,9 @@
 .ReactTable .rt-th,
 .ReactTable .rt-td {
   padding: 7px 8px;
+  /* Override default nowrap */
+  white-space: inherit;
+  overflow-wrap: break-word;
 }
 
 .ReactTable .rt-thead .rt-th,
@@ -27,6 +30,11 @@
 .ReactTable.-compact .rt-thead .rt-th,
 .ReactTable.-compact .rt-thead .rt-td {
   padding: 4px 6px;
+}
+
+.ReactTable.-nowrap .rt-th,
+.ReactTable.-nowrap .rt-td {
+  white-space: nowrap;
 }
 
 /* Selectable cells */

@@ -260,7 +260,8 @@ describe('table styles', () => {
       '-striped',
       '-highlight',
       '-compact',
-      '-inline'
+      '-inline',
+      '-nowrap'
     )
 
     rerender(<Reactable {...props} outlined />)
@@ -284,8 +285,11 @@ describe('table styles', () => {
     rerender(<Reactable {...props} inline />)
     expect(table).toHaveClass('-inline')
 
-    rerender(<Reactable {...props} outlined bordered borderless striped highlight inline />)
-    expect(table).toHaveClass('-outlined -bordered -borderless -striped -highlight -inline')
+    rerender(<Reactable {...props} nowrap />)
+    expect(table).toHaveClass('-nowrap')
+
+    rerender(<Reactable {...props} outlined bordered borderless striped highlight inline nowrap />)
+    expect(table).toHaveClass('-outlined -bordered -borderless -striped -highlight -inline -nowrap')
   })
 
   it('applies width and height', () => {

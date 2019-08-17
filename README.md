@@ -259,6 +259,7 @@ reactable(
   striped = FALSE,            # Zebra-stripe rows?
   highlight = TRUE,           # Highlight rows on hover?
   compact = FALSE,            # Make tables more compact?
+  wrap = TRUE,                # Enable text wrapping? If FALSE, long text will be truncated to fit on one line
   showSortable = FALSE,       # Show an indicator on sortable columns?
   class = NULL,               # Additional CSS classes to apply to the table
   style = NULL,               # Inline styles to apply to the table. A named list or character string

@@ -208,6 +208,7 @@ class Reactable extends React.Component {
       striped,
       highlight,
       compact,
+      nowrap,
       showSortable,
       className,
       style,
@@ -235,7 +236,8 @@ class Reactable extends React.Component {
       striped ? '-striped' : '',
       highlight ? ' -highlight' : '',
       compact ? '-compact' : '',
-      inline ? ' -inline' : ''
+      inline ? ' -inline' : '',
+      nowrap ? '-nowrap' : ''
     )
 
     style = { width, height, ...style }
@@ -404,6 +406,7 @@ Reactable.propTypes = {
   striped: PropTypes.bool,
   highlight: PropTypes.bool,
   compact: PropTypes.bool,
+  nowrap: PropTypes.bool,
   showSortable: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,

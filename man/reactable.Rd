@@ -14,10 +14,10 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   showPageInfo = TRUE, minRows = 1, selection = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
   bordered = FALSE, borderless = FALSE, striped = FALSE,
-  highlight = TRUE, compact = FALSE, showSortable = FALSE,
-  class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
-  inline = FALSE, width = "auto", height = "auto",
-  elementId = NULL)
+  highlight = TRUE, compact = FALSE, wrap = TRUE,
+  showSortable = FALSE, class = NULL, style = NULL,
+  rowClass = NULL, rowStyle = NULL, inline = FALSE, width = "auto",
+  height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -90,6 +90,9 @@ details expander column.}
 \item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 
 \item{compact}{Make tables more compact?}
+
+\item{wrap}{Enable text wrapping? If \code{TRUE} (the default), long text will be
+wrapped to multiple lines. If \code{FALSE}, text will be truncated to fit on one line.}
 
 \item{showSortable}{Show an indicator on sortable columns?}
 
