@@ -148,6 +148,11 @@
   border-top: 1px solid hsl(0, 0%, 90%);
 }
 
+.-bordered .rt-tr-group:first-child > .rt-tr-group .rt-td {
+  /* Borders for aggregated rows */
+  border-top: 1px solid hsl(0, 0%, 95%);
+}
+
 .-bordered .rt-td,
 .-bordered .rt-th {
   border-left: 1px solid rgba(0, 0, 0, 0.05);
