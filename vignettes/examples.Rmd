@@ -502,7 +502,7 @@ reactable(iris[1:50, ], columns = list(
 ```
 
 
-## Table Styles
+## Table Styling
 
 ### Default
 
@@ -552,6 +552,13 @@ reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 reactable(iris[1:5, ], compact = TRUE)
 ```
 
+### No text wrapping
+
+```{r}
+data <- aggregate(. ~ Species, iris, toString)
+
+reactable(data, wrap = FALSE, resizable = TRUE)
+```
 
 ## Pagination
 

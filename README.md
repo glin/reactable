@@ -197,8 +197,8 @@ reactable(iris, columns = list(
 ))
 ```
 
-### Table Styles
-https://glin.github.io/reactable/articles/examples.html#table-styles
+### Table Styling
+https://glin.github.io/reactable/articles/examples.html#table-styling
 
 ```r
 reactable(iris, striped = TRUE, outlined = TRUE, bordered = TRUE)
