@@ -21,12 +21,15 @@ tbl <- reactable(
   pageSizeOptions = c(10, 20, 50, 100),
   resizable = TRUE,
   highlight = FALSE,
+  wrap = FALSE,
   class = "packages-table",
   defaultColDef = colDef(headerClass = "header"),
   columns = list(
     Package = colDef(),
     Version = colDef(sortable = FALSE),
-    Title = colDef(minWidth = 250, class = "package-title"),
+    Title = colDef(minWidth = 250, class = "package-title", cell = function(value) {
+      span(title = value, value)
+    }),
     Date = colDef(name = "Published", align = "right", cell = function(value) {
       strftime(value, format = "%b %d, %Y")
     }),

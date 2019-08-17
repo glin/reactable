@@ -37,7 +37,7 @@ off_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 1.
 def_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 0.6)
 knockout_pct_color <- hex_color_ramp(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"), bias = 2)
 
-rating_column <- function(maxWidth = 45, ...) {
+rating_column <- function(maxWidth = 55, ...) {
   colDef(maxWidth = maxWidth, align = "center", class = "number", ...)
 }
 
@@ -88,8 +88,9 @@ tbl <- reactable(
       }
     ),
     points = colDef(show = FALSE),
-    group = colDef(defaultSortOrder = "asc", align = "center", class = "group", headerStyle = list(fontWeight = 700)),
-    spi = rating_column(format = colFormat(digits = 1), maxWidth = 55),
+    group = colDef(defaultSortOrder = "asc", align = "center", maxWidth = 75,
+                   class = "group", headerStyle = list(fontWeight = 700)),
+    spi = rating_column(format = colFormat(digits = 1)),
     global_o = rating_column(
       name = "Off.",
       cell = function(value) {
@@ -114,7 +115,7 @@ tbl <- reactable(
     group_3 = group_column(name = "3rd Place"),
     make_round_of_16 = knockout_column(name = "Make Round of 16", class = "border-left"),
     make_quarters = knockout_column(name = "Make Qtr-Finals"),
-    make_semis = knockout_column(name = "Make Semifinals", maxWidth = 85),
+    make_semis = knockout_column(name = "Make Semifinals", maxWidth = 90),
     make_final = knockout_column(name = "Make Final"),
     win_league = knockout_column(name = "Win World Cup")
   ),
@@ -182,8 +183,6 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  flex-wrap: wrap;
-  white-space: normal;
 }
 
 .col-header {
@@ -266,7 +265,7 @@ h1.title {
 
 /* pkgdown articles */
 .contents {
-  width: inherit;
+  width: 1054px;
 }
 
 .page-header {
