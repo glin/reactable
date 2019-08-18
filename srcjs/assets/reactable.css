@@ -238,6 +238,12 @@
 }
 
 /* Pagination */
+.ReactTable .pagination-bottom,
+.ReactTable .pagination-top {
+  /* Fix overflow issue in IE 11 */
+  overflow: hidden;
+}
+
 .ReactTable .pagination-bottom .rt-pagination {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
