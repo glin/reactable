@@ -17,6 +17,9 @@
   /* Override default nowrap */
   white-space: inherit;
   overflow-wrap: break-word;
+  /* For IE 11 */
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .ReactTable .rt-thead .rt-th,
