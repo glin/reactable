@@ -552,6 +552,12 @@ reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 reactable(iris[1:5, ], compact = TRUE)
 ```
 
+### No highlighting on hover
+
+```{r}
+reactable(iris[1:5, ], highlight = FALSE)
+```
+
 ### No text wrapping
 
 ```{r}
