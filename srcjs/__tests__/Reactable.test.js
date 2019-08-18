@@ -524,6 +524,22 @@ describe('row details', () => {
     expect(queryByText('detail-a2')).toEqual(null)
   })
 
+  it('works for expander-only columns', () => {
+    const columns = [
+      { Header: '', accessor: '.details', className: 'no-content', details: ['detail-1', null] },
+      { Header: 'b', accessor: 'b' }
+    ]
+    const { container, getByText } = render(<Reactable {...props} columns={columns} />)
+    expect(getExpanders(container)).toHaveLength(1)
+    const expanderCells = container.querySelectorAll('.no-content')
+    expect(expanderCells).toHaveLength(2)
+    fireEvent.click(expanderCells[0])
+    expect(getByText('detail-1')).toBeTruthy()
+    // Expander-only cells should not have overflow ellipsis
+    expect(expanderCells[0]).toHaveStyle('text-overflow: inherit')
+    expect(expanderCells[1]).not.toHaveStyle('text-overflow: inherit')
+  })
+
   it('handles Shiny elements in content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
     const columns = [

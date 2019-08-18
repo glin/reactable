@@ -238,6 +238,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           // Don't expand rows without content
         } else {
           props.className = classNames('rt-expandable', props.className)
+          // Hide overflow ellipsis on expander-only columns
+          if (rowInfo.row[column.id] == null) {
+            props.style = { ...props.style, textOverflow: 'inherit' }
+          }
           props.onClick = (e, handleOriginal) => {
             onExpanderClick(rowInfo, column)
             if (handleOriginal) {

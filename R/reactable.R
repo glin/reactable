@@ -198,7 +198,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.null(details)) {
     detailsKey <- ".details"
     columnKeys <- c(detailsKey, columnKeys)
-    detailsColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE, width = 35)
+    detailsColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE, width = 45, align = "center")
     if (is.colDef(details)) {
       detailsColumn <- mergeLists(detailsColumn, details)
     } else {
