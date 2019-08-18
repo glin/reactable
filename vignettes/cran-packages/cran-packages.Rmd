@@ -106,7 +106,7 @@ Source: [crandb](https://github.com/r-hub/crandb), [cranlogs](https://github.com
 ```
 
 ```{r}
-tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600&display=fallback", rel = "stylesheet")
+tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=fallback", rel = "stylesheet")
 ```
 
 ```{css}
