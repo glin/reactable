@@ -179,6 +179,12 @@ reactable(iris[1:50, ], sortable = FALSE, showSortable = TRUE, columns = list(
 ))
 ```
 
+### Hide sort icons
+
+```{r}
+reactable(iris[1:5, ], showSortIcon = FALSE)
+```
+
 
 ## Filtering
 

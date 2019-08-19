@@ -21,7 +21,7 @@ export function columnsToRows(columns) {
 }
 
 export function buildColumnDefs(columns, groups, tableProps = {}) {
-  const { sortable, showSortable, isExpanded, onExpanderClick } = tableProps
+  const { sortable, showSortIcon, showSortable, isExpanded, onExpanderClick } = tableProps
 
   columns = columns.map(column => {
     let col = { ...column }
@@ -164,7 +164,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
     // Add sort icon to column header
     const isSortable = getFirstDefined(col.sortable, sortable)
-    if (isSortable) {
+    if (isSortable && showSortIcon) {
       const header = col.Header
       col.Header = function Header() {
         const sortClass = showSortable ? '-sort' : ''

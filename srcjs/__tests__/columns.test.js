@@ -394,11 +394,17 @@ describe('buildColumnDefs', () => {
     // No sort
     let cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }])
     expect(cols[0].Header).toEqual('xy')
-    cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }], null, { sortable: false })
+    cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }], null, {
+      sortable: false,
+      showSortIcon: true
+    })
     expect(cols[0].Header).toEqual('xy')
 
     // Table sort
-    cols = buildColumnDefs([{ Header: 'x', accessor: 'x' }], null, { sortable: true })
+    cols = buildColumnDefs([{ Header: 'x', accessor: 'x' }], null, {
+      sortable: true,
+      showSortIcon: true
+    })
     expect(cols[0].Header()).toEqual(
       <React.Fragment>
         {'x'}
@@ -407,7 +413,8 @@ describe('buildColumnDefs', () => {
     )
 
     cols = buildColumnDefs([{ Header: 'x', accessor: 'x', align: 'right' }], null, {
-      sortable: true
+      sortable: true,
+      showSortIcon: true
     })
     expect(cols[0].Header()).toEqual(
       <React.Fragment>
@@ -421,7 +428,8 @@ describe('buildColumnDefs', () => {
       [{ Header: 'xy', accessor: 'x', align: 'center', sortable: true }],
       null,
       {
-        sortable: false
+        sortable: false,
+        showSortIcon: true
       }
     )
     expect(cols[0].Header()).toEqual(
@@ -431,12 +439,25 @@ describe('buildColumnDefs', () => {
       </React.Fragment>
     )
 
+    // Hide sort icon
+    cols = buildColumnDefs(
+      [{ Header: 'x', accessor: 'x', align: 'right' }, { Header: 'y', accessor: 'y' }],
+      null,
+      {
+        sortable: true,
+        showSortIcon: false
+      }
+    )
+    expect(cols[0].Header).toEqual('x')
+    expect(cols[1].Header).toEqual('y')
+
     // showSortable
     cols = buildColumnDefs(
       [{ Header: 'x', accessor: 'x', align: 'right' }, { Header: 'y', accessor: 'y' }],
       null,
       {
         sortable: true,
+        showSortIcon: true,
         showSortable: true
       }
     )

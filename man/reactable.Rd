@@ -15,9 +15,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   selectionId = NULL, details = NULL, outlined = FALSE,
   bordered = FALSE, borderless = FALSE, striped = FALSE,
   highlight = TRUE, compact = FALSE, wrap = TRUE,
-  showSortable = FALSE, class = NULL, style = NULL,
-  rowClass = NULL, rowStyle = NULL, inline = FALSE, width = "auto",
-  height = "auto", elementId = NULL)
+  showSortIcon = TRUE, showSortable = FALSE, class = NULL,
+  style = NULL, rowClass = NULL, rowStyle = NULL, inline = FALSE,
+  width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -93,6 +93,8 @@ details expander column.}
 
 \item{wrap}{Enable text wrapping? If \code{TRUE} (the default), long text will be
 wrapped to multiple lines. If \code{FALSE}, text will be truncated to fit on one line.}
+
+\item{showSortIcon}{Show a sort icon when sorting columns?}
 
 \item{showSortable}{Show an indicator on sortable columns?}
 

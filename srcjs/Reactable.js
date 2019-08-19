@@ -209,6 +209,7 @@ class Reactable extends React.Component {
       highlight,
       compact,
       nowrap,
+      showSortIcon,
       showSortable,
       className,
       style,
@@ -223,6 +224,7 @@ class Reactable extends React.Component {
     data = columnsToRows(data)
     columns = buildColumnDefs(columns, columnGroups, {
       sortable,
+      showSortIcon,
       showSortable,
       isExpanded: this.isExpanded,
       onExpanderClick: this.handleExpanderClick
@@ -407,6 +409,7 @@ Reactable.propTypes = {
   highlight: PropTypes.bool,
   compact: PropTypes.bool,
   nowrap: PropTypes.bool,
+  showSortIcon: PropTypes.bool,
   showSortable: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -419,7 +422,8 @@ Reactable.propTypes = {
 }
 
 Reactable.defaultProps = {
-  sortable: true
+  sortable: true,
+  showSortIcon: true
 }
 
 export default Reactable

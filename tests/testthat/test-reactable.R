@@ -48,6 +48,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, compact = "true"))
   expect_error(reactable(df, wrap = "true"))
+  expect_error(reactable(df, showSortIcon = "true"))
   expect_error(reactable(df, showSortable = "true"))
   expect_error(reactable(df, class = c(1, 5)))
   expect_error(reactable(df, style = 555))
@@ -104,8 +105,8 @@ test_that("reactable", {
                    minRows = 5, selection = "single", selectionId = "sel",
                    details = function(i) i,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
-                   highlight = FALSE, compact = TRUE, wrap = FALSE, showSortable = TRUE,
-                   class = "tbl", style = list(color = "red"),
+                   highlight = FALSE, compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
+                   showSortable = TRUE, class = "tbl", style = list(color = "red"),
                    inline = TRUE, groupBy = "x", width = "400px", height = "100%",
                    elementId = "tbl")
   attribs <- getAttribs(tbl)
@@ -144,6 +145,7 @@ test_that("reactable", {
     highlight = FALSE,
     compact = TRUE,
     nowrap = TRUE,
+    showSortIcon = FALSE,
     showSortable = TRUE,
     className = "tbl",
     style = list(color = "red"),

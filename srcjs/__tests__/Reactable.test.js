@@ -71,20 +71,24 @@ describe('sorting', () => {
     expect(headers[1]).toHaveAttribute('aria-sort', 'descending')
   })
 
-  it('shows sort indicators', () => {
-    const { container } = render(
-      <Reactable
-        data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
-        columns={[
-          { Header: 'colA', accessor: 'a', type: 'numeric' },
-          { Header: 'colB', accessor: 'b' }
-        ]}
-      />
-    )
-    const numericSortIndicator = container.querySelectorAll('.rt-th .-sort-left')
-    expect(numericSortIndicator).toHaveLength(1)
-    const defaultSortIndicator = container.querySelectorAll('.rt-th .-sort-right')
-    expect(defaultSortIndicator).toHaveLength(1)
+  it('shows or hides sort icons', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { Header: 'colA', accessor: 'a', type: 'numeric' },
+        { Header: 'colB', accessor: 'b' }
+      ]
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    const numericSortIcon = container.querySelectorAll('.-sort-left')
+    expect(numericSortIcon).toHaveLength(1)
+    const defaultSortIcon = container.querySelectorAll('.-sort-right')
+    expect(defaultSortIcon).toHaveLength(1)
+
+    // Hide sort icons
+    rerender(<Reactable {...props} showSortIcon={false} />)
+    expect(container.querySelector('.-sort-left')).toEqual(null)
+    expect(container.querySelector('.-sort-right')).toEqual(null)
   })
 
   it('sorts NAs to the bottom', () => {
