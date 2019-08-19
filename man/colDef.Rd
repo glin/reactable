@@ -89,3 +89,15 @@ character string.}
 \description{
 Column definitions
 }
+\examples{
+reactable(
+  iris,
+  columns = list(
+    Sepal.Length = colDef(name = "Sepal Length"),
+    Sepal.Width = colDef(filterable = TRUE),
+    Petal.Length = colDef(show = FALSE),
+    Petal.Width = colDef(defaultSortOrder = "desc")
+  )
+)
+
+}
