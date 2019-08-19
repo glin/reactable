@@ -38,9 +38,7 @@ body {
 }
 
 .tag {
-  display: inline-flex;
   padding: 0.15rem 2rem;
-  min-width: 6rem;
   border-radius: 30px;
   font-weight: 600;
   background-color: #eee;
