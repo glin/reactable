@@ -518,9 +518,10 @@ Cells can be conditionally styled using a Javascript function:
 ```r
 colDef(
   style = JS("
-    function(rowInfo, state) {
+    function(rowInfo, colInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
+      //  - colInfo, an object containing column info (optional)
       //  - state, an object containing the table state (optional)
       //
       // output:
@@ -529,9 +530,10 @@ colDef(
     }
   "),
   class = JS("
-    function(rowInfo, state) {
+    function(rowInfo, colInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
+      //  - colInfo, an object containing column info (optional)
       //  - state, an object containing the table state (optional)
       //
       // output:

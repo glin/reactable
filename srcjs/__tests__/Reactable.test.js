@@ -750,13 +750,13 @@ describe('column classes and styles', () => {
       {
         Header: 'a',
         accessor: 'a',
-        className: (rowInfo, state) => {
-          if (rowInfo.index === 0 && state.page === 0) {
+        className: (rowInfo, column, state) => {
+          if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
             return 'my-cell'
           }
         },
-        style: (rowInfo, state) => {
-          if (rowInfo.index === 0 && state.page === 0) {
+        style: (rowInfo, column, state) => {
+          if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
             return { backgroundColor: 'red' }
           }
         }

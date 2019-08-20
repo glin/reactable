@@ -211,7 +211,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       // Set cell class
       let className
       if (typeof cellClass === 'function') {
-        className = cellClass(rowInfo, state)
+        className = cellClass(rowInfo, column, state)
       } else if (cellClass instanceof Array) {
         className = cellClass[rowInfo.index]
       } else {
@@ -222,7 +222,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (cellStyle) {
         let style
         if (typeof cellStyle === 'function') {
-          style = cellStyle(rowInfo, state)
+          style = cellStyle(rowInfo, column, state)
         } else if (cellStyle instanceof Array) {
           style = cellStyle[rowInfo.index]
         } else {

@@ -258,16 +258,16 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([
       {
         accessor: 'x',
-        className: (rowInfo, table) => {
+        className: (rowInfo, column, state) => {
           if (rowInfo.index === 1) {
-            return `${rowInfo.index}-${table.page}-cls`
+            return `index-${rowInfo.index} col-${column.id} page-${state.page}`
           }
         }
       }
     ])
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps({ page: 3 }, { index: 0 }, {}).className).toEqual('rt-col-left')
-    expect(cols[0].getProps({ page: 3 }, { index: 1 }, {}).className).toEqual('rt-col-left 1-3-cls')
+    expect(cols[0].getProps({ page: 3 }, { index: 0 }, { id: 'x' }).className).toEqual('rt-col-left')
+    expect(cols[0].getProps({ page: 3 }, { index: 1 }, { id: 'x' }).className).toEqual('rt-col-left index-1 col-x page-3')
 
     // R callback
     cols = buildColumnDefs([
@@ -303,16 +303,16 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([
       {
         accessor: 'x',
-        style: (rowInfo, table) => {
-          if (rowInfo.index === 1 && table.page === 1) {
+        style: (rowInfo, column, state) => {
+          if (rowInfo.index === 1 && column.id === 'x' && state.page === 1) {
             return { color: 'red' }
           }
         }
       }
     ])
     expect(cols[0].style).toEqual(undefined)
-    expect(cols[0].getProps({ page: 0 }, { index: 0 }, {}).style).toEqual(undefined)
-    expect(cols[0].getProps({ page: 1 }, { index: 1 }, {}).style).toEqual({ color: 'red' })
+    expect(cols[0].getProps({ page: 0 }, { index: 0 }, { id: 'x' }).style).toEqual(undefined)
+    expect(cols[0].getProps({ page: 1 }, { index: 1 }, { id: 'x' }).style).toEqual({ color: 'red' })
 
     // R callback
     cols = buildColumnDefs([
