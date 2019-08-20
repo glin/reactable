@@ -201,12 +201,14 @@
 }
 
 /* Sort icons */
-.ReactTable .-sort-desc {
-  box-shadow: none !important;
+.ReactTable .rt-thead .rt-th.-sort-desc {
+  /* Remove default style */
+  box-shadow: none;
 }
 
-.ReactTable .-sort-asc {
-  box-shadow: none !important;
+.ReactTable .rt-thead .rt-th.-sort-asc {
+  /* Remove default style */
+  box-shadow: none;
 }
 
 .ReactTable .rt-th[aria-sort] .-sort-left:after {
