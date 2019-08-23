@@ -609,7 +609,7 @@ reactable(
     if (index == 1) "color: red; margin-left: 30px;"
     else list(color = "red", marginLeft = "30px")
   },
-  rowClass = function(value, index) {
+  rowClass = function(index) {
     # input:
     #   - index, the row index
     #
