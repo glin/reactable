@@ -53,7 +53,9 @@ test_that("colDef", {
     class = list(1, list()),
     style = list(list("a"), 2),
     headerClass = list(1, list()),
-    headerStyle = list(list("a"), 2)
+    headerStyle = list(list("a"), 2),
+    footerClass = list(1, list()),
+    footerStyle = list(list("a"), 2)
   )
   for (arg in names(invalidArgs)) {
     for (val in invalidArgs[[arg]]) {
