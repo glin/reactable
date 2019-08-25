@@ -112,8 +112,8 @@ reactable(data, columns = list(
 ))
 ```
 
-### Cell Renderers
-https://glin.github.io/reactable/articles/examples.html#cell-renderers
+### Custom Cell Rendering
+https://glin.github.io/reactable/articles/examples.html#custom-cell-rendering
 
 ```r
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
@@ -277,7 +277,7 @@ reactable(
 ### Column Definitions
 ```r
 colDef(
-  name = NULL,              # Column name
+  name = NULL,              # Column header name
   aggregate = NULL,         # Aggregate function. See aggregate functions below
   sortable = NULL,          # Enable sorting?
   resizable = NULL,         # Enable column resizing?
@@ -309,7 +309,7 @@ colDef(
 ### Column Groups
 ```r
 colGroup(
-  name,                # Column group name
+  name,                # Column group header name
   columns,             # Names of columns in the group
   align = NULL,        # Column group header alignment. One of "left", "right", "center"
   headerClass = NULL,  # Additional CSS classes to apply to the header
@@ -381,7 +381,7 @@ colFormat(
 )                      # tags, such as "en-US", "hi", "sv-SE". Defaults to the locale of the browser
 ```
 
-### Cell Renderers
+### Custom Cell Rendering
 Cell rendering can be customized using a Javascript function:
 ```r
 colDef(
@@ -391,11 +391,12 @@ colDef(
       //  - cellInfo, an object containing cell and row info
       //
       // output:
-      //  - a cell value, e.g. a string converted to uppercase
-      return cellInfo.value.toUpperCase()
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + cellInfo.value + '</div>'
     }
   "),
-  aggregated = JS("function(cellInfo) { return cellInfo.value }")
+  aggregated = JS("function(cellInfo) { return cellInfo.value }"),
+  html = TRUE  # to render as HTML
 )
 ```
 
@@ -452,7 +453,7 @@ colDef(
       return '<div>Rows: ' + colInfo.data.length + '</div>'
     }
   "),
-  html = TRUE
+  html = TRUE  # to render as HTML
 )
 ```
 
@@ -507,7 +508,7 @@ reactable(
   details = colDef(
     name = "More",
     details = JS("function(rowInfo) { return '<div>details</div>' }"),
-    html = TRUE,
+    html = TRUE,  # to render as HTML
     width = 50
   )
 )

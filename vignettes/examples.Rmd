@@ -319,7 +319,7 @@ reactable(data, columns = list(
 ```
 
 
-## Cell Renderers
+## Custom Cell Rendering
 
 #### R render function
 ```{r}
