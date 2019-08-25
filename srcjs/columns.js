@@ -157,8 +157,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (React.isValidElement(header)) {
         content = header
       } else if (col.html) {
-        // Render inline to align with the sort icon
-        content = <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: header }} />
+        content = <div dangerouslySetInnerHTML={{ __html: header }} />
       } else {
         content = header != null ? String(header) : ''
       }

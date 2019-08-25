@@ -88,10 +88,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
     cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
     expect(cols[0].Header()).toEqual(
-      <div
-        style={{ display: 'inline' }}
-        dangerouslySetInnerHTML={{ __html: '<div>header</div>' }}
-      />
+      <div dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
     )
 
     // React elements and HTML rendering don't clash
