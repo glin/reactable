@@ -131,6 +131,7 @@ tbl <- reactable(
       }
     }"
   ),
+  showSortIcon = FALSE,
   highlight = FALSE,
   borderless = TRUE,
   class = "standings-table"
@@ -192,7 +193,9 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   text-transform: uppercase;
 }
 
-.col-header:hover {
+.col-header:hover,
+.col-header[aria-sort="ascending"],
+.col-header[aria-sort="descending"] {
   background-color: #eee;
 }
 
