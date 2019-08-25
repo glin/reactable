@@ -130,7 +130,7 @@ Set default sort order for the table, specific columns, or default sorted column
 
 ```{r}
 reactable(
-  iris,
+  iris[1:5, ],
   defaultSortOrder = "desc",
   defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
   columns = list(
@@ -173,7 +173,7 @@ reactable(
 ### Show sortable columns
 
 ```{r}
-reactable(iris[1:50, ], sortable = FALSE, showSortable = TRUE, columns = list(
+reactable(iris[1:5, ], sortable = FALSE, showSortable = TRUE, columns = list(
   Petal.Width = colDef(sortable = TRUE),
   Petal.Length = colDef(sortable = TRUE)
 ))
@@ -202,25 +202,6 @@ data <- data.frame(
 )
 
 reactable(data, filterable = TRUE)
-```
-
-
-## Column Groups
-
-```{r}
-reactable(
-  iris[1:50, ],
-  colnames = list(
-    Sepal.Length = "Length",
-    Sepal.Width = "Width",
-    Petal.Length = "Length",
-    Petal.Width = "Width"
-  ),
-  columnGroups = list(
-    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
-    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
-  )
-)
 ```
 
 
@@ -319,6 +300,83 @@ reactable(data, columns = list(
 ```
 
 
+## Conditional Styling
+
+### Cell styling
+```{r}
+reactable(sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
+))
+```
+
+```{r}
+reactable(sleep, columns = list(
+  extra = colDef(style = JS("
+    function(rowInfo) {
+      var value = rowInfo.row.extra
+      if (value > 0) {
+        var color = 'green'
+      } else if (value < 0) {
+        var color = 'red'
+      } else {
+        var color = '#777'
+      }
+      return { color: color, fontWeight: 'bold' }
+    }
+  "))
+))
+```
+
+### Row styling
+```{r row_styling, eval=FALSE}
+reactable(sleep, 
+  rowStyle = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      list(backgroundColor = "#ffd08a")
+    }
+  },
+  rowClass = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      "bold"
+    }
+  }
+)
+```
+
+```{css}
+.bold {
+  font-weight: bold;
+}
+```
+
+```{r ref.label="row_styling", echo=FALSE}
+```
+
+```{r}
+reactable(sleep,
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return { backgroundColor: '#ffd08a' }
+    }
+  }"),
+  rowClass = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return 'bold'
+    }
+  }")
+)
+```
+
+
 ## Custom Cell Rendering
 
 #### R render function
@@ -412,83 +470,6 @@ reactable(data, highlight = FALSE, columns = list(
 ```
 
 
-## Conditional Styling
-
-### Cell styling
-```{r}
-reactable(sleep, columns = list(
-  extra = colDef(style = function(value) {
-    if (value > 0) {
-      color <- "green"
-    } else if (value < 0) {
-      color <- "red"
-    } else {
-      color <- "#777"
-    }
-    list(color = color, fontWeight = "bold")
-  })
-))
-```
-
-```{r}
-reactable(sleep, columns = list(
-  extra = colDef(style = JS("
-    function(rowInfo) {
-      var value = rowInfo.row.extra
-      if (value > 0) {
-        var color = 'green'
-      } else if (value < 0) {
-        var color = 'red'
-      } else {
-        var color = '#777'
-      }
-      return { color: color, fontWeight: 'bold' }
-    }
-  "))
-))
-```
-
-### Row styling
-```{r row_styling, eval=FALSE}
-reactable(sleep, 
-  rowStyle = function(index) {
-    if (sleep[index, "extra"] < -1) {
-      list(backgroundColor = "#ffd08a")
-    }
-  },
-  rowClass = function(index) {
-    if (sleep[index, "extra"] < -1) {
-      "bold"
-    }
-  }
-)
-```
-
-```{css}
-.bold {
-  font-weight: bold;
-}
-```
-
-```{r ref.label="row_styling", echo=FALSE}
-```
-
-```{r}
-reactable(sleep,
-  rowStyle = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
-      return { backgroundColor: '#ffd08a' }
-    }
-  }"),
-  rowClass = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
-      return 'bold'
-    }
-  }")
-)
-```
-
-
 ## Custom Header Rendering
 
 ```{r}
@@ -532,6 +513,25 @@ reactable(iris[1:50, ], columns = list(
     }
   "))
 ))
+```
+
+
+## Column Groups
+
+```{r}
+reactable(
+  iris[1:5, ],
+  colnames = list(
+    Sepal.Length = "Length",
+    Sepal.Width = "Width",
+    Petal.Length = "Length",
+    Petal.Width = "Width"
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
 ```
 
 

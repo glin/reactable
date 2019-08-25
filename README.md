@@ -72,25 +72,6 @@ https://glin.github.io/reactable/articles/examples.html#filtering
 reactable(iris, filterable = TRUE)
 ```
 
-### Column Groups
-https://glin.github.io/reactable/articles/examples.html#column-groups
-
-```r
-reactable(
-  iris,
-  columns = list(
-    Sepal.Length = colDef(name = "Length"),
-    Sepal.Width = colDef(name = "Width"),
-    Petal.Length = colDef(name = "Length"),
-    Petal.Width = colDef(name = "Width")
-  ),
-  columnGroups = list(
-    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
-    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
-  )
-)
-```
-
 ### Column Formatting
 https://glin.github.io/reactable/articles/examples.html#column-formatting
 
@@ -109,6 +90,24 @@ reactable(data, columns = list(
   temp = colDef(format = colFormat(suffix = " °C")),
   percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
   date = colDef(format = colFormat(date = TRUE, locale = "en-GB"))
+))
+```
+
+### Conditional Styling
+https://glin.github.io/reactable/articles/examples.html#conditional-styling
+
+```r
+reactable(sleep, columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "green"
+    } else if (value < 0) {
+      color <- "red"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
 ))
 ```
 
@@ -160,24 +159,6 @@ reactable(data, columns = list(
 ))
 ```
 
-### Conditional Styling
-https://glin.github.io/reactable/articles/examples.html#conditional-styling
-
-```r
-reactable(sleep, columns = list(
-  extra = colDef(style = function(value) {
-    if (value > 0) {
-      color <- "green"
-    } else if (value < 0) {
-      color <- "red"
-    } else {
-      color <- "#777"
-    }
-    list(color = color, fontWeight = "bold")
-  })
-))
-```
-
 ### Footers
 https://glin.github.io/reactable/articles/examples.html#footers
 
@@ -195,6 +176,25 @@ reactable(iris, columns = list(
     }
   "))
 ))
+```
+
+### Column Groups
+https://glin.github.io/reactable/articles/examples.html#column-groups
+
+```r
+reactable(
+  iris,
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
 ```
 
 ### Table Styling
@@ -353,7 +353,7 @@ colDef(
 Format all cells in the column:
 ```r
 colDef(
-  format = colFormat()
+  format = colFormat(...)
 )
 ```
 
@@ -361,8 +361,8 @@ Format standard and aggregated cells separately:
 ```r
 colDef(
   format = list(
-    cell = colFormat(),       # Standard cells
-    aggregated = colFormat()  # Aggregated cells
+    cell = colFormat(...),       # Standard cells
+    aggregated = colFormat(...)  # Aggregated cells
   )
 )
 ```
