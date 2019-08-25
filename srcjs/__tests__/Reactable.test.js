@@ -20,10 +20,10 @@ test('basic table rendering', () => {
         d: ['2019-03-04', '1955-12-12', '2000-01-30']
       }}
       columns={[
-        { Header: 'num', accessor: 'a', type: 'numeric' },
-        { Header: 'str', accessor: 'b', type: 'character' },
-        { Header: 'bool', accessor: 'c', type: 'logical' },
-        { Header: 'date', accessor: 'd', type: 'date' }
+        { name: 'num', accessor: 'a', type: 'numeric' },
+        { name: 'str', accessor: 'b', type: 'character' },
+        { name: 'bool', accessor: 'c', type: 'logical' },
+        { name: 'date', accessor: 'd', type: 'date' }
       ]}
     />
   )
@@ -51,9 +51,9 @@ describe('sorting', () => {
       <Reactable
         data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
         columns={[
-          { Header: 'colA', accessor: 'a' },
-          { Header: 'colB', accessor: 'b' },
-          { Header: 'colC', accessor: 'c', sortable: false }
+          { name: 'colA', accessor: 'a' },
+          { name: 'colB', accessor: 'b' },
+          { name: 'colC', accessor: 'c', sortable: false }
         ]}
       />
     )
@@ -74,10 +74,7 @@ describe('sorting', () => {
   it('shows or hides sort icons', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
-      columns: [
-        { Header: 'colA', accessor: 'a', type: 'numeric' },
-        { Header: 'colB', accessor: 'b' }
-      ]
+      columns: [{ name: 'colA', accessor: 'a', type: 'numeric' }, { name: 'colB', accessor: 'b' }]
     }
     const { container, rerender } = render(<Reactable {...props} />)
     const numericSortIcon = container.querySelectorAll('.-sort-left')
@@ -97,13 +94,13 @@ describe('sorting', () => {
         data={{ a: [2, 'NA', 1, 3], b: ['aa', null, null, 'BB'] }}
         columns={[
           {
-            Header: 'colA',
+            name: 'colA',
             accessor: 'a',
             type: 'numeric',
             sortMethod: 'naLast',
             className: 'col-a'
           },
-          { Header: 'colB', accessor: 'b', sortMethod: 'naLast', className: 'col-b' }
+          { name: 'colB', accessor: 'b', sortMethod: 'naLast', className: 'col-b' }
         ]}
         minRows={4}
       />
@@ -129,7 +126,7 @@ describe('filtering', () => {
   it('enables filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
     }
     const { container, rerender } = render(<Reactable {...props} />)
     let filters = container.querySelectorAll('.rt-thead.-filters input')
@@ -143,7 +140,7 @@ describe('filtering', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: [111, 115, 32.11] }}
-        columns={[{ Header: 'a', accessor: 'a', type: 'numeric' }]}
+        columns={[{ name: 'a', accessor: 'a', type: 'numeric' }]}
         filterable
         minRows={1}
       />
@@ -173,8 +170,8 @@ describe('filtering', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
-          { Header: 'a', accessor: 'a', type: 'factor' },
-          { Header: 'b', accessor: 'b', type: 'character' }
+          { name: 'a', accessor: 'a', type: 'factor' },
+          { name: 'b', accessor: 'b', type: 'character' }
         ]}
         filterable
         minRows={1}
@@ -218,7 +215,7 @@ describe('filtering', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
-        columns={[{ Header: 'a', accessor: 'a' }]}
+        columns={[{ name: 'a', accessor: 'a' }]}
         filterable
         minRows={1}
       />
@@ -254,7 +251,7 @@ describe('table styles', () => {
   const getTable = container => container.querySelector('.ReactTable')
 
   it('applies table styles', () => {
-    const props = { data: { a: [1, 2] }, columns: [{ Header: 'a', accessor: 'a' }] }
+    const props = { data: { a: [1, 2] }, columns: [{ name: 'a', accessor: 'a' }] }
     const { container, rerender } = render(<Reactable {...props} />)
     const table = getTable(container)
     expect(table).not.toHaveClass(
@@ -299,7 +296,7 @@ describe('table styles', () => {
   it('applies width and height', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ Header: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', accessor: 'a' }],
       width: 100,
       height: '100%',
       style: { background: 'blue' }
@@ -312,7 +309,7 @@ describe('table styles', () => {
   it('style overrides width and height', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ Header: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', accessor: 'a' }],
       width: 100,
       height: '100%',
       style: { width: 500, height: '30px' }
@@ -334,7 +331,7 @@ describe('row selection', () => {
 
   const props = {
     data: { a: [1, 2] },
-    columns: [{ Header: 'a', accessor: 'a' }]
+    columns: [{ name: 'a', accessor: 'a' }]
   }
 
   it('not selectable by default', () => {
@@ -414,8 +411,8 @@ describe('row details', () => {
 
   it('render function', () => {
     const columns = [
-      { Header: 'a', accessor: 'a' },
-      { Header: 'b', accessor: 'b', details: rowInfo => `row details: ${rowInfo.row.a}` }
+      { name: 'a', accessor: 'a' },
+      { name: 'b', accessor: 'b', details: rowInfo => `row details: ${rowInfo.row.a}` }
     ]
     const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
@@ -432,9 +429,9 @@ describe('row details', () => {
 
   it('render function to html', () => {
     const columns = [
-      { Header: 'a', accessor: 'a' },
+      { name: 'a', accessor: 'a' },
       {
-        Header: 'b',
+        name: 'b',
         accessor: 'b',
         html: true,
         details: rowInfo => `<span class="row-details">row details: ${rowInfo.row.a}</span>`
@@ -452,9 +449,9 @@ describe('row details', () => {
 
   it('render content to html', () => {
     const columns = [
-      { Header: 'a', accessor: 'a' },
+      { name: 'a', accessor: 'a' },
       {
-        Header: 'b',
+        name: 'b',
         accessor: 'b',
         html: true,
         details: [
@@ -475,8 +472,8 @@ describe('row details', () => {
 
   it('render content with conditional expanders', () => {
     const columns = [
-      { Header: 'a', accessor: 'a' },
-      { Header: 'b', accessor: 'b', details: ['row details: 1', null] }
+      { name: 'a', accessor: 'a' },
+      { name: 'b', accessor: 'b', details: ['row details: 1', null] }
     ]
     const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
@@ -488,10 +485,7 @@ describe('row details', () => {
   })
 
   it('renders empty row details', () => {
-    const columns = [
-      { Header: 'a', accessor: 'a' },
-      { Header: 'b', accessor: 'b', details: ['', ''] }
-    ]
+    const columns = [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b', details: ['', ''] }]
     const { container } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
@@ -501,8 +495,8 @@ describe('row details', () => {
 
   it('renders multiple row details', () => {
     const columns = [
-      { Header: 'a', accessor: 'a', details: ['detail-a1', 'detail-a2'] },
-      { Header: 'b', accessor: 'b', details: ['detail-b1', 'detail-b2'] }
+      { name: 'a', accessor: 'a', details: ['detail-a1', 'detail-a2'] },
+      { name: 'b', accessor: 'b', details: ['detail-b1', 'detail-b2'] }
     ]
     const { container, getByText, queryByText } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
@@ -530,8 +524,8 @@ describe('row details', () => {
 
   it('works for expander-only columns', () => {
     const columns = [
-      { Header: '', accessor: '.details', className: 'no-content', details: ['detail-1', null] },
-      { Header: 'b', accessor: 'b' }
+      { name: '', accessor: '.details', className: 'no-content', details: ['detail-1', null] },
+      { name: 'b', accessor: 'b' }
     ]
     const { container, getByText } = render(<Reactable {...props} columns={columns} />)
     expect(getExpanders(container)).toHaveLength(1)
@@ -547,8 +541,8 @@ describe('row details', () => {
   it('handles Shiny elements in content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
     const columns = [
-      { Header: 'a', accessor: 'a', details: ['row details: a'] },
-      { Header: 'b', accessor: 'b', details: ['row details: b'] }
+      { name: 'a', accessor: 'a', details: ['row details: a'] },
+      { name: 'b', accessor: 'b', details: ['row details: b'] }
     ]
     const { container } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
@@ -577,8 +571,8 @@ describe('row details', () => {
 
   it('details are collapsed on pagination, sorting, and filtering', () => {
     const columns = [
-      { Header: 'col-a', accessor: 'a', filterable: true, details: ['row-details', 'row-details'] },
-      { Header: 'col-b', accessor: 'b' }
+      { name: 'col-a', accessor: 'a', filterable: true, details: ['row-details', 'row-details'] },
+      { name: 'col-b', accessor: 'b' }
     ]
     const { container, getByText, queryByText } = render(
       <Reactable {...props} columns={columns} defaultPageSize={1} />
@@ -611,7 +605,7 @@ describe('row details', () => {
 
   it('pivoting still works with custom expanders', () => {
     const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
-    const columns = [{ Header: 'col-a', accessor: 'a' }, { Header: 'col-b', accessor: 'b' }]
+    const columns = [{ name: 'col-a', accessor: 'a' }, { name: 'col-b', accessor: 'b' }]
     const { container } = render(
       <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
     )
@@ -628,8 +622,8 @@ describe('row details', () => {
     const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
     const getCells = container => container.querySelectorAll('.rt-td')
     const columns = [
-      { Header: 'col-a', accessor: 'a', details: ['row-details', 'row-details'] },
-      { Header: 'col-b', accessor: 'b' }
+      { name: 'col-a', accessor: 'a', details: ['row-details', 'row-details'] },
+      { name: 'col-b', accessor: 'b' }
     ]
     const { container, getByText } = render(
       <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
@@ -659,8 +653,8 @@ describe('row details', () => {
 
   it('row details work with column groups', () => {
     const columns = [
-      { Header: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
-      { Header: 'col-b', accessor: 'b' }
+      { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+      { name: 'col-b', accessor: 'b' }
     ]
     const { container, getByText } = render(
       <Reactable {...props} columns={columns} columnGroups={[{ columns: ['a', 'b'] }]} />
@@ -674,13 +668,92 @@ describe('row details', () => {
   })
 })
 
+describe('header rendering', () => {
+  const getHeaders = container => container.querySelectorAll('.rt-th')
+  const data = { a: [1, 2] }
+
+  it('renders a basic header', () => {
+    const columns = [
+      {
+        name: 'a',
+        accessor: 'a',
+        header: 'my-header',
+        headerClassName: 'my-header',
+        headerStyle: { color: 'red' }
+      }
+    ]
+    const props = { data, columns }
+    const { container } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers[0]).toHaveTextContent('my-header')
+    expect(headers[0]).toHaveClass('my-header')
+    expect(headers[0]).toHaveStyle('color: red;')
+  })
+
+  it('render function', () => {
+    const columns = [
+      {
+        name: 'a',
+        accessor: 'a',
+        header: colInfo =>
+          `<span>${colInfo.column.name}</span> <span>(${colInfo.data.length})</span>`,
+        html: true
+      }
+    ]
+    const props = { data, columns }
+    const { container } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers[0]).toHaveTextContent('a (2)')
+  })
+})
+
+describe('column group header rendering', () => {
+  const getGroupHeaders = container => container.querySelectorAll('.-headerGroup.rt-th')
+  const props = {
+    data: { a: [1, 2], b: ['a', 'b'] },
+    columns: [{ name: 'col-a', accessor: 'a' }, { name: 'col-b', accessor: 'b' }]
+  }
+
+  it('renders a basic group header', () => {
+    const columnGroups = [
+      { columns: ['a'], header: 'group-a' },
+      { columns: ['b'], name: 'group-b' }
+    ]
+    const { container } = render(<Reactable {...props} columnGroups={columnGroups} />)
+    const headers = getGroupHeaders(container)
+    expect(headers[0]).toHaveTextContent('group-a')
+    expect(headers[1]).toHaveTextContent('group-b')
+  })
+
+  it('render function', () => {
+    const columnGroups = [
+      {
+        columns: ['a'],
+        name: 'group-a',
+        header: colInfo =>
+          `${colInfo.column.name} (${colInfo.column.columns.length} ${colInfo.data.length})`
+      },
+      {
+        columns: ['b'],
+        name: 'group-b',
+        header: () => '<span>group</span> <span>b</span>',
+        html: true
+      }
+    ]
+    const { container } = render(<Reactable {...props} columnGroups={columnGroups} />)
+    const headers = getGroupHeaders(container)
+    expect(headers[0]).toHaveTextContent('group-a (1 2)')
+    expect(headers[1]).toHaveTextContent('group b')
+  })
+})
+
 describe('footer rendering', () => {
   const data = { a: [1, 2] }
 
   it('renders a basic footer', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         footer: 'my-footer',
         footerClassName: 'my-footer',
@@ -697,7 +770,7 @@ describe('footer rendering', () => {
   it('render function', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         footer: colInfo => `rows: ${colInfo.data.length}`
       }
@@ -711,7 +784,7 @@ describe('footer rendering', () => {
   it('does not apply cell classes and styles to footers', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         footer: 'my-footer',
         className: 'cell',
@@ -732,7 +805,7 @@ describe('column classes and styles', () => {
   it('applies fixed classes and styles', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         className: 'my-cell',
         style: { backgroundColor: 'red' }
@@ -748,7 +821,7 @@ describe('column classes and styles', () => {
   it('applies conditional classes and styles from JS callbacks', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         className: (rowInfo, column, state) => {
           if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
@@ -775,7 +848,7 @@ describe('column classes and styles', () => {
   it('applies conditional classes and styles from R callbacks', () => {
     const columns = [
       {
-        Header: 'a',
+        name: 'a',
         accessor: 'a',
         className: ['my-cell', null],
         style: [{ backgroundColor: 'red' }, null]
@@ -798,7 +871,7 @@ describe('row classes and styles', () => {
   it('applies fixed classes and styles', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       rowClassName: 'my-row',
       rowStyle: { backgroundColor: 'red' }
     }
@@ -813,7 +886,7 @@ describe('row classes and styles', () => {
   it('applies conditional classes and styles from JS callbacks', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       minRows: 5,
       rowClassName: (rowInfo, state) => {
         if (!rowInfo) {
@@ -852,7 +925,7 @@ describe('row classes and styles', () => {
   it('applies conditional classes and styles from R callbacks', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       minRows: 5,
       rowClassName: ['row1', 'row2', null],
       rowStyle: [{ backgroundColor: 'red' }, { backgroundColor: 'black' }, null]
@@ -891,7 +964,7 @@ describe('pagination', () => {
   it('default page size', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5, 6, 7] },
-      columns: [{ Header: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', accessor: 'a' }],
       defaultPageSize: 2
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -907,7 +980,7 @@ describe('pagination', () => {
   it('shows or hides pagination', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }]
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
     }
 
     // Auto hidden if table always fits on one page
@@ -939,7 +1012,7 @@ describe('pagination', () => {
   it('page info', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['a', 'b', 'c', 'd', 'e'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 2
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -967,7 +1040,7 @@ describe('pagination', () => {
   it('page size options', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 2,
       pageSizeOptions: [2, 4, 6]
     }
@@ -998,7 +1071,7 @@ describe('pagination', () => {
   it('simple page navigation', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 2,
       paginationType: 'simple'
     }
@@ -1038,7 +1111,7 @@ describe('pagination', () => {
   it('page number buttons', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 1,
       paginationType: 'numbers'
     }
@@ -1090,7 +1163,7 @@ describe('pagination', () => {
   it('page jump', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ Header: 'a', accessor: 'a' }, { Header: 'b', accessor: 'b' }],
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 2,
       paginationType: 'jump'
     }
@@ -1140,7 +1213,7 @@ describe('pagination', () => {
 describe('table updates correctly when data props change', () => {
   const props = {
     data: { a: ['a-1', 'a-2'] },
-    columns: [{ Header: 'a', accessor: 'a' }]
+    columns: [{ name: 'a', accessor: 'a' }]
   }
 
   it('updates without data key', () => {

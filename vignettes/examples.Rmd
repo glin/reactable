@@ -489,15 +489,42 @@ reactable(sleep,
 ```
 
 
+## Custom Header Rendering
+
+```{r}
+library(htmltools)
+
+reactable(
+  iris[1:5, ],
+  defaultColDef = colDef(header = function(value) {
+    units <- div(style = "color: #999", "cm")
+    div(title = value, value, units)
+  }),
+  columns = list(
+    Petal.Width = colDef(name = "Petal Width", html = TRUE, align = "left", header = JS("
+      function(colInfo) {
+        return colInfo.column.name + '<div style=\"color: #999\">cm</div>'
+      }
+    ")),
+    Species = colDef(header = function(value) {
+      tags$a(href = "https://wikipedia.org/wiki/List_of_Iris_species", title = "Iris species", value)
+    })
+  )
+)
+```
+
+
 ## Footers
 
 ```{r}
+library(htmltools)
+
 reactable(iris[1:50, ], columns = list(
   Sepal.Length = colDef(
     footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
   ),
   Sepal.Width = colDef(footer = function(values, key) {
-    htmltools::span(htmltools::tags$b("Total: "), sum(values))
+    span(tags$b("Total: "), sum(values))
   }),
   Petal.Length = colDef(html = TRUE, footer = JS("
     function(colInfo) {

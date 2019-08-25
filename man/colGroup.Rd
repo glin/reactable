@@ -4,13 +4,18 @@
 \alias{colGroup}
 \title{Column group definitions}
 \usage{
-colGroup(name = NULL, columns = NULL, align = NULL,
-  headerClass = NULL, headerStyle = NULL)
+colGroup(name = NULL, columns = NULL, header = NULL, html = FALSE,
+  align = NULL, headerClass = NULL, headerStyle = NULL)
 }
 \arguments{
-\item{name}{Column group name.}
+\item{name}{Column group header name.}
 
 \item{columns}{Character vector of column names in the group.}
+
+\item{header}{Custom header renderer. An R function that takes the header value
+as an argument, or a \code{\link[=JS]{JS()}} function that takes a column info object as an argument.}
+
+\item{html}{Render header as HTML? HTML strings are escaped by default.}
 
 \item{align}{Column group header alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 

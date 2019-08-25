@@ -1,6 +1,6 @@
 #' Column definitions
 #'
-#' @param name Column name.
+#' @param name Column header name.
 #' @param aggregate Aggregate function. The name of a built-in aggregate
 #'   function or a custom [JS()] aggregate function. Built-in aggregate functions
 #'   are: `"mean"`, `"sum"`, `"max"`, `"min"`, `"count"`, `"unique"`, `"frequency"`.
@@ -20,6 +20,9 @@
 #'   an argument.
 #' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
 #'   a cell info object as an argument.
+#' @param header Custom header renderer. An R function that takes the header value
+#'   and column name as arguments, or a [JS()] function that takes a column info
+#'   object as an argument.
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes two arguments, the column values and column name, or a
 #'   [JS()] function that takes a column info object as an argument.
@@ -65,10 +68,10 @@
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
                    defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
-                   cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
-                   html = FALSE, na = NULL, minWidth = NULL, maxWidth = NULL,
-                   width = NULL, align = NULL, class = NULL, style = NULL,
-                   headerClass = NULL, headerStyle = NULL,
+                   cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
+                   details = NULL, html = FALSE, na = NULL, minWidth = NULL,
+                   maxWidth = NULL, width = NULL, align = NULL, class = NULL,
+                   style = NULL, headerClass = NULL, headerStyle = NULL,
                    footerClass = NULL, footerStyle = NULL) {
 
   if (!is.null(name) && !is.character(name)) {
@@ -172,7 +175,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
 
   structure(
     filterNulls(list(
-      Header = name,
+      name = name,
       aggregate = aggregate,
       sortable = sortable,
       resizable = resizable,
@@ -183,6 +186,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       format = format,
       cell = cell,
       aggregated = aggregated,
+      header = header,
       footer = footer,
       details = details,
       html = if (html) TRUE,
@@ -216,8 +220,11 @@ isDescOrder <- function(x) {
 
 #' Column group definitions
 #'
-#' @param name Column group name.
+#' @param name Column group header name.
 #' @param columns Character vector of column names in the group.
+#' @param header Custom header renderer. An R function that takes the header value
+#'   as an argument, or a [JS()] function that takes a column info object as an argument.
+#' @param html Render header as HTML? HTML strings are escaped by default.
 #' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
@@ -239,8 +246,8 @@ isDescOrder <- function(x) {
 #' )
 #'
 #' @export
-colGroup <- function(name = NULL, columns = NULL, align = NULL, headerClass = NULL,
-                     headerStyle = NULL) {
+colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
+                     align = NULL, headerClass = NULL, headerStyle = NULL) {
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
   }
@@ -254,12 +261,13 @@ colGroup <- function(name = NULL, columns = NULL, align = NULL, headerClass = NU
   }
   group <- colDef(
     name = name,
+    header = header,
+    html = html,
     align = align,
     headerClass = headerClass,
     headerStyle = headerStyle
   )
   group$columns <- columns
-  group <- filterNulls(group)
   structure(group, class = "colGroup")
 }
 

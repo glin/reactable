@@ -7,14 +7,14 @@
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
   defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
-  cell = NULL, aggregated = NULL, footer = NULL, details = NULL,
-  html = FALSE, na = NULL, minWidth = NULL, maxWidth = NULL,
-  width = NULL, align = NULL, class = NULL, style = NULL,
-  headerClass = NULL, headerStyle = NULL, footerClass = NULL,
-  footerStyle = NULL)
+  cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
+  details = NULL, html = FALSE, na = NULL, minWidth = NULL,
+  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
+  style = NULL, headerClass = NULL, headerStyle = NULL,
+  footerClass = NULL, footerStyle = NULL)
 }
 \arguments{
-\item{name}{Column name.}
+\item{name}{Column header name.}
 
 \item{aggregate}{Aggregate function. The name of a built-in aggregate
 function or a custom \code{\link[=JS]{JS()}} aggregate function. Built-in aggregate functions
@@ -44,6 +44,10 @@ an argument.}
 
 \item{aggregated}{Custom aggregated cell renderer. A \code{\link[=JS]{JS()}} function that takes
 a cell info object as an argument.}
+
+\item{header}{Custom header renderer. An R function that takes the header value
+and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a column info
+object as an argument.}
 
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a

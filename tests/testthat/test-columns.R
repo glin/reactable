@@ -17,7 +17,7 @@ test_that("colDef", {
                 footerClass = "ftr", footerStyle = "color:blue")
 
   expected <- structure(list(
-    Header = "col", aggregate = "sum",
+    name = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, sortMethod = "naLast",
     format = list(cell = colFormat(), aggregated = colFormat()),
@@ -88,26 +88,31 @@ test_that("colDef format", {
 })
 
 test_that("colDef renderers", {
-  renderJS <- JS("cell => cell.value")
-  renderR <- function(value, index) value
-
   # Cell renderer
-  col <- colDef(cell = renderJS)
-  expect_equal(col$cell, renderJS)
-  col <- colDef(cell = renderR)
-  expect_equal(col$cell, renderR)
+  col <- colDef(cell = JS("cell => cell.value"))
+  expect_equal(col$cell, JS("cell => cell.value"))
+  col <- colDef(cell = function(value, index) value)
+  expect_equal(col$cell, function(value, index) value)
 
   # Aggregated renderer
-  col <- colDef(aggregated = renderJS)
-  expect_equal(col$aggregated, renderJS)
+  col <- colDef(aggregated = JS("cell => cell.value"))
+  expect_equal(col$aggregated, JS("cell => cell.value"))
+
+  # Header renderer
+  col <- colDef(header = "header")
+  expect_equal(col$header, "header")
+  col <- colDef(header = JS("colInfo => colInfo.column.name"))
+  expect_equal(col$header, JS("colInfo => colInfo.column.name"))
+  col <- colDef(header = function(value) value)
+  expect_equal(col$header, function(value) value)
 
   # Footer renderer
   col <- colDef(footer = "footer")
   expect_equal(col$footer, "footer")
-  col <- colDef(footer = renderJS)
-  expect_equal(col$footer, renderJS)
-  col <- colDef(footer = renderR)
-  expect_equal(col$footer, renderR)
+  col <- colDef(footer = JS("colInfo => colInfo.column.name"))
+  expect_equal(col$footer, JS("colInfo => colInfo.column.name"))
+  col <- colDef(footer = function(values, name) name)
+  expect_equal(col$footer, function(values, name) name)
 
   # Details renderer
   col <- colDef(details = JS("rowInfo => rowInfo.row.value"))
@@ -163,15 +168,24 @@ test_that("colGroup", {
   expect_equal(colGroup(), structure(list(), .Names = character(0), class = "colGroup"))
 
   # Valid args
-  group <- colGroup(name = "name", columns = c("colA", "colB"), align = "right",
+  group <- colGroup(name = "name", columns = c("colA", "colB"), html = TRUE, align = "right",
                     headerStyle = list(color = "red"), headerClass = "cls")
   expect_equal(group, structure(list(
-    Header = "name",
+    name = "name",
+    html = TRUE,
     align = "right",
     headerClassName = "cls",
     headerStyle = list(color = "red"),
     columns = list("colA", "colB")
   ), class = "colGroup"))
+
+  # Header renderer
+  group <- colGroup(header = "header")
+  expect_equal(group$header, "header")
+  group <- colDef(header = JS("colInfo => colInfo.column.name"))
+  expect_equal(group$header, JS("colInfo => colInfo.column.name"))
+  group <- colDef(header = function(value) value)
+  expect_equal(group$header, function(value) value)
 
   # Style
   test_that("colDef style", {

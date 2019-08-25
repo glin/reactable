@@ -354,9 +354,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   cols <- lapply(columnKeys, function(key) {
     column <- list(accessor = key)
     if (!is.null(colnames[[key]])) {
-      column$Header <- colnames[[key]]
+      column$name <- colnames[[key]]
     } else {
-      column$Header <- key
+      column$name <- key
     }
     column$type <- colType(data[[key]])
     if (!is.null(columns[[key]])) {
@@ -373,6 +373,15 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       })
       column$cell <- lapply(content, asReactTag)
       addDependencies(column$cell)
+    }
+
+    header <- column[["header"]]
+    if (!is.null(header)) {
+      if (is.function(header)) {
+        header <- callFunc(header, column$name, key)
+      }
+      column$header <- asReactTag(header)
+      addDependencies(column$header)
     }
 
     footer <- column[["footer"]]
@@ -414,6 +423,20 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
 
     column
   })
+
+  if (!is.null(columnGroups)) {
+    columnGroups <- lapply(columnGroups, function(group) {
+      header <- group[["header"]]
+      if (!is.null(header)) {
+        if (is.function(header)) {
+          header <- callFunc(header, group$name)
+        }
+        group$header <- asReactTag(header)
+        addDependencies(group$header)
+      }
+      group
+    })
+  }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE, digits = NA,
                            POSIXt = "ISO8601")

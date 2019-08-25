@@ -200,7 +200,12 @@
   right: 0;
 }
 
-/* Sort icons */
+/* Sorting */
+.rt-sort-header {
+  display: inline-flex;
+  align-items: baseline;
+}
+
 .ReactTable .rt-thead .rt-th.-sort-desc {
   /* Remove default style */
   box-shadow: none;

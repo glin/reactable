@@ -63,12 +63,9 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'y', index: 1 })).toEqual('2')
     expect(cols[0].Cell({ value: 'z', index: 2 })).toEqual(React.createElement('div', null, 'Z'))
 
-    cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>footer</div>'] }])
+    cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>cell</div>'] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
-      <div
-        style={{ display: 'inline' }}
-        dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }}
-      />
+      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>cell</div>' }} />
     )
 
     // React elements and HTML rendering don't clash
@@ -81,6 +78,27 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cell => cell.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
+
+    // Header
+    cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])
+    expect(cols[0].Header()).toEqual('x')
+    cols = buildColumnDefs([{ accessor: 'x', header: () => 'header' }])
+    expect(cols[0].Header()).toEqual('header')
+    cols = buildColumnDefs([{ accessor: 'x', header: React.createElement('div', null, 'header') }])
+    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
+    cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
+    expect(cols[0].Header()).toEqual(
+      <div
+        style={{ display: 'inline' }}
+        dangerouslySetInnerHTML={{ __html: '<div>header</div>' }}
+      />
+    )
+
+    // React elements and HTML rendering don't clash
+    cols = buildColumnDefs([
+      { accessor: 'x', header: React.createElement('div', null, 'header'), html: true }
+    ])
+    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
 
     // Footer
     cols = buildColumnDefs([{ accessor: 'x' }])
@@ -266,8 +284,12 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].className).toEqual(undefined)
-    expect(cols[0].getProps({ page: 3 }, { index: 0 }, { id: 'x' }).className).toEqual('rt-col-left')
-    expect(cols[0].getProps({ page: 3 }, { index: 1 }, { id: 'x' }).className).toEqual('rt-col-left index-1 col-x page-3')
+    expect(cols[0].getProps({ page: 3 }, { index: 0 }, { id: 'x' }).className).toEqual(
+      'rt-col-left'
+    )
+    expect(cols[0].getProps({ page: 3 }, { index: 1 }, { id: 'x' }).className).toEqual(
+      'rt-col-left index-1 col-x page-3'
+    )
 
     // R callback
     cols = buildColumnDefs([
@@ -392,68 +414,64 @@ describe('buildColumnDefs', () => {
 
   test('header sort icons', () => {
     // No sort
-    let cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }])
-    expect(cols[0].Header).toEqual('xy')
-    cols = buildColumnDefs([{ Header: 'xy', accessor: 'x' }], null, {
+    let cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }])
+    expect(cols[0].Header()).toEqual('xy')
+    cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }], null, {
       sortable: false,
       showSortIcon: true
     })
-    expect(cols[0].Header).toEqual('xy')
+    expect(cols[0].Header()).toEqual('xy')
 
     // Table sort
-    cols = buildColumnDefs([{ Header: 'x', accessor: 'x' }], null, {
+    cols = buildColumnDefs([{ name: 'x', accessor: 'x' }], null, {
       sortable: true,
       showSortIcon: true
     })
     expect(cols[0].Header()).toEqual(
-      <React.Fragment>
+      <div className="rt-sort-header">
         {'x'}
         <span className="-sort-right" />
-      </React.Fragment>
+      </div>
     )
 
-    cols = buildColumnDefs([{ Header: 'x', accessor: 'x', align: 'right' }], null, {
+    cols = buildColumnDefs([{ name: 'x', accessor: 'x', align: 'right' }], null, {
       sortable: true,
       showSortIcon: true
     })
     expect(cols[0].Header()).toEqual(
-      <React.Fragment>
+      <div className="rt-sort-header">
         <span className="-sort-left" />
         {'x'}
-      </React.Fragment>
+      </div>
     )
 
     // Column sort override
-    cols = buildColumnDefs(
-      [{ Header: 'xy', accessor: 'x', align: 'center', sortable: true }],
-      null,
-      {
-        sortable: false,
-        showSortIcon: true
-      }
-    )
+    cols = buildColumnDefs([{ name: 'xy', accessor: 'x', align: 'center', sortable: true }], null, {
+      sortable: false,
+      showSortIcon: true
+    })
     expect(cols[0].Header()).toEqual(
-      <React.Fragment>
+      <div className="rt-sort-header">
         {'xy'}
         <span className="-sort-right" />
-      </React.Fragment>
+      </div>
     )
 
     // Hide sort icon
     cols = buildColumnDefs(
-      [{ Header: 'x', accessor: 'x', align: 'right' }, { Header: 'y', accessor: 'y' }],
+      [{ name: 'x', accessor: 'x', align: 'right' }, { name: 'y', accessor: 'y' }],
       null,
       {
         sortable: true,
         showSortIcon: false
       }
     )
-    expect(cols[0].Header).toEqual('x')
-    expect(cols[1].Header).toEqual('y')
+    expect(cols[0].Header()).toEqual('x')
+    expect(cols[1].Header()).toEqual('y')
 
     // showSortable
     cols = buildColumnDefs(
-      [{ Header: 'x', accessor: 'x', align: 'right' }, { Header: 'y', accessor: 'y' }],
+      [{ name: 'x', accessor: 'x', align: 'right' }, { name: 'y', accessor: 'y' }],
       null,
       {
         sortable: true,
@@ -462,56 +480,86 @@ describe('buildColumnDefs', () => {
       }
     )
     expect(cols[0].Header()).toEqual(
-      <React.Fragment>
+      <div className="rt-sort-header">
         <span className="-sort -sort-left" />
         {'x'}
-      </React.Fragment>
+      </div>
     )
     expect(cols[1].Header()).toEqual(
-      <React.Fragment>
+      <div className="rt-sort-header">
         {'y'}
         <span className="-sort -sort-right" />
-      </React.Fragment>
+      </div>
     )
   })
 
   test('column groups', () => {
-    let groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    let groups = [{ name: 'xy', columns: ['x', 'y'] }]
     let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols.length).toEqual(1)
-    expect(cols[0].Header).toEqual('xy')
+    expect(cols[0].Header()).toEqual('xy')
     expect(cols[0].columns.map(col => col.id)).toEqual(['x', 'y'])
+  })
+
+  test('column group header renderers', () => {
+    let groups = [{ name: 'xy', columns: ['x', 'y'], header: () => 'group header' }]
+    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].Header()).toEqual('group header')
+
+    groups = [
+      { name: 'xy', columns: ['x', 'y'], header: React.createElement('div', null, 'header') }
+    ]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
+
+    groups = [{ name: 'xy', columns: ['x', 'y'], header: '<div>header</div>', html: true }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].Header()).toEqual(
+      <div dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
+    )
+
+    // React elements and HTML rendering don't clash
+    groups = [
+      {
+        name: 'xy',
+        columns: ['x', 'y'],
+        header: React.createElement('div', null, 'header'),
+        html: true
+      }
+    ]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
   })
 
   test('column group alignment', () => {
     // Default: center
-    let groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    let groups = [{ name: 'xy', columns: ['x', 'y'] }]
     let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-col-center')
 
     // Left
-    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'left' }]
+    groups = [{ name: 'xy', columns: ['x', 'y'], align: 'left' }]
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-col-left')
 
     // Right
-    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'right', headerClassName: 'hdr' }]
+    groups = [{ name: 'xy', columns: ['x', 'y'], align: 'right', headerClassName: 'hdr' }]
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-col-right hdr')
 
     // Center
-    groups = [{ Header: 'xy', columns: ['x', 'y'], align: 'center' }]
+    groups = [{ name: 'xy', columns: ['x', 'y'], align: 'center' }]
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-col-center')
   })
 
   test("columns and groups aren't mutated", () => {
-    const groups = [{ Header: 'xy', columns: ['x', 'y'] }]
+    const groups = [{ name: 'xy', columns: ['x', 'y'] }]
     const columns = [{ accessor: 'x' }, { accessor: 'y' }]
     let cols = buildColumnDefs(columns, groups)
-    expect(cols[0].Header).toEqual('xy')
+    expect(cols[0].Header()).toEqual('xy')
     expect(columns).toEqual([{ accessor: 'x' }, { accessor: 'y' }])
-    expect(groups).toEqual([{ Header: 'xy', columns: ['x', 'y'] }])
+    expect(groups).toEqual([{ name: 'xy', columns: ['x', 'y'] }])
   })
 })
 

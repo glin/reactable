@@ -66,8 +66,8 @@ test_that("reactable", {
   data <- data.frame(x = 1, y = "b")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(accessor = "x", Header = "x", type = "numeric"),
-    list(accessor = "y", Header = "y", type = "factor")
+    list(accessor = "x", name = "x", type = "numeric"),
+    list(accessor = "y", name = "y", type = "factor")
   )
   expected <- list(
     data = data,
@@ -113,11 +113,11 @@ test_that("reactable", {
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
+    list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
          filterable = FALSE,  width = 45, align = "center", details = list("1")),
-    list(accessor = ".rownames", Header = "", type = "numeric",
+    list(accessor = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE),
-    list(accessor = "x", Header = "x", type = "factor")
+    list(accessor = "x", name = "x", type = "factor")
   )
   expected <- list(
     data = data,
@@ -162,8 +162,8 @@ test_that("reactable", {
   # Column names
   tbl <- reactable(data.frame(x = 1, y = "2"), colnames = list(x = "X", y = "Y"))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$Header, "X")
-  expect_equal(attribs$columns[[2]]$Header, "Y")
+  expect_equal(attribs$columns[[1]]$name, "X")
+  expect_equal(attribs$columns[[2]]$name, "Y")
 
   # Column overrides
   tbl <- reactable(data.frame(x = 1, y = "2"), columns = list(
@@ -172,7 +172,7 @@ test_that("reactable", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$sortable, FALSE)
-  expect_equal(attribs$columns[[2]]$Header, "Y")
+  expect_equal(attribs$columns[[2]]$name, "Y")
 
   # Style
   tbl <- reactable(data.frame(), style = " border-bottom: 1px solid; top: 50px")
@@ -214,7 +214,7 @@ test_that("rownames", {
   attribs <- getAttribs(data)
   expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", Header = "",  type = "numeric",
+    accessor = ".rownames", name = "",  type = "numeric",
     sortable = FALSE, filterable = FALSE
   ))
 
@@ -223,7 +223,7 @@ test_that("rownames", {
   attribs <- getAttribs(data)
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", Header = "",  type = "character",
+    accessor = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE
   ))
 
@@ -233,7 +233,7 @@ test_that("rownames", {
   ))
   attribs <- getAttribs(data)
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", Header = "N",  type = "numeric",
+    accessor = ".rownames", name = "N",  type = "numeric",
     sortable = TRUE, filterable = FALSE, headerClassName = "hdr"
   ))
 
@@ -295,12 +295,12 @@ test_that("defaultColGroup", {
     )
   )
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columnGroups[[1]]$Header, "group")
+  expect_equal(attribs$columnGroups[[1]]$name, "group")
   expect_equal(attribs$columnGroups[[1]]$columns, list("x"))
   expect_equal(attribs$columnGroups[[1]]$align, "left")
   expect_equal(attribs$columnGroups[[1]]$headerClass, "cls")
   expect_equal(attribs$columnGroups[[1]]$headerStyle, list(color = "blue"))
-  expect_equal(attribs$columnGroups[[2]]$Header, "y")
+  expect_equal(attribs$columnGroups[[2]]$name, "y")
   expect_equal(attribs$columnGroups[[2]]$columns, list("y"))
   expect_equal(attribs$columnGroups[[2]]$align, "left")
   expect_equal(attribs$columnGroups[[2]]$headerClass, "cls")
@@ -428,6 +428,33 @@ test_that("column renderers", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[4]]$cell, list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01")))
 
+  # Header renderers
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = function(value) paste("header:", value)),
+    y = colDef(header = function(value, name) paste("name:", name)),
+    z = colDef(name = "ZZ", header = function(value) div(value))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["header"]], "header: x")
+  expect_equal(attribs$columns[[2]][["header"]], "name: y")
+  expect_equal(attribs$columns[[3]][["header"]], div("ZZ"))
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = div("header")),
+    y = colDef(header = 123)
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["header"]], div("header"))
+  expect_equal(attribs$columns[[2]][["header"]], "123")
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = JS("colInfo => 'header'"), headerClass = "header"),
+    y = colDef(headerClass = "no-header")
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["header"]], JS("colInfo => 'header'"))
+  expect_equal(attribs$columns[[2]][["header"]], NULL)
+
   # Footer renderers
   tbl <- reactable(data, columns = list(
     x = colDef(footer = function(values) paste(values, collapse = " ")),
@@ -454,6 +481,33 @@ test_that("column renderers", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]][["footer"]], JS("colInfo => 'footer'"))
   expect_equal(attribs$columns[[2]][["footer"]], NULL)
+
+  # Group header renderers
+  tbl <- reactable(data, columnGroups = list(
+    colGroup(name = "x", header = div("group X"), columns = "x"),
+    colGroup(name = "group Y", header = function(value) paste("name:", value), columns = "y"),
+    colGroup(name = "group Z", header = function(value) div(value), columns = "z")
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups[[1]][["header"]], div("group X"))
+  expect_equal(attribs$columnGroups[[2]][["header"]], "name: group Y")
+  expect_equal(attribs$columnGroups[[3]][["header"]], div("group Z"))
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = div("header")),
+    y = colDef(header = 123)
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["header"]], div("header"))
+  expect_equal(attribs$columns[[2]][["header"]], "123")
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = JS("colInfo => 'header'"), headerClass = "header"),
+    y = colDef(headerClass = "no-header")
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]][["header"]], JS("colInfo => 'header'"))
+  expect_equal(attribs$columns[[2]][["header"]], NULL)
 })
 
 test_that("row details", {
@@ -462,7 +516,7 @@ test_that("row details", {
   # R renderer
   tbl <- reactable(data, details = function(i) data[i, "y"])
   attribs <- getAttribs(tbl)
-  expected <- list(accessor = ".details", Header = "", type = "NULL", sortable = FALSE,
+  expected <- list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
                    filterable = FALSE, width = 45, align = "center", details = list("a", "b"))
   expect_equal(attribs$columns[[1]], expected)
 
@@ -520,7 +574,23 @@ test_that("html dependencies from rendered content are passed through", {
   ))
   expect_equal(tbl$dependencies, list(dep, dep2))
 
+  # Header renderers
+  tbl <- reactable(data, columns = list(
+    x = colDef(header = function(value) {
+      attachDependencies(div("x"), dep)
+    }),
+    y = colDef(header = attachDependencies(tagList(), dep2))
+  ))
+  expect_equal(tbl$dependencies, list(dep, dep2))
+
   # Footer renderers
+  tbl <- reactable(data, columnGroups = list(
+    colGroup(columns = "x", header = function(value) attachDependencies(div("x"), dep)),
+    colGroup(columns = "y", header = attachDependencies(tagList(), dep2))
+  ))
+  expect_equal(tbl$dependencies, list(dep, dep2))
+
+  # Group header renderers
   tbl <- reactable(data, columns = list(
     x = colDef(footer = function(values) {
       attachDependencies(div("x"), dep)

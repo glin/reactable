@@ -286,8 +286,9 @@ colDef(
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
   sortMethod = NULL,        # Custom sort method. Specify "naLast" to always sort NAs to the bottom
   format = NULL,            # Column formatting options. See column formatting below
-  cell = NULL,              # Custom cell renderer. See cell renderers below
-  aggregated = NULL,        # Custom aggregated cell renderer. See cell renderers below
+  cell = NULL,              # Custom cell renderer. See cell rendering below
+  aggregated = NULL,        # Custom aggregated cell renderer. See cell rendering below
+  header = NULL,            # Custom header renderer. See header rendering below
   footer = NULL,            # Footer content or renderer. See footers below
   details = NULL,           # Additional content to display when expanding a row. See row details below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
@@ -311,6 +312,8 @@ colDef(
 colGroup(
   name,                # Column group header name
   columns,             # Names of columns in the group
+  header = NULL,       # Custom header renderer. See header rendering below
+  html = FALSE,        # Render header as HTML? HTML strings are escaped by default
   align = NULL,        # Column group header alignment. One of "left", "right", "center"
   headerClass = NULL,  # Additional CSS classes to apply to the header
   headerStyle = NULL   # Inline styles to apply to the header. A named list or character string
@@ -417,6 +420,39 @@ colDef(
 
 See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
 on JS render function arguments.
+
+### Custom Header Rendering
+Header rendering can be customized using an R render function:
+```r
+colDef(
+  header = function(value, name) {
+    # input:
+    #   - value, the header value
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag)
+    htmltools::div(value)
+  }
+)
+```
+
+Or a Javascript render function:
+```r
+colDef(
+  header = JS("
+    function(colInfo) {
+      // input:
+      //  - colInfo, an object containing column info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + colInfo.column.name + '</div>'
+    }
+  "),
+  html = TRUE  # to render as HTML
+)
+```
 
 ### Footers
 Footer content can be a cell value or HTML tag:

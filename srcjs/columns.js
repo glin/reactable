@@ -36,6 +36,27 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.aggregate = aggregators[type]
     }
 
+    col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortMethod === 'naLast' })
+
+    // Default column filters
+    //  - string columns: locale-sensitive, case-insensitive substring
+    //  - numeric columns: string starts with (the default)
+    //  - other columns: case-insensitive substring
+    if (col.type === 'character' || col.type === 'factor') {
+      col.filterAll = true
+      col.filterMethod = filterRowsLocaleSubstring
+    } else if (col.type !== 'numeric') {
+      col.filterAll = true
+      col.filterMethod = filterRowsSubstring
+    }
+
+    if (col.type === 'numeric') {
+      // Right-align numbers by default
+      col.align = col.align || 'right'
+    } else {
+      col.align = col.align || 'left'
+    }
+
     col.Cell = function Cell(cell) {
       let value = cell.value
 
@@ -121,6 +142,50 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       }
     }
 
+    col.Header = function Header(colInfo) {
+      let header = col.name
+
+      if (col.header) {
+        if (typeof col.header === 'function') {
+          header = col.header(colInfo)
+        } else {
+          header = hydrate({ Fragment, WidgetContainer }, col.header)
+        }
+      }
+
+      let content
+      if (React.isValidElement(header)) {
+        content = header
+      } else if (col.html) {
+        // Render inline to align with the sort icon
+        content = <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: header }} />
+      } else {
+        content = header != null ? String(header) : ''
+      }
+
+      // Add sort icon to column header
+      const isSortable = getFirstDefined(col.sortable, sortable)
+      if (isSortable && showSortIcon) {
+        const sortClass = showSortable ? '-sort' : ''
+        if (col.align === 'right') {
+          return (
+            <div className="rt-sort-header">
+              <span className={classNames(sortClass, '-sort-left')} />
+              {content}
+            </div>
+          )
+        } else {
+          return (
+            <div className="rt-sort-header">
+              {content}
+              <span className={classNames(sortClass, '-sort-right')} />
+            </div>
+          )
+        }
+      }
+      return content
+    }
+
     if (col.footer) {
       col.Footer = function Footer(colInfo) {
         let footer
@@ -149,54 +214,9 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       }
     }
 
-    col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortMethod === 'naLast' })
-
-    if (col.type === 'numeric') {
-      // Right-align numbers by default
-      col.align = col.align || 'right'
-    } else {
-      col.align = col.align || 'left'
-    }
-
     const colAlignClass = `rt-col-${col.align}`
     col.headerClassName = classNames(colAlignClass, col.headerClassName)
     col.footerClassName = classNames(colAlignClass, col.footerClassName)
-
-    // Add sort icon to column header
-    const isSortable = getFirstDefined(col.sortable, sortable)
-    if (isSortable && showSortIcon) {
-      const header = col.Header
-      col.Header = function Header() {
-        const sortClass = showSortable ? '-sort' : ''
-        if (col.align === 'right') {
-          return (
-            <React.Fragment>
-              <span className={classNames(sortClass, '-sort-left')} />
-              {header}
-            </React.Fragment>
-          )
-        } else {
-          return (
-            <React.Fragment>
-              {header}
-              <span className={classNames(sortClass, '-sort-right')} />
-            </React.Fragment>
-          )
-        }
-      }
-    }
-
-    // Default column filters
-    //  - string columns: locale-sensitive, case-insensitive substring
-    //  - numeric columns: string starts with (the default)
-    //  - other columns: case-insensitive substring
-    if (col.type === 'character' || col.type === 'factor') {
-      col.filterAll = true
-      col.filterMethod = filterRowsLocaleSubstring
-    } else if (col.type !== 'numeric') {
-      col.filterAll = true
-      col.filterMethod = filterRowsSubstring
-    }
 
     // Prevent react-table from applying cell classes and styles to footers by default.
     // Override this behavior with our own footerClass and footerStyle.
@@ -264,6 +284,23 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
   if (groups) {
     columns = addColumnGroups(columns, groups)
     columns.forEach(col => {
+      col.Header = function Header(colInfo) {
+        let header = col.name
+        if (col.header) {
+          if (typeof col.header === 'function') {
+            header = col.header(colInfo)
+          } else {
+            header = hydrate({ Fragment, WidgetContainer }, col.header)
+          }
+        }
+        if (React.isValidElement(header)) {
+          return header
+        } else if (col.html) {
+          return <div dangerouslySetInnerHTML={{ __html: header }} />
+        } else {
+          return header != null ? String(header) : ''
+        }
+      }
       col.align = col.align || 'center'
       col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
     })
