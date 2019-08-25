@@ -213,7 +213,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       }
     }
 
-    const colAlignClass = `rt-col-${col.align}`
+    const colAlignClass = `rt-align-${col.align}`
     col.headerClassName = classNames(colAlignClass, col.headerClassName)
     col.footerClassName = classNames(colAlignClass, col.footerClassName)
 
@@ -301,7 +301,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         }
       }
       col.align = col.align || 'center'
-      col.headerClassName = classNames(`rt-col-${col.align}`, col.headerClassName)
+      col.headerClassName = classNames(`rt-align-${col.align}`, col.headerClassName)
     })
   }
 

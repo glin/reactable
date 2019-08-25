@@ -66,15 +66,15 @@
 }
 
 /* Column alignment */
-.ReactTable .rt-col-left {
+.ReactTable .rt-align-left {
   text-align: left;
 }
 
-.ReactTable .rt-col-right {
+.ReactTable .rt-align-right {
   text-align: right;
 }
 
-.ReactTable .rt-col-center {
+.ReactTable .rt-align-center {
   text-align: center;
 }
 
@@ -202,8 +202,15 @@
 
 /* Sorting */
 .rt-sort-header {
-  display: inline-flex;
-  align-items: baseline;
+  display: flex;
+}
+
+.rt-align-center .rt-sort-header {
+  justify-content: center;
+}
+
+.rt-align-right .rt-sort-header {
+  justify-content: flex-end;
 }
 
 .ReactTable .rt-thead .rt-th.-sort-desc {
