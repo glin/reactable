@@ -443,7 +443,7 @@ export function formatValue(value, options) {
 }
 
 function filterRowsSubstring(filter, rows) {
-  const id = filter.pivotId || filter.id
+  const id = filter.id
   return rows.filter(row => {
     if (row[id] === undefined) {
       return true
@@ -454,7 +454,7 @@ function filterRowsSubstring(filter, rows) {
 }
 
 function filterRowsLocaleSubstring(filter, rows) {
-  const id = filter.pivotId || filter.id
+  const id = filter.id
   const strIncludesLocale = getStrIncludesLocale()
   const noLocale = new RegExp(/^[\w-.\s,]*$/)
   return rows.filter(row => {
