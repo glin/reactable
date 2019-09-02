@@ -526,21 +526,45 @@ reactable(
 ## Footers
 
 ```{r}
-library(htmltools)
+data <- subset(iris[1:5, ], select = c(Species, Sepal.Length:Petal.Width))
 
-reactable(iris[1:50, ], columns = list(
-  Sepal.Length = colDef(
-    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
-  ),
-  Sepal.Width = colDef(footer = function(values, key) {
-    span(tags$b("Total: "), sum(values))
+reactable(
+  data, 
+  defaultColDef = colDef(footer = function(values) {
+    format(sum(values), nsmall = 1)
   }),
-  Petal.Length = colDef(html = TRUE, footer = JS("
-    function(colInfo) {
-      return '<b>Rows: </b>' + colInfo.data.length
-    }
-  "))
+  columns = list(
+    Species = colDef(footer = htmltools::tags$b("Total"))
+  )
+)
+```
+
+
+```{r}
+library(dplyr)
+
+set.seed(10)
+
+data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+reactable(data, filterable = TRUE, defaultPageSize = 5, minRows = 5, columns = list(
+  Manufacturer = colDef(html = TRUE, footer = "<b>Total</b>"),
+  Sales = colDef(filterable = FALSE, html = TRUE, footer = JS("function(colInfo) {
+    var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
+    var total = values.reduce(function(a, b) { return a + b }, 0)
+    return '<b>$' + total.toFixed(2) + '</b>'
+  }"))
 ))
+```
+
+```{r}
+library(sparkline)
+
+reactable(iris[1:20, ], bordered = TRUE, defaultColDef = colDef(footer = function(values) {
+  if (!is.numeric(values)) return()
+  sparkline::sparkline(values, type = "box", width = 100, height = 30)
+}))
 ```
 
 

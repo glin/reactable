@@ -159,23 +159,21 @@ reactable(data, columns = list(
 ))
 ```
 
-### Footers
+### Footers and Total Rows
 https://glin.github.io/reactable/articles/examples.html#footers
 
 ```r
-reactable(iris, columns = list(
-  Sepal.Length = colDef(
-    footer = paste("Avg:", round(mean(iris$Sepal.Length), 1))
-  ),
-  Sepal.Width = colDef(footer = function(values, key) {
-    htmltools::span(htmltools::tags$b("Total: "), sum(values))
+data <- subset(iris[1:5, ], select = c(Species, Sepal.Length:Petal.Width))
+
+reactable(
+  data, 
+  defaultColDef = colDef(footer = function(values) {
+    format(sum(values), nsmall = 1)
   }),
-  Petal.Length = colDef(html = TRUE, footer = JS("
-    function(colInfo) {
-      return '<b>Rows: </b>' + colInfo.data.length
-    }
-  "))
-))
+  columns = list(
+    Species = colDef(footer = htmltools::tags$b("Total"))
+  )
+)
 ```
 
 ### Column Groups
