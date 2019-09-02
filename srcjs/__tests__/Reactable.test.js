@@ -169,7 +169,7 @@ describe('filtering', () => {
   })
 
   it('filters string columns', () => {
-    const { container, getByText } = render(
+    const { container, getByText, queryByText } = render(
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
@@ -206,12 +206,11 @@ describe('filtering', () => {
     rows = getRows(container)
     expect(rows).toHaveLength(3)
 
-    // Locale-sensitive
-    fireEvent.change(filters[1], { target: { value: 'a' } })
+    // Diacritics
+    fireEvent.change(filters[1], { target: { value: 'á' } })
     rows = getRows(container)
-    expect(rows).toHaveLength(2)
-    expect(getByText('ááád')).toBeTruthy()
-    expect(getByText('bAb')).toBeTruthy()
+    expect(rows).toHaveLength(1)
+    expect(queryByText('ááád')).toBeTruthy()
   })
 
   it('filters other columns', () => {

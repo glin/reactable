@@ -54,3 +54,7 @@ export function set(obj, path, value) {
   })
   return newObj
 }
+
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}

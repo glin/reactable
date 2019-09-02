@@ -3,8 +3,8 @@ import { ReactTableDefaults } from 'react-table'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
-import { aggregators, normalizeNumber, isNA } from './aggregators'
-import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes } from './utils'
+import { aggregators, isNA, normalizeNumber } from './aggregators'
+import { classNames, escapeRegExp, getFirstDefined } from './utils'
 
 // Convert column-based data to rows
 // e.g. { a: [1, 2], b: ['x', 'y'] } to [{ a: 1, b: 'x' }, { a: 2, b: 'y' }]
@@ -39,16 +39,13 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortMethod === 'naLast' })
 
     // Default column filters
-    //  - string columns: locale-sensitive, case-insensitive substring
-    //  - numeric columns: string starts with (the default)
+    //  - numeric columns: string starts with
     //  - other columns: case-insensitive substring
     col.filterAll = true
-    if (col.type === 'character' || col.type === 'factor') {
-      col.filterMethod = filterColumnLocaleSubstring
-    } else if (col.type !== 'numeric') {
-      col.filterMethod = filterColumnSubstring
-    } else {
+    if (col.type === 'numeric') {
       col.filterMethod = filterColumnStartsWith
+    } else {
+      col.filterMethod = filterColumnSubstring
     }
 
     if (col.type === 'numeric') {
@@ -445,51 +442,32 @@ export function formatValue(value, options) {
 
 function filterColumnStartsWith(filter, rows) {
   const id = filter.id
+  const filterRegex = new RegExp('^' + escapeRegExp(filter.value), 'i')
   return rows.filter(row => {
-    if (row[id] === undefined) {
+    const value = row[id]
+    if (value === undefined) {
       return true
     }
     // Don't filter on aggregated cells
     if (row._subRows) {
       return true
     }
-    return row[id] !== undefined ? String(row[id]).startsWith(filter.value) : true
+    return filterRegex.test(value)
   })
 }
 
 function filterColumnSubstring(filter, rows) {
   const id = filter.id
+  const filterRegex = new RegExp(escapeRegExp(filter.value), 'i')
   return rows.filter(row => {
-    if (row[id] === undefined) {
+    const value = row[id]
+    if (value === undefined) {
       return true
     }
     // Don't filter on aggregated cells
     if (row._subRows) {
       return true
     }
-    const value = String(row[id])
-    return strIncludes(value, filter.value)
-  })
-}
-
-function filterColumnLocaleSubstring(filter, rows) {
-  const id = filter.id
-  const strIncludesLocale = getStrIncludesLocale()
-  const noLocale = new RegExp(/^[\w-.\s,]*$/)
-  return rows.filter(row => {
-    if (row[id] === undefined) {
-      return true
-    }
-    // Don't filter on aggregated cells
-    if (row._subRows) {
-      return true
-    }
-    const value = String(row[id])
-    // Ignore alphanumeric strings that don't need the (significantly) slower
-    // locale-sensitive string comparison.
-    if (noLocale.test(value)) {
-      return strIncludes(value, filter.value)
-    }
-    return strIncludesLocale(value, filter.value)
+    return filterRegex.test(value)
   })
 }
