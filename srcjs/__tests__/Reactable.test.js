@@ -602,7 +602,7 @@ describe('row details', () => {
     delete window.Shiny
   })
 
-  it('details are collapsed on pagination, sorting, and filtering', () => {
+  it('details are collapsed on pagination and sorting, but not filtering', () => {
     const columns = [
       { name: 'col-a', accessor: 'a', filterable: true, details: ['row-details', 'row-details'] },
       { name: 'col-b', accessor: 'b' }
@@ -632,7 +632,7 @@ describe('row details', () => {
     expect(getByText('row-details')).toBeTruthy()
     const filter = container.querySelector('.rt-thead.-filters input')
     fireEvent.change(filter, { target: { value: '1' } })
-    expect(queryByText('row-details')).toEqual(null)
+    expect(getByText('row-details')).toBeTruthy()
     expect(getExpanders(container)).toHaveLength(1)
   })
 

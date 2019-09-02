@@ -366,7 +366,6 @@ class Reactable extends React.Component {
         onExpandedChange={onExpandedChange}
         onPageChange={collapseDetails}
         onSortedChange={collapseDetails}
-        onFilteredChange={collapseDetails}
         getTheadThProps={getTheadThProps}
         getTheadGroupThProps={getTheadGroupThProps}
         getTrProps={getTrProps}
