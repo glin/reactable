@@ -42,12 +42,13 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     //  - string columns: locale-sensitive, case-insensitive substring
     //  - numeric columns: string starts with (the default)
     //  - other columns: case-insensitive substring
+    col.filterAll = true
     if (col.type === 'character' || col.type === 'factor') {
-      col.filterAll = true
-      col.filterMethod = filterRowsLocaleSubstring
+      col.filterMethod = filterColumnLocaleSubstring
     } else if (col.type !== 'numeric') {
-      col.filterAll = true
-      col.filterMethod = filterRowsSubstring
+      col.filterMethod = filterColumnSubstring
+    } else {
+      col.filterMethod = filterColumnStartsWith
     }
 
     if (col.type === 'numeric') {
@@ -442,10 +443,28 @@ export function formatValue(value, options) {
   return value
 }
 
-function filterRowsSubstring(filter, rows) {
+function filterColumnStartsWith(filter, rows) {
   const id = filter.id
   return rows.filter(row => {
     if (row[id] === undefined) {
+      return true
+    }
+    // Don't filter on aggregated cells
+    if (row._subRows) {
+      return true
+    }
+    return row[id] !== undefined ? String(row[id]).startsWith(filter.value) : true
+  })
+}
+
+function filterColumnSubstring(filter, rows) {
+  const id = filter.id
+  return rows.filter(row => {
+    if (row[id] === undefined) {
+      return true
+    }
+    // Don't filter on aggregated cells
+    if (row._subRows) {
       return true
     }
     const value = String(row[id])
@@ -453,12 +472,16 @@ function filterRowsSubstring(filter, rows) {
   })
 }
 
-function filterRowsLocaleSubstring(filter, rows) {
+function filterColumnLocaleSubstring(filter, rows) {
   const id = filter.id
   const strIncludesLocale = getStrIncludesLocale()
   const noLocale = new RegExp(/^[\w-.\s,]*$/)
   return rows.filter(row => {
     if (row[id] === undefined) {
+      return true
+    }
+    // Don't filter on aggregated cells
+    if (row._subRows) {
       return true
     }
     const value = String(row[id])

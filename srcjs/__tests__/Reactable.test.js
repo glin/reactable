@@ -123,16 +123,19 @@ describe('sorting', () => {
 })
 
 describe('filtering', () => {
+  const getFilters = container => container.querySelectorAll('.rt-thead.-filters input')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+
   it('enables filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
     }
     const { container, rerender } = render(<Reactable {...props} />)
-    let filters = container.querySelectorAll('.rt-thead.-filters input')
+    let filters = getFilters(container)
     expect(filters).toHaveLength(0)
     rerender(<Reactable {...props} filterable />)
-    filters = container.querySelectorAll('.rt-thead.-filters input')
+    filters = getFilters(container)
     expect(filters).toHaveLength(2)
   })
 
@@ -145,23 +148,23 @@ describe('filtering', () => {
         minRows={1}
       />
     )
-    const filter = container.querySelector('.rt-thead.-filters input')
+    const filter = getFilters(container)[0]
 
     fireEvent.change(filter, { target: { value: '11' } })
-    let rows = container.querySelectorAll('.rt-tr-group')
+    let rows = getRows(container)
     expect(rows).toHaveLength(2)
     expect(getByText('111')).toBeTruthy()
     expect(getByText('115')).toBeTruthy()
 
     // No matches
     fireEvent.change(filter, { target: { value: '5' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
     fireEvent.change(filter, { target: { value: '' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(3)
   })
 
@@ -177,35 +180,35 @@ describe('filtering', () => {
         minRows={1}
       />
     )
-    const filters = container.querySelectorAll('.rt-thead.-filters input')
+    const filters = getFilters(container)
 
     // Case-insensitive
     fireEvent.change(filters[0], { target: { value: 'Bb' } })
-    let rows = container.querySelectorAll('.rt-tr-group')
+    let rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('bbb')).toBeTruthy()
 
     // Substring matches
     fireEvent.change(filters[0], { target: { value: 'c' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(2)
     expect(getByText('aaac')).toBeTruthy()
     expect(getByText('CCC')).toBeTruthy()
 
     // No matches
     fireEvent.change(filters[0], { target: { value: 'cccc' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
     fireEvent.change(filters[0], { target: { value: '' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(3)
 
     // Locale-sensitive
     fireEvent.change(filters[1], { target: { value: 'a' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(2)
     expect(getByText('ááád')).toBeTruthy()
     expect(getByText('bAb')).toBeTruthy()
@@ -220,30 +223,61 @@ describe('filtering', () => {
         minRows={1}
       />
     )
-    const filter = container.querySelector('.rt-thead.-filters input')
+    const filter = getFilters(container)[0]
 
     // Case-insensitive
     fireEvent.change(filter, { target: { value: 'acc' } })
-    let rows = container.querySelectorAll('.rt-tr-group')
+    let rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('acCC')).toBeTruthy()
 
     // Substring matches
     fireEvent.change(filter, { target: { value: '03-05' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('2018-03-05')).toBeTruthy()
 
     // Not locale-sensitive
     fireEvent.change(filter, { target: { value: 'aaa' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(1)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
     fireEvent.change(filter, { target: { value: '' } })
-    rows = container.querySelectorAll('.rt-tr-group')
+    rows = getRows(container)
     expect(rows).toHaveLength(4)
+  })
+
+  it('filters individual rows when aggregated', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ group: ['x', 'x', 'x', 'y'], a: [1, 1, 2, 40], b: ['aa', 'bb', 'aa', 'bb'] }}
+        columns={[
+          { name: 'group', accessor: 'group' },
+          { name: 'a', accessor: 'a', type: 'numeric', aggregate: 'sum' },
+          { name: 'b', accessor: 'b', aggregate: () => 'cc' }
+        ]}
+        filterable
+        pivotBy={['group']}
+        minRows={1}
+      />
+    )
+    const filters = getFilters(container)
+
+    // Numeric column
+    fireEvent.change(filters[1], { target: { value: '1' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('4')).toBeTruthy()
+    expect(getByText('x (2)')).toBeTruthy()
+
+    // Non-numeric column
+    fireEvent.change(filters[2], { target: { value: 'b' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('4')).toBeTruthy()
+    expect(getByText('x (1)')).toBeTruthy()
   })
 })
 
