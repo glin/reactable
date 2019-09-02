@@ -444,6 +444,34 @@ reactable(data, groupBy = "Manufacturer", columns = list(
 ))
 ```
 
+```{r}
+library(dplyr)
+
+set.seed(10)
+
+data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+reactable(data, groupBy = "Manufacturer", columns = list(
+  Model = colDef(aggregate = "unique"),
+  Type = colDef(filterable = TRUE, aggregated = JS("
+    function(cellInfo) {
+      // Get comma-separated list of unique values in visible rows
+      var values = cellInfo.subRows.map(function(row) { return row.Type })
+      var unique = values.reduce(function(obj, v) {obj[v] = true; return obj }, {})
+      return Object.keys(unique).join(', ')
+    }
+  ")),
+  Sales = colDef(aggregated = JS("
+    function(cellInfo) {
+      // Calculate sum of all values in visible rows
+      var values = cellInfo.subRows.map(function(row) { return row.Sales })
+      var total = values.reduce(function(a, b) { return a + b }, 0)
+      return '$' + total.toFixed(1)
+    }
+  "))
+))
+```
 
 ## Embedding HTML Widgets
 
