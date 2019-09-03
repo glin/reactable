@@ -444,7 +444,7 @@ reactable(data, groupBy = "Manufacturer", columns = list(
 ))
 ```
 
-```{r}
+```{r, message=FALSE}
 library(dplyr)
 
 set.seed(10)
@@ -540,7 +540,7 @@ reactable(
 ```
 
 
-```{r}
+```{r, message=FALSE}
 library(dplyr)
 
 set.seed(10)
@@ -683,7 +683,7 @@ reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4)
 
 ### No pagination
 ```{r}
-reactable(iris[1:50, ], pagination = FALSE, height = 300)
+reactable(iris[1:20, ], pagination = FALSE, height = 300)
 ```
 
 ```{css echo=FALSE}
