@@ -200,6 +200,35 @@
   right: 0;
 }
 
+/* Sticky headers/footers */
+@supports(position: sticky) {
+  .ReactTable .rt-tbody {
+    /* Override default */
+    overflow: visible;
+  }
+
+  .ReactTable .rt-thead {
+    position: sticky;
+    top: 0;
+    background: #fff;
+  }
+
+  .ReactTable .rt-tfoot {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+  }
+}
+
+@media screen and (-ms-high-contrast: active),
+screen and (-ms-high-contrast: none) {
+  /* Keep body aligned with headers/footers in IE 11 */
+  .ReactTable .rt-tbody {
+    overflow: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
 /* Sorting */
 .rt-sort-header {
   display: flex;
