@@ -412,3 +412,13 @@ screen and (-ms-high-contrast: none) {
   width: 70px;
   text-align: center;
 }
+
+/* No data */
+.ReactTable .rt-tbody {
+  position: relative;
+}
+
+.ReactTable .rt-noData {
+  padding: 0 8px;
+  color: rgba(0, 0, 0, 0.8);
+}

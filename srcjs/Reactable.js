@@ -62,6 +62,28 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
+// Render no data component in table body rather than the entire table
+// so it doesn't overlap with headers/filters.
+const getTbodyProps = state => ({ state })
+const DefaultTbodyComponent = ReactTableDefaults.TbodyComponent
+const DefaultNoDataComponent = ReactTableDefaults.NoDataComponent
+Object.assign(ReactTableDefaults, {
+  // eslint-disable-next-line react/prop-types
+  TbodyComponent({ state, children, ...rest }) {
+    const { pageRows, noDataText } = state
+    const noData = !pageRows.length && <DefaultNoDataComponent>{noDataText}</DefaultNoDataComponent>
+    return (
+      <DefaultTbodyComponent {...rest}>
+        {children}
+        {noData}
+      </DefaultTbodyComponent>
+    )
+  },
+  NoDataComponent() {
+    return null
+  }
+})
+
 ReactTable.propTypes = fixedReactTablePropTypes
 
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison
@@ -366,8 +388,9 @@ class Reactable extends React.Component {
         onExpandedChange={onExpandedChange}
         onPageChange={collapseDetails}
         onSortedChange={collapseDetails}
-        getTheadThProps={getTheadThProps}
         getTheadGroupThProps={getTheadGroupThProps}
+        getTheadThProps={getTheadThProps}
+        getTbodyProps={getTbodyProps}
         getTrProps={getTrProps}
         SubComponent={SubComponent}
         {...selectProps}

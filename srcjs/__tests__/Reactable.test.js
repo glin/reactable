@@ -1279,3 +1279,30 @@ describe('table updates correctly when data props change', () => {
     expect(getByText('a-1')).toBeTruthy()
   })
 })
+
+describe('no data', () => {
+  const getTbody = container => container.querySelector('.rt-tbody')
+  const getNoData = container => container.querySelector('.rt-noData')
+
+  it('renders no data message in table body', () => {
+    const props = {
+      data: { a: [] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    const { queryAllByText, container } = render(<Reactable {...props} />)
+    const noData = queryAllByText('No rows found')
+    expect(noData).toHaveLength(1)
+    const tbody = getTbody(container)
+    expect(getNoData(tbody)).toBeTruthy()
+  })
+
+  it('does not show message with data present', () => {
+    const props = {
+      data: { a: [1] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    const { queryByText } = render(<Reactable {...props} />)
+    const noData = queryByText('No rows found')
+    expect(noData).toEqual(null)
+  })
+})
