@@ -81,7 +81,7 @@
 /* Outer table borders */
 .ReactTable {
   /* Remove default style */
-  border: inherit;
+  border: none;
 }
 
 .-outlined .rt-table,
@@ -92,7 +92,7 @@
 /* Header borders */
 .ReactTable .rt-thead.-header {
   /* Remove default style */
-  box-shadow: inherit;
+  box-shadow: none;
 }
 
 .rt-th {
@@ -113,7 +113,7 @@
 
 .ReactTable .rt-thead.-filters .rt-th {
   /* Remove default style */
-  border-right: inherit;
+  border-right: none;
 }
 
 .-filters .rt-th {
@@ -127,7 +127,7 @@
 /* Cell and footer borders */
 .ReactTable .rt-tbody .rt-tr-group {
   /* Remove default style */
-  border-bottom: inherit;
+  border-bottom: none;
 }
 
 .ReactTable .rt-thead .rt-th,
@@ -135,19 +135,19 @@
 .ReactTable .rt-tbody .rt-td,
 .ReactTable .rt-tfoot .rt-td {
   /* Remove default style */
-  border-right: inherit;
+  border-right: none;
 }
 
 .ReactTable .rt-tfoot {
   /* Remove default style */
-  box-shadow: inherit;
+  box-shadow: none;
 }
 
 .rt-td {
   border-top: 1px solid hsl(0, 0%, 95%);
 }
 
-.rt-tr-group:first-child > .rt-tr:first-child .rt-td {
+.rt-tr-group:first-child>.rt-tr:first-child .rt-td {
   border-top: none;
 }
 
@@ -172,7 +172,7 @@
 /* Header group borders */
 .ReactTable .rt-thead.-headerGroups {
   /* Remove default style */
-  background: inherit;
+  background: transparent;
   border-bottom: none;
 }
 
