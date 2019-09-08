@@ -229,6 +229,11 @@ screen and (-ms-high-contrast: none) {
   }
 }
 
+/* Filters */
+.ReactTable .rt-thead.-filters input:focus {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
 /* Sorting */
 .rt-sort-header {
   display: flex;
