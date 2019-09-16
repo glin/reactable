@@ -252,6 +252,11 @@ class Reactable extends React.Component {
       onExpanderClick: this.handleExpanderClick
     })
 
+    // Leave at least one row to show the no data message properly
+    if (minRows != null) {
+      minRows = Math.max(minRows, 1)
+    }
+
     className = classNames(
       className,
       outlined ? '-outlined' : '',
