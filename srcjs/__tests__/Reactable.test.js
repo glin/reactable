@@ -124,7 +124,7 @@ describe('sorting', () => {
 
 describe('filtering', () => {
   const getFilters = container => container.querySelectorAll('.rt-thead.-filters input')
-  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
 
   it('enables filtering', () => {
     const props = {
@@ -159,7 +159,7 @@ describe('filtering', () => {
     // No matches
     fireEvent.change(filter, { target: { value: '5' } })
     rows = getRows(container)
-    expect(rows).toHaveLength(1)
+    expect(rows).toHaveLength(0)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
@@ -198,7 +198,7 @@ describe('filtering', () => {
     // No matches
     fireEvent.change(filters[0], { target: { value: 'cccc' } })
     rows = getRows(container)
-    expect(rows).toHaveLength(1)
+    expect(rows).toHaveLength(0)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
@@ -239,7 +239,7 @@ describe('filtering', () => {
     // Not locale-sensitive
     fireEvent.change(filter, { target: { value: 'aaa' } })
     rows = getRows(container)
-    expect(rows).toHaveLength(1)
+    expect(rows).toHaveLength(0)
     expect(getByText('No rows found')).toBeTruthy()
 
     // Clear filter
