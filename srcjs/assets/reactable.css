@@ -56,8 +56,8 @@
   height: 100%;
 }
 
-.rt-select-label input[type=checkbox],
-.rt-select-label input[type=radio] {
+.rt-select-label input[type='checkbox'],
+.rt-select-label input[type='radio'] {
   margin: 0;
 }
 
@@ -147,7 +147,7 @@
   border-top: 1px solid hsl(0, 0%, 95%);
 }
 
-.rt-tr-group:first-child>.rt-tr:first-child .rt-td {
+.rt-tr-group:first-child > .rt-tr:first-child .rt-td {
   border-top: none;
 }
 
@@ -201,7 +201,7 @@
 }
 
 /* Sticky headers/footers */
-@supports(position: sticky) {
+@supports (position: sticky) {
   .ReactTable .rt-tbody {
     /* Override default */
     overflow: visible;
@@ -221,8 +221,7 @@
   }
 }
 
-@media screen and (-ms-high-contrast: active),
-screen and (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
   /* Keep body aligned with headers/footers in IE 11 */
   .ReactTable .rt-tbody {
     overflow: auto;
@@ -350,7 +349,9 @@ screen and (-ms-high-contrast: none) {
   .ReactTable .rt-pagination select {
     -moz-appearance: none !important;
     padding-right: 12px;
-    background: transparent url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==') right center no-repeat !important;
+    background: transparent
+      url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==')
+      right center no-repeat !important;
     background-position: right 6px center !important;
   }
 }
@@ -377,15 +378,15 @@ screen and (-ms-high-contrast: none) {
   border-radius: 3px;
 }
 
-.ReactTable .rt-page-button:not(:disabled):hover>.rt-page-button-content {
+.ReactTable .rt-page-button:not(:disabled):hover > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.04);
 }
 
-.ReactTable .rt-page-button:not(:disabled):active>.rt-page-button-content {
+.ReactTable .rt-page-button:not(:disabled):active > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.08);
 }
 
-.ReactTable .rt-page-button:focus>.rt-page-button-content {
+.ReactTable .rt-page-button:focus > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.04);
 }
 
@@ -394,7 +395,7 @@ screen and (-ms-high-contrast: none) {
   outline: none;
 }
 
-.ReactTable .rt-page-button-active>.rt-page-button-content {
+.ReactTable .rt-page-button-active > .rt-page-button-content {
   font-weight: bold;
 }
 
@@ -422,4 +423,23 @@ screen and (-ms-high-contrast: none) {
 .ReactTable .rt-noData {
   padding: 0 8px;
   color: rgba(0, 0, 0, 0.8);
+}
+
+/* Search */
+.rt-search {
+  display: block;
+  margin-left: auto;
+  margin-bottom: 8px;
+  padding: 5px 7px;
+  background: #fff;
+  outline: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.rt-search:active,
+.rt-search:focus {
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }

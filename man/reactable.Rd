@@ -6,15 +6,15 @@
 \usage{
 reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   columns = NULL, columnGroups = NULL, sortable = TRUE,
-  resizable = FALSE, filterable = FALSE, defaultColDef = NULL,
-  defaultColGroup = NULL, defaultSortOrder = "asc",
-  defaultSorted = NULL, pagination = TRUE, defaultPageSize = 10,
-  pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
-  showPagination = NULL, showPageSizeOptions = TRUE,
-  showPageInfo = TRUE, minRows = 1, selection = NULL,
-  selectionId = NULL, details = NULL, outlined = FALSE,
-  bordered = FALSE, borderless = FALSE, striped = FALSE,
-  highlight = TRUE, compact = FALSE, wrap = TRUE,
+  resizable = FALSE, filterable = FALSE, searchable = FALSE,
+  defaultColDef = NULL, defaultColGroup = NULL,
+  defaultSortOrder = "asc", defaultSorted = NULL, pagination = TRUE,
+  defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
+  paginationType = "numbers", showPagination = NULL,
+  showPageSizeOptions = TRUE, showPageInfo = TRUE, minRows = 1,
+  selection = NULL, selectionId = NULL, details = NULL,
+  outlined = FALSE, bordered = FALSE, borderless = FALSE,
+  striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
   style = NULL, rowClass = NULL, rowStyle = NULL, inline = FALSE,
   width = "auto", height = "auto", elementId = NULL)
@@ -37,6 +37,8 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 \item{resizable}{Enable column resizing?}
 
 \item{filterable}{Enable column filtering?}
+
+\item{searchable}{Enable global table searching?}
 
 \item{defaultColDef}{Default column definition used by every column. See \code{\link[=colDef]{colDef()}}.}
 

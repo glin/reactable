@@ -102,7 +102,53 @@ ReactTable.prototype.componentWillReceiveProps = function(newProps, newState) {
       newProps[name] = this.props[name]
     }
   })
+  // Reset search value if searchable changes
+  if (this.props.searchable !== newProps.searchable) {
+    newProps.filtered = this.state.filtered.filter(filter => filter.id !== this.props.searchKey)
+  }
   return this.oldComponentWillReceiveProps(newProps, newState)
+}
+
+// Add global table searching. react-table doesn't support a global filter,
+// so we use a dummy column to efficiently filter all columns. Because filters
+// are only applied for visible (show = true) columns, we pass the dummy column
+// directly to filterData to avoid having to hide the column.
+ReactTable.prototype.oldFilterData = ReactTable.prototype.filterData
+ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, allVisibleColumns) {
+  let filterColumns = allVisibleColumns
+  if (this.props.searchable) {
+    const searchColumn = {
+      id: this.props.searchKey,
+      filterAll: true,
+      filterable: true,
+      filterMethod: (filter, rows) => {
+        if (!filter.value) {
+          return rows
+        }
+
+        const matchers = allVisibleColumns.reduce((obj, col) => {
+          obj[col.id] = col.createMatcher(filter.value)
+          return obj
+        }, {})
+
+        rows = rows.filter(row => {
+          // Don't filter on aggregated rows
+          if (row._subRows) {
+            return true
+          }
+          for (let col of allVisibleColumns) {
+            let value = row._original[col.id]
+            if (matchers[col.id](value)) {
+              return true
+            }
+          }
+        })
+        return rows
+      }
+    }
+    filterColumns = allVisibleColumns.concat(searchColumn)
+  }
+  return this.oldFilterData(data, filtered, defaultFilterMethod, filterColumns)
 }
 
 const SelectTable = selectTableHOC(ReactTable)
@@ -214,6 +260,7 @@ class Reactable extends React.Component {
       sortable,
       resizable,
       filterable,
+      searchable,
       defaultSortDesc,
       defaultSorted,
       defaultPageSize,
@@ -373,6 +420,8 @@ class Reactable extends React.Component {
         sortable={sortable}
         resizable={resizable}
         filterable={filterable}
+        searchable={searchable}
+        searchKey="__search__"
         defaultSortDesc={defaultSortDesc}
         defaultSorted={defaultSorted}
         defaultPageSize={defaultPageSize}
@@ -405,7 +454,32 @@ class Reactable extends React.Component {
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
         dataKey={dataKey}
-      />
+      >
+        {(state, makeTable, instance) => {
+          let searchInput
+          if (searchable) {
+            const filter = state.filtered.find(filter => filter.id === state.searchKey)
+            searchInput = (
+              <input
+                type="text"
+                value={filter ? filter.value : ''}
+                onChange={event =>
+                  instance.filterColumn({ id: state.searchKey }, event.target.value)
+                }
+                className="rt-search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+            )
+          }
+          return (
+            <React.Fragment>
+              {searchInput}
+              {makeTable()}
+            </React.Fragment>
+          )
+        }}
+      </Table>
     )
   }
 }
@@ -418,6 +492,7 @@ Reactable.propTypes = {
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
+  searchable: PropTypes.bool,
   defaultSortDesc: PropTypes.bool,
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,

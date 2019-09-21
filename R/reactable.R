@@ -18,6 +18,7 @@ NULL
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
 #' @param filterable Enable column filtering?
+#' @param searchable Enable global table searching?
 #' @param defaultColDef Default column definition used by every column. See [colDef()].
 #' @param defaultColGroup Default column group definition used by every column group.
 #'   See [colGroup()].
@@ -114,7 +115,7 @@ NULL
 reactable <- function(data, rownames = FALSE, colnames = NULL,
                       groupBy = NULL, columns = NULL, columnGroups = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
-                      defaultColDef = NULL, defaultColGroup = NULL,
+                      searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
@@ -194,6 +195,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
+  }
+  if (!is.logical(searchable)) {
+    stop("`searchable` must be TRUE or FALSE")
   }
   columnKeys <- colnames(data)
   if (!is.null(details)) {
@@ -449,6 +453,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     sortable = sortable,
     resizable = resizable,
     filterable = filterable,
+    searchable = searchable,
     defaultSortDesc = isDescOrder(defaultSortOrder),
     defaultSorted = columnSortDefs(defaultSorted),
     defaultPageSize = defaultPageSize,

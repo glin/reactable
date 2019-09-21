@@ -235,6 +235,7 @@ reactable(
   sortable = TRUE,            # Enable sorting?
   resizable = FALSE,          # Enable column resizing?
   filterable = FALSE,         # Enable column filtering?
+  searchable = FALSE,         # Enable global table searching?
   defaultColDef = NULL,       # Default column definition. See column definitions below
   defaultColGroup = NULL,     # Default column group definition. See column groups below
   defaultSortOrder = "asc",   # Default sort order. Either "asc" or "desc"

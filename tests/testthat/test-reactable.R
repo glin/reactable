@@ -22,6 +22,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
+  expect_error(reactable(df, searchable = "true"))
   expect_error(reactable(df, defaultColDef = list()))
   expect_error(reactable(df, defaultColGroup = list()))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
@@ -75,6 +76,7 @@ test_that("reactable", {
     sortable = TRUE,
     resizable = FALSE,
     filterable = FALSE,
+    searchable = FALSE,
     defaultSortDesc = FALSE,
     defaultPageSize = 10,
     pageSizeOptions = c(10, 25, 50, 100),
@@ -98,7 +100,7 @@ test_that("reactable", {
   # Table options
   tbl <- reactable(data.frame(x = "a"), rownames = TRUE,
                    columnGroups = list(colGroup("group", "x")),
-                   sortable = FALSE, resizable = TRUE, filterable = TRUE,
+                   sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    defaultPageSize = 1, pageSizeOptions = c(1, 2), paginationType = "simple",
                    showPagination = FALSE, showPageSizeOptions = FALSE, showPageInfo = FALSE,
@@ -127,6 +129,7 @@ test_that("reactable", {
     sortable = FALSE,
     resizable = TRUE,
     filterable = TRUE,
+    searchable = TRUE,
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 1,

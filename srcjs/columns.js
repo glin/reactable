@@ -43,9 +43,24 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     //  - other columns: case-insensitive substring
     col.filterAll = true
     if (col.type === 'numeric') {
-      col.filterMethod = filterColumnStartsWith
+      col.createMatcher = createStartsWithMatcher
     } else {
-      col.filterMethod = filterColumnSubstring
+      col.createMatcher = createSubstringMatcher
+    }
+    col.filterMethod = (filter, rows) => {
+      const id = filter.id
+      const match = col.createMatcher(filter.value)
+      return rows.filter(row => {
+        const value = row[id]
+        if (value === undefined) {
+          return true
+        }
+        // Don't filter on aggregated cells
+        if (row._subRows) {
+          return true
+        }
+        return match(value)
+      })
     }
 
     if (col.type === 'numeric') {
@@ -440,34 +455,12 @@ export function formatValue(value, options) {
   return value
 }
 
-function filterColumnStartsWith(filter, rows) {
-  const id = filter.id
-  const filterRegex = new RegExp('^' + escapeRegExp(filter.value), 'i')
-  return rows.filter(row => {
-    const value = row[id]
-    if (value === undefined) {
-      return true
-    }
-    // Don't filter on aggregated cells
-    if (row._subRows) {
-      return true
-    }
-    return filterRegex.test(value)
-  })
+function createStartsWithMatcher(str) {
+  const regex = new RegExp('^' + escapeRegExp(str), 'i')
+  return value => regex.test(value)
 }
 
-function filterColumnSubstring(filter, rows) {
-  const id = filter.id
-  const filterRegex = new RegExp(escapeRegExp(filter.value), 'i')
-  return rows.filter(row => {
-    const value = row[id]
-    if (value === undefined) {
-      return true
-    }
-    // Don't filter on aggregated cells
-    if (row._subRows) {
-      return true
-    }
-    return filterRegex.test(value)
-  })
+function createSubstringMatcher(str) {
+  const regex = new RegExp(escapeRegExp(str), 'i')
+  return value => regex.test(value)
 }

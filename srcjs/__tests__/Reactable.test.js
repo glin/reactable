@@ -213,7 +213,7 @@ describe('filtering', () => {
     expect(queryByText('ááád')).toBeTruthy()
   })
 
-  it('filters other columns', () => {
+  it('filters other types of columns', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
@@ -277,6 +277,198 @@ describe('filtering', () => {
     expect(rows).toHaveLength(1)
     expect(getByText('4')).toBeTruthy()
     expect(getByText('x (1)')).toBeTruthy()
+  })
+})
+
+describe('searching', () => {
+  const getSearchInput = container => container.querySelector('.rt-search')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
+
+  it('enables searching', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let searchInput = getSearchInput(container)
+    expect(searchInput).toEqual(null)
+    rerender(<Reactable {...props} searchable />)
+    searchInput = getSearchInput(container)
+    expect(searchInput).toBeTruthy()
+  })
+
+  it('searches numeric columns', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ a: [111, 115, 32.11] }}
+        columns={[{ name: 'a', accessor: 'a', type: 'numeric' }]}
+        searchable
+        minRows={1}
+      />
+    )
+    const searchInput = getSearchInput(container)
+
+    fireEvent.change(searchInput, { target: { value: '11' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(2)
+    expect(getByText('111')).toBeTruthy()
+    expect(getByText('115')).toBeTruthy()
+
+    // No matches
+    fireEvent.change(searchInput, { target: { value: '5' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(0)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear search
+    fireEvent.change(searchInput, { target: { value: '' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(3)
+  })
+
+  it('searches string columns', () => {
+    const { container, getByText, queryByText } = render(
+      <Reactable
+        data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
+        columns={[
+          { name: 'a', accessor: 'a', type: 'factor' },
+          { name: 'b', accessor: 'b', type: 'character' }
+        ]}
+        searchable
+        minRows={1}
+      />
+    )
+    const searchInput = getSearchInput(container)
+
+    // Case-insensitive
+    fireEvent.change(searchInput, { target: { value: 'Bb' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    // Substring matches
+    fireEvent.change(searchInput, { target: { value: 'c' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(2)
+    expect(getByText('aaac')).toBeTruthy()
+    expect(getByText('CCC')).toBeTruthy()
+
+    // No matches
+    fireEvent.change(searchInput, { target: { value: 'cccc' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(0)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear search
+    fireEvent.change(searchInput, { target: { value: '' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(3)
+
+    // Diacritics
+    fireEvent.change(searchInput, { target: { value: 'á' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(queryByText('ááád')).toBeTruthy()
+  })
+
+  it('searches other types of columns', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
+        columns={[{ name: 'a', accessor: 'a' }]}
+        searchable
+        minRows={1}
+      />
+    )
+    const searchInput = getSearchInput(container)
+
+    // Case-insensitive
+    fireEvent.change(searchInput, { target: { value: 'acc' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('acCC')).toBeTruthy()
+
+    // Substring matches
+    fireEvent.change(searchInput, { target: { value: '03-05' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('2018-03-05')).toBeTruthy()
+
+    // Not locale-sensitive
+    fireEvent.change(searchInput, { target: { value: 'aaa' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(0)
+    expect(getByText('No rows found')).toBeTruthy()
+
+    // Clear search
+    fireEvent.change(searchInput, { target: { value: '' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(4)
+  })
+
+  it('ignores hidden columns', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['b', 'b', 'b'] }}
+        columns={[{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b', show: false }]}
+        searchable
+        minRows={1}
+      />
+    )
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'b' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(0)
+  })
+
+  it('searches individual rows when aggregated', () => {
+    const { container, getByText } = render(
+      <Reactable
+        data={{ group: ['x', 'x', 'x', 'y'], a: [1, 1, 2, 41], b: ['aa', 'bb', 'aa', 'bb'] }}
+        columns={[
+          { name: 'group', accessor: 'group' },
+          { name: 'a', accessor: 'a', type: 'numeric', aggregate: 'sum' },
+          { name: 'b', accessor: 'b', aggregate: () => 'cc' }
+        ]}
+        searchable
+        pivotBy={['group']}
+        minRows={1}
+      />
+    )
+    const searchInput = getSearchInput(container)
+
+    // Numeric column
+    fireEvent.change(searchInput, { target: { value: '1' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(1)
+    expect(getByText('4')).toBeTruthy()
+    expect(getByText('x (2)')).toBeTruthy()
+
+    // Non-numeric column
+    fireEvent.change(searchInput, { target: { value: 'b' } })
+    rows = getRows(container)
+    expect(rows).toHaveLength(2)
+    expect(getByText('4')).toBeTruthy()
+    expect(getByText('x (1)')).toBeTruthy()
+    expect(getByText('y (1)')).toBeTruthy()
+  })
+
+  it('resets search value when searchable changes', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+    }
+    const { container, rerender } = render(<Reactable {...props} searchable />)
+    let searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'b' } })
+    rerender(<Reactable {...props} />)
+    let rows = getRows(container)
+    expect(rows).toHaveLength(2)
+    rerender(<Reactable {...props} searchable />)
+    searchInput = getSearchInput(container)
+    expect(searchInput.value).toEqual('')
+    rows = getRows(container)
+    expect(rows).toHaveLength(2)
   })
 })
 
