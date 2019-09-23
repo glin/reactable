@@ -189,7 +189,9 @@ reactable(iris[1:5, ], showSortIcon = FALSE)
 ## Filtering
 
 ```{r}
-reactable(iris, filterable = TRUE)
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, filterable = TRUE, minRows = 10)
 ```
 
 ```{r}
@@ -202,6 +204,15 @@ data <- data.frame(
 )
 
 reactable(data, filterable = TRUE)
+```
+
+
+## Searching
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, searchable = TRUE, minRows = 10)
 ```
 
 

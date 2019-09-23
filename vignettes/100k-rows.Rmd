@@ -26,6 +26,7 @@ data <- data.frame(
 reactable(
   data,
   filterable = TRUE,
+  searchable = TRUE,
   minRows = 10,
   columns = list(
     state = colDef(cell = JS("

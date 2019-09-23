@@ -36,6 +36,7 @@ ui <- fluidPage(
               "Column groups" = "columnGroups",
               "Footer" = "footer",
               Filterable = "filterable",
+              Searchable = "searchable",
               Sortable = "sortable",
               Resizable = "resizable",
               "Default sorted" = "defaultSorted",
@@ -132,6 +133,7 @@ server <- function(input, output, session) {
         ))
       },
       filterable = "filterable" %in% input$options,
+      searchable = "searchable" %in% input$options,
       resizable = "resizable" %in% input$options,
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
@@ -231,6 +233,7 @@ server <- function(input, output, session) {
       iris,
       columnGroups = .(opts$columnGroups),
       filterable = .(opts$filterable),
+      searchable = .(opts$searchable),
       sortable = .(opts$sortable),
       resizable = .(opts$resizable),
       pagination = .(opts$pagination),
