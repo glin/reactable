@@ -72,6 +72,15 @@ https://glin.github.io/reactable/articles/examples.html#filtering
 reactable(iris, filterable = TRUE)
 ```
 
+### Searching
+https://glin.github.io/reactable/articles/examples.html#searching
+
+```r
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+
+reactable(data, searchable = TRUE, minRows = 10)
+```
+
 ### Column Formatting
 https://glin.github.io/reactable/articles/examples.html#column-formatting
 
