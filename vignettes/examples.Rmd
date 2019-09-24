@@ -716,7 +716,7 @@ reactable(iris[1:20, ], pagination = FALSE, height = 300)
   font-size: inherit;
 }
 
-.ReactTable {
+.reactable {
   font-size: 14px;
 }
 ```
