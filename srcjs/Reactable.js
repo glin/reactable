@@ -84,6 +84,22 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
+// Add aria-label to filter inputs
+Object.assign(ReactTableDefaults, {
+  // eslint-disable-next-line react/prop-types
+  FilterComponent({ column, filter, onChange }) {
+    return (
+      <input
+        type="text"
+        style={{ width: '100%' }}
+        value={filter ? filter.value : ''}
+        onChange={event => onChange(event.target.value)}
+        aria-label={`Filter ${column.name}`}
+      />
+    )
+  }
+})
+
 ReactTable.propTypes = fixedReactTablePropTypes
 
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison

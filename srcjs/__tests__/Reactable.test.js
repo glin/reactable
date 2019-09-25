@@ -278,6 +278,20 @@ describe('filtering', () => {
     expect(getByText('4')).toBeTruthy()
     expect(getByText('x (1)')).toBeTruthy()
   })
+
+  it('filters have aria-label set', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2], b: ['a', 'b'] }}
+        columns={[{ name: 'column-a', accessor: 'a' }, { name: 'column-b', accessor: 'b' }]}
+        filterable
+      />
+    )
+    let filters = getFilters(container)
+    filters = getFilters(container)
+    expect(filters[0]).toHaveAttribute('aria-label', 'Filter column-a')
+    expect(filters[1]).toHaveAttribute('aria-label', 'Filter column-b')
+  })
 })
 
 describe('searching', () => {
