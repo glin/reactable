@@ -36,7 +36,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.aggregate = aggregators[type]
     }
 
-    col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortMethod === 'naLast' })
+    col.sortMethod = createCompareFunction({ type: col.type, naLast: col.sortNALast })
 
     // Default column filters
     //  - numeric columns: string starts with
@@ -366,7 +366,7 @@ export function addColumnGroups(columns, groups) {
 }
 
 // Compare function that handles numbers (NAs and Inf/-Inf) and optionally
-// sorts NAs/NaNs/nulls last
+// sorts missing values (NA, NaN, NULL) last.
 export function createCompareFunction({ type, naLast } = {}) {
   return function compare(a, b, desc) {
     if (type === 'numeric') {

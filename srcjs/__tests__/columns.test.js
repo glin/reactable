@@ -247,8 +247,8 @@ describe('buildColumnDefs', () => {
     expect(cols[0].sortMethod(111, 2)).toEqual(1)
     expect(cols[0].sortMethod(111, 'Inf')).toEqual(-1)
 
-    // Custom sort methods
-    cols = buildColumnDefs([{ accessor: 'x', sortMethod: 'naLast' }])
+    // Sort missing values last
+    cols = buildColumnDefs([{ accessor: 'x', sortNALast: true }])
     expect(cols[0].sortMethod(null, 'x', true)).toEqual(-1)
     expect(cols[0].sortMethod(null, 'x', false)).toEqual(1)
   })

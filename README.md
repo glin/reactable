@@ -292,7 +292,7 @@ colDef(
   filterable = NULL,        # Enable column filtering?
   show = TRUE,              # Show the column?
   defaultSortOrder = NULL,  # Default sort order. Either "asc" or "desc"
-  sortMethod = NULL,        # Custom sort method. Specify "naLast" to always sort NAs to the bottom
+  sortNALast = FALSE,       # Always sort missing values (NA or NaN) last?
   format = NULL,            # Column formatting options. See column formatting below
   cell = NULL,              # Custom cell renderer. See cell rendering below
   aggregated = NULL,        # Custom aggregated cell renderer. See cell rendering below

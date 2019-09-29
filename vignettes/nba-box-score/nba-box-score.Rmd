@@ -70,7 +70,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
     pagination = FALSE,
     defaultSortOrder = "desc",
     defaultColDef = colDef(
-      sortMethod = "naLast",
+      sortNALast = TRUE,
       minWidth = 45,
       class = JS("function(rowInfo, colInfo, state) {
         // Highlight sorted columns

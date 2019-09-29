@@ -10,8 +10,7 @@
 #' @param show Show the column? Defaults to `TRUE`.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
-#' @param sortMethod Custom sort method. Specify `"naLast"` to always sort NAs
-#'   to the bottom.
+#' @param sortNALast Always sort missing values ([NA] or [NaN]) last?
 #' @param format Column formatting options. A [colFormat()] object to
 #'   format all cells, or a named list of [colFormat()] objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
@@ -30,7 +29,7 @@
 #'   that takes a row index argument or a [JS()] function that takes a row info object
 #'   as an argument. Cannot be used on a grouping column.
 #' @param html Render cells as HTML? HTML strings are escaped by default.
-#' @param na String to display for missing (`NA` or `NaN`) values.
+#' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
 #' @param minWidth Min width of the column in pixels.
 #' @param maxWidth Max width of the column in pixels.
@@ -67,7 +66,7 @@
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
                    resizable = NULL, filterable = NULL, show = TRUE,
-                   defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
+                   defaultSortOrder = NULL, sortNALast = FALSE, format = NULL,
                    cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
                    details = NULL, html = FALSE, na = "", minWidth = NULL,
                    maxWidth = NULL, width = NULL, align = NULL, class = NULL,
@@ -102,11 +101,8 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
-  if (!is.null(sortMethod)) {
-    methods <- "naLast"
-    if (!sortMethod %in% methods) {
-      stop(paste("`sortMethod` must be one of:", paste(dQuote(methods)), collapse = ", "))
-    }
+  if (!is.logical(sortNALast)) {
+    stop("`sortNALast` must be TRUE or FALSE")
   }
   if (!is.null(format)) {
     if (!is.colFormat(format) && !isNamedList(format)) {
@@ -136,7 +132,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
-  if (!is.null(na) && !is.character(na)) {
+  if (!is.character(na)) {
     stop("`na` must be a character string")
   }
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
@@ -182,7 +178,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       filterable = filterable,
       show = if (!show) FALSE,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
-      sortMethod = sortMethod,
+      sortNALast = if (sortNALast) TRUE,
       format = format,
       cell = cell,
       aggregated = aggregated,

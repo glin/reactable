@@ -7,7 +7,7 @@ test_that("colDef", {
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
-                show = FALSE, defaultSortOrder = "desc", sortMethod = "naLast",
+                show = FALSE, defaultSortOrder = "desc", sortNALast = TRUE,
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
                 footer = "footer", details = function(i) i, html = TRUE, na = "NA",
@@ -19,7 +19,7 @@ test_that("colDef", {
   expected <- structure(list(
     name = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
-    show = FALSE, defaultSortDesc = TRUE, sortMethod = "naLast",
+    show = FALSE, defaultSortDesc = TRUE, sortNALast = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
     cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
     footer = "footer", details = function(i) i, html = TRUE, na = "NA",
@@ -39,7 +39,7 @@ test_that("colDef", {
     filterable = list(0, "FALSE"),
     show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
-    sortMethod = list("nalast", function() {}),
+    sortNALast = list("true", 1),
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     cell = list("function() {}"),
     aggregated = list(function() {}),

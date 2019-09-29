@@ -156,16 +156,16 @@ reactable(
 )
 ```
 
-### Always sort NAs to the bottom
+### Always sort missing values last
 
 ```{r}
 reactable(
   data.frame(
     n = c(1, 2, 3, 4, 5),
-    x = c(2, 3, 1, NA, NA),
+    x = c(2, 3, 1, NA, NaN),
     y = c("aa", "cc", "bb", NA, NA)
   ),
-  defaultColDef = colDef(sortMethod = "naLast"),
+  defaultColDef = colDef(sortNALast = TRUE),
   defaultSorted = "x"
 )
 ```

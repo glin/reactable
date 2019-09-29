@@ -6,9 +6,9 @@
 \usage{
 colDef(name = NULL, aggregate = NULL, sortable = NULL,
   resizable = NULL, filterable = NULL, show = TRUE,
-  defaultSortOrder = NULL, sortMethod = NULL, format = NULL,
+  defaultSortOrder = NULL, sortNALast = FALSE, format = NULL,
   cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
-  details = NULL, html = FALSE, na = NULL, minWidth = NULL,
+  details = NULL, html = FALSE, na = "", minWidth = NULL,
   maxWidth = NULL, width = NULL, align = NULL, class = NULL,
   style = NULL, headerClass = NULL, headerStyle = NULL,
   footerClass = NULL, footerStyle = NULL)
@@ -31,8 +31,7 @@ are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"count"}, \c
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}
 
-\item{sortMethod}{Custom sort method. Specify \code{"naLast"} to always sort NAs
-to the bottom.}
+\item{sortNALast}{Always sort missing values (\link{NA} or \link{NaN}) last?}
 
 \item{format}{Column formatting options. A \code{\link[=colFormat]{colFormat()}} object to
 format all cells, or a named list of \code{\link[=colFormat]{colFormat()}} objects to format standard
@@ -59,7 +58,7 @@ as an argument. Cannot be used on a grouping column.}
 
 \item{html}{Render cells as HTML? HTML strings are escaped by default.}
 
-\item{na}{String to display for missing (\code{NA} or \code{NaN}) values.
+\item{na}{String to display for missing values (i.e. \link{NA} or \link{NaN}).
 By default, missing values are displayed as blank cells.}
 
 \item{minWidth}{Min width of the column in pixels.}

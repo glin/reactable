@@ -88,7 +88,7 @@ describe('sorting', () => {
     expect(container.querySelector('.-sort-right')).toEqual(null)
   })
 
-  it('sorts NAs to the bottom', () => {
+  it('sorts missing values last', () => {
     const { container } = render(
       <Reactable
         data={{ a: [2, 'NA', 1, 3], b: ['aa', null, null, 'BB'] }}
@@ -97,10 +97,10 @@ describe('sorting', () => {
             name: 'colA',
             accessor: 'a',
             type: 'numeric',
-            sortMethod: 'naLast',
+            sortNALast: true,
             className: 'col-a'
           },
-          { name: 'colB', accessor: 'b', sortMethod: 'naLast', className: 'col-b' }
+          { name: 'colB', accessor: 'b', sortNALast: true, className: 'col-b' }
         ]}
         minRows={4}
       />
