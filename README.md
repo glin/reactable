@@ -300,7 +300,7 @@ colDef(
   footer = NULL,            # Footer content or renderer. See footers below
   details = NULL,           # Additional content to display when expanding a row. See row details below
   html = FALSE,             # Render cells as HTML? HTML strings are escaped by default
-  na = NULL,                # String to display for missing (NA or NaN) values
+  na = "",                  # String to display for missing values (i.e. NA or NaN)
   minWidth = NULL,          # Min width of the column in pixels
   maxWidth = NULL,          # Max width of the column in pixels
   width = NULL,             # Fixed width of the column in pixels. Overrides minWidth and maxWidth
