@@ -182,7 +182,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (col.align === 'right') {
           return (
             <div className="rt-sort-header">
-              <span className={classNames(sortClass, '-sort-left')} />
+              <span className={classNames(sortClass, '-sort-left')} aria-hidden="true" />
               {content}
             </div>
           )
@@ -190,7 +190,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           return (
             <div className="rt-sort-header">
               {content}
-              <span className={classNames(sortClass, '-sort-right')} />
+              <span className={classNames(sortClass, '-sort-right')} aria-hidden="true" />
             </div>
           )
         }

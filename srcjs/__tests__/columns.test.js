@@ -427,7 +427,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         {'x'}
-        <span className="-sort-right" />
+        <span aria-hidden="true" className="-sort-right" />
       </div>
     )
 
@@ -437,7 +437,7 @@ describe('buildColumnDefs', () => {
     })
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        <span className="-sort-left" />
+        <span aria-hidden="true" className="-sort-left" />
         {'x'}
       </div>
     )
@@ -450,7 +450,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         {'xy'}
-        <span className="-sort-right" />
+        <span aria-hidden="true" className="-sort-right" />
       </div>
     )
 
@@ -478,14 +478,14 @@ describe('buildColumnDefs', () => {
     )
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        <span className="-sort -sort-left" />
+        <span aria-hidden="true" className="-sort -sort-left" />
         {'x'}
       </div>
     )
     expect(cols[1].Header()).toEqual(
       <div className="rt-sort-header">
         {'y'}
-        <span className="-sort -sort-right" />
+        <span aria-hidden="true" className="-sort -sort-right" />
       </div>
     )
   })
