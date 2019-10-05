@@ -261,6 +261,10 @@
   box-shadow: none;
 }
 
+.rt-th {
+  outline-width: 0;
+}
+
 .rt-th[aria-sort] .-sort-left:after {
   padding-right: 5px;
 }
@@ -281,6 +285,18 @@
 
 .rt-th[aria-sort='none'] .-sort:after {
   content: '\2195';
+  opacity: 0.4;
+}
+
+.rt-th[data-sort-hint='ascending'] .-sort-left:after,
+.rt-th[data-sort-hint='ascending'] .-sort-right:after {
+  content: '\2191';
+  opacity: 0.4;
+}
+
+.rt-th[data-sort-hint='descending'] .-sort-left:after,
+.rt-th[data-sort-hint='descending'] .-sort-right:after {
+  content: '\2193';
   opacity: 0.4;
 }
 

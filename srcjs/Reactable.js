@@ -15,12 +15,22 @@ import 'react-table/react-table.css'
 import './assets/reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
-  // Add aria-sort to column headers
+  // Add aria attributes for sortable column headers
   const isSortable = getFirstDefined(column.sortable, state.sortable)
   if (isSortable) {
     const sort = state.sorted.find(d => d.id === column.id)
-    const order = sort ? (sort.desc ? 'descending' : 'ascending') : 'none'
-    return { 'aria-sort': order }
+    const currentSortOrder = sort ? (sort.desc ? 'descending' : 'ascending') : 'none'
+    const defaultSortDesc = getFirstDefined(column.defaultSortDesc, state.defaultSortDesc)
+    const defaultSortOrder = defaultSortDesc ? 'descending' : 'ascending'
+    const isResizing = state.currentlyResizing && state.currentlyResizing.id === column.id
+    return {
+      'aria-label': `${column.name}, sort`,
+      'aria-sort': currentSortOrder,
+      defaultSortOrder,
+      isSortable,
+      isSorted: sort ? true : false,
+      isResizing
+    }
   }
   return {}
 }
@@ -30,7 +40,7 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
   // When ungrouped columns or columns in different groups are pivoted,
   // the group header is hardcoded to <strong>Pivoted</strong> and not easily
   // configurable. Work around this by overriding the default ThComponent to
-  // render a custom HeaderPivoted component instead.
+  // render a custom HeaderPivoted element instead.
   if (column.columns.some(col => col.pivoted)) {
     const pivotColumns = column.columns
     const pivotParentColumn = pivotColumns.reduce(
@@ -50,16 +60,75 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
   return props
 }
 
-// Render column group headers with a custom HeaderPivoted component instead
-// of the default "Pivoted" header.
+// ThComponent that can render a custom HeaderPivoted element and be navigated
+// using a keyboard, with sorting toggleable through the enter or space key.
 const DefaultThComponent = ReactTableDefaults.ThComponent
-Object.assign(ReactTableDefaults, {
-  ThComponent({ HeaderPivoted, children, ...rest }) {
-    if (HeaderPivoted) {
-      children = HeaderPivoted
+class ThComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showFocus: false,
+      clicked: false
     }
-    return DefaultThComponent({ ...rest, children })
   }
+
+  render() {
+    let { HeaderPivoted, defaultSortOrder, isSortable, isSorted, isResizing, ...props } = this.props
+
+    if (HeaderPivoted) {
+      props.children = HeaderPivoted
+    }
+
+    // Show focus indicators (sort order hint) when navigating using keyboard only
+    if (isSortable) {
+      const originalToggleSort = props.toggleSort
+      const toggleSort = e => {
+        originalToggleSort && originalToggleSort(e)
+        // Don't show focus while sorting
+        this.setState({ showFocus: false })
+      }
+      props = {
+        ...props,
+        toggleSort,
+        onKeyPress: e => {
+          const keyCode = e.which || e.keyCode
+          if (keyCode === 13 || keyCode === 32) {
+            toggleSort(e)
+          }
+        },
+        onMouseDown: () => {
+          this.setState({ clicked: true })
+        },
+        onFocus: () => {
+          // The resizer component doesn't propagate mousedown events, so we use
+          // the resizing state to tell when focus comes from clicking the resizer.
+          if (!this.state.clicked && !isSorted && !isResizing) {
+            this.setState({ showFocus: true })
+          }
+        },
+        onBlur: () => {
+          this.setState({ showFocus: false, clicked: false })
+        },
+        role: 'button',
+        tabIndex: '0',
+        'data-sort-hint': this.state.showFocus ? defaultSortOrder : undefined
+      }
+    }
+
+    return DefaultThComponent(props)
+  }
+}
+
+ThComponent.propTypes = {
+  HeaderPivoted: PropTypes.node,
+  defaultSortOrder: PropTypes.string,
+  isSortable: PropTypes.bool,
+  isSorted: PropTypes.bool,
+  isResizing: PropTypes.bool
+}
+
+Object.assign(ReactTableDefaults, {
+  ThComponent
 })
 
 // Render no data component in table body rather than the entire table

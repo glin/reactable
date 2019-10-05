@@ -46,7 +46,9 @@ test('basic table rendering', () => {
 })
 
 describe('sorting', () => {
-  it('sets aria-sort attributes', () => {
+  const getHeaders = container => container.querySelectorAll('.rt-th')
+
+  it('headers have aria attributes', () => {
     const { container } = render(
       <Reactable
         data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
@@ -55,20 +57,102 @@ describe('sorting', () => {
           { name: 'colB', accessor: 'b' },
           { name: 'colC', accessor: 'c', sortable: false }
         ]}
+        sortable
       />
     )
-    const headers = container.querySelectorAll('[aria-sort]')
-    expect(headers.length).toEqual(2)
+    const headers = getHeaders(container)
     expect(headers[0]).toHaveAttribute('aria-sort', 'none')
     expect(headers[1]).toHaveAttribute('aria-sort', 'none')
-    expect(headers[0]).toHaveTextContent('colA')
-    expect(headers[1]).toHaveTextContent('colB')
+    expect(headers[0]).toHaveAttribute('aria-label', 'colA, sort')
+    expect(headers[1]).toHaveAttribute('aria-label', 'colB, sort')
+    expect(headers[0]).toHaveAttribute('role', 'button')
+    expect(headers[1]).toHaveAttribute('role', 'button')
 
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'ascending')
 
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'descending')
+
+    expect(headers[2]).not.toHaveAttribute('aria-label')
+    expect(headers[2]).not.toHaveAttribute('role')
+  })
+
+  it('can be navigated with keyboard', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
+        columns={[
+          { name: 'colA', accessor: 'a' },
+          { name: 'colB', accessor: 'b', defaultSortDesc: true },
+          { name: 'colC', accessor: 'c', sortable: false }
+        ]}
+        sortable
+      />
+    )
+    const headers = getHeaders(container)
+    expect(headers[0]).toHaveAttribute('tabindex', '0')
+    expect(headers[1]).toHaveAttribute('tabindex', '0')
+    expect(headers[2]).not.toHaveAttribute('tabindex')
+
+    // Should be toggleable using enter or space key
+    fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13 })
+    expect(headers[0]).toHaveAttribute('aria-sort', 'ascending')
+    fireEvent.keyPress(headers[0], { key: ' ', keyCode: 32, charCode: 32 })
+    expect(headers[0]).toHaveAttribute('aria-sort', 'descending')
+    fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13, shiftKey: true })
+    expect(headers[0]).toHaveAttribute('aria-sort', 'none')
+  })
+
+  it('shows tab focus indicators', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
+        columns={[
+          { name: 'colA', accessor: 'a' },
+          { name: 'colB', accessor: 'b', defaultSortDesc: true },
+          { name: 'colC', accessor: 'c', sortable: false }
+        ]}
+        sortable
+      />
+    )
+    const headers = getHeaders(container)
+    headers[0].focus()
+    expect(headers[0]).toHaveAttribute('data-sort-hint', 'ascending')
+    headers[1].focus()
+    expect(headers[1]).toHaveAttribute('data-sort-hint', 'descending')
+
+    // Should not show indicator when toggling with mouse
+    fireEvent.mouseDown(headers[0])
+    headers[0].focus()
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+    fireEvent.mouseUp(headers[0])
+    fireEvent.blur(headers[0])
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+
+    // Should not show indicator while sorted
+    fireEvent.click(headers[0])
+    headers[0].focus()
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+    fireEvent.click(headers[0], { shiftKey: true })
+    fireEvent.click(headers[0], { shiftKey: true })
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+
+    // Should not show indicator after toggling back to unsorted
+    headers[0].focus()
+    fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13 })
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+    fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13, shiftKey: true })
+    fireEvent.keyPress(headers[0], { key: ' ', keyCode: 32, charCode: 32, shiftKey: true })
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
+
+    // Should still show indicator when holding mouse down while tab focused
+    headers[0].focus()
+    fireEvent.mouseDown(headers[0])
+    expect(headers[0]).toHaveAttribute('data-sort-hint', 'ascending')
+    fireEvent.mouseUp(headers[0])
+    fireEvent.blur(headers[0])
+    expect(headers[0]).not.toHaveAttribute('data-sort-hint')
   })
 
   it('shows or hides sort icons', () => {
