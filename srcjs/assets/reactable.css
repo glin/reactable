@@ -305,6 +305,24 @@
   cursor: unset;
 }
 
+.rt-expander-button {
+  margin: 0 2px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ReactTable .rt-expander {
+  /* Override defaults */
+  margin: 0;
+}
+
+.rt-expander {
+  padding: 0 8px;
+  outline-width: 0;
+}
+
 /* Pagination */
 .ReactTable .pagination-bottom,
 .ReactTable .pagination-top {

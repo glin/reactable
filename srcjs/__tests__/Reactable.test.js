@@ -728,6 +728,7 @@ describe('row selection', () => {
 
 describe('row details', () => {
   const getExpanders = container => container.querySelectorAll('.rt-expander')
+  const getExpanderButtons = container => container.querySelectorAll('.rt-expander-button')
   const props = {
     data: { a: [1, 2], b: ['a', 'b'] }
   }
@@ -988,6 +989,18 @@ describe('row details', () => {
     expect(getByText('row-details-1')).toBeTruthy()
     fireEvent.click(expanders[1])
     expect(getByText('row-details-2')).toBeTruthy()
+  })
+
+  it('expanders have aria labels', () => {
+    const columns = [
+      { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` }
+    ]
+    const { container } = render(<Reactable {...props} columns={columns} />)
+    const expanderButtons = getExpanderButtons(container)
+    expect(expanderButtons).toHaveLength(2)
+    expect(expanderButtons[0]).toHaveAttribute('aria-label', 'Expand details')
+    fireEvent.click(expanderButtons[0])
+    expect(expanderButtons[0]).toHaveAttribute('aria-label', 'Collapse details')
   })
 })
 

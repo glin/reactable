@@ -169,6 +169,25 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
+// Enable keyboard navigation and add aria-label to expanders
+Object.assign(ReactTableDefaults, {
+  // eslint-disable-next-line react/prop-types
+  ExpanderComponent({ isExpanded }) {
+    const label = `${isExpanded ? 'Collapse' : 'Expand'} details`
+    return (
+      <button className="rt-expander-button" aria-label={label}>
+        <span
+          className={classNames('rt-expander', isExpanded && '-open')}
+          tabIndex="-1"
+          aria-hidden="true"
+        >
+          &bull;
+        </span>
+      </button>
+    )
+  }
+})
+
 ReactTable.propTypes = fixedReactTablePropTypes
 
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison
