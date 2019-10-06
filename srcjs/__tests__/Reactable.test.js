@@ -1046,8 +1046,12 @@ describe('header rendering', () => {
 describe('column group header rendering', () => {
   const getGroupHeaders = container => container.querySelectorAll('.-headerGroup.rt-th')
   const props = {
-    data: { a: [1, 2], b: ['a', 'b'] },
-    columns: [{ name: 'col-a', accessor: 'a' }, { name: 'col-b', accessor: 'b' }]
+    data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
+    columns: [
+      { name: 'col-a', accessor: 'a' },
+      { name: 'col-b', accessor: 'b' },
+      { name: 'col-c', accessor: 'c' }
+    ]
   }
 
   it('renders a basic group header', () => {
@@ -1057,6 +1061,7 @@ describe('column group header rendering', () => {
     ]
     const { container } = render(<Reactable {...props} columnGroups={columnGroups} />)
     const headers = getGroupHeaders(container)
+    expect(headers).toHaveLength(2)
     expect(headers[0]).toHaveTextContent('group-a')
     expect(headers[1]).toHaveTextContent('group-b')
   })
@@ -1078,8 +1083,27 @@ describe('column group header rendering', () => {
     ]
     const { container } = render(<Reactable {...props} columnGroups={columnGroups} />)
     const headers = getGroupHeaders(container)
+    expect(headers).toHaveLength(2)
     expect(headers[0]).toHaveTextContent('group-a (1 2)')
     expect(headers[1]).toHaveTextContent('group b')
+  })
+
+  it('renders header groups with blank names', () => {
+    const columnGroups = [
+      {
+        columns: ['a'],
+        name: ''
+      },
+      {
+        columns: ['b'],
+        header: () => ''
+      }
+    ]
+    const { container } = render(<Reactable {...props} columnGroups={columnGroups} />)
+    const headers = getGroupHeaders(container)
+    expect(headers).toHaveLength(2)
+    expect(headers[0]).toHaveTextContent('')
+    expect(headers[1]).toHaveTextContent('')
   })
 })
 

@@ -296,21 +296,23 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
   if (groups) {
     columns = addColumnGroups(columns, groups)
     columns.forEach(col => {
-      col.Header = function Header(colInfo) {
-        let header = col.name
-        if (col.header) {
-          if (typeof col.header === 'function') {
-            header = col.header(colInfo)
-          } else {
-            header = hydrate({ Fragment, WidgetContainer }, col.header)
+      if (col.name != null || col.header) {
+        col.Header = function Header(colInfo) {
+          let header = col.name
+          if (col.header) {
+            if (typeof col.header === 'function') {
+              header = col.header(colInfo)
+            } else {
+              header = hydrate({ Fragment, WidgetContainer }, col.header)
+            }
           }
-        }
-        if (React.isValidElement(header)) {
-          return header
-        } else if (col.html) {
-          return <div dangerouslySetInnerHTML={{ __html: header }} />
-        } else {
-          return header != null ? String(header) : ''
+          if (React.isValidElement(header)) {
+            return header
+          } else if (col.html) {
+            return <div dangerouslySetInnerHTML={{ __html: header }} />
+          } else {
+            return header != null ? String(header) : ''
+          }
         }
       }
       col.align = col.align || 'center'
