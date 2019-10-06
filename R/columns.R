@@ -255,14 +255,22 @@ colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
       columns <- as.list(columns)
     }
   }
-  group <- colDef(
-    name = name,
-    header = header,
-    html = html,
-    align = align,
-    headerClass = headerClass,
-    headerStyle = headerStyle
-  )
+
+  group <- tryCatch({
+    colDef(
+      name = name,
+      header = header,
+      html = html,
+      align = align,
+      headerClass = headerClass,
+      headerStyle = headerStyle
+    )
+  }, error = function(e) e)
+
+  if (inherits(group, "error")) {
+    stop(group$message)
+  }
+
   group$columns <- columns
   structure(group, class = "colGroup")
 }
