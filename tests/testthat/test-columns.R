@@ -9,7 +9,7 @@ test_that("colDef", {
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
                 show = FALSE, defaultSortOrder = "desc", sortNALast = TRUE,
                 format = list(cell = colFormat(), aggregated = colFormat()),
-                cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
+                cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
                 footer = "footer", details = function(i) i, html = TRUE, na = "NA",
                 minWidth = 100, maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
@@ -21,7 +21,7 @@ test_that("colDef", {
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
     show = FALSE, defaultSortDesc = TRUE, sortNALast = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
-    cell = JS("cell => cell.value"), aggregated = JS("cell => cell.value"),
+    cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
     footer = "footer", details = function(i) i, html = TRUE, na = "NA",
     minWidth = 100, maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
@@ -89,14 +89,14 @@ test_that("colDef format", {
 
 test_that("colDef renderers", {
   # Cell renderer
-  col <- colDef(cell = JS("cell => cell.value"))
-  expect_equal(col$cell, JS("cell => cell.value"))
+  col <- colDef(cell = JS("cellInfo => cellInfo.value"))
+  expect_equal(col$cell, JS("cellInfo => cellInfo.value"))
   col <- colDef(cell = function(value, index) value)
   expect_equal(col$cell, function(value, index) value)
 
   # Aggregated renderer
-  col <- colDef(aggregated = JS("cell => cell.value"))
-  expect_equal(col$aggregated, JS("cell => cell.value"))
+  col <- colDef(aggregated = JS("cellInfo => cellInfo.value"))
+  expect_equal(col$aggregated, JS("cellInfo => cellInfo.value"))
 
   # Header renderer
   col <- colDef(header = "header")

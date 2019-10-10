@@ -52,7 +52,7 @@ describe('buildColumnDefs', () => {
 
   test('renderers', () => {
     // Cell
-    let cols = buildColumnDefs([{ accessor: 'x', cell: cell => cell.value }])
+    let cols = buildColumnDefs([{ accessor: 'x', cell: cellInfo => cellInfo.value }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
@@ -75,7 +75,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(React.createElement('div', null, 'Z'))
 
     // Aggregated
-    cols = buildColumnDefs([{ accessor: 'x', aggregated: cell => cell.value + '!!' }])
+    cols = buildColumnDefs([{ accessor: 'x', aggregated: cellInfo => cellInfo.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
 
@@ -122,7 +122,7 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         format: { cell: { prefix: '@' } },
-        cell: cell => `__${cell.value}__`
+        cell: cellInfo => `__${cellInfo.value}__`
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
@@ -133,7 +133,7 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         format: { aggregated: { prefix: '@' } },
-        aggregated: cell => `__${cell.value}__`
+        aggregated: cellInfo => `__${cellInfo.value}__`
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
@@ -153,8 +153,8 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([
       {
         accessor: 'x',
-        cell: cell => cell.value + '!',
-        aggregated: cell => cell.value + '!!',
+        cell: cellInfo => cellInfo.value + '!',
+        aggregated: cellInfo => cellInfo.value + '!!',
         html: true
       }
     ])
@@ -170,8 +170,8 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         format: { cell: { prefix: '@' }, aggregated: { prefix: '$' } },
-        cell: cell => `__${cell.value}__`,
-        aggregated: cell => `__${cell.value}__`,
+        cell: cellInfo => `__${cellInfo.value}__`,
+        aggregated: cellInfo => `__${cellInfo.value}__`,
         html: true
       }
     ])
@@ -188,7 +188,7 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         format: { cell: { prefix: '@' } },
-        cell: cell => `__${cell.value}__`
+        cell: cellInfo => `__${cellInfo.value}__`
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
@@ -224,12 +224,12 @@ describe('buildColumnDefs', () => {
         accessor: 'x',
         type: 'numeric',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
-        cell: cell => `__${cell.value ? cell.value : 'missing'}__`
+        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       },
       {
         accessor: 'y',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
-        cell: cell => `__${cell.value ? cell.value : 'missing'}__`
+        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       }
     ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('__missing__')

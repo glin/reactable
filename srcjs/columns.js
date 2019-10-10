@@ -70,8 +70,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.align = col.align || 'left'
     }
 
-    col.Cell = function Cell(cell) {
-      let value = cell.value
+    col.Cell = function Cell(cellInfo) {
+      let value = cellInfo.value
 
       const isMissingValue = value == null || (col.type === 'numeric' && isNA(value))
       if (isMissingValue) {
@@ -84,13 +84,13 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
       if (col.cell) {
         if (typeof col.cell === 'function') {
-          value = col.cell({ ...cell, value })
+          value = col.cell({ ...cellInfo, value })
         }
         // Make sure we don't render aggregated cells for R renderers
-        if (col.cell instanceof Array && !cell.aggregated) {
-          value = col.cell[cell.index]
+        if (col.cell instanceof Array && !cellInfo.aggregated) {
+          value = col.cell[cellInfo.index]
           if (value) {
-            value = hydrate({ Fragment, WidgetContainer }, col.cell[cell.index])
+            value = hydrate({ Fragment, WidgetContainer }, col.cell[cellInfo.index])
           }
         }
       }
@@ -108,10 +108,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       // Render expander for custom row details
       let expander
       if (col.details) {
-        if (col.details instanceof Array && col.details[cell.index] == null) {
+        if (col.details instanceof Array && col.details[cellInfo.index] == null) {
           // Don't expand rows without content
         } else {
-          expander = ReactTableDefaults.ExpanderComponent({ ...cell, isExpanded: isExpanded(cell) })
+          expander = ReactTableDefaults.ExpanderComponent({ ...cellInfo, isExpanded: isExpanded(cellInfo) })
         }
       }
 
@@ -127,23 +127,23 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     }
 
     // Render pivoted values the same as regular cells
-    col.PivotValue = function PivotValue(cell) {
-      const value = col.Cell(cell)
+    col.PivotValue = function PivotValue(cellInfo) {
+      const value = col.Cell(cellInfo)
       return (
         <span>
-          {value} {cell.subRows && `(${cell.subRows.length})`}
+          {value} {cellInfo.subRows && `(${cellInfo.subRows.length})`}
         </span>
       )
     }
 
-    col.Aggregated = function Aggregated(cell) {
+    col.Aggregated = function Aggregated(cellInfo) {
       // Default to empty string to avoid string conversion of undefined/null
-      let value = cell.value != null ? cell.value : ''
+      let value = cellInfo.value != null ? cellInfo.value : ''
       if (col.format && col.format.aggregated) {
         value = formatValue(value, col.format.aggregated)
       }
       if (col.aggregated) {
-        value = col.aggregated({ ...cell, value })
+        value = col.aggregated({ ...cellInfo, value })
       }
       if (col.html) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
