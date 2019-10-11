@@ -44,23 +44,21 @@ tbl <- reactable(
     exclusive_followers_pct = colDef(
       name = "Exclusive Followers",
       defaultSortOrder = "desc",
-      format = colFormat(percent = TRUE, digits = 1),
       cell = JS('function(cellInfo) {
-        let value = cellInfo.value
+        // Format as percentage
+        const pct = (cellInfo.value * 100).toFixed(1) + "%"
+        // Pad single-digit numbers
+        let value = pct.padStart(5)
         // Show % on first row only
         if (cellInfo.viewIndex > 0) {
           value = value.replace("%", " ")
         }
-        // Pad single-digit numbers
-        if (value.length < 5) {
-          value = " " + value
-        }
-        const width = cellInfo.value
+        // Render bar chart
         return `
           <div class="bar-cell">
             <span class="number">${value}</span>
             <div class="bar-chart" style="background-color: #e1e1e1">
-              <div class="bar" style="width: ${width}; background-color: #fc5185"></div>
+              <div class="bar" style="width: ${pct}; background-color: #fc5185"></div>
             </div>
           </div>
         `
