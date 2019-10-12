@@ -255,6 +255,32 @@ ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, 
   return this.oldFilterData(data, filtered, defaultFilterMethod, filterColumns)
 }
 
+// Table component with a search input
+const DefaultTableComponent = ReactTableDefaults.TableComponent
+const SearchTableComponent = ({ searchValue, onSearchChange, ...rest }) => {
+  const searchInput = (
+    <input
+      type="text"
+      value={searchValue}
+      onChange={onSearchChange}
+      className="rt-search"
+      placeholder="Search"
+      aria-label="Search"
+    />
+  )
+  return (
+    <Fragment>
+      {searchInput}
+      <DefaultTableComponent {...rest} />
+    </Fragment>
+  )
+}
+
+SearchTableComponent.propTypes = {
+  searchValue: PropTypes.string.isRequired,
+  onSearchChange: PropTypes.func.isRequired
+}
+
 const SelectTable = selectTableHOC(ReactTable)
 
 class RowDetails extends React.Component {
@@ -516,6 +542,22 @@ class Reactable extends React.Component {
       }
     }
 
+    let TableComponent, getTableProps
+    if (searchable) {
+      TableComponent = SearchTableComponent
+      getTableProps = (state, rowInfo, column, instance) => {
+        const filter = state.filtered.find(filter => filter.id === state.searchKey)
+        const searchValue = filter ? filter.value : ''
+        const onSearchChange = event => {
+          instance.filterColumn({ id: state.searchKey }, event.target.value)
+        }
+        return {
+          searchValue,
+          onSearchChange
+        }
+      }
+    }
+
     return (
       <Table
         data={data}
@@ -546,10 +588,12 @@ class Reactable extends React.Component {
         onExpandedChange={onExpandedChange}
         onPageChange={collapseDetails}
         onSortedChange={collapseDetails}
+        getTableProps={getTableProps}
         getTheadGroupThProps={getTheadGroupThProps}
         getTheadThProps={getTheadThProps}
         getTbodyProps={getTbodyProps}
         getTrProps={getTrProps}
+        TableComponent={TableComponent}
         SubComponent={SubComponent}
         {...selectProps}
         pageJumpText="go to page"
@@ -558,32 +602,7 @@ class Reactable extends React.Component {
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
         dataKey={dataKey}
-      >
-        {(state, makeTable, instance) => {
-          let searchInput
-          if (searchable) {
-            const filter = state.filtered.find(filter => filter.id === state.searchKey)
-            searchInput = (
-              <input
-                type="text"
-                value={filter ? filter.value : ''}
-                onChange={event =>
-                  instance.filterColumn({ id: state.searchKey }, event.target.value)
-                }
-                className="rt-search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-            )
-          }
-          return (
-            <React.Fragment>
-              {searchInput}
-              {makeTable()}
-            </React.Fragment>
-          )
-        }}
-      </Table>
+      />
     )
   }
 }
