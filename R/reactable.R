@@ -63,9 +63,8 @@ NULL
 #' @param rowStyle Inline styles to apply to table rows. A named list, character
 #'   string, [JS()] function that takes a row info object and table state object
 #'   as arguments, or an R function that takes a row index argument.
-#' @param inline Display the table as an inline element, which shrinks to fit
-#'   its contents? By default, the table is displayed as a block element, which
-#'   expands to fit its parent container.
+#' @param fullWidth Stretch the table to fill the full width of its container?
+#'   Defaults to `TRUE`.
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param elementId Element ID for the widget.
@@ -125,7 +124,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
-                      inline = FALSE, width = "auto", height = "auto",
+                      fullWidth = TRUE, width = "auto", height = "auto",
                       elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -340,8 +339,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
       rowStyle <- asReactStyle(rowStyle)
     }
   }
-  if (!is.null(inline) && !is.logical(inline)) {
-    stop("`inline` must be TRUE or FALSE")
+  if (!is.logical(fullWidth)) {
+    stop("`fullWidth` must be TRUE or FALSE")
   }
   width <- htmltools::validateCssUnit(width)
   height <- htmltools::validateCssUnit(height)
@@ -478,7 +477,7 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     style = asReactStyle(style),
     rowClassName = rowClass,
     rowStyle = rowStyle,
-    inline = if (inline) inline,
+    inline = if (!fullWidth) TRUE,
     width = if (width != "auto") width,
     height = if (height != "auto") height,
     dataKey = digest::digest(list(data, cols))

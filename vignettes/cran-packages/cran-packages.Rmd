@@ -81,7 +81,7 @@ tbl <- reactable(
             })
           ),
           highlight = FALSE,
-          inline = TRUE,
+          fullWidth = FALSE,
           class = "archived-table"
         )
       )

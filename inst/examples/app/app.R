@@ -47,9 +47,9 @@ ui <- fluidPage(
               Striped = "striped",
               Highlight = "highlight",
               Compact = "compact",
-              Inline = "inline"
+              "Full width" = "fullWidth"
             ),
-            selected = c("sortable", "resizable", "highlight")
+            selected = c("sortable", "resizable", "highlight", "fullWidth")
           ),
 
           checkboxGroupInput(
@@ -150,7 +150,7 @@ server <- function(input, output, session) {
       highlight = "highlight" %in% input$options,
       compact = "compact" %in% input$options,
       showSortable = "showSortable" %in% input$options,
-      inline = "inline" %in% input$options,
+      fullWidth = "fullWidth" %in% input$options,
       height = if ("pagination" %in% input$pagination) "auto" else 500
     )
   })
@@ -205,7 +205,7 @@ server <- function(input, output, session) {
       if (index == 3) {
         tabsetPanel(
           tabPanel("plot", plotOutput("plot")),
-          tabPanel("subtable", reactable(iris[1:3, 1:2], inline = TRUE))
+          tabPanel("subtable", reactable(iris[1:3, 1:2], fullWidth = FALSE))
         )
       } else if (index == 5) {
         paste("Details for row:", index)
@@ -251,7 +251,7 @@ server <- function(input, output, session) {
       showSortable = .(opts$showSortable),
       groupBy = .(opts$groupBy),
       defaultSorted = .(opts$defaultSorted),
-      inline = .(opts$inline),
+      fullWidth = .(opts$fullWidth),
       height = .(opts$height),
       columns = list(
         Sepal.Length = colDef(

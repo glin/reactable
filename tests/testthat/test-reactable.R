@@ -55,7 +55,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, style = 555))
   expect_error(reactable(df, rowClass = 123))
   expect_error(reactable(df, rowStyle = 555))
-  expect_error(reactable(df, inline = "yes"))
+  expect_error(reactable(df, fullWidth = "yes"))
   expect_error(reactable(df, width = "asd"))
   expect_error(reactable(df, height = "asd"))
 })
@@ -109,7 +109,7 @@ test_that("reactable", {
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    highlight = FALSE, compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
-                   inline = TRUE, groupBy = "x", width = "400px", height = "100%",
+                   fullWidth = FALSE, groupBy = "x", width = "400px", height = "100%",
                    elementId = "tbl")
   attribs <- getAttribs(tbl)
   data <- data.frame(.rownames = 1, x = "a")

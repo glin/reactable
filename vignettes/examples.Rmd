@@ -88,7 +88,7 @@ reactable(data, details = function(index) {
 ```{r}
 reactable(iris[1:5, ], details = function(index) {
   if (index %in% c(3, 5)) {
-    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
+    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
   }
 })
 ```
@@ -99,7 +99,7 @@ reactable(iris[1:5, ], details = function(index) {
 reactable(iris[1:5, ],
   details = function(index) {
     if (index %in% c(3, 5)) {
-      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), inline = TRUE)
+      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
     }
   },
   columns = list(

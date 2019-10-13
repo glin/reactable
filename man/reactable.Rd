@@ -16,7 +16,7 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   outlined = FALSE, bordered = FALSE, borderless = FALSE,
   striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
-  style = NULL, rowClass = NULL, rowStyle = NULL, inline = FALSE,
+  style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
   width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
@@ -112,9 +112,8 @@ as arguments, or an R function that takes a row index argument.}
 string, \code{\link[=JS]{JS()}} function that takes a row info object and table state object
 as arguments, or an R function that takes a row index argument.}
 
-\item{inline}{Display the table as an inline element, which shrinks to fit
-its contents? By default, the table is displayed as a block element, which
-expands to fit its parent container.}
+\item{fullWidth}{Stretch the table to fill the full width of its container?
+Defaults to \code{TRUE}.}
 
 \item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
