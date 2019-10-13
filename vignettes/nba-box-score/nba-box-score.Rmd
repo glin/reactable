@@ -15,43 +15,41 @@ player_stats <- read.csv("player_stats.csv", stringsAsFactors = FALSE)
 team_stats <- read.csv("team_stats.csv", stringsAsFactors = FALSE)
 line_score <- read.csv("line_score.csv", stringsAsFactors = FALSE)
 
-line_score_tbl <- function(line_score, teams) {
-  cols <- c("TEAM_ID", "TEAM_CITY_NAME", "TEAM_NICKNAME", "TEAM_WINS_LOSSES",
-            "PTS_QTR1", "PTS_QTR2", "PTS_QTR3", "PTS_QTR4", "PTS")
-  score <- line_score[match(teams, line_score$TEAM_ABBREVIATION), cols]
+cols <- c("TEAM_ID", "TEAM_CITY_NAME", "TEAM_NICKNAME", "TEAM_WINS_LOSSES",
+          "PTS_QTR1", "PTS_QTR2", "PTS_QTR3", "PTS_QTR4", "PTS")
+line_score <- line_score[match(c("TOR", "GSW"), line_score$TEAM_ABBREVIATION), cols]
 
-  reactable(
-    score,
-    sortable = FALSE,
-    highlight = FALSE,
-    bordered = FALSE,
-    class = "line-score-tbl",
-    defaultColDef = colDef(headerClass = "line-score-header"),
-    columns = list(
-      TEAM_ID = colDef(show = FALSE),
-      TEAM_CITY_NAME = colDef(
-        name = "",
-        minWidth = 250,
-        cell = function(value, index) {
-          team_url <- sprintf("https://stats.nba.com/team/%s/traditional", score[index, "TEAM_ID"])
-          team_name <- paste(value, score[index, "TEAM_NICKNAME"])
-          team_record <- score[index, "TEAM_WINS_LOSSES"]
-          tagList(
-            tags$a(class = "team-name", href = team_url, target = "_blank", team_name),
-            span(class = "team-record", team_record)
-          )
-        }
-      ),
-      TEAM_NICKNAME = colDef(show = FALSE),
-      TEAM_WINS_LOSSES = colDef(show = FALSE),
-      PTS_QTR1 = colDef(name = "Q1", align = "center", width = 50),
-      PTS_QTR2 = colDef(name = "Q2", align = "center", width = 50),
-      PTS_QTR3 = colDef(name = "Q3", align = "center", width = 50),
-      PTS_QTR4 = colDef(name = "Q4", align = "center", width = 50),
-      PTS = colDef(name = "Total", align = "center", width = 50, class = "line-score-total")
-    )
-  )
-}
+line_score_tbl <- reactable(
+  line_score,
+  sortable = FALSE,
+  defaultColDef = colDef(headerClass = "line-score-header", align = "center", minWidth = 50),
+  columns = list(
+    TEAM_ID = colDef(show = FALSE),
+    TEAM_CITY_NAME = colDef(
+      name = "",
+      align = "left",
+      minWidth = 250,
+      cell = function(value, index) {
+        team_url <- sprintf("https://stats.nba.com/team/%s/traditional", line_score[index, "TEAM_ID"])
+        team_name <- paste(value, line_score[index, "TEAM_NICKNAME"])
+        team_record <- line_score[index, "TEAM_WINS_LOSSES"]
+        tagList(
+          tags$a(class = "team-name", href = team_url, target = "_blank", team_name),
+          span(class = "team-record", team_record)
+        )
+      }
+    ),
+    TEAM_NICKNAME = colDef(show = FALSE),
+    TEAM_WINS_LOSSES = colDef(show = FALSE),
+    PTS_QTR1 = colDef(name = "Q1"),
+    PTS_QTR2 = colDef(name = "Q2"),
+    PTS_QTR3 = colDef(name = "Q3"),
+    PTS_QTR4 = colDef(name = "Q4"),
+    PTS = colDef(name = "Final", class = "line-score-final")
+  ),
+  highlight = FALSE,
+  class = "line-score-tbl"
+)
 
 box_score_tbl <- function(player_stats, team_stats, team) {
   # Convert M:SS strings to datetimes for proper sorting
@@ -69,6 +67,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
     stats,
     pagination = FALSE,
     defaultSortOrder = "desc",
+    defaultSorted = "PTS",
     defaultColDef = colDef(
       sortNALast = TRUE,
       minWidth = 45,
@@ -152,7 +151,7 @@ div(class = "box-score",
   h2(class = "header", "Raptors vs. Warriors:",
      tags$a(class = "game-date", href="https://stats.nba.com/game/0041800403", target = "_blank", "Jun 5, 2019")),
 
-  div(class = "line-score", line_score_tbl(line_score, c("TOR", "GSW"))),
+  div(class = "line-score", line_score_tbl),
 
   div(class = "box-score-title", "Toronto Raptors"),
   box_score_tbl(player_stats, team_stats, "TOR"),
@@ -194,13 +193,13 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
 }
 
 .line-score {
-  margin: 0 auto;
-  max-width: 500px;
+  margin-top: 24px;
+  text-align: center;
 }
 
 .line-score-tbl {
-  margin-top: 24px;
-  margin-left: auto;
+  margin: 0 auto;
+  max-width: 500px;
   font-size: 15px;
 }
 
@@ -209,7 +208,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
   font-weight: 400;
 }
 
-.line-score-total {
+.line-score-final {
   font-weight: 500;
 }
 
