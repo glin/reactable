@@ -508,16 +508,13 @@ columnSortDefs <- function(defaultSorted) {
 #' applications and interactive R Markdown documents.
 #'
 #' @param outputId Output variable to read from.
-#' @param width,height Must be a valid CSS unit (like `"100%"`,
-#'   `"400px"`, `"auto"`) or a number, which will be coerced to a
-#'   string and have `"px"` appended.
-#' @param inline Display the table as an inline element, which shrinks to fit
-#'   its contents? By default, the table is displayed as a block element, which
-#'   expands to fit its parent container.
-#' @param expr An expression that generates a reactable.
+#' @param width,height A valid CSS unit (like `"100%"`, `"400px"`, `"auto"`)
+#'   or a number, which will be coerced to a string and have `"px"` appended.
+#' @param inline Use an inline element for the table's container?
+#' @param expr An expression that generates a [reactable] widget.
 #' @param env The environment in which to evaluate `expr`.
-#' @param quoted Is `expr` a quoted expression (with `quote()`)? This
-#'   is useful if you want to save an expression in a variable.
+#' @param quoted Is `expr` a quoted expression (with [quote()])? This is useful
+#'   if you want to save an expression in a variable.
 #'
 #' @name reactable-shiny
 #'
@@ -545,7 +542,7 @@ columnSortDefs <- function(defaultSorted) {
 #' }
 #'
 #' @export
-reactableOutput <- function(outputId, width = NULL, height = NULL, inline = FALSE) {
+reactableOutput <- function(outputId, width = "auto", height = "auto", inline = FALSE) {
   htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
                                  inline = inline, package = "reactable")
 }
