@@ -463,7 +463,7 @@
 /* Search */
 .rt-search {
   display: block;
-  margin-left: auto;
+  align-self: flex-end;
   margin-bottom: 8px;
   padding: 5px 7px;
   background: #fff;
