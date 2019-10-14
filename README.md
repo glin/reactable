@@ -25,6 +25,13 @@ devtools::install_github("glin/reactable")
 - [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
 - [Shiny Demo](https://glin.github.io/reactable/articles/shiny-demo.html)
 
+### Basic Usage
+https://glin.github.io/reactable/articles/examples.html#basic-usage
+
+```r
+reactable(iris)
+```
+
 ### Grouping and Aggregation
 https://glin.github.io/reactable/articles/examples.html#grouping-and-aggregation
 

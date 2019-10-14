@@ -13,6 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
+## Basic Usage
+```{r}
+reactable(iris)
+```
+
 ## Grouping and Aggregation
 
 ```{r}

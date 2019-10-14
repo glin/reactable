@@ -78,6 +78,7 @@ NULL
 #'   in Shiny applications or interactive R Markdown documents.
 #'
 #' @examples
+#' # Basic usage
 #' reactable(iris)
 #'
 #' # Grouping and aggregation

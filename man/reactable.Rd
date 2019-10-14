@@ -132,6 +132,7 @@ See the \href{https://glin.github.io/reactable}{online documentation} for
 additional details and examples.
 }
 \examples{
+# Basic usage
 reactable(iris)
 
 # Grouping and aggregation
