@@ -28,15 +28,15 @@ NULL
 #'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
 #' @param pagination Enable pagination? Defaults to `TRUE`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.
+#' @param showPageSizeOptions Show page size options?
 #' @param pageSizeOptions Page size options for the table. Defaults to 10, 25, 50, 100.
 #' @param paginationType Pagination control to use. Either `"numbers"` for page
 #'   number buttons (the default), `"jump"` for a page jump, or `"simple"` to show
 #'   'Previous' and 'Next' buttons only.
 #' @param showPagination Show pagination? Defaults to `TRUE` if the table has more
 #'   than one page.
-#' @param showPageSizeOptions Show page size options?
-#' @param showPageInfo Show page info?
-#' @param minRows Minimum number of rows to show. Defaults to 1.
+#' @param showPageInfo Show page info? Defaults to `TRUE`.
+#' @param minRows Minimum number of rows to show per page. Defaults to 1.
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
@@ -117,8 +117,8 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
                       searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
                       defaultSortOrder = "asc", defaultSorted = NULL,
                       pagination = TRUE, defaultPageSize = 10,
-                      pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
-                      showPagination = NULL, showPageSizeOptions = TRUE, showPageInfo = TRUE,
+                      showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
+                      paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
                       minRows = 1, selection = NULL, selectionId = NULL,
                       details = NULL, outlined = FALSE, bordered = FALSE, borderless = FALSE,
                       striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
@@ -260,6 +260,9 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   if (!is.numeric(defaultPageSize)) {
     stop("`defaultPageSize` must be numeric")
   }
+  if (!is.logical(showPageSizeOptions)) {
+    stop("`showPageSizeOptions` must be TRUE or FALSE")
+  }
   if (!is.numeric(pageSizeOptions)) {
     stop("`pageSizeOptions` must be numeric")
   }
@@ -268,9 +271,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   }
   if (!is.null(showPagination) && !is.logical(showPagination)) {
     stop("`showPagination` must be TRUE or FALSE")
-  }
-  if (!is.logical(showPageSizeOptions)) {
-    stop("`showPageSizeOptions` must be TRUE or FALSE")
   }
   if (!is.logical(showPageInfo)) {
     stop("`showPageInfo` must be TRUE or FALSE")
@@ -456,10 +456,10 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     defaultSortDesc = isDescOrder(defaultSortOrder),
     defaultSorted = columnSortDefs(defaultSorted),
     defaultPageSize = defaultPageSize,
+    showPageSizeOptions = showPageSizeOptions,
     pageSizeOptions = pageSizeOptions,
     paginationType = paginationType,
     showPagination = showPagination,
-    showPageSizeOptions = showPageSizeOptions,
     showPageInfo = showPageInfo,
     minRows = minRows,
     selection = selection,

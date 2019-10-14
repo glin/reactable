@@ -251,13 +251,13 @@ reactable(
   defaultSorted = NULL,       # Column names to sort by default. Or a named list with values of "asc" or "desc"
   pagination = TRUE,          # Enable pagination?
   defaultPageSize = 10,       # Default page size
+  showPageSizeOptions = FALSE,# Show page size options?
   pageSizeOptions =           # Page size options
     c(10, 25, 50, 100),
   paginationType = "numbers", # Pagination control to use. Either "numbers" (the default), "jump", or "simple"
   showPagination = NULL,      # Show pagination? Defaults to TRUE if the table has more than one page
-  showPageSizeOptions = TRUE, # Show page size options?
   showPageInfo = TRUE,        # Show page info?
-  minRows = 1,                # Minimum number of rows to show
+  minRows = 1,                # Minimum number of rows to show per page
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows
   details = NULL,             # Additional content to display when expanding a row. See row details below

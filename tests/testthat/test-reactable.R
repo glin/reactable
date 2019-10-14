@@ -32,10 +32,10 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
   expect_error(reactable(df, pagination = "yes"))
   expect_error(reactable(df, defaultPageSize = "100"))
+  expect_error(reactable(df, showPageSizeOptions = "true"))
   expect_error(reactable(df, pageSizeOptions = c("a", "100")))
   expect_error(reactable(df, paginationType = "x"))
   expect_error(reactable(df, showPagination = "true"))
-  expect_error(reactable(df, showPageSizeOptions = "true"))
   expect_error(reactable(df, showPageInfo = "true"))
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, selection = "none"))
@@ -79,9 +79,9 @@ test_that("reactable", {
     searchable = FALSE,
     defaultSortDesc = FALSE,
     defaultPageSize = 10,
+    showPageSizeOptions = FALSE,
     pageSizeOptions = c(10, 25, 50, 100),
     paginationType = "numbers",
-    showPageSizeOptions = TRUE,
     showPageInfo = TRUE,
     minRows = 1,
     outlined = FALSE,
@@ -102,8 +102,8 @@ test_that("reactable", {
                    columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
-                   defaultPageSize = 1, pageSizeOptions = c(1, 2), paginationType = "simple",
-                   showPagination = FALSE, showPageSizeOptions = FALSE, showPageInfo = FALSE,
+                   defaultPageSize = 1, showPageSizeOptions = FALSE, pageSizeOptions = c(1, 2),
+                   paginationType = "simple", showPagination = FALSE, showPageInfo = FALSE,
                    minRows = 5, selection = "single", selectionId = "sel",
                    details = function(i) i,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
@@ -133,10 +133,10 @@ test_that("reactable", {
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 1,
+    showPageSizeOptions = FALSE,
     pageSizeOptions = c(1, 2),
     paginationType = "simple",
     showPagination = FALSE,
-    showPageSizeOptions = FALSE,
     showPageInfo = FALSE,
     minRows = 5,
     selection = "single",

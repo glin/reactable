@@ -666,7 +666,9 @@ reactable(data, wrap = FALSE, resizable = TRUE)
 
 ### Page size options
 ```{r}
-reactable(iris[1:50, ], defaultPageSize = 4, pageSizeOptions = c(4, 8, 12))
+reactable(iris[1:100, ], showPageSizeOptions = TRUE)
+
+reactable(iris[1:12, ], showPageSizeOptions = TRUE, pageSizeOptions = c(4, 8, 12), defaultPageSize = 4)
 ```
 
 ### Alternative pagination types
@@ -681,10 +683,11 @@ reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
 reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
 ```
 
-### Hide pagination elements
+### Hide page info
 ```{r}
-reactable(iris[1:50, ], showPageSizeOptions = FALSE, defaultPageSize = 4)
-reactable(iris[1:50, ], showPageInfo = FALSE, defaultPageSize = 4)
+reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
+
+reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaultPageSize = 4)
 ```
 
 ### Minimum rows per page

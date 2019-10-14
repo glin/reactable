@@ -9,9 +9,9 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
   resizable = FALSE, filterable = FALSE, searchable = FALSE,
   defaultColDef = NULL, defaultColGroup = NULL,
   defaultSortOrder = "asc", defaultSorted = NULL, pagination = TRUE,
-  defaultPageSize = 10, pageSizeOptions = c(10, 25, 50, 100),
-  paginationType = "numbers", showPagination = NULL,
-  showPageSizeOptions = TRUE, showPageInfo = TRUE, minRows = 1,
+  defaultPageSize = 10, showPageSizeOptions = FALSE,
+  pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
+  showPagination = NULL, showPageInfo = TRUE, minRows = 1,
   selection = NULL, selectionId = NULL, details = NULL,
   outlined = FALSE, bordered = FALSE, borderless = FALSE,
   striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
@@ -55,6 +55,8 @@ Or to customize sort order, a named list with values of \code{"asc"} or \code{"d
 
 \item{defaultPageSize}{Default page size for the table. Defaults to 10.}
 
+\item{showPageSizeOptions}{Show page size options?}
+
 \item{pageSizeOptions}{Page size options for the table. Defaults to 10, 25, 50, 100.}
 
 \item{paginationType}{Pagination control to use. Either \code{"numbers"} for page
@@ -64,11 +66,9 @@ number buttons (the default), \code{"jump"} for a page jump, or \code{"simple"} 
 \item{showPagination}{Show pagination? Defaults to \code{TRUE} if the table has more
 than one page.}
 
-\item{showPageSizeOptions}{Show page size options?}
+\item{showPageInfo}{Show page info? Defaults to \code{TRUE}.}
 
-\item{showPageInfo}{Show page info?}
-
-\item{minRows}{Minimum number of rows to show. Defaults to 1.}
+\item{minRows}{Minimum number of rows to show per page. Defaults to 1.}
 
 \item{selection}{Enable row selection? Either \code{"multiple"} or \code{"single"} for
 multiple or single row selection.}
