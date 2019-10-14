@@ -662,6 +662,20 @@ data <- aggregate(. ~ Species, iris, toString)
 reactable(data, wrap = FALSE, resizable = TRUE)
 ```
 
+### Fixed height + sticky header/footer
+```{r}
+reactable(
+  iris[1:20, ],
+  height = 270,
+  striped = TRUE,
+  borderless = TRUE,
+  highlight = FALSE,
+  defaultColDef = colDef(
+    footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
+  )
+)
+```
+
 ## Pagination
 
 ### Page size options
