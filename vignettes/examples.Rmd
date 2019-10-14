@@ -714,6 +714,11 @@ reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4)
 reactable(iris[1:20, ], pagination = FALSE, height = 300)
 ```
 
+#### Don't auto-hide pagination
+```{r}
+reactable(iris[1:5, ], showPagination = TRUE)
+```
+
 ```{css echo=FALSE}
 /* rmarkdown html documents */
 .main-container {

@@ -387,15 +387,20 @@ test_that("pagination", {
   # Disable pagination
   tbl <- reactable(data.frame(x = rep(0, 4)), pagination = FALSE)
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$showPagination, FALSE)
   expect_equal(attribs$defaultPageSize, 4)
+  expect_null(attribs$showPagination)
 
-  # pagination = FALSE should override other page options
+  # Should override defaultPageSize when disabled
   tbl <- reactable(data.frame(x = rep(0, 10)), pagination = FALSE,
                    showPagination = TRUE, defaultPageSize = 25)
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$showPagination, FALSE)
   expect_equal(attribs$defaultPageSize, 10)
+
+  # Should still be able to show pagination when disabled
+  tbl <- reactable(data.frame(x = rep(0, 4)), pagination = FALSE, showPagination = TRUE)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultPageSize, 4)
+  expect_true(attribs$showPagination)
 
   # Pagination types
   for (type in c("numbers", "jump", "simple")) {

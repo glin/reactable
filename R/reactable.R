@@ -255,7 +255,6 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
     stop("`pagination` must be TRUE or FALSE")
   } else if (!pagination) {
     defaultPageSize <- nrow(data)
-    showPagination <- FALSE
   }
   if (!is.numeric(defaultPageSize)) {
     stop("`defaultPageSize` must be numeric")
