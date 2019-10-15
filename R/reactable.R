@@ -10,10 +10,10 @@ NULL
 #' Creates a data table HTML widget using the React Table library.
 #'
 #' @param data A data frame or matrix.
-#' @param rownames Show row names?
 #' @param colnames Named list of column names.
 #' @param columns Named list of column definitions. See [colDef()].
 #' @param columnGroups List of column group definitions. See [colGroup()].
+#' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
 #' @param groupBy Character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
@@ -112,8 +112,8 @@ NULL
 #' ))
 #'
 #' @export
-reactable <- function(data, rownames = FALSE, colnames = NULL,
-                      groupBy = NULL, columns = NULL, columnGroups = NULL,
+reactable <- function(data, colnames = NULL, columns = NULL, columnGroups = NULL,
+                      rownames = NULL, groupBy = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
                       searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
                       defaultSortOrder = "asc", defaultSorted = NULL,
@@ -133,11 +133,17 @@ reactable <- function(data, rownames = FALSE, colnames = NULL,
   } else if (is.matrix(data)) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
+  if (is.null(rownames)) {
+    # Check if row names were set. This may not work if row names were set to
+    # integers, but it's more reliable than using .row_names_info() on
+    # data frames that have been subsetted.
+    rownames <- is.character(attr(data, "row.names"))
+  }
   if (!is.logical(rownames)) {
     stop("`rownames` must be TRUE or FALSE")
   } else if (rownames) {
     rownamesKey <- ".rownames"
-    # Use attribute to get integer row names, if present
+    # Use attribute to preserve type, in case of integer row names
     data <- cbind(
       stats::setNames(list(attr(data, "row.names")), rownamesKey),
       data,

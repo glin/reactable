@@ -4,8 +4,8 @@
 \alias{reactable}
 \title{Create a reactable HTML widget}
 \usage{
-reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
-  columns = NULL, columnGroups = NULL, sortable = TRUE,
+reactable(data, colnames = NULL, columns = NULL, columnGroups = NULL,
+  rownames = NULL, groupBy = NULL, sortable = TRUE,
   resizable = FALSE, filterable = FALSE, searchable = FALSE,
   defaultColDef = NULL, defaultColGroup = NULL,
   defaultSortOrder = "asc", defaultSorted = NULL, pagination = TRUE,
@@ -22,15 +22,15 @@ reactable(data, rownames = FALSE, colnames = NULL, groupBy = NULL,
 \arguments{
 \item{data}{A data frame or matrix.}
 
-\item{rownames}{Show row names?}
-
 \item{colnames}{Named list of column names.}
-
-\item{groupBy}{Character vector of column names to group by.}
 
 \item{columns}{Named list of column definitions. See \code{\link[=colDef]{colDef()}}.}
 
 \item{columnGroups}{List of column group definitions. See \code{\link[=colGroup]{colGroup()}}.}
+
+\item{rownames}{Show row names? Defaults to \code{TRUE} if the data has row names.}
+
+\item{groupBy}{Character vector of column names to group by.}
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 

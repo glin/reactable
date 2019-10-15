@@ -7,7 +7,6 @@ getAttribs <- function(widget) widget$x$tag$attribs
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
   df <- data.frame(x = 1)
-  expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, colnames = list("name")))
   expect_error(reactable(df, colnames = list(y = "asd")))
   expect_error(reactable(df, columns = "x"))
@@ -18,6 +17,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, columnGroups = list(colDef())))
   expect_error(reactable(df, columnGroups = list(colGroup(name = "", columns = "y"))))
   expect_error(reactable(df, columnGroups = list(colGroup(name = ""))))
+  expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, groupBy = c("y", "z")))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
@@ -213,8 +213,8 @@ test_that("dates/datetimes are serialized in ISO 8601", {
 
 test_that("rownames", {
   # Integer row names
-  data <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)
-  attribs <- getAttribs(data)
+  tbl <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)
+  attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "numeric",
@@ -222,8 +222,8 @@ test_that("rownames", {
   ))
 
   # Character row names
-  data <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")), rownames = TRUE)
-  attribs <- getAttribs(data)
+  tbl <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")), rownames = TRUE)
+  attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
@@ -231,25 +231,48 @@ test_that("rownames", {
   ))
 
   # Custom rownames colDef
-  data <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columns = list(
+  tbl <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columns = list(
     .rownames = colDef(name = "N", sortable = TRUE, headerClass = "hdr")
   ))
-  attribs <- getAttribs(data)
+  attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "N",  type = "numeric",
     sortable = TRUE, filterable = FALSE, headerClassName = "hdr"
   ))
 
   # Row names can be part of column groups
-  data <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columnGroups = list(
+  tbl <- reactable(data.frame(x = c(1, 2)), rownames = TRUE, columnGroups = list(
     colGroup("group", c(".rownames", "x"))
   ))
-  attribs <- getAttribs(data)
+  attribs <- getAttribs(tbl)
   expect_equal(attribs$columnGroups[[1]]$columns, list(".rownames", "x"))
 
   # Can't use rownames column without rownames
-  expect_error(reactable(df, columns = list(.rownames = colDef())))
-  expect_error(reactable(df, columnGroups = list(colGroup("", ".rownames"))))
+  expect_error(reactable(data.frame(1), columns = list(.rownames = colDef())))
+  expect_error(reactable(data.frame(1), columnGroups = list(colGroup("", ".rownames"))))
+
+  # If row names present, should be shown by default
+  tbl <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")))
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".rownames", name = "",  type = "character",
+    sortable = FALSE, filterable = FALSE
+  ))
+  # Handles matrices
+  tbl <- reactable(matrix(c(1,2,3), dimnames = list(c(1, 2, 3), "x")))
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1,2,3]}')
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".rownames", name = "",  type = "character",
+    sortable = FALSE, filterable = FALSE
+  ))
+
+  # If no row names, should not be shown by default
+  tbl <- reactable(data.frame(x = c(1, 2, 3)))
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[1,2,3]}')
+  expect_equal(length(attribs$columns), 1)
 })
 
 test_that("defaultColDef", {
