@@ -7,8 +7,6 @@ getAttribs <- function(widget) widget$x$tag$attribs
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
   df <- data.frame(x = 1)
-  expect_error(reactable(df, colnames = list("name")))
-  expect_error(reactable(df, colnames = list(y = "asd")))
   expect_error(reactable(df, columns = "x"))
   expect_error(reactable(df, columns = list(list())))
   expect_error(reactable(df, columns = list(colDef())))
@@ -161,12 +159,6 @@ test_that("reactable", {
   expect_equal(tbl$width, "400px")
   expect_equal(tbl$height, "100%")
   expect_equal(tbl$elementId, "tbl")
-
-  # Column names
-  tbl <- reactable(data.frame(x = 1, y = "2"), colnames = list(x = "X", y = "Y"))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$name, "X")
-  expect_equal(attribs$columns[[2]]$name, "Y")
 
   # Column overrides
   tbl <- reactable(data.frame(x = 1, y = "2"), columns = list(

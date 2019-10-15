@@ -10,7 +10,6 @@ NULL
 #' Creates a data table HTML widget using the React Table library.
 #'
 #' @param data A data frame or matrix.
-#' @param colnames Named list of column names.
 #' @param columns Named list of column definitions. See [colDef()].
 #' @param columnGroups List of column group definitions. See [colGroup()].
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
@@ -112,7 +111,7 @@ NULL
 #' ))
 #'
 #' @export
-reactable <- function(data, colnames = NULL, columns = NULL, columnGroups = NULL,
+reactable <- function(data, columns = NULL, columnGroups = NULL,
                       rownames = NULL, groupBy = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
                       searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
@@ -154,14 +153,6 @@ reactable <- function(data, colnames = NULL, columns = NULL, columnGroups = NULL
       columns[[rownamesKey]] <- mergeLists(defaultColumn, columns[[rownamesKey]])
     } else {
       columns <- c(stats::setNames(list(defaultColumn), rownamesKey), columns)
-    }
-  }
-  if (!is.null(colnames)) {
-    if (!isNamedList(colnames)) {
-      stop("`colnames` must be a named list")
-    }
-    if (!all(names(colnames) %in% colnames(data))) {
-      stop("`colnames` names must exist in `data`")
     }
   }
   if (!is.null(columns)) {
@@ -361,13 +352,12 @@ reactable <- function(data, colnames = NULL, columns = NULL, columnGroups = NULL
   }
 
   cols <- lapply(columnKeys, function(key) {
-    column <- list(accessor = key)
-    if (!is.null(colnames[[key]])) {
-      column$name <- colnames[[key]]
-    } else {
-      column$name <- key
-    }
-    column$type <- colType(data[[key]])
+    column <- list(
+      accessor = key,
+      name = key,
+      type = colType(data[[key]])
+    )
+
     if (!is.null(columns[[key]])) {
       column <- mergeLists(column, columns[[key]])
     }

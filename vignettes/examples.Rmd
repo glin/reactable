@@ -589,11 +589,11 @@ reactable(iris[1:20, ], bordered = TRUE, defaultColDef = colDef(footer = functio
 ```{r}
 reactable(
   iris[1:5, ],
-  colnames = list(
-    Sepal.Length = "Length",
-    Sepal.Width = "Width",
-    Petal.Length = "Length",
-    Petal.Width = "Width"
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
   ),
   columnGroups = list(
     colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),

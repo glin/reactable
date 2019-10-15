@@ -4,25 +4,23 @@
 \alias{reactable}
 \title{Create a reactable HTML widget}
 \usage{
-reactable(data, colnames = NULL, columns = NULL, columnGroups = NULL,
-  rownames = NULL, groupBy = NULL, sortable = TRUE,
-  resizable = FALSE, filterable = FALSE, searchable = FALSE,
-  defaultColDef = NULL, defaultColGroup = NULL,
-  defaultSortOrder = "asc", defaultSorted = NULL, pagination = TRUE,
-  defaultPageSize = 10, showPageSizeOptions = FALSE,
-  pageSizeOptions = c(10, 25, 50, 100), paginationType = "numbers",
-  showPagination = NULL, showPageInfo = TRUE, minRows = 1,
-  selection = NULL, selectionId = NULL, details = NULL,
-  outlined = FALSE, bordered = FALSE, borderless = FALSE,
-  striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
+reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
+  groupBy = NULL, sortable = TRUE, resizable = FALSE,
+  filterable = FALSE, searchable = FALSE, defaultColDef = NULL,
+  defaultColGroup = NULL, defaultSortOrder = "asc",
+  defaultSorted = NULL, pagination = TRUE, defaultPageSize = 10,
+  showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
+  paginationType = "numbers", showPagination = NULL,
+  showPageInfo = TRUE, minRows = 1, selection = NULL,
+  selectionId = NULL, details = NULL, outlined = FALSE,
+  bordered = FALSE, borderless = FALSE, striped = FALSE,
+  highlight = TRUE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
   style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
   width = "auto", height = "auto", elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
-
-\item{colnames}{Named list of column names.}
 
 \item{columns}{Named list of column definitions. See \code{\link[=colDef]{colDef()}}.}
 

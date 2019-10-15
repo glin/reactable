@@ -243,7 +243,6 @@ shinyApp(ui, server)
 ```r
 reactable(
   data,                       # Data frame or matrix
-  colnames = NULL,            # Named list of column names
   columns = NULL,             # Named list of column definitions. See column definitions below
   columnGroups = NULL,        # List of column group definitions. See column groups below
   rownames = NULL,            # Show row names? Defaults to TRUE if the data has row names
