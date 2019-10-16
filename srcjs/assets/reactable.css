@@ -1,5 +1,6 @@
 .ReactTable {
   height: 100%;
+  background: #fff;
 }
 
 .ReactTable.-inline {
@@ -202,6 +203,10 @@
 
 /* Sticky headers/footers */
 @supports (position: sticky) {
+  .ReactTable .rt-table {
+    background: inherit;
+  }
+
   .ReactTable .rt-tbody {
     /* Override default */
     overflow: visible;
@@ -210,14 +215,14 @@
   .ReactTable .rt-thead {
     position: sticky;
     top: 0;
-    background: #fff;
+    background: inherit;
     z-index: 1;
   }
 
   .ReactTable .rt-tfoot {
     position: sticky;
     bottom: 0;
-    background: #fff;
+    background: inherit;
   }
 }
 
