@@ -212,7 +212,7 @@
     overflow: visible;
   }
 
-  .ReactTable .rt-thead {
+  .ReactTable .rt-thead.-header {
     position: sticky;
     top: 0;
     background: inherit;
