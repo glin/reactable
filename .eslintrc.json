@@ -16,6 +16,7 @@
   },
   "plugins": ["react", "jsx-a11y"],
   "rules": {
-    "jsx-a11y/no-onchange": "off"
+    "jsx-a11y/no-onchange": "off",
+    "react/prop-types": ["error", { "skipUndeclared": true }]
   }
 }

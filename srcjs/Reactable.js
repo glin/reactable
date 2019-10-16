@@ -137,7 +137,6 @@ const getTbodyProps = state => ({ state })
 const DefaultTbodyComponent = ReactTableDefaults.TbodyComponent
 const DefaultNoDataComponent = ReactTableDefaults.NoDataComponent
 Object.assign(ReactTableDefaults, {
-  // eslint-disable-next-line react/prop-types
   TbodyComponent({ state, children, ...rest }) {
     const { pageRows, noDataText } = state
     const noData = !pageRows.length && <DefaultNoDataComponent>{noDataText}</DefaultNoDataComponent>
@@ -155,7 +154,6 @@ Object.assign(ReactTableDefaults, {
 
 // Add aria-label to filter inputs
 Object.assign(ReactTableDefaults, {
-  // eslint-disable-next-line react/prop-types
   FilterComponent({ column, filter, onChange }) {
     return (
       <input
@@ -171,7 +169,6 @@ Object.assign(ReactTableDefaults, {
 
 // Enable keyboard navigation and add aria-label to expanders
 Object.assign(ReactTableDefaults, {
-  // eslint-disable-next-line react/prop-types
   ExpanderComponent({ isExpanded }) {
     const label = `${isExpanded ? 'Collapse' : 'Expand'} details`
     return (
