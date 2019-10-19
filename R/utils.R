@@ -87,9 +87,9 @@ asReactTag <- function(x) {
   # Unnest and wrap tag lists in fragments for proper hydration
   if (isTagList(x)) {
     x <- unnestTagList(x)
-    # Preserve html dependencies
+    # Preserve HTML dependencies
     deps <- htmltools::htmlDependencies(x)
-    # Collect inline html dependencies
+    # Collect inline HTML dependencies
     inlineDeps <- sapply(x, is.htmlDependency)
     if (any(inlineDeps)) {
       deps <- c(deps, x[inlineDeps])
@@ -110,9 +110,9 @@ asReactTag <- function(x) {
 
   # Unnest tag lists for proper hydration
   x$children <- unnestTagList(x$children)
-  # Preserve html dependencies
+  # Preserve HTML dependencies
   deps <- htmltools::htmlDependencies(x$children)
-  # Collect inline html dependencies
+  # Collect inline HTML dependencies
   inlineDeps <- sapply(x$children, is.htmlDependency)
   if (any(inlineDeps)) {
     deps <- c(deps, x$children[inlineDeps])
@@ -128,24 +128,33 @@ asReactTag <- function(x) {
 
 # Recursively unnest tag lists
 unnestTagList <- function(x) {
-  if (is.tag(x) || is.htmlwidget(x) || is.htmlDependency(x) || !is.list(x)) {
+  isList <- function(x) {
+    # Ignore HTML tags/widgets/dependencies, which are technically lists
+    is.list(x) && !is.tag(x) && !is.htmlwidget(x) && !is.htmlDependency(x)
+  }
+
+  if (!isList(x)) {
     return(x)
   }
 
-  # Preserve html dependencies of tag lists
+  # Preserve HTML dependencies of tag lists
   htmlDeps <- htmltools::htmlDependencies(x)
 
   tags <- Reduce(function(a, b) {
     if (isTagList(b)) {
-      # Preserve html dependencies of nested tag lists
+      # Preserve HTML dependencies of nested tag lists
       deps <- htmltools::htmlDependencies(b)
       if (!is.null(deps)) {
         htmlDeps <<- c(htmlDeps, deps)
       }
       b <- unnestTagList(b)
     }
-    b <- if (is.tag(b) || is.htmlwidget(b) || is.htmlDependency(b)) list(b) else b
-    tags <- c(a, b)
+    # Merge without losing attributes
+    if (isList(b)) {
+      c(a, b)
+    } else {
+      c(a, list(b))
+    }
   }, x, list())
 
   htmltools::attachDependencies(tags, htmlDeps)

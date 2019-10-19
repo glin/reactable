@@ -76,6 +76,9 @@ test_that("asReactTag", {
   expect_equal(asReactTag("text"), "text")
   expect_equal(asReactTag(NULL), NULL)
   expect_equal(asReactTag(list("text")), list("text"))
+  expect_equal(asReactTag(factor("xy")), factor("xy"))
+
+  # Nodes should be strings
   expect_equal(asReactTag(123), "123")
   expect_equal(asReactTag(TRUE), "TRUE")
 
@@ -145,45 +148,49 @@ test_that("asReactTag", {
   expect_equal(asReactTag(div(style = "color: red", class = "cls")),
                div(style = list(color = "red"), className = "cls"))
 
+  # Attributes should be preserved
+  expect_equal(asReactTag(div(factor("xy"))), div(factor("xy")))
+  expect_equal(asReactTag(div(div(as.Date("2019-01-03")))), div(div(as.Date("2019-01-03"))))
+
   # HTML dependencies should be preserved
   dep <- htmlDependency("dep", "0.1.0", "/path/to/dep")
   dep2 <- htmlDependency("dep2", "0.5.0", "/path/to/dep2")
 
-  # Single tag
+  ## Single tag
   tag <- attachDependencies(div(div("x")), dep)
   expect_equal(htmlDependencies(asReactTag(tag)), list(dep))
 
-  # Tag w/ nested deps
+  ## Tag w/ nested deps
   tag <- div(attachDependencies(div("x"), dep))
   expect_equal(htmlDependencies(asReactTag(tag)$children[[1]]), list(dep))
 
-  # Multiple nested deps
+  ## Multiple nested deps
   tag <- div(attachDependencies(div("x"), dep2), attachDependencies(div("x"), dep))
   expect_equal(findDependencies(asReactTag(tag)), list(dep2, dep))
 
-  # Tag list
+  ## Tag list
   tag <- attachDependencies(tagList(div("x")), dep)
   expect_equal(htmlDependencies(asReactTag(tag)), list(dep))
 
-  # Tag list w/ nested tag deps
+  ## Tag list w/ nested tag deps
   tag <- attachDependencies(tagList(div("x"), attachDependencies(div("y"), dep)), dep2)
   expect_equal(findDependencies(asReactTag(tag)), list(dep, dep2))
 
-  # Tag list w/ nested tag list deps
+  ## Tag list w/ nested tag list deps
   tag <- attachDependencies(tagList(div("x"), attachDependencies(tagList("y"), dep)), dep2)
   expect_equal(findDependencies(asReactTag(tag)), list(dep2, dep))
 
-  # Tag w/ nested tag list deps
+  ## Tag w/ nested tag list deps
   tag <- div(attachDependencies(tagList(div("x")), dep), div("y"))
   expect_equal(findDependencies(asReactTag(tag)), list(dep))
 
-  # HTML dependency objects
+  ## HTML dependency objects
   tag <- tagList("x", "y", dep)
   expect_equal(asReactTag(tag), attachDependencies(reactR::React$Fragment("x", "y"), dep))
   tag <- div("x", div(), dep, dep2, "z")
   expect_equal(asReactTag(tag), attachDependencies(div("x", div(), "z"), list(dep, dep2)))
 
-  # Nested HTML dependency objects
+  ## Nested HTML dependency objects
   tag <- tagList("x", div(dep), span("y"))
   expect_equal(asReactTag(tag), reactR::React$Fragment("x", attachDependencies(div(), dep), span("y")))
   tag <- div("x", tagList(dep), span("y"))
