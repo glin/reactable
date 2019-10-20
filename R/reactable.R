@@ -5,9 +5,12 @@
 #' @name reactable-package
 NULL
 
-#' Create a reactable HTML widget
+#' Create an interactive data table
 #'
-#' Creates a data table HTML widget using the React Table library.
+#' `reactable()` creates a data table from tabular data with sorting,
+#' pagination, and highlighting enabled by default. The data table is
+#' an HTML widget that can be viewed at an R console, embedded in
+#' R Markdown documents, or used in Shiny web applications.
 #'
 #' @param data A data frame or matrix.
 #' @param columns Named list of column definitions. See [colDef()].

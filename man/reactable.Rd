@@ -2,7 +2,7 @@
 % Please edit documentation in R/reactable.R
 \name{reactable}
 \alias{reactable}
-\title{Create a reactable HTML widget}
+\title{Create an interactive data table}
 \usage{
 reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   groupBy = NULL, sortable = TRUE, resizable = FALSE,
@@ -126,7 +126,10 @@ Defaults to \code{TRUE}.}
 A reactable HTML widget.
 }
 \description{
-Creates a data table HTML widget using the React Table library.
+\code{reactable()} creates a data table from tabular data with sorting,
+pagination, and highlighting enabled by default. The data table is
+an HTML widget that can be viewed at an R console, embedded in
+R Markdown documents, or used in Shiny web applications.
 }
 \note{
 See the \href{https://glin.github.io/reactable}{online documentation} for
