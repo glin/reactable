@@ -26,7 +26,10 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
 
 \item{columnGroups}{List of column group definitions. See \code{\link[=colGroup]{colGroup()}}.}
 
-\item{rownames}{Show row names? Defaults to \code{TRUE} if the data has row names.}
+\item{rownames}{Show row names? Defaults to \code{TRUE} if the data has row names.
+
+To customize or group the row names column, use \code{".rownames"} as the
+column name.}
 
 \item{groupBy}{Character vector of column names to group by.}
 

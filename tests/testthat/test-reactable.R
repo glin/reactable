@@ -286,14 +286,18 @@ test_that("defaultColDef", {
   expect_equal(attribs$columns[[2]]$width, 44)
   expect_equal(attribs$columns[[2]]$class, "default-cls")
 
-  # Defaults apply to row name column
+  # Defaults should apply to row name column
   tbl <- reactable(data.frame(x = 1, y = "2"),
-                   defaultColDef = colDef(show = FALSE),
+                   defaultColDef = colDef(name = "not-row-names", show = FALSE),
                    rownames = TRUE)
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$show, FALSE)
   expect_equal(attribs$columns[[2]]$show, FALSE)
   expect_equal(attribs$columns[[3]]$show, FALSE)
+  # Defaults don't override row name column defaults
+  expect_equal(attribs$columns[[1]]$name, "")
+  expect_equal(attribs$columns[[2]]$name, "not-row-names")
+  expect_equal(attribs$columns[[3]]$name, "not-row-names")
 })
 
 test_that("defaultColGroup", {

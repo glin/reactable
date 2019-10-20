@@ -13,6 +13,9 @@ NULL
 #' @param columns Named list of column definitions. See [colDef()].
 #' @param columnGroups List of column group definitions. See [colGroup()].
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
+#'
+#'  To customize or group the row names column, use `".rownames"` as the
+#'  column name.
 #' @param groupBy Character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
@@ -132,6 +135,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   } else if (is.matrix(data)) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
+
   if (is.null(rownames)) {
     # Check if row names were set. This may not work if row names were set to
     # integers, but it's more reliable than using .row_names_info() on
@@ -142,19 +146,19 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     stop("`rownames` must be TRUE or FALSE")
   } else if (rownames) {
     rownamesKey <- ".rownames"
-    # Use attribute to preserve type, in case of integer row names
+    # Get row names from attribute to preserve type (in case of integer row names)
     data <- cbind(
       stats::setNames(list(attr(data, "row.names")), rownamesKey),
       data,
       stringsAsFactors = FALSE
     )
-    defaultColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE)
+    rownamesColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE)
     if (rownamesKey %in% names(columns)) {
-      columns[[rownamesKey]] <- mergeLists(defaultColumn, columns[[rownamesKey]])
-    } else {
-      columns <- c(stats::setNames(list(defaultColumn), rownamesKey), columns)
+      rownamesColumn <- mergeLists(rownamesColumn, columns[[rownamesKey]])
     }
+    columns[[rownamesKey]] <- rownamesColumn
   }
+
   if (!is.null(columns)) {
     if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
       stop("`columns` must be a named list of column definitions")
@@ -206,6 +210,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     } else {
       detailsColumn <- mergeLists(detailsColumn, colDef(details = details))
     }
+    # Prepend column
     columns <- c(stats::setNames(list(detailsColumn), detailsKey), columns)
   }
   if (!is.null(defaultColDef)) {

@@ -246,6 +246,7 @@ reactable(
   columns = NULL,             # Named list of column definitions. See column definitions below
   columnGroups = NULL,        # List of column group definitions. See column groups below
   rownames = NULL,            # Show row names? Defaults to TRUE if the data has row names
+                              # To customize or group the row names column, use ".rownames" as the column name
   groupBy = NULL,             # Names of columns to group by
   sortable = TRUE,            # Enable sorting?
   resizable = FALSE,          # Enable column resizing?
