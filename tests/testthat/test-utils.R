@@ -143,6 +143,8 @@ test_that("asReactTag", {
 
   # Null elements should be pruned
   expect_equal(asReactTag(div(1, NULL, 3)), div("1", "3"))
+  expect_equal(asReactTag(tagList(NULL, "a", tagList(NULL, "b", NULL), div(NULL, "c"))),
+               reactR::React$Fragment("a", "b", div("c")))
 
   # Attributes should be converted
   expect_equal(asReactTag(div(style = "color: red", class = "cls")),

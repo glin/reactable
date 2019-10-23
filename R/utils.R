@@ -141,6 +141,9 @@ unnestTagList <- function(x) {
   htmlDeps <- htmltools::htmlDependencies(x)
 
   tags <- Reduce(function(a, b) {
+    if (is.null(b)) {
+      return(a)
+    }
     if (isTagList(b)) {
       # Preserve HTML dependencies of nested tag lists
       deps <- htmltools::htmlDependencies(b)
