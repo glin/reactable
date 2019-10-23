@@ -1,0 +1,261 @@
+---
+title: "Cookbook"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+resource_files:
+  - images
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+## Insert links
+
+```{r}
+data <- data.frame(
+  Address = c("https://google.com", "https://yahoo.com", "https://duckduckgo.com"),
+  Site = c("Google", "Yahoo", "DuckDuckGo")
+)
+
+reactable(data, columns = list(
+  # Using htmltools to render a link
+  Address = colDef(cell = function(value) {
+    htmltools::tags$a(href = value, value)
+  }),
+  # Or using raw HTML
+  Site = colDef(html = TRUE, cell = function(value, index) {
+    sprintf('<a href="%s" target="_blank">%s</a>', data$Address[index], value)
+  })
+))
+```
+
+## Conditional coloring
+
+```{r}
+data <- iris[1:20, ]
+orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
+
+reactable(data, highlight = FALSE, columns = list(
+  Petal.Width = colDef(style = function(value) {
+    color <- orange_pal(value / max(data$Petal.Width))
+    list(background = color)
+  })
+))
+```
+
+## Bar charts
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "MPG.city")]
+
+# Render a bar chart with a label on the left
+bar_chart <- function(label, width = "100%", background = "#00bfc4", height = "16px") {
+  bar <- div(style = list(background = background, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, paddingLeft = "8px"), bar)
+  div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+reactable(data, highlight = FALSE, columns = list(
+  MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
+    width <- paste0(value / max(data$MPG.city) * 100, "%")
+    bar_chart(value, width)
+  })
+))
+```
+
+## Embed images
+
+```{r}
+library(htmltools)
+
+data <- data.frame(
+  Animal = c("beaver", "cow", "wolf", "goat"),
+  Body = c(1.35, 465, 36.33, 27.66),
+  Brain = c(8.1, 423, 119.5, 115)
+)
+
+reactable(data, columns = list(
+  Animal = colDef(cell = function(value) {
+    image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = "")
+    tagList(
+      div(style = list(display = "inline-block", width = "45px"), image),
+      value
+    )
+  }),
+  Body = colDef(name = "Body (kg)"),
+  Brain = colDef(name = "Brain (g)")
+))
+```
+
+## Total rows
+
+```{r, message=FALSE}
+library(dplyr)
+library(htmltools)
+
+data <- MASS::Cars93[18:47, ] %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+reactable(
+  data,
+  defaultPageSize = 5,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(footer = sprintf("$%.2f", sum(data$Sales)))
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+### Dynamic totals
+
+To update the total when filtering the table, calculate the total in a
+JS renderer instead:
+
+```{r}
+reactable(
+  data,
+  searchable = TRUE,
+  defaultPageSize = 5,
+  minRows = 5,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(
+      footer = JS("function(colInfo) {
+        var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
+        var total = values.reduce(function(a, b) { return a + b }, 0)
+        return '$' + total.toFixed(2)
+      }")
+    )
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+## Highlight columns
+
+```{r}
+reactable(iris[1:5, ], highlight = FALSE, columns = list(
+  Petal.Width = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
+))
+```
+
+## Highlight rows
+
+```{r}
+reactable(iris[1:5, ], highlight = FALSE, rowStyle = function(index) {
+  if (index == 2) list(fontWeight = "bold")
+  else if (index == 4) list(background = "rgba(0, 0, 0, 0.05)")
+})
+```
+
+## Highlight sorted headers
+
+To style headers on hover, select headers with a `:hover` pseudo-class in CSS:
+
+```{r sort_highlight, eval=FALSE}
+reactable(iris[1:5, ], defaultColDef = colDef(headerClass = "sort-header"))
+```
+
+```{css}
+.sort-header:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+```
+
+To style sorted headers, select headers with either an `aria-sort="ascending"`
+or `aria-sort="descending"` attribute:
+
+```{css}
+.sort-header[aria-sort="ascending"],
+.sort-header[aria-sort="descending"] {
+  background: rgba(0, 0, 0, 0.03);
+}
+```
+
+```{r ref.label="sort_highlight", echo=FALSE}
+```
+
+## Highlight sorted columns
+
+Use a JS callback to style columns based on the table's sorted state:
+
+```{r}
+reactable(
+  iris[1:5, ],
+  defaultSorted = "Sepal.Width",
+  highlight = FALSE,
+  defaultColDef = colDef(
+    style = JS("function(rowInfo, colInfo, state) {
+      // Highlight sorted columns
+      for (var i = 0; i < state.sorted.length; i++) {
+        if (state.sorted[i].id === colInfo.id) {
+          return { background: 'rgba(0, 0, 0, 0.03)' }
+        }
+      }
+    }")
+  )
+)
+```
+
+## Custom sort indicators
+
+To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
+add your own indicator.
+
+For example, changing the sort indicator to a bar using CSS:
+
+```{r bar_sort, eval=FALSE}
+reactable(
+  iris[1:5, ],
+  showSortIcon = FALSE,
+  bordered = TRUE,
+  defaultSorted = "Petal.Length",
+  defaultColDef = colDef(headerClass = "bar-sort-header")
+)
+```
+
+```{css}
+.bar-sort-header[aria-sort="ascending"] {
+  box-shadow: inset 0 3px 0 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+.bar-sort-header[aria-sort="descending"] {
+  box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.6) !important;
+}
+```
+
+```{r ref.label="bar_sort", echo=FALSE}
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
+}
+```
