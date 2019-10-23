@@ -12,7 +12,7 @@ import { columnsToRows, buildColumnDefs } from './columns'
 import { classNames, getFirstDefined, get, set } from './utils'
 
 import 'react-table/react-table.css'
-import './assets/reactable.css'
+import './reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
   // Add aria attributes for sortable column headers
