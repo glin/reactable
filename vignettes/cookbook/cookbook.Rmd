@@ -54,19 +54,23 @@ reactable(data, highlight = FALSE, columns = list(
 ```{r}
 library(htmltools)
 
-data <- MASS::Cars93[, c("Manufacturer", "Model", "MPG.city")]
+data <- MASS::Cars93[20:49, c("Make", "MPG.city", "MPG.highway")]
 
 # Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", background = "#00bfc4", height = "16px") {
-  bar <- div(style = list(background = background, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, paddingLeft = "8px"), bar)
+bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", background = NULL) {
+  bar <- div(style = list(background = fill, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, marginLeft = "8px", background = background), bar)
   div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
 
 reactable(data, highlight = FALSE, columns = list(
   MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
     width <- paste0(value / max(data$MPG.city) * 100, "%")
-    bar_chart(value, width)
+    bar_chart(value, width = width)
+  }),
+  MPG.highway = colDef(name = "MPG (highway)", align = "left", cell = function(value) {
+    width <- paste0(value / max(data$MPG.highway) * 100, "%")
+    bar_chart(value, width = width, fill = "#fc5185", background = "#e1e1e1")
   })
 ))
 ```
