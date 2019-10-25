@@ -257,6 +257,41 @@ reactable(
 )
 ```
 
+## Borders between groups of data
+
+To add borders between groups, use an R or JS callback to style rows based on
+the previous or next row's data. If the table can be sorted, use a JS callback
+to style rows only when sorting by that group.
+
+```{r, message=FALSE}
+library(dplyr)
+
+data <- as_tibble(MASS::painters, rownames = "Painter") %>%
+  filter(School %in% c("A", "B", "C")) %>%
+  mutate(School = recode(School, A = "Renaissance", B = "Mannerist", C = "Seicento")) %>%
+  select(Painter, School, everything()) %>%
+  group_by(School) %>%
+  slice(1:3)
+
+reactable(
+  data,
+  defaultSorted = list(School = "asc", Drawing = "desc"),
+  borderless = TRUE,
+  rowStyle = JS("
+    function(rowInfo, state) {
+      // Add horizontal separators between groups when sorting by school
+      var firstSorted = state.sorted[0]
+      if (firstSorted && firstSorted.id === 'School') {
+        var nextRow = state.sortedData[rowInfo.viewIndex + 1]
+        if (nextRow && rowInfo.row['School'] !== nextRow['School']) {
+          return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
+        }
+      }
+    }
+  ")
+)
+```
+
 ## Custom sort indicators
 
 To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
