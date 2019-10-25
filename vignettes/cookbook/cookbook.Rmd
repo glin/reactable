@@ -144,6 +144,53 @@ reactable(
 )
 ```
 
+## Units on first row only
+
+To show a label on the first row only (even when sorting), use a JS renderer
+to add the label when the cell's `viewIndex` is 0.
+
+If the label breaks the alignment of values in the column, realign the values
+by adding white space to the cells without units. Two ways to do this are shown below.
+
+```{r units_first_row, eval=FALSE}
+data <- MASS::Cars93[40:44, c("Make", "Length", "Luggage.room")]
+
+reactable(data, class = "car-specs", columns = list(
+  # Align values using white space with a monospaced font
+  Length = colDef(
+    cell = JS("function(cellInfo) {
+      var units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
+      return cellInfo.value + units
+    }"),
+    class = "number"
+  ),
+  # Align values using a fixed-width container for units
+  Luggage.room = colDef(
+    name = "Luggage Room",
+    cell = JS("function(cellInfo) {
+      var units = cellInfo.viewIndex === 0 ? ' ft³' : ''
+      return cellInfo.value + '<div class=\"units\">' + units + '</div>'
+    }"),
+    html = TRUE
+  )
+))
+```
+
+```{css}
+.car-specs .number {
+  font-family: "Courier New", Courier, monospace;
+  white-space: pre;
+}
+
+.car-specs .units {
+  display: inline-block;
+  width: 18px;
+}
+```
+
+```{r ref.label="units_first_row", echo=FALSE}
+```
+
 ## Highlight columns
 
 ```{r}
