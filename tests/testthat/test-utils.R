@@ -73,14 +73,17 @@ test_that("isTagList", {
 })
 
 test_that("asReactTag", {
-  expect_equal(asReactTag("text"), "text")
-  expect_equal(asReactTag(NULL), NULL)
-  expect_equal(asReactTag(list("text")), list("text"))
-  expect_equal(asReactTag(factor("xy")), factor("xy"))
-
   # Nodes should be strings
+  expect_equal(asReactTag("text"), "text")
+  expect_equal(asReactTag("\u2718"), "\u2718")
   expect_equal(asReactTag(123), "123")
   expect_equal(asReactTag(TRUE), "TRUE")
+  expect_equal(asReactTag(NA), "NA")  # should be "NA" rather than NA_character_
+  expect_equal(asReactTag(factor("xy")), "xy")
+  expect_equal(asReactTag(as.Date("2019-01-03")), "2019-01-03")
+  expect_equal(asReactTag(list("text")), "text")
+  # NULLs should be left as-is
+  expect_equal(asReactTag(NULL), NULL)
 
   # Tags should be extracted from subtables
   expect_true(is.tag(asReactTag(reactable(data.frame()))))
@@ -151,8 +154,8 @@ test_that("asReactTag", {
                div(style = list(color = "red"), className = "cls"))
 
   # Attributes should be preserved
-  expect_equal(asReactTag(div(factor("xy"))), div(factor("xy")))
-  expect_equal(asReactTag(div(div(as.Date("2019-01-03")))), div(div(as.Date("2019-01-03"))))
+  expect_equal(asReactTag(div(factor("xy"))), div("xy"))
+  expect_equal(asReactTag(div(div(as.Date("2019-01-03")))), div(div("2019-01-03")))
 
   # HTML dependencies should be preserved
   dep <- htmlDependency("dep", "0.1.0", "/path/to/dep")

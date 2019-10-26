@@ -387,8 +387,10 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       if (is.function(header)) {
         header <- callFunc(header, column$name, key)
       }
-      column$header <- asReactTag(header)
-      addDependencies(column$header)
+      if (!is.JS(header)) {
+        column$header <- asReactTag(header)
+        addDependencies(column$header)
+      }
     }
 
     footer <- column[["footer"]]
@@ -397,8 +399,10 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
         values <- data[[key]]
         footer <- callFunc(footer, values, key)
       }
-      column$footer <- asReactTag(footer)
-      addDependencies(column$footer)
+      if (!is.JS(footer)) {
+        column$footer <- asReactTag(footer)
+        addDependencies(column$footer)
+      }
     }
 
     details <- column[["details"]]
@@ -438,8 +442,10 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
         if (is.function(header)) {
           header <- callFunc(header, group$name)
         }
-        group$header <- asReactTag(header)
-        addDependencies(group$header)
+        if (!is.JS(header)) {
+          group$header <- asReactTag(header)
+          addDependencies(group$header)
+        }
       }
       group
     })

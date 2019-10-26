@@ -440,7 +440,7 @@ test_that("column renderers", {
     p = colDef(cell = function(value) value)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[4]]$cell, list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01")))
+  expect_equal(attribs$columns[[4]]$cell, list("2019-01-01", "2019-05-01"))
 
   # Header renderers
   tbl <- reactable(data, columns = list(
@@ -499,13 +499,13 @@ test_that("column renderers", {
   # Group header renderers
   tbl <- reactable(data, columnGroups = list(
     colGroup(name = "x", header = div("group X"), columns = "x"),
-    colGroup(name = "group Y", header = function(value) paste("name:", value), columns = "y"),
-    colGroup(name = "group Z", header = function(value) div(value), columns = "z")
+    colGroup(name = "group Y", header = function(value) div("name:", value), columns = "y"),
+    colGroup(name = "group Z", header = JS("colInfo => 'header'"), columns = "z")
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columnGroups[[1]][["header"]], div("group X"))
-  expect_equal(attribs$columnGroups[[2]][["header"]], "name: group Y")
-  expect_equal(attribs$columnGroups[[3]][["header"]], div("group Z"))
+  expect_equal(attribs$columnGroups[[2]][["header"]], div("name:", "group Y"))
+  expect_equal(attribs$columnGroups[[3]][["header"]], JS("colInfo => 'header'"))
 
   tbl <- reactable(data, columns = list(
     x = colDef(header = div("header")),
@@ -528,10 +528,10 @@ test_that("row details", {
   data <- data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE)
 
   # R renderer
-  tbl <- reactable(data, details = function(i) data[i, "y"])
+  tbl <- reactable(data, details = function(i) if (i == 1) data[i, "y"])
   attribs <- getAttribs(tbl)
   expected <- list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-                   filterable = FALSE, width = 45, align = "center", details = list("a", "b"))
+                   filterable = FALSE, width = 45, align = "center", details = list("a", NULL))
   expect_equal(attribs$columns[[1]], expected)
 
   # JS renderer
