@@ -40,11 +40,11 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, selectionId = 123))
   expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
+  expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
   expect_error(reactable(df, borderless = NULL))
   expect_error(reactable(df, striped = "true"))
-  expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, compact = "true"))
   expect_error(reactable(df, wrap = "true"))
   expect_error(reactable(df, showSortIcon = "true"))
@@ -82,12 +82,6 @@ test_that("reactable", {
     paginationType = "numbers",
     showPageInfo = TRUE,
     minRows = 1,
-    outlined = FALSE,
-    bordered = FALSE,
-    borderless = FALSE,
-    striped = FALSE,
-    highlight = TRUE,
-    compact = FALSE,
     dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
@@ -103,9 +97,9 @@ test_that("reactable", {
                    defaultPageSize = 1, showPageSizeOptions = FALSE, pageSizeOptions = c(1, 2),
                    paginationType = "simple", showPagination = FALSE, showPageInfo = FALSE,
                    minRows = 5, selection = "single", selectionId = "sel",
-                   details = function(i) i,
+                   details = function(i) i, highlight = TRUE,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
-                   highlight = FALSE, compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
+                   compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
                    fullWidth = FALSE, groupBy = "x", width = "400px", height = "100%",
                    elementId = "tbl")
@@ -139,11 +133,11 @@ test_that("reactable", {
     minRows = 5,
     selection = "single",
     selectionId = "sel",
+    highlight = TRUE,
     outlined = TRUE,
     bordered = TRUE,
     borderless = TRUE,
     striped = TRUE,
-    highlight = FALSE,
     compact = TRUE,
     nowrap = TRUE,
     showSortIcon = FALSE,

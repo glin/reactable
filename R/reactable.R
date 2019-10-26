@@ -7,10 +7,10 @@ NULL
 
 #' Create an interactive data table
 #'
-#' `reactable()` creates a data table from tabular data with sorting,
-#' pagination, and highlighting enabled by default. The data table is
-#' an HTML widget that can be viewed at an R console, embedded in
-#' R Markdown documents, or used in Shiny web applications.
+#' `reactable()` creates a data table from tabular data with sorting
+#' and pagination by default. The data table is an HTML widget that can be
+#' viewed at an R console, embedded in R Markdown documents, or used in
+#' Shiny web applications.
 #'
 #' @param data A data frame or matrix.
 #' @param columns Named list of column definitions. See [colDef()].
@@ -50,11 +50,11 @@ NULL
 #'   that takes a row index argument or a [JS()] function that takes
 #'   a row info object as an argument. Can also be a [colDef()] to customize the
 #'   details expander column.
+#' @param highlight Highlight table rows on hover?
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?
 #' @param borderless Remove inner borders from table?
 #' @param striped Add zebra-striping to table rows?
-#' @param highlight Highlight table rows on hover? Defaults to `TRUE`.
 #' @param compact Make tables more compact?
 #' @param wrap Enable text wrapping? If `TRUE` (the default), long text will be
 #'   wrapped to multiple lines. If `FALSE`, text will be truncated to fit on one line.
@@ -126,8 +126,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
                       minRows = 1, selection = NULL, selectionId = NULL,
-                      details = NULL, outlined = FALSE, bordered = FALSE, borderless = FALSE,
-                      striped = FALSE, highlight = TRUE, compact = FALSE, wrap = TRUE,
+                      details = NULL, highlight = FALSE, outlined = FALSE, bordered = FALSE,
+                      borderless = FALSE, striped = FALSE, compact = FALSE, wrap = TRUE,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
                       fullWidth = TRUE, width = "auto", height = "auto",
@@ -289,6 +289,9 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   if (!is.null(selectionId) && !is.character(selectionId)) {
     stop("`selectionId` must be a character")
   }
+  if (!is.logical(highlight)) {
+    stop("`highlight` must be TRUE or FALSE")
+  }
   if (!is.logical(outlined)) {
     stop("`outlined` must be TRUE or FALSE")
   }
@@ -300,9 +303,6 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
   if (!is.logical(striped)) {
     stop("`striped` must be TRUE or FALSE")
-  }
-  if (!is.logical(highlight)) {
-    stop("`highlight` must be TRUE or FALSE")
   }
   if (!is.logical(compact)) {
     stop("`compact` must be TRUE or FALSE")
@@ -468,12 +468,12 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     minRows = minRows,
     selection = selection,
     selectionId = selectionId,
-    outlined = outlined,
-    bordered = bordered,
-    borderless = borderless,
-    striped = striped,
-    highlight = highlight,
-    compact = compact,
+    highlight = if (highlight) TRUE,
+    outlined = if (outlined) TRUE,
+    bordered = if (bordered) TRUE,
+    borderless = if (borderless) TRUE,
+    striped = if (striped) TRUE,
+    compact = if (compact) TRUE,
     nowrap = if (!wrap) TRUE,
     showSortIcon = if (!showSortIcon) showSortIcon,
     showSortable = if (showSortable) showSortable,

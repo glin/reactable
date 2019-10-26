@@ -268,11 +268,11 @@ reactable(
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows
   details = NULL,             # Additional content to display when expanding a row. See row details below
+  highlight = FALSE,          # Highlight rows on hover?
   outlined = FALSE,           # Add borders around the table?
   bordered = FALSE,           # Add borders around the table and every cell?
   borderless = FALSE,         # Remove inner borders from table?
   striped = FALSE,            # Zebra-stripe rows?
-  highlight = TRUE,           # Highlight rows on hover?
   compact = FALSE,            # Make tables more compact?
   wrap = TRUE,                # Enable text wrapping? If FALSE, long text will be truncated to fit on one line
   showSortIcon = TRUE,        # Show a sort icon when sorting columns?

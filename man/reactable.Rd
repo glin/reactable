@@ -12,9 +12,9 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
   paginationType = "numbers", showPagination = NULL,
   showPageInfo = TRUE, minRows = 1, selection = NULL,
-  selectionId = NULL, details = NULL, outlined = FALSE,
-  bordered = FALSE, borderless = FALSE, striped = FALSE,
-  highlight = TRUE, compact = FALSE, wrap = TRUE,
+  selectionId = NULL, details = NULL, highlight = FALSE,
+  outlined = FALSE, bordered = FALSE, borderless = FALSE,
+  striped = FALSE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
   style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
   width = "auto", height = "auto", elementId = NULL)
@@ -82,6 +82,8 @@ that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes
 a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to customize the
 details expander column.}
 
+\item{highlight}{Highlight table rows on hover?}
+
 \item{outlined}{Add borders around the table?}
 
 \item{bordered}{Add borders around the table and every cell?}
@@ -89,8 +91,6 @@ details expander column.}
 \item{borderless}{Remove inner borders from table?}
 
 \item{striped}{Add zebra-striping to table rows?}
-
-\item{highlight}{Highlight table rows on hover? Defaults to \code{TRUE}.}
 
 \item{compact}{Make tables more compact?}
 
@@ -126,10 +126,10 @@ Defaults to \code{TRUE}.}
 A reactable HTML widget.
 }
 \description{
-\code{reactable()} creates a data table from tabular data with sorting,
-pagination, and highlighting enabled by default. The data table is
-an HTML widget that can be viewed at an R console, embedded in
-R Markdown documents, or used in Shiny web applications.
+\code{reactable()} creates a data table from tabular data with sorting
+and pagination by default. The data table is an HTML widget that can be
+viewed at an R console, embedded in R Markdown documents, or used in
+Shiny web applications.
 }
 \note{
 See the \href{https://glin.github.io/reactable}{online documentation} for
