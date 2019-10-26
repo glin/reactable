@@ -261,13 +261,13 @@ reactable(
   showPageSizeOptions = FALSE,# Show page size options?
   pageSizeOptions =           # Page size options
     c(10, 25, 50, 100),
-  paginationType = "numbers", # Pagination control to use. Either "numbers" (the default), "jump", or "simple"
+  paginationType = "numbers", # Pagination control to use. Either "numbers", "jump", or "simple"
   showPagination = NULL,      # Show pagination? Defaults to TRUE if the table has more than one page
   showPageInfo = TRUE,        # Show page info?
   minRows = 1,                # Minimum number of rows to show per page
+  details = NULL,             # Additional content to display when expanding a row. See row details below
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows
-  details = NULL,             # Additional content to display when expanding a row. See row details below
   highlight = FALSE,          # Highlight rows on hover?
   outlined = FALSE,           # Add borders around the table?
   bordered = FALSE,           # Add borders around the table and every cell?

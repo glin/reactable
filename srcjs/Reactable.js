@@ -645,6 +645,8 @@ Reactable.propTypes = {
 
 Reactable.defaultProps = {
   sortable: true,
+  resizable: false,
+  showPageSizeOptions: false,
   showSortIcon: true
 }
 

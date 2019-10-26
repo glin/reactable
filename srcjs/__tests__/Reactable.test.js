@@ -1349,24 +1349,44 @@ describe('pagination', () => {
     expect(pagination).toEqual(null)
 
     // Auto shown if default page size causes paging
-    rerender(<Reactable {...props} defaultPageSize={1} pageSizeOptions={[10, 20]} />)
+    rerender(
+      <Reactable {...props} defaultPageSize={1} showPageSizeOptions pageSizeOptions={[10, 20]} />
+    )
     pagination = getPagination(container)
     expect(pagination).toBeTruthy()
 
     // Auto shown if page size option causes paging
-    rerender(<Reactable {...props} defaultPageSize={20} pageSizeOptions={[1, 20]} />)
+    rerender(
+      <Reactable {...props} defaultPageSize={20} showPageSizeOptions pageSizeOptions={[1, 20]} />
+    )
     pagination = getPagination(container)
     expect(pagination).toBeTruthy()
 
     // Force show pagination
-    rerender(<Reactable {...props} showPagination defaultPageSize={2} pageSizeOptions={[2]} />)
+    rerender(
+      <Reactable
+        {...props}
+        showPagination
+        defaultPageSize={2}
+        showPageSizeOptions
+        pageSizeOptions={[2]}
+      />
+    )
     pagination = getPagination(container)
     expect(pagination).toBeTruthy()
 
     // Force hide pagination
-    rerender(<Reactable {...props} defaultPageSize={1} pageSizeOptions={[10, 20]} />)
+    rerender(
+      <Reactable
+        {...props}
+        showPagination={false}
+        defaultPageSize={1}
+        showPageSizeOptions
+        pageSizeOptions={[10, 20]}
+      />
+    )
     pagination = getPagination(container)
-    expect(pagination).toBeTruthy()
+    expect(pagination).toEqual(null)
   })
 
   it('page info', () => {
@@ -1402,6 +1422,7 @@ describe('pagination', () => {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
       columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
       defaultPageSize: 2,
+      showPageSizeOptions: true,
       pageSizeOptions: [2, 4, 6]
     }
     const { container, rerender } = render(<Reactable {...props} />)

@@ -11,8 +11,8 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   defaultSorted = NULL, pagination = TRUE, defaultPageSize = 10,
   showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
   paginationType = "numbers", showPagination = NULL,
-  showPageInfo = TRUE, minRows = 1, selection = NULL,
-  selectionId = NULL, details = NULL, highlight = FALSE,
+  showPageInfo = TRUE, minRows = 1, details = NULL,
+  selection = NULL, selectionId = NULL, highlight = FALSE,
   outlined = FALSE, bordered = FALSE, borderless = FALSE,
   striped = FALSE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
@@ -71,16 +71,16 @@ than one page.}
 
 \item{minRows}{Minimum number of rows to show per page. Defaults to 1.}
 
+\item{details}{Additional content to display when expanding a row. An R function
+that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes
+a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to customize the
+details expander column.}
+
 \item{selection}{Enable row selection? Either \code{"multiple"} or \code{"single"} for
 multiple or single row selection.}
 
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
 represented as a vector of row indices, or \code{NULL} if no rows are selected.}
-
-\item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes
-a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to customize the
-details expander column.}
 
 \item{highlight}{Highlight table rows on hover?}
 

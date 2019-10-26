@@ -42,14 +42,14 @@ NULL
 #'   than one page.
 #' @param showPageInfo Show page info? Defaults to `TRUE`.
 #' @param minRows Minimum number of rows to show per page. Defaults to 1.
-#' @param selection Enable row selection? Either `"multiple"` or `"single"` for
-#'   multiple or single row selection.
-#' @param selectionId Shiny input ID for the selected rows. The selected rows are
-#'   represented as a vector of row indices, or `NULL` if no rows are selected.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes a row index argument or a [JS()] function that takes
 #'   a row info object as an argument. Can also be a [colDef()] to customize the
 #'   details expander column.
+#' @param selection Enable row selection? Either `"multiple"` or `"single"` for
+#'   multiple or single row selection.
+#' @param selectionId Shiny input ID for the selected rows. The selected rows are
+#'   represented as a vector of row indices, or `NULL` if no rows are selected.
 #' @param highlight Highlight table rows on hover?
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?
@@ -125,8 +125,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
-                      minRows = 1, selection = NULL, selectionId = NULL,
-                      details = NULL, highlight = FALSE, outlined = FALSE, bordered = FALSE,
+                      minRows = 1, details = NULL, selection = NULL, selectionId = NULL,
+                      highlight = FALSE, outlined = FALSE, bordered = FALSE,
                       borderless = FALSE, striped = FALSE, compact = FALSE, wrap = TRUE,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
@@ -453,17 +453,17 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     columns = cols,
     columnGroups = columnGroups,
     pivotBy = as.list(groupBy),
-    sortable = sortable,
-    resizable = resizable,
-    filterable = filterable,
-    searchable = searchable,
-    defaultSortDesc = isDescOrder(defaultSortOrder),
+    sortable = if (!sortable) FALSE,
+    resizable = if (resizable) TRUE,
+    filterable = if (filterable) TRUE,
+    searchable = if (searchable) TRUE,
+    defaultSortDesc = if (isDescOrder(defaultSortOrder)) TRUE,
     defaultSorted = columnSortDefs(defaultSorted),
     defaultPageSize = defaultPageSize,
-    showPageSizeOptions = showPageSizeOptions,
-    pageSizeOptions = pageSizeOptions,
+    showPageSizeOptions = if (showPageSizeOptions) TRUE,
+    pageSizeOptions = if (showPageSizeOptions) pageSizeOptions,
     paginationType = paginationType,
-    showPagination = showPagination,
+    showPagination = if (!is.null(showPagination)) showPagination,
     showPageInfo = showPageInfo,
     minRows = minRows,
     selection = selection,
@@ -475,8 +475,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     striped = if (striped) TRUE,
     compact = if (compact) TRUE,
     nowrap = if (!wrap) TRUE,
-    showSortIcon = if (!showSortIcon) showSortIcon,
-    showSortable = if (showSortable) showSortable,
+    showSortIcon = if (!showSortIcon) FALSE,
+    showSortable = if (showSortable) TRUE,
     className = class,
     style = asReactStyle(style),
     rowClassName = rowClass,
