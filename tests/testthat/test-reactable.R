@@ -439,13 +439,13 @@ test_that("column renderers", {
   # Cell renderers
   tbl <- reactable(data, columns = list(
     x = colDef(cell = function(value) value + 1),
-    y = colDef(cell = function(value, index) index),
-    z = colDef(cell = function(values, index) paste(length(values), index))
+    y = colDef(cell = function(value, index, name) index),
+    z = colDef(cell = function(values, index, name) paste(length(values), index, name))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$cell, list("2", "3"))
   expect_equal(attribs$columns[[2]]$cell, list("1", "2"))
-  expect_equal(attribs$columns[[3]]$cell, list("3 1", "3 2"))
+  expect_equal(attribs$columns[[3]]$cell, list("3 1 z", "3 2 z"))
 
   # POSIXlt objects should be handled
   data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"))
@@ -646,31 +646,14 @@ test_that("html dependencies from rendered content are passed through", {
 })
 
 test_that("column class callbacks", {
-  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
+  data <- data.frame(x = c("a", "b", "c"), y = c(2, 4, 6))
   tbl <- reactable(data, columns = list(
     x = colDef(class = function(value) if (value != "a") paste0(value, "-cls")),
-    y = colDef(class = function(value, index) paste0(index, "-cls"))
+    y = colDef(class = function(value, index, name) sprintf("%s-%s-%s", value, index, name))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$className, list(NULL, "b-cls", "c-cls"))
-  expect_equal(attribs$columns[[2]]$className, list("1-cls", "2-cls", "3-cls"))
-
-  tbl <- reactable(data, columns = list(
-    x = colDef(class = JS("rowInfo => 'cls'"))
-  ))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$className, JS("rowInfo => 'cls'"))
-})
-
-test_that("column class callbacks", {
-  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
-  tbl <- reactable(data, columns = list(
-    x = colDef(class = function(value) if (value != "a") paste0(value, "-cls")),
-    y = colDef(class = function(value, index) paste0(index, "-cls"))
-  ))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$className, list(NULL, "b-cls", "c-cls"))
-  expect_equal(attribs$columns[[2]]$className, list("1-cls", "2-cls", "3-cls"))
+  expect_equal(attribs$columns[[2]]$className, list("2-1-y", "4-2-y", "6-3-y"))
 
   tbl <- reactable(data, columns = list(
     x = colDef(class = JS("rowInfo => 'cls'"))
@@ -680,16 +663,16 @@ test_that("column class callbacks", {
 })
 
 test_that("column style callbacks", {
-  data <- data.frame(x = c("a", "b", "c"), y = c(1, 2, 3))
+  data <- data.frame(x = c("a", "b", "c"), y = c(2, 4, 6))
   tbl <- reactable(data, columns = list(
     x = colDef(style = function(value) if (value != "a") "background-color: red"),
-    y = colDef(style = function(value, index) if (index < 3) list(color = "red"))
+    y = colDef(style = function(value, index, name) list(color = sprintf("%s-%s-%s", value, index, name)))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$style,
                list(NULL, list("background-color" = "red"), list("background-color" = "red")))
   expect_equal(attribs$columns[[2]]$style,
-               list(list(color = "red"), list(color = "red"), NULL))
+               list(list(color = "2-1-y"), list(color = "4-2-y"), list(color = "6-3-y")))
 
   tbl <- reactable(data, columns = list(
     x = colDef(style = JS("rowInfo => ({ backgroundColor: 'red' })"))

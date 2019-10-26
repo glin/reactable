@@ -37,9 +37,9 @@ order or \code{"desc"} for descending order. Overrides the table option.}
 format all cells, or a named list of \code{\link[=colFormat]{colFormat()}} objects to format standard
 cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
-\item{cell}{Custom cell renderer. An R function that takes the cell value and
-row index as arguments, or a \code{\link[=JS]{JS()}} function that takes a cell info object as
-an argument.}
+\item{cell}{Custom cell renderer. An R function that takes the cell value,
+row index, and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a
+cell info object as an argument.}
 
 \item{aggregated}{Custom aggregated cell renderer. A \code{\link[=JS]{JS()}} function that takes
 a cell info object as an argument.}
@@ -70,7 +70,7 @@ By default, missing values are displayed as blank cells.}
 \item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
 \item{class}{Additional CSS classes to apply to cells. Can also be an R function
-that takes the cell value and row index as arguments, or a \code{\link[=JS]{JS()}}
+that takes the cell value, row index, and column name as arguments, or a \code{\link[=JS]{JS()}}
 function that takes a row info object, column info object, and table state
 object as arguments.
 Note that R functions cannot apply classes to aggregated cells.}

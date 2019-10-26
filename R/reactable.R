@@ -376,7 +376,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       subsetter <- if (is.POSIXlt(data[[key]])) `[` else `[[`
       content <- lapply(seq_len(nrow(data)), function(index) {
         value <- subsetter(data, index, key)
-        callFunc(cell, value, index)
+        callFunc(cell, value, index, key)
       })
       column$cell <- lapply(content, asReactTag)
       addDependencies(column$cell)
@@ -414,7 +414,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     if (is.function(className)) {
       classes <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(className, value, index)
+        callFunc(className, value, index, key)
       })
       column$className <- classes
     }
@@ -423,7 +423,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     if (is.function(style)) {
       style <- lapply(seq_len(nrow(data)), function(index) {
         value <- data[index, key]
-        callFunc(style, value, index)
+        callFunc(style, value, index, key)
       })
       column$style <- lapply(style, asReactStyle)
     }

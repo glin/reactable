@@ -14,9 +14,9 @@
 #' @param format Column formatting options. A [colFormat()] object to
 #'   format all cells, or a named list of [colFormat()] objects to format standard
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
-#' @param cell Custom cell renderer. An R function that takes the cell value and
-#'   row index as arguments, or a [JS()] function that takes a cell info object as
-#'   an argument.
+#' @param cell Custom cell renderer. An R function that takes the cell value,
+#'   row index, and column name as arguments, or a [JS()] function that takes a
+#'   cell info object as an argument.
 #' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
 #'   a cell info object as an argument.
 #' @param header Custom header renderer. An R function that takes the header value
@@ -36,7 +36,7 @@
 #' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param class Additional CSS classes to apply to cells. Can also be an R function
-#'   that takes the cell value and row index as arguments, or a [JS()]
+#'   that takes the cell value, row index, and column name as arguments, or a [JS()]
 #'   function that takes a row info object, column info object, and table state
 #'   object as arguments.
 #'   Note that R functions cannot apply classes to aggregated cells.

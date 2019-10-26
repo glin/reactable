@@ -421,10 +421,11 @@ colDef(
 Standard cell renderers can also be an R function (not supported for aggregated cells):
 ```r
 colDef(
-  cell = function(value, index) {
+  cell = function(value, index, name) {
     # input:
     #   - value, the cell value
     #   - index, the row index (optional)
+    #   - name, the column name (optional)
     #
     # output:
     #   - content to render (e.g. an HTML tag)
@@ -599,20 +600,22 @@ colDef(
 Or using an R function (not applied to aggregated cells):
 ```r
 colDef(
-  style = function(value, index) {
+  style = function(value, index, name) {
     # input:
     #   - value, the cell value
     #   - index, the row index (optional)
+    #   - name, the column name (optional)
     #
     # output:
     #   - an inline style string or named list of camelCased properties
     if (index == 1) "color: red; margin-left: 30px;"
     else list(color = "red", marginLeft = "30px")
   },
-  class = function(value, index) {
+  class = function(value, index, name) {
     # input:
     #   - value, the cell value
     #   - index, the row index (optional)
+    #   - name, the column name (optional)
     #
     # output:
     #   - CSS class names
