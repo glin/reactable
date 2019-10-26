@@ -191,6 +191,20 @@ reactable(data, class = "car-specs", columns = list(
 ```{r ref.label="units_first_row", echo=FALSE}
 ```
 
+## Highlight cells
+
+```{r}
+data <- MASS::road[11:17, ]
+
+reactable(data, highlight = FALSE, defaultColDef = colDef(
+  style = function(value, index, name) {
+    if (is.numeric(value) && value == max(data[[name]])) {
+      list(fontWeight = "bold")
+    }
+  })
+)
+```
+
 ## Highlight columns
 
 ```{r}
