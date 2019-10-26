@@ -47,7 +47,6 @@ line_score_tbl <- reactable(
     PTS_QTR4 = colDef(name = "Q4"),
     PTS = colDef(name = "Final", class = "line-score-final")
   ),
-  highlight = FALSE,
   class = "line-score-tbl"
 )
 
@@ -142,6 +141,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
       })
     ),
     showSortIcon = FALSE,
+    highlight = TRUE,
     striped = TRUE,
     class = "box-score-tbl"
   )

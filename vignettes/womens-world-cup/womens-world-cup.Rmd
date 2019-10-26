@@ -132,7 +132,6 @@ tbl <- reactable(
     }"
   ),
   showSortIcon = FALSE,
-  highlight = FALSE,
   borderless = TRUE,
   class = "standings-table"
 )

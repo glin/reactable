@@ -15,7 +15,7 @@ library(reactable)
 
 ## Basic Usage
 
-Create a data table from a data frame using `reactable()`:
+Create a data table from a data frame or matrix using `reactable()`:
 ```{r}
 reactable(iris)
 ```
@@ -502,7 +502,7 @@ data <- chickwts %>%
   summarise(weight = list(weight)) %>%
   mutate(boxplot = NA, sparkline = NA)
 
-reactable(data, highlight = FALSE, columns = list(
+reactable(data, columns = list(
   weight = colDef(cell = function(values) {
     sparkline(values, type = "bar")
   }),
@@ -581,7 +581,7 @@ library(sparkline)
 
 reactable(iris[1:20, ], bordered = TRUE, defaultColDef = colDef(footer = function(values) {
   if (!is.numeric(values)) return()
-  sparkline::sparkline(values, type = "box", width = 100, height = 30)
+  sparkline(values, type = "box", width = 100, height = 30)
 }))
 ```
 
@@ -607,10 +607,10 @@ reactable(
 
 ## Table Styling
 
-### Default
+### Highlight rows on hover
 
 ```{r}
-reactable(iris[1:5, ])
+reactable(iris[1:5, ], highlight = TRUE)
 ```
 
 ### Bordered
@@ -655,12 +655,6 @@ reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 reactable(iris[1:5, ], compact = TRUE)
 ```
 
-### No highlighting on hover
-
-```{r}
-reactable(iris[1:5, ], highlight = FALSE)
-```
-
 ### No text wrapping
 
 ```{r}
@@ -676,7 +670,6 @@ reactable(
   height = 270,
   striped = TRUE,
   borderless = TRUE,
-  highlight = FALSE,
   defaultColDef = colDef(
     footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
   )
@@ -718,7 +711,7 @@ reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4)
 
 ### No pagination
 ```{r}
-reactable(iris[1:20, ], pagination = FALSE, height = 300)
+reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 300)
 ```
 
 #### Don't auto-hide pagination

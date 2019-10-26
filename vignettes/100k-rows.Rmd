@@ -28,6 +28,7 @@ reactable(
   filterable = TRUE,
   searchable = TRUE,
   minRows = 10,
+  highlight = TRUE,
   columns = list(
     state = colDef(cell = JS("
     function(cell) {

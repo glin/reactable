@@ -21,7 +21,6 @@ tbl <- reactable(
   showPageSizeOptions = TRUE,
   pageSizeOptions = c(10, 20, 50, 100),
   resizable = TRUE,
-  highlight = FALSE,
   wrap = FALSE,
   class = "packages-table",
   defaultColDef = colDef(headerClass = "header"),
@@ -81,7 +80,6 @@ tbl <- reactable(
               strftime(value, format = "%b %d, %Y")
             })
           ),
-          highlight = FALSE,
           fullWidth = FALSE,
           class = "archived-table"
         )

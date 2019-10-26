@@ -41,7 +41,7 @@ reactable(data, columns = list(
 data <- iris[1:20, ]
 orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
 
-reactable(data, highlight = FALSE, columns = list(
+reactable(data, columns = list(
   Petal.Width = colDef(style = function(value) {
     color <- orange_pal(value / max(data$Petal.Width))
     list(background = color)
@@ -63,7 +63,7 @@ bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", 
   div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
 
-reactable(data, highlight = FALSE, columns = list(
+reactable(data, columns = list(
   MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
     width <- paste0(value / max(data$MPG.city) * 100, "%")
     bar_chart(value, width = width)
@@ -196,7 +196,7 @@ reactable(data, class = "car-specs", columns = list(
 ```{r}
 data <- MASS::road[11:17, ]
 
-reactable(data, highlight = FALSE, defaultColDef = colDef(
+reactable(data, defaultColDef = colDef(
   style = function(value, index, name) {
     if (is.numeric(value) && value == max(data[[name]])) {
       list(fontWeight = "bold")
@@ -208,7 +208,7 @@ reactable(data, highlight = FALSE, defaultColDef = colDef(
 ## Highlight columns
 
 ```{r}
-reactable(iris[1:5, ], highlight = FALSE, columns = list(
+reactable(iris[1:5, ], columns = list(
   Petal.Width = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
 ))
 ```
@@ -216,7 +216,7 @@ reactable(iris[1:5, ], highlight = FALSE, columns = list(
 ## Highlight rows
 
 ```{r}
-reactable(iris[1:5, ], highlight = FALSE, rowStyle = function(index) {
+reactable(iris[1:5, ], rowStyle = function(index) {
   if (index == 2) list(fontWeight = "bold")
   else if (index == 4) list(background = "rgba(0, 0, 0, 0.05)")
 })
@@ -257,7 +257,6 @@ Use a JS callback to style columns based on the table's sorted state:
 reactable(
   iris[1:5, ],
   defaultSorted = "Sepal.Width",
-  highlight = FALSE,
   defaultColDef = colDef(
     style = JS("function(rowInfo, colInfo, state) {
       // Highlight sorted columns
