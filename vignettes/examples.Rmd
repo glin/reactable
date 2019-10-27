@@ -73,7 +73,7 @@ reactable(iris[1:50, ], details = colDef(
 ))
 ```
 
-### Subtables
+### Nested tables
 
 > NOTE: only supported by R render functions
 

@@ -44,7 +44,7 @@ reactable(iris, groupBy = "Species", columns = list(
 ))
 ```
 
-### Expandable Rows and Subtables
+### Expandable Rows and Nested Tables
 https://glin.github.io/reactable/articles/examples.html#expandable-row-details
 
 ```r
