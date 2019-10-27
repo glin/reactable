@@ -15,7 +15,8 @@ library(reactable)
 
 ## Basic Usage
 
-Create a data table from a data frame or matrix using `reactable()`:
+To create a data table, use `reactable()` on a data frame or matrix.
+The table will have sorting and pagination by default:
 ```{r}
 reactable(iris)
 ```
@@ -130,14 +131,14 @@ reactable(iris[1:5, ],
 Sort columns by default:
 
 ```{r}
-reactable(iris, defaultSorted = c("Species", "Petal.Length"))
+reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
 ```
 
 Set default sort order for the table, specific columns, or default sorted columns:
 
 ```{r}
 reactable(
-  iris[1:5, ],
+  iris[48:52, ],
   defaultSortOrder = "desc",
   defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
   columns = list(
@@ -637,10 +638,10 @@ reactable(iris[1:5, ], outlined = TRUE)
 reactable(iris[1:5, ], striped = TRUE)
 ```
 
-### Bordered + striped
+### Bordered + striped + highlighting
 
 ```{r}
-reactable(iris[1:5, ], bordered = TRUE, striped = TRUE)
+reactable(iris[1:5, ], bordered = TRUE, striped = TRUE, highlight = TRUE)
 ```
 
 ### Outlined + borderless

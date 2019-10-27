@@ -1,5 +1,5 @@
 ---
-title: "Cookbook"
+title: "Demo Cookbook"
 output:
   html_document:
     toc: true
@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
+> A collection of recipes used to create the reactable demos
+
 ## Insert links
 
 ```{r}
@@ -26,7 +28,7 @@ data <- data.frame(
 reactable(data, columns = list(
   # Using htmltools to render a link
   Address = colDef(cell = function(value) {
-    htmltools::tags$a(href = value, value)
+    htmltools::tags$a(href = value, target = "_blank", value)
   }),
   # Or using raw HTML
   Site = colDef(html = TRUE, cell = function(value, index) {
@@ -36,6 +38,8 @@ reactable(data, columns = list(
 ```
 
 ## Conditional coloring
+
+### Color scales
 
 ```{r}
 data <- iris[1:20, ]
@@ -47,6 +51,82 @@ reactable(data, columns = list(
     list(background = color)
   })
 ))
+```
+
+### Formatting changes
+
+```{r}
+stocks <- data.frame(
+  Symbol = c("GOOG", "FB", "AMZN", "NFLX", "TSLA"),
+  Price = c(1265.13, 187.89, 1761.33, 276.82, 328.13),
+  Change = c(4.14, 1.51, -19.45, 5.32, -12.45)
+)
+
+reactable(stocks, columns = list(
+  Change = colDef(
+    cell = function(value) {
+      if (value >= 0) paste0("+", value) else value
+    },
+    style = function(value) {
+      color <- if (value > 0) {
+        "#008000"
+      } else if (value < 0) {
+        "#e00000"
+      }
+      list(fontWeight = 600, color = color)
+    }
+  )
+))
+```
+
+### Tags and badges
+
+```{r, echo=FALSE}
+set.seed(20)
+```
+
+```{r tags, eval=FALSE}
+orders <- data.frame(
+  Order = 2300:2304,
+  Created = seq(as.Date("2019-04-01"), by = "day", length.out = 5),
+  Customer = sample(rownames(MASS::painters), 5),
+  Status = sample(c("Pending", "Paid", "Canceled"), 5, replace = TRUE)
+)
+
+reactable(orders, columns = list(
+  Status = colDef(cell = function(value) {
+    class <- paste0("tag status-", tolower(value))
+    htmltools::div(class = class, value)
+  })
+))
+```
+
+```{css}
+.tag {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.status-paid {
+  background: hsl(116, 60%, 90%);
+  color: hsl(116, 30%, 25%);
+}
+
+.status-pending {
+  background: hsl(230, 70%, 90%);
+  color: hsl(230, 45%, 30%);
+}
+
+.status-canceled {
+  background: hsl(350, 70%, 90%);
+  color: hsl(350, 45%, 30%);
+}
+```
+
+```{r ref.label="tags", echo=FALSE}
 ```
 
 ## Bar charts
@@ -122,7 +202,7 @@ reactable(
 ### Dynamic totals
 
 To update the total when filtering the table, calculate the total in a
-JS renderer instead:
+JS renderer:
 
 ```{r}
 reactable(
@@ -177,7 +257,7 @@ by adding white space to the cells without units. Two ways to do this are shown 
 data <- MASS::Cars93[40:44, c("Make", "Length", "Luggage.room")]
 
 reactable(data, class = "car-specs", columns = list(
-  # Align values using white space with a monospaced font
+  # Align values using white space (and a monospaced font)
   Length = colDef(
     cell = JS("function(cellInfo) {
       var units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
@@ -212,6 +292,26 @@ reactable(data, class = "car-specs", columns = list(
 ```{r ref.label="units_first_row", echo=FALSE}
 ```
 
+## Tooltips
+
+```{r}
+data <- mtcars[1:5, c("mpg", "cyl", "disp", "hp")]
+
+with_tooltip <- function(value, tooltip) {
+  span(style = "text-decoration: underline dotted", title = tooltip, value)
+}
+
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(header = with_tooltip("mpg", "Miles/(US) gallon")),
+    cyl = colDef(header = with_tooltip("cyl", "Number of cylinders")),
+    disp = colDef(header = with_tooltip("disp", "Displacement (cu.in.)")),
+    hp = colDef(header = with_tooltip("hp", "Gross horsepower"))
+  )
+)
+```
+
 ## Highlight cells
 
 ```{r}
@@ -230,7 +330,7 @@ reactable(data, defaultColDef = colDef(
 
 ```{r}
 reactable(iris[1:5, ], columns = list(
-  Petal.Width = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
+  Petal.Length = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
 ))
 ```
 
@@ -272,7 +372,8 @@ or `aria-sort="descending"` attribute:
 
 ## Highlight sorted columns
 
-Use a JS callback to style columns based on the table's sorted state:
+To style sorted columns, use a JS callback to style columns based on the
+table's sorted state:
 
 ```{r}
 reactable(
@@ -318,6 +419,7 @@ reactable(
       if (firstSorted && firstSorted.id === 'School') {
         var nextRow = state.sortedData[rowInfo.viewIndex + 1]
         if (nextRow && rowInfo.row['School'] !== nextRow['School']) {
+          // Use box-shadow to add a 2px border without taking extra space
           return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
         }
       }

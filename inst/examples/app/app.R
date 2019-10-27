@@ -141,7 +141,7 @@ server <- function(input, output, session) {
       selectionId = if (input$rowSelection != "none") "selected",
       pagination = "pagination" %in% input$pagination,
       paginationType = input$paginationType,
-      showPageSizeOptions = "showPageSizeOptions" %in% input$pagination,
+      showPageSizeOptions = all(c("showPageSizeOptions", "pagination") %in% input$pagination),
       showPageInfo = "showPageInfo" %in% input$pagination,
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
