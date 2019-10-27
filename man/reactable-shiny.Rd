@@ -4,15 +4,12 @@
 \alias{reactable-shiny}
 \alias{reactableOutput}
 \alias{renderReactable}
-\alias{reactable_html}
 \title{Shiny bindings for reactable}
 \usage{
 reactableOutput(outputId, width = "auto", height = "auto",
   inline = FALSE)
 
 renderReactable(expr, env = parent.frame(), quoted = FALSE)
-
-reactable_html(id, style, class, ...)
 }
 \arguments{
 \item{outputId}{Output variable to read from.}
@@ -28,14 +25,6 @@ or a number, which will be coerced to a string and have \code{"px"} appended.}
 
 \item{quoted}{Is \code{expr} a quoted expression (with \code{\link[=quote]{quote()}})? This is useful
 if you want to save an expression in a variable.}
-
-\item{id}{Element ID.}
-
-\item{style}{Element style.}
-
-\item{class}{Element class.}
-
-\item{...}{Additional arguments.}
 }
 \description{
 Output and render functions for using reactable within Shiny

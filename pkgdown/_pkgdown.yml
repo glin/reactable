@@ -21,10 +21,23 @@ navbar:
         href: articles/cran-packages/cran-packages.html
       - text: 100k Rows
         href: articles/100k-rows.html
-      - text: Cookbook
+      - text: Demo Cookbook
         href: articles/cookbook/cookbook.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
+
+reference:
+- title: Create tables
+  contents:
+  - reactable
+- title: Customize columns
+  contents:
+  - colDef
+  - colGroup
+  - colFormat
+- title: Use in Shiny apps
+  contents:
+  - reactable-shiny
 
 development:
   mode: unreleased

@@ -570,7 +570,7 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @param style Element style.
 #' @param class Element class.
 #' @param ... Additional arguments.
-#' @rdname reactable-shiny
+#' @keywords internal
 reactable_html <- function(id, style, class, ...) {
   htmltools::tagList(
     # Necessary for RStudio viewer version < 1.2
