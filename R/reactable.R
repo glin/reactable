@@ -1,16 +1,18 @@
-#' reactable: R Interface to the React Table Library
-#'
+#' @details
+#' See the [online documentation](https://glin.github.io/reactable) for
+#' examples and an extensive usage guide.
 #' @keywords internal
 #' @import htmlwidgets
 #' @name reactable-package
-NULL
+#' @aliases reactable-package
+"_PACKAGE"
 
 #' Create an interactive data table
 #'
 #' `reactable()` creates a data table from tabular data with sorting
 #' and pagination by default. The data table is an HTML widget that can be
-#' viewed at an R console, embedded in R Markdown documents, or used in
-#' Shiny web applications.
+#' used in R Markdown documents and Shiny applications, or viewed from an
+#' R console.
 #'
 #' @param data A data frame or matrix.
 #' @param columns Named list of column definitions. See [colDef()].

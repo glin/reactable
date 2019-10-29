@@ -128,8 +128,8 @@ A reactable HTML widget.
 \description{
 \code{reactable()} creates a data table from tabular data with sorting
 and pagination by default. The data table is an HTML widget that can be
-viewed at an R console, embedded in R Markdown documents, or used in
-Shiny web applications.
+used in R Markdown documents and Shiny applications, or viewed from an
+R console.
 }
 \note{
 See the \href{https://glin.github.io/reactable}{online documentation} for
