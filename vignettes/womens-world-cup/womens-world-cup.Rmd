@@ -28,14 +28,14 @@ format_pct <- function(value) {
   else formatC(paste0(round(value * 100), "%"), width = 4)
 }
 
-hex_color_ramp <- function(colors, bias = 1) {
+make_color_pal <- function(colors, bias = 1) {
   get_color <- colorRamp(colors, bias = bias)
   function(x) rgb(get_color(x), maxColorValue = 255)
 }
 
-off_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 1.3)
-def_rating_color <- hex_color_ramp(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 0.6)
-knockout_pct_color <- hex_color_ramp(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"), bias = 2)
+off_rating_color <- make_color_pal(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 1.3)
+def_rating_color <- make_color_pal(c("#ff2700", "#f8fcf8", "#44ab43"), bias = 0.6)
+knockout_pct_color <- make_color_pal(c("#ffffff", "#f2fbd2", "#c9ecb4", "#93d3ab", "#35b0ab"), bias = 2)
 
 rating_column <- function(maxWidth = 55, ...) {
   colDef(maxWidth = maxWidth, align = "center", class = "number", ...)

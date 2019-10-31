@@ -15,9 +15,8 @@ player_stats <- read.csv("player_stats.csv", stringsAsFactors = FALSE)
 team_stats <- read.csv("team_stats.csv", stringsAsFactors = FALSE)
 line_score <- read.csv("line_score.csv", stringsAsFactors = FALSE)
 
-cols <- c("TEAM_ID", "TEAM_CITY_NAME", "TEAM_NICKNAME", "TEAM_WINS_LOSSES",
-          "PTS_QTR1", "PTS_QTR2", "PTS_QTR3", "PTS_QTR4", "PTS")
-line_score <- line_score[match(c("TOR", "GSW"), line_score$TEAM_ABBREVIATION), cols]
+line_score <- line_score[, c("TEAM_ID", "TEAM_CITY_NAME", "TEAM_NICKNAME", "TEAM_WINS_LOSSES",
+                             "PTS_QTR1", "PTS_QTR2", "PTS_QTR3", "PTS_QTR4", "PTS")]
 
 line_score_tbl <- reactable(
   line_score,
