@@ -39,18 +39,25 @@
 #'   that takes the cell value, row index, and column name as arguments, or a [JS()]
 #'   function that takes a row info object, column info object, and table state
 #'   object as arguments.
+#'
 #'   Note that R functions cannot apply classes to aggregated cells.
 #' @param style Inline styles to apply to cells. A named list or character string.
 #'   Can also be an R function that takes the cell value and row index as arguments,
 #'   or a [JS()] function that takes a row info object, column info object, and
 #'   table state object as arguments.
+#'
 #'   Note that R functions cannot apply styles to aggregated cells.
+#'   If `style` is a named list, property names should be camelCased.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
+#'
+#'   Note that if `headerStyle` is a named list, property names should be camelCased.
 #' @param footerClass Additional CSS classes to apply to the footer.
 #' @param footerStyle Inline styles to apply to the footer. A named list or
 #'   character string.
+#'
+#'   Note that if `footerStyle` is a named list, property names should be camelCased.
 #'
 #' @examples
 #' reactable(
@@ -225,6 +232,8 @@ isDescOrder <- function(x) {
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
+#'
+#'   Note that if `headerStyle` is a named list, property names should be camelCased.
 #'
 #' @examples
 #' reactable(

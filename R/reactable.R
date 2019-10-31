@@ -64,12 +64,18 @@
 #' @param showSortable Show an indicator on sortable columns?
 #' @param class Additional CSS classes to apply to the table.
 #' @param style Inline styles to apply to the table. A named list or character string.
+#'
+#'   Note that if `style` is a named list, property names should be camelCased.
 #' @param rowClass Additional CSS classes to apply to table rows. A character
 #'   string, a [JS()] function that takes a row info object and table state object
 #'   as arguments, or an R function that takes a row index argument.
 #' @param rowStyle Inline styles to apply to table rows. A named list, character
 #'   string, [JS()] function that takes a row info object and table state object
 #'   as arguments, or an R function that takes a row index argument.
+#'
+#'   Note that if `rowStyle` is a named list, property names should be camelCased.
+#'   If `rowStyle` is a [JS()] function, it should return a JavaScript object with
+#'   camelCased property names.
 #' @param fullWidth Stretch the table to fill the full width of its container?
 #'   Defaults to `TRUE`.
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.

@@ -103,7 +103,9 @@ wrapped to multiple lines. If \code{FALSE}, text will be truncated to fit on one
 
 \item{class}{Additional CSS classes to apply to the table.}
 
-\item{style}{Inline styles to apply to the table. A named list or character string.}
+\item{style}{Inline styles to apply to the table. A named list or character string.
+
+Note that if \code{style} is a named list, property names should be camelCased.}
 
 \item{rowClass}{Additional CSS classes to apply to table rows. A character
 string, a \code{\link[=JS]{JS()}} function that takes a row info object and table state object
@@ -111,7 +113,11 @@ as arguments, or an R function that takes a row index argument.}
 
 \item{rowStyle}{Inline styles to apply to table rows. A named list, character
 string, \code{\link[=JS]{JS()}} function that takes a row info object and table state object
-as arguments, or an R function that takes a row index argument.}
+as arguments, or an R function that takes a row index argument.
+
+Note that if \code{rowStyle} is a named list, property names should be camelCased.
+If \code{rowStyle} is a \code{\link[=JS]{JS()}} function, it should return a JavaScript object with
+camelCased property names.}
 
 \item{fullWidth}{Stretch the table to fill the full width of its container?
 Defaults to \code{TRUE}.}
