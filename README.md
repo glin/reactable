@@ -4,8 +4,18 @@
 [![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://codecov.io/gh/glin/reactable)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-R interface to the [React Table](https://github.com/tannerlinsley/react-table) library,
+Interactive data tables for R, based on the
+[React Table](https://github.com/tannerlinsley/react-table) library,
 made with [reactR](https://github.com/react-R/reactR).
+
+## Features
+- Sorting, filtering, pagination
+- Grouping and aggregation
+- Expandable rows and nested tables
+- Built-in column formatting
+- Conditional styling
+- Custom rendering using R or JavaScript
+- Fast and lightweight
 
 ## Installation
 
