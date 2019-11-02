@@ -137,12 +137,17 @@ server <- function(input, output, session) {
       resizable = "resizable" %in% input$options,
       sortable = "sortable" %in% input$options,
       defaultSorted = if ("defaultSorted" %in% input$options) c("Sepal.Length", "Sepal.Width"),
-      selection = if (input$rowSelection != "none") input$rowSelection,
-      selectionId = if (input$rowSelection != "none") "selected",
       pagination = "pagination" %in% input$pagination,
       paginationType = input$paginationType,
       showPageSizeOptions = all(c("showPageSizeOptions", "pagination") %in% input$pagination),
       showPageInfo = "showPageInfo" %in% input$pagination,
+      selection = if (input$rowSelection != "none") input$rowSelection,
+      selectionId = if (input$rowSelection != "none") "selected",
+      onClick = if (input$rowSelection != "none") {
+        "select"
+      } else if (any(c("showRowDetails", "multiRowDetails") %in% input$rowDetails)) {
+        "expand"
+      },
       outlined = "outlined" %in% input$options,
       bordered = "bordered" %in% input$options,
       borderless = "borderless" %in% input$options,
@@ -242,6 +247,7 @@ server <- function(input, output, session) {
       showPageInfo = .(opts$showPageInfo),
       selection = .(opts$selection),
       selectionId = .(opts$selectionId),
+      onClick = .(opts$onClick),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
       borderless = .(opts$borderless),

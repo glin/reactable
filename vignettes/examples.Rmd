@@ -606,6 +606,33 @@ reactable(
 ```
 
 
+## Cell Click Actions
+
+### Expand on click
+```{r}
+reactable(
+  iris[48:52, ],
+  groupBy = "Species",
+  details = function(index) paste("Details for row:", index),
+  onClick = "expand",
+  rowStyle = list(cursor = "pointer")
+)
+```
+
+### Select on click
+```{r}
+reactable(iris[1:5, ], selection = "multiple", onClick = "select")
+```
+
+### Custom action
+```{r}
+reactable(iris[1:5, ], onClick = JS("
+  function(rowInfo, colInfo) {
+    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
+  }
+"))
+```
+
 ## Table Styling
 
 ### Highlight rows on hover
