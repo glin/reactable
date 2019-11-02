@@ -103,10 +103,10 @@ data <- data.frame(
 
 reactable(data, columns = list(
   price_USD = colDef(format = colFormat(prefix = "$", separators = TRUE, digits = 2)),
-  price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")),
+  price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locales = "hi-IN")),
   temp = colDef(format = colFormat(suffix = " °C")),
   percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
-  date = colDef(format = colFormat(date = TRUE, locale = "en-GB"))
+  date = colDef(format = colFormat(date = TRUE, locales = "en-GB"))
 ))
 ```
 
