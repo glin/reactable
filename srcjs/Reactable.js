@@ -320,7 +320,7 @@ class Reactable extends React.Component {
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleAll = this.toggleAll.bind(this)
     this.isSelected = this.isSelected.bind(this)
-    this.handleExpanderClick = this.handleExpanderClick.bind(this)
+    this.toggleExpand = this.toggleExpand.bind(this)
     this.isExpanded = this.isExpanded.bind(this)
   }
 
@@ -351,20 +351,31 @@ class Reactable extends React.Component {
     this.setState({ selected })
   }
 
-  handleExpanderClick(rowInfo, column) {
+  toggleExpand(rowInfo, column) {
     let expanded = { ...this.state.expanded }
-    const expandedId = get(expanded, rowInfo.nestingPath)
-    if (expandedId && expandedId === column.id) {
-      expanded = set(expanded, rowInfo.nestingPath, undefined)
+    if (column) {
+      // Expand row details
+      const expandedId = get(expanded, rowInfo.nestingPath)
+      if (expandedId && expandedId === column.id) {
+        expanded = set(expanded, rowInfo.nestingPath, undefined)
+      } else {
+        expanded = set(expanded, rowInfo.nestingPath, column.id)
+      }
     } else {
-      expanded = set(expanded, rowInfo.nestingPath, column.id)
+      // Expand a pivot row
+      const isExpanded = get(expanded, rowInfo.nestingPath)
+      if (isExpanded) {
+        expanded = set(expanded, rowInfo.nestingPath, undefined)
+      } else {
+        expanded = set(expanded, rowInfo.nestingPath, {})
+      }
     }
     this.setState({ expanded })
   }
 
   isExpanded(cellInfo) {
-    const expanded = get(this.state.expanded, cellInfo.nestingPath)
-    return expanded && expanded === cellInfo.column.id
+    const expandedId = get(this.state.expanded, cellInfo.nestingPath)
+    return expandedId && expandedId === cellInfo.column.id
   }
 
   componentDidUpdate() {
@@ -398,6 +409,7 @@ class Reactable extends React.Component {
       showPageInfo,
       minRows,
       selection,
+      onClick,
       outlined,
       bordered,
       borderless,
@@ -423,7 +435,7 @@ class Reactable extends React.Component {
       showSortIcon,
       showSortable,
       isExpanded: this.isExpanded,
-      onExpanderClick: this.handleExpanderClick
+      onExpanderClick: this.toggleExpand
     })
 
     // Leave at least one row to show the no data message properly
@@ -487,11 +499,12 @@ class Reactable extends React.Component {
       }
     }
 
-    // Row details
-    let SubComponent
     const dataColumns = columns.reduce((cols, col) => {
       return cols.concat(col.columns ? col.columns : col)
     }, [])
+
+    // Row details
+    let SubComponent
     if (dataColumns.some(col => col.details)) {
       SubComponent = rowInfo => {
         const expandedId = get(this.state.expanded, rowInfo.nestingPath)
@@ -536,6 +549,47 @@ class Reactable extends React.Component {
     const collapseDetails = () => {
       if (Object.keys(this.state.expanded).length > 0) {
         this.setState({ expanded: {} })
+      }
+    }
+
+    let getTdProps
+    if (onClick) {
+      if (onClick === 'select') {
+        onClick = (rowInfo, column) => {
+          if (column.selectable) {
+            // Ignore selection columns
+            return
+          }
+          this.toggleSelection(rowInfo.index)
+        }
+      } else if (onClick === 'expand') {
+        onClick = (rowInfo, column) => {
+          const firstDetailsCol = dataColumns.find(col => col.details)
+          if (rowInfo.aggregated) {
+            // Pivoted columns already expand on click
+            if (!column.pivoted) {
+              this.toggleExpand(rowInfo)
+            }
+          } else if (firstDetailsCol) {
+            const details = firstDetailsCol.details
+            if (details instanceof Array && details[rowInfo.index] == null) {
+              // Ignore rows without content
+              return
+            }
+            this.toggleExpand(rowInfo, firstDetailsCol)
+          }
+        }
+      }
+
+      getTdProps = (state, rowInfo, column) => {
+        return {
+          onClick: (e, handleOriginal) => {
+            onClick(rowInfo, column, state)
+            if (handleOriginal) {
+              handleOriginal()
+            }
+          }
+        }
       }
     }
 
@@ -590,6 +644,7 @@ class Reactable extends React.Component {
         getTheadThProps={getTheadThProps}
         getTbodyProps={getTbodyProps}
         getTrProps={getTrProps}
+        getTdProps={getTdProps}
         TableComponent={TableComponent}
         SubComponent={SubComponent}
         {...selectProps}
@@ -624,6 +679,7 @@ Reactable.propTypes = {
   minRows: PropTypes.number,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
+  onClick: PropTypes.oneOfType(PropTypes.oneOf(['expand', 'select']), PropTypes.func),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,
   borderless: PropTypes.bool,

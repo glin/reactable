@@ -12,12 +12,13 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
   paginationType = "numbers", showPagination = NULL,
   showPageInfo = TRUE, minRows = 1, details = NULL,
-  selection = NULL, selectionId = NULL, highlight = FALSE,
-  outlined = FALSE, bordered = FALSE, borderless = FALSE,
-  striped = FALSE, compact = FALSE, wrap = TRUE,
-  showSortIcon = TRUE, showSortable = FALSE, class = NULL,
-  style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
-  width = "auto", height = "auto", elementId = NULL)
+  selection = NULL, selectionId = NULL, onClick = NULL,
+  highlight = FALSE, outlined = FALSE, bordered = FALSE,
+  borderless = FALSE, striped = FALSE, compact = FALSE,
+  wrap = TRUE, showSortIcon = TRUE, showSortable = FALSE,
+  class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
+  fullWidth = TRUE, width = "auto", height = "auto",
+  elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -81,6 +82,10 @@ multiple or single row selection.}
 
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
 represented as a vector of row indices, or \code{NULL} if no rows are selected.}
+
+\item{onClick}{Action to take when clicking a cell. Either \code{"expand"} to expand
+the row, \code{"select"} to select the row, or a \code{\link[=JS]{JS()}} function that takes a
+row info object, column info object, and table state object as arguments.}
 
 \item{highlight}{Highlight table rows on hover?}
 

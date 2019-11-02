@@ -724,11 +724,46 @@ describe('row selection', () => {
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
   })
+
+  it('selects on row click', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      onClick: 'select'
+    }
+    const { container, getByLabelText, getByText, rerender } = render(
+      <Reactable {...props} selection="single" />
+    )
+    expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
+    const selectRow1Radio = getByLabelText('Select row 1')
+    const selectRow2Radio = getByLabelText('Select row 2')
+
+    fireEvent.click(getByText('aaa1'))
+    expect(selectRow1Radio.checked).toEqual(true)
+    expect(selectRow2Radio.checked).toEqual(false)
+
+    fireEvent.click(getByText('aaa2'))
+    expect(selectRow1Radio.checked).toEqual(false)
+    expect(selectRow2Radio.checked).toEqual(true)
+
+    // Should work fine with select inputs
+    fireEvent.click(selectRow2Radio)
+    expect(selectRow1Radio.checked).toEqual(false)
+    expect(selectRow2Radio.checked).toEqual(false)
+
+    rerender(<Reactable {...props} selection="multiple" />)
+    fireEvent.click(getByText('aaa1'))
+    fireEvent.click(getByText('aaa2'))
+    expect(selectRow1Radio.checked).toEqual(true)
+    expect(selectRow2Radio.checked).toEqual(true)
+  })
 })
 
-describe('row details', () => {
+describe('expandable row details and pivot rows', () => {
   const getExpanders = container => container.querySelectorAll('.rt-expander')
   const getExpanderButtons = container => container.querySelectorAll('.rt-expander-button')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+  const getCells = container => container.querySelectorAll('.rt-td')
   const props = {
     data: { a: [1, 2], b: ['a', 'b'] }
   }
@@ -928,7 +963,6 @@ describe('row details', () => {
   })
 
   it('pivoting still works with custom expanders', () => {
-    const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
     const columns = [{ name: 'col-a', accessor: 'a' }, { name: 'col-b', accessor: 'b' }]
     const { container } = render(
       <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
@@ -943,8 +977,6 @@ describe('row details', () => {
   })
 
   it('pivoting works with row details', () => {
-    const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
-    const getCells = container => container.querySelectorAll('.rt-td')
     const columns = [
       { name: 'col-a', accessor: 'a', details: ['row-details', 'row-details'] },
       { name: 'col-b', accessor: 'b' }
@@ -1002,6 +1034,121 @@ describe('row details', () => {
     fireEvent.click(expanderButtons[0])
     expect(expanderButtons[0]).toHaveAttribute('aria-label', 'Collapse details')
   })
+
+  it('expands first row detail on row click', () => {
+    const data = {
+      a: ['aaa1', 'aaa2'],
+      b: ['bbb1', 'bbb2'],
+      c: ['ccc1', 'ccc2']
+    }
+    const columns = [
+      { name: 'a', accessor: 'a' },
+      { name: 'b', accessor: 'b', details: ['detail-b', null] },
+      { name: 'c', accessor: 'c', details: ['detail-c', 'detail-c'] }
+    ]
+    const { container, getByText, queryByText } = render(
+      <Reactable data={data} columns={columns} onClick="expand" />
+    )
+    const expanders = getExpanders(container)
+    expect(expanders).toHaveLength(3)
+
+    fireEvent.click(getByText('aaa1'))
+    expect(getByText('detail-b')).toBeTruthy()
+    expect(queryByText('detail-c')).toEqual(null)
+
+    // Should work fine with expander buttons
+    fireEvent.click(expanders[0])
+    expect(queryByText('detail-b')).toEqual(null)
+    fireEvent.click(expanders[0])
+    expect(getByText('detail-b')).toBeTruthy()
+
+    // Collapse row
+    fireEvent.click(getByText('aaa1'))
+    expect(queryByText('detail-b')).toEqual(null)
+  })
+
+  it('expands row details on row click with column groups', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb2'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', accessor: 'b' }
+      ],
+      columnGroups: [{ columns: ['a', 'b'] }],
+      onClick: 'expand'
+    }
+    const { getByText } = render(<Reactable {...props} />)
+    fireEvent.click(getByText('bbb1'))
+    expect(getByText('row-details-1')).toBeTruthy()
+    fireEvent.click(getByText('bbb2'))
+    expect(getByText('row-details-2')).toBeTruthy()
+  })
+
+  it('expands pivoted row on row click', () => {
+    const data = {
+      a: ['aaa1', 'aaa2', 'aaa3'],
+      b: ['group1', 'group1', 'group2'],
+      c: ['ccc1', 'ccc2', 'ccc3']
+    }
+    const columns = [
+      { name: 'col-a', accessor: 'a', details: ['details-a1', 'details-a2', 'details-a3'] },
+      { name: 'col-b', accessor: 'b' },
+      { name: 'col-c', accessor: 'c' }
+    ]
+    const { container, getByText } = render(
+      <Reactable data={data} columns={columns} pivotBy={['b']} minRows={1} onClick="expand" />
+    )
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    // Click empty cell in first pivoted row
+    const cells = getCells(container)
+    let aggregatedCell = cells[1]
+    expect(aggregatedCell).toHaveTextContent('')
+    fireEvent.click(aggregatedCell)
+    expect(getRows(container)).toHaveLength(4)
+
+    // Should work fine with expander button
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(2)
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(4)
+
+    // Should still be able to expand row details
+    fireEvent.click(getByText('ccc2'))
+    expect(getByText('details-a2')).toBeTruthy()
+
+    // Collapse pivoted row
+    aggregatedCell = cells[2]
+    expect(aggregatedCell).toHaveTextContent('')
+    fireEvent.click(aggregatedCell)
+    expect(getRows(container)).toHaveLength(2)
+  })
+})
+
+test('custom onClick actions', () => {
+  const props = {
+    data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb2'], c: ['ccc1', 'ccc2'] },
+    columns: [
+      { name: 'a', accessor: 'a' },
+      { name: 'b', accessor: 'b' },
+      { name: 'c', accessor: 'c' }
+    ]
+  }
+  const onClick = jest.fn(
+    (rowInfo, column, state) =>
+      `row ${rowInfo.index}, col ${column.id}, ${state.data.length} entries`
+  )
+  const { getByText } = render(<Reactable {...props} onClick={onClick} />)
+
+  fireEvent.click(getByText('aaa1'))
+  expect(onClick).toHaveBeenCalledTimes(1)
+  expect(onClick).toHaveLastReturnedWith('row 0, col a, 2 entries')
+  fireEvent.click(getByText('bbb2'))
+  fireEvent.click(getByText('ccc2'))
+  expect(onClick).toHaveBeenCalledTimes(3)
+  expect(onClick).toHaveLastReturnedWith('row 1, col c, 2 entries')
 })
 
 describe('header rendering', () => {

@@ -52,6 +52,9 @@
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   represented as a vector of row indices, or `NULL` if no rows are selected.
+#' @param onClick Action to take when clicking a cell. Either `"expand"` to expand
+#'   the row, `"select"` to select the row, or a [JS()] function that takes a
+#'   row info object, column info object, and table state object as arguments.
 #' @param highlight Highlight table rows on hover?
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?
@@ -134,6 +137,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
                       minRows = 1, details = NULL, selection = NULL, selectionId = NULL,
+                      onClick = NULL,
                       highlight = FALSE, outlined = FALSE, bordered = FALSE,
                       borderless = FALSE, striped = FALSE, compact = FALSE, wrap = TRUE,
                       showSortIcon = TRUE, showSortable = FALSE,
@@ -296,6 +300,9 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
   if (!is.null(selectionId) && !is.character(selectionId)) {
     stop("`selectionId` must be a character")
+  }
+  if (!is.null(onClick) && !onClick %in% c("expand", "select") && !is.JS(onClick)) {
+    stop('`onClick` must be "expand", "select", or a JS function')
   }
   if (!is.logical(highlight)) {
     stop("`highlight` must be TRUE or FALSE")
@@ -482,6 +489,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     minRows = minRows,
     selection = selection,
     selectionId = selectionId,
+    onClick = onClick,
     highlight = if (highlight) TRUE,
     outlined = if (outlined) TRUE,
     bordered = if (bordered) TRUE,

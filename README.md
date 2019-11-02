@@ -269,6 +269,7 @@ reactable(
   details = NULL,             # Additional content to display when expanding a row. See row details below
   selection = NULL,           # Enable row selection? Either "multiple" or "single"
   selectionId = NULL,         # Shiny input ID for the selected rows
+  onClick = NULL,             # Action to take when clicking a cell. Either "expand", "select", or a JS function
   highlight = FALSE,          # Highlight rows on hover?
   outlined = FALSE,           # Add borders around the table?
   bordered = FALSE,           # Add borders around the table and every cell?

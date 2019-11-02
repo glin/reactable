@@ -17,6 +17,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, columnGroups = list(colGroup(name = ""))))
   expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, groupBy = c("y", "z")))
+  expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, filterable = "true"))
@@ -36,10 +37,10 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, showPagination = "true"))
   expect_error(reactable(df, showPageInfo = "true"))
   expect_error(reactable(df, minRows = "2"))
+  expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
-  expect_error(reactable(df, details = "details"))
-  expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
+  expect_error(reactable(df, onClick = "function() {}"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, outlined = "true"))
   expect_error(reactable(df, bordered = NULL))
@@ -571,7 +572,6 @@ test_that("row details", {
   expect_equal(attribs$columns[[2]]$details, list("a", "b"))
 })
 
-
 test_that("html dependencies from rendered content are passed through", {
   dep <- htmlDependency("dep", "0.1.0", "/path/to/dep")
   dep2 <- htmlDependency("dep2", "0.5.0", "/path/to/dep2")
@@ -630,6 +630,21 @@ test_that("html dependencies from rendered content are passed through", {
   # No dependencies
   tbl <- reactable(data)
   expect_equal(tbl$dependencies, list())
+})
+
+test_that("onClick", {
+  data <- data.frame(x = c(1, 2), y = c("a", "b"))
+  tbl <- reactable(data, onClick = "expand")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$onClick, "expand")
+
+  tbl <- reactable(data, onClick = "select")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$onClick, "select")
+
+  tbl <- reactable(data, onClick = JS("(rowInfo, column, state) => {}"))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$onClick, JS("(rowInfo, column, state) => {}"))
 })
 
 test_that("column class callbacks", {
