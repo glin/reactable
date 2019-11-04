@@ -1,3 +1,6 @@
+home:
+  title: Interactive data tables for R
+
 navbar:
   structure:
     left: [reference, examples, demos]
