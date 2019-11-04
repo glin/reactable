@@ -298,7 +298,7 @@ reactable(data, class = "car-specs", columns = list(
 data <- mtcars[1:5, c("mpg", "cyl", "disp", "hp")]
 
 with_tooltip <- function(value, tooltip) {
-  span(style = "text-decoration: underline dotted", title = tooltip, value)
+  span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
 }
 
 reactable(
