@@ -268,6 +268,7 @@
 
 .rt-th {
   outline-width: 0;
+  outline-style: solid;
 }
 
 .rt-th[aria-sort] .-sort-left:after {
@@ -326,6 +327,7 @@
 .rt-expander {
   padding: 0 8px;
   outline-width: 0;
+  outline-style: solid;
 }
 
 /* Pagination */
@@ -398,6 +400,7 @@
   border: none;
   background-color: transparent;
   outline-width: 0;
+  outline-style: solid;
   cursor: pointer;
 }
 
@@ -415,6 +418,7 @@
   padding: 6px 12px;
   border-radius: 3px;
   outline-width: 0;
+  outline-style: solid;
 }
 
 .ReactTable .rt-page-button:not(:disabled):hover > .rt-page-button-content {
@@ -469,6 +473,7 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
   outline-width: 0;
+  outline-style: solid;
   font-family: inherit;
   font-size: inherit;
 }
