@@ -3,11 +3,15 @@ home:
 
 navbar:
   structure:
-    left: [reference, examples, demos]
+    left: [reference, examples, demos, articles]
     right: [github]
   components:
     home: ~
-    articles: ~
+    articles:
+      text: Articles
+      menu:
+      - text: Custom Rendering
+        href: articles/custom-rendering.html
     examples:
       text: Examples
       href: articles/examples.html

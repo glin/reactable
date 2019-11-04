@@ -411,7 +411,7 @@ colFormat(
 ```
 
 ### Custom Cell Rendering
-Cell rendering can be customized using a Javascript function:
+Cell rendering can be customized using a JavaScript function:
 ```r
 colDef(
   cell = JS("
@@ -445,8 +445,8 @@ colDef(
 )
 ```
 
-See https://github.com/tannerlinsley/react-table/tree/v6#renderers for more details
-on JS render function arguments.
+See [Custom Rendering](https://glin.github.io/reactable/articles/custom-rendering.html)
+for more details on JavaScript render function arguments.
 
 ### Custom Header Rendering
 Header rendering can be customized using an R render function:
@@ -464,7 +464,7 @@ colDef(
 )
 ```
 
-Or a Javascript render function:
+Or a JavaScript render function:
 ```r
 colDef(
   header = JS("
@@ -503,7 +503,7 @@ colDef(
 )
 ```
 
-Or a Javascript render function:
+Or a JavaScript render function:
 ```r
 colDef(
   footer = JS("
@@ -538,7 +538,7 @@ reactable(
 )
 ```
 
-Or a Javascript render function:
+Or a JavaScript render function:
 ```r
 reactable(
   details = JS("
@@ -578,7 +578,7 @@ reactable(
 ```
 
 ### Conditional Styling
-Cells can be conditionally styled using a Javascript function:
+Cells can be conditionally styled using a JavaScript function:
 ```r
 colDef(
   style = JS("
@@ -635,7 +635,7 @@ colDef(
 )
 ```
 
-Rows can also be conditionally styled using a Javascript function:
+Rows can also be conditionally styled using a JavaScript function:
 ```r
 reactable(
   rowStyle = JS("

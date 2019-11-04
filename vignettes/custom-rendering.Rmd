@@ -1,0 +1,310 @@
+---
+title: "Custom Rendering"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+
+Occasionally you'll want to customize how your data is displayed beyond what
+the built-in formatters provide. For example, inserting a link, combining data
+from multiple columns, or showing a column total that updates on filtering.
+
+In reactable, you can customize data rendering by providing either an R or
+JavaScript render function:
+
+<table>
+<thead><tr><th>R render functions</th><th>JavaScript render functions</th></tr></thead>
+<tbody>
+<tr><td>
+
+```{r eval=FALSE}
+reactable(iris, columns = list(
+  Species = colDef(
+    cell = function(value) {
+      htmltools::tags$b(value)
+    })
+  )
+)
+```
+
+</td><td>
+
+```{r eval=FALSE}
+reactable(iris, columns = list(
+  Species = colDef(
+    cell = JS("function(cellInfo) {
+      return '<b>' + cellInfo.value + '</b>'
+    }")
+  )
+))
+```
+
+</td></tr>
+<tr><td>
+
+- Easier to use but more static
+- Render once, when the table is created
+- Supports htmltools and htmlwidgets
+
+</td><td>
+
+- Harder to use but more dynamic
+- Render on the fly, based on client-side state
+- Can be more efficient in large tables
+
+</td></tr>
+</tbody></table>
+
+Whichever one to use depends on the situation and personal preference.
+You might prefer to use R render functions except in cases where you need more
+dynamic behavior (e.g., render based on filtered state) or have a very large table.
+
+
+## Cells
+
+### R render function
+To customize cell rendering, provide an R function with up to 3 optional arguments:
+```{r, eval=FALSE}
+colDef(
+  cell = function(value, index, name) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag or widget)
+    htmltools::div(style = "color: red", toupper(value))
+  }
+)
+```
+
+### JavaScript render function
+Or a JavaScript function, wrapped in `JS()`, with a single argument:
+```{r, eval=FALSE}
+colDef(
+  cell = JS("
+    function(cellInfo) {
+      // input:
+      //  - cellInfo, an object containing cell and row info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + cellInfo.value + '</div>'
+    }
+  "),
+  html = TRUE  # to render as HTML
+)
+```
+
+With JavaScript functions, you can also customize rendering of aggregated cells:
+```{r, eval=FALSE}
+colDef(
+  aggregated = JS("function(cellInfo) { return cellInfo.value }")
+)
+```
+
+#### `cellInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "value", '"setosa"', "cell value",
+  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "column", '{id: "Species"}', "column info object",
+  "index", "20", "row index (zero-based)",
+  "viewIndex", "0", "row index within the page (zero-based)",
+  "page", "2", "page index (zero-based)",
+  "show", "true", "whether the column is visible"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+
+## Headers
+
+### R render function
+To customize header rendering, provide an R function with up to 2 optional arguments:
+```{r, eval=FALSE}
+colDef(
+  header = function(value, name) {
+    # input:
+    #   - value, the header value
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag or widget)
+    htmltools::div(value)
+  }
+)
+```
+
+### JavaScript render function
+Or a JavaScript function with a single argument:
+```{r, eval=FALSE}
+colDef(
+  header = JS("
+    function(colInfo) {
+      // input:
+      //  - colInfo, an object containing column info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + colInfo.column.name + '</div>'
+    }
+  "),
+  html = TRUE  # to render as HTML
+)
+```
+
+#### `colInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "column", '{id: "Petal.Width", name: "Petal Width", show: true}', "column info object",
+  "data", '[{Sepal.Length: 5.1, Petal.Width: 0.2}, ...]', "array of row data objects"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value), width = 450)
+))
+```
+
+
+## Footers
+
+### R render function
+To add footer content, provide an R function with up to 2 optional arguments:
+```{r, eval=FALSE}
+colDef(
+  footer = function(values, name) {
+    # input:
+    #   - values, the column values
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag or widget)
+    htmltools::div(paste("Total:", sum(values)))
+  }
+)
+```
+
+### JavaScript render function
+Or a JavaScript function with a single argument:
+```{r, eval=FALSE}
+colDef(
+  footer = JS("
+    function(colInfo) {
+      // input:
+      //  - colInfo, an object containing column info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>Rows: ' + colInfo.data.length + '</div>'
+    }
+  "),
+  html = TRUE  # to render as HTML
+)
+```
+
+#### `colInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "column", '{id: "Petal.Width", name: "Petal Width", show: true}', "column info object",
+  "data", '[{Sepal.Length: 5.1, Petal.Width: 0.2}, ...]', "array of row data objects"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value), width = 450)
+))
+```
+
+
+## Expandable Row Details
+
+### R render function
+To add expandable row details, provide an R function with a single argument:
+```{r, eval=FALSE}
+reactable(
+  details = function(index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - content to render (e.g. an HTML tag or subtable), or NULL to hide details for the row
+    htmltools::div(
+      paste("Details for row:", index),
+      reactable(data[index, ])
+    )
+  }
+)
+```
+
+### JavaScript render function
+Or a JavaScript function with a single argument:
+```{r, eval=FALSE}
+reactable(
+  details = JS("
+    function(rowInfo) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //
+      // output:
+      //  - content to render (e.g. an HTML string)
+      return '<div>' + JSON.stringify(rowInfo) + '</div>'
+    }
+  ")
+)
+```
+
+#### `rowInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "index", "20", "row index (zero-based)",
+  "viewIndex", "0", "row index within the page (zero-based)",
+  "page", "2", "page index (zero-based)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+```
