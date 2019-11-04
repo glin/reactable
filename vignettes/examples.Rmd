@@ -606,6 +606,12 @@ reactable(
 ```
 
 
+## Column Resizing
+```{r}
+reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
+```
+
+
 ## Cell Click Actions
 
 ### Expand on click
@@ -632,6 +638,7 @@ reactable(iris[1:5, ], onClick = JS("
   }
 "))
 ```
+
 
 ## Table Styling
 
