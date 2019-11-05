@@ -273,10 +273,12 @@
 
 .rt-th[aria-sort] .-sort-left:after {
   padding-right: 5px;
+  line-height: 0;
 }
 
 .rt-th[aria-sort] .-sort-right:after {
   padding-left: 5px;
+  line-height: 0;
 }
 
 .rt-th[aria-sort='ascending'] .-sort-left:after,
