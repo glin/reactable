@@ -24,6 +24,7 @@ Suggests:
     covr,
     dplyr,
     rmarkdown,
+    shiny,
     sparkline,
     testthat
 Encoding: UTF-8
