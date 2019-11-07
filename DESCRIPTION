@@ -7,8 +7,8 @@ Authors@R: c(
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library")
     )
 Description: Interactive data tables for R, based on the 'React Table'
-    JavaScript library. Provides an HTML widget that can be used in R Markdown
-    documents and Shiny applications, or viewed from an R console.
+    JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
+    documents and 'Shiny' applications, or viewed from an R console.
 License: MIT + file LICENSE
 URL: https://glin.github.io/reactable, https://github.com/glin/reactable
 BugReports: https://github.com/glin/reactable/issues
