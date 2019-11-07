@@ -6,6 +6,7 @@
 ^\.eslintrc\.json$
 ^\.prettierrc\.json$
 ^coverage$
+^cran-comments\.md$
 ^docs$
 ^jest.config\.js$
 ^node_modules$
