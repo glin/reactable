@@ -14,12 +14,41 @@ library(reactable)
 ```
 
 ## Basic Usage
-
 To create a data table, use `reactable()` on a data frame or matrix.
-The table will have sorting and pagination by default:
+The table will be sortable and paginated by default:
 ```{r}
 reactable(iris)
 ```
+
+### Column definitions
+Columns can be customized by providing a named list of column definitions
+created by `colDef()` to `columns`:
+```{r}
+reactable(iris[1:5, ], columns = list(
+  Sepal.Length = colDef(name = "Sepal Length"),
+  Sepal.Width = colDef(name = "Sepal Width"),
+  Species = colDef(align = "center")
+))
+```
+
+For convenience, you can also specify a default `colDef()` to use for all
+columns in `defaultColDef`:
+```{r}
+reactable(
+  iris[1:5, ],
+  defaultColDef = colDef(
+    header = function(value) gsub(".", " ", value, fixed = TRUE),
+    cell = function(value) format(value, nsmall = 1),
+    align = "center",
+    minWidth = 70
+  ),
+  columns = list(
+    Species = colDef(minWidth = 140)  # overrides the default
+  ),
+  bordered = TRUE
+)
+```
+
 
 ## Grouping and Aggregation
 
@@ -125,51 +154,36 @@ reactable(iris[1:5, ],
 
 
 ## Sorting
+Tables are sortable by default. You can sort on a column by clicking on its
+header, or sort on multiple columns by holding the shift key while sorting.
 
-### Default sorting
+### Default sort order
+Tables are sorted in ascending order first by default. To customize the sort order,
+set `defaultSortOrder` on a table or column to either `"asc"` (ascending) or
+`"desc"` (descending):
+```{r}
+reactable(iris[48:52, ], defaultSortOrder = "desc", columns = list(
+  Species = colDef(defaultSortOrder = "asc")
+))
+```
 
-Sort columns by default:
-
+### Default sorted columns
+You can pre-sort columns by specifying a vector of column names in `defaultSorted`:
 ```{r}
 reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
 ```
 
-Set default sort order for the table, specific columns, or default sorted columns:
-
+You can also provide a named list to customize the sort orders:
 ```{r}
-reactable(
-  iris[48:52, ],
-  defaultSortOrder = "desc",
-  defaultSorted = list(Sepal.Length = "asc", Petal.Length = "desc"),
-  columns = list(
-    Species = colDef(defaultSortOrder = "asc")
-  )
-)
+reactable(iris[48:52, ], defaultSorted = list(Species = "asc", Petal.Length = "desc"))
 ```
 
-> Tip: shift+click to sort multiple columns
-
-### NA and Infinity handling
-
+### Sort missing values last
+You can ignore missing values when sorting by setting `sortNALast` on a column:
 ```{r}
 reactable(
   data.frame(
-    n = seq(7),
-    x = c(5, 7, NA, NaN, 9, 0, -20),
-    y = c(1, NA, NA, -Inf, 0, Inf, -5)
-  ),
-  columns = list(
-    y = colDef(na = "NA")
-  )
-)
-```
-
-### Always sort missing values last
-
-```{r}
-reactable(
-  data.frame(
-    n = c(1, 2, 3, 4, 5),
+    n = seq(5),
     x = c(2, 3, 1, NA, NaN),
     y = c("aa", "cc", "bb", NA, NA)
   ),
@@ -178,47 +192,68 @@ reactable(
 )
 ```
 
-### Show sortable columns
-
+### Displaying missing values
+Missing values are shown as empty cells by default, but you can customize their
+display text by setting `na` on a column:
 ```{r}
-reactable(iris[1:5, ], sortable = FALSE, showSortable = TRUE, columns = list(
-  Petal.Width = colDef(sortable = TRUE),
-  Petal.Length = colDef(sortable = TRUE)
-))
+reactable(
+  data.frame(
+    n = seq(5),
+    x = c(55, 27, NA, NaN, 19),
+    y = c(1, NA, NA, -Inf, Inf)
+  ),
+  columns = list(
+    x = colDef(na = "–"),
+    y = colDef(na = "NA")
+  )
+)
+```
+
+### No sorting
+You can disable sorting by setting `sortable` to `FALSE` on the table or column.
+When only some columns are sortable, it can be helpful to indicate sortable
+columns using `showSortable`:
+```{r}
+reactable(
+  iris[1:5, ],
+  sortable = FALSE,
+  showSortable = TRUE,
+  columns = list(
+    Petal.Width = colDef(sortable = TRUE),
+    Petal.Length = colDef(sortable = TRUE)
+  )
+)
 ```
 
 ### Hide sort icons
-
+You can hide sort icons by setting `showSortIcon` to `FALSE`. This may be
+useful if want to use a
+[custom sort indicator](cookbook/cookbook.html#custom-sort-indicators).
 ```{r}
 reactable(iris[1:5, ], showSortIcon = FALSE)
 ```
 
 
 ## Filtering
-
+You can make columns filterable using `filterable`:
 ```{r}
-data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, filterable = TRUE, minRows = 10)
 ```
 
+To make specific columns filterable (or not), set `filterable` in the column definition:
 ```{r}
-data <- data.frame(
-  city = c("Hà N\u1ed9i", "Zürich", "Saint-Étienne", "São Gonçalo"),
-  country = c("Vietnam", "Switzerland", "France", "Brazil"),
-  area = c(3328.9, 87.88, 79.97, 249.142),
-  capital = c(TRUE, FALSE, FALSE, FALSE),
-  stringsAsFactors = FALSE
-)
-
-reactable(data, filterable = TRUE)
+reactable(data, filterable = TRUE, columns = list(
+  Price = colDef(filterable = FALSE)
+))
 ```
 
 
 ## Searching
-
+You can make the entire table searchable using `searchable`:
 ```{r}
-data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, searchable = TRUE, minRows = 10)
 ```
@@ -301,19 +336,19 @@ data <- data.frame(
 
 reactable(data, columns = list(
   USD = colDef(
-    format = colFormat(currency = "USD", separators = TRUE, locale = "en-US")
+    format = colFormat(currency = "USD", separators = TRUE, locales = "en-US")
   ),
   EUR = colDef(
-    format = colFormat(currency = "EUR", separators = TRUE, locale = "de-DE")
+    format = colFormat(currency = "EUR", separators = TRUE, locales = "de-DE")
   ),
   INR = colDef(
-    format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")
+    format = colFormat(currency = "INR", separators = TRUE, locales = "hi-IN")
   ),
   JPY = colDef(
-    format = colFormat(currency = "JPY", separators = TRUE, locale = "ja-JP")
+    format = colFormat(currency = "JPY", separators = TRUE, locales = "ja-JP")
   ),
   MAD = colDef(
-    format = colFormat(currency = "MAD", separators = TRUE, locale = "ar-MA")
+    format = colFormat(currency = "MAD", separators = TRUE, locales = "ar-MA")
   )
 ))
 ```
@@ -400,7 +435,7 @@ reactable(sleep,
 
 #### R render function
 ```{r}
-data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, columns = list(
   Model = colDef(cell = function(value, index) {
@@ -421,7 +456,7 @@ reactable(data, columns = list(
 
 #### JS render function
 ```{r}
-data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
+data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, columns = list(
   Model = colDef(html = TRUE, cell = JS("
@@ -449,7 +484,7 @@ reactable(data, columns = list(
 ### Aggregated cells
 
 ```{r}
-data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(data, groupBy = "Manufacturer", columns = list(
   Model = colDef(name = "Models", aggregate = "count"),
@@ -588,7 +623,7 @@ reactable(iris[1:20, ], bordered = TRUE, defaultColDef = colDef(footer = functio
 
 
 ## Column Groups
-
+You can create column groups by passing a list of `colGroup()` definitions to `columnGroups`:
 ```{r}
 reactable(
   iris[1:5, ],
@@ -607,12 +642,18 @@ reactable(
 
 
 ## Column Resizing
+You can make columns resizable using `resizable`:
 ```{r}
 reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
 ```
 
 
 ## Cell Click Actions
+You can add cell click actions using `onClick`, which accepts the following values:
+
+- `"expand"` to expand the row
+- `"select"` to select the row
+- a JavaScript function for a custom action, e.g., sending the click event to Shiny
 
 ### Expand on click
 ```{r}
@@ -621,6 +662,7 @@ reactable(
   groupBy = "Species",
   details = function(index) paste("Details for row:", index),
   onClick = "expand",
+  # Give rows a pointer cursor to indicate that they're clickable
   rowStyle = list(cursor = "pointer")
 )
 ```
@@ -635,12 +677,19 @@ reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 reactable(iris[1:5, ], onClick = JS("
   function(rowInfo, colInfo) {
     window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
+
+    // Send the click event to Shiny (note that the row indices start at 0 in JavaScript)
+    if (window.Shiny) {
+      Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
+    }
   }
 "))
 ```
 
 
 ## Table Styling
+
+You can customize the table style using several options that can be mixed and matched:
 
 ### Highlight rows on hover
 
@@ -691,7 +740,8 @@ reactable(iris[1:5, ], compact = TRUE)
 ```
 
 ### No text wrapping
-
+Long text is wrapped by default, but you can force text to fit on a single line
+by setting `wrap` to `FALSE`:
 ```{r}
 data <- aggregate(. ~ Species, iris, toString)
 
@@ -699,6 +749,8 @@ reactable(data, wrap = FALSE, resizable = TRUE)
 ```
 
 ### Fixed height + sticky header/footer
+You can make tables scrollable by setting a fixed height or width.
+Headers and footers are sticky by default, so they stay in place when scrolling:
 ```{r}
 reactable(
   iris[1:20, ],
@@ -711,16 +763,31 @@ reactable(
 )
 ```
 
+
 ## Pagination
+You can change the default page size by configuring `defaultPageSize`:
+```{r}
+reactable(iris[1:6, ], defaultPageSize = 4)
+```
+
+You can also set the minimum rows per page using `minRows`. This may be
+useful when rows don't completely fill the page, or if the table has filtering:
+```{r}
+reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4, searchable = TRUE)
+```
 
 ### Page size options
+You can show a dropdown of page sizes for users to choose from using `showPageSizeOptions`.
+The page size options can be customized through `pageSizeOptions`:
 ```{r}
-reactable(iris[1:100, ], showPageSizeOptions = TRUE)
-
 reactable(iris[1:12, ], showPageSizeOptions = TRUE, pageSizeOptions = c(4, 8, 12), defaultPageSize = 4)
 ```
 
 ### Alternative pagination types
+You can use an alternative pagination type by setting `paginationType` to:
+
+- `"jump"` to show a page jump
+- `"simple"` to show previous/next buttons only
 
 #### Page jump
 ```{r}
@@ -733,26 +800,28 @@ reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
 ```
 
 ### Hide page info
+You can hide page info by setting `showPageInfo` to `FALSE`:
 ```{r}
 reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
 
 reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaultPageSize = 4)
 ```
 
-### Minimum rows per page
-```{r}
-reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4)
-```
+### Always show pagination
+By default, pagination is hidden if the table only has one page. To always show
+pagination, set `showPagination` to `TRUE`. This may be useful if you want to
+show page info:
 
-### No pagination
-```{r}
-reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 300)
-```
-
-#### Don't auto-hide pagination
 ```{r}
 reactable(iris[1:5, ], showPagination = TRUE)
 ```
+
+### No pagination
+Tables are paged by default, but you can disable pagination by setting `pagination` to `FALSE`:
+```{r}
+reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */
