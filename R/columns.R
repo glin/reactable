@@ -58,6 +58,8 @@
 #'   character string.
 #'
 #'   Note that if `footerStyle` is a named list, property names should be camelCased.
+#' @return A column definition object that can be used to customize columns
+#'   in `reactable()`.
 #'
 #' @examples
 #' reactable(
@@ -234,6 +236,8 @@ isDescOrder <- function(x) {
 #'   character string.
 #'
 #'   Note that if `headerStyle` is a named list, property names should be camelCased.
+#' @return A column group definition object that can be used to create column
+#'   groups in `reactable()`.
 #'
 #' @examples
 #' reactable(
@@ -309,6 +313,8 @@ is.colGroup <- function(x) {
 #'   vector of BCP 47 language tags, such as `"en-US"` for English (United States),
 #'   `"hi"` for Hindi, or `"sv-SE"` for Swedish (Sweden). Defaults to the locale
 #'   of the browser.
+#' @return A column format object that can be used to customize data formatting
+#'   in `colDef()`.
 #'
 #' @examples
 #' data <- data.frame(
