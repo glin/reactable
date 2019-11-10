@@ -134,7 +134,8 @@ Defaults to \code{TRUE}.}
 \item{elementId}{Element ID for the widget.}
 }
 \value{
-A reactable HTML widget.
+A \code{reactable} HTML widget that can be used in R Markdown documents
+and Shiny applications, or viewed from an R console.
 }
 \description{
 \code{reactable()} creates a data table from tabular data with sorting

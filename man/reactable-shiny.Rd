@@ -26,6 +26,13 @@ or a number, which will be coerced to a string and have \code{"px"} appended.}
 \item{quoted}{Is \code{expr} a quoted expression (with \code{\link[=quote]{quote()}})? This is useful
 if you want to save an expression in a variable.}
 }
+\value{
+\code{reactableOutput()} returns a \code{reactable} output element that can be
+included in a Shiny UI.
+
+\code{renderReactable()} returns a \code{reactable} render function that can be
+assigned to a Shiny output slot.
+}
 \description{
 Output and render functions for using reactable within Shiny
 applications and interactive R Markdown documents.

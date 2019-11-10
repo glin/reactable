@@ -26,6 +26,10 @@ character string.
 
 Note that if \code{headerStyle} is a named list, property names should be camelCased.}
 }
+\value{
+A column group definition object that can be used to create column
+groups in \code{reactable()}.
+}
 \description{
 Column group definitions
 }

@@ -84,7 +84,8 @@
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param elementId Element ID for the widget.
-#' @return A reactable HTML widget.
+#' @return A `reactable` HTML widget that can be used in R Markdown documents
+#'   and Shiny applications, or viewed from an R console.
 #'
 #' @note
 #' See the [online documentation](https://glin.github.io/reactable) for
@@ -540,6 +541,11 @@ columnSortDefs <- function(defaultSorted) {
 #' @param env The environment in which to evaluate `expr`.
 #' @param quoted Is `expr` a quoted expression (with [quote()])? This is useful
 #'   if you want to save an expression in a variable.
+#' @return `reactableOutput()` returns a `reactable` output element that can be
+#'   included in a Shiny UI.
+#'
+#'   `renderReactable()` returns a `reactable` render function that can be
+#'   assigned to a Shiny output slot.
 #'
 #' @name reactable-shiny
 #'

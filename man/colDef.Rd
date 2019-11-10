@@ -98,6 +98,10 @@ character string.
 
 Note that if \code{footerStyle} is a named list, property names should be camelCased.}
 }
+\value{
+A column definition object that can be used to customize columns
+in \code{reactable()}.
+}
 \description{
 Column definitions
 }

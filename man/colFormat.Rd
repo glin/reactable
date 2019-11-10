@@ -40,6 +40,10 @@ vector of BCP 47 language tags, such as \code{"en-US"} for English (United State
 \code{"hi"} for Hindi, or \code{"sv-SE"} for Swedish (Sweden). Defaults to the locale
 of the browser.}
 }
+\value{
+A column format object that can be used to customize data formatting
+in \code{colDef()}.
+}
 \description{
 Column formatting options
 }
