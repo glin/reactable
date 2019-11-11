@@ -179,6 +179,37 @@ reactable(data, columns = list(
 ))
 ```
 
+## Rating stars
+
+```{r}
+library(htmltools)
+
+rating_stars <- function(rating, max_rating = 5) {
+  star_icon <- function(empty = FALSE) {
+    tagAppendAttributes(shiny::icon("star"),
+      style = paste("color:", if (empty) "#edf0f2" else "orange"),
+      "aria-hidden" = "true"
+    )
+  }
+  rounded_rating <- floor(rating + 0.5)  # always round up
+  stars <- lapply(seq_len(max_rating), function(i) {
+    if (i <= rounded_rating) star_icon() else star_icon(empty = TRUE)
+  })
+  label <- sprintf("%s out of %s", rating, max_rating)
+  div(title = label, "aria-label" = label, role = "img", stars)
+}
+
+ratings <- data.frame(
+  Movie = c("Silent Serpent", "Nowhere to Hyde", "The Ape-Man Goes to Mars", "A Menace in Venice"),
+  Rating = c(3.65, 2.35, 4.5, 1.4),
+  Votes = c(115, 37, 60, 99)
+)
+
+reactable(ratings, columns = list(
+  Rating = colDef(cell = function(value) rating_stars(value))
+))
+```
+
 ## Total rows
 
 ```{r, message=FALSE}
