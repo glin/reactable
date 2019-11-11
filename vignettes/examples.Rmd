@@ -50,109 +50,6 @@ reactable(
 ```
 
 
-## Grouping and Aggregation
-
-```{r}
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Length = colDef(aggregate = "count"),
-  Sepal.Width = colDef(aggregate = "mean"),
-  Petal.Length = colDef(aggregate = "sum"),
-  Petal.Width = colDef(aggregate = "max")
-))
-```
-
-### Multiple Groups
-
-```{r}
-data <- data.frame(
-  State = state.name,
-  Region = state.region,
-  Division = state.division,
-  Area = state.area
-)
-
-reactable(data, groupBy = c("Region", "Division"), bordered = TRUE, columns = list(
-  Division = colDef(aggregate = "unique"),
-  Area = colDef(aggregate = "sum", format = colFormat(separators = TRUE))
-))
-```
-
-
-## Expandable Row Details
-
-#### R render function
-```{r}
-reactable(iris[1:50, ], details = function(index) {
-  htmltools::div(
-    "Details for row: ", index,
-    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
-  )
-})
-```
-
-#### JS render function
-```{r}
-reactable(iris[1:50, ], details = colDef(
-  name = "More",
-  details = JS("function(rowInfo) {
-    return 'Details for row: ' + rowInfo.index +
-      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
-  }"),
-  html = TRUE,
-  width = 50
-))
-```
-
-### Nested tables
-
-> NOTE: only supported by R render functions
-
-```{r}
-data <- unique(CO2[, c("Plant", "Type")])
-
-reactable(data, details = function(index) {
-  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
-  htmltools::div(style = "padding: 16px",
-    reactable(subset, outlined = TRUE)
-  )
-})
-```
-
-### Conditional row details
-
-> NOTE: only supported by R render functions
-
-```{r}
-reactable(iris[1:5, ], details = function(index) {
-  if (index %in% c(3, 5)) {
-    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
-  }
-})
-```
-
-### Multiple row details
-
-```{r}
-reactable(iris[1:5, ],
-  details = function(index) {
-    if (index %in% c(3, 5)) {
-      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
-    }
-  },
-  columns = list(
-    Petal.Length = colDef(details = function(index) {
-      paste("Petal.Length: ", iris[index, "Petal.Length"])
-    }),
-    Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
-      function(rowInfo) {
-        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
-      }
-    "))
-  )
-)
-```
-
-
 ## Sorting
 Tables are sortable by default. You can sort on a column by clicking on its
 header, or sort on multiple columns by holding the shift key while sorting.
@@ -256,6 +153,168 @@ You can make the entire table searchable using `searchable`:
 data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, searchable = TRUE, minRows = 10)
+```
+
+
+## Pagination
+You can change the default page size by configuring `defaultPageSize`:
+```{r}
+reactable(iris[1:6, ], defaultPageSize = 4)
+```
+
+You can also set the minimum rows per page using `minRows`. This may be
+useful when rows don't completely fill the page, or if the table has filtering:
+```{r}
+reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4, searchable = TRUE)
+```
+
+### Page size options
+You can show a dropdown of page sizes for users to choose from using `showPageSizeOptions`.
+The page size options can be customized through `pageSizeOptions`:
+```{r}
+reactable(iris[1:12, ], showPageSizeOptions = TRUE, pageSizeOptions = c(4, 8, 12), defaultPageSize = 4)
+```
+
+### Alternative pagination types
+You can use an alternative pagination type by setting `paginationType` to:
+
+- `"jump"` to show a page jump
+- `"simple"` to show previous/next buttons only
+
+#### Page jump
+```{r}
+reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
+```
+
+#### Simple
+```{r}
+reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
+```
+
+### Hide page info
+You can hide page info by setting `showPageInfo` to `FALSE`:
+```{r}
+reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
+
+reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaultPageSize = 4)
+```
+
+### Always show pagination
+By default, pagination is hidden if the table only has one page. To always show
+pagination, set `showPagination` to `TRUE`. This may be useful if you want to
+show page info:
+
+```{r}
+reactable(iris[1:5, ], showPagination = TRUE)
+```
+
+### No pagination
+Tables are paged by default, but you can disable pagination by setting `pagination` to `FALSE`:
+```{r}
+reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
+```
+
+
+## Grouping and Aggregation
+
+```{r}
+reactable(iris, groupBy = "Species", columns = list(
+  Sepal.Length = colDef(aggregate = "count"),
+  Sepal.Width = colDef(aggregate = "mean"),
+  Petal.Length = colDef(aggregate = "sum"),
+  Petal.Width = colDef(aggregate = "max")
+))
+```
+
+### Multiple Groups
+
+```{r}
+data <- data.frame(
+  State = state.name,
+  Region = state.region,
+  Division = state.division,
+  Area = state.area
+)
+
+reactable(data, groupBy = c("Region", "Division"), bordered = TRUE, columns = list(
+  Division = colDef(aggregate = "unique"),
+  Area = colDef(aggregate = "sum", format = colFormat(separators = TRUE))
+))
+```
+
+
+## Expandable Row Details
+
+#### R render function
+```{r}
+reactable(iris[1:50, ], details = function(index) {
+  htmltools::div(
+    "Details for row: ", index,
+    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
+  )
+})
+```
+
+#### JS render function
+```{r}
+reactable(iris[1:50, ], details = colDef(
+  name = "More",
+  details = JS("function(rowInfo) {
+    return 'Details for row: ' + rowInfo.index +
+      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+  }"),
+  html = TRUE,
+  width = 50
+))
+```
+
+### Nested tables
+
+> NOTE: only supported by R render functions
+
+```{r}
+data <- unique(CO2[, c("Plant", "Type")])
+
+reactable(data, details = function(index) {
+  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
+  htmltools::div(style = "padding: 16px",
+    reactable(subset, outlined = TRUE)
+  )
+})
+```
+
+### Conditional row details
+
+> NOTE: only supported by R render functions
+
+```{r}
+reactable(iris[1:5, ], details = function(index) {
+  if (index %in% c(3, 5)) {
+    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
+  }
+})
+```
+
+### Multiple row details
+
+```{r}
+reactable(iris[1:5, ],
+  details = function(index) {
+    if (index %in% c(3, 5)) {
+      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
+    }
+  },
+  columns = list(
+    Petal.Length = colDef(details = function(index) {
+      paste("Petal.Length: ", iris[index, "Petal.Length"])
+    }),
+    Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
+      function(rowInfo) {
+        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
+      }
+    "))
+  )
+)
 ```
 
 
@@ -761,65 +820,6 @@ reactable(
     footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
   )
 )
-```
-
-
-## Pagination
-You can change the default page size by configuring `defaultPageSize`:
-```{r}
-reactable(iris[1:6, ], defaultPageSize = 4)
-```
-
-You can also set the minimum rows per page using `minRows`. This may be
-useful when rows don't completely fill the page, or if the table has filtering:
-```{r}
-reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4, searchable = TRUE)
-```
-
-### Page size options
-You can show a dropdown of page sizes for users to choose from using `showPageSizeOptions`.
-The page size options can be customized through `pageSizeOptions`:
-```{r}
-reactable(iris[1:12, ], showPageSizeOptions = TRUE, pageSizeOptions = c(4, 8, 12), defaultPageSize = 4)
-```
-
-### Alternative pagination types
-You can use an alternative pagination type by setting `paginationType` to:
-
-- `"jump"` to show a page jump
-- `"simple"` to show previous/next buttons only
-
-#### Page jump
-```{r}
-reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
-```
-
-#### Simple
-```{r}
-reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
-```
-
-### Hide page info
-You can hide page info by setting `showPageInfo` to `FALSE`:
-```{r}
-reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
-
-reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaultPageSize = 4)
-```
-
-### Always show pagination
-By default, pagination is hidden if the table only has one page. To always show
-pagination, set `showPagination` to `TRUE`. This may be useful if you want to
-show page info:
-
-```{r}
-reactable(iris[1:5, ], showPagination = TRUE)
-```
-
-### No pagination
-Tables are paged by default, but you can disable pagination by setting `pagination` to `FALSE`:
-```{r}
-reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 ```
 
 
