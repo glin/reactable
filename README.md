@@ -61,9 +61,9 @@ https://glin.github.io/reactable/articles/examples.html#expandable-row-details
 data <- unique(CO2[, c("Plant", "Type")])
 
 reactable(data, details = function(index) {
-  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
+  plant_data <- CO2[CO2$Plant == data$Plant[index], ]
   htmltools::div(style = "padding: 16px",
-    reactable(subset, outlined = TRUE)
+    reactable(plant_data, outlined = TRUE)
   )
 })
 ```

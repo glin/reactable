@@ -14,12 +14,12 @@ library(reactable)
 ```
 
 
-Occasionally you'll want to customize how your data is displayed beyond what
-the built-in formatters provide. For example, inserting a link, combining data
-from multiple columns, or showing a column total that updates on filtering.
+You may want to customize how your data is displayed beyond what the built-in
+formatters provide. For example, inserting a link, combining data from multiple
+columns, or showing a column total that updates on filtering.
 
-In reactable, you can customize data rendering by providing either an R or
-JavaScript render function:
+In reactable, you can customize data rendering using either an R or JavaScript
+function that returns custom content:
 
 <table>
 <thead><tr><th>R render functions</th><th>JavaScript render functions</th></tr></thead>
@@ -67,6 +67,39 @@ reactable(iris, columns = list(
 Whichever one to use depends on the situation and personal preference.
 You might prefer to use R render functions except in cases where you need more
 dynamic behavior (e.g., render based on filtered state) or have a very large table.
+
+#### Example: column total with filtering
+For example, you can easily add a column total using an R render function:
+```{r}
+data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(data, searchable = TRUE, columns = list(
+  Price = colDef(footer = function(values) {
+    htmltools::tags$b(sprintf("$%.2f", sum(values)))
+  }),
+  Manufacturer = colDef(footer = htmltools::tags$b("Total"))
+))
+```
+
+However, the column total doesn't update with filtering. For that, you need a
+JavaScript render function with access to the client-side filtered state:
+```{r}
+data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(data, searchable = TRUE, columns = list(
+  Price = colDef(
+    html = TRUE,
+    footer = JS("function(colInfo) {
+      var values = colInfo.data.map(function(row) {
+        return row[colInfo.column.id]
+      })
+      var total = values.reduce(function(a, b) { return a + b }, 0)
+      return '<b>$' + total.toFixed(2) + '</b>'
+    }")
+  ),
+  Manufacturer = colDef(html = TRUE, footer = "<b>Total</b>")
+))
+```
 
 
 ## Cells
@@ -123,7 +156,8 @@ props <- tibble::tribble(
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "page", "2", "page index (zero-based)",
-  "show", "true", "whether the column is visible"
+  "show", "true", "whether the column is visible",
+  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated cells only)"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -306,5 +340,9 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 
 .contents blockquote {
   font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
 }
 ```

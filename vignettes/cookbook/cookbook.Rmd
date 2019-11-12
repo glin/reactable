@@ -233,7 +233,7 @@ reactable(
 ### Dynamic totals
 
 To update the total when filtering the table, calculate the total in a
-JS renderer:
+JavaScript render function:
 
 ```{r}
 reactable(
@@ -278,8 +278,8 @@ reactable(sales_by_mfr, details = function(index) {
 
 ## Units on first row only
 
-To show a label on the first row only (even when sorting), use a JS renderer
-to add the label when the cell's `viewIndex` is 0.
+To show a label on the first row only (even when sorting), use a JavaScript
+render function to add the label when the cell's `viewIndex` is 0.
 
 If the label breaks the alignment of values in the column, realign the values
 by adding white space to the cells without units. Two ways to do this are shown below.
@@ -403,7 +403,7 @@ or `aria-sort="descending"` attribute:
 
 ## Highlight sorted columns
 
-To style sorted columns, use a JS callback to style columns based on the
+To style sorted columns, use a JavaScript function to style columns based on the
 table's sorted state:
 
 ```{r}
@@ -425,9 +425,9 @@ reactable(
 
 ## Borders between groups of data
 
-To add borders between groups, use an R or JS callback to style rows based on
-the previous or next row's data. If the table can be sorted, use a JS callback
-to style rows only when sorting by that group.
+To add borders between groups, use an R or JavaScript function to style rows
+based on the previous or next row's data. If the table can be sorted, use a
+JavaScript function to style rows only when sorting by that group.
 
 ```{r, message=FALSE}
 library(dplyr)
@@ -482,7 +482,7 @@ reactable(
 }
 
 .bar-sort-header[aria-sort="descending"] {
-  box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.6) !important;
+  box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.6) !important;
 }
 ```
 

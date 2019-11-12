@@ -40,12 +40,14 @@ reactable(
     header = function(value) gsub(".", " ", value, fixed = TRUE),
     cell = function(value) format(value, nsmall = 1),
     align = "center",
-    minWidth = 70
+    minWidth = 70,
+    headerStyle = list(background = "#f7f7f8")
   ),
   columns = list(
     Species = colDef(minWidth = 140)  # overrides the default
   ),
-  bordered = TRUE
+  bordered = TRUE,
+  highlight = TRUE
 )
 ```
 
@@ -59,9 +61,13 @@ Tables are sorted in ascending order first by default. To customize the sort ord
 set `defaultSortOrder` on a table or column to either `"asc"` (ascending) or
 `"desc"` (descending):
 ```{r}
-reactable(iris[48:52, ], defaultSortOrder = "desc", columns = list(
-  Species = colDef(defaultSortOrder = "asc")
-))
+reactable(
+  iris[48:52, ],
+  defaultSortOrder = "desc",
+  columns = list(
+    Species = colDef(defaultSortOrder = "asc")
+  )
+)
 ```
 
 ### Default sorted columns
@@ -80,29 +86,12 @@ You can ignore missing values when sorting by setting `sortNALast` on a column:
 ```{r}
 reactable(
   data.frame(
-    n = seq(5),
+    n = c(1, 2, 3, -Inf, Inf),
     x = c(2, 3, 1, NA, NaN),
     y = c("aa", "cc", "bb", NA, NA)
   ),
   defaultColDef = colDef(sortNALast = TRUE),
   defaultSorted = "x"
-)
-```
-
-### Displaying missing values
-Missing values are shown as empty cells by default, but you can customize their
-display text by setting `na` on a column:
-```{r}
-reactable(
-  data.frame(
-    n = seq(5),
-    x = c(55, 27, NA, NaN, 19),
-    y = c(1, NA, NA, -Inf, Inf)
-  ),
-  columns = list(
-    x = colDef(na = "–"),
-    y = colDef(na = "NA")
-  )
 )
 ```
 
@@ -216,18 +205,54 @@ reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 
 
 ## Grouping and Aggregation
-
+You can group rows in a table by specifying one or more columns in `groupBy`:
 ```{r}
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Length = colDef(aggregate = "count"),
-  Sepal.Width = colDef(aggregate = "mean"),
-  Petal.Length = colDef(aggregate = "sum"),
-  Petal.Width = colDef(aggregate = "max")
+data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
+
+reactable(data, groupBy = "Manufacturer")
+```
+
+When rows are grouped, you can aggregate data in a column using an `aggregate` function:
+```{r}
+data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
+
+reactable(data, groupBy = "Type", columns = list(
+  Price = colDef(aggregate = "max"),
+  MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+  DriveTrain = colDef(aggregate = "unique"),
+  Man.trans.avail = colDef(aggregate = "frequency")
 ))
 ```
 
-### Multiple Groups
+You can use one of the built-in aggregate functions:
+```r
+colDef(aggregate = "sum")        # Sum of numbers
+colDef(aggregate = "mean")       # Mean of numbers
+colDef(aggregate = "max")        # Max of numbers
+colDef(aggregate = "min")        # Min of numbers
+colDef(aggregate = "count")      # Count of values
+colDef(aggregate = "unique")     # Comma-separated list of unique values
+colDef(aggregate = "frequency")  # Comma-separated counts of unique values
+```
 
+Or a custom aggregate function in JavaScript:
+```r
+colDef(
+  aggregate = JS("
+    function(values, rows) {
+      // input:
+      //  - values: an array of all values in the group
+      //  - rows: an array of row info objects for all rows in the group
+      //
+      // output:
+      //  - an aggregated value, e.g. a comma-separated list
+      return values.join(', ')
+    }
+  ")
+)
+```
+
+### Multiple groups
 ```{r}
 data <- data.frame(
   State = state.name,
@@ -236,18 +261,25 @@ data <- data.frame(
   Area = state.area
 )
 
-reactable(data, groupBy = c("Region", "Division"), bordered = TRUE, columns = list(
-  Division = colDef(aggregate = "unique"),
-  Area = colDef(aggregate = "sum", format = colFormat(separators = TRUE))
-))
+reactable(
+  data,
+  groupBy = c("Region", "Division"),
+  columns = list(
+    Division = colDef(aggregate = "unique"),
+    Area = colDef(aggregate = "sum", format = colFormat(separators = TRUE))
+  ),
+  bordered = TRUE
+)
 ```
 
 
 ## Expandable Row Details
+You can make rows expandable with additional content through `details`, which
+takes an R or JavaScript render function. See [Custom Rendering](custom-rendering.html)
+for more details on how to use render functions.
 
-#### R render function
 ```{r}
-reactable(iris[1:50, ], details = function(index) {
+reactable(iris[1:5, ], details = function(index) {
   htmltools::div(
     "Details for row: ", index,
     htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
@@ -255,38 +287,35 @@ reactable(iris[1:50, ], details = function(index) {
 })
 ```
 
-#### JS render function
+The details column can be customized by providing a `colDef()` instead:
 ```{r}
-reactable(iris[1:50, ], details = colDef(
+reactable(iris[1:5, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
     return 'Details for row: ' + rowInfo.index +
       '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
   }"),
   html = TRUE,
-  width = 50
+  width = 60
 ))
 ```
 
 ### Nested tables
-
-> NOTE: only supported by R render functions
-
+With R render functions, you can render HTML tags, HTML widgets, and even nested tables:
 ```{r}
 data <- unique(CO2[, c("Plant", "Type")])
 
 reactable(data, details = function(index) {
-  subset <- CO2[CO2$Plant == data[index, "Plant"], ]
+  plant_data <- CO2[CO2$Plant == data$Plant[index], ]
   htmltools::div(style = "padding: 16px",
-    reactable(subset, outlined = TRUE)
+    reactable(plant_data, outlined = TRUE)
   )
 })
 ```
 
 ### Conditional row details
-
-> NOTE: only supported by R render functions
-
+R render functions support conditional rendering. If the render function
+returns `NULL`, the row won't be expandable:
 ```{r}
 reactable(iris[1:5, ], details = function(index) {
   if (index %in% c(3, 5)) {
@@ -296,7 +325,7 @@ reactable(iris[1:5, ], details = function(index) {
 ```
 
 ### Multiple row details
-
+You can set `details` on individual columns, and even show multiple details for a row:
 ```{r}
 reactable(iris[1:5, ],
   details = function(index) {
@@ -319,7 +348,7 @@ reactable(iris[1:5, ],
 
 
 ## Column Formatting
-
+You can format data in a column by providing `colFormat()` options to `format`:
 ```{r}
 data <- data.frame(
   price_USD = c(123456.56, 132, 5650.12),
@@ -339,7 +368,9 @@ reactable(data, columns = list(
 ```
 
 ### Formatting aggregated cells
-
+Column formatters apply to both standard and aggregated cells by default. If you
+want to format aggregated cells separately, provide a named list of `"cell"` and
+`"aggregated"` options:
 ```{r}
 data <- data.frame(
   States = state.name,
@@ -362,7 +393,6 @@ reactable(data, groupBy = "Region", columns = list(
 ```
 
 ### Date Formatting
-
 ```{r}
 datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-09-22 14:20:00"))
 data <- data.frame(
@@ -383,7 +413,6 @@ reactable(data, columns = list(
 ```
 
 ### Currency Formatting
-
 ```{r}
 data <- data.frame(
   USD = c(12.12, 2141.213, 0.42, 1.55, 34414),
@@ -412,85 +441,38 @@ reactable(data, columns = list(
 ))
 ```
 
-
-## Conditional Styling
-
-### Cell styling
+### Displaying missing values
+Missing values are ignored by formatters and shown as empty cells by default.
+You can customize their display text by setting `na` on a column:
 ```{r}
-reactable(sleep, columns = list(
-  extra = colDef(style = function(value) {
-    if (value > 0) {
-      color <- "green"
-    } else if (value < 0) {
-      color <- "red"
-    } else {
-      color <- "#777"
-    }
-    list(color = color, fontWeight = "bold")
-  })
-))
-```
-
-```{r}
-reactable(sleep, columns = list(
-  extra = colDef(style = JS("
-    function(rowInfo) {
-      var value = rowInfo.row.extra
-      if (value > 0) {
-        var color = 'green'
-      } else if (value < 0) {
-        var color = 'red'
-      } else {
-        var color = '#777'
-      }
-      return { color: color, fontWeight: 'bold' }
-    }
-  "))
-))
-```
-
-### Row styling
-```{r row_styling, eval=FALSE}
-reactable(sleep, 
-  rowStyle = function(index) {
-    if (sleep[index, "extra"] < -1) {
-      list(backgroundColor = "#ffd08a")
-    }
-  },
-  rowClass = function(index) {
-    if (sleep[index, "extra"] < -1) {
-      "bold"
-    }
-  }
+reactable(
+  data.frame(
+    n = c(1, 2, NA, 4, 5),
+    x = c(55, 27, NA, NaN, 19),
+    y = c(1, NA, 0.25, 0.55, NA)
+  ),
+  columns = list(
+    x = colDef(na = "–", format = colFormat(prefix = "$")),
+    y = colDef(na = "NA", format = colFormat(percent = TRUE))
+  )
 )
 ```
 
-```{css}
-.bold {
-  font-weight: bold;
-}
-```
-
-```{r ref.label="row_styling", echo=FALSE}
-```
-
-```{r}
-reactable(sleep,
-  rowStyle = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
-      return { backgroundColor: '#ffd08a' }
-    }
-  }"),
-  rowClass = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
-      return 'bold'
-    }
-  }")
-)
-```
+### Custom Data Formatting
+If none of the built-in formatters apply to your data, you can use a
+[custom cell renderer](#cell-rendering) instead.
 
 
-## Custom Cell Rendering
+## Custom Rendering
+You can customize how data is displayed using an R or JavaScript function
+that returns custom content. R render functions support `htmltools` and
+`htmlwidgets`, while JavaScript render functions allow for more dynamic behavior.
+
+See [Custom Rendering](custom-rendering.html) for more details on how to
+use render functions, and the [Demo Cookbook](cookbook/cookbook.html)
+for even more examples of custom rendering.
+
+### Cell rendering
 
 #### R render function
 ```{r}
@@ -513,7 +495,7 @@ reactable(data, columns = list(
 ))
 ```
 
-#### JS render function
+#### JavaScript render function
 ```{r}
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
@@ -540,54 +522,7 @@ reactable(data, columns = list(
 ))
 ```
 
-### Aggregated cells
-
-```{r}
-data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")]
-
-reactable(data, groupBy = "Manufacturer", columns = list(
-  Model = colDef(name = "Models", aggregate = "count"),
-  Type = colDef(aggregate = "unique"),
-  Price = colDef(align = "left", html = TRUE, aggregate = "mean", aggregated = JS("
-    function(cellInfo) {
-      var value = '$' + Math.round(cellInfo.value * 1000).toLocaleString()
-      return '<span style=\"margin-right: 4px; color: #999\">Avg</span> ' + value
-    }
-  "))
-))
-```
-
-```{r, message=FALSE}
-library(dplyr)
-
-set.seed(10)
-
-data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
-  select(Manufacturer, Model, Type, Sales = Price)
-
-reactable(data, groupBy = "Manufacturer", columns = list(
-  Model = colDef(aggregate = "unique"),
-  Type = colDef(filterable = TRUE, aggregated = JS("
-    function(cellInfo) {
-      // Get comma-separated list of unique values in visible rows
-      var values = cellInfo.subRows.map(function(row) { return row.Type })
-      var unique = values.reduce(function(obj, v) {obj[v] = true; return obj }, {})
-      return Object.keys(unique).join(', ')
-    }
-  ")),
-  Sales = colDef(aggregated = JS("
-    function(cellInfo) {
-      // Calculate sum of all values in visible rows
-      var values = cellInfo.subRows.map(function(row) { return row.Sales })
-      var total = values.reduce(function(a, b) { return a + b }, 0)
-      return '$' + total.toFixed(1)
-    }
-  "))
-))
-```
-
-## Embedding HTML Widgets
-
+#### Embedding HTML widgets
 ```{r message=FALSE}
 library(dplyr)
 library(sparkline)
@@ -610,9 +545,42 @@ reactable(data, columns = list(
 ))
 ```
 
+### Aggregated cell rendering
+```{r, message=FALSE}
+library(dplyr)
 
-## Custom Header Rendering
+set.seed(10)
 
+data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+reactable(
+  data,
+  groupBy = "Manufacturer",
+  searchable = TRUE,
+  columns = list(
+    Model = colDef(aggregate = "unique"),
+    Type = colDef(aggregated = JS("
+      function(cellInfo) {
+        // Get comma-separated list of unique values in visible rows
+        var values = cellInfo.subRows.map(function(row) { return row.Type })
+        var unique = values.reduce(function(obj, v) { obj[v] = true; return obj }, {})
+        return Object.keys(unique).join(', ')
+      }
+    ")),
+    Sales = colDef(aggregated = JS("
+      function(cellInfo) {
+        // Calculate sum of all values in visible rows
+        var values = cellInfo.subRows.map(function(row) { return row.Sales })
+        var total = values.reduce(function(a, b) { return a + b }, 0)
+        return '$' + total.toFixed(1)
+      }
+    "))
+  )
+)
+```
+
+### Header rendering
 ```{r}
 library(htmltools)
 
@@ -637,118 +605,156 @@ reactable(
 
 
 ## Footers
+You can add column footers by specifying content to render in `footer`.
 
-```{r}
-data <- subset(iris[1:5, ], select = c(Species, Sepal.Length:Petal.Width))
+`footer` can also be an R or JavaScript render function — see
+[Custom Rendering](custom-rendering.html) for more details on how to
+use render functions.
+
+#### R render function
+```{r, message=FALSE}
+library(dplyr)
+library(htmltools)
+
+data <- MASS::Cars93[18:47, ] %>%
+  select(Manufacturer, Model, Type, Sales = Price)
 
 reactable(
-  data, 
-  defaultColDef = colDef(footer = function(values) {
-    format(sum(values), nsmall = 1)
-  }),
+  data,
+  defaultPageSize = 5,
   columns = list(
-    Species = colDef(footer = htmltools::tags$b("Total"))
-  )
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(footer = function(values) sprintf("$%.2f", sum(values)))
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+#### JavaScript render function
+```{r}
+reactable(
+  data,
+  searchable = TRUE,
+  defaultPageSize = 5,
+  minRows = 5,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(
+      footer = JS("function(colInfo) {
+        var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
+        var total = values.reduce(function(a, b) { return a + b }, 0)
+        return '$' + total.toFixed(2)
+      }")
+    )
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+#### Embedding HTML widgets {#embedding-html-widgets-footers}
+```{r}
+library(sparkline)
+
+reactable(
+  iris[1:20, ],
+  defaultPageSize = 5,
+  bordered = TRUE,
+  defaultColDef = colDef(footer = function(values) {
+    if (!is.numeric(values)) return()
+    sparkline(values, type = "box", width = 100, height = 30)
+  })
 )
 ```
 
 
-```{r, message=FALSE}
-library(dplyr)
+## Conditional Styling
+You can style cells and rows conditionally using an R or JavaScript
+function. Both `style`/`class` and `rowStyle`/`rowClass` accept functions
+with the same arguments as their custom render function counterparts
+(see [Custom Rendering](custom-rendering.html) for details).
 
-set.seed(10)
+> **NOTE:** R functions can optionally return inline styles as named
+> lists with camelCased property names. JavaScript functions, however,
+> must return inline styles as objects with camelCased property names.
 
-data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
-  select(Manufacturer, Model, Type, Sales = Price)
-
-reactable(data, filterable = TRUE, defaultPageSize = 5, minRows = 5, columns = list(
-  Manufacturer = colDef(html = TRUE, footer = "<b>Total</b>"),
-  Sales = colDef(filterable = FALSE, html = TRUE, footer = JS("function(colInfo) {
-    var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
-    var total = values.reduce(function(a, b) { return a + b }, 0)
-    return '<b>$' + total.toFixed(2) + '</b>'
-  }"))
+### Cell styling
+```{r}
+reactable(sleep[1:6, ], columns = list(
+  extra = colDef(style = function(value) {
+    if (value > 0) {
+      color <- "#008000"
+    } else if (value < 0) {
+      color <- "#e00000"
+    } else {
+      color <- "#777"
+    }
+    list(color = color, fontWeight = "bold")
+  })
 ))
 ```
 
 ```{r}
-library(sparkline)
-
-reactable(iris[1:20, ], bordered = TRUE, defaultColDef = colDef(footer = function(values) {
-  if (!is.numeric(values)) return()
-  sparkline(values, type = "box", width = 100, height = 30)
-}))
+reactable(sleep[1:6, ], columns = list(
+  extra = colDef(style = JS("
+    function(rowInfo) {
+      var value = rowInfo.row.extra
+      if (value > 0) {
+        var color = '#008000'
+      } else if (value < 0) {
+        var color = '#e00000'
+      } else {
+        var color = '#777'
+      }
+      return { color: color, fontWeight: 'bold' }
+    }
+  "))
+))
 ```
 
-
-## Column Groups
-You can create column groups by passing a list of `colGroup()` definitions to `columnGroups`:
-```{r}
-reactable(
-  iris[1:5, ],
-  columns = list(
-    Sepal.Length = colDef(name = "Length"),
-    Sepal.Width = colDef(name = "Width"),
-    Petal.Length = colDef(name = "Length"),
-    Petal.Width = colDef(name = "Width")
-  ),
-  columnGroups = list(
-    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
-    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
-  )
-)
-```
-
-
-## Column Resizing
-You can make columns resizable using `resizable`:
-```{r}
-reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
-```
-
-
-## Cell Click Actions
-You can add cell click actions using `onClick`, which accepts the following values:
-
-- `"expand"` to expand the row
-- `"select"` to select the row
-- a JavaScript function for a custom action, e.g., sending the click event to Shiny
-
-### Expand on click
-```{r}
-reactable(
-  iris[48:52, ],
-  groupBy = "Species",
-  details = function(index) paste("Details for row:", index),
-  onClick = "expand",
-  # Give rows a pointer cursor to indicate that they're clickable
-  rowStyle = list(cursor = "pointer")
-)
-```
-
-### Select on click
-```{r}
-reactable(iris[1:5, ], selection = "multiple", onClick = "select")
-```
-
-### Custom action
-```{r}
-reactable(iris[1:5, ], onClick = JS("
-  function(rowInfo, colInfo) {
-    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
-
-    // Send the click event to Shiny (note that the row indices start at 0 in JavaScript)
-    if (window.Shiny) {
-      Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
+### Row styling
+```{r row_styling, eval=FALSE}
+reactable(sleep[1:6, ], 
+  rowStyle = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      list(background = "rgba(0, 0, 0, 0.05)")
+    }
+  },
+  rowClass = function(index) {
+    if (sleep[index, "extra"] < -1) {
+      "bold"
     }
   }
-"))
+)
+```
+
+```{css}
+.bold {
+  font-weight: bold;
+}
+```
+
+```{r ref.label="row_styling", echo=FALSE}
+```
+
+```{r}
+reactable(sleep[1:6, ],
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return { background: 'rgba(0, 0, 0, 0.05)' }
+    }
+  }"),
+  rowClass = JS("function(rowInfo) {
+    if (rowInfo.row.extra < -1) {
+      return 'bold'
+    }
+  }")
+)
 ```
 
 
 ## Table Styling
 
-You can customize the table style using several options that can be mixed and matched:
+You can customize table styling using several options that can all be combined:
 
 ### Highlight rows on hover
 
@@ -820,6 +826,115 @@ reactable(
     footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
   )
 )
+```
+
+### No full width
+Tables are full width by default, but you can shrink the table to fit its
+contents by setting `fullWidth` to `FALSE`:
+```{r}
+reactable(iris[1:5, ], fullWidth = FALSE, bordered = TRUE, defaultColDef = colDef(minWidth = 120))
+```
+
+
+## Column Groups
+You can create column groups by passing a list of `colGroup()` definitions to `columnGroups`:
+```{r}
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Sepal.Length = colDef(name = "Length"),
+    Sepal.Width = colDef(name = "Width"),
+    Petal.Length = colDef(name = "Length"),
+    Petal.Width = colDef(name = "Width")
+  ),
+  columnGroups = list(
+    colGroup(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    colGroup(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
+```
+
+
+## Column Resizing
+You can make columns resizable using `resizable`:
+```{r}
+reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
+```
+
+
+## Row Names
+Row names are shown by default, if present. You can customize the row names column
+using `.rownames` as the column name:
+```{r}
+reactable(USPersonalExpenditure, columns = list(
+  .rownames = colDef(name = "Category", sortable = TRUE)
+))
+```
+
+If row names haven't been set explicitly, you can force them to show by setting
+`rownames` to `TRUE`:
+```{r}
+reactable(iris[1:5, ], rownames = TRUE)
+```
+
+
+## Cell Click Actions
+You can add cell click actions using `onClick`, which accepts the following values:
+
+- `"expand"` to expand the row
+- `"select"` to select the row
+- a JavaScript function for a custom action, e.g., sending the click event to Shiny
+
+### Expand on click
+```{r}
+reactable(
+  iris[48:52, ],
+  groupBy = "Species",
+  details = function(index) paste("Details for row:", index),
+  onClick = "expand",
+  # Give rows a pointer cursor to indicate that they're clickable
+  rowStyle = list(cursor = "pointer")
+)
+```
+
+### Select on click
+```{r}
+reactable(iris[1:5, ], selection = "multiple", onClick = "select")
+```
+
+### Custom action
+```{r}
+reactable(iris[1:5, ], onClick = JS("
+  function(rowInfo, colInfo) {
+    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
+
+    // Send the click event to Shiny (note that the row indices start at 0 in JavaScript)
+    if (window.Shiny) {
+      Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
+    }
+  }
+"))
+```
+
+
+## Shiny
+To use reactable in Shiny apps, use `renderReactable()` and `reactableOutput()`:
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  titlePanel("reactable example"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(iris)
+  })
+}
+
+shinyApp(ui, server)
 ```
 
 
