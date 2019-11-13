@@ -5,16 +5,17 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 Interactive data tables for R, based on the
-[React Table](https://github.com/tannerlinsley/react-table) library.
+[React Table](https://github.com/tannerlinsley/react-table) library and made with
+[reactR](https://github.com/react-R/reactR).
 
 ## Features
 - Sorting, filtering, pagination
 - Grouping and aggregation
 - Expandable rows and nested tables
 - Built-in column formatting
-- Conditional styling
 - Custom rendering using R or JavaScript
-- HTML widget (via [reactR](https://github.com/react-R/reactR)) that can be used in R Markdown documents or Shiny apps
+- Conditional styling
+- HTML widget that can be used in R Markdown documents and Shiny apps
 
 ## Installation
 
