@@ -124,7 +124,7 @@ tbl <- reactable(
       // Add horizontal separators between groups when sorting by group
       const firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'group') {
-        const nextRow = state.sortedData[rowInfo.viewIndex + 1]
+        const nextRow = state.pageRows[rowInfo.viewIndex + 1]
         if (nextRow && rowInfo.row.group !== nextRow.group) {
           return 'group-last'
         }

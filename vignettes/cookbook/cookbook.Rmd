@@ -427,7 +427,7 @@ reactable(
 
 To add borders between groups, use an R or JavaScript function to style rows
 based on the previous or next row's data. If the table can be sorted, use a
-JavaScript function to style rows only when sorting by that group.
+JavaScript function to style rows only when the groups are sorted.
 
 ```{r, message=FALSE}
 library(dplyr)
@@ -448,7 +448,7 @@ reactable(
       // Add horizontal separators between groups when sorting by school
       var firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'School') {
-        var nextRow = state.sortedData[rowInfo.viewIndex + 1]
+        var nextRow = state.pageRows[rowInfo.viewIndex + 1]
         if (nextRow && rowInfo.row['School'] !== nextRow['School']) {
           // Use box-shadow to add a 2px border without taking extra space
           return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
