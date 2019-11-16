@@ -18,8 +18,12 @@ Interactive data tables for R, based on the
 - HTML widget that can be used in R Markdown documents and Shiny apps
 
 ## Installation
+You can install reactable from CRAN with:
+```r
+install.packages("reactable")
+```
 
-You can install the development version from GitHub with:
+Or install the development version from GitHub with:
 ```r
 # install.packages("devtools")
 devtools::install_github("glin/reactable")

@@ -45,6 +45,3 @@ reference:
 - title: Use in Shiny apps
   contents:
   - reactable-shiny
-
-development:
-  mode: unreleased
