@@ -42,15 +42,41 @@ reactable(data, columns = list(
 ### Color scales
 
 ```{r}
-data <- iris[1:20, ]
+data <- iris[10:29, ]
 orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
 
 reactable(data, columns = list(
-  Petal.Width = colDef(style = function(value) {
-    color <- orange_pal(value / max(data$Petal.Width))
+  Petal.Length = colDef(style = function(value) {
+    normalized <- (value - min(data$Petal.Length)) / (max(data$Petal.Length) - min(data$Petal.Length))
+    color <- orange_pal(normalized)
     list(background = color)
   })
 ))
+```
+
+```{r}
+dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
+temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
+
+GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f8696b"))(x), maxColorValue = 255)
+
+reactable(
+  temps,
+  defaultColDef = colDef(
+    style = function(value) {
+      if (!is.numeric(value)) return()
+      normalized <- (value - min(nottem)) / (max(nottem) - min(nottem))
+      color <- GnYlRd(normalized)
+      list(background = color)
+    },
+    format = colFormat(digits = 1),
+    minWidth = 50
+  ),
+  columns = list(
+    .rownames = colDef(name = "Year", sortable = TRUE, align = "left")
+  ),
+  bordered = TRUE
+)
 ```
 
 ### Formatting changes
@@ -269,11 +295,15 @@ data <- MASS::Cars93[18:47, ] %>%
 sales_by_mfr <- group_by(data, Manufacturer) %>%
   summarize(Quantity = n(), Sales = sum(Price))
 
-reactable(sales_by_mfr, details = function(index) {
-  sales <- filter(data, Manufacturer == sales_by_mfr$Manufacturer[index]) %>% select(-Manufacturer)
-  tbl <- reactable(sales, outlined = TRUE, highlight = TRUE, fullWidth = FALSE)
-  div(style = list(margin = "12px 45px"), tbl)
-})
+reactable(
+  sales_by_mfr,
+  details = function(index) {
+    sales <- filter(data, Manufacturer == sales_by_mfr$Manufacturer[index]) %>% select(-Manufacturer)
+    tbl <- reactable(sales, outlined = TRUE, highlight = TRUE, fullWidth = FALSE)
+    div(style = list(margin = "12px 45px"), tbl)
+  },
+  onClick = "expand"
+)
 ```
 
 ## Units on first row only
@@ -370,7 +400,7 @@ reactable(iris[1:5, ], columns = list(
 ```{r}
 reactable(iris[1:5, ], rowStyle = function(index) {
   if (index == 2) list(fontWeight = "bold")
-  else if (index == 4) list(background = "rgba(0, 0, 0, 0.05)")
+  else if (iris[index, "Petal.Length"] >= 1.5) list(background = "rgba(0, 0, 0, 0.05)")
 })
 ```
 
