@@ -53,7 +53,7 @@ reactable(iris, columns = list(
 
 - Easier to use but more static
 - Render once, when the table is created
-- Supports htmltools and htmlwidgets
+- Supports [`htmltools`](https://shiny.rstudio.com/articles/tag-glossary.html) and [`htmlwidgets`](https://www.htmlwidgets.org/)
 
 </td><td>
 

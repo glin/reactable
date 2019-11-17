@@ -369,8 +369,18 @@ reactable(data, columns = list(
 
 ### Formatting aggregated cells
 Column formatters apply to both standard and aggregated cells by default. If you
-want to format aggregated cells separately, provide a named list of `"cell"` and
-`"aggregated"` options:
+want to format aggregated cells separately, provide a named list of `cell` and
+`aggregated` options:
+```{r, eval=FALSE}
+colDef(
+  format = list(
+    cell = colFormat(...),       # Standard cells
+    aggregated = colFormat(...)  # Aggregated cells
+  )
+)
+```
+
+For example, only the aggregated `States` are formatted here:
 ```{r}
 data <- data.frame(
   States = state.name,
@@ -465,8 +475,10 @@ If none of the built-in formatters apply to your data, you can use a
 
 ## Custom Rendering
 You can customize how data is displayed using an R or JavaScript function
-that returns custom content. R render functions support `htmltools` and
-`htmlwidgets`, while JavaScript render functions allow for more dynamic behavior.
+that returns custom content. R render functions support
+[`htmltools`](https://shiny.rstudio.com/articles/tag-glossary.html) and
+[`htmlwidgets`](https://www.htmlwidgets.org/),
+while JavaScript render functions allow for more dynamic behavior.
 
 See [Custom Rendering](custom-rendering.html) for more details on how to
 use render functions, and the [Demo Cookbook](cookbook/cookbook.html)
@@ -753,7 +765,7 @@ reactable(sleep[1:6, ],
 
 ## Table Styling
 
-You can customize table styling using several options that can all be combined:
+You can customize table styling using several options, which can all be combined:
 
 ### Highlight rows on hover
 

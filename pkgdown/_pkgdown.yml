@@ -28,10 +28,10 @@ navbar:
         href: articles/nba-box-score/nba-box-score.html
       - text: CRAN Packages
         href: articles/cran-packages/cran-packages.html
-      - text: 100k Rows
-        href: articles/100k-rows.html
       - text: Demo Cookbook
         href: articles/cookbook/cookbook.html
+      - text: 100k Rows
+        href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
 
