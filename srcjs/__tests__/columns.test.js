@@ -16,7 +16,11 @@ reactR.hydrate = (components, tag) => tag
 test('columnsToRows', () => {
   const columns = { a: [1, 2, 3], b: ['x', 'y', 'z'] }
   const rows = columnsToRows(columns)
-  expect(rows).toEqual([{ a: 1, b: 'x' }, { a: 2, b: 'y' }, { a: 3, b: 'z' }])
+  expect(rows).toEqual([
+    { a: 1, b: 'x' },
+    { a: 2, b: 'y' },
+    { a: 3, b: 'z' }
+  ])
 })
 
 describe('buildColumnDefs', () => {
@@ -456,7 +460,10 @@ describe('buildColumnDefs', () => {
 
     // Hide sort icon
     cols = buildColumnDefs(
-      [{ name: 'x', accessor: 'x', align: 'right' }, { name: 'y', accessor: 'y' }],
+      [
+        { name: 'x', accessor: 'x', align: 'right' },
+        { name: 'y', accessor: 'y' }
+      ],
       null,
       {
         sortable: true,
@@ -468,7 +475,10 @@ describe('buildColumnDefs', () => {
 
     // showSortable
     cols = buildColumnDefs(
-      [{ name: 'x', accessor: 'x', align: 'right' }, { name: 'y', accessor: 'y' }],
+      [
+        { name: 'x', accessor: 'x', align: 'right' },
+        { name: 'y', accessor: 'y' }
+      ],
       null,
       {
         sortable: true,
@@ -685,6 +695,8 @@ describe('formatValue', () => {
     expect(formatValue(123.125, { digits: 2 })).toEqual('123.13')
     expect(formatValue(123.1, { digits: 3 })).toEqual('123.100')
     expect(formatValue(24, { digits: 1 })).toEqual('24.0')
+    // Should limit to 18 digits
+    expect(formatValue(24, { digits: 20 })).toEqual('24.000000000000000000')
     expect(formatValue('ignorestring', { digits: 3 })).toEqual('ignorestring')
   })
 

@@ -346,8 +346,8 @@ colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,
     stop("`suffix` must be a character string")
   }
   if (!is.null(digits)) {
-    if (!is.numeric(digits) || digits < 0 || digits > 20) {
-      stop("`digits` must be a number between 0 and 20")
+    if (!is.numeric(digits) || digits < 0 || digits > 18) {
+      stop("`digits` must be a number between 0 and 18")
     }
     digits <- as.integer(digits)
   }

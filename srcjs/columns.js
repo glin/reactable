@@ -111,7 +111,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (col.details instanceof Array && col.details[cellInfo.index] == null) {
           // Don't expand rows without content
         } else {
-          expander = ReactTableDefaults.ExpanderComponent({ ...cellInfo, isExpanded: isExpanded(cellInfo) })
+          expander = ReactTableDefaults.ExpanderComponent({
+            ...cellInfo,
+            isExpanded: isExpanded(cellInfo)
+          })
         }
       }
 
@@ -416,6 +419,9 @@ export function formatValue(value, options) {
 
   if (typeof value === 'number') {
     if (separators || percent || currency || digits != null) {
+      // While Number.toLocaleString supports up to 20 fraction digits,
+      // IE11 only supports up to 18 digits when formatting as percentages.
+      const maximumFractionDigits = 18
       const options = { useGrouping: separators ? true : false }
       if (percent) {
         options.style = 'percent'
@@ -424,10 +430,10 @@ export function formatValue(value, options) {
         options.style = 'currency'
         options.currency = currency
       } else if (digits != null) {
-        options.minimumFractionDigits = digits
-        options.maximumFractionDigits = digits
+        options.minimumFractionDigits = Math.min(digits, maximumFractionDigits)
+        options.maximumFractionDigits = Math.min(digits, maximumFractionDigits)
       } else {
-        options.maximumFractionDigits = 20
+        options.maximumFractionDigits = maximumFractionDigits
       }
       value = value.toLocaleString(locales || undefined, options)
     }

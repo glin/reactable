@@ -224,7 +224,7 @@ test_that("colFormat", {
   expect_error(colFormat(prefix = 1))
   expect_error(colFormat(suffix = 1))
   expect_error(colFormat(digits = -1))
-  expect_error(colFormat(digits = 21))
+  expect_error(colFormat(digits = 19))
   expect_error(colFormat(separators = "sad"))
   expect_error(colFormat(percent = "true"))
   expect_error(colFormat(currency = FALSE))
