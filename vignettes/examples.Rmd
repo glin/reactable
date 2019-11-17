@@ -17,6 +17,8 @@ library(reactable)
 To create a data table, use `reactable()` on a data frame or matrix.
 The table will be sortable and paginated by default:
 ```{r}
+library(reactable)
+
 reactable(iris)
 ```
 
