@@ -34,6 +34,7 @@ navbar:
         href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
+    news: ~
 
 reference:
 - title: Create tables
