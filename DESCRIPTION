@@ -1,7 +1,7 @@
 Package: reactable
 Type: Package
 Title: Interactive Data Tables Based on 'React Table'
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library")
