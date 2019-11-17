@@ -1,0 +1,350 @@
+---
+title: "Conditional Styling"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+
+You can conditionally style a table using functions that return inline styles
+or CSS classes. Just like with [custom rendering](custom-rendering.html),
+style functions can either be in R or JavaScript:
+
+<table>
+<thead><tr><th>R functions</th><th>JavaScript functions</th></tr></thead>
+<tbody>
+<tr><td>
+
+```{r eval=FALSE}
+reactable(
+  iris,
+  rowStyle = function(index) {
+    if (iris[index, "Sepal.Width"] > 3.5) {
+      list(fontWeight = "bold")
+    }
+  }
+)
+```
+
+</td><td>
+
+```{r eval=FALSE}
+reactable(
+  iris,
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.row['Sepal.Width'] > 3.5) {
+      return { fontWeight: 'bold' }
+    }
+  }")
+)
+```
+
+</td></tr>
+<tr><td>
+
+- Easier to use but more static
+- Style once, when the table is created
+
+</td><td>
+
+- Harder to use but more dynamic
+- Style on the fly, based on client-side state
+
+</td></tr>
+</tbody></table>
+
+Whichever one to use depends on the situation and personal preference.
+You might prefer to use R functions except when you need more dynamic behavior
+(e.g., style based on sorted state).
+
+#### Example: color scales
+We can use R's built-in
+[color utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
+to apply a color scale to a column:
+```{r}
+data <- iris[1:5, ]
+orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ffb54d"))(x), maxColorValue = 255)
+
+reactable(
+  data,
+  columns = list(
+    Petal.Length = colDef(
+      style = function(value) {
+        normalized <- (value - min(data$Petal.Length)) / (max(data$Petal.Length) - min(data$Petal.Length))
+        color <- orange_pal(normalized)
+        list(background = color)
+      }
+    )
+  )
+)
+```
+
+#### Example: highlight sorted columns
+To style sorted columns, we need to use a JavaScript function to determine
+whether a column is currently being sorted:
+```{r highlight_sorted, eval=FALSE}
+reactable(
+  iris[1:5, ],
+  defaultSorted = "Petal.Length",
+  defaultColDef = colDef(
+    class = JS("function(rowInfo, colInfo, state) {
+      // Highlight sorted columns
+      for (var i = 0; i < state.sorted.length; i++) {
+        if (state.sorted[i].id === colInfo.id) {
+          return 'sorted'
+        }
+      }
+    }")
+  )
+)
+```
+
+```{css}
+.sorted {
+  background: rgba(0, 0, 0, 0.03);
+}
+```
+
+```{r ref.label="highlight_sorted", echo=FALSE}
+```
+
+
+## Cell Styling
+
+### R functions
+Both `style` and `class` take an R function with up to 3 optional arguments:
+```{r, eval=FALSE}
+colDef(
+  style = function(value, index, name) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - a named list with camelCased property names
+    list(color = "red", marginLeft = "30px")
+    #   - or an inline style string
+    else "color: red; margin-left: 30px;"
+  },
+  class = function(value, index, name) {
+    # input:
+    #   - value, the cell value
+    #   - index, the row index (optional)
+    #   - name, the column name (optional)
+    #
+    # output:
+    #   - CSS class names
+    "class1 class2"
+  }
+)
+```
+
+> NOTE: R functions cannot apply styles to aggregated cells.
+
+### JavaScript functions
+Or a JavaScript function, wrapped in `JS()`, with up to 3 optional arguments:
+```{r, eval=FALSE}
+colDef(
+  style = JS("
+    function(rowInfo, colInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - colInfo, an object containing column info (optional)
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - a style object with camelCased property names
+      return { backgroundColor: 'gray' }
+    }
+  "),
+  class = JS("
+    function(rowInfo, colInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - colInfo, an object containing column info (optional)
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - CSS class names
+      return 'class1 class2'
+    }
+  ")
+)
+```
+
+#### `rowInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "index", "20", "row index (zero-based)",
+  "viewIndex", "0", "row index within the page (zero-based)",
+  "page", "2", "page index (zero-based)",
+  "aggregated", "true", "whether the row is aggregated",
+  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+#### `colInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "id", '"Petal.Length"', "column ID",
+  "name", '"Petal Length"', "column display name"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table",
+  "expanded", '{2: "Species"} or {2: {0: "Species"}}', "expanded rows in the table (can be nested)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+
+## Row Styling
+
+### R functions
+Both `rowStyle` and `rowClass` take an R function with a single argument:
+```{r, eval=FALSE}
+reactable(
+  rowStyle = function(index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - a named list with camelCased property names
+    list(color = "red", marginLeft = "30px")
+    #   - or an inline style string
+    "color: red; margin-left: 30px;"
+  },
+  rowClass = function(index) {
+    # input:
+    #   - index, the row index
+    #
+    # output:
+    #   - CSS class names
+    "class1 class2"
+  }
+)
+```
+
+> NOTE: R functions cannot apply styles to aggregated rows.
+
+### JavaScript functions
+Or a JavaScript function with up to 2 optional arguments:
+```{r, eval=FALSE}
+reactable(
+  rowStyle = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - a style object with camelCased properties
+      return { backgroundColor: 'gray' }
+    }
+  "),
+  rowClass = JS("
+    function(rowInfo, state) {
+      // input:
+      //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional)
+      //
+      // output:
+      //  - CSS class names
+      return 'class1 class2'
+    }
+  ")
+)
+```
+
+#### `rowInfo` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "index", "20", "row index (zero-based)",
+  "viewIndex", "0", "row index within the page (zero-based)",
+  "page", "2", "page index (zero-based)",
+  "aggregated", "true", "whether the row is aggregated",
+  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table",
+  "expanded", '{2: "Species"} or {2: {0: "Species"}}', "expanded rows in the table (can be nested)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
+}
+```

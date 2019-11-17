@@ -12,6 +12,8 @@ navbar:
       menu:
       - text: Custom Rendering
         href: articles/custom-rendering.html
+      - text: Conditional Styling
+        href: articles/conditional-styling.html
     examples:
       text: Examples
       href: articles/examples.html

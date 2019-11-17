@@ -668,14 +668,13 @@ reactable(
 
 
 ## Conditional Styling
-You can style cells and rows conditionally using an R or JavaScript
-function. Both `style`/`class` and `rowStyle`/`rowClass` accept functions
-with the same arguments as their custom render function counterparts
-(see [Custom Rendering](custom-rendering.html) for details).
+You can conditionally style a table using functions that return inline styles
+or CSS classes. Just like with custom rendering, style functions can either be
+in R or JavaScript.
 
-> **NOTE:** R functions can optionally return inline styles as named
-> lists with camelCased property names. JavaScript functions, however,
-> must return inline styles as objects with camelCased property names.
+See [Conditional Styling](conditional-styling.html) for details on how to
+use style functions, and the [Demo Cookbook](cookbook/cookbook.html)
+for even more examples of conditional styling.
 
 ### Cell styling
 ```{r}
