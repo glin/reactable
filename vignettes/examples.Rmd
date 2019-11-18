@@ -275,80 +275,6 @@ reactable(
 ```
 
 
-## Expandable Row Details
-You can make rows expandable with additional content through `details`, which
-takes an R or JavaScript render function. See [Custom Rendering](custom-rendering.html)
-for more details on how to use render functions.
-
-```{r}
-reactable(iris[1:5, ], details = function(index) {
-  htmltools::div(
-    "Details for row: ", index,
-    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
-  )
-})
-```
-
-The details column can be customized by providing a `colDef()` instead:
-```{r}
-reactable(iris[1:5, ], details = colDef(
-  name = "More",
-  details = JS("function(rowInfo) {
-    return 'Details for row: ' + rowInfo.index +
-      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
-  }"),
-  html = TRUE,
-  width = 60
-))
-```
-
-### Nested tables
-With R render functions, you can render HTML tags, HTML widgets, and even nested tables:
-```{r}
-data <- unique(CO2[, c("Plant", "Type")])
-
-reactable(data, details = function(index) {
-  plant_data <- CO2[CO2$Plant == data$Plant[index], ]
-  htmltools::div(style = "padding: 16px",
-    reactable(plant_data, outlined = TRUE)
-  )
-})
-```
-
-### Conditional row details
-R render functions support conditional rendering. If the render function
-returns `NULL`, the row won't be expandable:
-```{r}
-reactable(iris[1:5, ], details = function(index) {
-  if (index %in% c(3, 5)) {
-    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
-  }
-})
-```
-
-### Multiple row details
-You can set `details` on individual columns, and even show multiple details for a row:
-```{r}
-reactable(iris[1:5, ],
-  details = function(index) {
-    if (index %in% c(3, 5)) {
-      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
-    }
-  },
-  columns = list(
-    Petal.Length = colDef(details = function(index) {
-      paste("Petal.Length: ", iris[index, "Petal.Length"])
-    }),
-    Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
-      function(rowInfo) {
-        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
-      }
-    "))
-  )
-)
-```
-
-
 ## Column Formatting
 You can format data in a column by providing `colFormat()` options to `format`:
 ```{r}
@@ -478,11 +404,12 @@ If none of the built-in formatters apply to your data, you can use a
 ## Custom Rendering
 You can customize how data is displayed using an R or JavaScript function
 that returns custom content. R render functions support
-[`htmltools`](https://shiny.rstudio.com/articles/tag-glossary.html) and
+[Shiny HTML tags](https://shiny.rstudio.com/articles/tag-glossary.html) (or
+[`htmltools`](https://mastering-shiny.org/advanced-ui.html#generating-html)) and
 [`htmlwidgets`](https://www.htmlwidgets.org/),
 while JavaScript render functions allow for more dynamic behavior.
 
-See [Custom Rendering](custom-rendering.html) for more details on how to
+See [Custom Rendering](custom-rendering.html) for details on how to
 use render functions, and the [Demo Cookbook](cookbook/cookbook.html)
 for even more examples of custom rendering.
 
@@ -622,7 +549,7 @@ reactable(
 You can add column footers by specifying content to render in `footer`.
 
 `footer` can also be an R or JavaScript render function — see
-[Custom Rendering](custom-rendering.html) for more details on how to
+[Custom Rendering](custom-rendering.html) for details on how to
 use render functions.
 
 #### R render function
@@ -677,6 +604,80 @@ reactable(
     if (!is.numeric(values)) return()
     sparkline(values, type = "box", width = 100, height = 30)
   })
+)
+```
+
+
+## Expandable Row Details
+You can make rows expandable with additional content through `details`, which
+takes an R or JavaScript render function. See [Custom Rendering](custom-rendering.html)
+for details on how to use render functions.
+
+```{r}
+reactable(iris[1:5, ], details = function(index) {
+  htmltools::div(
+    "Details for row: ", index,
+    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
+  )
+})
+```
+
+The details column can be customized by providing a `colDef()` instead:
+```{r}
+reactable(iris[1:5, ], details = colDef(
+  name = "More",
+  details = JS("function(rowInfo) {
+    return 'Details for row: ' + rowInfo.index +
+      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+  }"),
+  html = TRUE,
+  width = 60
+))
+```
+
+### Nested tables
+With R render functions, you can render HTML tags, HTML widgets, and even nested tables:
+```{r}
+data <- unique(CO2[, c("Plant", "Type")])
+
+reactable(data, details = function(index) {
+  plant_data <- CO2[CO2$Plant == data$Plant[index], ]
+  htmltools::div(style = "padding: 16px",
+    reactable(plant_data, outlined = TRUE)
+  )
+})
+```
+
+### Conditional row details
+R render functions support conditional rendering. If a render function
+returns `NULL`, the row won't be expandable:
+```{r}
+reactable(iris[1:5, ], details = function(index) {
+  if (index %in% c(3, 5)) {
+    reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
+  }
+})
+```
+
+### Multiple row details
+You can add `details` to individual columns, and even show multiple details for a row:
+```{r}
+reactable(iris[1:5, ],
+  details = function(index) {
+    if (index %in% c(3, 5)) {
+      reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
+    }
+  },
+  columns = list(
+    Petal.Length = colDef(details = function(index) {
+      paste("Petal.Length: ", iris[index, "Petal.Length"])
+    }),
+    Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
+      function(rowInfo) {
+        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
+      }
+    "))
+  )
 )
 ```
 
