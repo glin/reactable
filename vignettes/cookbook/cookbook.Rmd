@@ -41,6 +41,10 @@ reactable(data, columns = list(
 
 ### Color scales
 
+To add color scales, you can use R's built-in
+[color utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
+(or other color manipulation package):
+
 ```{r}
 data <- iris[10:29, ]
 orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
@@ -58,6 +62,7 @@ reactable(data, columns = list(
 dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
 temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
 
+# Excel-inspired 3-color scale
 GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f8696b"))(x), maxColorValue = 255)
 
 reactable(
@@ -157,6 +162,9 @@ reactable(orders, columns = list(
 
 ## Bar charts
 
+There are different ways to create bar charts, but here's one way
+[using HTML and CSS](https://css-tricks.com/making-charts-with-css/):
+
 ```{r}
 library(htmltools)
 
@@ -183,6 +191,10 @@ reactable(data, columns = list(
 
 ## Embed images
 
+To embed an image, render an [`<img>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
+element into the table. Make sure to add [`alt` text](https://webaim.org/techniques/alttext/)
+for accessibility, if the image is not purely decorative.
+
 ```{r}
 library(htmltools)
 
@@ -206,6 +218,10 @@ reactable(data, columns = list(
 ```
 
 ## Rating stars
+
+This example uses Font Awesome icons
+([via Shiny](https://shiny.rstudio.com/reference/shiny/latest/icon.html))
+to render rating stars in a table:
 
 ```{r}
 library(htmltools)
@@ -309,7 +325,8 @@ reactable(
 ## Units on first row only
 
 To show a label on the first row only (even when sorting), use a JavaScript
-render function to add the label when the cell's `viewIndex` is 0.
+render function to add the label when the cell's
+[`viewIndex`](../custom-rendering.html#cellinfo-properties) is 0.
 
 If the label breaks the alignment of values in the column, realign the values
 by adding white space to the cells without units. Two ways to do this are shown below.
@@ -354,6 +371,10 @@ reactable(data, class = "car-specs", columns = list(
 ```
 
 ## Tooltips
+
+To add tooltips to column headers, render the headers with a
+[`title`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title)
+attribute:
 
 ```{r}
 data <- mtcars[1:5, c("mpg", "cyl", "disp", "hp")]
