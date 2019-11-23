@@ -1,5 +1,6 @@
 # reactable
 
+[![CRAN Status](https://www.r-pkg.org/badges/version/reactable)](https://cran.r-project.org/package=reactable)
 [![Build Status](https://travis-ci.com/glin/reactable.svg?branch=master)](https://travis-ci.com/glin/reactable)
 [![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://codecov.io/gh/glin/reactable)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
