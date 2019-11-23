@@ -679,7 +679,7 @@ Reactable.propTypes = {
   minRows: PropTypes.number,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
-  onClick: PropTypes.oneOfType(PropTypes.oneOf(['expand', 'select']), PropTypes.func),
+  onClick: PropTypes.oneOfType([PropTypes.oneOf(['expand', 'select']), PropTypes.func]),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,
   borderless: PropTypes.bool,
