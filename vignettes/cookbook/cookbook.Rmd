@@ -510,6 +510,42 @@ reactable(
 )
 ```
 
+## Merge cells
+
+You can give the appearance of merged cells by hiding cells based on the
+previous row's data. Just like with the example above, you'll need a JavaScript
+style function for grouping to work with sorting, filtering, and pagination.
+
+```{r, message=FALSE}
+library(dplyr)
+
+data <- as_tibble(MASS::painters, rownames = "Painter") %>%
+  filter(School %in% c("A", "B", "C")) %>%
+  mutate(School = recode(School, A = "Renaissance", B = "Mannerist", C = "Seicento")) %>%
+  select(School, Painter, everything()) %>%
+  group_by(School) %>%
+  slice(1:3)
+
+reactable(
+  data,
+  columns = list(
+    School = colDef(
+      style = JS("function(rowInfo, colInfo, state) {
+        var firstSorted = state.sorted[0]
+        // Merge cells if unsorted or sorting by school
+        if (!firstSorted || firstSorted.id === 'School') {
+          var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+          if (prevRow && rowInfo.row['School'] === prevRow['School']) {
+            return { visibility: 'hidden' }
+          }
+        }
+      }")
+    )
+  ),
+  outlined = TRUE
+)
+```
+
 ## Custom sort indicators
 
 To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
