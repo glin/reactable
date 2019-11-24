@@ -3,6 +3,7 @@
 ### Bug fixes
 
 * `colFormat(percent = TRUE)` now works correctly when viewing tables in IE11.
+* Table searching now works when row selection is enabled.
 
 # reactable 0.1.0
 

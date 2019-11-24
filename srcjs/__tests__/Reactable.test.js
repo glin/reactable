@@ -519,6 +519,21 @@ describe('searching', () => {
     expect(rows).toHaveLength(0)
   })
 
+  it('ignores selection columns', () => {
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['aa', 'bb', 'bbcc'] }}
+        columns={[{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]}
+        searchable
+        selection="single"
+      />
+    )
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'bb' } })
+    let rows = getRows(container)
+    expect(rows).toHaveLength(2)
+  })
+
   it('searches individual rows when aggregated', () => {
     const { container, getByText } = render(
       <Reactable

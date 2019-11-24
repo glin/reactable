@@ -218,6 +218,8 @@ ReactTable.prototype.oldFilterData = ReactTable.prototype.filterData
 ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, allVisibleColumns) {
   let filterColumns = allVisibleColumns
   if (this.props.searchable) {
+    // Exclude unfilterable columns (e.g. selection columns)
+    const searchableColumns = allVisibleColumns.filter(col => col.createMatcher)
     const searchColumn = {
       id: this.props.searchKey,
       filterAll: true,
@@ -227,7 +229,7 @@ ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, 
           return rows
         }
 
-        const matchers = allVisibleColumns.reduce((obj, col) => {
+        const matchers = searchableColumns.reduce((obj, col) => {
           obj[col.id] = col.createMatcher(filter.value)
           return obj
         }, {})
@@ -237,7 +239,7 @@ ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, 
           if (row._subRows) {
             return true
           }
-          for (let col of allVisibleColumns) {
+          for (let col of searchableColumns) {
             let value = row._original[col.id]
             if (matchers[col.id](value)) {
               return true
