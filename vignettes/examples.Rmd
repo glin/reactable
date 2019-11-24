@@ -475,7 +475,7 @@ data <- chickwts %>%
 
 reactable(data, columns = list(
   weight = colDef(cell = function(values) {
-    sparkline(values, type = "bar")
+    sparkline(values, type = "bar", chartRangeMin = 0, chartRangeMax = max(chickwts$weight))
   }),
   boxplot = colDef(cell = function(value, index) {
     sparkline(data$weight[[index]], type = "box")
