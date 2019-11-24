@@ -386,10 +386,11 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       column <- mergeLists(column, columns[[key]])
     }
 
+    # [[ subsetting doesn't work well with POSIXlt objects on R <= 3.4
+    subsetter <- if (is.POSIXlt(data[[key]])) `[` else `[[`
+
     cell <- column[["cell"]]
     if (is.function(cell)) {
-      # [[ subsetting doesn't work well with POSIXlt objects
-      subsetter <- if (is.POSIXlt(data[[key]])) `[` else `[[`
       content <- lapply(seq_len(nrow(data)), function(index) {
         value <- subsetter(data, index, key)
         callFunc(cell, value, index, key)
@@ -433,7 +434,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     className <- column[["className"]]
     if (is.function(className)) {
       classes <- lapply(seq_len(nrow(data)), function(index) {
-        value <- data[index, key]
+        value <- subsetter(data, index, key)
         callFunc(className, value, index, key)
       })
       column$className <- classes
@@ -442,7 +443,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     style <- column[["style"]]
     if (is.function(style)) {
       style <- lapply(seq_len(nrow(data)), function(index) {
-        value <- data[index, key]
+        value <- subsetter(data, index, key)
         callFunc(style, value, index, key)
       })
       column$style <- lapply(style, asReactStyle)

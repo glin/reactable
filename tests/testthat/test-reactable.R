@@ -647,16 +647,33 @@ test_that("onClick", {
   expect_equal(attribs$onClick, JS("(rowInfo, column, state) => {}"))
 })
 
-test_that("column class callbacks", {
-  data <- data.frame(x = c("a", "b", "c"), y = c(2, 4, 6))
+test_that("column class functions", {
+  data <- data.frame(
+    x = c("a", "b", "c"),
+    y = c(2, 4, 6),
+    z = I(list(list(1,2,3), list(4,5,6), list(0,0,0)))
+  )
+
+  # R functions
   tbl <- reactable(data, columns = list(
     x = colDef(class = function(value) if (value != "a") paste0(value, "-cls")),
-    y = colDef(class = function(value, index, name) sprintf("%s-%s-%s", value, index, name))
+    y = colDef(class = function(value, index, name) sprintf("%s-%s-%s", value, index, name)),
+    z = colDef(class = function(values, index) sprintf("%s-%s", length(values), index))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$className, list(NULL, "b-cls", "c-cls"))
   expect_equal(attribs$columns[[2]]$className, list("2-1-y", "4-2-y", "6-3-y"))
+  expect_equal(attribs$columns[[3]]$className, list("3-1", "3-2", "3-3"))
 
+  # POSIXlt objects should be handled
+  data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))
+  tbl <- reactable(data, columns = list(
+    p = colDef(class = function(value) value)
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[4]]$class, list("2019-01-01", "2019-05-01", "2019-07-05"))
+
+  # JS functions
   tbl <- reactable(data, columns = list(
     x = colDef(class = JS("rowInfo => 'cls'"))
   ))
@@ -664,18 +681,36 @@ test_that("column class callbacks", {
   expect_equal(attribs$columns[[1]]$className, JS("rowInfo => 'cls'"))
 })
 
-test_that("column style callbacks", {
-  data <- data.frame(x = c("a", "b", "c"), y = c(2, 4, 6))
+test_that("column style functions", {
+  data <- data.frame(
+    x = c("a", "b", "c"),
+    y = c(2, 4, 6),
+    z = I(list(list(1,2,3), list(4,5,6), list(0,0,0)))
+  )
+
+  # R functions
   tbl <- reactable(data, columns = list(
     x = colDef(style = function(value) if (value != "a") "background-color: red"),
-    y = colDef(style = function(value, index, name) list(color = sprintf("%s-%s-%s", value, index, name)))
+    y = colDef(style = function(value, index, name) list(color = sprintf("%s-%s-%s", value, index, name))),
+    z = colDef(style = function(values, index) list(content = sprintf("%s-%s", length(values), index)))
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$style,
                list(NULL, list("background-color" = "red"), list("background-color" = "red")))
   expect_equal(attribs$columns[[2]]$style,
                list(list(color = "2-1-y"), list(color = "4-2-y"), list(color = "6-3-y")))
+  expect_equal(attribs$columns[[3]]$style,
+               list(list(content = "3-1"), list(content = "3-2"), list(content = "3-3")))
 
+  # POSIXlt objects should be handled
+  data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))
+  tbl <- reactable(data, columns = list(
+    p = colDef(style = function(value) value)
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[4]]$style, list("2019-01-01", "2019-05-01", "2019-07-05"))
+
+  # JS functions
   tbl <- reactable(data, columns = list(
     x = colDef(style = JS("rowInfo => ({ backgroundColor: 'red' })"))
   ))
