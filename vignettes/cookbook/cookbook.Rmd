@@ -316,9 +316,10 @@ reactable(
   details = function(index) {
     sales <- filter(data, Manufacturer == sales_by_mfr$Manufacturer[index]) %>% select(-Manufacturer)
     tbl <- reactable(sales, outlined = TRUE, highlight = TRUE, fullWidth = FALSE)
-    div(style = list(margin = "12px 45px"), tbl)
+    htmltools::div(style = list(margin = "12px 45px"), tbl)
   },
-  onClick = "expand"
+  onClick = "expand",
+  rowStyle = list(cursor = "pointer")
 )
 ```
 
