@@ -683,6 +683,7 @@ describe('row selection', () => {
       <Reactable {...props} selection="multiple" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
+    expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
     const selectAllCheckbox = getByLabelText('Select all rows')
     const selectRow1Checkbox = getByLabelText('Select row 1')
     const selectRow2Checkbox = getByLabelText('Select row 2')
@@ -705,6 +706,7 @@ describe('row selection', () => {
       <Reactable {...props} selection="single" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
+    expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
     const selectRow1Radio = getByLabelText('Select row 1')
     const selectRow2Radio = getByLabelText('Select row 2')
 
@@ -722,6 +724,20 @@ describe('row selection', () => {
     expect(selectRow1Radio.checked).toEqual(false)
     expect(selectRow2Radio.checked).toEqual(false)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+  })
+
+  it('default selected', () => {
+    const { container, getByLabelText } = render(
+      <Reactable {...props} selection="multiple" selectionId="selected" defaultSelected={[1, 0]}/>
+    )
+    expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
+    const selectAllCheckbox = getByLabelText('Deselect all rows')
+    const selectRow1Checkbox = getByLabelText('Deselect row 1')
+    const selectRow2Checkbox = getByLabelText('Deselect row 2')
+    expect(selectAllCheckbox.checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
   })
 
   it('works without Shiny', () => {

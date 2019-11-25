@@ -40,6 +40,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
+  expect_error(reactable(df, defaultSelected = "12"))
   expect_error(reactable(df, onClick = "function() {}"))
   expect_error(reactable(df, highlight = "true"))
   expect_error(reactable(df, outlined = "true"))
@@ -630,6 +631,23 @@ test_that("html dependencies from rendered content are passed through", {
   # No dependencies
   tbl <- reactable(data)
   expect_equal(tbl$dependencies, list())
+})
+
+test_that("row selection", {
+  data <- data.frame(x = c(1, 2, 3))
+  tbl <- reactable(data, selection = "single", selectionId = "selected")
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$selection, "single")
+  expect_equal(attribs$selectionId, "selected")
+
+  tbl <- reactable(data, selection = "multiple", defaultSelected = c(1, 3, 2))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$selection, "multiple")
+  expect_equal(attribs$defaultSelected, c(0, 2, 1))
+
+  # Out of bounds errors
+  expect_error(reactable(data, selection = "single", defaultSelected = c(0, 1)))
+  expect_error(reactable(data, selection = "multiple", defaultSelected = c(2, 4)))
 })
 
 test_that("onClick", {

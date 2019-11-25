@@ -1,5 +1,9 @@
 # reactable 0.1.0.9000
 
+### New features
+
+* `reactable()` gains a `defaultSelected` argument to set default selected rows.
+
 ### Bug fixes
 
 * `colFormat(percent = TRUE)` now works correctly when viewing tables in IE11.

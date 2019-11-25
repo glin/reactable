@@ -316,11 +316,11 @@ class Reactable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selected: new Set(),
+      selected: new Set(props.defaultSelected),
       expanded: {}
     }
     this.toggleSelection = this.toggleSelection.bind(this)
-    this.toggleAll = this.toggleAll.bind(this)
+    this.toggleSelectionAll = this.toggleSelectionAll.bind(this)
     this.isSelected = this.isSelected.bind(this)
     this.toggleExpand = this.toggleExpand.bind(this)
     this.isExpanded = this.isExpanded.bind(this)
@@ -340,17 +340,26 @@ class Reactable extends React.Component {
       }
       selected.add(index)
     }
-    this.setState({ selected })
+    this.setState({ selected }, this.onSelectedChange)
   }
 
-  toggleAll(indices, checked) {
+  toggleSelectionAll(indices, checked) {
     const selected = new Set(this.state.selected)
     if (checked) {
       indices.forEach(i => selected.add(i))
     } else {
       indices.forEach(i => selected.delete(i))
     }
-    this.setState({ selected })
+    this.setState({ selected }, this.onSelectedChange)
+  }
+
+  onSelectedChange() {
+    const { selection, selectionId } = this.props
+    if (selection && selectionId && window.Shiny) {
+      // Convert to R's 1-based indices
+      const selected = [...this.state.selected].map(i => i + 1)
+      window.Shiny.onInputChange(selectionId, selected)
+    }
   }
 
   toggleExpand(rowInfo, column) {
@@ -380,14 +389,9 @@ class Reactable extends React.Component {
     return expandedId && expandedId === cellInfo.column.id
   }
 
-  componentDidUpdate() {
-    const { selection, selectionId } = this.props
-    if (selection) {
-      // Convert to R's 1-based indices
-      const selected = [...this.state.selected].map(i => i + 1)
-      if (window.Shiny && selectionId) {
-        Shiny.onInputChange(selectionId, selected)
-      }
+  componentDidMount() {
+    if (this.state.selected.size > 0) {
+      this.onSelectedChange()
     }
   }
 
@@ -466,7 +470,7 @@ class Reactable extends React.Component {
       selectProps = {
         isSelected: this.isSelected,
         toggleSelection: this.toggleSelection,
-        toggleAll: this.toggleAll,
+        toggleAll: this.toggleSelectionAll,
         selectType: selection === 'multiple' ? 'checkbox' : 'radio'
       }
     }
@@ -681,6 +685,7 @@ Reactable.propTypes = {
   minRows: PropTypes.number,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
+  defaultSelected: PropTypes.arrayOf(PropTypes.number),
   onClick: PropTypes.oneOfType([PropTypes.oneOf(['expand', 'select']), PropTypes.func]),
   outlined: PropTypes.bool,
   bordered: PropTypes.bool,

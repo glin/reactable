@@ -51,7 +51,8 @@
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
-#'   represented as a vector of row indices, or `NULL` if no rows are selected.
+#'   given as a numeric vector of row indices, or `NULL` if no rows are selected.
+#' @param defaultSelected A numeric vector of default selected row indices.
 #' @param onClick Action to take when clicking a cell. Either `"expand"` to expand
 #'   the row, `"select"` to select the row, or a [JS()] function that takes a
 #'   row info object, column info object, and table state object as arguments.
@@ -138,7 +139,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
                       minRows = 1, details = NULL, selection = NULL, selectionId = NULL,
-                      onClick = NULL,
+                      defaultSelected = NULL, onClick = NULL,
                       highlight = FALSE, outlined = FALSE, bordered = FALSE,
                       borderless = FALSE, striped = FALSE, compact = FALSE, wrap = TRUE,
                       showSortIcon = TRUE, showSortable = FALSE,
@@ -301,6 +302,16 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
   if (!is.null(selectionId) && !is.character(selectionId)) {
     stop("`selectionId` must be a character")
+  }
+  if (!is.null(defaultSelected)) {
+    if (!is.numeric(defaultSelected)) {
+      stop("`defaultSelected` must be numeric")
+    }
+    if (any(defaultSelected < 1 | defaultSelected > nrow(data))) {
+      stop("`defaultSelected` row indices must be within range")
+    }
+    # Convert to 0-based indexing
+    defaultSelected <- defaultSelected - 1
   }
   if (!is.null(onClick) && !onClick %in% c("expand", "select") && !is.JS(onClick)) {
     stop('`onClick` must be "expand", "select", or a JS function')
@@ -491,6 +502,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     minRows = minRows,
     selection = selection,
     selectionId = selectionId,
+    defaultSelected = defaultSelected,
     onClick = onClick,
     highlight = if (highlight) TRUE,
     outlined = if (outlined) TRUE,
