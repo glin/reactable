@@ -987,6 +987,15 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+#### Default selected rows
+
+> **New in v0.1.0.9000**
+
+You can preselect rows by specifying a vector of row indices in `defaultSelected`:
+```{r}
+reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */
