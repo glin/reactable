@@ -311,7 +311,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       stop("`defaultSelected` row indices must be within range")
     }
     # Convert to 0-based indexing
-    defaultSelected <- defaultSelected - 1
+    defaultSelected <- as.list(defaultSelected - 1)
   }
   if (!is.null(onClick) && !onClick %in% c("expand", "select") && !is.JS(onClick)) {
     stop('`onClick` must be "expand", "select", or a JS function')

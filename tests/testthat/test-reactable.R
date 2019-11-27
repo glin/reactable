@@ -643,7 +643,12 @@ test_that("row selection", {
   tbl <- reactable(data, selection = "multiple", defaultSelected = c(1, 3, 2))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$selection, "multiple")
-  expect_equal(attribs$defaultSelected, c(0, 2, 1))
+  expect_equal(attribs$defaultSelected, list(0, 2, 1))
+
+  # defaultSelected should be serialized as an array
+  tbl <- reactable(data, selection = "single", defaultSelected = 3)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultSelected, list(2))
 
   # Out of bounds errors
   expect_error(reactable(data, selection = "single", defaultSelected = c(0, 1)))
