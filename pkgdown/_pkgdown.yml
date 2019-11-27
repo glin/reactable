@@ -48,3 +48,6 @@ reference:
 - title: Use in Shiny apps
   contents:
   - reactable-shiny
+
+template:
+  path: pkgdown/templates
