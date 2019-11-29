@@ -560,6 +560,31 @@ reactable(
 )
 ```
 
+## Custom fonts
+
+Tables don't have a default font, and just inherit the font properties
+from their parent elements. (This may explain why tables look different in
+in R Markdown documents or Shiny apps vs. standalone pages).
+
+To customize the table font, you can set a font on the page, or on the table itself:
+
+```{r}
+reactable(
+  iris[1:5, ],
+  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+)
+```
+
+```{r}
+# Add a custom font from Google Fonts
+tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+          rel = "stylesheet")
+```
+
+> Side note: these docs use a [system font stack](https://css-tricks.com/snippets/css/system-font-stack):
+>
+> `font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;`
+
 ## Custom sort indicators
 
 To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
