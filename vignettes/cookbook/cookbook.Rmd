@@ -547,6 +547,19 @@ reactable(
 )
 ```
 
+## Borders between columns
+
+```{r}
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Sepal.Width = colDef(style = list(borderRight = "1px solid rgba(0, 0, 0, 0.1)")),
+    Petal.Width = colDef(style = list(borderRight = "1px solid rgba(0, 0, 0, 0.1)"))
+  ),
+  borderless = TRUE
+)
+```
+
 ## Custom sort indicators
 
 To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
