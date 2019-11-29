@@ -94,7 +94,7 @@ export default class Pagination extends React.Component {
     const rowStart = Math.min(page * pageSize + 1, sortedData.length)
     const rowEnd = Math.min(page * pageSize + pageSize, sortedData.length)
     const pageInfo = (
-      <div className="rt-page-info">{`${rowStart}-${rowEnd} ${ofText} ${totalRows} ${rowsText}`}</div>
+      <div className="rt-page-info">{`${rowStart}–${rowEnd} ${ofText} ${totalRows} ${rowsText}`}</div>
     )
     return pageInfo
   }

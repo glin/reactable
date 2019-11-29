@@ -1575,19 +1575,19 @@ describe('pagination', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     let pageInfo = getPageInfo(container)
-    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+    expect(pageInfo).toHaveTextContent('1–2 of 5 rows')
 
     const nextButton = getNextButton(container)
     fireEvent.click(nextButton)
-    expect(pageInfo).toHaveTextContent('3-4 of 5 rows')
+    expect(pageInfo).toHaveTextContent('3–4 of 5 rows')
     fireEvent.click(nextButton)
-    expect(pageInfo).toHaveTextContent('5-5 of 5 rows')
+    expect(pageInfo).toHaveTextContent('5–5 of 5 rows')
 
     // Updates on filtering
     rerender(<Reactable {...props} filterable />)
     const filter = container.querySelector('.rt-thead.-filters input')
     fireEvent.change(filter, { target: { value: '11' } })
-    expect(pageInfo).toHaveTextContent('0-0 of 0 rows')
+    expect(pageInfo).toHaveTextContent('0–0 of 0 rows')
 
     // Hide page info
     rerender(<Reactable {...props} showPageInfo={false} />)
@@ -1616,7 +1616,7 @@ describe('pagination', () => {
     // Change page size
     fireEvent.change(pageSizeSelect, { target: { value: 4 } })
     expect(getRows(container)).toHaveLength(4)
-    expect(getPageInfo(container)).toHaveTextContent('1-4 of 5 rows')
+    expect(getPageInfo(container)).toHaveTextContent('1–4 of 5 rows')
 
     // Hide page size options
     rerender(<Reactable {...props} showPageSizeOptions={false} />)
@@ -1690,18 +1690,18 @@ describe('pagination', () => {
 
     fireEvent.click(pageNumberBtns[1])
     const pageInfo = getPageInfo(container)
-    expect(pageInfo).toHaveTextContent('2-2 of 5 rows')
+    expect(pageInfo).toHaveTextContent('2–2 of 5 rows')
     expect(pageNumberBtns[0]).not.toHaveClass('rt-page-button-active')
     expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
     expect(pageNumberBtns[1]).toHaveAttribute('aria-current', 'page')
 
     // Changing to the same page should be a no-op
     fireEvent.click(pageNumberBtns[1])
-    expect(pageInfo).toHaveTextContent('2-2 of 5 rows')
+    expect(pageInfo).toHaveTextContent('2–2 of 5 rows')
     expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
 
     fireEvent.click(pageNumberBtns[4])
-    expect(pageInfo).toHaveTextContent('5-5 of 5 rows')
+    expect(pageInfo).toHaveTextContent('5–5 of 5 rows')
 
     // Should update on external page changes
     const prevButton = getPrevButton(container)
@@ -1735,14 +1735,14 @@ describe('pagination', () => {
     const pageInfo = getPageInfo(container)
     fireEvent.change(pageJump, { target: { value: 2 } })
     // Shouldn't change page yet
-    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+    expect(pageInfo).toHaveTextContent('1–2 of 5 rows')
     // Should change page on unfocus
     fireEvent.blur(pageJump)
-    expect(pageInfo).toHaveTextContent('3-4 of 5 rows')
+    expect(pageInfo).toHaveTextContent('3–4 of 5 rows')
     fireEvent.change(pageJump, { target: { value: 1 } })
     // Should change page on enter keypress
     fireEvent.keyPress(pageJump, { key: 'Enter', code: 13, charCode: 13 })
-    expect(pageInfo).toHaveTextContent('1-2 of 5 rows')
+    expect(pageInfo).toHaveTextContent('1–2 of 5 rows')
 
     // Should update on external page changes
     const nextButton = getNextButton(container)
