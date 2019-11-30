@@ -189,6 +189,51 @@ reactable(data, columns = list(
 ))
 ```
 
+### Positive and negative values
+
+```{r}
+library(htmltools)
+
+# Render a bar chart with positive and negative values
+bar_chart_pos_neg <- function(label, value, max_value = 1, height = "16px",
+                              pos_fill = "#02aa5c", neg_fill = "#ff121a") {
+  neg_chart <- div(style = list(flex = "1 1 0"))
+  pos_chart <- div(style = list(flex = "1 1 0"))
+  width <- paste0(abs(value / max_value) * 100, "%")
+
+  if (value < 0) {
+    bar <- div(style = list(marginLeft = "8px", background = neg_fill, width = width, height = height))
+    chart <- div(style = list(display = "flex", alignItems = "center", justifyContent = "flex-end"), label, bar)
+    neg_chart <- tagAppendChild(neg_chart, chart)
+  } else {
+    bar <- div(style = list(marginRight = "8px", background = pos_fill, width = width, height = height))
+    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
+    pos_chart <- tagAppendChild(pos_chart, chart)
+  }
+
+  div(style = list(display = "flex"), neg_chart, pos_chart)
+}
+
+data <- data.frame(
+  company = sprintf("Company%02d", 1:10),
+  profit_chg = c(0.2, 0.685, 0.917, 0.284, 0.105, -0.701, -0.528, -0.808, -0.957, -0.11)
+)
+
+reactable(data, bordered = TRUE, columns = list(
+  company = colDef(name = "Company", minWidth = 100),
+  profit_chg = colDef(
+    name = "Change in Profit",
+    defaultSortOrder = "desc",
+    cell = function(value) {
+      label <- paste0(round(value * 100), "%")
+      bar_chart_pos_neg(label, value)
+    },
+    align = "center",
+    minWidth = 400
+  )
+))
+```
+
 ## Embed images
 
 To embed an image, render an [`<img>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
