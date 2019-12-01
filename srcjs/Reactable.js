@@ -185,6 +185,15 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
+// By default, the loading text is always present and read by screen readers, even
+// when hidden. Hide the loading text completely to prevent it from being read.
+const DefaultLoadingComponent = ReactTableDefaults.LoadingComponent
+Object.assign(ReactTableDefaults, {
+  LoadingComponent({ loading, ...rest }) {
+    return loading ? DefaultLoadingComponent({ loading, ...rest }) : null
+  }
+})
+
 ReactTable.propTypes = fixedReactTablePropTypes
 
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison
