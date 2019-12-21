@@ -38,6 +38,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, showPageInfo = "true"))
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, details = "details"))
+  expect_error(reactable(df, defaultExpanded = TRUE))
   expect_error(reactable(df, selection = "none"))
   expect_error(reactable(df, selectionId = 123))
   expect_error(reactable(df, defaultSelected = "12"))
@@ -571,6 +572,53 @@ test_that("row details", {
   tbl <- reactable(data, columns = list(y = colDef(details = function(i) data[i, "y"])))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[2]]$details, list("a", "b"))
+})
+
+test_that("defaultExpanded", {
+  data <- data.frame(x = c(1, 2, 3, 4), y = c(2, 4, 6, 8), z = c("a", "b", "c", "d"))
+
+  # Table-level row details
+  tbl <- reactable(data, details = function(i) i, defaultExpanded = c(1, 4))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultExpanded, list(.details = c(0, 3)))
+
+  # Column-specific row details
+  tbl <- reactable(data, columns = list(y = colDef(details = function(i) i)), defaultExpanded = 2)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultExpanded, list(y = 1))
+
+  # Defaults to first expandable column
+  tbl <- reactable(data, details = function(i) i, defaultColDef = colDef(details = function(i) i),
+                   defaultExpanded = c(3, 4))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultExpanded, list(.details = c(2, 3)))
+
+  tbl <- reactable(data, defaultColDef = colDef(details = function(i) i), defaultExpanded = c(3, 4))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultExpanded, list(x = c(2, 3)))
+
+  # Named list of row indices
+  tbl <- reactable(data, defaultColDef = colDef(details = function(i) i),
+                   defaultExpanded = list(.details = c(3, 4), x = c(1, 2), y = 3))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$defaultExpanded, list(.details = c(2, 3), x = c(0, 1), y = 2))
+
+  # No row details
+  tbl <- reactable(data, defaultExpanded = c(1, 2))
+  attribs <- getAttribs(tbl)
+  expect_null(attribs$defaultExpanded)
+
+  # Errors
+  expect_error(reactable(data, details = JS("rowInfo => 1"), defaultExpanded = c("a", "b")),
+               "`defaultExpanded` must be a numeric vector or named list")
+  expect_error(reactable(data, details = JS("rowInfo => 1"), defaultExpanded = list(x = c("a", "b"))),
+               "row indices must be numeric")
+  expect_error(reactable(data, details = JS("rowInfo => 1"), defaultExpanded = c(0, 1)),
+               "row indices must be within range")
+  expect_error(reactable(data, details = JS("rowInfo => 1"), defaultExpanded = c(2, 5)),
+               "row indices must be within range")
+  expect_error(reactable(data, details = JS("rowInfo => 1"), defaultExpanded = list(.details = c(2, 5))),
+               "row indices must be within range")
 })
 
 test_that("html dependencies from rendered content are passed through", {

@@ -9,7 +9,7 @@ import selectTableHOC from './selectTable'
 import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
-import { classNames, getFirstDefined, get, set } from './utils'
+import { classNames, getFirstDefined, get, set, invertObj } from './utils'
 
 import 'react-table/react-table.css'
 import './reactable.css'
@@ -326,7 +326,7 @@ class Reactable extends React.Component {
     super(props)
     this.state = {
       selected: new Set(props.defaultSelected),
-      expanded: {}
+      expanded: props.defaultExpanded ? invertObj(props.defaultExpanded) : {}
     }
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleSelectionAll = this.toggleSelectionAll.bind(this)
@@ -401,6 +401,15 @@ class Reactable extends React.Component {
   componentDidMount() {
     if (this.state.selected.size > 0) {
       this.onSelectedChange()
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { defaultExpanded } = this.props
+    if (prevProps.defaultExpanded !== defaultExpanded) {
+      this.setState({
+        expanded: defaultExpanded ? invertObj(defaultExpanded) : {}
+      })
     }
   }
 
@@ -692,6 +701,7 @@ Reactable.propTypes = {
   showPageSizeOptions: PropTypes.bool,
   showPageInfo: Pagination.propTypes.showPageInfo,
   minRows: PropTypes.number,
+  defaultExpanded: PropTypes.object,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
   defaultSelected: PropTypes.arrayOf(PropTypes.number),

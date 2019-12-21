@@ -952,6 +952,33 @@ describe('expandable row details and pivot rows', () => {
     expect(expanderCells[1]).not.toHaveStyle('text-overflow: inherit')
   })
 
+  it('default expanded', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: [3, 4, 5] },
+      columns: [
+        { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.index}-a` },
+        { name: 'b', accessor: 'b', details: rowInfo => `row details: ${rowInfo.index}-b` },
+        { name: 'c', accessor: 'c', details: rowInfo => `row details: ${rowInfo.index}-c` }
+      ]
+    }
+    const { getByText, queryByText, rerender } = render(
+      <Reactable {...props} defaultExpanded={{ a: 0, b: [1] }} />
+    )
+    expect(getByText('row details: 0-a')).toBeTruthy()
+    expect(getByText('row details: 1-b')).toBeTruthy()
+    expect(queryByText('row details: 2-c')).toEqual(null)
+
+    // Should update when props change
+    rerender(<Reactable {...props} />)
+    expect(queryByText('row details:')).toEqual(null)
+    rerender(<Reactable {...props} defaultExpanded={{ a: [1, 2], c: 0 }} />)
+    expect(getByText('row details: 0-c')).toBeTruthy()
+    expect(getByText('row details: 1-a')).toBeTruthy()
+    expect(getByText('row details: 2-a')).toBeTruthy()
+    rerender(<Reactable {...props} defaultExpanded={{}} />)
+    expect(queryByText('row details:')).toEqual(null)
+  })
+
   it('handles Shiny elements in content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
     const columns = [
