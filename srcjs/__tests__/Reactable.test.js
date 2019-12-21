@@ -158,7 +158,10 @@ describe('sorting', () => {
   it('shows or hides sort icons', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
-      columns: [{ name: 'colA', accessor: 'a', type: 'numeric' }, { name: 'colB', accessor: 'b' }]
+      columns: [
+        { name: 'colA', accessor: 'a', type: 'numeric' },
+        { name: 'colB', accessor: 'b' }
+      ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
     const numericSortIcon = container.querySelectorAll('.-sort-left')
@@ -213,7 +216,10 @@ describe('filtering', () => {
   it('enables filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
     let filters = getFilters(container)
@@ -367,7 +373,10 @@ describe('filtering', () => {
     const { container } = render(
       <Reactable
         data={{ a: [1, 2], b: ['a', 'b'] }}
-        columns={[{ name: 'column-a', accessor: 'a' }, { name: 'column-b', accessor: 'b' }]}
+        columns={[
+          { name: 'column-a', accessor: 'a' },
+          { name: 'column-b', accessor: 'b' }
+        ]}
         filterable
       />
     )
@@ -385,7 +394,10 @@ describe('searching', () => {
   it('enables searching', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
     let searchInput = getSearchInput(container)
@@ -508,7 +520,10 @@ describe('searching', () => {
     const { container } = render(
       <Reactable
         data={{ a: [1, 2, 3], b: ['b', 'b', 'b'] }}
-        columns={[{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b', show: false }]}
+        columns={[
+          { name: 'a', accessor: 'a' },
+          { name: 'b', accessor: 'b', show: false }
+        ]}
         searchable
         minRows={1}
       />
@@ -523,7 +538,10 @@ describe('searching', () => {
     const { container } = render(
       <Reactable
         data={{ a: [1, 2, 3], b: ['aa', 'bb', 'bbcc'] }}
-        columns={[{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]}
+        columns={[
+          { name: 'a', accessor: 'a' },
+          { name: 'b', accessor: 'b' }
+        ]}
         searchable
         selection="single"
       />
@@ -569,7 +587,10 @@ describe('searching', () => {
   it('resets search value when searchable changes', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ]
     }
     const { container, rerender } = render(<Reactable {...props} searchable />)
     let searchInput = getSearchInput(container)
@@ -728,7 +749,7 @@ describe('row selection', () => {
 
   it('default selected', () => {
     const { container, getByLabelText } = render(
-      <Reactable {...props} selection="multiple" selectionId="selected" defaultSelected={[1, 0]}/>
+      <Reactable {...props} selection="multiple" selectionId="selected" defaultSelected={[1, 0]} />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
@@ -875,7 +896,10 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('renders empty row details', () => {
-    const columns = [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b', details: ['', ''] }]
+    const columns = [
+      { name: 'a', accessor: 'a' },
+      { name: 'b', accessor: 'b', details: ['', ''] }
+    ]
     const { container } = render(<Reactable {...props} columns={columns} />)
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
@@ -994,7 +1018,10 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('pivoting still works with custom expanders', () => {
-    const columns = [{ name: 'col-a', accessor: 'a' }, { name: 'col-b', accessor: 'b' }]
+    const columns = [
+      { name: 'col-a', accessor: 'a' },
+      { name: 'col-b', accessor: 'b' }
+    ]
     const { container } = render(
       <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
     )
@@ -1409,7 +1436,10 @@ describe('row classes and styles', () => {
   it('applies fixed classes and styles', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       rowClassName: 'my-row',
       rowStyle: { backgroundColor: 'red' }
     }
@@ -1424,7 +1454,10 @@ describe('row classes and styles', () => {
   it('applies conditional classes and styles from JS callbacks', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       minRows: 5,
       rowClassName: (rowInfo, state) => {
         if (!rowInfo) {
@@ -1463,7 +1496,10 @@ describe('row classes and styles', () => {
   it('applies conditional classes and styles from R callbacks', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       minRows: 5,
       rowClassName: ['row1', 'row2', null],
       rowStyle: [{ backgroundColor: 'red' }, { backgroundColor: 'black' }, null]
@@ -1518,7 +1554,10 @@ describe('pagination', () => {
   it('shows or hides pagination', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }]
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ]
     }
 
     // Auto hidden if table always fits on one page
@@ -1570,7 +1609,10 @@ describe('pagination', () => {
   it('page info', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['a', 'b', 'c', 'd', 'e'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       defaultPageSize: 2
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -1598,7 +1640,10 @@ describe('pagination', () => {
   it('page size options', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       defaultPageSize: 2,
       showPageSizeOptions: true,
       pageSizeOptions: [2, 4, 6]
@@ -1630,7 +1675,10 @@ describe('pagination', () => {
   it('simple page navigation', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       defaultPageSize: 2,
       paginationType: 'simple'
     }
@@ -1670,7 +1718,10 @@ describe('pagination', () => {
   it('page number buttons', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       defaultPageSize: 1,
       paginationType: 'numbers'
     }
@@ -1722,7 +1773,10 @@ describe('pagination', () => {
   it('page jump', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
-      columns: [{ name: 'a', accessor: 'a' }, { name: 'b', accessor: 'b' }],
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
       defaultPageSize: 2,
       paginationType: 'jump'
     }
