@@ -572,8 +572,8 @@ class Reactable extends React.Component {
     const onExpandedChange = newExpanded => {
       this.setState({ expanded: newExpanded })
     }
-    // And also handle collapsing on page/sorting/filter change
-    const collapseDetails = () => {
+    // And also handle collapsing on page and sorting (but not filtering) change
+    const collapseExpanded = () => {
       if (Object.keys(this.state.expanded).length > 0) {
         this.setState({ expanded: {} })
       }
@@ -664,8 +664,8 @@ class Reactable extends React.Component {
         style={style}
         expanded={this.state.expanded}
         onExpandedChange={onExpandedChange}
-        onPageChange={collapseDetails}
-        onSortedChange={collapseDetails}
+        onPageChange={collapseExpanded}
+        onSortedChange={collapseExpanded}
         getTableProps={getTableProps}
         getTheadGroupThProps={getTheadGroupThProps}
         getTheadThProps={getTheadThProps}
