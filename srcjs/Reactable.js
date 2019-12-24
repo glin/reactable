@@ -405,11 +405,14 @@ class Reactable extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { defaultExpanded } = this.props
+    const { defaultSelected, defaultExpanded } = this.props
+    if (prevProps.defaultSelected !== defaultSelected) {
+      const selected = new Set(defaultSelected)
+      this.setState({ selected }, this.onSelectedChange)
+    }
     if (prevProps.defaultExpanded !== defaultExpanded) {
-      this.setState({
-        expanded: defaultExpanded ? invertObj(defaultExpanded) : {}
-      })
+      const expanded = defaultExpanded ? invertObj(defaultExpanded) : {}
+      this.setState({ expanded })
     }
   }
 

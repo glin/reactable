@@ -748,17 +748,42 @@ describe('row selection', () => {
   })
 
   it('default selected', () => {
-    const { container, getByLabelText } = render(
-      <Reactable {...props} selection="multiple" selectionId="selected" defaultSelected={[1, 0]} />
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      selectionId: 'selected'
+    }
+    const { container, getByLabelText, rerender } = render(
+      <Reactable {...props} defaultSelected={[1, 0]} />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
-    const selectAllCheckbox = getByLabelText('Deselect all rows')
-    const selectRow1Checkbox = getByLabelText('Deselect row 1')
-    const selectRow2Checkbox = getByLabelText('Deselect row 2')
+    let selectAllCheckbox = getByLabelText('Deselect all rows')
+    let selectRow1Checkbox = getByLabelText('Deselect row 1')
+    let selectRow2Checkbox = getByLabelText('Deselect row 2')
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
+
+    // Should update when props change
+    rerender(<Reactable {...props} defaultSelected={[0]} />)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
+    selectAllCheckbox = getByLabelText('Select all rows')
+    selectRow1Checkbox = getByLabelText('Deselect row 1')
+    selectRow2Checkbox = getByLabelText('Select row 2')
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+    // Clear selection
+    rerender(<Reactable {...props} />)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+    selectAllCheckbox = getByLabelText('Select all rows')
+    selectRow1Checkbox = getByLabelText('Select row 1')
+    selectRow2Checkbox = getByLabelText('Select row 2')
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
   })
 
   it('works without Shiny', () => {
