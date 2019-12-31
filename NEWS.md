@@ -3,7 +3,7 @@
 ### New features
 
 * `reactable()` gains a `defaultSelected` argument to set default selected rows.
-* `reactable()` gains a `defaultExpanded` argument to set default expanded row details.
+* `reactable()` gains a `defaultExpanded` argument to set default expanded rows.
 
 ### Bug fixes
 

@@ -5,7 +5,6 @@ import {
   strIncludes,
   get,
   set,
-  invertObj
 } from '../utils'
 
 test('classNames', () => {
@@ -78,11 +77,4 @@ test('set', () => {
   const obj = { 1: 2 }
   set(obj, [1], 5)
   expect(obj[1]).toEqual(2)
-})
-
-test('invertObj', () => {
-  expect(invertObj({})).toEqual({})
-  expect(invertObj({ abc: 0 })).toEqual({ 0: 'abc' })
-  expect(invertObj({ a: [1, 2, 3] })).toEqual({ 1: 'a', 2: 'a', 3: 'a' })
-  expect(invertObj({ abc: 0, a: [1, 2, 3], b: [3, 0] })).toEqual({ 0: 'b', 1: 'a', 2: 'a', 3: 'b' })
 })

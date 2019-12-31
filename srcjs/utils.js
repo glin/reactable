@@ -58,16 +58,3 @@ export function set(obj, path, value) {
 export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
-
-// Invert an object, e.g. { a: [1, 2], b: 2 } -> { 1: 'a', 2: 'b' }
-export function invertObj(obj) {
-  return Object.keys(obj).reduce((inverted, key) => {
-    const val = obj[key]
-    if (val instanceof Array) {
-      val.forEach(v => (inverted[v] = key))
-    } else {
-      inverted[val] = key
-    }
-    return inverted
-  }, {})
-}

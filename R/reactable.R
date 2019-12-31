@@ -48,11 +48,7 @@
 #'   that takes a row index argument or a [JS()] function that takes
 #'   a row info object as an argument. Can also be a [colDef()] to customize the
 #'   details expander column.
-#' @param defaultExpanded Default expanded row details. Either a numeric vector of
-#'   row indices, or a named list of row indices for specific columns to expand.
-#'
-#'   To specify table-level row details in a named list, use `".details"` as the
-#'   column name.
+#' @param defaultExpanded Expand all rows by default?
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
@@ -143,7 +139,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
-                      minRows = 1, details = NULL, defaultExpanded = NULL,
+                      minRows = 1, details = NULL, defaultExpanded = FALSE,
                       selection = NULL, selectionId = NULL,
                       defaultSelected = NULL, onClick = NULL,
                       highlight = FALSE, outlined = FALSE, bordered = FALSE,
@@ -303,29 +299,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   if (!is.numeric(minRows)) {
     stop("`minRows` must be numeric")
   }
-  if (!is.null(defaultExpanded)) {
-    if (!is.numeric(defaultExpanded) && !isNamedList(defaultExpanded)) {
-      stop("`defaultExpanded` must be a numeric vector or named list of row indices")
-    }
-    if (is.numeric(defaultExpanded)) {
-      firstDetailsKey <- Find(function(key) !is.null(columns[[key]][["details"]]), columnKeys)
-      if (is.null(firstDetailsKey)) {
-        defaultExpanded <- NULL
-      } else {
-        defaultExpanded <- stats::setNames(list(defaultExpanded), firstDetailsKey)
-      }
-    }
-    for (key in names(defaultExpanded)) {
-      indexes <- defaultExpanded[[key]]
-      if (!is.numeric(indexes)) {
-        stop("`defaultExpanded` row indices must be numeric")
-      }
-      if (any(indexes < 1 | indexes > nrow(data))) {
-        stop("`defaultExpanded` row indices must be within range")
-      }
-      # Convert to 0-based indexing
-      defaultExpanded[[key]] <- indexes - 1
-    }
+  if (!is.logical(defaultExpanded)) {
+    stop("`defaultExpanded` must be TRUE or FALSE")
   }
   if (!is.null(selection) && !selection %in% c("multiple", "single")) {
     stop('`selection` must be "multiple" or "single"')
@@ -530,7 +505,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     showPagination = if (!is.null(showPagination)) showPagination,
     showPageInfo = showPageInfo,
     minRows = minRows,
-    defaultExpanded = defaultExpanded,
+    defaultExpanded = if (defaultExpanded) defaultExpanded,
     selection = selection,
     selectionId = selectionId,
     defaultSelected = defaultSelected,

@@ -685,27 +685,15 @@ reactable(iris[1:5, ],
 
 > **New in v0.1.0.9000**
 
-You can set default expanded rows by specifying a vector of row indices in `defaultExpanded`:
+You can expand all rows by default by setting `defaultExpanded` to `TRUE`:
 ```{r}
 reactable(
   iris[1:4, ],
   details = function(index) paste("Details for row:", index),
-  defaultExpanded = c(1, 3)
+  defaultExpanded = TRUE
 )
 ```
 
-When there are multiple row details, you can specify which columns are expanded
-using a named list instead:
-```{r}
-reactable(
-  iris[1:4, ],
-  details = function(index) paste("Details for row:", index),
-  columns = list(Species = colDef(details = function(index) paste("Species details for row:", index))),
-  defaultExpanded = list(Species = c(1, 2, 3), .details = 3)
-)
-```
-
-> Note: to specify table-level row details in a named list, use `.details` as the column name.
 
 ## Conditional Styling
 You can conditionally style a table using functions that return inline styles

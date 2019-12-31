@@ -9,7 +9,7 @@ import selectTableHOC from './selectTable'
 import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
-import { classNames, getFirstDefined, get, set, invertObj } from './utils'
+import { classNames, getFirstDefined, get, set } from './utils'
 
 import 'react-table/react-table.css'
 import './reactable.css'
@@ -326,13 +326,14 @@ class Reactable extends React.Component {
     super(props)
     this.state = {
       selected: new Set(props.defaultSelected),
-      expanded: props.defaultExpanded ? invertObj(props.defaultExpanded) : {}
+      expanded: props.defaultExpanded || {}
     }
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleSelectionAll = this.toggleSelectionAll.bind(this)
     this.isSelected = this.isSelected.bind(this)
     this.toggleExpand = this.toggleExpand.bind(this)
     this.isExpanded = this.isExpanded.bind(this)
+    this.tableRef = React.createRef()
   }
 
   isSelected(index) {
@@ -398,9 +399,30 @@ class Reactable extends React.Component {
     return expandedId && expandedId === cellInfo.column.id
   }
 
+  toggleExpandAll() {
+    // Convert the possibly grouped and/or sorted data to an expanded state object
+    const { columns, sortedData } = this.tableRef.current.state
+    const firstDetailsColumn = columns.find(col => col.details)
+    const dataToExpandedObj = arr => {
+      return arr.reduce((obj, item, index) => {
+        if (item._subRows) {
+          obj[index] = dataToExpandedObj(item._subRows)
+        } else {
+          obj[index] = firstDetailsColumn ? firstDetailsColumn.id : {}
+        }
+        return obj
+      }, {})
+    }
+    const expanded = dataToExpandedObj(sortedData)
+    this.setState({ expanded })
+  }
+
   componentDidMount() {
     if (this.state.selected.size > 0) {
       this.onSelectedChange()
+    }
+    if (this.state.expanded === true) {
+      this.toggleExpandAll()
     }
   }
 
@@ -411,8 +433,12 @@ class Reactable extends React.Component {
       this.setState({ selected }, this.onSelectedChange)
     }
     if (prevProps.defaultExpanded !== defaultExpanded) {
-      const expanded = defaultExpanded ? invertObj(defaultExpanded) : {}
-      this.setState({ expanded })
+      if (defaultExpanded === true) {
+        this.toggleExpandAll()
+      } else {
+        const expanded = defaultExpanded || {}
+        this.setState({ expanded })
+      }
     }
   }
 
@@ -681,6 +707,7 @@ class Reactable extends React.Component {
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
         dataKey={dataKey}
+        ref={this.tableRef}
       />
     )
   }
@@ -704,7 +731,7 @@ Reactable.propTypes = {
   showPageSizeOptions: PropTypes.bool,
   showPageInfo: Pagination.propTypes.showPageInfo,
   minRows: PropTypes.number,
-  defaultExpanded: PropTypes.object,
+  defaultExpanded: PropTypes.bool,
   selection: PropTypes.oneOf(['multiple', 'single']),
   selectionId: PropTypes.string,
   defaultSelected: PropTypes.arrayOf(PropTypes.number),
