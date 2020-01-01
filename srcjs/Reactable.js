@@ -328,12 +328,16 @@ class Reactable extends React.Component {
       selected: new Set(props.defaultSelected),
       expanded: props.defaultExpanded || {}
     }
+    this.isSelected = this.isSelected.bind(this)
     this.toggleSelection = this.toggleSelection.bind(this)
     this.toggleSelectionAll = this.toggleSelectionAll.bind(this)
-    this.isSelected = this.isSelected.bind(this)
+    this.setSelection = this.setSelection.bind(this)
     this.toggleExpand = this.toggleExpand.bind(this)
+    this.toggleExpandAll = this.toggleExpandAll.bind(this)
+    this.toggleCollapseAll = this.toggleCollapseAll.bind(this)
     this.isExpanded = this.isExpanded.bind(this)
-    this.tableRef = React.createRef()
+    this.tableInstance = React.createRef()
+    this.tableElement = React.createRef()
   }
 
   isSelected(index) {
@@ -361,6 +365,10 @@ class Reactable extends React.Component {
       indices.forEach(i => selected.delete(i))
     }
     this.setState({ selected }, this.onSelectedChange)
+  }
+
+  setSelection(indices) {
+    this.setState({ selected: new Set(indices) }, this.onSelectedChange)
   }
 
   onSelectedChange() {
@@ -401,7 +409,7 @@ class Reactable extends React.Component {
 
   toggleExpandAll() {
     // Convert the possibly grouped and/or sorted data to an expanded state object
-    const { columns, sortedData } = this.tableRef.current.state
+    const { columns, sortedData } = this.tableInstance.current.state
     const firstDetailsColumn = columns.find(col => col.details)
     const dataToExpandedObj = arr => {
       return arr.reduce((obj, item, index) => {
@@ -417,12 +425,29 @@ class Reactable extends React.Component {
     this.setState({ expanded })
   }
 
+  toggleCollapseAll() {
+    this.setState({ expanded: {} })
+  }
+
   componentDidMount() {
     if (this.state.selected.size > 0) {
       this.onSelectedChange()
     }
     if (this.state.expanded === true) {
       this.toggleExpandAll()
+    }
+
+    if (window.Shiny) {
+      const outputId = this.tableElement.current.parentElement.id
+      const updateState = state => {
+        if (state.selected != null) {
+          this.setSelection(state.selected)
+        }
+        if (state.expanded != null) {
+          state.expanded ? this.toggleExpandAll() : this.toggleCollapseAll()
+        }
+      }
+      window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
     }
   }
 
@@ -707,7 +732,11 @@ class Reactable extends React.Component {
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
         dataKey={dataKey}
-        ref={this.tableRef}
+        ref={this.tableInstance}
+        // Get the table's DOM element
+        getProps={() => {
+          return { ref: this.tableElement }
+        }}
       />
     )
   }

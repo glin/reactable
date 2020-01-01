@@ -1009,6 +1009,56 @@ You can preselect rows by specifying a vector of row indices in `defaultSelected
 reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
 ```
 
+### Update selected or expanded rows
+
+> **New in v0.1.0.9000**
+
+You can update selected or expanded rows using `updateReactable()`:
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  actionButton("select_btn", "Select rows"),
+  actionButton("clear_btn", "Clear selection"),
+  actionButton("expand_btn", "Expand rows"),
+  actionButton("collapse_btn", "Collapse rows"),
+  reactableOutput("table")
+)
+
+server <- function(input, output) {
+  output$table <- renderReactable({
+    reactable(
+      iris,
+      selection = "multiple",
+      details = function(index) paste("Details for row:", index)
+    )
+  })
+
+  observeEvent(input$select_btn, {
+    # Select rows
+    updateReactable("table", selected = c(1, 3, 5))
+  })
+
+  observeEvent(input$clear_btn, {
+    # Clear row selection
+    updateReactable("table", selected = NA)
+  })
+
+  observeEvent(input$expand_btn, {
+    # Expand all rows
+    updateReactable("table", expanded = TRUE)
+  })
+
+  observeEvent(input$collapse_btn, {
+    # Collapse all rows
+    updateReactable("table", expanded = FALSE)
+  })
+}
+
+shinyApp(ui, server)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */

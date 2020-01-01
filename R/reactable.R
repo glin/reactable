@@ -572,6 +572,8 @@ columnSortDefs <- function(defaultSorted) {
 #' See the [online demo](https://glin.github.io/reactable/articles/shiny-demo.html)
 #' for additional examples of using reactable in Shiny.
 #'
+#' @seealso [updateReactable()] for updating reactable instances in Shiny.
+#'
 #' @examples
 #' # Run in an interactive R session
 #' if (interactive()) {

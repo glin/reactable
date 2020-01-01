@@ -63,3 +63,6 @@ shinyApp(ui, server)
 }
 
 }
+\seealso{
+\code{\link[=updateReactable]{updateReactable()}} for updating reactable instances in Shiny.
+}

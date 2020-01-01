@@ -4,6 +4,7 @@
 
 * `reactable()` gains a `defaultSelected` argument to set default selected rows.
 * `reactable()` gains a `defaultExpanded` argument to set default expanded rows.
+* New `updateReactable()` function to update selected and expanded rows of a reactable instance in Shiny.
 
 ### Bug fixes
 

@@ -48,6 +48,7 @@ reference:
 - title: Use in Shiny apps
   contents:
   - reactable-shiny
+  - updateReactable
 
 template:
   path: pkgdown/templates

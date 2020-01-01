@@ -681,7 +681,7 @@ describe('table styles', () => {
 
 describe('row selection', () => {
   beforeEach(() => {
-    window.Shiny = { onInputChange: jest.fn() }
+    window.Shiny = { onInputChange: jest.fn(), addCustomMessageHandler: jest.fn() }
   })
 
   afterEach(() => {
@@ -978,7 +978,7 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('handles Shiny elements in content', () => {
-    window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn() }
+    window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn(), addCustomMessageHandler: jest.fn() }
     const columns = [
       { name: 'a', accessor: 'a', details: ['row details: a'] },
       { name: 'b', accessor: 'b', details: ['row details: b'] }
@@ -1955,5 +1955,74 @@ describe('no data', () => {
     const { queryByText } = render(<Reactable {...props} />)
     const noData = queryByText('No rows found')
     expect(noData).toEqual(null)
+  })
+})
+
+describe('update reactable state from Shiny', () => {
+  beforeEach(() => {
+    window.Shiny = {
+      onInputChange: jest.fn(),
+      addCustomMessageHandler: jest.fn(),
+      bindAll: jest.fn(),
+      unbindAll: jest.fn()
+    }
+  })
+
+  afterEach(() => {
+    delete window.Shiny
+  })
+
+  it('updates selected rows', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      selectionId: 'selected'
+    }
+    const { getByLabelText } = render(
+      <div id="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__shiny-output-container')
+
+    updateState({ selected: [1, 0] })
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
+    let selectAllCheckbox = getByLabelText('Deselect all rows')
+    let selectRow1Checkbox = getByLabelText('Deselect row 1')
+    let selectRow2Checkbox = getByLabelText('Deselect row 2')
+    expect(selectAllCheckbox.checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+
+    updateState({ selected: [] })
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+    selectAllCheckbox = getByLabelText('Select all rows')
+    selectRow1Checkbox = getByLabelText('Select row 1')
+    selectRow2Checkbox = getByLabelText('Select row 2')
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
+  it('updates expanded rows', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2'] }]
+    }
+    const { getByText, queryByText } = render(<Reactable {...props} />)
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__')
+
+    updateState({ expanded: true })
+    expect(getByText('detail-1')).toBeTruthy()
+    expect(getByText('detail-2')).toBeTruthy()
+
+    updateState({ expanded: false })
+    expect(queryByText('detail-1')).toEqual(null)
+    expect(queryByText('detail-2')).toEqual(null)
   })
 })
