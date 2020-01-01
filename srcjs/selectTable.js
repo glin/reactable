@@ -37,7 +37,7 @@ DefaultSelectInputComponent.propTypes = {
 }
 
 export default (Component, options) => {
-  const wrapper = class RTSelectTable extends React.Component {
+  class RTSelectTable extends React.Component {
     constructor(props) {
       super(props)
     }
@@ -94,7 +94,7 @@ export default (Component, options) => {
     }
 
     render() {
-      const { columns: originalCols, selectWidth, ...rest } = this.props
+      const { columns: originalCols, selectWidth, forwardedRef, ...rest } = this.props
       const select = {
         id: '_selector',
         accessor: () => '', // this value is not important
@@ -127,27 +127,29 @@ export default (Component, options) => {
         columns
       }
 
-      RTSelectTable.propTypes = {
-        selectType: PropTypes.oneOf(['checkbox', 'radio']).isRequired,
-        SelectInputComponent: PropTypes.func.isRequired,
-        SelectAllInputComponent: PropTypes.func.isRequired,
-        isSelected: PropTypes.func.isRequired,
-        toggleSelection: PropTypes.func.isRequired,
-        toggleAll: PropTypes.func.isRequired,
-        selectWidth: PropTypes.number,
-        columns: PropTypes.array.isRequired
-      }
-
-      return <Component {...rest} {...extra} />
+      return <Component ref={forwardedRef} {...rest} {...extra} />
     }
   }
 
-  wrapper.displayName = 'RTSelectTable'
-  wrapper.defaultProps = {
+  RTSelectTable.displayName = 'RTSelectTable'
+  RTSelectTable.propTypes = {
+    selectType: PropTypes.oneOf(['checkbox', 'radio']).isRequired,
+    SelectInputComponent: PropTypes.func.isRequired,
+    SelectAllInputComponent: PropTypes.func.isRequired,
+    isSelected: PropTypes.func.isRequired,
+    toggleSelection: PropTypes.func.isRequired,
+    toggleAll: PropTypes.func.isRequired,
+    selectWidth: PropTypes.number,
+    columns: PropTypes.array.isRequired,
+    forwardedRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })])
+  }
+  RTSelectTable.defaultProps = {
     selectType: 'checkbox',
     SelectInputComponent: DefaultSelectInputComponent,
     SelectAllInputComponent: DefaultSelectInputComponent
   }
 
-  return wrapper
+  return React.forwardRef((props, ref) => {
+    return <RTSelectTable {...props} forwardedRef={ref} />
+  })
 }
