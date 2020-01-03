@@ -680,8 +680,15 @@ describe('table styles', () => {
 })
 
 describe('row selection', () => {
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+
   beforeEach(() => {
-    window.Shiny = { onInputChange: jest.fn(), addCustomMessageHandler: jest.fn() }
+    window.Shiny = {
+      onInputChange: jest.fn(),
+      addCustomMessageHandler: jest.fn(),
+      bindAll: jest.fn(),
+      unbindAll: jest.fn()
+    }
   })
 
   afterEach(() => {
@@ -833,6 +840,44 @@ describe('row selection', () => {
     fireEvent.click(getByText('aaa2'))
     expect(selectRow1Radio.checked).toEqual(true)
     expect(selectRow2Radio.checked).toEqual(true)
+  })
+
+  it('selected state available in rowInfo', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          details: rowInfo => `row ${rowInfo.index} selected? ${rowInfo.selected ? 'yes' : 'no'}`
+        },
+        { name: 'b', accessor: 'b' }
+      ],
+      minRows: 3,
+      selection: 'multiple',
+      rowClassName: rowInfo => {
+        if (rowInfo.selected) {
+          return 'selected'
+        }
+      },
+      rowStyle: rowInfo => {
+        if (rowInfo.selected) {
+          return { backgroundColor: 'red' }
+        }
+      },
+      defaultExpanded: true
+    }
+    const { container, getByLabelText, getByText } = render(<Reactable {...props} />)
+    const selectRow1Checkbox = getByLabelText('Select row 1')
+    fireEvent.click(selectRow1Checkbox)
+
+    const rows = getRows(container)
+    expect(rows[0]).toHaveClass('selected')
+    expect(rows[1]).not.toHaveClass('selected')
+    expect(rows[0]).toHaveStyle('background-color: red')
+    expect(rows[1]).not.toHaveStyle('background-color: red')
+    expect(getByText('row 0 selected? yes')).toBeTruthy()
+    expect(getByText('row 1 selected? no')).toBeTruthy()
   })
 })
 

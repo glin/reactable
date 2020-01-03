@@ -429,6 +429,18 @@ class Reactable extends React.Component {
     this.setState({ expanded: {} })
   }
 
+  getRowInfo(rowInfo) {
+    // Ignore padding rows
+    if (!rowInfo) {
+      return rowInfo
+    }
+    // Add selection state to rowInfo
+    if (this.props.selection) {
+      return { selected: this.isSelected(rowInfo.index), ...rowInfo }
+    }
+    return rowInfo
+  }
+
   componentDidMount() {
     if (this.state.selected.size > 0) {
       this.onSelectedChange()
@@ -555,7 +567,7 @@ class Reactable extends React.Component {
         let props = {}
         if (rowClassName) {
           if (typeof rowClassName === 'function') {
-            props.className = rowClassName(rowInfo, state)
+            props.className = rowClassName(this.getRowInfo(rowInfo), state)
           } else if (rowClassName instanceof Array) {
             // Ignore padding rows
             props.className = rowInfo && rowClassName[rowInfo.index]
@@ -565,7 +577,7 @@ class Reactable extends React.Component {
         }
         if (rowStyle) {
           if (typeof rowStyle === 'function') {
-            props.style = rowStyle(rowInfo, state)
+            props.style = rowStyle(this.getRowInfo(rowInfo), state)
           } else if (rowStyle instanceof Array) {
             // Ignore padding rows
             props.style = rowInfo && rowStyle[rowInfo.index]
@@ -590,7 +602,7 @@ class Reactable extends React.Component {
         const { details, html } = column
         let props = {}
         if (typeof details === 'function') {
-          let content = details(rowInfo)
+          let content = details(this.getRowInfo(rowInfo))
           if (html) {
             props.html = content
           }

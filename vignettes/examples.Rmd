@@ -1009,6 +1009,29 @@ You can preselect rows by specifying a vector of row indices in `defaultSelected
 reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
 ```
 
+#### Style selected rows
+
+> **New in v0.1.0.9000**
+
+You can style selected rows using a `rowClass` or `rowStyle` JavaScript function:
+```{r}
+reactable(
+  iris[1:4, ],
+  selection = "multiple",
+  defaultSelected = c(1, 3),
+  rowClass = JS("function(rowInfo) {
+    return rowInfo.selected ? 'selected' : ''
+  }"),
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.selected) {
+      return { backgroundColor: '#eee', boxShadow: 'inset 2px 0 0 0 #ffa62d' }
+    }
+  }"),
+  borderless = TRUE,
+  onClick = "select"
+)
+```
+
 ### Update selected or expanded rows
 
 > **New in v0.1.0.9000**
