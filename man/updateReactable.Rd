@@ -5,7 +5,7 @@
 \title{Update a reactable instance}
 \usage{
 updateReactable(outputId, selected = NULL, expanded = NULL,
-  session = NULL)
+  page = NULL, session = NULL)
 }
 \arguments{
 \item{outputId}{The Shiny output ID of the \code{reactable} instance.}
@@ -16,11 +16,12 @@ or \code{NA} to deselect all rows.}
 \item{expanded}{Expanded rows. Either \code{TRUE} to expand all rows, or \code{FALSE}
 to collapse all rows.}
 
+\item{page}{The current page. A single, positive integer.}
+
 \item{session}{The Shiny session object. Defaults to the current Shiny session.}
 }
 \description{
-\code{updateReactable()} updates the selected or expanded rows of a reactable
-instance within a Shiny application.
+\code{updateReactable()} updates a reactable instance within a Shiny application.
 }
 \examples{
 # Run in an interactive R session
@@ -34,6 +35,7 @@ ui <- fluidPage(
   actionButton("clear_btn", "Clear selection"),
   actionButton("expand_btn", "Expand rows"),
   actionButton("collapse_btn", "Collapse rows"),
+  actionButton("page_btn", "Change page"),
   reactableOutput("table")
 )
 
@@ -64,6 +66,11 @@ server <- function(input, output) {
   observeEvent(input$collapse_btn, {
     # Collapse all rows
     updateReactable("table", expanded = FALSE)
+  })
+
+  observeEvent(input$page_btn, {
+    # Change current page
+    updateReactable("table", page = 3)
   })
 }
 

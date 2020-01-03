@@ -17,6 +17,9 @@ test_that("updateReactable", {
   expect_error(updateReactable(123, session = session), "`outputId` must be a character string")
   expect_error(updateReactable("id", selected = TRUE, session = session), "`selected` must be numeric")
   expect_error(updateReactable("id", expanded = 123, session = session), "`expanded` must be TRUE or FALSE")
+  expect_error(updateReactable("id", page = TRUE, session = session), "`page` must be a single, positive integer")
+  expect_error(updateReactable("id", page = c(1, 3), session = session), "`page` must be a single, positive integer")
+  expect_error(updateReactable("id", page = 0, session = session), "`page` must be a single, positive integer")
 
   expect_null(updateReactable("id"))
   updateReactable("id", session = session)
@@ -39,4 +42,8 @@ test_that("updateReactable", {
     type = "__reactable__mytbl",
     message = list(selected = list(0, 2), expanded = FALSE)
   ))
+
+  # Update current page
+  updateReactable("mytbl", page = 2, session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(page = 1)))
 })

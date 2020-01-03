@@ -1,13 +1,13 @@
 #' Update a reactable instance
 #'
-#' `updateReactable()` updates the selected or expanded rows of a reactable
-#' instance within a Shiny application.
+#' `updateReactable()` updates a reactable instance within a Shiny application.
 #'
 #' @param outputId The Shiny output ID of the `reactable` instance.
 #' @param selected Selected rows. Either a numeric vector of row indices,
 #'   or `NA` to deselect all rows.
 #' @param expanded Expanded rows. Either `TRUE` to expand all rows, or `FALSE`
 #'   to collapse all rows.
+#' @param page The current page. A single, positive integer.
 #' @param session The Shiny session object. Defaults to the current Shiny session.
 #'
 #' @examples
@@ -22,6 +22,7 @@
 #'   actionButton("clear_btn", "Clear selection"),
 #'   actionButton("expand_btn", "Expand rows"),
 #'   actionButton("collapse_btn", "Collapse rows"),
+#'   actionButton("page_btn", "Change page"),
 #'   reactableOutput("table")
 #' )
 #'
@@ -53,13 +54,18 @@
 #'     # Collapse all rows
 #'     updateReactable("table", expanded = FALSE)
 #'   })
+#'
+#'   observeEvent(input$page_btn, {
+#'     # Change current page
+#'     updateReactable("table", page = 3)
+#'   })
 #' }
 #'
 #' shinyApp(ui, server)
 #' }
 #'
 #' @export
-updateReactable <- function(outputId, selected = NULL, expanded = NULL, session = NULL) {
+updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = NULL, session = NULL) {
   if (is.null(session)) {
     if (requireNamespace("shiny", quietly = TRUE)) {
       session <- shiny::getDefaultReactiveDomain()
@@ -82,9 +88,17 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, session 
   if (!is.null(expanded) && !is.logical(expanded)) {
     stop("`expanded` must be TRUE or FALSE")
   }
+  if (!is.null(page)) {
+    if (!is.numeric(page) || length(page) != 1 || page <= 0) {
+      stop("`page` must be a single, positive integer")
+    }
+    # Convert to 0-based indexing
+    page <- as.integer(page - 1)
+  }
   newState <- filterNulls(list(
     selected = selected,
-    expanded = expanded
+    expanded = expanded,
+    page = page
   ))
   if (length(newState) > 0) {
     session$sendCustomMessage(sprintf("__reactable__%s", outputId), newState)

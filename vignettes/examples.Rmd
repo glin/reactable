@@ -1032,11 +1032,11 @@ reactable(
 )
 ```
 
-### Update selected or expanded rows
+### Update a reactable instance
 
 > **New in v0.1.0.9000**
 
-You can update selected or expanded rows using `updateReactable()`:
+You can update the selected rows, expanded rows, or current page using `updateReactable()`:
 ```{r, eval=FALSE}
 library(shiny)
 library(reactable)
@@ -1046,6 +1046,7 @@ ui <- fluidPage(
   actionButton("clear_btn", "Clear selection"),
   actionButton("expand_btn", "Expand rows"),
   actionButton("collapse_btn", "Collapse rows"),
+  actionButton("page_btn", "Change page"),
   reactableOutput("table")
 )
 
@@ -1076,6 +1077,11 @@ server <- function(input, output) {
   observeEvent(input$collapse_btn, {
     # Collapse all rows
     updateReactable("table", expanded = FALSE)
+  })
+
+  observeEvent(input$page_btn, {
+    # Change current page
+    updateReactable("table", page = 3)
   })
 }
 

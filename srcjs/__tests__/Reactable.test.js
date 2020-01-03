@@ -2070,4 +2070,22 @@ describe('update reactable state from Shiny', () => {
     expect(queryByText('detail-1')).toEqual(null)
     expect(queryByText('detail-2')).toEqual(null)
   })
+
+  it('updates current page', () => {
+    const props = {
+      data: { a: [1, 2, 3] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      defaultPageSize: 1
+    }
+    const { getByText } = render(<Reactable {...props} />)
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__')
+
+    expect(getByText('1–1 of 3 rows')).toBeTruthy()
+    updateState({ page: 2 })
+    expect(getByText('3–3 of 3 rows')).toBeTruthy()
+    updateState({ page: 0 })
+    expect(getByText('1–1 of 3 rows')).toBeTruthy()
+  })
 })

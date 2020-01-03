@@ -458,6 +458,11 @@ class Reactable extends React.Component {
         if (state.expanded != null) {
           state.expanded ? this.toggleExpandAll() : this.toggleCollapseAll()
         }
+        if (state.page != null) {
+          // Don't use controlled page state here because react-table can recalculate
+          // its internal page without calling onPageChange (e.g. when filtering).
+          this.tableInstance.current.onPageChange(state.page)
+        }
       }
       window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
     }
