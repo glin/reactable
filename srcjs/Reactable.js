@@ -449,22 +449,24 @@ class Reactable extends React.Component {
       this.toggleExpandAll()
     }
 
-    if (window.Shiny) {
+    if (window.Shiny && !this.props.isChild) {
       const outputId = this.tableElement.current.parentElement.id
-      const updateState = state => {
-        if (state.selected != null) {
-          this.setSelection(state.selected)
+      if (outputId) {
+        const updateState = state => {
+          if (state.selected != null) {
+            this.setSelection(state.selected)
+          }
+          if (state.expanded != null) {
+            state.expanded ? this.toggleExpandAll() : this.toggleCollapseAll()
+          }
+          if (state.page != null) {
+            // Don't use controlled page state here because react-table can recalculate
+            // its internal page without calling onPageChange (e.g. when filtering).
+            this.tableInstance.current.onPageChange(state.page)
+          }
         }
-        if (state.expanded != null) {
-          state.expanded ? this.toggleExpandAll() : this.toggleCollapseAll()
-        }
-        if (state.page != null) {
-          // Don't use controlled page state here because react-table can recalculate
-          // its internal page without calling onPageChange (e.g. when filtering).
-          this.tableInstance.current.onPageChange(state.page)
-        }
+        window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
       }
-      window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
     }
   }
 
@@ -798,7 +800,8 @@ Reactable.propTypes = {
   inline: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  dataKey: PropTypes.string
+  dataKey: PropTypes.string,
+  isChild: PropTypes.bool
 }
 
 Reactable.defaultProps = {

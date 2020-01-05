@@ -2057,10 +2057,14 @@ describe('update reactable state from Shiny', () => {
       data: { a: [1, 2] },
       columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2'] }]
     }
-    const { getByText, queryByText } = render(<Reactable {...props} />)
+    const { getByText, queryByText } = render(
+      <div id="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
 
     const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
-    expect(outputId).toEqual('__reactable__')
+    expect(outputId).toEqual('__reactable__shiny-output-container')
 
     updateState({ expanded: true })
     expect(getByText('detail-1')).toBeTruthy()
@@ -2077,15 +2081,46 @@ describe('update reactable state from Shiny', () => {
       columns: [{ name: 'a', accessor: 'a' }],
       defaultPageSize: 1
     }
-    const { getByText } = render(<Reactable {...props} />)
+    const { getByText } = render(
+      <div id="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
 
     const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
-    expect(outputId).toEqual('__reactable__')
+    expect(outputId).toEqual('__reactable__shiny-output-container')
 
     expect(getByText('1–1 of 3 rows')).toBeTruthy()
     updateState({ page: 2 })
     expect(getByText('3–3 of 3 rows')).toBeTruthy()
     updateState({ page: 0 })
     expect(getByText('1–1 of 3 rows')).toBeTruthy()
+  })
+
+  it('does not enable updateState when parent element has no ID', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    render(
+      <div>
+        <Reactable {...props} />
+      </div>
+    )
+    expect(window.Shiny.addCustomMessageHandler).not.toHaveBeenCalled()
+  })
+
+  it('does not enable updateState for child tables, which are not Shiny bound', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      isChild: true
+    }
+    render(
+      <div id="not-a-shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+    expect(window.Shiny.addCustomMessageHandler).not.toHaveBeenCalled()
   })
 })
