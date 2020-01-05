@@ -622,8 +622,8 @@ reactable(
 
 ```{r}
 # Add a custom font from Google Fonts
-tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
-          rel = "stylesheet")
+htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+                     rel = "stylesheet")
 ```
 
 > Side note: these docs use a [system font stack](https://css-tricks.com/snippets/css/system-font-stack):
