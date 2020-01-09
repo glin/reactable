@@ -2124,3 +2124,98 @@ describe('update reactable state from Shiny', () => {
     expect(window.Shiny.addCustomMessageHandler).not.toHaveBeenCalled()
   })
 })
+
+describe('sends reactable state to Shiny', () => {
+  const getPageSizeOptions = container => container.querySelector('.rt-page-size')
+  const getNextButton = container => container.querySelector('.rt-next-button')
+
+  beforeEach(() => {
+    window.Shiny = {
+      onInputChange: jest.fn(),
+      addCustomMessageHandler: jest.fn(),
+      bindAll: jest.fn(),
+      unbindAll: jest.fn()
+    }
+  })
+
+  afterEach(() => {
+    delete window.Shiny
+  })
+
+  it('sends reactable state', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      defaultPageSize: 2,
+      showPageSizeOptions: true,
+      pageSizeOptions: [2, 4]
+    }
+    const { container, getByLabelText } = render(
+      <div id="tbl">
+        <Reactable {...props} />
+      </div>
+    )
+
+    // Initial state
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [])
+    window.Shiny.onInputChange.mockReset()
+
+    // Selected rows
+    const selectRow2Checkbox = getByLabelText('Select row 2')
+    fireEvent.click(selectRow2Checkbox)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    window.Shiny.onInputChange.mockReset()
+
+    // Current page
+    fireEvent.click(getNextButton(container))
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    window.Shiny.onInputChange.mockReset()
+
+    // Pages, page size
+    const pageSizeOptions = getPageSizeOptions(container)
+    const pageSizeSelect = pageSizeOptions.querySelector('select')
+    fireEvent.change(pageSizeSelect, { target: { value: 4 } })
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 4)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    window.Shiny.onInputChange.mockReset()
+  })
+
+  it('does not send state when parent element has no ID', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    render(
+      <div>
+        <Reactable {...props} />
+      </div>
+    )
+    expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
+  })
+
+  it('does not send state for child tables, which are not Shiny bound', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      isChild: true
+    }
+    render(
+      <div id="not-a-shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+    expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
+  })
+})

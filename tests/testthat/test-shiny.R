@@ -2,6 +2,7 @@ context("shiny")
 
 mockSession <- function() {
   e <- new.env()
+  e$input <- list()
   e$msgs <- list()
   e$sendCustomMessage = function(type, message) {
     msg <- list(type = type, message = message)
@@ -46,4 +47,30 @@ test_that("updateReactable", {
   # Update current page
   updateReactable("mytbl", page = 2, session = session)
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(page = 1)))
+})
+
+test_that("getReactableState", {
+  session <- mockSession()
+  expect_error(getReactableState(123, session = session), "`outputId` must be a character string")
+  expect_error(getReactableState("id", "x", session = session), '`name` must be one of "page", "pageSize", "pages", "selected"')
+
+  expect_null(getReactableState("id"))
+  updateReactable("id", session = session)
+
+  expect_equal(getReactableState("mytbl", session = session), NULL)
+
+  session$input[["__reactable__mytbl__page"]] <- 3
+  expect_equal(getReactableState("mytbl", "page", session = session), 3)
+
+  session$input[["__reactable__mytbl__pageSize"]] <- 2
+  expect_equal(getReactableState("mytbl", "pageSize", session = session), 2)
+
+  session$input[["__reactable__mytbl__pages"]] <- 10
+  expect_equal(getReactableState("mytbl", "pages", session = session), 10)
+
+  session$input[["__reactable__mytbl__selected"]] <- c(1, 5, 7)
+  expect_equal(getReactableState("mytbl", "selected", session = session), c(1, 5, 7))
+
+  expect_equal(getReactableState("mytbl", session = session),
+               list(page = 3, pageSize = 2, pages = 10, selected = c(1, 5, 7)))
 })

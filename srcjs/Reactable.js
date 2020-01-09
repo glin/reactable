@@ -441,6 +441,31 @@ class Reactable extends React.Component {
     return rowInfo
   }
 
+  onTableUpdate() {
+    // Send reactable state to Shiny
+    if (window.Shiny && !this.props.isChild) {
+      const element = this.tableElement.current
+      const instance = this.tableInstance.current
+      if (!element || !instance) {
+        return
+      }
+      const outputId = element.parentElement.id
+      if (!outputId) {
+        return
+      }
+      const state = {
+        // Convert to R's 1-based indices
+        page: instance.state.page + 1,
+        pageSize: instance.state.pageSize,
+        pages: instance.state.pages,
+        selected: [...this.state.selected].map(i => i + 1)
+      }
+      Object.keys(state).forEach(prop => {
+        window.Shiny.onInputChange(`__reactable__${outputId}__${prop}`, state[prop])
+      })
+    }
+  }
+
   componentDidMount() {
     if (this.state.selected.size > 0) {
       this.onSelectedChange()
@@ -468,6 +493,8 @@ class Reactable extends React.Component {
         window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
       }
     }
+
+    this.onTableUpdate()
   }
 
   componentDidUpdate(prevProps) {
@@ -754,6 +781,7 @@ class Reactable extends React.Component {
         ref={this.tableInstance}
         // Get the table's DOM element
         getProps={() => {
+          this.onTableUpdate()
           return { ref: this.tableElement }
         }}
       />

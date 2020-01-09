@@ -1092,6 +1092,57 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+### Get the state of a reactable instance
+
+> **New in v0.1.0.9000**
+
+You can get the current page, page size, number of pages, or selected rows
+using `getReactableState()`:
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  actionButton("prev_page_btn", "Previous page"),
+  actionButton("next_page_btn", "Next page"),
+  reactableOutput("table"),
+  verbatimTextOutput("table_state")
+)
+
+server <- function(input, output) {
+  output$table <- renderReactable({
+    reactable(
+      iris,
+      showPageSizeOptions = TRUE,
+      selection = "multiple"
+    )
+  })
+
+  output$table_state <- renderPrint({
+    state <- req(getReactableState("table"))
+    print(state)
+  })
+
+  observeEvent(input$prev_page_btn, {
+    # Change to the previous page
+    page <- getReactableState("table", "page")
+    if (page > 1) {
+      updateReactable("table", page = page - 1)
+    }
+  })
+
+  observeEvent(input$next_page_btn, {
+    # Change to the next page
+    state <- getReactableState("table")
+    if (state$page < state$pages) {
+      updateReactable("table", page = state$page + 1)
+    }
+  })
+}
+
+shinyApp(ui, server)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */
