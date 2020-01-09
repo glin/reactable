@@ -80,10 +80,11 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
   }
   if (!is.null(selected)) {
     if (!is.numeric(selected) && !is.na(selected)) {
-      stop("`selected` must be numeric")
+      stop("`selected` must be numeric or NA")
     }
+    selected <- na.omit(selected)
     # Convert to 0-based indexing
-    selected <- if (is.numeric(selected)) as.list(as.integer(selected) - 1) else list()
+    selected <- as.list(as.integer(selected) - 1)
   }
   if (!is.null(expanded) && !is.logical(expanded)) {
     stop("`expanded` must be TRUE or FALSE")

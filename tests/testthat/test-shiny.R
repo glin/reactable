@@ -31,6 +31,14 @@ test_that("updateReactable", {
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list(0))))
   updateReactable("mytbl", selected = c(1, 3, 5), session = session)
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list(0, 2, 4))))
+  updateReactable("mytbl", selected = integer(0), session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list())))
+  updateReactable("mytbl", selected = NA, session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list())))
+  updateReactable("mytbl", selected = NA_real_, session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list())))
+  updateReactable("mytbl", selected = c(3, 5, NA), session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list(2, 4))))
 
   # Update expanded rows
   updateReactable("mytbl", expanded = TRUE, session = session)
