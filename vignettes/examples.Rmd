@@ -1020,11 +1020,15 @@ reactable(
   selection = "multiple",
   defaultSelected = c(1, 3),
   rowClass = JS("function(rowInfo) {
-    return rowInfo.selected ? 'selected' : ''
+    if (rowInfo) {
+      return rowInfo.selected ? 'selected' : ''
+    }
   }"),
   rowStyle = JS("function(rowInfo) {
-    if (rowInfo.selected) {
-      return { backgroundColor: '#eee', boxShadow: 'inset 2px 0 0 0 #ffa62d' }
+    if (rowInfo) {
+      if (rowInfo.selected) {
+        return { backgroundColor: '#eee', boxShadow: 'inset 2px 0 0 0 #ffa62d' }
+      }
     }
   }"),
   borderless = TRUE,
