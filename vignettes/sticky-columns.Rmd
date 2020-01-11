@@ -1,0 +1,144 @@
+---
+title: "Sticky Columns"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+### Basic sticky columns
+
+You can make a single left or right column sticky using the [`position: sticky;`](https://developer.mozilla.org/en-US/docs/Web/CSS/position) CSS property.
+
+Note that `position: sticky` is supported by Chrome, Firefox, Safari, and Edge, but **not** IE11.
+IE11 does fail gracefully though -- the columns just don't stick.
+
+`background: #fff` and `z-index: 1` are added to properly hide scrolling content.
+
+```{r}
+reactable(MASS::Cars93, columns = list(
+  Manufacturer = colDef(
+    style = list(position = "sticky", left = 0, background = "#fff", zIndex = 1),
+    headerStyle = list(position = "sticky", left = 0, background = "#fff", zIndex = 1)
+  ),
+  Make = colDef(
+    style = list(position = "sticky", right = 0, background = "#fff", zIndex = 1),
+    headerStyle = list(position = "sticky", right = 0, background = "#fff", zIndex = 1)
+  )
+))
+```
+
+Adding a border style and reducing some of the repetition:
+
+```{r}
+sticky_style <- function(left = TRUE) {
+  style <- list(position = "sticky", background = "#fff", zIndex = 1)
+  if (left) {
+    style <- c(style, list(left = 0, borderRight = "1px solid #eee"))
+  } else {
+    style <- c(style, list(right = 0, borderLeft = "1px solid #eee"))
+  }
+  style
+}
+
+reactable(MASS::Cars93, columns = list(
+  Manufacturer = colDef(
+    style = sticky_style(),
+    headerStyle = sticky_style()
+  ),
+  Make = colDef(
+    style = sticky_style(left = FALSE),
+    headerStyle = sticky_style(left = FALSE)
+  )
+))
+```
+
+### Multiple sticky columns
+
+To make multiple columns sticky, you have to set the [`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left)
+or `right` positions of the columns to where they'll stick. In this case, you'll
+need to know the column widths -- columns are `100px` wide by default, so
+the 2nd column from left needs `left: 100px;`, the 3rd column from left needs
+`left: 200px;`, etc.
+
+```{r sticky_multi, eval=FALSE}
+reactable(MASS::Cars93, columns = list(
+  Manufacturer = colDef(
+    class = "sticky left-col-1",
+    headerClass = "sticky left-col-1"
+  ),
+  Model = colDef(
+    class = "sticky left-col-2",
+    headerClass = "sticky left-col-2"
+  ),
+  Type = colDef(
+    class = "sticky left-col-3",
+    headerClass = "sticky left-col-3"
+  ),
+  Make = colDef(
+    class = "sticky right-col-1",
+    headerClass = "sticky right-col-1"
+  )
+))
+```
+
+```{css}
+.sticky {
+  position: sticky !important;
+  background: #fff;
+  z-index: 1;
+}
+
+.left-col-1 {
+  left: 0;
+}
+
+.left-col-2 {
+  left: 100px;
+}
+
+.left-col-3 {
+  left: 200px;
+  border-right: 1px solid #eee !important;
+}
+
+.right-col-1 {
+  right: 0;
+  border-left: 1px solid #eee !important;
+}
+```
+
+```{r ref.label="sticky_multi", echo=FALSE}
+```
+
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
+}
+```
