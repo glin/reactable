@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
-import ReactTable from 'react-table'
-import { ReactTableDefaults } from 'react-table'
+import ReactTable from '@glin/react-table'
+import { ReactTableDefaults } from '@glin/react-table'
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
 
@@ -11,7 +11,7 @@ import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
 import { classNames, getFirstDefined, get, set } from './utils'
 
-import 'react-table/react-table.css'
+import '@glin/react-table/react-table.css'
 import './reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {

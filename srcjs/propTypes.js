@@ -1,4 +1,4 @@
-import ReactTable from 'react-table'
+import ReactTable from '@glin/react-table'
 import PropTypes from 'prop-types'
 
 // Fixed ReactTable propTypes from https://github.com/tannerlinsley/react-table/blob/v6/src/propTypes.js

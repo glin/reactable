@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { ReactTableDefaults } from 'react-table'
+import { ReactTableDefaults } from '@glin/react-table'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'

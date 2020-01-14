@@ -710,6 +710,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@glin/react-table@6.7.0-1":
+  version "6.7.0-1"
+  resolved "https://registry.yarnpkg.com/@glin/react-table/-/react-table-6.7.0-1.tgz#80b7215aa11c96b54d95c642b9558e62b679c414"
+  integrity sha512-KnNDvHgUsP2wTSdF2CjKHe2nJnWT3JWueMIrQf+8ToKOy6s1gyoCrfefi1JPJQsJySEMR0eMpB+zRXbk9ykGWg==
+  dependencies:
+    classnames "^2.2.5"
+    eslint-config-react-tools "^1.0.10"
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -5277,14 +5285,6 @@ react-is@^16.8.1, react-is@^16.8.4:
   version "16.10.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.2.tgz#984120fd4d16800e9a738208ab1fba422d23b5ab"
   integrity sha512-INBT1QEgtcCCgvccr5/86CfD71fw9EPmDxgiJX4I2Ddr6ZsV6iFXsuby+qWJPtmNuMY0zByTsG4468P7nHuNWA==
-
-react-table@6.7.0:
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.7.0.tgz#57ed04b7b7a497088fa18a6ff5cc6d5dbb10e33f"
-  integrity sha512-qYgRVOv+OFQEhKtFMkTZx0ztY/g9tQoO88882E1HBjm2K2aKUYEx0ZfFAMyeNxkythR2Bn6DuG8Wg0hlzyS9cw==
-  dependencies:
-    classnames "^2.2.5"
-    eslint-config-react-tools "^1.0.10"
 
 react@^16.8.6:
   version "16.10.2"

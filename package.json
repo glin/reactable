@@ -10,10 +10,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@glin/react-table": "6.7.0-1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-table": "6.7.0"
+    "react-dom": "^16.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
