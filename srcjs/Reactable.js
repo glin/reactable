@@ -199,8 +199,8 @@ ReactTable.propTypes = fixedReactTablePropTypes
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison
 // of data props rather than a === comparison. Kind of ugly, but significantly
 // increases performance when selecting or expanding rows in a very large table.
-ReactTable.prototype.oldComponentWillReceiveProps = ReactTable.prototype.componentWillReceiveProps
-ReactTable.prototype.componentWillReceiveProps = function(newProps, newState) {
+ReactTable.prototype.oldComponentWillReceiveProps = ReactTable.prototype.UNSAFE_componentWillReceiveProps
+ReactTable.prototype.UNSAFE_componentWillReceiveProps = function(newProps, newState) {
   newProps = { ...newProps }
   if (this.props.dataKey && this.props.dataKey === newProps.dataKey) {
     newProps.data = this.props.data
