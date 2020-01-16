@@ -710,10 +710,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@glin/react-table@^6.7.0-2":
-  version "6.7.0-2"
-  resolved "https://registry.yarnpkg.com/@glin/react-table/-/react-table-6.7.0-2.tgz#a102aa53cc3d88af51ab95d37e6fccd1d4cd2d57"
-  integrity sha512-DfHFrwEED88adrv3Cn8DzZi+LTwusLJ/HT18Lcn9ckqJTvjnJghWoYzFzRMIq7z9tRj2M2w31vxlwtTkMZGD5Q==
+"@glin/react-table@6.7.0-3":
+  version "6.7.0-3"
+  resolved "https://registry.yarnpkg.com/@glin/react-table/-/react-table-6.7.0-3.tgz#77e826c557aae6544d182271a5dc5fc77ca125b9"
+  integrity sha512-+Dsc0mkjo9FA88thFr9Ryq9FCe9S1ucfeXNo3zrP/KJpLfCXpMAj7RSIpvBY4zERhd9/nH0WsKsYxd+eUGH0OA==
   dependencies:
     classnames "^2.2.5"
     eslint-config-react-tools "^1.0.10"
