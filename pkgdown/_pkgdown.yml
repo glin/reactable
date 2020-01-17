@@ -49,6 +49,7 @@ reference:
   contents:
   - reactable-shiny
   - updateReactable
+  - getReactableState
 
 template:
   path: pkgdown/templates
