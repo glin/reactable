@@ -15,7 +15,7 @@ import '@glin/react-table/react-table.css'
 import './reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
-  // Add aria attributes for sortable column headers
+  let props = { role: 'columnheader' }
   const isSortable = getFirstDefined(column.sortable, state.sortable)
   if (isSortable) {
     const sort = state.sorted.find(d => d.id === column.id)
@@ -23,7 +23,8 @@ const getTheadThProps = (state, rowInfo, column) => {
     const defaultSortDesc = getFirstDefined(column.defaultSortDesc, state.defaultSortDesc)
     const defaultSortOrder = defaultSortDesc ? 'descending' : 'ascending'
     const isResizing = state.currentlyResizing && state.currentlyResizing.id === column.id
-    return {
+    props = {
+      ...props,
       'aria-label': `${column.name}, sort`,
       'aria-sort': currentSortOrder,
       defaultSortOrder,
@@ -32,7 +33,7 @@ const getTheadThProps = (state, rowInfo, column) => {
       isResizing
     }
   }
-  return {}
+  return props
 }
 
 const getTheadGroupThProps = (state, rowInfo, column) => {
@@ -52,13 +53,84 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
     }
   }
 
-  // Mark actual column group headers
+  // Add attributes to actual column group headers
   if (column.Header) {
-    props.className = classNames('-headerGroup', column.className)
+    props = {
+      ...props,
+      'aria-colspan': column.columns.length,
+      role: 'columnheader',
+      // Add bottom border
+      className: classNames('-headerGroup', column.className)
+    }
   }
 
   return props
 }
+
+// Add ARIA roles to rows and cells
+const getTheadGroupTrProps = () => {
+  return { role: 'row' }
+}
+
+const getTheadTrProps = () => {
+  return { role: 'row' }
+}
+
+const getTheadFilterTrProps = () => {
+  return { role: 'row' }
+}
+
+const getTheadFilterThProps = () => {
+  return { role: 'cell' }
+}
+
+const getTrGroupProps = (state, rowInfo) => {
+  // Hide padding rows (consisting of empty "space" cells) from screen readers
+  if (!rowInfo) {
+    return { 'aria-hidden': 'true' }
+  }
+  return {}
+}
+
+const getTrProps = (state, rowInfo) => {
+  // Ignore padding rows, although they don't receive custom props
+  if (!rowInfo) {
+    return {}
+  }
+  return { role: 'row' }
+}
+
+const getTdProps = (state, rowInfo) => {
+  // Ignore padding rows
+  if (!rowInfo) {
+    return {}
+  }
+  return { role: 'cell' }
+}
+
+const getTfootTrProps = () => {
+  return { role: 'row' }
+}
+
+const getTfootTdProps = () => {
+  return { role: 'cell' }
+}
+
+// Add ARIA roles to table, table headers, and table footer
+const DefaultTableComponent = ReactTableDefaults.TableComponent
+const DefaultTheadComponent = ReactTableDefaults.TheadComponent
+const DefaultTfootComponent = ReactTableDefaults.TfootComponent
+Object.assign(ReactTableDefaults, {
+  TableComponent(props) {
+    return <DefaultTableComponent role="table" {...props} />
+  },
+  TheadComponent(props) {
+    return <DefaultTheadComponent role="rowgroup" {...props} />
+  },
+  TfootComponent(props) {
+    return <DefaultTfootComponent role="rowgroup" {...props} />
+  }
+})
 
 // ThComponent that can render a custom HeaderPivoted element and be navigated
 // using a keyboard, with sorting toggleable through the enter or space key.
@@ -109,7 +181,6 @@ class ThComponent extends React.Component {
         onBlur: () => {
           this.setState({ showFocus: false, clicked: false })
         },
-        role: 'button',
         tabIndex: '0',
         'data-sort-hint': this.state.showFocus ? defaultSortOrder : undefined
       }
@@ -131,6 +202,7 @@ Object.assign(ReactTableDefaults, {
   ThComponent
 })
 
+// Add ARIA role to table body.
 // Render no data component in table body rather than the entire table
 // so it doesn't overlap with headers/filters.
 const getTbodyProps = state => ({ state })
@@ -141,7 +213,7 @@ Object.assign(ReactTableDefaults, {
     const { pageRows, noDataText } = state
     const noData = !pageRows.length && <DefaultNoDataComponent>{noDataText}</DefaultNoDataComponent>
     return (
-      <DefaultTbodyComponent {...rest}>
+      <DefaultTbodyComponent role="rowgroup" {...rest}>
         {children}
         {noData}
       </DefaultTbodyComponent>
@@ -199,7 +271,8 @@ ReactTable.propTypes = fixedReactTablePropTypes
 // Prevent unnecessary data updates on table rerenders by doing a deep comparison
 // of data props rather than a === comparison. Kind of ugly, but significantly
 // increases performance when selecting or expanding rows in a very large table.
-ReactTable.prototype.oldComponentWillReceiveProps = ReactTable.prototype.UNSAFE_componentWillReceiveProps
+ReactTable.prototype.oldComponentWillReceiveProps =
+  ReactTable.prototype.UNSAFE_componentWillReceiveProps
 ReactTable.prototype.UNSAFE_componentWillReceiveProps = function(newProps, newState) {
   newProps = { ...newProps }
   if (this.props.dataKey && this.props.dataKey === newProps.dataKey) {
@@ -264,7 +337,6 @@ ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, 
 }
 
 // Table component with a search input
-const DefaultTableComponent = ReactTableDefaults.TableComponent
 const SearchTableComponent = ({ searchValue, onSearchChange, ...rest }) => {
   const searchInput = (
     <input
@@ -279,7 +351,7 @@ const SearchTableComponent = ({ searchValue, onSearchChange, ...rest }) => {
   return (
     <Fragment>
       {searchInput}
-      <DefaultTableComponent {...rest} />
+      <ReactTableDefaults.TableComponent {...rest} />
     </Fragment>
   )
 }
@@ -595,10 +667,10 @@ class Reactable extends React.Component {
 
     const autoHidePagination = showPagination == null
 
-    let getTrProps
+    let newGetTrProps = getTrProps
     if (rowClassName || rowStyle) {
-      getTrProps = (state, rowInfo) => {
-        let props = {}
+      newGetTrProps = (state, rowInfo) => {
+        let props = getTrProps(state, rowInfo)
         if (rowClassName) {
           if (typeof rowClassName === 'function') {
             props.className = rowClassName(this.getRowInfo(rowInfo), state)
@@ -676,7 +748,7 @@ class Reactable extends React.Component {
       }
     }
 
-    let getTdProps
+    let newGetTdProps = getTdProps
     if (onClick) {
       if (onClick === 'select') {
         onClick = (rowInfo, column) => {
@@ -705,8 +777,9 @@ class Reactable extends React.Component {
         }
       }
 
-      getTdProps = (state, rowInfo, column) => {
+      newGetTdProps = (state, rowInfo, column) => {
         return {
+          ...getTdProps(state, rowInfo),
           onClick: (e, handleOriginal) => {
             onClick(rowInfo, column, state)
             if (handleOriginal) {
@@ -764,11 +837,18 @@ class Reactable extends React.Component {
         onPageChange={collapseExpanded}
         onSortedChange={collapseExpanded}
         getTableProps={getTableProps}
+        getTheadGroupTrProps={getTheadGroupTrProps}
         getTheadGroupThProps={getTheadGroupThProps}
+        getTheadTrProps={getTheadTrProps}
         getTheadThProps={getTheadThProps}
+        getTheadFilterTrProps={getTheadFilterTrProps}
+        getTheadFilterThProps={getTheadFilterThProps}
         getTbodyProps={getTbodyProps}
-        getTrProps={getTrProps}
-        getTdProps={getTdProps}
+        getTrGroupProps={getTrGroupProps}
+        getTrProps={newGetTrProps}
+        getTdProps={newGetTdProps}
+        getTfootTrProps={getTfootTrProps}
+        getTfootTdProps={getTfootTdProps}
         TableComponent={TableComponent}
         SubComponent={SubComponent}
         {...selectProps}

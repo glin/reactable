@@ -45,6 +45,115 @@ test('basic table rendering', () => {
   })
 })
 
+describe('ARIA roles', () => {
+  const getTable = container => container.querySelector('.rt-table')
+  const getTheads = container => container.querySelectorAll('.rt-thead')
+  const getTbody = container => container.querySelector('.rt-tbody')
+  const getTfoot = container => container.querySelector('.rt-tfoot')
+  const getGroupHeaders = container =>
+    container.querySelectorAll('.-headerGroups .-headerGroup.rt-th')
+  const getUngroupedHeaders = container =>
+    container.querySelectorAll('.-headerGroups :not(.-headerGroup).rt-th')
+  const getHeaderRows = container => container.querySelectorAll('.rt-thead .rt-tr')
+  const getHeaders = container => container.querySelectorAll('.-header .rt-th')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
+  const getPadRows = container => container.querySelectorAll('.rt-tbody .rt-tr.-padRow')
+  const getFooterRow = container => container.querySelector('.rt-tfoot .rt-tr')
+  const getCells = container => container.querySelectorAll('.rt-tr:not(.-padRow) .rt-td')
+  const getPadCells = container => container.querySelectorAll('.rt-tr.-padRow .rt-td')
+  const getFilterRow = container => container.querySelector('.-filters .rt-tr')
+  const getFilterCells = container => container.querySelectorAll('.-filters .rt-th')
+
+  const props = {
+    data: { a: [1, 2], b: ['aa', 'bb'] },
+    columns: [
+      { name: 'colA', accessor: 'a', footer: 'footer-a' },
+      { name: 'colB', accessor: 'b', footer: 'footer-b' }
+    ],
+    columnGroups: [{ columns: ['a'], name: 'group-a' }],
+    minRows: 4
+  }
+
+  it('tables have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    expect(getTable(container)).toHaveAttribute('role', 'table')
+  })
+
+  it('headers have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers).toHaveLength(2)
+    headers.forEach(header => expect(header).toHaveAttribute('role', 'columnheader'))
+  })
+
+  it('header groups have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    const headers = getGroupHeaders(container)
+    expect(headers).toHaveLength(1)
+    expect(headers[0]).toHaveAttribute('role', 'columnheader')
+    expect(headers[0]).toHaveAttribute('aria-colspan', '1')
+    const ungroupedHeaders = getUngroupedHeaders(container)
+    expect(ungroupedHeaders).toHaveLength(1)
+    expect(ungroupedHeaders[0]).not.toHaveAttribute('role')
+    expect(ungroupedHeaders[0]).not.toHaveAttribute('aria-colspan')
+  })
+
+  it('row groups have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    // Table theads
+    const theads = getTheads(container)
+    expect(theads).toHaveLength(2)
+    theads.forEach(thead => expect(thead).toHaveAttribute('role', 'rowgroup'))
+
+    // Table body
+    const tbody = getTbody(container)
+    expect(tbody).toHaveAttribute('role', 'rowgroup')
+
+    // Table tfoot
+    const tfoot = getTfoot(container)
+    expect(tfoot).toHaveAttribute('role', 'rowgroup')
+  })
+
+  it('rows have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    expect(rows).toHaveLength(2)
+    rows.forEach(row => expect(row).toHaveAttribute('role', 'row'))
+
+    // Padding rows should be hidden (via their row groups)
+    const padRows = getPadRows(container)
+    expect(padRows).toHaveLength(2)
+    padRows.forEach(row => expect(row).not.toHaveAttribute('role', 'row'))
+    padRows.forEach(row => expect(row.parentElement).toHaveAttribute('aria-hidden', 'true'))
+
+    // Header and header group rows
+    const headerRows = getHeaderRows(container)
+    expect(headerRows).toHaveLength(2)
+    headerRows.forEach(row => expect(row).toHaveAttribute('role', 'row'))
+
+    // Footer rows
+    const footerRow = getFooterRow(container)
+    expect(footerRow).toHaveAttribute('role', 'row')
+  })
+
+  it('cells and footer cells have aria roles', () => {
+    const { container } = render(<Reactable {...props} />)
+    const cells = getCells(container)
+    cells.forEach(cell => expect(cell).toHaveAttribute('role', 'cell'))
+    const padCells = getPadCells(container)
+    padCells.forEach(cell => expect(cell).not.toHaveAttribute('role'))
+  })
+
+  it('filter rows and cells have aria roles', () => {
+    const { container } = render(<Reactable {...props} filterable />)
+    const filterRow = getFilterRow(container)
+    expect(filterRow).toHaveAttribute('role', 'row')
+    const filterCells = getFilterCells(container)
+    expect(filterCells).toHaveLength(2)
+    filterCells.forEach(cell => expect(cell).toHaveAttribute('role', 'cell'))
+  })
+})
+
 describe('sorting', () => {
   const getHeaders = container => container.querySelectorAll('.rt-th')
 
@@ -65,8 +174,8 @@ describe('sorting', () => {
     expect(headers[1]).toHaveAttribute('aria-sort', 'none')
     expect(headers[0]).toHaveAttribute('aria-label', 'colA, sort')
     expect(headers[1]).toHaveAttribute('aria-label', 'colB, sort')
-    expect(headers[0]).toHaveAttribute('role', 'button')
-    expect(headers[1]).toHaveAttribute('role', 'button')
+    expect(headers[0]).toHaveAttribute('role', 'columnheader')
+    expect(headers[1]).toHaveAttribute('role', 'columnheader')
 
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'ascending')
@@ -74,8 +183,9 @@ describe('sorting', () => {
     fireEvent.click(headers[1])
     expect(headers[1]).toHaveAttribute('aria-sort', 'descending')
 
+    expect(headers[2]).not.toHaveAttribute('aria-sort')
     expect(headers[2]).not.toHaveAttribute('aria-label')
-    expect(headers[2]).not.toHaveAttribute('role')
+    expect(headers[2]).toHaveAttribute('role', 'columnheader')
   })
 
   it('can be navigated with keyboard', () => {
