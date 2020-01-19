@@ -64,5 +64,7 @@ shinyApp(ui, server)
 
 }
 \seealso{
-\code{\link[=updateReactable]{updateReactable()}} for updating reactable instances in Shiny.
+\code{\link[=updateReactable]{updateReactable()}} for updating a reactable instance in Shiny.
+
+\code{\link[=getReactableState]{getReactableState()}} for getting the state of a reactable instance in Shiny.
 }
