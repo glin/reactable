@@ -52,6 +52,8 @@ pre {
 }
 
 #tocnav {
+  height: calc(100vh - 90px); /* Set fixed height for overflowing sticky ToC */
+  overflow-y: auto;
   font-size: 15px;
 }
 
