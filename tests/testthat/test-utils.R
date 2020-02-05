@@ -79,6 +79,7 @@ test_that("asReactTag", {
   expect_equal(asReactTag(123), "123")
   expect_equal(asReactTag(TRUE), "TRUE")
   expect_equal(asReactTag(NA), "NA")  # should be "NA" rather than NA_character_
+  expect_equal(asReactTag(NA_character_), "NA")  # should be "NA" rather than NA_character_
   expect_equal(asReactTag(factor("xy")), "xy")
   expect_equal(asReactTag(as.Date("2019-01-03")), "2019-01-03")
   expect_equal(asReactTag(list("text")), "text")

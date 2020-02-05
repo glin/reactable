@@ -103,7 +103,7 @@ asReactTag <- function(x) {
 
   if (!is.tag(x)) {
     # Nodes should be strings for proper hydration
-    if (!is.null(x) && !is.character(x)) {
+    if (!is.null(x) && (!is.character(x) || is.na(x))) {
       x <- format(x)
     }
     return(x)
