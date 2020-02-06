@@ -1240,7 +1240,6 @@ describe('expandable row details and pivot rows', () => {
     const cells = getCells(container)
     const pivotedChildCell = cells[2]
     expect(pivotedChildCell).toHaveTextContent('')
-    expect(pivotedChildCell).toHaveClass('rt-expand-disabled')
     fireEvent.click(pivotedChildCell)
     expect(getByText('row-details')).toBeTruthy()
   })
@@ -1333,7 +1332,7 @@ describe('expandable row details and pivot rows', () => {
       { name: 'col-b', accessor: 'b' },
       { name: 'col-c', accessor: 'c' }
     ]
-    const { container, getByText } = render(
+    const { container, getByText, queryByText } = render(
       <Reactable data={data} columns={columns} pivotBy={['b']} minRows={1} onClick="expand" />
     )
     let expanders = getExpanders(container)
@@ -1356,6 +1355,12 @@ describe('expandable row details and pivot rows', () => {
     // Should still be able to expand row details
     fireEvent.click(getByText('ccc2'))
     expect(getByText('details-a2')).toBeTruthy()
+
+    // Empty pivoted cells should be clickable too
+    const emptyPivotedCell = getByText('aaa2').previousSibling
+    expect(emptyPivotedCell).toHaveTextContent('')
+    fireEvent.click(emptyPivotedCell)
+    expect(queryByText('details-a2')).toEqual(null)
 
     // Collapse pivoted row
     aggregatedCell = cells[2]

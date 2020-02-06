@@ -309,10 +309,6 @@
 }
 
 /* Expanders */
-.ReactTable .rt-expandable.rt-expand-disabled {
-  cursor: unset;
-}
-
 .rt-expander-button {
   margin: 0 2px;
   padding: 0;

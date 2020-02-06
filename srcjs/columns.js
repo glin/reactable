@@ -284,10 +284,6 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
             }
           }
         }
-      } else if (column.pivoted && !rowInfo.aggregated) {
-        // Disable expansion on child rows under pivoted columns
-        props.onClick = () => {}
-        props.className = classNames('rt-expand-disabled', props.className)
       }
 
       return props

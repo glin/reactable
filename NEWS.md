@@ -16,6 +16,7 @@
 * `colFormat(percent = TRUE)` now works correctly when viewing tables in IE11.
 * Table searching now works when row selection is enabled.
 * In `colDef()`, R functions for `class` and `style` now always receive cell values as single elements.
+* Cell click actions now work for the empty cells in grouped rows.
 
 # reactable 0.1.0
 
