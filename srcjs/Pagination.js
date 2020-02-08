@@ -185,8 +185,7 @@ export default class Pagination extends React.Component {
       pageText,
       previousText,
       nextText,
-      paginationLabel,
-      currentPageLabel
+      paginationLabel
     } = this.props
 
     if (autoHidePagination) {
@@ -216,7 +215,9 @@ export default class Pagination extends React.Component {
             key={page}
             isActive={isActive}
             onClick={this.changePage.bind(null, page)}
-            aria-label={`${pageText} ${page}` + (isActive ? `, ${currentPageLabel}` : '')}
+            // Change aria-label to work around issue with aria-current changes
+            // not being recognized in NVDA + Chrome. https://github.com/nvaccess/nvda/issues/10728
+            aria-label={`${pageText} ${page}` + (isActive ? ' ' : '')}
             aria-current={isActive ? 'page' : null}
           >
             {page}
@@ -300,8 +301,7 @@ Pagination.propTypes = {
   autoHidePagination: PropTypes.bool,
   showPageInfo: PropTypes.bool,
   showText: PropTypes.string,
-  paginationLabel: PropTypes.string,
-  currentPageLabel: PropTypes.string
+  paginationLabel: PropTypes.string
 }
 
 Pagination.defaultProps = {
@@ -309,6 +309,5 @@ Pagination.defaultProps = {
   autoHidePagination: true,
   showPageInfo: true,
   showText: 'Show',
-  paginationLabel: 'pagination',
-  currentPageLabel: 'current page'
+  paginationLabel: 'pagination'
 }

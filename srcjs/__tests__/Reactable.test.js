@@ -1964,7 +1964,8 @@ describe('pagination', () => {
       const page = i + 1
       expect(btn).toHaveTextContent(page)
       if (page === 1) {
-        expect(btn).toHaveAttribute('aria-label', `Page 1, current page`)
+        expect(btn).toHaveAttribute('aria-current', 'page')
+        expect(btn).toHaveAttribute('aria-label', `Page ${page} `)
       } else {
         expect(btn).toHaveAttribute('aria-label', `Page ${page}`)
       }
