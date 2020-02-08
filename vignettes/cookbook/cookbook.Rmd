@@ -605,6 +605,33 @@ reactable(
 )
 ```
 
+## Style nested rows
+
+To style nested rows, use a JavaScript function to style rows based on their
+nesting [`level`](../conditional-styling.html#rowinfo-properties-1):
+
+```{r}
+data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
+
+reactable(
+  data,
+  groupBy = "Type",
+  columns = list(
+    Price = colDef(aggregate = "max"),
+    MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    DriveTrain = colDef(aggregate = "unique"),
+    Man.trans.avail = colDef(aggregate = "frequency")
+  ),
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.level > 0) {
+      return { background: '#eee', borderLeft: '2px solid #ffa62d' }
+    } else {
+      return { borderLeft: '2px solid transparent' }
+    }
+  }")
+)
+```
+
 ## Custom fonts
 
 Tables don't have a default font, and just inherit the font properties

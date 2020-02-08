@@ -191,6 +191,7 @@ props <- tibble::tribble(
   "page", "2", "page index (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
+  "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.1.0.9000)"
 )
 
@@ -300,6 +301,7 @@ props <- tibble::tribble(
   "page", "2", "page index (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
+  "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.1.0.9000)"
 )
 
