@@ -992,8 +992,8 @@ describe('row selection', () => {
 })
 
 describe('expandable row details and pivot rows', () => {
-  const getExpanders = container => container.querySelectorAll('.rt-expander')
-  const getExpanderButtons = container => container.querySelectorAll('.rt-expander-button')
+  const getExpanders = container => container.querySelectorAll('.rt-expander-button')
+  const getExpandableCells = container => container.querySelectorAll('.rt-expandable')
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getCells = container => container.querySelectorAll('.rt-td')
   const props = {
@@ -1198,16 +1198,21 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('pivoting still works with custom expanders', () => {
-    const columns = [
-      { name: 'col-a', accessor: 'a' },
-      { name: 'col-b', accessor: 'b' }
-    ]
-    const { container } = render(
-      <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
-    )
-    let expanders = getExpanders(container)
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [
+        { name: 'col-a', accessor: 'a' },
+        { name: 'col-b', accessor: 'b' }
+      ],
+      pivotBy: ['b'],
+      defaultPageSize: 2
+    }
+    const { container } = render(<Reactable {...props} />)
+    const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     expect(getRows(container)).toHaveLength(2)
+    const expandableCells = getExpandableCells(container)
+    expect(expandableCells).toHaveLength(2)
 
     // Expand pivoted cell
     fireEvent.click(expanders[0])
@@ -1261,15 +1266,19 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('expanders have aria labels', () => {
-    const columns = [
-      { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` }
-    ]
-    const { container } = render(<Reactable {...props} columns={columns} />)
-    const expanderButtons = getExpanderButtons(container)
-    expect(expanderButtons).toHaveLength(2)
-    expect(expanderButtons[0]).toHaveAttribute('aria-label', 'Expand details')
-    fireEvent.click(expanderButtons[0])
-    expect(expanderButtons[0]).toHaveAttribute('aria-label', 'Collapse details')
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` },
+        { name: 'col-b', accessor: 'b' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Expand details')
+    fireEvent.click(expanders[0])
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Collapse details')
   })
 
   it('expands first row detail on row click', () => {
