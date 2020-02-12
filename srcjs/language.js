@@ -24,7 +24,6 @@ export const defaultLanguage = {
   pageNumberLabel: 'Page {page}',
   pageJumpLabel: 'Go to page',
   pageSizeOptionsLabel: 'Rows per page',
-  pageNavLabel: 'Pagination',
 
   // Column groups
   defaultGroupHeader: 'Grouped',

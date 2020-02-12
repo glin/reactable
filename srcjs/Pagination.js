@@ -265,11 +265,11 @@ export default class Pagination extends React.Component {
           {pageSizeOptions}
         </div>
 
-        <nav className="rt-pagination-nav" aria-label={language.pageNavLabel}>
+        <div className="rt-pagination-nav">
           {prevButton}
           {pageNumbers}
           {nextButton}
-        </nav>
+        </div>
       </div>
     )
   }
@@ -293,8 +293,7 @@ Pagination.propTypes = {
     pagePreviousLabel: PropTypes.string,
     pageNumberLabel: PropTypes.string,
     pageJumpLabel: PropTypes.string,
-    pageSizeOptionsLabel: PropTypes.string,
-    pageNavLabel: PropTypes.string
+    pageSizeOptionsLabel: PropTypes.string
   })
 }
 

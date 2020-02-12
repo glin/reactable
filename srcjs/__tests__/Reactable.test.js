@@ -1945,7 +1945,6 @@ describe('pagination', () => {
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getPagination = container => container.querySelector('.rt-pagination')
   const getPageInfo = container => container.querySelector('.rt-page-info')
-  const getPaginationNav = container => container.querySelector('.rt-pagination-nav')
   const getPageSizeOptions = container => container.querySelector('.rt-page-size')
   const getPageSizeSelect = container => container.querySelector('.rt-page-size select')
   const getPrevButton = container => container.querySelector('.rt-prev-button')
@@ -2113,20 +2112,6 @@ describe('pagination', () => {
     pageSizeSelect = getPageSizeSelect(container)
     expect(pageSizeOptions).toHaveTextContent(/^_Show 246$/)
     expect(pageSizeSelect).toHaveAttribute('aria-label', '_Rows per page')
-  })
-
-  it('pagination nav', () => {
-    const props = {
-      data: { a: [1, 2, 3, 4, 5] },
-      columns: [{ name: 'a', accessor: 'a' }],
-      defaultPageSize: 2
-    }
-    const { container, rerender } = render(<Reactable {...props} />)
-    const paginationNav = getPaginationNav(container)
-    expect(paginationNav).toHaveAttribute('aria-label', 'Pagination')
-    // Language
-    rerender(<Reactable {...props} language={{ pageNavLabel: '_Pagination' }} />)
-    expect(paginationNav).toHaveAttribute('aria-label', '_Pagination')
   })
 
   it('simple page navigation', () => {
