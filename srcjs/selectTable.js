@@ -4,22 +4,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import { defaultLanguage, renderTemplate } from './language'
+
 const DefaultSelectInputComponent = props => {
+  const { selectType, checked, label, rows, row, onClick } = props
   return (
     <input
-      type={props.selectType || 'checkbox'}
-      aria-label={`${props.checked ? 'Deselect' : 'Select'} ${props.label || ''}`}
-      checked={props.checked}
+      type={selectType || 'checkbox'}
+      aria-label={label}
+      checked={checked}
       onClick={e => {
         e.stopPropagation()
-        if (props.rows) {
+        if (rows) {
           // Select all
-          const indices = props.rows.map(row => row._index)
-          props.onClick(indices, !props.checked)
-        } else if (props.row) {
+          const indices = rows.map(row => row._index)
+          onClick(indices, !checked)
+        } else if (row) {
           // Select single
-          const index = props.row._index
-          props.onClick(index)
+          const index = row._index
+          onClick(index)
         }
       }}
       onChange={() => {}}
@@ -43,20 +46,22 @@ export default (Component, options) => {
     }
 
     rowSelector(cellInfo) {
-      const { isSelected, toggleSelection, selectType, SelectInputComponent } = this.props
+      const { isSelected, toggleSelection, selectType, SelectInputComponent, language } = this.props
       const checked = isSelected(cellInfo.index)
       const inputProps = {
         checked,
         onClick: toggleSelection,
         selectType,
         row: cellInfo.row,
-        label: `row ${cellInfo.index + 1}`
+        label: renderTemplate(checked ? language.deselectRowLabel : language.selectRowLabel, {
+          row: cellInfo.index + 1
+        })
       }
       return React.createElement(SelectInputComponent, inputProps)
     }
 
     subRowSelector(cellInfo) {
-      const { isSelected, toggleAll, selectType, SelectInputComponent } = this.props
+      const { isSelected, toggleAll, selectType, SelectInputComponent, language } = this.props
       if (selectType === 'radio') return null
       const rows = cellInfo.subRows
       // Don't support selecting aggregated cells for now
@@ -69,13 +74,13 @@ export default (Component, options) => {
         onClick: toggleAll,
         selectType,
         rows,
-        label: `all rows in the group`
+        label: checked ? language.deselectAllSubRowsLabel : language.selectAllSubRowsLabel
       }
       return React.createElement(SelectInputComponent, inputProps)
     }
 
     headSelector(cellInfo) {
-      const { isSelected, selectType, toggleAll, SelectAllInputComponent } = this.props
+      const { isSelected, selectType, toggleAll, SelectAllInputComponent, language } = this.props
       if (selectType === 'radio') return null
       const rows = cellInfo.data
       // Don't support selecting aggregated cells for now
@@ -88,7 +93,7 @@ export default (Component, options) => {
         onClick: toggleAll,
         selectType,
         rows,
-        label: 'all rows'
+        label: checked ? language.deselectAllRowsLabel : language.selectAllRowsLabel
       }
       return React.createElement(SelectAllInputComponent, inputProps)
     }
@@ -141,12 +146,21 @@ export default (Component, options) => {
     toggleAll: PropTypes.func.isRequired,
     selectWidth: PropTypes.number,
     columns: PropTypes.array.isRequired,
+    language: PropTypes.shape({
+      selectAllRowsLabel: PropTypes.string,
+      deselectAllRowsLabel: PropTypes.string,
+      selectAllSubRowsLabel: PropTypes.string,
+      deselectAllSubRowsLabel: PropTypes.string,
+      selectRowLabel: PropTypes.string,
+      deselectRowLabel: PropTypes.string
+    }),
     forwardedRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })])
   }
   RTSelectTable.defaultProps = {
     selectType: 'checkbox',
     SelectInputComponent: DefaultSelectInputComponent,
-    SelectAllInputComponent: DefaultSelectInputComponent
+    SelectAllInputComponent: DefaultSelectInputComponent,
+    language: defaultLanguage
   }
 
   return React.forwardRef((props, ref) => {

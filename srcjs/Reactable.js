@@ -9,6 +9,7 @@ import selectTableHOC from './selectTable'
 import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
+import { defaultLanguage, renderTemplate } from './language'
 import { classNames, getFirstDefined, get, set } from './utils'
 
 import '@glin/react-table/react-table.css'
@@ -25,7 +26,7 @@ const getTheadThProps = (state, rowInfo, column) => {
     const isResizing = state.currentlyResizing && state.currentlyResizing.id === column.id
     props = {
       ...props,
-      'aria-label': `${column.name}, sort`,
+      'aria-label': renderTemplate(state.language.sortLabel, { name: column.name }),
       'aria-sort': currentSortOrder,
       defaultSortOrder,
       isSortable,
@@ -49,7 +50,7 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
       pivotColumns[0].parentColumn
     )
     if (!pivotParentColumn.Header) {
-      props.HeaderPivoted = 'Grouped'
+      props.HeaderPivoted = state.language.defaultGroupHeader
     }
   }
 
@@ -210,8 +211,10 @@ const DefaultTbodyComponent = ReactTableDefaults.TbodyComponent
 const DefaultNoDataComponent = ReactTableDefaults.NoDataComponent
 Object.assign(ReactTableDefaults, {
   TbodyComponent({ state, children, ...rest }) {
-    const { pageRows, noDataText } = state
-    const noData = !pageRows.length && <DefaultNoDataComponent>{noDataText}</DefaultNoDataComponent>
+    const { pageRows, language } = state
+    const noData = !pageRows.length && (
+      <DefaultNoDataComponent>{language.noData}</DefaultNoDataComponent>
+    )
     return (
       <DefaultTbodyComponent role="rowgroup" {...rest}>
         {children}
@@ -233,7 +236,8 @@ Object.assign(ReactTableDefaults, {
         style={{ width: '100%' }}
         value={filter ? filter.value : ''}
         onChange={event => onChange(event.target.value)}
-        aria-label={`Filter ${column.name}`}
+        placeholder={column.language.filterPlaceholder}
+        aria-label={renderTemplate(column.language.filterLabel, { name: column.name })}
       />
     )
   }
@@ -241,8 +245,9 @@ Object.assign(ReactTableDefaults, {
 
 // Enable keyboard navigation and add aria-label to expanders
 Object.assign(ReactTableDefaults, {
-  ExpanderComponent({ isExpanded }) {
-    const label = `${isExpanded ? 'Collapse' : 'Expand'} details`
+  ExpanderComponent({ isExpanded, column }) {
+    const { language } = column
+    const label = isExpanded ? language.detailsCollapseLabel : language.detailsExpandLabel
     return (
       <button className="rt-expander-button" aria-label={label}>
         <span
@@ -337,15 +342,21 @@ ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, 
 }
 
 // Table component with a search input
-const SearchTableComponent = ({ searchValue, onSearchChange, ...rest }) => {
+const SearchTableComponent = ({
+  searchValue,
+  onSearchChange,
+  searchPlaceholder,
+  searchLabel,
+  ...rest
+}) => {
   const searchInput = (
     <input
       type="text"
       value={searchValue}
       onChange={onSearchChange}
       className="rt-search"
-      placeholder="Search"
-      aria-label="Search"
+      placeholder={searchPlaceholder}
+      aria-label={searchLabel}
     />
   )
   return (
@@ -358,7 +369,9 @@ const SearchTableComponent = ({ searchValue, onSearchChange, ...rest }) => {
 
 SearchTableComponent.propTypes = {
   searchValue: PropTypes.string.isRequired,
-  onSearchChange: PropTypes.func.isRequired
+  onSearchChange: PropTypes.func.isRequired,
+  searchPlaceholder: PropTypes.string,
+  searchLabel: PropTypes.string
 }
 
 const SelectTable = selectTableHOC(ReactTable)
@@ -622,8 +635,11 @@ class Reactable extends React.Component {
       inline,
       width,
       height,
+      language,
       dataKey
     } = this.props
+
+    language = { ...defaultLanguage, ...language }
 
     data = columnsToRows(data)
     columns = buildColumnDefs(columns, columnGroups, {
@@ -631,7 +647,8 @@ class Reactable extends React.Component {
       showSortIcon,
       showSortable,
       isExpanded: this.isExpanded,
-      onExpanderClick: this.toggleExpand
+      onExpanderClick: this.toggleExpand,
+      language
     })
 
     // Leave at least one row to show the no data message properly
@@ -801,7 +818,9 @@ class Reactable extends React.Component {
         }
         return {
           searchValue,
-          onSearchChange
+          onSearchChange,
+          searchPlaceholder: state.language.searchPlaceholder,
+          searchLabel: state.language.searchLabel
         }
       }
     }
@@ -852,8 +871,7 @@ class Reactable extends React.Component {
         TableComponent={TableComponent}
         SubComponent={SubComponent}
         {...selectProps}
-        pageJumpText="go to page"
-        rowsSelectorText="rows per page"
+        language={language}
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
@@ -908,6 +926,7 @@ Reactable.propTypes = {
   inline: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  language: PropTypes.object,
   dataKey: PropTypes.string,
   isChild: PropTypes.bool
 }

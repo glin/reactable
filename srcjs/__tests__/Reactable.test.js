@@ -172,8 +172,8 @@ describe('sorting', () => {
     const headers = getHeaders(container)
     expect(headers[0]).toHaveAttribute('aria-sort', 'none')
     expect(headers[1]).toHaveAttribute('aria-sort', 'none')
-    expect(headers[0]).toHaveAttribute('aria-label', 'colA, sort')
-    expect(headers[1]).toHaveAttribute('aria-label', 'colB, sort')
+    expect(headers[0]).toHaveAttribute('aria-label', 'Sort colA')
+    expect(headers[1]).toHaveAttribute('aria-label', 'Sort colB')
     expect(headers[0]).toHaveAttribute('role', 'columnheader')
     expect(headers[1]).toHaveAttribute('role', 'columnheader')
 
@@ -186,6 +186,22 @@ describe('sorting', () => {
     expect(headers[2]).not.toHaveAttribute('aria-sort')
     expect(headers[2]).not.toHaveAttribute('aria-label')
     expect(headers[2]).toHaveAttribute('role', 'columnheader')
+  })
+
+  it('sort language', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ],
+      sortable: true,
+      language: { sortLabel: '_Sort {name}' }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers[0]).toHaveAttribute('aria-label', '_Sort colA')
+    expect(headers[1]).toHaveAttribute('aria-label', '_Sort colB')
   })
 
   it('can be navigated with keyboard', () => {
@@ -479,21 +495,35 @@ describe('filtering', () => {
     expect(getByText('x (1)')).toBeTruthy()
   })
 
-  it('filters have aria-label set', () => {
-    const { container } = render(
-      <Reactable
-        data={{ a: [1, 2], b: ['a', 'b'] }}
-        columns={[
-          { name: 'column-a', accessor: 'a' },
-          { name: 'column-b', accessor: 'b' }
-        ]}
-        filterable
-      />
-    )
-    let filters = getFilters(container)
-    filters = getFilters(container)
+  it('filter language', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [
+        { name: 'column-a', accessor: 'a' },
+        { name: 'column-b', accessor: 'b' }
+      ],
+      filterable: true
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    const filters = getFilters(container)
     expect(filters[0]).toHaveAttribute('aria-label', 'Filter column-a')
     expect(filters[1]).toHaveAttribute('aria-label', 'Filter column-b')
+    expect(filters[0].placeholder).toEqual('')
+    expect(filters[1].placeholder).toEqual('')
+
+    rerender(
+      <Reactable
+        {...props}
+        language={{
+          filterPlaceholder: 'All',
+          filterLabel: '_Filter {name}'
+        }}
+      />
+    )
+    expect(filters[0]).toHaveAttribute('aria-label', '_Filter column-a')
+    expect(filters[1]).toHaveAttribute('aria-label', '_Filter column-b')
+    expect(filters[0].placeholder).toEqual('All')
+    expect(filters[1].placeholder).toEqual('All')
   })
 })
 
@@ -714,6 +744,27 @@ describe('searching', () => {
     rows = getRows(container)
     expect(rows).toHaveLength(2)
   })
+
+  it('search language', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      searchable: true
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    const searchInput = getSearchInput(container)
+    expect(searchInput.placeholder).toEqual('Search')
+    expect(searchInput).toHaveAttribute('aria-label', 'Search')
+
+    rerender(
+      <Reactable
+        {...props}
+        language={{ searchPlaceholder: '_search...', searchLabel: '_Search' }}
+      />
+    )
+    expect(searchInput.placeholder).toEqual('_search...')
+    expect(searchInput).toHaveAttribute('aria-label', '_Search')
+  })
 })
 
 describe('table styles', () => {
@@ -817,7 +868,7 @@ describe('row selection', () => {
   })
 
   it('multiple select', () => {
-    const { container, getByLabelText } = render(
+    const { container, getByLabelText, rerender } = render(
       <Reactable {...props} selection="multiple" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
@@ -830,6 +881,8 @@ describe('row selection', () => {
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
+    expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Deselect all rows')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row 1')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
 
     fireEvent.click(selectAllCheckbox)
@@ -837,10 +890,80 @@ describe('row selection', () => {
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        selection="multiple"
+        language={{
+          selectAllRowsLabel: '_Select all rows',
+          deselectAllRowsLabel: '_Deselect all rows',
+          selectRowLabel: '_Select row {row}',
+          deselectRowLabel: '_Deselect row {row}'
+        }}
+      />
+    )
+    expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Select all rows')
+    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Select row 2')
+    fireEvent.click(selectAllCheckbox)
+    expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Deselect all rows')
+    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Deselect row 2')
+  })
+
+  it('multiple select with pivoted sub rows', () => {
+    const props = {
+      data: { a: ['x', 'x', 'y', 'y'], b: [1, 1, 2, 41] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      selectionId: 'selected',
+      pivotBy: ['a'],
+      defaultExpanded: true
+    }
+    const { container, getByLabelText, getAllByLabelText, rerender } = render(
+      <Reactable {...props} />
+    )
+    expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(6)
+    expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
+    const selectAllCheckboxes = getAllByLabelText('Select all rows in group')
+    expect(selectAllCheckboxes).toHaveLength(2)
+    const selectRow1Checkbox = getByLabelText('Select row 1')
+    const selectRow2Checkbox = getByLabelText('Select row 2')
+
+    fireEvent.click(selectAllCheckboxes[0])
+    expect(selectAllCheckboxes[0].checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+    expect(selectAllCheckboxes[0]).toHaveAttribute('aria-label', 'Deselect all rows in group')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row 1')
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
+
+    fireEvent.click(selectAllCheckboxes[0])
+    expect(selectAllCheckboxes[0].checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+    expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        language={{
+          selectAllSubRowsLabel: '_Select all rows in group',
+          deselectAllSubRowsLabel: '_Deselect all rows in group'
+        }}
+      />
+    )
+    expect(selectAllCheckboxes[0]).toHaveAttribute('aria-label', '_Select all rows in group')
+    fireEvent.click(selectAllCheckboxes[0])
+    expect(selectAllCheckboxes[0]).toHaveAttribute('aria-label', '_Deselect all rows in group')
   })
 
   it('single select', () => {
-    const { container, getByLabelText } = render(
+    const { container, getByLabelText, rerender } = render(
       <Reactable {...props} selection="single" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
@@ -851,6 +974,7 @@ describe('row selection', () => {
     fireEvent.click(selectRow1Radio)
     expect(selectRow1Radio.checked).toEqual(true)
     expect(selectRow2Radio.checked).toEqual(false)
+    expect(selectRow1Radio).toHaveAttribute('aria-label', 'Deselect row 1')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
 
     fireEvent.click(selectRow2Radio)
@@ -862,6 +986,21 @@ describe('row selection', () => {
     expect(selectRow1Radio.checked).toEqual(false)
     expect(selectRow2Radio.checked).toEqual(false)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        selection="single"
+        language={{
+          selectRowLabel: '_Select row {row}',
+          deselectRowLabel: '_Deselect row {row}'
+        }}
+      />
+    )
+    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Select row 2')
+    fireEvent.click(selectRow2Radio)
+    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Deselect row 2')
   })
 
   it('default selected', () => {
@@ -1281,6 +1420,22 @@ describe('expandable row details and pivot rows', () => {
     expect(expanders[0]).toHaveAttribute('aria-label', 'Collapse details')
   })
 
+  it('expanders language', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [{ name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` }],
+      language: {
+        detailsExpandLabel: '_Expand details',
+        detailsCollapseLabel: '_Collapse details'
+      }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const expanders = getExpanders(container)
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Expand details')
+    fireEvent.click(expanders[0])
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Collapse details')
+  })
+
   it('expands first row detail on row click', () => {
     const data = {
       a: ['aaa1', 'aaa2'],
@@ -1550,6 +1705,28 @@ describe('column group header rendering', () => {
     expect(headers[0]).toHaveTextContent('')
     expect(headers[1]).toHaveTextContent('')
   })
+
+  it('ungrouped pivoted columns have a default header set', () => {
+    const columnGroups = [{ columns: ['a'], name: 'group-a' }]
+    const { container, rerender } = render(
+      <Reactable {...props} columnGroups={columnGroups} pivotBy={['b']} />
+    )
+    const headers = getGroupHeaders(container)
+    expect(headers).toHaveLength(2)
+    expect(headers[0]).toHaveTextContent('Grouped')
+    expect(headers[1]).toHaveTextContent('group-a')
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        columnGroups={columnGroups}
+        pivotBy={['b']}
+        language={{ defaultGroupHeader: '_Grouped' }}
+      />
+    )
+    expect(headers[0]).toHaveTextContent('_Grouped')
+  })
 })
 
 describe('footer rendering', () => {
@@ -1768,7 +1945,9 @@ describe('pagination', () => {
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getPagination = container => container.querySelector('.rt-pagination')
   const getPageInfo = container => container.querySelector('.rt-page-info')
+  const getPaginationNav = container => container.querySelector('.rt-pagination-nav')
   const getPageSizeOptions = container => container.querySelector('.rt-page-size')
+  const getPageSizeSelect = container => container.querySelector('.rt-page-size select')
   const getPrevButton = container => container.querySelector('.rt-prev-button')
   const getNextButton = container => container.querySelector('.rt-next-button')
   const getPageNumbers = container => container.querySelector('.rt-page-numbers')
@@ -1855,7 +2034,7 @@ describe('pagination', () => {
       ],
       defaultPageSize: 2
     }
-    const { container, rerender } = render(<Reactable {...props} />)
+    let { container, rerender } = render(<Reactable {...props} />)
     let pageInfo = getPageInfo(container)
     expect(pageInfo).toHaveTextContent('1–2 of 5 rows')
 
@@ -1875,6 +2054,17 @@ describe('pagination', () => {
     rerender(<Reactable {...props} showPageInfo={false} />)
     pageInfo = getPageInfo(container)
     expect(pageInfo).toEqual(null)
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        showPageInfo
+        language={{ pageInfo: '_{rowStart} to {rowEnd} of {rows}' }}
+      />
+    )
+    pageInfo = getPageInfo(container)
+    expect(pageInfo).toHaveTextContent('_1 to 2 of 5')
   })
 
   it('page size options', () => {
@@ -1889,11 +2079,12 @@ describe('pagination', () => {
       pageSizeOptions: [2, 4, 6]
     }
     const { container, rerender } = render(<Reactable {...props} />)
-    const pageSizeOptions = getPageSizeOptions(container)
+    let pageSizeOptions = getPageSizeOptions(container)
+    let pageSizeSelect = getPageSizeSelect(container)
     expect(pageSizeOptions).toHaveTextContent(/^Show 246$/)
+    expect(pageSizeSelect).toHaveAttribute('aria-label', 'Rows per page')
 
     // Options
-    const pageSizeSelect = pageSizeOptions.querySelector('select')
     const options = pageSizeSelect.querySelectorAll('option')
     expect(options).toHaveLength(3)
     options.forEach((option, i) => expect(option).toHaveTextContent(props.pageSizeOptions[i]))
@@ -1909,7 +2100,33 @@ describe('pagination', () => {
 
     // No page info shown
     rerender(<Reactable {...props} showPageInfo={false} />)
-    expect(getPageSizeOptions(container)).toHaveTextContent(/^Show 246 rows$/)
+    expect(getPageSizeOptions(container)).toHaveTextContent(/^Show 246$/)
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        language={{ pageSizeOptions: '_Show {rows}', pageSizeOptionsLabel: '_Rows per page' }}
+      />
+    )
+    pageSizeOptions = getPageSizeOptions(container)
+    pageSizeSelect = getPageSizeSelect(container)
+    expect(pageSizeOptions).toHaveTextContent(/^_Show 246$/)
+    expect(pageSizeSelect).toHaveAttribute('aria-label', '_Rows per page')
+  })
+
+  it('pagination nav', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      defaultPageSize: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    const paginationNav = getPaginationNav(container)
+    expect(paginationNav).toHaveAttribute('aria-label', 'Pagination')
+    // Language
+    rerender(<Reactable {...props} language={{ pageNavLabel: '_Pagination' }} />)
+    expect(paginationNav).toHaveAttribute('aria-label', '_Pagination')
   })
 
   it('simple page navigation', () => {
@@ -1922,7 +2139,7 @@ describe('pagination', () => {
       defaultPageSize: 2,
       paginationType: 'simple'
     }
-    const { container, queryByText } = render(<Reactable {...props} />)
+    const { container, queryByText, rerender } = render(<Reactable {...props} />)
     const pageNumbers = getPageNumbers(container)
     const prevButton = getPrevButton(container)
     const nextButton = getNextButton(container)
@@ -1953,6 +2170,21 @@ describe('pagination', () => {
 
     fireEvent.click(prevButton)
     expect(pageNumbers).toHaveTextContent('2 of 3')
+
+    // Language
+    const language = {
+      pageNext: '_Next',
+      pagePrevious: '_Previous',
+      pageNumbers: '_{page} of {pages}',
+      pageNextLabel: '_Next page',
+      pagePreviousLabel: '_Previous page'
+    }
+    rerender(<Reactable {...props} language={language} />)
+    expect(prevButton).toHaveTextContent('_Previous')
+    expect(nextButton).toHaveTextContent('_Next')
+    expect(prevButton).toHaveAttribute('aria-label', '_Previous page')
+    expect(nextButton).toHaveAttribute('aria-label', '_Next page')
+    expect(pageNumbers).toHaveTextContent('_2 of 3')
   })
 
   it('page number buttons', () => {
@@ -1965,9 +2197,9 @@ describe('pagination', () => {
       defaultPageSize: 1,
       paginationType: 'numbers'
     }
-    const { container, rerender, queryAllByText } = render(<Reactable {...props} />)
+    const { container, queryAllByText, rerender } = render(<Reactable {...props} />)
     let pageButtons = [...getPageButtons(container)]
-    const pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
+    let pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
     expect(pageNumberBtns).toHaveLength(5)
     pageNumberBtns.forEach((btn, i) => {
       const page = i + 1
@@ -1997,18 +2229,35 @@ describe('pagination', () => {
 
     // Should update on external page changes
     const prevButton = getPrevButton(container)
+    const nextButton = getNextButton(container)
     fireEvent.click(prevButton)
     expect(pageNumberBtns[3]).toHaveClass('rt-page-button-active')
+    fireEvent.click(nextButton)
+    expect(pageNumberBtns[4]).toHaveClass('rt-page-button-active')
 
     // Pages with ellipses
     const data = { a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }
     rerender(<Reactable {...props} data={data} />)
+    fireEvent.click(pageNumberBtns[0]) // page 1
     let ellipses = queryAllByText('...')
     expect(ellipses).toHaveLength(1)
     pageButtons = [...getPageButtons(container)]
-    fireEvent.click(pageButtons[5]) // page 5
+    fireEvent.click(pageNumberBtns[4]) // page 5
     ellipses = queryAllByText('...')
     expect(ellipses).toHaveLength(2)
+
+    // Language
+    rerender(<Reactable {...props} language={{ pageNumberLabel: '_Page {page}' }} />)
+    pageButtons = [...getPageButtons(container)]
+    pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
+    pageNumberBtns.forEach((btn, i) => {
+      const page = i + 1
+      if (btn.hasAttribute('aria-current')) {
+        expect(btn).toHaveAttribute('aria-label', `_Page ${page} `)
+      } else {
+        expect(btn).toHaveAttribute('aria-label', `_Page ${page}`)
+      }
+    })
   })
 
   it('page jump', () => {
@@ -2021,10 +2270,11 @@ describe('pagination', () => {
       defaultPageSize: 2,
       paginationType: 'jump'
     }
-    const { container } = render(<Reactable {...props} />)
+    const { container, rerender } = render(<Reactable {...props} />)
     const pageJump = getPageJump(container)
     const pageNumbers = getPageNumbers(container)
     expect(pageJump).toHaveAttribute('value', '1')
+    expect(pageJump).toHaveAttribute('aria-label', 'Go to page')
     expect(pageNumbers).toHaveTextContent('of 3')
 
     const pageInfo = getPageInfo(container)
@@ -2061,6 +2311,16 @@ describe('pagination', () => {
     fireEvent.change(pageJump, { target: { value: 'asdf' } })
     fireEvent.blur(pageJump)
     expect(pageJump).toHaveAttribute('value', '2')
+
+    // Language
+    rerender(
+      <Reactable
+        {...props}
+        language={{ pageNumbers: '_{page} of {pages}', pageJumpLabel: '_Go to page' }}
+      />
+    )
+    expect(pageJump).toHaveAttribute('aria-label', '_Go to page')
+    expect(pageNumbers).toHaveTextContent('_ of 3')
   })
 })
 
@@ -2110,11 +2370,15 @@ describe('no data', () => {
       data: { a: [] },
       columns: [{ name: 'a', accessor: 'a' }]
     }
-    const { queryAllByText, container } = render(<Reactable {...props} />)
+    const { container, queryAllByText, rerender } = render(<Reactable {...props} />)
     const noData = queryAllByText('No rows found')
     expect(noData).toHaveLength(1)
     const tbody = getTbody(container)
     expect(getNoData(tbody)).toBeTruthy()
+
+    // Language
+    rerender(<Reactable {...props} language={{ noData: '_No rows found' }} />)
+    expect(getNoData(tbody)).toHaveTextContent('_No rows found')
   })
 
   it('does not show message with data present', () => {

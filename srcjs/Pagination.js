@@ -5,6 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import reactTablePropTypes from './propTypes'
+import { defaultLanguage, renderTemplate } from './language'
 import { classNames } from './utils'
 
 const PageButton = ({ isActive, className, ...props }) => {
@@ -88,52 +89,39 @@ export default class Pagination extends React.Component {
     }
   }
 
-  renderPageInfo(props) {
-    const { page, pageSize, sortedData, ofText, rowsText } = props
-    const totalRows = sortedData.length
+  renderPageInfo({ page, pageSize, sortedData, language }) {
+    const rows = sortedData.length
     const rowStart = Math.min(page * pageSize + 1, sortedData.length)
     const rowEnd = Math.min(page * pageSize + pageSize, sortedData.length)
-    const pageInfo = (
-      <div className="rt-page-info">{`${rowStart}–${rowEnd} ${ofText} ${totalRows} ${rowsText}`}</div>
-    )
-    return pageInfo
+    const pageInfo = renderTemplate(language.pageInfo, { rowStart, rowEnd, rows })
+    return <div className="rt-page-info">{pageInfo}</div>
   }
 
-  renderPageSizeOptions(props) {
-    const {
-      pageSize,
-      pageSizeOptions,
-      onPageSizeChange,
-      rowsSelectorText,
-      showPageInfo,
-      rowsText,
-      showText
-    } = props
-
-    return (
-      <div className="rt-page-size">
-        {`${showText} `}
-        <select
-          aria-label={rowsSelectorText}
-          onChange={e => onPageSizeChange(Number(e.target.value))}
-          value={pageSize}
-        >
-          {pageSizeOptions.map((option, i) => (
-            <option key={i} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        {!showPageInfo ? ` ${rowsText}` : null}
-      </div>
+  renderPageSizeOptions({ pageSize, pageSizeOptions, onPageSizeChange, language }) {
+    const selector = (
+      <select
+        key="page-size-select"
+        aria-label={language.pageSizeOptionsLabel}
+        onChange={e => onPageSizeChange(Number(e.target.value))}
+        value={pageSize}
+      >
+        {pageSizeOptions.map((option, i) => (
+          <option key={i} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     )
+    const elements = renderTemplate(language.pageSizeOptions, { rows: selector })
+    return <div className="rt-page-size">{elements}</div>
   }
 
-  renderPageJump({ onChange, value, onBlur, onKeyPress, inputType, pageJumpText }) {
+  renderPageJump({ onChange, value, onBlur, onKeyPress, inputType, language }) {
     return (
       <input
+        key="page-jump"
         className="rt-page-jump"
-        aria-label={pageJumpText}
+        aria-label={language.pageJumpLabel}
         type={inputType}
         onChange={onChange}
         value={value}
@@ -165,7 +153,7 @@ export default class Pagination extends React.Component {
         }
       },
       inputType: 'number',
-      pageJumpText: this.props.pageJumpText
+      language: this.props.language
     }
   }
 
@@ -181,11 +169,7 @@ export default class Pagination extends React.Component {
       canNext,
       className,
       style,
-      ofText,
-      pageText,
-      previousText,
-      nextText,
-      paginationLabel
+      language
     } = this.props
 
     if (autoHidePagination) {
@@ -217,7 +201,7 @@ export default class Pagination extends React.Component {
             onClick={this.changePage.bind(null, page)}
             // Change aria-label to work around issue with aria-current changes
             // not being recognized in NVDA + Chrome. https://github.com/nvaccess/nvda/issues/10728
-            aria-label={`${pageText} ${page}` + (isActive ? ' ' : '')}
+            aria-label={renderTemplate(language.pageNumberLabel, { page }) + (isActive ? ' ' : '')}
             aria-current={isActive ? 'page' : null}
           >
             {page}
@@ -239,8 +223,7 @@ export default class Pagination extends React.Component {
       const totalPages = Math.max(pages, 1)
       pageNumbers = (
         <div className="rt-page-numbers">
-          {page}
-          {` ${ofText} ${totalPages}`}
+          {renderTemplate(language.pageNumbers, { page, pages: totalPages })}
         </div>
       )
     }
@@ -254,9 +237,9 @@ export default class Pagination extends React.Component {
         }}
         disabled={!canPrevious}
         aria-disabled={!canPrevious ? 'true' : null}
-        aria-label={`${previousText} ${pageText}`}
+        aria-label={language.pagePreviousLabel}
       >
-        {previousText}
+        {language.pagePrevious}
       </PageButton>
     )
 
@@ -269,9 +252,9 @@ export default class Pagination extends React.Component {
         }}
         disabled={!canNext}
         aria-disabled={!canNext ? 'true' : null}
-        aria-label={`${nextText} ${pageText}`}
+        aria-label={language.pageNextLabel}
       >
-        {nextText}
+        {language.pageNext}
       </PageButton>
     )
 
@@ -282,7 +265,7 @@ export default class Pagination extends React.Component {
           {pageSizeOptions}
         </div>
 
-        <nav className="rt-pagination-nav" aria-label={paginationLabel}>
+        <nav className="rt-pagination-nav" aria-label={language.pageNavLabel}>
           {prevButton}
           {pageNumbers}
           {nextButton}
@@ -300,14 +283,24 @@ Pagination.propTypes = {
   paginationType: PropTypes.oneOf(['numbers', 'jump', 'simple']),
   autoHidePagination: PropTypes.bool,
   showPageInfo: PropTypes.bool,
-  showText: PropTypes.string,
-  paginationLabel: PropTypes.string
+  language: PropTypes.shape({
+    pageNext: PropTypes.string,
+    pagePrevious: PropTypes.string,
+    pageNumbers: PropTypes.string,
+    pageInfo: PropTypes.string,
+    pageSizeOptions: PropTypes.string,
+    pageNextLabel: PropTypes.string,
+    pagePreviousLabel: PropTypes.string,
+    pageNumberLabel: PropTypes.string,
+    pageJumpLabel: PropTypes.string,
+    pageSizeOptionsLabel: PropTypes.string,
+    pageNavLabel: PropTypes.string
+  })
 }
 
 Pagination.defaultProps = {
   paginationType: 'numbers',
   autoHidePagination: true,
   showPageInfo: true,
-  showText: 'Show',
-  paginationLabel: 'pagination'
+  language: defaultLanguage
 }

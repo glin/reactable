@@ -21,7 +21,7 @@ export function columnsToRows(columns) {
 }
 
 export function buildColumnDefs(columns, groups, tableProps = {}) {
-  const { sortable, showSortIcon, showSortable, isExpanded, onExpanderClick } = tableProps
+  const { sortable, showSortIcon, showSortable, isExpanded, onExpanderClick, language } = tableProps
 
   columns = columns.map(column => {
     let col = { ...column }
@@ -288,6 +288,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
       return props
     }
+
+    col.language = language
 
     return col
   })
