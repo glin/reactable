@@ -37,8 +37,8 @@ export const defaultLanguage = {
   deselectAllRowsLabel: 'Deselect all rows',
   selectAllSubRowsLabel: 'Select all rows in group',
   deselectAllSubRowsLabel: 'Deselect all rows in group',
-  selectRowLabel: 'Select row {row}',
-  deselectRowLabel: 'Deselect row {row}'
+  selectRowLabel: 'Select row',
+  deselectRowLabel: 'Deselect row'
 }
 
 export function renderTemplate(template, params = {}) {

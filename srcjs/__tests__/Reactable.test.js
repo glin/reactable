@@ -842,6 +842,10 @@ describe('table styles', () => {
 
 describe('row selection', () => {
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
+  const getSelectRowRadios = container =>
+    container.querySelectorAll('.rt-select input[type="radio"]')
+  const getSelectRowCheckboxes = container =>
+    container.querySelectorAll('.rt-select input[type="checkbox"]')
 
   beforeEach(() => {
     window.Shiny = {
@@ -863,26 +867,31 @@ describe('row selection', () => {
 
   it('not selectable by default', () => {
     const { container } = render(<Reactable {...props} />)
-    expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(0)
-    expect(container.querySelectorAll('input[type=radio]')).toHaveLength(0)
+    expect(getSelectRowCheckboxes(container)).toHaveLength(0)
+    expect(getSelectRowRadios(container)).toHaveLength(0)
   })
 
   it('multiple select', () => {
-    const { container, getByLabelText, rerender } = render(
+    const { container, rerender } = render(
       <Reactable {...props} selection="multiple" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
-    const selectAllCheckbox = getByLabelText('Select all rows')
-    const selectRow1Checkbox = getByLabelText('Select row 1')
-    const selectRow2Checkbox = getByLabelText('Select row 2')
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    expect(selectRowCheckboxes).toHaveLength(3)
+    const selectAllCheckbox = selectRowCheckboxes[0]
+    const selectRow1Checkbox = selectRowCheckboxes[1]
+    const selectRow2Checkbox = selectRowCheckboxes[2]
+    expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Select all rows')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Select row')
+    expect(selectRow2Checkbox).toHaveAttribute('aria-label', 'Select row')
 
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
     expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Deselect all rows')
-    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row 1')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
 
     fireEvent.click(selectAllCheckbox)
@@ -899,16 +908,16 @@ describe('row selection', () => {
         language={{
           selectAllRowsLabel: '_Select all rows',
           deselectAllRowsLabel: '_Deselect all rows',
-          selectRowLabel: '_Select row {row}',
-          deselectRowLabel: '_Deselect row {row}'
+          selectRowLabel: '_Select row',
+          deselectRowLabel: '_Deselect row'
         }}
       />
     )
     expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Select all rows')
-    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Select row 2')
+    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Select row')
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Deselect all rows')
-    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Deselect row 2')
+    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Deselect row')
   })
 
   it('multiple select with pivoted sub rows', () => {
@@ -923,22 +932,21 @@ describe('row selection', () => {
       pivotBy: ['a'],
       defaultExpanded: true
     }
-    const { container, getByLabelText, getAllByLabelText, rerender } = render(
-      <Reactable {...props} />
-    )
+    const { container, getAllByLabelText, rerender } = render(<Reactable {...props} />)
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(6)
     expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
     const selectAllCheckboxes = getAllByLabelText('Select all rows in group')
     expect(selectAllCheckboxes).toHaveLength(2)
-    const selectRow1Checkbox = getByLabelText('Select row 1')
-    const selectRow2Checkbox = getByLabelText('Select row 2')
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
 
     fireEvent.click(selectAllCheckboxes[0])
     expect(selectAllCheckboxes[0].checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
     expect(selectAllCheckboxes[0]).toHaveAttribute('aria-label', 'Deselect all rows in group')
-    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row 1')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
 
     fireEvent.click(selectAllCheckboxes[0])
@@ -963,18 +971,19 @@ describe('row selection', () => {
   })
 
   it('single select', () => {
-    const { container, getByLabelText, rerender } = render(
+    const { container, rerender } = render(
       <Reactable {...props} selection="single" selectionId="selected" />
     )
-    expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
+    const selectRowRadios = getSelectRowRadios(container)
+    expect(selectRowRadios).toHaveLength(2)
     expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
-    const selectRow1Radio = getByLabelText('Select row 1')
-    const selectRow2Radio = getByLabelText('Select row 2')
+    const selectRow1Radio = selectRowRadios[0]
+    const selectRow2Radio = selectRowRadios[1]
 
     fireEvent.click(selectRow1Radio)
     expect(selectRow1Radio.checked).toEqual(true)
     expect(selectRow2Radio.checked).toEqual(false)
-    expect(selectRow1Radio).toHaveAttribute('aria-label', 'Deselect row 1')
+    expect(selectRow1Radio).toHaveAttribute('aria-label', 'Deselect row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
 
     fireEvent.click(selectRow2Radio)
@@ -993,14 +1002,14 @@ describe('row selection', () => {
         {...props}
         selection="single"
         language={{
-          selectRowLabel: '_Select row {row}',
-          deselectRowLabel: '_Deselect row {row}'
+          selectRowLabel: '_Select row',
+          deselectRowLabel: '_Deselect row'
         }}
       />
     )
-    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Select row 2')
+    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Select row')
     fireEvent.click(selectRow2Radio)
-    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Deselect row 2')
+    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Deselect row')
   })
 
   it('default selected', () => {
@@ -1010,14 +1019,16 @@ describe('row selection', () => {
       selection: 'multiple',
       selectionId: 'selected'
     }
-    const { container, getByLabelText, rerender } = render(
+    const { container, getAllByLabelText, getByLabelText, rerender } = render(
       <Reactable {...props} defaultSelected={[1, 0]} />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
-    let selectAllCheckbox = getByLabelText('Deselect all rows')
-    let selectRow1Checkbox = getByLabelText('Deselect row 1')
-    let selectRow2Checkbox = getByLabelText('Deselect row 2')
+    const selectAllCheckbox = getByLabelText('Deselect all rows')
+    const selectRowCheckboxes = getAllByLabelText('Deselect row')
+    expect(selectRowCheckboxes).toHaveLength(2)
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
@@ -1025,18 +1036,12 @@ describe('row selection', () => {
     // Should update when props change
     rerender(<Reactable {...props} defaultSelected={[0]} />)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
-    selectAllCheckbox = getByLabelText('Select all rows')
-    selectRow1Checkbox = getByLabelText('Deselect row 1')
-    selectRow2Checkbox = getByLabelText('Select row 2')
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(false)
     // Clear selection
     rerender(<Reactable {...props} />)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
-    selectAllCheckbox = getByLabelText('Select all rows')
-    selectRow1Checkbox = getByLabelText('Select row 1')
-    selectRow2Checkbox = getByLabelText('Select row 2')
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
@@ -1044,13 +1049,14 @@ describe('row selection', () => {
 
   it('works without Shiny', () => {
     delete window.Shiny
-    const { container, getByLabelText } = render(
+    const { container, getAllByLabelText, getByLabelText } = render(
       <Reactable {...props} selection="multiple" selectionId="selected" />
     )
     expect(container.querySelectorAll('input[type=checkbox]')).toHaveLength(3)
     const selectAllCheckbox = getByLabelText('Select all rows')
-    const selectRow1Checkbox = getByLabelText('Select row 1')
-    const selectRow2Checkbox = getByLabelText('Select row 2')
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
 
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox.checked).toEqual(true)
@@ -1064,12 +1070,13 @@ describe('row selection', () => {
       columns: [{ name: 'a', accessor: 'a' }],
       onClick: 'select'
     }
-    const { container, getByLabelText, getByText, rerender } = render(
+    const { getAllByLabelText, getByText, rerender } = render(
       <Reactable {...props} selection="single" />
     )
-    expect(container.querySelectorAll('input[type=radio]')).toHaveLength(2)
-    const selectRow1Radio = getByLabelText('Select row 1')
-    const selectRow2Radio = getByLabelText('Select row 2')
+    const selectRowRadios = getAllByLabelText('Select row')
+    expect(selectRowRadios).toHaveLength(2)
+    const selectRow1Radio = selectRowRadios[0]
+    const selectRow2Radio = selectRowRadios[1]
 
     fireEvent.click(getByText('aaa1'))
     expect(selectRow1Radio.checked).toEqual(true)
@@ -1116,8 +1123,8 @@ describe('row selection', () => {
       },
       defaultExpanded: true
     }
-    const { container, getByLabelText, getByText } = render(<Reactable {...props} />)
-    const selectRow1Checkbox = getByLabelText('Select row 1')
+    const { container, getAllByLabelText, getByText } = render(<Reactable {...props} />)
+    const selectRow1Checkbox = getAllByLabelText('Select row')[0]
     fireEvent.click(selectRow1Checkbox)
 
     const rows = getRows(container)
@@ -2398,7 +2405,7 @@ describe('update reactable state from Shiny', () => {
       selection: 'multiple',
       selectionId: 'selected'
     }
-    const { getByLabelText } = render(
+    const { getAllByLabelText, getByLabelText } = render(
       <div id="shiny-output-container">
         <Reactable {...props} />
       </div>
@@ -2410,17 +2417,15 @@ describe('update reactable state from Shiny', () => {
     updateState({ selected: [1, 0] })
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [2, 1])
     let selectAllCheckbox = getByLabelText('Deselect all rows')
-    let selectRow1Checkbox = getByLabelText('Deselect row 1')
-    let selectRow2Checkbox = getByLabelText('Deselect row 2')
+    let selectRowCheckboxes = getAllByLabelText('Deselect row')
+    let selectRow1Checkbox = selectRowCheckboxes[0]
+    let selectRow2Checkbox = selectRowCheckboxes[1]
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
 
     updateState({ selected: [] })
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
-    selectAllCheckbox = getByLabelText('Select all rows')
-    selectRow1Checkbox = getByLabelText('Select row 1')
-    selectRow2Checkbox = getByLabelText('Select row 2')
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
@@ -2525,7 +2530,7 @@ describe('sends reactable state to Shiny', () => {
       showPageSizeOptions: true,
       pageSizeOptions: [2, 4]
     }
-    const { container, getByLabelText } = render(
+    const { container, getAllByLabelText } = render(
       <div id="tbl">
         <Reactable {...props} />
       </div>
@@ -2539,7 +2544,7 @@ describe('sends reactable state to Shiny', () => {
     window.Shiny.onInputChange.mockReset()
 
     // Selected rows
-    const selectRow2Checkbox = getByLabelText('Select row 2')
+    const selectRow2Checkbox = getAllByLabelText('Select row')[1]
     fireEvent.click(selectRow2Checkbox)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)

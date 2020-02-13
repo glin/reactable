@@ -4,7 +4,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { defaultLanguage, renderTemplate } from './language'
+import { defaultLanguage } from './language'
 
 const DefaultSelectInputComponent = props => {
   const { selectType, checked, label, rows, row, onClick } = props
@@ -53,9 +53,7 @@ export default (Component, options) => {
         onClick: toggleSelection,
         selectType,
         row: cellInfo.row,
-        label: renderTemplate(checked ? language.deselectRowLabel : language.selectRowLabel, {
-          row: cellInfo.index + 1
-        })
+        label: checked ? language.deselectRowLabel : language.selectRowLabel
       }
       return React.createElement(SelectInputComponent, inputProps)
     }
