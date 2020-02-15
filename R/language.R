@@ -1,0 +1,147 @@
+#' Language options
+#'
+#' @description
+#' Use `reactableLang()` to customize the language strings in a table.
+#' Language strings include both visible text and accessible labels that can
+#' be read by assistive technology, such as screen readers.
+#'
+#' To configure the default language strings for all tables, use the global
+#' `reactable.language` option.
+#'
+#' @param sortLabel Accessible label for column sort buttons.
+#'   Takes a `{name}` parameter for the column name.
+#'
+#' @param filterPlaceholder Placeholder for column filter inputs.
+#' @param filterLabel Accessible label for column filter inputs.
+#'   Takes a `{name}` parameter for the column name.
+#'
+#' @param searchPlaceholder Placeholder for the table search input.
+#' @param searchLabel Accessible label for the table search input.
+#'
+#' @param noData Placeholder text when the table has no data.
+#'
+#' @param pageNext Text for the next page button.
+#' @param pagePrevious Text for the previous page button.
+#' @param pageNumbers Text for the page numbers info. Only used with the `"jump"` and
+#'   `"simple"` pagination types.
+#'   Takes the following parameters:
+#'   - `{page}` for the current page
+#'   - `{pages}` for the total number of pages
+#' @param pageInfo Text for the page info.
+#'   Takes the following parameters:
+#'   - `{rowStart}` for the starting row of the page
+#'   - `{rowEnd}` for the ending row of the page
+#'   - `{rows}` for the total number of rows
+#' @param pageSizeOptions Text for the page size options input.
+#'   Takes a `{rows}` parameter for the page size options input.
+#' @param pageNextLabel Accessible label for the next page button.
+#' @param pagePreviousLabel Accessible label for the previous page button.
+#' @param pageNumberLabel Accessible label for the page number buttons.
+#'   Only used with the the `"numbers"` pagination type.
+#'   Takes a `{page}` parameter for the page number.
+#' @param pageJumpLabel Accessible label for the page jump input. Only used with
+#'   the `"jump"` pagination type.
+#' @param pageSizeOptionsLabel Accessible label for the page size options input.
+#'
+#' @param defaultGroupHeader Header for default column groups. Only used for
+#'   `groupBy` columns.
+#'
+#' @param detailsExpandLabel Accessible label for the row details expand button.
+#' @param detailsCollapseLabel Accessible label for the row details collapse button.
+#'
+#' @param selectAllRowsLabel Accessible label for the select all rows checkbox.
+#' @param deselectAllRowsLabel Accessible label for the deselect all rows checkbox.
+#' @param selectAllSubRowsLabel Accessible label for the select all sub rows checkbox.
+#' @param deselectAllSubRowsLabel Accessible label for the deselect all sub rows checkbox.
+#' @param selectRowLabel Accessible label for the select row checkbox
+#' @param deselectRowLabel Accessible label for the deselect row checkbox.
+#'
+#' @return A language options object that can be used to customize the language
+#'   strings in `reactable()`.
+#'
+#' @examples
+#' reactable(
+#'   iris[1:30, ],
+#'   searchable = TRUE,
+#'   paginationType = "simple",
+#'   language = reactableLang(
+#'     searchPlaceholder = "Search...",
+#'     noData = "No entries found",
+#'     pageInfo = "{rowStart}\u2013{rowEnd} of {rows} entries",
+#'     pagePrevious = "\u276e",
+#'     pageNext = "\u276f",
+#'
+#'     # Accessible labels for assistive technology, such as screen readers
+#'     pagePreviousLabel = "Previous page",
+#'     pageNextLabel = "Next page"
+#'   )
+#' )
+#'
+#' # Configure default language for all tables
+#' options(reactable.language = reactableLang(
+#'   searchPlaceholder = "Search...",
+#'   noData = "No entries found",
+#'   pageInfo = "{rowStart} to {rowEnd} of {rows} entries"
+#' ))
+#'
+#' reactable(iris[1:30, ], searchable = TRUE)
+#'
+#' @export
+reactableLang <- function(
+  # Sorting
+  sortLabel = "Sort {name}",
+
+  # Filters
+  filterPlaceholder = "",
+  filterLabel = "Filter {name}",
+
+  # Search
+  searchPlaceholder = "Search",
+  searchLabel = "Search",
+
+  # Tables
+  noData = "No rows found",
+
+  # Pagination
+  pageNext = "Next",
+  pagePrevious = "Previous",
+  pageNumbers = "{page} of {pages}",
+  pageInfo = "{rowStart}\u2013{rowEnd} of {rows} rows",
+  pageSizeOptions = "Show {rows}",
+  pageNextLabel = "Next page",
+  pagePreviousLabel = "Previous page",
+  pageNumberLabel = "Page {page}",
+  pageJumpLabel = "Go to page",
+  pageSizeOptionsLabel = "Rows per page",
+
+  # Column groups
+  defaultGroupHeader = "Grouped",
+
+  # Row details
+  detailsExpandLabel = "Expand details",
+  detailsCollapseLabel = "Collapse details",
+
+  # Selection
+  selectAllRowsLabel = "Select all rows",
+  deselectAllRowsLabel = "Deselect all rows",
+  selectAllSubRowsLabel = "Select all rows in group",
+  deselectAllSubRowsLabel = "Deselect all rows in group",
+  selectRowLabel = "Select row",
+  deselectRowLabel = "Deselect row"
+) {
+
+  defaultArgs <- formals()
+  args <- as.list(match.call())
+  for (arg in names(args)) {
+    value <- args[[arg]]
+    if (!is.null(value) && !is.character(value)) {
+      stop(sprintf("`%s` must be a character string", arg))
+    }
+  }
+  lang <- filterNulls(args[names(defaultArgs)])
+  structure(lang, class = "reactableLang")
+}
+
+is.reactableLang <- function(x) {
+  inherits(x, "reactableLang")
+}

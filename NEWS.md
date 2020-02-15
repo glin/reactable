@@ -9,6 +9,7 @@
 * New `getReactableState()` function to get the state of a reactable instance in Shiny.
 * In `reactable()`, the `rowClass`, `rowStyle`, and `details` JavaScript functions
   now receive a `rowInfo.selected` property indicating whether the row is selected.
+* `reactable()` gains a `language` argument to customize the language strings in a table.
 
 ### Bug fixes
 

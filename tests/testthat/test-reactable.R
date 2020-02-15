@@ -60,6 +60,7 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, fullWidth = "yes"))
   expect_error(reactable(df, width = "asd"))
   expect_error(reactable(df, height = "asd"))
+  expect_error(reactable(df, language = list()))
 })
 
 test_that("reactable", {
@@ -783,6 +784,29 @@ test_that("rowClass and rowStyle", {
   expect_equal(attribs$rowStyle,
                list(list("background-color" = "red"), list(color = "red"), NULL))
 })
+
+test_that("language", {
+  data <- data.frame(x = 1)
+
+  language <- reactableLang(pageNext = "_Next", searchPlaceholder = "_Search", sortLabel = "_Sort {name}")
+  tbl <- reactable(data, language = language)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$language, language)
+
+  # Global language option
+  old <- options(reactable.language = language)
+  on.exit(options(old))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$language, language)
+
+  # Table language should override global option
+  language <- reactableLang(selectAllRowsLabel = "_Select all rows")
+  tbl <- reactable(data, language = language)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$language, language)
+})
+
 
 test_that("columnSortDefs", {
   defaultSorted <- list(x = "asc", y = "desc")

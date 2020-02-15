@@ -45,6 +45,9 @@ reference:
   - colDef
   - colGroup
   - colFormat
+- title: Customize tables
+  contents:
+  - reactableLang
 - title: Use in Shiny apps
   contents:
   - reactable-shiny

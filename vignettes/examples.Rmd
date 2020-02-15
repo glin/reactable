@@ -944,6 +944,28 @@ reactable(iris[1:5, ], onClick = JS("
 ```
 
 
+## Language options
+You can customize the language in the table by providing a set of `reactableLang()`
+options to `language`:
+```{r}
+reactable(
+  iris[1:30, ],
+  searchable = TRUE,
+  paginationType = "simple",
+  language = reactableLang(
+    searchPlaceholder = "Search...",
+    noData = "No entries found",
+    pageInfo = "{rowStart} to {rowEnd} of {rows} entries",
+    pagePrevious = "\u276e",
+    pageNext = "\u276f",
+
+    # Accessible labels for assistive technology, such as screen readers
+    pagePreviousLabel = "Previous page",
+    pageNextLabel = "Next page"
+  )
+)
+```
+
 ## Shiny
 To use reactable in Shiny apps, use `renderReactable()` and `reactableOutput()`:
 ```{r, eval=FALSE}

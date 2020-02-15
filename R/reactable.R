@@ -85,6 +85,8 @@
 #'   Defaults to `TRUE`.
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
+#' @param language Language options for the table, specified by
+#'   [reactableLang()]. Defaults to the global `reactable.language` option.
 #' @param elementId Element ID for the widget.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
 #'   and Shiny applications, or viewed from an R console.
@@ -147,6 +149,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
                       fullWidth = TRUE, width = "auto", height = "auto",
+                      language = getOption("reactable.language"),
                       elementId = NULL) {
 
   if (!(is.data.frame(data) || is.matrix(data))) {
@@ -382,6 +385,10 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   width <- htmltools::validateCssUnit(width)
   height <- htmltools::validateCssUnit(height)
 
+  if (!is.null(language) && !is.reactableLang(language)) {
+    stop("`language` must be a reactable language options object")
+  }
+
   dependencies <- list()
   addDependencies <- function(x) {
     # Dedupe dependencies
@@ -526,6 +533,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     inline = if (!fullWidth) TRUE,
     width = if (width != "auto") width,
     height = if (height != "auto") height,
+    language = language,
     dataKey = digest::digest(list(data, cols))
   ))
 

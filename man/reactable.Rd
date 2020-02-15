@@ -18,7 +18,8 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   striped = FALSE, compact = FALSE, wrap = TRUE,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
   style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
-  width = "auto", height = "auto", elementId = NULL)
+  width = "auto", height = "auto",
+  language = getOption("reactable.language"), elementId = NULL)
 }
 \arguments{
 \item{data}{A data frame or matrix.}
@@ -134,6 +135,9 @@ Defaults to \code{TRUE}.}
 \item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
 \item{height}{Height in pixels. Defaults to \code{"auto"} for automatic sizing.}
+
+\item{language}{Language options for the table, specified by
+\code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}
 
 \item{elementId}{Element ID for the widget.}
 }
