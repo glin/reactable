@@ -640,6 +640,9 @@ class Reactable extends React.Component {
     } = this.props
 
     language = { ...defaultLanguage, ...language }
+    for (let key in language) {
+      language[key] = language[key] || null
+    }
 
     data = columnsToRows(data)
     columns = buildColumnDefs(columns, columnGroups, {

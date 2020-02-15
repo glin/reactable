@@ -2164,7 +2164,7 @@ describe('pagination', () => {
     expect(pageNumbers).toHaveTextContent('2 of 3')
 
     // Language
-    const language = {
+    let language = {
       pageNext: '_Next',
       pagePrevious: '_Previous',
       pageNumbers: '_{page} of {pages}',
@@ -2177,6 +2177,18 @@ describe('pagination', () => {
     expect(prevButton).toHaveAttribute('aria-label', '_Previous page')
     expect(nextButton).toHaveAttribute('aria-label', '_Next page')
     expect(pageNumbers).toHaveTextContent('_2 of 3')
+
+    language = {
+      pageNext: '',
+      pagePrevious: null,
+      pageNextLabel: '',
+      pagePreviousLabel: null
+    }
+    rerender(<Reactable {...props} language={language} />)
+    expect(prevButton).not.toHaveTextContent()
+    expect(nextButton).not.toHaveTextContent()
+    expect(prevButton).not.toHaveAttribute('aria-label')
+    expect(nextButton).not.toHaveAttribute('aria-label')
   })
 
   it('page number buttons', () => {

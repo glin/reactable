@@ -2,6 +2,7 @@ import { renderTemplate } from '../language'
 
 test('renderTemplate', () => {
   expect(renderTemplate(null)).toEqual(null)
+  expect(renderTemplate(undefined)).toEqual(undefined)
   expect(renderTemplate('')).toEqual('')
   expect(renderTemplate('no params')).toEqual('no params')
   expect(renderTemplate('unused params', { a: 'param', b: 'param' })).toEqual('unused params')

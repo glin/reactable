@@ -3,7 +3,7 @@ export const defaultLanguage = {
   sortLabel: 'Sort {name}',
 
   // Filters
-  filterPlaceholder: null,
+  filterPlaceholder: '',
   filterLabel: 'Filter {name}',
 
   // Search
