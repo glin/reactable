@@ -17,7 +17,7 @@ export const defaultLanguage = {
   pageNext: 'Next',
   pagePrevious: 'Previous',
   pageNumbers: '{page} of {pages}',
-  pageInfo: '{rowStart}–{rowEnd} of {rows} rows',
+  pageInfo: `{rowStart}${String.fromCharCode(0x2013)}{rowEnd} of {rows} rows`,
   pageSizeOptions: 'Show {rows}',
   pageNextLabel: 'Next page',
   pagePreviousLabel: 'Previous page',
