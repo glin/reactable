@@ -1366,13 +1366,17 @@ describe('expandable row details and pivot rows', () => {
   })
 
   it('pivoting works with row details', () => {
-    const columns = [
-      { name: 'col-a', accessor: 'a', details: ['row-details', 'row-details'] },
-      { name: 'col-b', accessor: 'b' }
-    ]
-    const { container, getByText } = render(
-      <Reactable {...props} columns={columns} pivotBy={['b']} defaultPageSize={2} />
-    )
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: ['r-row-details', 'r-row-details'] },
+        { name: 'col-b', accessor: 'b', details: () => 'js-row-details' },
+        { name: 'col-c', accessor: 'c' }
+      ],
+      pivotBy: ['c'],
+      defaultPageSize: 2
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
     let expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     expect(getRows(container)).toHaveLength(2)
@@ -1383,16 +1387,24 @@ describe('expandable row details and pivot rows', () => {
 
     // Expand details
     expanders = getExpanders(container)
-    expect(expanders).toHaveLength(3)
-    fireEvent.click(expanders[1])
-    expect(getByText('row-details')).toBeTruthy()
+    expect(expanders).toHaveLength(4)
+    fireEvent.click(expanders[1]) // Expand col-a
+    expect(getByText('r-row-details')).toBeTruthy()
+    fireEvent.click(expanders[2]) // Expand col-b
+    expect(getByText('js-row-details')).toBeTruthy()
+
+    // Aggregated cells in columns with JS row details should not be clickable
+    const cells = getCells(container)
+    const aggregatedCell = cells[2]
+    expect(aggregatedCell).toHaveTextContent('')
+    fireEvent.click(aggregatedCell)
+    expect(getByText('js-row-details')).toBeTruthy()
 
     // Empty cells under pivoted cells should not be clickable
-    const cells = getCells(container)
-    const pivotedChildCell = cells[2]
+    const pivotedChildCell = cells[3]
     expect(pivotedChildCell).toHaveTextContent('')
     fireEvent.click(pivotedChildCell)
-    expect(getByText('row-details')).toBeTruthy()
+    expect(getByText('js-row-details')).toBeTruthy()
   })
 
   it('row details work with column groups', () => {

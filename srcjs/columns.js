@@ -271,7 +271,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (column.details) {
         if (column.details instanceof Array && column.details[rowInfo.index] == null) {
           // Don't expand rows without content
-        } else {
+        } else if (!rowInfo.aggregated) {
+          // Make cells with row details expandable. Ignore aggregated cells.
           props.className = classNames('rt-expandable', props.className)
           // Hide overflow ellipsis on expander-only columns
           if (rowInfo.row[column.id] == null) {
