@@ -2418,7 +2418,7 @@ describe('update reactable state from Shiny', () => {
       selectionId: 'selected'
     }
     const { getAllByLabelText, getByLabelText } = render(
-      <div id="shiny-output-container">
+      <div data-reactable-output="shiny-output-container">
         <Reactable {...props} />
       </div>
     )
@@ -2449,7 +2449,7 @@ describe('update reactable state from Shiny', () => {
       columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2'] }]
     }
     const { getByText, queryByText } = render(
-      <div id="shiny-output-container">
+      <div data-reactable-output="shiny-output-container">
         <Reactable {...props} />
       </div>
     )
@@ -2473,7 +2473,7 @@ describe('update reactable state from Shiny', () => {
       defaultPageSize: 1
     }
     const { getByText } = render(
-      <div id="shiny-output-container">
+      <div data-reactable-output="shiny-output-container">
         <Reactable {...props} />
       </div>
     )
@@ -2488,7 +2488,7 @@ describe('update reactable state from Shiny', () => {
     expect(getByText('1–1 of 3 rows')).toBeTruthy()
   })
 
-  it('does not enable updateState when parent element has no ID', () => {
+  it('does not enable updateState when parent element has no data-reactable-output ID', () => {
     const props = {
       data: { a: [1, 2] },
       columns: [{ name: 'a', accessor: 'a' }]
@@ -2508,7 +2508,7 @@ describe('update reactable state from Shiny', () => {
       isChild: true
     }
     render(
-      <div id="not-a-shiny-output-container">
+      <div data-reactable-output="not-a-shiny-output-container">
         <Reactable {...props} />
       </div>
     )
@@ -2543,7 +2543,7 @@ describe('sends reactable state to Shiny', () => {
       pageSizeOptions: [2, 4]
     }
     const { container, getAllByLabelText } = render(
-      <div id="tbl">
+      <div data-reactable-output="tbl">
         <Reactable {...props} />
       </div>
     )
@@ -2583,7 +2583,7 @@ describe('sends reactable state to Shiny', () => {
     window.Shiny.onInputChange.mockReset()
   })
 
-  it('does not send state when parent element has no ID', () => {
+  it('does not send state when parent element has no data-reactable-output ID', () => {
     const props = {
       data: { a: [1, 2] },
       columns: [{ name: 'a', accessor: 'a' }]
@@ -2603,10 +2603,25 @@ describe('sends reactable state to Shiny', () => {
       isChild: true
     }
     render(
-      <div id="not-a-shiny-output-container">
+      <div data-reactable-output="not-a-shiny-output-container">
         <Reactable {...props} />
       </div>
     )
     expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
+  })
+
+  it('does not send state for static widgets in Shiny apps', () => {
+    // When static widgets are rendered in Shiny apps, Shiny may be defined
+    // but not yet initialized.
+    window.Shiny.onInputChange = undefined
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    render(
+      <div data-reactable-output="not-a-shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
   })
 })

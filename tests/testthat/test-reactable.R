@@ -813,3 +813,16 @@ test_that("columnSortDefs", {
   expected <- list(list(id = "x", desc = FALSE), list(id = "y", desc = TRUE))
   expect_equal(columnSortDefs(defaultSorted), expected)
 })
+
+test_that("reactableOutput", {
+  output <- reactableOutput("mytbl")
+
+  # HTML dependencies should be intact
+  deps <- htmltools::htmlDependencies(output)
+  expect_true(length(deps) > 0)
+
+  # Output container should have data-reactable-output ID set
+  expect_equal(output[[1]][[4]]$attribs[["data-reactable-output"]], "mytbl")
+  expect_equal(output[[1]][[4]]$name, "div")
+  expect_equal(output[[1]][[4]]$attribs$id, "mytbl")
+})

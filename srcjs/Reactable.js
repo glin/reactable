@@ -527,14 +527,14 @@ class Reactable extends React.Component {
   }
 
   onTableUpdate() {
-    // Send reactable state to Shiny
-    if (window.Shiny && !this.props.isChild) {
+    // Send reactable state to Shiny for getReactableState()
+    if (window.Shiny && window.Shiny.onInputChange && !this.props.isChild) {
       const element = this.tableElement.current
       const instance = this.tableInstance.current
       if (!element || !instance) {
         return
       }
-      const outputId = element.parentElement.id
+      const outputId = element.parentElement.getAttribute('data-reactable-output')
       if (!outputId) {
         return
       }
@@ -559,8 +559,9 @@ class Reactable extends React.Component {
       this.toggleExpandAll()
     }
 
+    // Add Shiny message handler for updateReactable()
     if (window.Shiny && !this.props.isChild) {
-      const outputId = this.tableElement.current.parentElement.id
+      const outputId = this.tableElement.current.parentElement.getAttribute('data-reactable-output')
       if (outputId) {
         const updateState = state => {
           if (state.selected != null) {
@@ -579,6 +580,7 @@ class Reactable extends React.Component {
       }
     }
 
+    // Send initial reactable state to Shiny
     this.onTableUpdate()
   }
 
@@ -880,9 +882,10 @@ class Reactable extends React.Component {
         // Used to deep compare data and columns props
         dataKey={dataKey}
         ref={this.tableInstance}
-        // Get the table's DOM element
         getProps={() => {
+          // Send reactable state to Shiny on ReactTable state changes
           this.onTableUpdate()
+          // Get the table's DOM element
           return { ref: this.tableElement }
         }}
       />

@@ -607,8 +607,19 @@ columnSortDefs <- function(defaultSorted) {
 #'
 #' @export
 reactableOutput <- function(outputId, width = "auto", height = "auto", inline = FALSE) {
-  htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
-                                 inline = inline, package = "reactable")
+  output <- htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
+                                           inline = inline, package = "reactable")
+  # Add attribute to Shiny output containers to differentiate them from static widgets
+  addOutputId <- function(x) {
+    if (isTagList(x)) {
+      x[] <- lapply(x, addOutputId)
+    } else if (is.tag(x)) {
+      x <- htmltools::tagAppendAttributes(x, "data-reactable-output" = outputId)
+    }
+    x
+  }
+  output <- addOutputId(output)
+  output
 }
 
 #' @rdname reactable-shiny
