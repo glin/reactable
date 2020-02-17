@@ -82,7 +82,7 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
     if (!is.numeric(selected) && !is.na(selected)) {
       stop("`selected` must be numeric or NA")
     }
-    selected <- na.omit(selected)
+    selected <- stats::na.omit(selected)
     # Convert to 0-based indexing
     selected <- as.list(as.integer(selected) - 1)
   }
