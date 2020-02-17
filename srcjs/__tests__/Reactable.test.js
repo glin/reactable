@@ -2541,11 +2541,11 @@ describe('update reactable state from Shiny', () => {
     expect(window.Shiny.addCustomMessageHandler).not.toHaveBeenCalled()
   })
 
-  it('does not enable updateState for child tables, which are not Shiny bound', () => {
+  it('does not enable updateState for nested tables, which are not Shiny bound', () => {
     const props = {
       data: { a: [1, 2] },
       columns: [{ name: 'a', accessor: 'a' }],
-      isChild: true
+      nested: true
     }
     render(
       <div data-reactable-output="not-a-shiny-output-container">
@@ -2636,11 +2636,11 @@ describe('sends reactable state to Shiny', () => {
     expect(window.Shiny.onInputChange).not.toHaveBeenCalled()
   })
 
-  it('does not send state for child tables, which are not Shiny bound', () => {
+  it('does not send state for nested tables, which are not Shiny bound', () => {
     const props = {
       data: { a: [1, 2] },
       columns: [{ name: 'a', accessor: 'a' }],
-      isChild: true
+      nested: true
     }
     render(
       <div data-reactable-output="not-a-shiny-output-container">

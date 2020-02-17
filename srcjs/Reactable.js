@@ -528,7 +528,7 @@ class Reactable extends React.Component {
 
   onTableUpdate() {
     // Send reactable state to Shiny for getReactableState()
-    if (window.Shiny && window.Shiny.onInputChange && !this.props.isChild) {
+    if (window.Shiny && window.Shiny.onInputChange && !this.props.nested) {
       const element = this.tableElement.current
       const instance = this.tableInstance.current
       if (!element || !instance) {
@@ -560,7 +560,7 @@ class Reactable extends React.Component {
     }
 
     // Add Shiny message handler for updateReactable()
-    if (window.Shiny && !this.props.isChild) {
+    if (window.Shiny && !this.props.nested) {
       const outputId = this.tableElement.current.parentElement.getAttribute('data-reactable-output')
       if (outputId) {
         const updateState = state => {
@@ -949,7 +949,7 @@ Reactable.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   language: PropTypes.object,
   dataKey: PropTypes.string,
-  isChild: PropTypes.bool
+  nested: PropTypes.bool
 }
 
 Reactable.defaultProps = {

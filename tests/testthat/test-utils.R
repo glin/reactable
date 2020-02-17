@@ -89,8 +89,8 @@ test_that("asReactTag", {
   # Tags should be extracted from subtables
   tag <- asReactTag(reactable(data.frame()))
   expect_true(is.tag(tag))
-  # Subtables / child tables should be marked
-  expect_true(tag$attribs$isChild)
+  # Subtables / nested tables should be marked
+  expect_true(tag$attribs$nested)
 
   # All other htmlwidgets should be converted to tags
   tbl <- reactable(data.frame())
