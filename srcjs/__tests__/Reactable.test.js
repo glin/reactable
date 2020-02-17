@@ -1098,6 +1098,34 @@ describe('row selection', () => {
     expect(selectRow2Radio.checked).toEqual(true)
   })
 
+  it('selects all sub rows on row click', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb1'] },
+      columns: [
+        { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
+        { name: 'b', accessor: 'b' }
+      ],
+      pivotBy: ['b'],
+      selection: 'multiple',
+      onClick: 'select'
+    }
+    const { getByLabelText, getAllByLabelText, getByText } = render(<Reactable {...props} />)
+    fireEvent.click(getByText('bbb1 (2)'))
+    const selectAllCheckbox = getByLabelText('Select all rows in group')
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
+    // Clicking on expandable pivoted cell should not toggle selection
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+
+    fireEvent.click(getByText('a-aggregated'))
+    expect(selectAllCheckbox.checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+  })
+
   it('selected state available in rowInfo', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },

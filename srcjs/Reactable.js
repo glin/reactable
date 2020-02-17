@@ -775,10 +775,25 @@ class Reactable extends React.Component {
       if (onClick === 'select') {
         onClick = (rowInfo, column) => {
           if (column.selectable) {
-            // Ignore selection columns
+            // Ignore selection cells
             return
           }
-          this.toggleSelection(rowInfo.index)
+          if (column.pivoted && rowInfo.aggregated) {
+            // Ignore expandable pivoted cells
+            return
+          }
+          if (rowInfo.subRows) {
+            const rows = rowInfo.subRows
+            // Don't support selecting aggregated cells for now
+            if (!rows || rows.some(row => row._aggregated)) {
+              return null
+            }
+            const indices = rows.map(row => row._index)
+            const checked = indices.every(index => this.isSelected(index))
+            this.toggleSelectionAll(indices, !checked)
+          } else {
+            this.toggleSelection(rowInfo.index)
+          }
         }
       } else if (onClick === 'expand') {
         onClick = (rowInfo, column) => {
