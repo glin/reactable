@@ -191,7 +191,7 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
   props <- c("page", "pageSize", "pages", "selected")
   if (!is.null(name)) {
     if (!is.character(name) || !name %in% props) {
-      stop(paste("`name` must be one of", paste(dQuote(props), collapse = ", ")))
+      stop(paste("`name` must be one of", paste(sprintf('"%s"', props), collapse = ", ")))
     }
     if (length(name) == 1) {
       return(session$input[[sprintf("__reactable__%s__%s", outputId, name)]])
