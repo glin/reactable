@@ -51,8 +51,12 @@
 #' @param defaultExpanded Expand all rows by default?
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
+#'
+#'   To get the selected rows in Shiny, use [getReactableState()].
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   given as a numeric vector of row indices, or `NULL` if no rows are selected.
+#'   **NOTE:** `selectionId` will be deprecated in a future release.
+#'   Use [getReactableState()] to get the selected rows in Shiny instead.
 #' @param defaultSelected A numeric vector of default selected row indices.
 #' @param onClick Action to take when clicking a cell. Either `"expand"` to expand
 #'   the row, `"select"` to select the row, or a [JS()] function that takes a

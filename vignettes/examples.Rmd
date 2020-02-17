@@ -993,8 +993,8 @@ shinyApp(ui, server)
 You can enable row selection by setting `selection` to `"single"`
 for single selection, or `"multiple"` for multiple selection.
 
-To get the selected rows in Shiny, specify a Shiny input ID through
-`selectionId`. The selected rows are given as a vector of row indices
+To get the selected rows in Shiny, use `getReactableState()`.
+The selected rows are given as a vector of row indices
 (e.g. `c(1, 6, 4)`) or `NULL` if no rows are selected.
 
 ```{r, eval=FALSE}
@@ -1008,22 +1008,26 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  selected <- reactive(getReactableState("table", "selected"))
+
   output$table <- renderReactable({
-    reactable(iris, selection = "multiple", selectionId = "selected", onClick = "select")
+    reactable(iris, selection = "multiple", onClick = "select")
   })
 
   output$selected <- renderPrint({
-    print(input$selected)
+    print(selected())
   })
 
-  # Note: use ignoreNULL = FALSE to handle deselected rows with observeEvent
-  observeEvent(input$selected, ignoreNULL = FALSE, {
-    print(iris[input$selected, ])
+  observe({
+    print(iris[selected(), ])
   })
 }
 
 shinyApp(ui, server)
 ```
+
+> **NOTE:** `selectionId` can also be used to get the selected rows in Shiny,
+> but this will be deprecated in a future release.
 
 #### Default selected rows
 

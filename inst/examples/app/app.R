@@ -142,7 +142,6 @@ server <- function(input, output, session) {
       showPageSizeOptions = all(c("showPageSizeOptions", "pagination") %in% input$pagination),
       showPageInfo = "showPageInfo" %in% input$pagination,
       selection = if (input$rowSelection != "none") input$rowSelection,
-      selectionId = if (input$rowSelection != "none") "selected",
       onClick = if (input$rowSelection != "none") {
         "select"
       } else if (any(c("showRowDetails", "multiRowDetails") %in% input$rowDetails)) {
@@ -246,7 +245,6 @@ server <- function(input, output, session) {
       showPageSizeOptions = .(opts$showPageSizeOptions),
       showPageInfo = .(opts$showPageInfo),
       selection = .(opts$selection),
-      selectionId = .(opts$selectionId),
       onClick = .(opts$onClick),
       outlined = .(opts$outlined),
       bordered = .(opts$bordered),
@@ -321,7 +319,7 @@ server <- function(input, output, session) {
   })
 
   output$selected <- renderPrint({
-    print(input$selected)
+    print(getReactableState("table", "selected"))
   })
 
   output$plot <- renderPlot({

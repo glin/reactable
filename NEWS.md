@@ -11,6 +11,11 @@
   now receive a `rowInfo.selected` property indicating whether the row is selected.
 * `reactable()` gains a `language` argument to customize the language strings in a table.
 
+### Breaking changes
+
+* The `selectionId` argument in `reactable()` will be deprecated in a future release.
+  Use `getReactableState()` to get the selected rows of a table in Shiny instead.
+
 ### Bug fixes
 
 * General improvements to screen reader accessibility.

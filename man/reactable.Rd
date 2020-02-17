@@ -81,10 +81,14 @@ details expander column.}
 \item{defaultExpanded}{Expand all rows by default?}
 
 \item{selection}{Enable row selection? Either \code{"multiple"} or \code{"single"} for
-multiple or single row selection.}
+multiple or single row selection.
+
+To get the selected rows in Shiny, use \code{\link[=getReactableState]{getReactableState()}}.}
 
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
-given as a numeric vector of row indices, or \code{NULL} if no rows are selected.}
+given as a numeric vector of row indices, or \code{NULL} if no rows are selected.
+\strong{NOTE:} \code{selectionId} will be deprecated in a future release.
+Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows in Shiny instead.}
 
 \item{defaultSelected}{A numeric vector of default selected row indices.}
 
