@@ -12,7 +12,7 @@ import { columnsToRows, buildColumnDefs } from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { classNames, getFirstDefined, get, set } from './utils'
 
-import '@glin/react-table/react-table.css'
+import './react-table.css'
 import './reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
