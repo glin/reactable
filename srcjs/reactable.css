@@ -91,11 +91,6 @@
 }
 
 /* Header borders */
-.ReactTable .rt-thead.-header {
-  /* Remove default style */
-  box-shadow: none;
-}
-
 .rt-th {
   border-bottom: 2px solid hsl(0, 0%, 90%);
 }
@@ -137,11 +132,6 @@
 .ReactTable .rt-tfoot .rt-td {
   /* Remove default style */
   border-right: none;
-}
-
-.ReactTable .rt-tfoot {
-  /* Remove default style */
-  box-shadow: none;
 }
 
 .rt-td {
@@ -254,16 +244,6 @@
 
 .rt-align-right .rt-sort-header {
   justify-content: flex-end;
-}
-
-.ReactTable .rt-thead .rt-th.-sort-desc {
-  /* Remove default style */
-  box-shadow: none;
-}
-
-.ReactTable .rt-thead .rt-th.-sort-asc {
-  /* Remove default style */
-  box-shadow: none;
 }
 
 .rt-th {
