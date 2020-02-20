@@ -297,11 +297,6 @@
   cursor: pointer;
 }
 
-.ReactTable .rt-expander {
-  /* Override defaults */
-  margin: 0;
-}
-
 .rt-expander {
   padding: 0 8px;
   outline-width: 0;

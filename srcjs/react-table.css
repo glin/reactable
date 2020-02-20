@@ -192,9 +192,7 @@
 .ReactTable .rt-expander {
   display: inline-block;
   position: relative;
-  margin: 0;
   color: transparent;
-  margin: 0 10px;
 }
 .ReactTable .rt-expander:after {
   content: '';
