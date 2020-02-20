@@ -97,16 +97,6 @@
 }
 
 /* Header filter borders */
-.ReactTable .rt-thead.-filters {
-  /* Remove default style */
-  border-bottom: none;
-}
-
-.ReactTable .rt-thead.-filters .rt-th {
-  /* Remove default style */
-  border-right: none;
-}
-
 .-filters .rt-th {
   border-bottom: 1px solid hsl(0, 0%, 95%);
 }
@@ -116,19 +106,6 @@
 }
 
 /* Cell and footer borders */
-.ReactTable .rt-tbody .rt-tr-group {
-  /* Remove default style */
-  border-bottom: none;
-}
-
-.ReactTable .rt-thead .rt-th,
-.ReactTable .rt-thead .rt-td,
-.ReactTable .rt-tbody .rt-td,
-.ReactTable .rt-tfoot .rt-td {
-  /* Remove default style */
-  border-right: none;
-}
-
 .rt-td {
   border-top: 1px solid hsl(0, 0%, 95%);
 }
