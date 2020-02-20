@@ -161,12 +161,6 @@
 }
 
 /* Header group borders */
-.ReactTable .rt-thead.-headerGroups {
-  /* Remove default style */
-  background: transparent;
-  border-bottom: none;
-}
-
 .-headerGroups .rt-th {
   border-bottom: none;
 }

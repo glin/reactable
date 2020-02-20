@@ -46,10 +46,6 @@
   -ms-user-select: none;
   user-select: none;
 }
-.ReactTable .rt-thead.-headerGroups {
-  background: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
 .ReactTable .rt-thead.-filters {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
