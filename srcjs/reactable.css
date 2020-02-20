@@ -80,11 +80,6 @@
 }
 
 /* Outer table borders */
-.ReactTable {
-  /* Remove default style */
-  border: none;
-}
-
 .-outlined .rt-table,
 .-bordered .rt-table {
   border: 1px solid hsl(0, 0%, 90%);

@@ -7,7 +7,6 @@
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 .ReactTable * {
   box-sizing: border-box;
