@@ -60,7 +60,6 @@
 }
 .ReactTable .rt-thead .rt-th,
 .ReactTable .rt-thead .rt-td {
-  padding: 5px 5px;
   line-height: normal;
   position: relative;
 }
@@ -148,7 +147,6 @@
   -webkit-box-flex: 1;
   -ms-flex: 1 0 0px;
   flex: 1 0 0;
-  padding: 7px 5px;
   overflow: hidden;
 }
 .ReactTable .rt-th.-hidden,

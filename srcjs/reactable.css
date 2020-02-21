@@ -21,16 +21,8 @@
   word-wrap: break-word;
 }
 
-.ReactTable .rt-thead .rt-th,
-.ReactTable .rt-thead .rt-td {
-  /* Override default */
-  padding: 7px 8px;
-}
-
 .ReactTable.-compact .rt-th,
-.ReactTable.-compact .rt-td,
-.ReactTable.-compact .rt-thead .rt-th,
-.ReactTable.-compact .rt-thead .rt-td {
+.ReactTable.-compact .rt-td {
   padding: 4px 6px;
 }
 
@@ -42,9 +34,7 @@
 
 /* Selectable cells */
 .ReactTable .rt-td.rt-select,
-.ReactTable .rt-th.rt-select,
-.ReactTable .rt-thead .rt-td.rt-select,
-.ReactTable .rt-thead .rt-th.rt-select {
+.ReactTable .rt-th.rt-select {
   padding: 0;
 }
 
