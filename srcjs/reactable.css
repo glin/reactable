@@ -15,8 +15,6 @@
 .ReactTable .rt-th,
 .ReactTable .rt-td {
   padding: 7px 8px;
-  /* Override default nowrap */
-  white-space: inherit;
   overflow-wrap: break-word;
   /* For IE 11 */
   max-width: 100%;
@@ -39,6 +37,7 @@
 .ReactTable.-nowrap .rt-th,
 .ReactTable.-nowrap .rt-td {
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* Selectable cells */
