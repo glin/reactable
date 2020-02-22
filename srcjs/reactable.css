@@ -150,6 +150,11 @@
   background: rgba(0, 0, 0, 0.03);
 }
 
+/* Custom highlight style to prevent bleed-through to nested tables */
+.rt-highlight:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 /* Sticky headers/footers */
 @supports (position: sticky) {
   .ReactTable .rt-table {

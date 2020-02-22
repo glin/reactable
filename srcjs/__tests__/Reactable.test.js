@@ -780,7 +780,6 @@ describe('table styles', () => {
       '-outlined',
       '-bordered',
       '-borderless',
-      '-highlight',
       '-compact',
       '-inline',
       '-nowrap'
@@ -795,9 +794,6 @@ describe('table styles', () => {
     rerender(<Reactable {...props} borderless />)
     expect(table).toHaveClass('-borderless')
 
-    rerender(<Reactable {...props} highlight />)
-    expect(table).toHaveClass('-highlight')
-
     rerender(<Reactable {...props} compact />)
     expect(table).toHaveClass('-compact')
 
@@ -807,8 +803,8 @@ describe('table styles', () => {
     rerender(<Reactable {...props} nowrap />)
     expect(table).toHaveClass('-nowrap')
 
-    rerender(<Reactable {...props} outlined bordered borderless highlight inline nowrap />)
-    expect(table).toHaveClass('-outlined -bordered -borderless -highlight -inline -nowrap')
+    rerender(<Reactable {...props} outlined bordered borderless inline nowrap />)
+    expect(table).toHaveClass('-outlined -bordered -borderless -inline -nowrap')
   })
 
   it('applies row stripe styles', () => {
@@ -826,6 +822,21 @@ describe('table styles', () => {
     expect(rows[3]).toHaveClass('rt-striped')
     const padRows = getPadRows(container)
     padRows.forEach(row => expect(row).not.toHaveClass('rt-striped'))
+  })
+
+  it('applies row highlight styles', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      striped: true,
+      highlight: true,
+      minRows: 8
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach(row => expect(row).toHaveClass('rt-highlight'))
+    const padRows = getPadRows(container)
+    padRows.forEach(row => expect(row).not.toHaveClass('rt-highlight'))
   })
 
   it('styles do not bleed through to nested tables', () => {
@@ -848,12 +859,14 @@ describe('table styles', () => {
         }
       ],
       striped: true,
+      highlight: true,
       defaultExpanded: true
     }
     const { container } = render(<Reactable {...props} />)
     const rows = container.querySelectorAll('.nested .rt-tr')
     expect(rows).toHaveLength(4) // Includes header row, which should not be striped
     rows.forEach(row => expect(row).not.toHaveClass('rt-striped'))
+    rows.forEach(row => expect(row).not.toHaveClass('rt-highlight'))
   })
 
   it('applies width and height', () => {
