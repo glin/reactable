@@ -79,7 +79,6 @@
   border-bottom: 2px solid hsl(0, 0%, 90%);
 }
 
-.-striped .rt-th,
 .-outlined .rt-th,
 .-bordered .rt-th {
   border-bottom-width: 1px;
@@ -144,6 +143,11 @@
   /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
+}
+
+/* Custom row stripe style to prevent bleed-through to nested tables */
+.rt-striped {
+  background: rgba(0, 0, 0, 0.03);
 }
 
 /* Sticky headers/footers */

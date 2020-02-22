@@ -177,9 +177,6 @@
   -ms-flex-direction: column;
   flex-direction: column;
 }
-.ReactTable.-striped .rt-tr.-odd {
-  background: rgba(0, 0, 0, 0.03);
-}
 .ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover {
   background: rgba(0, 0, 0, 0.05);
 }

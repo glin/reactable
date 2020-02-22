@@ -666,7 +666,6 @@ class Reactable extends React.Component {
       outlined ? '-outlined' : '',
       bordered ? '-bordered' : '',
       borderless ? '-borderless' : '',
-      striped ? '-striped' : '',
       highlight ? ' -highlight' : '',
       compact ? '-compact' : '',
       inline ? ' -inline' : '',
@@ -690,9 +689,14 @@ class Reactable extends React.Component {
     const autoHidePagination = showPagination == null
 
     let newGetTrProps = getTrProps
-    if (rowClassName || rowStyle) {
+    if (striped || rowClassName || rowStyle) {
       newGetTrProps = (state, rowInfo) => {
         let props = getTrProps(state, rowInfo)
+        // Add row stripe styles to prevent bleed-through to nested tables
+        if (striped) {
+          // Ignore padding rows
+          props.className = rowInfo && rowInfo.viewIndex % 2 ? 'rt-striped' : null
+        }
         if (rowClassName) {
           if (typeof rowClassName === 'function') {
             props.className = rowClassName(this.getRowInfo(rowInfo), state)
