@@ -220,8 +220,6 @@
   transition: all 0.3s ease;
   z-index: 1;
   pointer-events: none;
-  padding: 20px;
-  color: rgba(0, 0, 0, 0.5);
 }
 .ReactTable .-loading {
   display: block;
