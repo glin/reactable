@@ -777,34 +777,34 @@ describe('table styles', () => {
     const { container, rerender } = render(<Reactable {...props} />)
     const table = getTable(container)
     expect(table).not.toHaveClass(
-      '-outlined',
-      '-bordered',
-      '-borderless',
-      '-compact',
-      '-inline',
-      '-nowrap'
+      'rt-outlined',
+      'rt-bordered',
+      'rt-borderless',
+      'rt-compact',
+      'rt-inline',
+      'rt-nowrap'
     )
 
     rerender(<Reactable {...props} outlined />)
-    expect(table).toHaveClass('-outlined')
+    expect(table).toHaveClass('rt-outlined')
 
     rerender(<Reactable {...props} bordered />)
-    expect(table).toHaveClass('-bordered')
+    expect(table).toHaveClass('rt-bordered')
 
     rerender(<Reactable {...props} borderless />)
-    expect(table).toHaveClass('-borderless')
+    expect(table).toHaveClass('rt-borderless')
 
     rerender(<Reactable {...props} compact />)
-    expect(table).toHaveClass('-compact')
+    expect(table).toHaveClass('rt-compact')
 
     rerender(<Reactable {...props} inline />)
-    expect(table).toHaveClass('-inline')
+    expect(table).toHaveClass('rt-inline')
 
     rerender(<Reactable {...props} nowrap />)
-    expect(table).toHaveClass('-nowrap')
+    expect(table).toHaveClass('rt-nowrap')
 
     rerender(<Reactable {...props} outlined bordered borderless inline nowrap />)
-    expect(table).toHaveClass('-outlined -bordered -borderless -inline -nowrap')
+    expect(table).toHaveClass('rt-outlined rt-bordered rt-borderless rt-inline rt-nowrap')
   })
 
   it('applies row stripe styles', () => {

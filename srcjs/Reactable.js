@@ -663,12 +663,12 @@ class Reactable extends React.Component {
 
     className = classNames(
       className,
-      outlined ? '-outlined' : '',
-      bordered ? '-bordered' : '',
-      borderless ? '-borderless' : '',
-      compact ? '-compact' : '',
-      inline ? ' -inline' : '',
-      nowrap ? '-nowrap' : ''
+      outlined ? 'rt-outlined' : '',
+      bordered ? 'rt-bordered' : '',
+      borderless ? 'rt-borderless' : '',
+      compact ? 'rt-compact' : '',
+      inline ? ' rt-inline' : '',
+      nowrap ? 'rt-nowrap' : ''
     )
 
     style = { width, height, ...style }
