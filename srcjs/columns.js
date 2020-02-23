@@ -181,11 +181,11 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       // Add sort icon to column header
       const isSortable = getFirstDefined(col.sortable, sortable)
       if (isSortable && showSortIcon) {
-        const sortClass = showSortable ? '-sort' : ''
+        const sortClass = showSortable ? 'rt-sort' : ''
         if (col.align === 'right') {
           return (
             <div className="rt-sort-header">
-              <span className={classNames(sortClass, '-sort-left')} aria-hidden="true" />
+              <span className={classNames(sortClass, 'rt-sort-left')} aria-hidden="true" />
               {content}
             </div>
           )
@@ -193,7 +193,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           return (
             <div className="rt-sort-header">
               {content}
-              <span className={classNames(sortClass, '-sort-right')} aria-hidden="true" />
+              <span className={classNames(sortClass, 'rt-sort-right')} aria-hidden="true" />
             </div>
           )
         }

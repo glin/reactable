@@ -290,15 +290,15 @@ describe('sorting', () => {
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
-    const numericSortIcon = container.querySelectorAll('.-sort-left')
+    const numericSortIcon = container.querySelectorAll('.rt-sort-left')
     expect(numericSortIcon).toHaveLength(1)
-    const defaultSortIcon = container.querySelectorAll('.-sort-right')
+    const defaultSortIcon = container.querySelectorAll('.rt-sort-right')
     expect(defaultSortIcon).toHaveLength(1)
 
     // Hide sort icons
     rerender(<Reactable {...props} showSortIcon={false} />)
-    expect(container.querySelector('.-sort-left')).toEqual(null)
-    expect(container.querySelector('.-sort-right')).toEqual(null)
+    expect(container.querySelector('.rt-sort-left')).toEqual(null)
+    expect(container.querySelector('.rt-sort-right')).toEqual(null)
   })
 
   it('sorts missing values last', () => {
