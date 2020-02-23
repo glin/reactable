@@ -816,12 +816,12 @@ describe('table styles', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const rows = getRows(container)
-    expect(rows[0]).not.toHaveClass('rt-striped')
-    expect(rows[1]).toHaveClass('rt-striped')
-    expect(rows[2]).not.toHaveClass('rt-striped')
-    expect(rows[3]).toHaveClass('rt-striped')
+    expect(rows[0]).not.toHaveClass('rt-tr-striped')
+    expect(rows[1]).toHaveClass('rt-tr-striped')
+    expect(rows[2]).not.toHaveClass('rt-tr-striped')
+    expect(rows[3]).toHaveClass('rt-tr-striped')
     const padRows = getPadRows(container)
-    padRows.forEach(row => expect(row).not.toHaveClass('rt-striped'))
+    padRows.forEach(row => expect(row).not.toHaveClass('rt-tr-striped'))
   })
 
   it('applies row highlight styles', () => {
@@ -834,9 +834,9 @@ describe('table styles', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const rows = getRows(container)
-    rows.forEach(row => expect(row).toHaveClass('rt-highlight'))
+    rows.forEach(row => expect(row).toHaveClass('rt-tr-highlight'))
     const padRows = getPadRows(container)
-    padRows.forEach(row => expect(row).not.toHaveClass('rt-highlight'))
+    padRows.forEach(row => expect(row).not.toHaveClass('rt-tr-highlight'))
   })
 
   it('styles do not bleed through to nested tables', () => {
@@ -865,8 +865,8 @@ describe('table styles', () => {
     const { container } = render(<Reactable {...props} />)
     const rows = container.querySelectorAll('.nested .rt-tr')
     expect(rows).toHaveLength(4) // Includes header row, which should not be striped
-    rows.forEach(row => expect(row).not.toHaveClass('rt-striped'))
-    rows.forEach(row => expect(row).not.toHaveClass('rt-highlight'))
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-striped'))
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-highlight'))
   })
 
   it('applies width and height', () => {

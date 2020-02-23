@@ -145,12 +145,12 @@
 }
 
 /* Custom row stripe style to prevent bleed-through to nested tables */
-.rt-striped {
+.rt-tr-striped {
   background: rgba(0, 0, 0, 0.03);
 }
 
 /* Custom highlight style to prevent bleed-through to nested tables */
-.rt-highlight:hover {
+.rt-tr-highlight:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
