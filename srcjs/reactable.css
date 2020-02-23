@@ -12,8 +12,8 @@
   font-weight: 600;
 }
 
-.ReactTable .rt-th,
-.ReactTable .rt-td {
+.rt-th,
+.rt-td {
   padding: 7px 8px;
   overflow-wrap: break-word;
   /* For IE 11 */
@@ -21,20 +21,19 @@
   word-wrap: break-word;
 }
 
-.ReactTable.-compact .rt-th,
-.ReactTable.-compact .rt-td {
+.-compact .rt-th,
+.-compact .rt-td {
   padding: 4px 6px;
 }
 
-.ReactTable.-nowrap .rt-th,
-.ReactTable.-nowrap .rt-td {
+.-nowrap .rt-th,
+.-nowrap .rt-td {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 /* Selectable cells */
-.ReactTable .rt-td.rt-select,
-.ReactTable .rt-th.rt-select {
+.rt-select {
   padding: 0;
 }
 
@@ -56,15 +55,15 @@
 }
 
 /* Column alignment */
-.ReactTable .rt-align-left {
+.rt-align-left {
   text-align: left;
 }
 
-.ReactTable .rt-align-right {
+.rt-align-right {
   text-align: right;
 }
 
-.ReactTable .rt-align-center {
+.rt-align-center {
   text-align: center;
 }
 
@@ -125,7 +124,7 @@
   border-bottom: none;
 }
 
-.ReactTable .rt-th.-headerGroup:after {
+.rt-th.-headerGroup:after {
   /* Custom borders with spacing */
   content: '';
   position: absolute;
@@ -138,8 +137,8 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.ReactTable.-outlined .rt-th.-headerGroup:after,
-.ReactTable.-bordered .rt-th.-headerGroup:after {
+.-outlined .rt-th.-headerGroup:after,
+.-bordered .rt-th.-headerGroup:after {
   /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
@@ -268,52 +267,52 @@
 }
 
 /* Pagination */
-.ReactTable .pagination-bottom .rt-pagination {
+.pagination-bottom .rt-pagination {
   padding: 6px 4px 0;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.ReactTable.-outlined .pagination-bottom .rt-pagination,
-.ReactTable.-bordered .pagination-bottom .rt-pagination {
+.-outlined .pagination-bottom .rt-pagination,
+.-bordered .pagination-bottom .rt-pagination {
   border-top: none;
 }
 
-.ReactTable .rt-pagination {
+.rt-pagination {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
 }
 
-.ReactTable .rt-pagination-info :not(:last-child) {
+.rt-pagination-info :not(:last-child) {
   margin-right: 16px;
 }
 
-.ReactTable .rt-page-info {
+.rt-page-info {
   display: inline-block;
   margin: 6px 8px;
   color: rgba(0, 0, 0, 0.6);
 }
 
-.ReactTable .rt-page-size {
+.rt-page-size {
   display: inline-block;
   margin: 0 8px;
 }
 
-.ReactTable .rt-page-size select {
+.rt-page-size select {
   margin: 0 2px;
 }
 
-.ReactTable .rt-pagination select,
-.ReactTable .rt-pagination input,
-.ReactTable .rt-pagination button {
+.rt-pagination select,
+.rt-pagination input,
+.rt-pagination button {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
 }
 
-.ReactTable .rt-pagination select,
-.ReactTable .rt-pagination input {
+.rt-pagination select,
+.rt-pagination input {
   background: #fff;
   padding: 3px;
   border-radius: 3px;
@@ -322,7 +321,7 @@
 
 /* Restyle native select on Firefox */
 @supports (-moz-appearance: none) {
-  .ReactTable .rt-pagination select {
+  .rt-pagination select {
     -moz-appearance: none !important;
     padding-right: 12px;
     background: transparent
@@ -332,7 +331,7 @@
   }
 }
 
-.ReactTable .rt-page-button {
+.rt-page-button {
   padding: 0;
   border: none;
   background-color: transparent;
@@ -341,16 +340,16 @@
   cursor: pointer;
 }
 
-.ReactTable .rt-page-button:disabled {
+.rt-page-button:disabled {
   color: rgba(0, 0, 0, 0.5);
   cursor: default;
 }
 
-.ReactTable .rt-page-button:hover:disabled {
+.rt-page-button:hover:disabled {
   background-color: transparent;
 }
 
-.ReactTable .rt-page-button-content {
+.rt-page-button-content {
   display: inline-block;
   padding: 6px 12px;
   border-radius: 3px;
@@ -358,44 +357,44 @@
   outline-style: solid;
 }
 
-.ReactTable .rt-page-button:not(:disabled):hover > .rt-page-button-content {
+.rt-page-button:not(:disabled):hover > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.04);
 }
 
-.ReactTable .rt-page-button:not(:disabled):active > .rt-page-button-content {
+.rt-page-button:not(:disabled):active > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.08);
 }
 
-.ReactTable .rt-page-button:focus > .rt-page-button-content {
+.rt-page-button:focus > .rt-page-button-content {
   background: rgba(0, 0, 0, 0.04);
 }
 
-.ReactTable .rt-page-button-active > .rt-page-button-content {
+.rt-page-button-active > .rt-page-button-content {
   font-weight: bold;
 }
 
-.ReactTable .rt-page-ellipsis {
+.rt-page-ellipsis {
   margin: 0 4px;
   pointer-events: none;
 }
 
-.ReactTable .rt-page-numbers {
+.rt-page-numbers {
   display: inline-block;
   margin: 0 8px;
   white-space: nowrap;
 }
 
-.ReactTable .rt-page-jump {
+.rt-page-jump {
   width: 70px;
   text-align: center;
 }
 
 /* No data */
-.ReactTable .rt-tbody {
+.rt-tbody {
   position: relative;
 }
 
-.ReactTable .rt-noData {
+.rt-noData {
   padding: 0 8px;
   color: rgba(0, 0, 0, 0.8);
 }
