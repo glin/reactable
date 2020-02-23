@@ -693,7 +693,7 @@ class Reactable extends React.Component {
         let props = getTrProps(state, rowInfo)
         // Add row stripe and highlight styles to prevent bleed-through to nested tables
         if (striped && rowInfo) {
-          props.className = rowInfo.viewIndex % 2 ? 'rt-tr-striped' : null
+          props.className = rowInfo.viewIndex % 2 ?  null : 'rt-tr-striped'
         }
         if (highlight && rowInfo) {
           props.className = classNames(props.className, 'rt-tr-highlight')
