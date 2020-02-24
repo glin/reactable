@@ -83,15 +83,6 @@
   border-bottom-width: 1px;
 }
 
-/* Header filter borders */
-.-filters .rt-th {
-  border-bottom: 1px solid hsl(0, 0%, 95%);
-}
-
-.rt-borderless .-filters .rt-th {
-  border-bottom: none;
-}
-
 /* Cell and footer borders */
 .rt-td {
   border-top: 1px solid hsl(0, 0%, 95%);
@@ -188,14 +179,29 @@
 }
 
 /* Filters */
-.rt-thead.-filters input:focus {
-  border: 1px solid rgba(0, 0, 0, 0.25);
+.rt-td-filter {
+  border-top: 0;
+  border-bottom: 1px solid hsl(0, 0%, 95%);
 }
 
-.rt-thead.-filters input {
+.rt-borderless .rt-td-filter {
+  border-bottom: 0;
+}
+
+.rt-filter {
+  padding: 5px 7px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
   font-family: inherit;
+  font-size: inherit;
+  font-weight: normal;
   outline-width: 0;
   outline-style: solid;
+}
+
+.rt-filter:focus {
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 /* Sorting */

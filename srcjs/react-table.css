@@ -45,15 +45,6 @@
   -ms-user-select: none;
   user-select: none;
 }
-.ReactTable .rt-thead.-filters input,
-.ReactTable .rt-thead.-filters select {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #fff;
-  padding: 5px 7px;
-  font-size: inherit;
-  border-radius: 3px;
-  font-weight: normal;
-}
 .ReactTable .rt-thead .rt-tr {
   text-align: center;
 }

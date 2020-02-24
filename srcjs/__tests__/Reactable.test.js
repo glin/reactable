@@ -62,7 +62,7 @@ describe('ARIA roles', () => {
   const getCells = container => container.querySelectorAll('.rt-tr:not(.-padRow) .rt-td')
   const getPadCells = container => container.querySelectorAll('.rt-tr.-padRow .rt-td')
   const getFilterRow = container => container.querySelector('.-filters .rt-tr')
-  const getFilterCells = container => container.querySelectorAll('.-filters .rt-th')
+  const getFilterCells = container => container.querySelectorAll('.rt-td-filter')
 
   const props = {
     data: { a: [1, 2], b: ['aa', 'bb'] },
@@ -336,7 +336,8 @@ describe('sorting', () => {
 })
 
 describe('filtering', () => {
-  const getFilters = container => container.querySelectorAll('.rt-thead.-filters input')
+  const getFilters = container => container.querySelectorAll('.rt-filter')
+  const getFilterCells = container => container.querySelectorAll('.rt-td.rt-td-filter')
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
 
   it('enables filtering', () => {
@@ -349,10 +350,14 @@ describe('filtering', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     let filters = getFilters(container)
+    let filterCells = getFilterCells(container)
     expect(filters).toHaveLength(0)
+    expect(filterCells).toHaveLength(0)
     rerender(<Reactable {...props} filterable />)
     filters = getFilters(container)
+    filterCells = getFilterCells(container)
     expect(filters).toHaveLength(2)
+    expect(filterCells).toHaveLength(2)
   })
 
   it('filters numeric columns', () => {

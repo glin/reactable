@@ -82,7 +82,8 @@ const getTheadFilterTrProps = () => {
 }
 
 const getTheadFilterThProps = () => {
-  return { role: 'cell' }
+  // Treat filter cells as table cells, rather than headers
+  return { role: 'cell', className: 'rt-td-filter' }
 }
 
 const getTrGroupProps = (state, rowInfo) => {
@@ -227,12 +228,13 @@ Object.assign(ReactTableDefaults, {
   }
 })
 
-// Add aria-label to filter inputs
+// Add className and aria-label to filter inputs
 Object.assign(ReactTableDefaults, {
   FilterComponent({ column, filter, onChange }) {
     return (
       <input
         type="text"
+        className="rt-filter"
         style={{ width: '100%' }}
         value={filter ? filter.value : ''}
         onChange={event => onChange(event.target.value)}
@@ -693,7 +695,7 @@ class Reactable extends React.Component {
         let props = getTrProps(state, rowInfo)
         // Add row stripe and highlight styles to prevent bleed-through to nested tables
         if (striped && rowInfo) {
-          props.className = rowInfo.viewIndex % 2 ?  null : 'rt-tr-striped'
+          props.className = rowInfo.viewIndex % 2 ? null : 'rt-tr-striped'
         }
         if (highlight && rowInfo) {
           props.className = classNames(props.className, 'rt-tr-highlight')
