@@ -275,21 +275,18 @@
 }
 
 /* Pagination */
-.pagination-bottom .rt-pagination {
-  padding: 6px 4px 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.rt-outlined .pagination-bottom .rt-pagination,
-.rt-bordered .pagination-bottom .rt-pagination {
-  border-top: none;
-}
-
 .rt-pagination {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
+  padding: 6px 4px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rt-outlined .rt-pagination,
+.rt-bordered .rt-pagination {
+  border-top: none;
 }
 
 .rt-pagination-info :not(:last-child) {
@@ -307,20 +304,20 @@
   margin: 0 8px;
 }
 
-.rt-page-size select {
+.rt-page-size-select {
   margin: 0 2px;
 }
 
-.rt-pagination select,
-.rt-pagination input,
-.rt-pagination button {
+.rt-page-size-select,
+.rt-page-jump,
+.rt-page-button {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
 }
 
-.rt-pagination select,
-.rt-pagination input {
+.rt-page-size-select,
+.rt-page-jump {
   background: #fff;
   padding: 3px;
   border-radius: 3px;
@@ -329,7 +326,7 @@
 
 /* Restyle native select on Firefox */
 @supports (-moz-appearance: none) {
-  .rt-pagination select {
+  .rt-page-size-select {
     -moz-appearance: none !important;
     padding-right: 12px;
     background: transparent

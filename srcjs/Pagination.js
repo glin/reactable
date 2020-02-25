@@ -101,6 +101,7 @@ export default class Pagination extends React.Component {
     const selector = (
       <select
         key="page-size-select"
+        className="rt-page-size-select"
         aria-label={language.pageSizeOptionsLabel}
         onChange={e => onPageSizeChange(Number(e.target.value))}
         value={pageSize}

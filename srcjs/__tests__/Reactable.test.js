@@ -2054,7 +2054,7 @@ describe('pagination', () => {
   const getPagination = container => container.querySelector('.rt-pagination')
   const getPageInfo = container => container.querySelector('.rt-page-info')
   const getPageSizeOptions = container => container.querySelector('.rt-page-size')
-  const getPageSizeSelect = container => container.querySelector('.rt-page-size select')
+  const getPageSizeSelect = container => container.querySelector('.rt-page-size-select')
   const getPrevButton = container => container.querySelector('.rt-prev-button')
   const getNextButton = container => container.querySelector('.rt-next-button')
   const getPageNumbers = container => container.querySelector('.rt-page-numbers')
