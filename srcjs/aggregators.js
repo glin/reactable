@@ -26,6 +26,17 @@ export function min(arr) {
   return Math.min.apply(null, arr)
 }
 
+export function median(arr) {
+  arr = toNumbers(arr)
+  if (arr.length === 0) return ''
+  arr.sort((a, b) => a - b)
+  if (arr.length % 2 === 1) {
+    return arr[(arr.length - 1) / 2]
+  } else {
+    return mean(arr.slice(arr.length / 2 - 1, arr.length / 2 + 1))
+  }
+}
+
 export function count(arr) {
   return arr.length
 }
@@ -51,6 +62,7 @@ export const aggregators = {
   sum,
   max,
   min,
+  median,
   count,
   unique,
   frequency
@@ -63,7 +75,7 @@ export function round(n, digits = 3) {
   digits = digits > 0 ? digits : 0
   const c = Math.pow(10, digits)
   // Round away from zero rather than up (Math.round rounds -1.5 to -1)
-  return Math.sign(n) * Math.round(Math.abs(n) * c) / c
+  return (Math.sign(n) * Math.round(Math.abs(n) * c)) / c
 }
 
 function toNumbers(arr) {

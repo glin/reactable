@@ -3,7 +3,8 @@
 #' @param name Column header name.
 #' @param aggregate Aggregate function. The name of a built-in aggregate
 #'   function or a custom [JS()] aggregate function. Built-in aggregate functions
-#'   are: `"mean"`, `"sum"`, `"max"`, `"min"`, `"count"`, `"unique"`, `"frequency"`.
+#'   are: `"mean"`, `"sum"`, `"max"`, `"min"`, `"median"`, `"count"`,
+#'   `"unique"`, `"frequency"`.
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
@@ -87,7 +88,8 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(aggregate)) {
     if (is.character(aggregate) && !is.JS(aggregate)) {
-      aggregators <- c("mean", "sum", "max", "min", "count", "unique", "frequency")
+      aggregators <- c("mean", "sum", "max", "min", "median", "count",
+                       "unique", "frequency")
       if (!aggregate %in% aggregators) {
         stop("`aggregate` must be a valid aggregate function")
       }

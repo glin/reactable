@@ -18,7 +18,8 @@ colDef(name = NULL, aggregate = NULL, sortable = NULL,
 
 \item{aggregate}{Aggregate function. The name of a built-in aggregate
 function or a custom \code{\link[=JS]{JS()}} aggregate function. Built-in aggregate functions
-are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"count"}, \code{"unique"}, \code{"frequency"}.}
+are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"median"}, \code{"count"},
+\code{"unique"}, \code{"frequency"}.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
 

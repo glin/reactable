@@ -3,6 +3,7 @@ import {
   mean,
   max,
   min,
+  median,
   round,
   count,
   unique,
@@ -29,6 +30,7 @@ test('mean', () => {
   expect(mean([1, 2, 'NA'])).toEqual(1.5)
   expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
   expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(mean(['Inf', '-Inf'])).toEqual(NaN)
   expect(mean([])).toEqual('')
   expect(aggregators.mean).toEqual(mean)
 })
@@ -53,6 +55,18 @@ test('min', () => {
   expect(min([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(min([])).toEqual('')
   expect(aggregators.min).toEqual(min)
+})
+
+test('median', () => {
+  expect(median([1, 2, 3, 4, 0])).toEqual(2)
+  expect(median([1])).toEqual(1)
+  expect(median([-0.1, 0.2])).toEqual(0.05)
+  expect(median([1, 2, 'NA'])).toEqual(1.5)
+  expect(median([1, 2, 'Inf'])).toEqual(2)
+  expect(median(['Inf', 'Inf', '-Inf'])).toEqual(Infinity)
+  expect(median(['Inf', '-Inf'])).toEqual(NaN)
+  expect(median([])).toEqual('')
+  expect(aggregators.median).toEqual(median)
 })
 
 test('round', () => {
