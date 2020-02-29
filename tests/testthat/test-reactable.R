@@ -61,7 +61,7 @@ test_that("reactable handles invalid args", {
 
 test_that("reactable", {
   # Default args
-  tbl <- reactable(data.frame(x = 1, y = "b"))
+  tbl <- reactable(data.frame(x = 1, y = "b", stringsAsFactors = TRUE))
   attribs <- getAttribs(tbl)
   data <- data.frame(x = 1, y = "b")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
@@ -84,7 +84,7 @@ test_that("reactable", {
   expect_null(tbl$elementId)
 
   # Table options
-  tbl <- reactable(data.frame(x = "a"), rownames = TRUE,
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
                    columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
