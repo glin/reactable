@@ -1,6 +1,6 @@
 .ReactTable {
   height: 100%;
-  background: #fff;
+  background-color: #fff;
 }
 
 .rt-inline {
@@ -137,12 +137,12 @@
 
 /* Custom row stripe style to prevent bleed-through to nested tables */
 .rt-tr-striped {
-  background: rgba(0, 0, 0, 0.03);
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 /* Custom highlight style to prevent bleed-through to nested tables */
 .rt-tr-highlight:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Sticky headers/footers */
@@ -190,7 +190,7 @@
 
 .rt-filter {
   padding: 5px 7px;
-  background: #fff;
+  background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
   font-family: inherit;
@@ -318,7 +318,7 @@
 
 .rt-page-size-select,
 .rt-page-jump {
-  background: #fff;
+  background-color: #fff;
   padding: 3px;
   border-radius: 3px;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -363,15 +363,15 @@
 }
 
 .rt-page-button:not(:disabled):hover > .rt-page-button-content {
-  background: rgba(0, 0, 0, 0.04);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .rt-page-button:not(:disabled):active > .rt-page-button-content {
-  background: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 .rt-page-button:focus > .rt-page-button-content {
-  background: rgba(0, 0, 0, 0.04);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .rt-page-button-active > .rt-page-button-content {
@@ -410,7 +410,7 @@
   align-self: flex-end;
   margin-bottom: 8px;
   padding: 5px 7px;
-  background: #fff;
+  background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
   outline-width: 0;
