@@ -26,6 +26,10 @@
 * Cell click actions now work for all cells in aggregated rows.
 * Aggregated cells in columns with row details no longer throw an error when clicked.
 
+# reactable 0.1.0.1
+
+* Updated tests for compatibility with R 4.0.0.
+
 # reactable 0.1.0
 
 * Initial release.
