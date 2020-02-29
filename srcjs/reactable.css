@@ -280,7 +280,7 @@
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
-  padding: 6px 4px 0;
+  padding: 6px 4px;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
