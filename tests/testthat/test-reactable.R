@@ -163,7 +163,7 @@ test_that("reactable", {
   expect_equal(attribs$columns[[2]]$name, "Y")
 
   # Style
-  tbl <- reactable(data.frame(), style = " border-bottom: 1px solid; top: 50px")
+  tbl <- reactable(data.frame(x = 1), style = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$style, list("border-bottom" = "1px solid", top = "50px"))
 })
@@ -179,6 +179,16 @@ test_that("data can be a matrix", {
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":["a","b"],"y":["c","d"]}')
+  expect_length(attribs$columns, 2)
+})
+
+test_that("data should have at least one column", {
+  expect_error(reactable(data.frame()), "`data` must have at least one column")
+
+  # Data can have zero rows, as long as it has columns
+  tbl <- reactable(data.frame(x = character(0), y = numeric(0)))
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[],"y":[]}')
   expect_length(attribs$columns, 2)
 })
 
@@ -747,11 +757,11 @@ test_that("column style functions", {
 
 test_that("rowClass and rowStyle", {
   # rowClass
-  tbl <- reactable(data.frame(), rowClass = "cls")
+  tbl <- reactable(data.frame(x = 1), rowClass = "cls")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowClassName, "cls")
 
-  tbl <- reactable(data.frame(), rowClass = JS("(rowInfo, state) => 'cls'"))
+  tbl <- reactable(data.frame(x = 1), rowClass = JS("(rowInfo, state) => 'cls'"))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowClassName, JS("(rowInfo, state) => 'cls'"))
 
@@ -761,15 +771,15 @@ test_that("rowClass and rowStyle", {
   expect_equal(attribs$rowClassName, list("row-1", "row-2", "row-3"))
 
   # rowStyle
-  tbl <- reactable(data.frame(), rowStyle = " border-bottom: 1px solid; top: 50px")
+  tbl <- reactable(data.frame(x = 1), rowStyle = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle, list("border-bottom" = "1px solid", top = "50px"))
 
-  tbl <- reactable(data.frame(), rowStyle = list(color = "red"))
+  tbl <- reactable(data.frame(x = 1), rowStyle = list(color = "red"))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle, list(color = "red"))
 
-  tbl <- reactable(data.frame(), rowStyle = JS("(rowInfo, state) => ({ color: 'red' })"))
+  tbl <- reactable(data.frame(x = 1), rowStyle = JS("(rowInfo, state) => ({ color: 'red' })"))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle, JS("(rowInfo, state) => ({ color: 'red' })"))
 

@@ -53,7 +53,7 @@ test_that("is.tag", {
 })
 
 test_that("is.htmlwidget", {
-  expect_true(is.htmlwidget(reactable(data.frame())))
+  expect_true(is.htmlwidget(reactable(data.frame(x = 1))))
   expect_false(is.htmlwidget(div()))
 })
 
@@ -87,13 +87,13 @@ test_that("asReactTag", {
   expect_equal(asReactTag(NULL), NULL)
 
   # Tags should be extracted from subtables
-  tag <- asReactTag(reactable(data.frame()))
+  tag <- asReactTag(reactable(data.frame(x = 1)))
   expect_true(is.tag(tag))
   # Subtables / nested tables should be marked
   expect_true(tag$attribs$nested)
 
   # All other htmlwidgets should be converted to tags
-  tbl <- reactable(data.frame())
+  tbl <- reactable(data.frame(x = 1))
   class(tbl) <- c("my-widget", "htmlwidget")
   tag <- asReactTag(tbl)
   expect_equal(tag$name, "WidgetContainer")
@@ -107,7 +107,7 @@ test_that("asReactTag", {
   expect_equal(asReactTag(tagList(div("x"))), reactR::React$Fragment(div("x")))
   expect_equal(asReactTag(tagList(div(), "x")), reactR::React$Fragment(div(), "x"))
   # htmlwidgets in tag lists
-  tag <- asReactTag(tagList(reactable(data.frame()), "y"))
+  tag <- asReactTag(tagList(reactable(data.frame(x = 1)), "y"))
   expect_equal(length(tag$children), 2)
   expect_true(is.tag(tag$children[[1]]))
   expect_equal(tag$children[[2]], "y")

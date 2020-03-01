@@ -161,6 +161,9 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   } else if (is.matrix(data)) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
+  if (ncol(data) == 0) {
+    stop("`data` must have at least one column")
+  }
 
   if (is.null(rownames)) {
     # Check if row names were set. This may not work if row names were set to
