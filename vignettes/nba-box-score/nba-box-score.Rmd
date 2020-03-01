@@ -237,11 +237,13 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
 
 .box-score-header {
   padding: 8px !important;
+  border-bottom-width: 1px;
   background-color: hsl(205, 93%, 16%);
   color: hsl(0, 0%, 98%);
   font-weight: 400;
   font-size: 11px;
   text-transform: uppercase;
+  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .box-score-header:hover,

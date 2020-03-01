@@ -611,7 +611,7 @@ To style nested rows, use a JavaScript function to style rows based on their
 nesting [`level`](../conditional-styling.html#rowinfo-properties-1):
 
 ```{r}
-data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
+data <- MASS::Cars93[4:8, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
 
 reactable(
   data,
@@ -628,7 +628,8 @@ reactable(
     } else {
       return { borderLeft: '2px solid transparent' }
     }
-  }")
+  }"),
+  defaultExpanded = TRUE
 )
 ```
 
@@ -643,7 +644,8 @@ To customize the table font, you can set a font on the page, or on the table its
 ```{r}
 reactable(
   iris[1:5, ],
-  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "14px")
+  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "14px"),
+  defaultSorted = "Species"
 )
 ```
 
@@ -681,6 +683,10 @@ reactable(
 
 .bar-sort-header[aria-sort="descending"] {
   box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+.bar-sort-header {
+  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 ```
 
