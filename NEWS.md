@@ -25,6 +25,7 @@
 * In `colDef()`, the `class` and `style` R functions now handle list-columns correctly.
 * Cell click actions now work for all cells in aggregated rows.
 * Aggregated cells in columns with row details no longer throw an error when clicked.
+* Row striping and highlighting styles no longer affect nested tables.
 
 # reactable 0.1.0.1
 
