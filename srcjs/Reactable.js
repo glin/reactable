@@ -548,7 +548,8 @@ class Reactable extends React.Component {
         selected: [...this.state.selected].map(i => i + 1)
       }
       Object.keys(state).forEach(prop => {
-        window.Shiny.onInputChange(`__reactable__${outputId}__${prop}`, state[prop])
+        // NOTE: input IDs must always come first to work with Shiny modules
+        window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, state[prop])
       })
     }
   }

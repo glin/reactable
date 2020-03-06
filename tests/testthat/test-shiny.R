@@ -1,14 +1,17 @@
 context("shiny")
 
-mockSession <- function() {
+mockSession <- function(namespace = NULL) {
   e <- new.env()
   e$input <- list()
   e$msgs <- list()
-  e$sendCustomMessage = function(type, message) {
+  e$sendCustomMessage <- function(type, message) {
     msg <- list(type = type, message = message)
     e$msgs[[length(e$msgs) + 1]] <- msg
     e$lastMsg <- msg
     msg
+  }
+  e$ns <- function(id) {
+    shiny::NS(namespace, id)
   }
   e
 }
@@ -55,6 +58,11 @@ test_that("updateReactable", {
   # Update current page
   updateReactable("mytbl", page = 2, session = session)
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(page = 1)))
+
+  # Should work with Shiny modules
+  session <- mockSession(namespace = "mod")
+  updateReactable("mytbl", selected = 2, session = session)
+  expect_equal(session$lastMsg, list(type = "__reactable__mod-mytbl", message = list(selected = list(1))))
 })
 
 test_that("getReactableState", {
@@ -67,16 +75,16 @@ test_that("getReactableState", {
 
   expect_equal(getReactableState("mytbl", session = session), NULL)
 
-  session$input[["__reactable__mytbl__page"]] <- 3
+  session$input[["mytbl__reactable__page"]] <- 3
   expect_equal(getReactableState("mytbl", "page", session = session), 3)
 
-  session$input[["__reactable__mytbl__pageSize"]] <- 2
+  session$input[["mytbl__reactable__pageSize"]] <- 2
   expect_equal(getReactableState("mytbl", "pageSize", session = session), 2)
 
-  session$input[["__reactable__mytbl__pages"]] <- 10
+  session$input[["mytbl__reactable__pages"]] <- 10
   expect_equal(getReactableState("mytbl", "pages", session = session), 10)
 
-  session$input[["__reactable__mytbl__selected"]] <- c(1, 5, 7)
+  session$input[["mytbl__reactable__selected"]] <- c(1, 5, 7)
   expect_equal(getReactableState("mytbl", "selected", session = session), c(1, 5, 7))
 
   expect_equal(getReactableState("mytbl", session = session),

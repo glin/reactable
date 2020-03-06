@@ -2650,37 +2650,37 @@ describe('sends reactable state to Shiny', () => {
     )
 
     // Initial state
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [])
     window.Shiny.onInputChange.mockReset()
 
     // Selected rows
     const selectRow2Checkbox = getAllByLabelText('Select row')[1]
     fireEvent.click(selectRow2Checkbox)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
     window.Shiny.onInputChange.mockReset()
 
     // Current page
     fireEvent.click(getNextButton(container))
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
     window.Shiny.onInputChange.mockReset()
 
     // Pages, page size
     const pageSizeOptions = getPageSizeOptions(container)
     const pageSizeSelect = pageSizeOptions.querySelector('select')
     fireEvent.change(pageSizeSelect, { target: { value: 4 } })
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, '__reactable__tbl__page', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, '__reactable__tbl__pageSize', 4)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, '__reactable__tbl__pages', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, '__reactable__tbl__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 4)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 1)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
     window.Shiny.onInputChange.mockReset()
   })
 

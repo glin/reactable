@@ -75,9 +75,12 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
       return(invisible(NULL))
     }
   }
+
   if (!is.character(outputId)) {
     stop("`outputId` must be a character string")
   }
+  outputId <- session$ns(outputId)
+
   if (!is.null(selected)) {
     if (!is.numeric(selected) && !is.na(selected)) {
       stop("`selected` must be numeric or NA")
@@ -86,9 +89,11 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
     # Convert to 0-based indexing
     selected <- as.list(as.integer(selected) - 1)
   }
+
   if (!is.null(expanded) && !is.logical(expanded)) {
     stop("`expanded` must be TRUE or FALSE")
   }
+
   if (!is.null(page)) {
     if (!is.numeric(page) || length(page) != 1 || page <= 0) {
       stop("`page` must be a single, positive integer")
@@ -96,11 +101,13 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
     # Convert to 0-based indexing
     page <- as.integer(page - 1)
   }
+
   newState <- filterNulls(list(
     selected = selected,
     expanded = expanded,
     page = page
   ))
+
   if (length(newState) > 0) {
     session$sendCustomMessage(sprintf("__reactable__%s", outputId), newState)
   }
@@ -188,13 +195,18 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
     stop("`outputId` must be a character string")
   }
 
+  getState <- function(outputId, name) {
+    # NOTE: input IDs must always come first to work with Shiny modules
+    session$input[[sprintf("%s__reactable__%s", outputId, name)]]
+  }
+
   props <- c("page", "pageSize", "pages", "selected")
   if (!is.null(name)) {
     if (!is.character(name) || !name %in% props) {
       stop(paste("`name` must be one of", paste(sprintf('"%s"', props), collapse = ", ")))
     }
     if (length(name) == 1) {
-      return(session$input[[sprintf("__reactable__%s__%s", outputId, name)]])
+      return(getState(outputId, name))
     } else {
       props <- name
     }
@@ -202,7 +214,7 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 
   state <- stats::setNames(
     lapply(props, function(prop) {
-      session$input[[sprintf("__reactable__%s__%s", outputId, prop)]]
+      getState(outputId, prop)
     }),
     props
   )
