@@ -1,0 +1,14 @@
+---
+output:
+  html_document:
+    theme: null
+    highlight: null
+    mathjax: null
+    self_contained: false
+---
+
+```{r, echo=FALSE}
+library(reactable)
+
+reactable(iris, style = list(fontSize = "14px"))
+```

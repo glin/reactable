@@ -18,7 +18,7 @@ matrix:
       after_success:
         - Rscript -e 'covr::codecov()'
         - R CMD INSTALL ${PKG_TARBALL}
-        - Rscript -e 'pkgdown::build_site()'
+        - Rscript pkgdown/build-docs.R
       deploy:
         provider: pages
         local_dir: docs

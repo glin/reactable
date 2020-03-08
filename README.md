@@ -47,6 +47,7 @@ library(reactable)
 reactable(iris)
 ```
 
+<!-- pkgdown:example -->
 [![reactable example using the iris dataset](man/figures/iris.png)](https://glin.github.io/reactable/articles/examples.html)
 
 You can embed tables in **R Markdown** documents:
