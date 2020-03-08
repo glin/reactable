@@ -395,12 +395,15 @@
 }
 
 /* No data */
-.rt-tbody {
+.rt-tbody-noData {
   position: relative;
 }
 
+.rt-tbody-noData .rt-td {
+  border-color: transparent;
+}
+
 .rt-noData {
-  padding: 0 8px;
   color: rgba(0, 0, 0, 0.8);
 }
 

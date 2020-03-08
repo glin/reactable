@@ -2480,6 +2480,7 @@ describe('no data', () => {
     expect(noData).toHaveLength(1)
     const tbody = getTbody(container)
     expect(getNoData(tbody)).toBeTruthy()
+    expect(tbody).toHaveClass('rt-tbody-noData')
 
     // Language
     rerender(<Reactable {...props} language={{ noData: '_No rows found' }} />)
@@ -2491,9 +2492,12 @@ describe('no data', () => {
       data: { a: [1] },
       columns: [{ name: 'a', accessor: 'a' }]
     }
-    const { queryByText } = render(<Reactable {...props} />)
+    const { container, queryByText } = render(<Reactable {...props} />)
     const noData = queryByText('No rows found')
     expect(noData).toEqual(null)
+
+    const tbody = getTbody(container)
+    expect(tbody).not.toHaveClass('rt-tbody-noData')
   })
 })
 

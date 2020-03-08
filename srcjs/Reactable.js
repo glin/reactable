@@ -211,13 +211,15 @@ const getTbodyProps = state => ({ state })
 const DefaultTbodyComponent = ReactTableDefaults.TbodyComponent
 const DefaultNoDataComponent = ReactTableDefaults.NoDataComponent
 Object.assign(ReactTableDefaults, {
-  TbodyComponent({ state, children, ...rest }) {
+  TbodyComponent({ state, className, children, ...rest }) {
     const { pageRows, language } = state
     const noData = !pageRows.length && (
       <DefaultNoDataComponent>{language.noData}</DefaultNoDataComponent>
     )
+    // Hide cell borders when table has no data
+    className = noData ? classNames(className, 'rt-tbody-noData') : className
     return (
-      <DefaultTbodyComponent role="rowgroup" {...rest}>
+      <DefaultTbodyComponent role="rowgroup" className={className} {...rest}>
         {children}
         {noData}
       </DefaultTbodyComponent>

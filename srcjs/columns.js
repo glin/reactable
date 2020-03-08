@@ -241,7 +241,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.style = undefined
     col.getProps = (state, rowInfo, column) => {
       let props = {}
-      // Ignore footers
+      // Ignore footers and padding rows
       if (!rowInfo) return props
       // Set cell class
       let className
