@@ -904,9 +904,9 @@ describe('table styles', () => {
 describe('row selection', () => {
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getSelectRowRadios = container =>
-    container.querySelectorAll('.rt-select input[type="radio"]')
+    container.querySelectorAll('.rt-td-select input[type="radio"]')
   const getSelectRowCheckboxes = container =>
-    container.querySelectorAll('.rt-select input[type="checkbox"]')
+    container.querySelectorAll('.rt-td-select input[type="checkbox"]')
 
   beforeEach(() => {
     window.Shiny = {

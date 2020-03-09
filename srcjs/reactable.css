@@ -33,11 +33,11 @@
 }
 
 /* Selectable cells */
-.rt-select {
+.rt-td-select {
   padding: 0;
 }
 
-.rt-select-label {
+.rt-td-select-label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,12 +45,12 @@
   height: 100%;
 }
 
-.rt-select-label input[type='checkbox'],
-.rt-select-label input[type='radio'] {
+.rt-td-select-label input[type='checkbox'],
+.rt-td-select-label input[type='radio'] {
   margin: 0;
 }
 
-.rt-th.rt-select div {
+.rt-th.rt-td-select div {
   height: 100%;
 }
 

@@ -102,22 +102,22 @@ export default (Component, options) => {
         id: '_selector',
         accessor: () => '', // this value is not important
         Header: cellInfo => {
-          return <label className="rt-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
+          return <label className="rt-td-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
         },
         Cell: cellInfo => {
-          return <label className="rt-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
+          return <label className="rt-td-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
         },
         Aggregated: cellInfo => {
           return (
-            <label className="rt-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
+            <label className="rt-td-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
           )
         },
         selectable: true,
         filterable: false,
         sortable: false,
         resizable: false,
-        className: 'rt-select',
-        headerClassName: 'rt-select',
+        className: 'rt-td-select',
+        headerClassName: 'rt-td-select',
         width: selectWidth || 30,
         style: { textAlign: 'center' }
       }
