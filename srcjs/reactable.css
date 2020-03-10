@@ -403,10 +403,6 @@
   border-color: transparent;
 }
 
-.rt-noData {
-  color: rgba(0, 0, 0, 0.8);
-}
-
 /* Search */
 .rt-search {
   display: block;
