@@ -1,7 +1,5 @@
-# (uncomment to add a dependency)
-# dependencies:
-#  - name:
-#    version:
-#    src:
-#    script:
-#    stylesheet:
+dependencies:
+  - name: reactable
+    version: 0.1.0.9000
+    src: htmlwidgets
+    stylesheet: reactable.css
