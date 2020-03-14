@@ -125,7 +125,7 @@
   bottom: 0;
   width: 100%;
   height: 1px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: hsl(0, 0%, 90%);
 }
 
 .rt-outlined .rt-th.-headerGroup:after,
