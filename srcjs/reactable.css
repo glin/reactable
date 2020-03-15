@@ -328,12 +328,11 @@
 /* Restyle native select on Firefox */
 @supports (-moz-appearance: none) {
   .rt-page-size-select {
-    -moz-appearance: none !important;
+    -moz-appearance: none;
     padding-right: 12px;
-    background: transparent
-      url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==')
-      right center no-repeat !important;
-    background-position: right 6px center !important;
+    background-image: url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==');
+    background-repeat: no-repeat;
+    background-position: right 6px center;
   }
 }
 
