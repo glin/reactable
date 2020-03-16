@@ -170,7 +170,11 @@ class ThComponent extends React.Component {
             toggleSort(e)
           }
         },
-        onMouseDown: () => {
+        onMouseDown: e => {
+          // Prevent text selection on double clicks, only when sorting
+          if (e.detail > 1) {
+            e.preventDefault()
+          }
           this.setState({ clicked: true })
         },
         onFocus: () => {
