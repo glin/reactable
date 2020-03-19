@@ -645,6 +645,11 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @param ... Additional arguments.
 #' @keywords internal
 reactable_html <- function(id, style, class, ...) {
+  # Set text color in R Notebooks to prevent contrast issues when
+  # using a dark editor theme and htmltools 0.4.0.
+  if (isTRUE(getOption("rstudio.notebook.executing"))) {
+    style <- paste0("color: #333;", style)
+  }
   htmltools::tagList(
     # Necessary for RStudio viewer version < 1.2
     reactR::html_dependency_corejs(),

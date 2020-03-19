@@ -836,3 +836,14 @@ test_that("reactableOutput", {
   expect_equal(output[[1]][[4]]$name, "div")
   expect_equal(output[[1]][[4]]$attribs$id, "mytbl")
 })
+
+test_that("reactable_html", {
+  html <- reactable_html("id", "color: red", "class")
+  expect_equal(html[[4]], htmltools::tags$div(id = "id", class = "class", style = "color: red"))
+
+  # Text color should be set in R Notebooks
+  old <- options(rstudio.notebook.executing = TRUE)
+  on.exit(options(old))
+  html <- reactable_html(NULL, "color: red", NULL)
+  expect_equal(html[[4]], htmltools::tags$div(style = "color: #333;color: red"))
+})
