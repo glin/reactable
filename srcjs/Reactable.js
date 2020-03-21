@@ -788,12 +788,16 @@ class Reactable extends React.Component {
     if (onClick) {
       if (onClick === 'select') {
         onClick = (rowInfo, column) => {
+          // Ignore padding rows
+          if (!rowInfo) {
+            return
+          }
           if (column.selectable) {
             // Ignore selection cells
             return
           }
+          // Ignore expandable pivoted cells
           if (column.pivoted && rowInfo.aggregated) {
-            // Ignore expandable pivoted cells
             return
           }
           if (rowInfo.aggregated) {
@@ -812,6 +816,10 @@ class Reactable extends React.Component {
         }
       } else if (onClick === 'expand') {
         onClick = (rowInfo, column) => {
+          // Ignore padding rows
+          if (!rowInfo) {
+            return
+          }
           const firstDetailsCol = dataColumns.find(col => col.details)
           if (rowInfo.aggregated) {
             // Pivoted columns already expand on click

@@ -1211,6 +1211,26 @@ describe('row selection', () => {
     expect(selectRow2Checkbox.checked).toEqual(false)
   })
 
+  it('ignores padding rows on row click', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'single',
+      onClick: 'select',
+      minRows: 5
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    const paddingCell = rows[3].querySelector('.rt-td')
+    fireEvent.click(paddingCell)
+    const selectRowRadios = getAllByLabelText('Select row')
+    expect(selectRowRadios).toHaveLength(2)
+    const selectRow1Radio = selectRowRadios[0]
+    const selectRow2Radio = selectRowRadios[1]
+    expect(selectRow1Radio.checked).toEqual(false)
+    expect(selectRow2Radio.checked).toEqual(false)
+  })
+
   it('selected state available in rowInfo', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
@@ -1663,6 +1683,20 @@ describe('expandable row details and pivot rows', () => {
     expect(aggregatedCell).toHaveTextContent('')
     fireEvent.click(aggregatedCell)
     expect(getRows(container)).toHaveLength(2)
+  })
+
+  it('ignores padding rows on row click', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'] },
+      columns: [{ name: 'a', accessor: 'a', details: ['detail-a', null] }],
+      onClick: 'expand',
+      minRows: 5
+    }
+    const { container, queryByText } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    const paddingCell = rows[3].querySelector('.rt-td')
+    fireEvent.click(paddingCell)
+    expect(queryByText('detail-a')).toEqual(null)
   })
 
   it('default expanded works with row details', () => {
