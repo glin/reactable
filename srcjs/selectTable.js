@@ -118,7 +118,7 @@ export default (Component, options) => {
         resizable: false,
         className: 'rt-td-select',
         headerClassName: 'rt-td-select',
-        width: selectWidth || 30,
+        width: selectWidth || 36,
         style: { textAlign: 'center' }
       }
 
