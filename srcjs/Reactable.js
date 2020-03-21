@@ -796,7 +796,8 @@ class Reactable extends React.Component {
             // Ignore expandable pivoted cells
             return
           }
-          if (rowInfo.subRows) {
+          if (rowInfo.aggregated) {
+            if (selection === 'single') return
             const rows = rowInfo.subRows
             // Don't support selecting aggregated cells for now
             if (!rows || rows.some(row => row._aggregated)) {

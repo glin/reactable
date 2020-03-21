@@ -1187,6 +1187,30 @@ describe('row selection', () => {
     expect(selectRow2Checkbox.checked).toEqual(true)
   })
 
+  it('does not select sub rows on row click for single selection', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb1'] },
+      columns: [
+        { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
+        { name: 'b', accessor: 'b' }
+      ],
+      pivotBy: ['b'],
+      selection: 'single',
+      onClick: 'select',
+      defaultExpanded: true
+    }
+    const { getAllByLabelText, getByText } = render(<Reactable {...props} />)
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+
+    fireEvent.click(getByText('a-aggregated'))
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
   it('selected state available in rowInfo', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
