@@ -792,10 +792,6 @@ class Reactable extends React.Component {
           if (!rowInfo) {
             return
           }
-          if (column.selectable) {
-            // Ignore selection cells
-            return
-          }
           // Ignore expandable pivoted cells
           if (column.pivoted && rowInfo.aggregated) {
             return

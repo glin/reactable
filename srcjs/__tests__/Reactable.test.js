@@ -904,9 +904,10 @@ describe('table styles', () => {
 describe('row selection', () => {
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getSelectRowRadios = container =>
-    container.querySelectorAll('.rt-td-select input[type="radio"]')
+    container.querySelectorAll('.rt-select-input[type="radio"]')
   const getSelectRowCheckboxes = container =>
-    container.querySelectorAll('.rt-td-select input[type="checkbox"]')
+    container.querySelectorAll('.rt-select-input[type="checkbox"]')
+  const getSelectRowCells = container => container.querySelectorAll('.rt-td-select')
 
   beforeEach(() => {
     window.Shiny = {
@@ -1123,6 +1124,107 @@ describe('row selection', () => {
     expect(selectAllCheckbox.checked).toEqual(true)
     expect(selectRow1Checkbox.checked).toEqual(true)
     expect(selectRow2Checkbox.checked).toEqual(true)
+  })
+
+  it('multiple selection cells are clickable', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      minRows: 2
+    }
+    const { container } = render(<Reactable {...props} />)
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    expect(selectRowCheckboxes).toHaveLength(3)
+    const selectAllCheckbox = selectRowCheckboxes[0]
+    const selectRow1Checkbox = selectRowCheckboxes[1]
+    const selectRow2Checkbox = selectRowCheckboxes[2]
+
+    const selectRowCells = getSelectRowCells(container)
+    expect(selectRowCells).toHaveLength(3)
+    const selectAllCell = selectRowCells[0]
+    const selectRow1Cell = selectRowCells[1]
+    const selectRow2Cell = selectRowCells[2]
+
+    fireEvent.click(selectAllCell)
+    expect(selectAllCheckbox.checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+
+    fireEvent.click(selectRow1Cell)
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+
+    fireEvent.click(selectRow2Cell)
+    expect(selectAllCheckbox.checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
+  it('multiple selection cells are clickable with pivoted sub rows', () => {
+    const props = {
+      data: { a: ['x', 'x', 'y', 'y'], b: [1, 1, 2, 41] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      pivotBy: ['a'],
+      defaultExpanded: true,
+      minRows: 2
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+    const selectAllCheckboxes = getAllByLabelText('Select all rows in group')
+    expect(selectAllCheckboxes).toHaveLength(2)
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    const selectRow1Checkbox = selectRowCheckboxes[0]
+    const selectRow2Checkbox = selectRowCheckboxes[1]
+
+    const selectRowCells = getSelectRowCells(container)
+    expect(selectRowCells).toHaveLength(7)
+    const selectAllGroup1Cell = selectRowCells[1]
+
+    fireEvent.click(selectAllGroup1Cell)
+    expect(selectAllCheckboxes[0].checked).toEqual(true)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+
+    fireEvent.click(selectAllGroup1Cell)
+    expect(selectAllCheckboxes[0].checked).toEqual(false)
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
+  it('single selection cells are clickable', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'single',
+      minRows: 2
+    }
+    const { container } = render(<Reactable {...props} />)
+    const selectRowRadios = getSelectRowRadios(container)
+    expect(selectRowRadios).toHaveLength(2)
+    const selectRow1Radio = selectRowRadios[0]
+    const selectRow2Radio = selectRowRadios[1]
+
+    const selectRowCells = getSelectRowCells(container)
+    expect(selectRowCells).toHaveLength(3)
+    const selectRow1Cell = selectRowCells[1]
+    const selectRow2Cell = selectRowCells[2]
+
+    fireEvent.click(selectRow2Cell)
+    expect(selectRow1Radio.checked).toEqual(false)
+    expect(selectRow2Radio.checked).toEqual(true)
+
+    fireEvent.click(selectRow1Cell)
+    expect(selectRow1Radio.checked).toEqual(true)
+    expect(selectRow2Radio.checked).toEqual(false)
+
+    fireEvent.click(selectRow1Cell)
+    expect(selectRow1Radio.checked).toEqual(false)
+    expect(selectRow2Radio.checked).toEqual(false)
   })
 
   it('selects on row click', () => {

@@ -11,6 +11,7 @@ const DefaultSelectInputComponent = props => {
   return (
     <input
       type={selectType || 'checkbox'}
+      className="rt-select-input"
       aria-label={label}
       checked={checked}
       onClick={e => {
@@ -98,19 +99,66 @@ export default (Component, options) => {
 
     render() {
       const { columns: originalCols, selectWidth, forwardedRef, ...rest } = this.props
+      const { isSelected, selectType, toggleAll, toggleSelection } = this.props
       const select = {
         id: '_selector',
         accessor: () => '', // this value is not important
         Header: cellInfo => {
-          return <label className="rt-td-select-label">{this.headSelector.bind(this)(cellInfo)}</label>
+          return this.headSelector.bind(this)(cellInfo)
         },
         Cell: cellInfo => {
-          return <label className="rt-td-select-label">{this.rowSelector.bind(this)(cellInfo)}</label>
+          return this.rowSelector.bind(this)(cellInfo)
         },
         Aggregated: cellInfo => {
-          return (
-            <label className="rt-td-select-label">{this.subRowSelector.bind(this)(cellInfo)}</label>
-          )
+          return this.subRowSelector.bind(this)(cellInfo)
+        },
+        getProps: (state, rowInfo, column) => {
+          let props = {}
+          // Ignore padding rows
+          if (!rowInfo) {
+            return props
+          }
+          // Ignore expandable pivoted cells
+          if (column.pivoted && rowInfo.aggregated) {
+            return props
+          }
+          if (rowInfo.aggregated) {
+            if (selectType === 'radio') {
+              return props
+            }
+            const rows = rowInfo.subRows
+            // Don't support selecting aggregated cells for now
+            if (!rows || rows.some(row => row._aggregated)) {
+              return props
+            }
+            props.onClick = () => {
+              const indices = rows.map(row => row._index)
+              const checked = indices.every(index => isSelected(index))
+              toggleAll(indices, !checked)
+            }
+          } else {
+            props.onClick = () => {
+              toggleSelection(rowInfo.index)
+            }
+          }
+          return props
+        },
+        getHeaderProps: state => {
+          let props = {}
+          if (selectType === 'radio') {
+            return props
+          }
+          const rows = state.sortedData
+          // Don't support selecting aggregated cells for now
+          if (!rows || rows.some(row => row._aggregated)) {
+            return props
+          }
+          props.onClick = () => {
+            const indices = rows.map(row => row._index)
+            const checked = indices.every(index => isSelected(index))
+            toggleAll(indices, !checked)
+          }
+          return props
         },
         selectable: true,
         filterable: false,
@@ -118,8 +166,7 @@ export default (Component, options) => {
         resizable: false,
         className: 'rt-td-select',
         headerClassName: 'rt-td-select',
-        width: selectWidth || 36,
-        style: { textAlign: 'center' }
+        width: selectWidth || 36
       }
 
       const columns =

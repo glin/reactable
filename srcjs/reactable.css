@@ -34,24 +34,15 @@
 
 /* Selectable cells */
 .rt-td-select {
-  padding: 0;
-}
-
-.rt-td-select-label {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
-  height: 100%;
 }
 
-.rt-td-select-label input[type='checkbox'],
-.rt-td-select-label input[type='radio'] {
-  margin: 0;
-}
-
-.rt-th.rt-td-select div {
-  height: 100%;
+input[type='checkbox'].rt-select-input,
+input[type='radio'].rt-select-input {
+  display: block; /* For vertical centering in headers (because nested div) */
+  margin: 0; /* Reset for browsers and Bootstrap 3's input[type=] form styles */
 }
 
 /* Column alignment */
