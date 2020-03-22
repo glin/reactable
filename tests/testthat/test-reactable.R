@@ -106,7 +106,8 @@ test_that("reactable", {
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
     list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-         filterable = FALSE,  width = 45, align = "center", details = list("1")),
+         resizable = FALSE, filterable = FALSE,  width = 45, align = "center",
+         details = list("1")),
     list(accessor = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE),
     list(accessor = "x", name = "x", type = "factor")
@@ -547,7 +548,8 @@ test_that("row details", {
   tbl <- reactable(data, details = function(i) if (i == 1) data[i, "y"])
   attribs <- getAttribs(tbl)
   expected <- list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-                   filterable = FALSE, width = 45, align = "center", details = list("a", NULL))
+                   resizable = FALSE, filterable = FALSE, width = 45, align = "center",
+                   details = list("a", NULL))
   expect_equal(attribs$columns[[1]], expected)
 
   # JS renderer
