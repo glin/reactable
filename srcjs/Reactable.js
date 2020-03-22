@@ -16,7 +16,10 @@ import './react-table.css'
 import './reactable.css'
 
 const getTheadThProps = (state, rowInfo, column) => {
-  let props = { role: 'columnheader' }
+  let props = {}
+  // Assign cell role to selectable column headers to prevent input labels
+  // from being read as column names ("select all rows column").
+  props.role = column.selectable ? 'cell' : 'columnheader'
   const isSortable = getFirstDefined(column.sortable, state.sortable)
   if (isSortable) {
     const sort = state.sorted.find(d => d.id === column.id)

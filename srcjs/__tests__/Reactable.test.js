@@ -86,6 +86,13 @@ describe('ARIA roles', () => {
     headers.forEach(header => expect(header).toHaveAttribute('role', 'columnheader'))
   })
 
+  it('selectable column headers have cell roles', () => {
+    const { container } = render(<Reactable {...props} selection="multiple" />)
+    const headers = getHeaders(container)
+    expect(headers).toHaveLength(3)
+    headers.forEach((header, i) => expect(header).toHaveAttribute('role', i === 0 ? 'cell' : 'columnheader'))
+  })
+
   it('header groups have aria roles', () => {
     const { container } = render(<Reactable {...props} />)
     const headers = getGroupHeaders(container)
