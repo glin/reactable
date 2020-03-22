@@ -250,14 +250,14 @@ describe('sorting', () => {
       />
     )
     const headers = getHeaders(container)
-    headers[0].focus()
+    fireEvent.focus(headers[0])
     expect(headers[0]).toHaveAttribute('data-sort-hint', 'ascending')
-    headers[1].focus()
+    fireEvent.focus(headers[1])
     expect(headers[1]).toHaveAttribute('data-sort-hint', 'descending')
 
     // Should not show indicator when toggling with mouse
     fireEvent.mouseDown(headers[0])
-    headers[0].focus()
+    fireEvent.blur(headers[0])
     expect(headers[0]).not.toHaveAttribute('data-sort-hint')
     fireEvent.mouseUp(headers[0])
     fireEvent.blur(headers[0])
@@ -265,14 +265,12 @@ describe('sorting', () => {
 
     // Should not show indicator while sorted
     fireEvent.click(headers[0])
-    headers[0].focus()
     expect(headers[0]).not.toHaveAttribute('data-sort-hint')
     fireEvent.click(headers[0], { shiftKey: true })
     fireEvent.click(headers[0], { shiftKey: true })
     expect(headers[0]).not.toHaveAttribute('data-sort-hint')
 
     // Should not show indicator after toggling back to unsorted
-    headers[0].focus()
     fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13 })
     expect(headers[0]).not.toHaveAttribute('data-sort-hint')
     fireEvent.keyPress(headers[0], { key: 'Enter', keyCode: 13, charCode: 13, shiftKey: true })
