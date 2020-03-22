@@ -26,6 +26,8 @@
 * Cell click actions now work for all cells in aggregated rows.
 * Aggregated cells in columns with row details no longer throw an error when clicked.
 * Row striping and highlighting styles no longer affect nested tables.
+* Text selection now works in column headers.
+* Dark themes no longer affect text color in RStudio R Notebooks ([#21](https://github.com/glin/reactable/issues/21)).
 
 # reactable 0.1.0.1
 
