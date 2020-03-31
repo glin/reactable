@@ -87,10 +87,6 @@ input[type='radio'].rt-select-input {
   border-top: none;
 }
 
-.rt-tfoot .rt-td {
-  border-top: 1px solid hsl(0, 0%, 90%);
-}
-
 .rt-bordered .rt-td,
 .rt-bordered .rt-th {
   border-left: 1px solid rgba(0, 0, 0, 0.05);
