@@ -118,7 +118,7 @@ const getTfootTrProps = () => {
 }
 
 const getTfootTdProps = () => {
-  return { role: 'cell' }
+  return { role: 'cell', className: 'rt-tfoot-td' }
 }
 
 // Add ARIA roles to table, table headers, and table footer

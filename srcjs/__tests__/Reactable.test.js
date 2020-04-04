@@ -2018,6 +2018,7 @@ describe('footer rendering', () => {
     const props = { data, columns }
     const { getByText } = render(<Reactable {...props} />)
     const footer = getByText('my-footer')
+    expect(footer).toHaveClass('rt-tfoot-td')
     expect(footer).toHaveClass('my-footer')
     expect(footer).toHaveStyle('color: red;')
   })
