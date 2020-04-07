@@ -732,5 +732,8 @@ describe('formatValue', () => {
     )
     expect(formatValue(date, { time: true, hour12: false, locales: 'en-US' })).toEqual('13:22:49')
     expect(formatValue(date, { time: true, hour12: null, locales: 'en-US' })).toEqual('1:22:49 PM')
+
+    // YYYY-MM-DD dates should be formatted in local time
+    expect(formatValue('2018-03-22', { date: true, locales: 'en-US' })).toEqual('3/22/2018')
   })
 })

@@ -446,6 +446,12 @@ export function formatValue(value, options) {
     if (datetime) {
       value = new Date(value).toLocaleString(locales, options)
     } else if (date) {
+      // Format YYYY-MM-DD dates in local time, not UTC.
+      // Ignore ISO 8601 dates otherwise, i.e., YYYY-MM-DDTHH:MM:SS[Z]
+      // http://blog.dygraphs.com/2012/03/javascript-and-dates-what-mess.html
+      if (value.includes('-') && !value.includes('T') && !value.includes('Z')) {
+        value = value.replace(/-/g, '/')
+      }
       value = new Date(value).toLocaleDateString(locales, options)
     } else if (time) {
       value = new Date(value).toLocaleTimeString(locales, options)

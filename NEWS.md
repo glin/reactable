@@ -22,6 +22,7 @@
 * General improvements to screen reader accessibility.
 * Table searching now works correctly when row selection is enabled.
 * `colFormat(percent = TRUE)` now works correctly when viewing tables in IE11.
+* `colFormat(date = TRUE)` now formats `YYYY-MM-DD` dates correctly ([#38](https://github.com/glin/reactable/issues/38)).
 * In `colDef()`, the `class` and `style` R functions now handle list-columns correctly.
 * Cell click actions now work for all cells in aggregated rows.
 * Aggregated cells in columns with row details no longer throw an error when clicked.
