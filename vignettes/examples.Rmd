@@ -892,7 +892,7 @@ reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
 
 ## Row Names
 Row names are shown by default, if present. You can customize the row names column
-using `.rownames` as the column name:
+using `".rownames"` as the column name:
 ```{r}
 reactable(USPersonalExpenditure, columns = list(
   .rownames = colDef(name = "Category", sortable = TRUE)
@@ -1063,6 +1063,26 @@ reactable(
   }"),
   borderless = TRUE,
   onClick = "select"
+)
+```
+
+#### Customize the selection column
+
+> **New in v0.1.0.9000**
+
+You can customize the selection column using `".selection"` as the column name:
+```{r}
+reactable(
+  iris[1:4, ],
+  selection = "multiple",
+  columns = list(
+    .selection = colDef(
+      width = 80,
+      style = list(cursor = "pointer"),
+      headerStyle = list(cursor = "pointer")
+    )
+  ),
+  bordered = TRUE
 )
 ```
 
