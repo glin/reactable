@@ -11,6 +11,7 @@
   now receive a `rowInfo.selected` property indicating whether the row is selected.
 * `reactable()` gains a `language` argument to customize the language strings in a table.
 * `colDef()` gains a `"median"` aggregate function to calculate the median of numbers.
+* The row selection column can now be customized using `".selection"` as the column name.
 
 ### Breaking changes
 

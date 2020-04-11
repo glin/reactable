@@ -5,6 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { defaultLanguage } from './language'
+import { classNames } from './utils'
 
 const DefaultSelectInputComponent = props => {
   const { selectType, checked, label, rows, row, onClick } = props
@@ -99,9 +100,19 @@ export default (Component, options) => {
 
     render() {
       const { columns: originalCols, selectWidth, forwardedRef, ...rest } = this.props
-      const { isSelected, selectType, toggleAll, toggleSelection } = this.props
-      const select = {
-        id: '_selector',
+      const { isSelected, selectType, toggleAll, toggleSelection, selectId } = this.props
+
+      let origSelectCol = {}
+      for (let i = 0; i < originalCols.length; i++) {
+        if (originalCols[i].id === selectId) {
+          origSelectCol = originalCols.splice(i, 1)[0]
+          break
+        }
+      }
+
+      const selectCol = {
+        ...origSelectCol,
+        id: selectId,
         accessor: () => '', // this value is not important
         Header: cellInfo => {
           return this.headSelector.bind(this)(cellInfo)
@@ -113,7 +124,7 @@ export default (Component, options) => {
           return this.subRowSelector.bind(this)(cellInfo)
         },
         getProps: (state, rowInfo, column) => {
-          let props = {}
+          let props = origSelectCol.getProps ? origSelectCol.getProps(state, rowInfo, column) : {}
           // Ignore padding rows
           if (!rowInfo) {
             return props
@@ -164,15 +175,15 @@ export default (Component, options) => {
         filterable: false,
         sortable: false,
         resizable: false,
-        className: 'rt-td-select',
-        headerClassName: 'rt-td-select',
-        width: selectWidth || 36
+        className: classNames('rt-td-select', origSelectCol.className),
+        headerClassName: classNames('rt-td-select', origSelectCol.headerClassName),
+        width: origSelectCol.width || selectWidth
       }
 
       const columns =
         options !== undefined && options.floatingLeft === true
-          ? [...originalCols, select]
-          : [select, ...originalCols]
+          ? [...originalCols, selectCol]
+          : [selectCol, ...originalCols]
       const extra = {
         columns
       }
@@ -184,12 +195,13 @@ export default (Component, options) => {
   RTSelectTable.displayName = 'RTSelectTable'
   RTSelectTable.propTypes = {
     selectType: PropTypes.oneOf(['checkbox', 'radio']).isRequired,
+    selectWidth: PropTypes.number,
+    selectId: PropTypes.string,
     SelectInputComponent: PropTypes.func.isRequired,
     SelectAllInputComponent: PropTypes.func.isRequired,
     isSelected: PropTypes.func.isRequired,
     toggleSelection: PropTypes.func.isRequired,
     toggleAll: PropTypes.func.isRequired,
-    selectWidth: PropTypes.number,
     columns: PropTypes.array.isRequired,
     language: PropTypes.shape({
       selectAllRowsLabel: PropTypes.string,
@@ -203,6 +215,8 @@ export default (Component, options) => {
   }
   RTSelectTable.defaultProps = {
     selectType: 'checkbox',
+    selectWidth: 36,
+    selectId: '.selection',
     SelectInputComponent: DefaultSelectInputComponent,
     SelectAllInputComponent: DefaultSelectInputComponent,
     language: defaultLanguage

@@ -30,8 +30,7 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
 
 \item{rownames}{Show row names? Defaults to \code{TRUE} if the data has row names.
 
-To customize or group the row names column, use \code{".rownames"} as the
-column name.}
+To customize the row names column, use \code{".rownames"} as the column name.}
 
 \item{groupBy}{Character vector of column names to group by.}
 
@@ -83,7 +82,9 @@ details expander column.}
 \item{selection}{Enable row selection? Either \code{"multiple"} or \code{"single"} for
 multiple or single row selection.
 
-To get the selected rows in Shiny, use \code{\link[=getReactableState]{getReactableState()}}.}
+To get the selected rows in Shiny, use \code{\link[=getReactableState]{getReactableState()}}.
+
+To customize the selection column, use \code{".selection"} as the column name.}
 
 \item{selectionId}{Shiny input ID for the selected rows. The selected rows are
 given as a numeric vector of row indices, or \code{NULL} if no rows are selected.

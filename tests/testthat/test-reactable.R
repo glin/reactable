@@ -105,6 +105,7 @@ test_that("reactable", {
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
+    list(accessor = ".selection", name = "", type = "NULL"),
     list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
          resizable = FALSE, filterable = FALSE,  width = 45, align = "center",
          details = list("1")),
@@ -587,6 +588,13 @@ test_that("row details", {
   tbl <- reactable(data, columns = list(y = colDef(details = function(i) data[i, "y"])))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[2]]$details, list("a", "b"))
+
+  # Details column can be part of column groups
+  tbl <- reactable(data.frame(x = c(1, 2)), details = function(i) i, columnGroups = list(
+    colGroup("group", c(".details", "x"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups[[1]]$columns, list(".details", "x"))
 })
 
 test_that("html dependencies from rendered content are passed through", {
@@ -665,6 +673,22 @@ test_that("row selection", {
   tbl <- reactable(data, selection = "single", defaultSelected = 3)
   attribs <- getAttribs(tbl)
   expect_equal(attribs$defaultSelected, list(2))
+
+  # Selection column should be customizable
+  tbl <- reactable(data, selection = "single", columns = list(
+    .selection = colDef(width = 100, class = "my-cls")
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$name, "")
+  expect_equal(attribs$columns[[1]]$width, 100)
+  expect_equal(attribs$columns[[1]]$className, "my-cls")
+
+  # Selection column can be part of column groups
+  tbl <- reactable(data.frame(x = c(1, 2)), selection = "multiple", columnGroups = list(
+    colGroup("group", c(".selection", "x"))
+  ))
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columnGroups[[1]]$columns, list(".selection", "x"))
 
   # Out of bounds errors
   expect_error(reactable(data, selection = "single", defaultSelected = c(0, 1)))

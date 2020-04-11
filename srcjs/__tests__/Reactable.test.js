@@ -90,7 +90,9 @@ describe('ARIA roles', () => {
     const { container } = render(<Reactable {...props} selection="multiple" />)
     const headers = getHeaders(container)
     expect(headers).toHaveLength(3)
-    headers.forEach((header, i) => expect(header).toHaveAttribute('role', i === 0 ? 'cell' : 'columnheader'))
+    headers.forEach((header, i) =>
+      expect(header).toHaveAttribute('role', i === 0 ? 'cell' : 'columnheader')
+    )
   })
 
   it('header groups have aria roles', () => {
@@ -1374,6 +1376,36 @@ describe('row selection', () => {
     expect(rows[1]).not.toHaveStyle('background-color: red')
     expect(getByText('row 0 selected? yes')).toBeTruthy()
     expect(getByText('row 1 selected? no')).toBeTruthy()
+  })
+
+  it('selection cells can be customized', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        {
+          name: '',
+          accessor: '.selection',
+          className: 'cell-cls',
+          headerClassName: 'header-cls',
+          width: 200
+        }
+      ],
+      selection: 'multiple',
+      minRows: 2
+    }
+    const { container } = render(<Reactable {...props} />)
+    const selectRowCells = getSelectRowCells(container)
+    expect(selectRowCells).toHaveLength(3)
+    selectRowCells.forEach(cell => {
+      expect(cell).toHaveStyle('width: 200px')
+    })
+    const selectAllCell = selectRowCells[0]
+    const selectRow1Cell = selectRowCells[1]
+    const selectRow2Cell = selectRowCells[2]
+    expect(selectAllCell).toHaveClass('header-cls')
+    expect(selectRow1Cell).toHaveClass('cell-cls')
+    expect(selectRow2Cell).toHaveClass('cell-cls')
   })
 })
 

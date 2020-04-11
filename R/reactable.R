@@ -19,8 +19,7 @@
 #' @param columnGroups List of column group definitions. See [colGroup()].
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
 #'
-#'  To customize or group the row names column, use `".rownames"` as the
-#'  column name.
+#'  To customize the row names column, use `".rownames"` as the column name.
 #' @param groupBy Character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
@@ -53,6 +52,8 @@
 #'   multiple or single row selection.
 #'
 #'   To get the selected rows in Shiny, use [getReactableState()].
+#'
+#'   To customize the selection column, use `".selection"` as the column name.
 #' @param selectionId Shiny input ID for the selected rows. The selected rows are
 #'   given as a numeric vector of row indices, or `NULL` if no rows are selected.
 #'   **NOTE:** `selectionId` will be deprecated in a future release.
@@ -188,27 +189,6 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     columns[[rownamesKey]] <- rownamesColumn
   }
 
-  if (!is.null(columns)) {
-    if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
-      stop("`columns` must be a named list of column definitions")
-    }
-    if (!all(names(columns) %in% colnames(data))) {
-      stop("`columns` names must exist in `data`")
-    }
-  }
-  if (!is.null(columnGroups)) {
-    if (!all(sapply(columnGroups, is.colGroup))) {
-      stop("`columnGroups` must be a list of column group definitions")
-    }
-    for (group in columnGroups) {
-      if (length(group$columns) == 0) {
-        stop("`columnGroups` groups must contain at least one column")
-      }
-      if (!all(group$columns %in% colnames(data))) {
-        stop("`columnGroups` columns must exist in `data`")
-      }
-    }
-  }
   if (!is.null(groupBy)) {
     if (!all(groupBy %in% colnames(data))) {
       stop("`groupBy` columns must exist in `data`")
@@ -229,6 +209,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   if (!is.logical(searchable)) {
     stop("`searchable` must be TRUE or FALSE")
   }
+
   columnKeys <- colnames(data)
   if (!is.null(details)) {
     detailsKey <- ".details"
@@ -242,6 +223,15 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     }
     # Prepend column
     columns <- c(stats::setNames(list(detailsColumn), detailsKey), columns)
+  }
+  if (!is.null(selection)) {
+    selectionKey <- ".selection"
+    columnKeys <- c(selectionKey, columnKeys)
+    selectionColumn <- colDef(name = "")
+    if (selectionKey %in% names(columns)) {
+      selectionColumn <- mergeLists(selectionColumn, columns[[selectionKey]])
+    }
+    columns[[selectionKey]] <- selectionColumn
   }
   if (!is.null(defaultColDef)) {
     if (!is.colDef(defaultColDef)) {
@@ -260,6 +250,28 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       mergeLists(defaultColGroup, group)
     })
   }
+  if (!is.null(columns)) {
+    if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
+      stop("`columns` must be a named list of column definitions")
+    }
+    if (!all(names(columns) %in% columnKeys)) {
+      stop("`columns` names must exist in `data`")
+    }
+  }
+  if (!is.null(columnGroups)) {
+    if (!all(sapply(columnGroups, is.colGroup))) {
+      stop("`columnGroups` must be a list of column group definitions")
+    }
+    for (group in columnGroups) {
+      if (length(group$columns) == 0) {
+        stop("`columnGroups` groups must contain at least one column")
+      }
+      if (!all(group$columns %in% columnKeys)) {
+        stop("`columnGroups` columns must exist in `data`")
+      }
+    }
+  }
+
   if (!isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
