@@ -711,14 +711,16 @@ class Reactable extends React.Component {
           props.className = classNames(props.className, 'rt-tr-highlight')
         }
         if (rowClassName) {
+          let rowCls
           if (typeof rowClassName === 'function') {
-            props.className = rowClassName(this.getRowInfo(rowInfo), state)
+            rowCls = rowClassName(this.getRowInfo(rowInfo), state)
           } else if (rowClassName instanceof Array) {
             // Ignore padding rows
-            props.className = rowInfo && rowClassName[rowInfo.index]
+            rowCls = rowInfo && rowClassName[rowInfo.index]
           } else {
-            props.className = rowClassName
+            rowCls = rowClassName
           }
+          props.className = classNames(props.className, rowCls)
         }
         if (rowStyle) {
           if (typeof rowStyle === 'function') {

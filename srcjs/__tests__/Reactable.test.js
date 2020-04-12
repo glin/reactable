@@ -2245,6 +2245,29 @@ describe('row classes and styles', () => {
       }
     })
   })
+
+  it('classes work with row striping and highlighting', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      striped: true,
+      highlight: true,
+      rowClassName: 'my-row',
+      minRows: 3
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach((row, index) => {
+      expect(row).toHaveClass('my-row')
+      expect(row).toHaveClass('rt-tr-highlight')
+      if (index % 2 === 0) {
+        expect(row).toHaveClass('rt-tr-striped')
+      }
+    })
+  })
 })
 
 describe('pagination', () => {
