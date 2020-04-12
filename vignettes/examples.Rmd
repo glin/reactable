@@ -410,6 +410,9 @@ that returns custom content. R render functions support
 [`htmlwidgets`](https://www.htmlwidgets.org/),
 while JavaScript render functions allow for more dynamic behavior.
 
+You can also render content as HTML using `colDef(html = TRUE)`. Note that all
+raw HTML is escaped by default.
+
 See [Custom Rendering](custom-rendering.html) for details on how to
 use render functions, and the [Demo Cookbook](cookbook/cookbook.html)
 for even more examples of custom rendering.
@@ -623,7 +626,8 @@ reactable(iris[1:5, ], details = function(index) {
 })
 ```
 
-The details column can be customized by providing a `colDef()` instead:
+The details column can be customized by providing a `colDef()` instead. This can
+be used to add a column name, render HTML content, or change the column width:
 ```{r}
 reactable(iris[1:5, ], details = colDef(
   name = "More",

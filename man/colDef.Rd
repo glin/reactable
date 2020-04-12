@@ -57,7 +57,7 @@ R function that takes two arguments, the column values and column name, or a
 that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes a row info object
 as an argument. Cannot be used on a grouping column.}
 
-\item{html}{Render cells as HTML? HTML strings are escaped by default.}
+\item{html}{Render content as HTML? Raw HTML strings are escaped by default.}
 
 \item{na}{String to display for missing values (i.e. \link{NA} or \link{NaN}).
 By default, missing values are displayed as blank cells.}

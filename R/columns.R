@@ -29,7 +29,7 @@
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes a row index argument or a [JS()] function that takes a row info object
 #'   as an argument. Cannot be used on a grouping column.
-#' @param html Render cells as HTML? HTML strings are escaped by default.
+#' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
 #' @param minWidth Min width of the column in pixels.
@@ -231,7 +231,7 @@ isDescOrder <- function(x) {
 #' @param columns Character vector of column names in the group.
 #' @param header Custom header renderer. An R function that takes the header value
 #'   as an argument, or a [JS()] function that takes a column info object as an argument.
-#' @param html Render header as HTML? HTML strings are escaped by default.
+#' @param html Render header content as HTML? Raw HTML strings are escaped by default.
 #' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or

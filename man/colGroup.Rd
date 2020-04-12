@@ -15,7 +15,7 @@ colGroup(name = NULL, columns = NULL, header = NULL, html = FALSE,
 \item{header}{Custom header renderer. An R function that takes the header value
 as an argument, or a \code{\link[=JS]{JS()}} function that takes a column info object as an argument.}
 
-\item{html}{Render header as HTML? HTML strings are escaped by default.}
+\item{html}{Render header content as HTML? Raw HTML strings are escaped by default.}
 
 \item{align}{Column group header alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 
