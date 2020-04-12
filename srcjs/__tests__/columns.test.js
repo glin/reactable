@@ -266,10 +266,9 @@ describe('buildColumnDefs', () => {
         footerClassName: 'ftr'
       }
     ])
-    // Cell className should be overrided since it applies to footers
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps(null, { index: 0 }, {}).className).toEqual('rt-align-left cell') // Cell
-    expect(cols[0].getProps(null, null, {}).className).toEqual(undefined) // Footer
+    expect(cols[0].getProps(null, null, {}).className).toEqual(undefined) // Footers and padding rows
     expect(cols[0].headerClassName).toEqual('rt-align-left hdr')
     expect(cols[0].footerClassName).toEqual('rt-align-left ftr')
 
@@ -315,10 +314,9 @@ describe('buildColumnDefs', () => {
         footerStyle: 'ftr-style'
       }
     ])
-    // Cell style should be overrided since it applies to footers
     expect(cols[0].style).toEqual(undefined)
     expect(cols[0].getProps(null, { index: 0 }, {}).style).toEqual('cell-style') // Cell
-    expect(cols[0].getProps(null, null, {}).style).toEqual(undefined) // Footer
+    expect(cols[0].getProps(null, null, {}).style).toEqual(undefined) // Footers and padding rows
     expect(cols[0].headerStyle).toEqual('hdr-style')
     expect(cols[0].footerStyle).toEqual('ftr-style')
 

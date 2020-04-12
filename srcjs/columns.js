@@ -217,24 +217,14 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           return footer != null ? String(footer) : ''
         }
       }
-
-      // Workaround for bug in react-table >= 6.7.0 where footerClassName
-      // and footerStyle are not passed through.
-      // https://github.com/tannerlinsley/react-table/issues/598
-      col.getFooterProps = () => {
-        return {
-          className: col.footerClassName,
-          style: col.footerStyle
-        }
-      }
     }
 
     const colAlignClass = `rt-align-${col.align}`
     col.headerClassName = classNames(colAlignClass, col.headerClassName)
     col.footerClassName = classNames(colAlignClass, col.footerClassName)
 
-    // Prevent react-table from applying cell classes and styles to footers by default.
-    // Override this behavior with our own footerClass and footerStyle.
+    // Apply dynamic styles. Unset className/style since they may be a
+    // function or array.
     const cellClass = col.className
     const cellStyle = col.style
     col.className = undefined
