@@ -824,6 +824,10 @@ test_that("rowClass and rowStyle", {
 test_that("language", {
   data <- data.frame(x = 1)
 
+  tbl <- reactable(data, language = reactableLang())
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$language, NULL)
+
   language <- reactableLang(pageNext = "_Next", searchPlaceholder = "_Search", sortLabel = "_Sort {name}")
   tbl <- reactable(data, language = language)
   attribs <- getAttribs(tbl)
@@ -841,8 +845,11 @@ test_that("language", {
   tbl <- reactable(data, language = language)
   attribs <- getAttribs(tbl)
   expect_equal(attribs$language, language)
-})
 
+  # Errors
+  expect_error(reactable(data, language = list()),
+               "`language` must be a reactable language options object")
+})
 
 test_that("columnSortDefs", {
   defaultSorted <- list(x = "asc", y = "desc")

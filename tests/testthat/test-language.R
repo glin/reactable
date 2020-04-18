@@ -49,6 +49,12 @@ test_that("reactableLang", {
   )
   expect_equal(do.call(reactableLang, lang), structure(lang, class = "reactableLang"))
 
+  # Expressions should work
+  expect_equal(reactableLang(noData = paste("no", "data"))$noData, "no data")
+  expect_equal(reactableLang(pageInfo = (function() "pageinfo")())$pageInfo, "pageinfo")
+  expect_equal(do.call(reactableLang, list(sortLabel = "sort"))$sortLabel, "sort")
+
+  # Errors
   expect_error(reactableLang(noData = 123, detailsExpandLabel = TRUE), "`noData` must be a character string")
   expect_error(reactableLang(selectRowLabel = list()), "`selectRowLabel` must be a character string")
 })

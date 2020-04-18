@@ -132,13 +132,16 @@ reactableLang <- function(
 
   defaultArgs <- formals()
   args <- as.list(match.call())
+  args <- args[names(args) %in% names(defaultArgs)]
+
   for (arg in names(args)) {
-    value <- args[[arg]]
+    value <- get(arg)
     if (!is.null(value) && !is.character(value)) {
       stop(sprintf("`%s` must be a character string", arg))
     }
+    args[[arg]] <- value
   }
-  lang <- filterNulls(args[names(defaultArgs)])
+  lang <- filterNulls(args)
   structure(lang, class = "reactableLang")
 }
 
