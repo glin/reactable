@@ -2541,14 +2541,14 @@ describe('pagination', () => {
     fireEvent.click(pageNumberBtns[1])
     const pageInfo = getPageInfo(container)
     expect(pageInfo).toHaveTextContent('2–2 of 5 rows')
-    expect(pageNumberBtns[0]).not.toHaveClass('rt-page-button-active')
-    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[0]).not.toHaveClass('rt-page-button-current')
+    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-current')
     expect(pageNumberBtns[1]).toHaveAttribute('aria-current', 'page')
 
     // Changing to the same page should be a no-op
     fireEvent.click(pageNumberBtns[1])
     expect(pageInfo).toHaveTextContent('2–2 of 5 rows')
-    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[1]).toHaveClass('rt-page-button-current')
 
     fireEvent.click(pageNumberBtns[4])
     expect(pageInfo).toHaveTextContent('5–5 of 5 rows')
@@ -2557,9 +2557,9 @@ describe('pagination', () => {
     const prevButton = getPrevButton(container)
     const nextButton = getNextButton(container)
     fireEvent.click(prevButton)
-    expect(pageNumberBtns[3]).toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[3]).toHaveClass('rt-page-button-current')
     fireEvent.click(nextButton)
-    expect(pageNumberBtns[4]).toHaveClass('rt-page-button-active')
+    expect(pageNumberBtns[4]).toHaveClass('rt-page-button-current')
 
     // Pages with ellipses
     const data = { a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }

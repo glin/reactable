@@ -8,8 +8,8 @@ import reactTablePropTypes from './propTypes'
 import { defaultLanguage, renderTemplate } from './language'
 import { classNames } from './utils'
 
-const PageButton = ({ isActive, className, ...props }) => {
-  className = classNames(className, 'rt-page-button', isActive ? ' rt-page-button-active' : null)
+const PageButton = ({ isCurrent, className, ...props }) => {
+  className = classNames(className, 'rt-page-button', isCurrent ? ' rt-page-button-current' : null)
   return (
     <button type="button" className={className} {...props}>
       <span className="rt-page-button-content" tabIndex="-1">
@@ -20,7 +20,7 @@ const PageButton = ({ isActive, className, ...props }) => {
 }
 
 PageButton.propTypes = {
-  isActive: PropTypes.bool,
+  isCurrent: PropTypes.bool,
   className: PropTypes.string,
   children: PropTypes.node
 }
@@ -194,16 +194,16 @@ export default class Pagination extends React.Component {
     if (paginationType === 'numbers') {
       let pageButtons = []
       visiblePages.forEach((page, index) => {
-        const isActive = currentPage === page
+        const isCurrent = currentPage === page
         const pageButton = (
           <PageButton
             key={page}
-            isActive={isActive}
+            isCurrent={isCurrent}
             onClick={this.changePage.bind(null, page)}
             // Change aria-label to work around issue with aria-current changes
             // not being recognized in NVDA + Chrome. https://github.com/nvaccess/nvda/issues/10728
-            aria-label={renderTemplate(language.pageNumberLabel, { page }) + (isActive ? ' ' : '')}
-            aria-current={isActive ? 'page' : null}
+            aria-label={renderTemplate(language.pageNumberLabel, { page }) + (isCurrent ? ' ' : '')}
+            aria-current={isCurrent ? 'page' : null}
           >
             {page}
           </PageButton>

@@ -361,7 +361,7 @@ input[type='radio'].rt-select-input {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.rt-page-button-active > .rt-page-button-content {
+.rt-page-button-current > .rt-page-button-content {
   font-weight: 700;
 }
 
