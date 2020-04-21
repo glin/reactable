@@ -317,9 +317,10 @@ input[type='radio'].rt-select-input {
   .rt-page-size-select {
     -moz-appearance: none;
     padding-right: 12px;
-    background-image: url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==');
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path fill="%23333" d="M24 1.5l-12 21-12-21h24z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 6px center;
+    background-size: 6px;
   }
 }
 
