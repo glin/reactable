@@ -177,6 +177,7 @@ input[type='radio'].rt-select-input {
 
 .rt-filter {
   padding: 5px 7px;
+  color: inherit;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
@@ -397,6 +398,7 @@ input[type='radio'].rt-select-input {
   align-self: flex-end;
   margin-bottom: 8px;
   padding: 5px 7px;
+  color: inherit;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
