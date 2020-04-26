@@ -128,7 +128,8 @@ input[type='radio'].rt-select-input {
 }
 
 /* Custom highlight style to prevent bleed-through to nested tables */
-.rt-tr-highlight:hover {
+.rt-tr-highlight:hover,
+.rt-tr-striped.rt-tr-highlight:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
