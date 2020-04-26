@@ -102,7 +102,7 @@ input[type='radio'].rt-select-input {
   border-bottom: none;
 }
 
-.rt-th.-headerGroup:after {
+.rt-th.-headerGroup::after {
   /* Custom borders with spacing */
   content: '';
   position: absolute;
@@ -115,8 +115,8 @@ input[type='radio'].rt-select-input {
   background-color: hsl(0, 0%, 90%);
 }
 
-.rt-outlined .rt-th.-headerGroup:after,
-.rt-bordered .rt-th.-headerGroup:after {
+.rt-outlined .rt-th.-headerGroup::after,
+.rt-bordered .rt-th.-headerGroup::after {
   /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
@@ -210,39 +210,39 @@ input[type='radio'].rt-select-input {
   outline-style: solid;
 }
 
-.rt-th[aria-sort] .rt-sort-left:after {
+.rt-th[aria-sort] .rt-sort-left::after {
   padding-right: 5px;
   line-height: 0;
 }
 
-.rt-th[aria-sort] .rt-sort-right:after {
+.rt-th[aria-sort] .rt-sort-right::after {
   padding-left: 5px;
   line-height: 0;
 }
 
-.rt-th[aria-sort='ascending'] .rt-sort-left:after,
-.rt-th[aria-sort='ascending'] .rt-sort-right:after {
+.rt-th[aria-sort='ascending'] .rt-sort-left::after,
+.rt-th[aria-sort='ascending'] .rt-sort-right::after {
   content: '\2191';
 }
 
-.rt-th[aria-sort='descending'] .rt-sort-left:after,
-.rt-th[aria-sort='descending'] .rt-sort-right:after {
+.rt-th[aria-sort='descending'] .rt-sort-left::after,
+.rt-th[aria-sort='descending'] .rt-sort-right::after {
   content: '\2193';
 }
 
-.rt-th[aria-sort='none'] .rt-sort:after {
+.rt-th[aria-sort='none'] .rt-sort::after {
   content: '\2195';
   opacity: 0.4;
 }
 
-.rt-th[data-sort-hint='ascending'] .rt-sort-left:after,
-.rt-th[data-sort-hint='ascending'] .rt-sort-right:after {
+.rt-th[data-sort-hint='ascending'] .rt-sort-left::after,
+.rt-th[data-sort-hint='ascending'] .rt-sort-right::after {
   content: '\2191';
   opacity: 0.4;
 }
 
-.rt-th[data-sort-hint='descending'] .rt-sort-left:after,
-.rt-th[data-sort-hint='descending'] .rt-sort-right:after {
+.rt-th[data-sort-hint='descending'] .rt-sort-left::after,
+.rt-th[data-sort-hint='descending'] .rt-sort-right::after {
   content: '\2193';
   opacity: 0.4;
 }
