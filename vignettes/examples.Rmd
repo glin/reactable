@@ -949,7 +949,7 @@ reactable(iris[1:5, ], onClick = JS("
 ```
 
 
-## Language options
+## Language Options
 
 > **New in v0.1.0.9000**
 
@@ -967,11 +967,29 @@ reactable(
     pagePrevious = "\u276e",
     pageNext = "\u276f",
 
-    # Accessible labels for assistive technologies, such as screen readers
+    # Accessible labels for assistive technologies such as screen readers
     pagePreviousLabel = "Previous page",
     pageNextLabel = "Next page"
   )
 )
+```
+
+### Global language options
+To set the default language strings for all tables, use the global
+`reactable.language` option:
+```{r}
+options(reactable.language = reactableLang(
+  pageSizeOptions = "\u663e\u793a {rows}",
+  pageInfo = "{rowStart} \u81f3 {rowEnd} \u9879\u7ed3\u679c,\u5171 {rows} \u9879",
+  pagePrevious = "\u4e0a\u9875",
+  pageNext = "\u4e0b\u9875"
+))
+
+reactable(iris[1:12, ], defaultPageSize = 4, showPageSizeOptions = TRUE)
+```
+
+```{r, echo=FALSE}
+options(reactable.language = NULL)
 ```
 
 ## Shiny

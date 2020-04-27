@@ -101,7 +101,7 @@ Use \code{reactableLang()} to customize the language strings in a table.
 Language strings include both visible text and accessible labels that can
 be read by assistive technology, such as screen readers.
 
-To configure the default language strings for all tables, use the global
+To set the default language strings for all tables, use the global
 \code{reactable.language} option.
 }
 \examples{
@@ -122,7 +122,7 @@ reactable(
   )
 )
 
-# Configure default language for all tables
+# Set the default language for all tables
 options(reactable.language = reactableLang(
   searchPlaceholder = "Search...",
   noData = "No entries found",

@@ -5,7 +5,7 @@
 #' Language strings include both visible text and accessible labels that can
 #' be read by assistive technology, such as screen readers.
 #'
-#' To configure the default language strings for all tables, use the global
+#' To set the default language strings for all tables, use the global
 #' `reactable.language` option.
 #'
 #' @param sortLabel Accessible label for column sort buttons.
@@ -77,7 +77,7 @@
 #'   )
 #' )
 #'
-#' # Configure default language for all tables
+#' # Set the default language for all tables
 #' options(reactable.language = reactableLang(
 #'   searchPlaceholder = "Search...",
 #'   noData = "No entries found",
