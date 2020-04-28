@@ -1,7 +1,4 @@
 const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = (env, argv) => {
   // Set NODE_ENV for Babel
@@ -15,21 +12,6 @@ module.exports = (env, argv) => {
       path: path.join(__dirname, 'inst', 'htmlwidgets')
     },
 
-    optimization: {
-      minimizer: [
-        new TerserPlugin({
-          extractComments: false
-        }),
-        new OptimizeCssAssetsPlugin()
-      ]
-    },
-
-    plugins: [
-      new MiniCssExtractPlugin({
-        filename: 'reactable.css'
-      })
-    ],
-
     module: {
       rules: [
         {
@@ -40,12 +22,12 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [
-            MiniCssExtractPlugin.loader,
+            'style-loader',
             'css-loader',
             {
               loader: 'postcss-loader',
               options: {
-                plugins: [require('autoprefixer')]
+                plugins: [require('autoprefixer'), require('cssnano')]
               }
             }
           ]
