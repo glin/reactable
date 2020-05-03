@@ -452,7 +452,7 @@ test_that("column renderers", {
   expect_equal(attribs$columns[[2]]$cell, list("1", "2"))
   expect_equal(attribs$columns[[3]]$cell, list("3 1 z", "3 2 z"))
 
-  # POSIXlt objects should be handled
+  # POSIXlt objects should be handled correctly (mostly just on R <= 3.4)
   data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"))
   tbl <- reactable(data, columns = list(
     p = colDef(cell = function(value) value)
