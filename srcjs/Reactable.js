@@ -532,7 +532,13 @@ class Reactable extends React.Component {
     }
     // Add selection state to rowInfo
     if (this.props.selection) {
-      return { selected: this.isSelected(rowInfo.index), ...rowInfo }
+      let selected
+      if (rowInfo.subRows && this.props.selection === 'multiple') {
+        selected = rowInfo.subRows.every(row => this.isSelected(row._index))
+      } else {
+        selected = this.isSelected(rowInfo.index)
+      }
+      return { selected, ...rowInfo }
     }
     return rowInfo
   }
@@ -700,8 +706,9 @@ class Reactable extends React.Component {
     const autoHidePagination = showPagination == null
 
     let newGetTrProps = getTrProps
-    if (striped || highlight || rowClassName || rowStyle) {
+    if (striped || highlight || selection || rowClassName || rowStyle) {
       newGetTrProps = (state, rowInfo) => {
+        rowInfo = this.getRowInfo(rowInfo)
         let props = getTrProps(state, rowInfo)
         // Add row stripe and highlight styles to prevent bleed-through to nested tables
         if (striped && rowInfo) {
@@ -710,10 +717,13 @@ class Reactable extends React.Component {
         if (highlight && rowInfo) {
           props.className = classNames(props.className, 'rt-tr-highlight')
         }
+        if (rowInfo && rowInfo.selected) {
+            props.className = classNames(props.className, 'rt-tr-selected')
+        }
         if (rowClassName) {
           let rowCls
           if (typeof rowClassName === 'function') {
-            rowCls = rowClassName(this.getRowInfo(rowInfo), state)
+            rowCls = rowClassName(rowInfo, state)
           } else if (rowClassName instanceof Array) {
             // Ignore padding rows
             rowCls = rowInfo && rowClassName[rowInfo.index]
@@ -724,7 +734,7 @@ class Reactable extends React.Component {
         }
         if (rowStyle) {
           if (typeof rowStyle === 'function') {
-            props.style = rowStyle(this.getRowInfo(rowInfo), state)
+            props.style = rowStyle(rowInfo, state)
           } else if (rowStyle instanceof Array) {
             // Ignore padding rows
             props.style = rowInfo && rowStyle[rowInfo.index]

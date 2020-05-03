@@ -931,7 +931,8 @@ describe('row selection', () => {
 
   const props = {
     data: { a: [1, 2] },
-    columns: [{ name: 'a', accessor: 'a' }]
+    columns: [{ name: 'a', accessor: 'a' }],
+    minRows: 2
   }
 
   it('not selectable by default', () => {
@@ -954,6 +955,8 @@ describe('row selection', () => {
     expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Select all rows')
     expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Select row')
     expect(selectRow2Checkbox).toHaveAttribute('aria-label', 'Select row')
+    const rows = getRows(container)
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-selected'))
 
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox.checked).toEqual(true)
@@ -962,12 +965,14 @@ describe('row selection', () => {
     expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Deselect all rows')
     expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
+    rows.forEach(row => expect(row).toHaveClass('rt-tr-selected'))
 
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-selected'))
 
     // Language
     rerender(
@@ -1009,6 +1014,8 @@ describe('row selection', () => {
     const selectRowCheckboxes = getAllByLabelText('Select row')
     const selectRow1Checkbox = selectRowCheckboxes[0]
     const selectRow2Checkbox = selectRowCheckboxes[1]
+    const rows = getRows(container)
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-selected'))
 
     fireEvent.click(selectAllCheckboxes[0])
     expect(selectAllCheckboxes[0].checked).toEqual(true)
@@ -1017,12 +1024,20 @@ describe('row selection', () => {
     expect(selectAllCheckboxes[0]).toHaveAttribute('aria-label', 'Deselect all rows in group')
     expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
+    rows.forEach((row, i) => {
+      if (i < 3) {
+        expect(row).toHaveClass('rt-tr-selected')
+      } else {
+        expect(row).not.toHaveClass('rt-tr-selected')
+      }
+    })
 
     fireEvent.click(selectAllCheckboxes[0])
     expect(selectAllCheckboxes[0].checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [])
+    rows.forEach(row => expect(row).not.toHaveClass('rt-tr-selected'))
 
     // Language
     rerender(
