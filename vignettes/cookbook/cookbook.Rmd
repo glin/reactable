@@ -473,14 +473,15 @@ reactable(iris[1:5, ], rowStyle = function(index) {
 
 ## Highlight sorted headers
 
-To style headers on hover, select headers with a `:hover` pseudo-class in CSS:
+To style sortable headers on hover, select headers with an `aria-sort` attribute
+and `:hover` pseudo-class in CSS:
 
 ```{r sort_highlight, eval=FALSE}
 reactable(iris[1:5, ], defaultColDef = colDef(headerClass = "sort-header"))
 ```
 
 ```{css}
-.sort-header:hover {
+.sort-header[aria-sort]:hover {
   background: rgba(0, 0, 0, 0.03);
 }
 ```
