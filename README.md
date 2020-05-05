@@ -93,6 +93,7 @@ To learn more about using reactable, check out the examples below.
 - [Expandable Rows and Nested Tables](https://glin.github.io/reactable/articles/examples.html#expandable-row-details)
 - [Conditional Styling](https://glin.github.io/reactable/articles/examples.html#conditional-styling)
 - [Table Styling](https://glin.github.io/reactable/articles/examples.html#table-styling)
+- [Theming](https://glin.github.io/reactable/articles/examples.html#theming)
 - [Column Groups](https://glin.github.io/reactable/articles/examples.html#column-groups)
 - [Column Resizing](https://glin.github.io/reactable/articles/examples.html#column-resizing)
 - [Row Names](https://glin.github.io/reactable/articles/examples.html#row-names)

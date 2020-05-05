@@ -18,6 +18,56 @@ prismDependencies <- tags$head(
             href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/themes/prism.min.css")
 )
 
+themes <- list(
+  "Light 1" = quote(reactableTheme(
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5f9",
+    cellPadding = "8px 12px"
+  )),
+  "Dark 1" = quote(reactableTheme(
+    color = "hsl(0, 0%, 87%)",
+    backgroundColor = "hsl(220, 13%, 18%)",
+    borderColor = "hsl(0, 0%, 22%)",
+    stripedColor = "rgba(255, 255, 255, 0.04)",
+    highlightColor = "rgba(255, 255, 255, 0.06)",
+    inputStyle = list(backgroundColor = "hsl(0, 0%, 24%)"),
+    selectStyle = list(backgroundColor = "hsl(0, 0%, 24%)"),
+    pageButtonHoverStyle = list(backgroundColor = "hsl(0, 0%, 24%)"),
+    pageButtonActiveStyle = list(backgroundColor = "hsl(0, 0%, 28%)")
+  )),
+  "Dark 2" = quote(reactableTheme(
+    color = "hsl(233, 9%, 87%)",
+    backgroundColor = "hsl(233, 9%, 19%)",
+    borderColor = "hsl(233, 9%, 22%)",
+    stripedColor = "hsl(233, 12%, 22%)",
+    highlightColor = "hsl(233, 12%, 24%)",
+    inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
+  )),
+  "Dark 3" = quote(reactableTheme(
+    color = "hsl(0, 0%, 90%)",
+    backgroundColor = "hsl(0, 0%, 10%)",
+    borderColor = "hsl(0, 0%, 18%)",
+    stripedColor = "hsl(0, 0%, 13%)",
+    headerStyle = list(
+      "&:hover[aria-sort]" = list(backgroundColor = "hsl(0, 0%, 14%)")
+    ),
+    tableBodyStyle = list(color = "hsl(0, 0%, 75%)"),
+    rowHighlightStyle = list(color = "hsl(0, 0%, 90%)", backgroundColor = "hsl(0, 0%, 14%)"),
+    selectStyle = list(backgroundColor = "hsl(0, 0%, 20%)"),
+    inputStyle = list(
+      backgroundColor = "hsl(0, 0%, 10%)",
+      borderColor = "hsl(0, 0%, 21%)",
+      "&:hover, &:focus" = list(borderColor = "hsl(0, 0%, 30%)")
+    ),
+    pageButtonHoverStyle = list(backgroundColor = "hsl(0, 0%, 20%)"),
+    pageButtonActiveStyle = list(backgroundColor = "hsl(0, 0%, 24%)")
+  ))
+)
+
 ui <- fluidPage(
   tags$head(
     tags$title("reactable demo"),
@@ -50,6 +100,14 @@ ui <- fluidPage(
               "Full width" = "fullWidth"
             ),
             selected = c("sortable", "resizable", "highlight", "fullWidth")
+          ),
+
+          selectInput(
+            "theme",
+            "Theme",
+            c("Default", names(themes)),
+            selectize = FALSE,
+            width = 170
           ),
 
           checkboxGroupInput(
@@ -123,7 +181,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  options <- reactive({
+  tblOptions <- reactive({
     list(
       groupBy = input$groupBy,
       columnGroups = if ("columnGroups" %in% input$options) {
@@ -155,7 +213,8 @@ server <- function(input, output, session) {
       compact = "compact" %in% input$options,
       showSortable = "showSortable" %in% input$options,
       fullWidth = "fullWidth" %in% input$options,
-      height = if ("pagination" %in% input$pagination) "auto" else 500
+      height = if ("pagination" %in% input$pagination) "auto" else 500,
+      theme = if (input$theme != "Default") bquote(.(themes[[input$theme]]))
     )
   })
 
@@ -223,14 +282,14 @@ server <- function(input, output, session) {
         colDef(
           details = .(details),
           name = "More",
-          width = 50
+          width = 70
         )
       )
     }
   })
 
   code <- reactive({
-    opts <- options()
+    opts <- tblOptions()
     colOpts <- colOptions()
 
     call <- bquote(reactable(
@@ -284,13 +343,15 @@ server <- function(input, output, session) {
           aggregate = "frequency"
         )
       ),
-      details = .(rowDetailsOptions())
+      details = .(rowDetailsOptions()),
+      theme = .(if (!is.null(opts$theme)) quote(theme))
     ))
 
     # Omit default reactable args
     defaultArgs <- formals(reactable)
     for (argname in names(call)) {
-      if (argname != "" && identical(call[[argname]], defaultArgs[[argname]])) {
+      if (argname != "" &&
+          (is.null(call[[argname]]) || identical(call[[argname]], defaultArgs[[argname]]))) {
         call[[argname]] <- NULL
       }
     }
@@ -307,6 +368,13 @@ server <- function(input, output, session) {
     }
 
     code <- gsub("\\n", "\n", deparse(call, control = "useSource"), fixed = TRUE)
+
+    if (!is.null(opts$theme)) {
+      themeCall <- bquote({ theme <- .(opts$theme) })
+      themeCode <- gsub("\\n", "\n", deparse(themeCall[[2]], control = "useSource"), fixed = TRUE)
+      code <- c(themeCode, "", code)
+    }
+
     paste(code, collapse = "\n")
   })
 

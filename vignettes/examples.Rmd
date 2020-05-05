@@ -331,7 +331,7 @@ reactable(data, groupBy = "Region", columns = list(
 ))
 ```
 
-### Date Formatting
+### Date formatting
 ```{r}
 datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-09-22 14:20:00"))
 data <- data.frame(
@@ -351,7 +351,7 @@ reactable(data, columns = list(
 ))
 ```
 
-### Currency Formatting
+### Currency formatting
 ```{r}
 data <- data.frame(
   USD = c(12.12, 2141.213, 0.42, 1.55, 34414),
@@ -397,7 +397,7 @@ reactable(
 )
 ```
 
-### Custom Data Formatting
+### Custom data formatting
 If none of the built-in formatters apply to your data, you can use a
 [custom cell renderer](#cell-rendering) instead.
 
@@ -867,6 +867,175 @@ contents by setting `fullWidth` to `FALSE`:
 reactable(iris[1:5, ], fullWidth = FALSE, bordered = TRUE, defaultColDef = colDef(minWidth = 120))
 ```
 
+### Custom CSS
+For more control over styling, you can add custom class names to the table and
+apply your own CSS:
+```{r}
+reactable(
+  iris[1:18, ],
+  defaultPageSize = 6,
+  borderless = TRUE,
+  class = "my-tbl",
+  defaultColDef = colDef(headerClass = "my-header"),
+  columns = list(
+    Sepal.Width = colDef(class = "my-col"),
+    Petal.Width = colDef(class = "my-col")
+  ),
+  rowClass = "my-row"
+)
+```
+
+```{css, echo=FALSE}
+.my-tbl {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.my-header {
+  border-width: 1px;
+}
+
+.my-col {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.my-row:hover {
+  background-color: #f5f8ff;
+}
+```
+
+In R Markdown documents, you can embed CSS using a `css` language chunk:
+```{r, echo=FALSE, comment=NA}
+cat('```{css, echo=FALSE}
+.my-tbl {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.my-header {
+  border-width: 1px;
+}
+
+.my-col {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.my-row:hover {
+  background-color: #f5f8ff;
+}
+```')
+```
+
+The examples here embed CSS for demonstration, but it's often better to put CSS
+in an external style sheet. You can learn more about adding custom CSS to R Markdown
+documents [here](https://bookdown.org/yihui/rmarkdown/html-document.html#custom-css),
+or to Shiny apps [here](https://shiny.rstudio.com/articles/css.html).
+
+
+## Theming
+
+> **New in v0.1.0.9000**
+
+Themes provide a powerful way to customize table styling that can be reused
+across tables. You can either set theme variables to change the default styles
+(e.g., row stripe color), or add your own custom CSS to specific elements of the table.
+
+To apply a theme, provide a `reactableTheme()` to `theme`:
+```{r}
+reactable(
+  iris[1:30, ],
+  searchable = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  bordered = TRUE,
+  theme = reactableTheme(
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5f9",
+    cellPadding = "8px 12px",
+    style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+    searchInputStyle = list(width = "100%")
+  )
+)
+```
+
+### Global theme
+To set the default theme for all tables, use the global `reactable.theme` option:
+```{r}
+options(reactable.theme = reactableTheme(
+  color = "hsl(233, 9%, 87%)",
+  backgroundColor = "hsl(233, 9%, 19%)",
+  borderColor = "hsl(233, 9%, 22%)",
+  stripedColor = "hsl(233, 12%, 22%)",
+  highlightColor = "hsl(233, 12%, 24%)",
+  inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
+))
+
+reactable(
+  iris[1:30, ],
+  filterable = TRUE,
+  showPageSizeOptions = TRUE,
+  striped = TRUE,
+  highlight = TRUE,
+  details = function(index) paste("Details for row", index)
+)
+```
+
+```{r, echo=FALSE}
+options(reactable.theme = NULL)
+```
+
+### Nested selectors
+You can use nested CSS selectors in theme styles to target the current element,
+using `&` as the selector, or other child elements (just like in Sass).
+This is useful for adding pseudo-classes like `&:hover`, or adding styles in a
+certain context like `.outer-container &`.
+
+For example, to highlight headers when sorting:
+```{r}
+reactable(
+  iris[1:5, ],
+  columns = list(Sepal.Length = colDef(sortable = FALSE)),
+  showSortable = TRUE,
+  theme = reactableTheme(
+    headerStyle = list(
+      "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)"),
+      "&[aria-sort='ascending'], &[aria-sort='descending']" = list(background = "hsl(0, 0%, 96%)"),
+      borderColor = "#555"
+    )
+  )
+)
+```
+
+### Dynamic theming
+Themes can also be functions that return a `reactableTheme()` for
+context-specific styling.
+
+For example, to style tables in RStudio R Notebooks only when a dark
+editor theme is active:
+```{r, eval=FALSE}
+options(reactable.theme = function() {
+  theme <- reactableTheme(
+    color = "hsl(233, 9%, 85%)",
+    backgroundColor = "hsl(233, 9%, 19%)",
+    borderColor = "hsl(233, 9%, 22%)",
+    stripedColor = "hsl(233, 12%, 22%)",
+    highlightColor = "hsl(233, 12%, 24%)",
+    inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+    pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
+  )
+
+  if (isTRUE(getOption("rstudio.notebook.executing"))) {
+    if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::getThemeInfo()$dark) {
+      return(theme)
+    }
+  }
+})
+```
+
 
 ## Column Groups
 You can create column groups by passing a list of `colGroup()` definitions to `columnGroups`:
@@ -1065,26 +1234,34 @@ reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
 
 > **New in v0.1.0.9000**
 
-You can style selected rows using a `rowClass` or `rowStyle` JavaScript function:
+You can style selected rows using `rowSelectedStyle` in `reactableTheme()`:
 ```{r}
 reactable(
   iris[1:4, ],
   selection = "multiple",
   defaultSelected = c(1, 3),
-  rowClass = JS("function(rowInfo) {
-    if (rowInfo) {
-      return rowInfo.selected ? 'selected' : ''
-    }
-  }"),
-  rowStyle = JS("function(rowInfo) {
-    if (rowInfo) {
-      if (rowInfo.selected) {
-        return { backgroundColor: '#eee', boxShadow: 'inset 2px 0 0 0 #ffa62d' }
-      }
-    }
-  }"),
   borderless = TRUE,
-  onClick = "select"
+  onClick = "select",
+  theme = reactableTheme(
+    rowSelectedStyle = list(backgroundColor = "#eee", boxShadow = "inset 2px 0 0 0 #ffa62d")
+  )
+)
+```
+
+Or using a `rowStyle` or `rowClass` JavaScript function:
+```{r}
+reactable(
+  MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")],
+  groupBy = "Manufacturer",
+  selection = "multiple",
+  defaultSelected = c(1, 3),
+  borderless = TRUE,
+  onClick = "select",
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo && rowInfo.selected) {
+      return { backgroundColor: '#eee', boxShadow: 'inset 2px 0 0 0 #ffa62d' }
+    }
+  }")
 )
 ```
 

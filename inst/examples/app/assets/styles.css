@@ -8,24 +8,32 @@ body {
 }
 
 .container-fluid {
-  height: 100vh;
-  overflow-y: scroll;
+  min-width: 576px;
 }
 
 .main {
   display: flex;
   justify-content: center;
-  padding: 2rem 1rem;
 }
 
 .sidebar {
-  min-width: 300px;
+  padding: 2rem 0;
+  height: 100vh;
+  min-width: 200px;
+  overflow-y: scroll;
 }
 
 .content {
+  padding: 2rem 1rem;
   width: 100%;
   max-width: 960px;
   overflow: auto;
+}
+
+@media (max-width: 760px) {
+  .content {
+    padding: 2rem 0;
+  }
 }
 
 .title {
@@ -57,9 +65,4 @@ body {
 .num-low {
   color: hsl(0, 75%, 32%);
   background-color: hsl(0, 75%, 92%);
-}
-
-.sort-tip {
-  margin-top: 1rem;
-  font-style: italic;
 }
