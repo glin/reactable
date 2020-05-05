@@ -90,6 +90,9 @@
 #'   Defaults to `TRUE`.
 #' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
+#' @param theme Theme options for the table, specified by
+#'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
+#'   Can also be a function that returns a [reactableTheme()] or `NULL`.
 #' @param language Language options for the table, specified by
 #'   [reactableLang()]. Defaults to the global `reactable.language` option.
 #' @param elementId Element ID for the widget.
@@ -154,6 +157,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
                       fullWidth = TRUE, width = "auto", height = "auto",
+                      theme = getOption("reactable.theme"),
                       language = getOption("reactable.language"),
                       elementId = NULL) {
 
@@ -405,6 +409,14 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   width <- htmltools::validateCssUnit(width)
   height <- htmltools::validateCssUnit(height)
 
+  if (!is.null(theme)) {
+    if (is.function(theme)) {
+      theme <- callFunc(theme)
+    }
+    if (!is.null(theme) && !is.reactableTheme(theme)) {
+      stop("`theme` must be a reactable theme object")
+    }
+  }
   if (!is.null(language) && !is.reactableLang(language)) {
     stop("`language` must be a reactable language options object")
   }
@@ -550,6 +562,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     inline = if (!fullWidth) TRUE,
     width = if (width != "auto") width,
     height = if (height != "auto") height,
+    theme = theme,
     language = language,
     dataKey = digest::digest(list(data, cols))
   ))

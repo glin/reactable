@@ -60,7 +60,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, fullWidth = "yes"))
   expect_error(reactable(df, width = "asd"))
   expect_error(reactable(df, height = "asd"))
-  expect_error(reactable(df, language = list()))
 })
 
 test_that("reactable", {
@@ -819,6 +818,48 @@ test_that("rowClass and rowStyle", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$rowStyle,
                list(list("background-color" = "red"), list(color = "red"), NULL))
+})
+
+test_that("theme", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data, theme = reactableTheme())
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, NULL)
+
+  theme <- reactableTheme(style = list(color = "red"), borderColor = "#555")
+  tbl <- reactable(data, theme = theme)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, theme)
+
+  # Theme function
+  theme <- function() reactableTheme(cellPadding = 13)
+  tbl <- reactable(data, theme = theme)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, theme())
+
+  theme <- function() NULL
+  tbl <- reactable(data, theme = theme)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, NULL)
+
+  # Global theme option
+  theme <- reactableTheme(style = list(color = "red"), borderColor = "#555")
+  old <- options(reactable.theme = theme)
+  on.exit(options(old))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, theme)
+
+  # Table theme should override global option
+  theme <- reactableTheme(borderWidth = "3px")
+  tbl <- reactable(data, theme = theme)
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$theme, theme)
+
+  # Errors
+  expect_error(reactable(data, theme = list()),
+               "`theme` must be a reactable theme object")
 })
 
 test_that("language", {

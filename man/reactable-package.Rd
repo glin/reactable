@@ -29,6 +29,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Tanner Linsley (React Table library) [contributor, copyright holder]
+  \item  Emotion team and other contributors (Emotion library) [contributor, copyright holder]
 }
 
 }

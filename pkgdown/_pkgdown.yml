@@ -47,6 +47,7 @@ reference:
   - colFormat
 - title: Customize tables
   contents:
+  - reactableTheme
   - reactableLang
 - title: Use in Shiny apps
   contents:

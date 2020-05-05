@@ -19,6 +19,7 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   showSortIcon = TRUE, showSortable = FALSE, class = NULL,
   style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
   width = "auto", height = "auto",
+  theme = getOption("reactable.theme"),
   language = getOption("reactable.language"), elementId = NULL)
 }
 \arguments{
@@ -140,6 +141,10 @@ Defaults to \code{TRUE}.}
 \item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
 \item{height}{Height in pixels. Defaults to \code{"auto"} for automatic sizing.}
+
+\item{theme}{Theme options for the table, specified by
+\code{\link[=reactableTheme]{reactableTheme()}}. Defaults to the global \code{reactable.theme} option.
+Can also be a function that returns a \code{\link[=reactableTheme]{reactableTheme()}} or \code{NULL}.}
 
 \item{language}{Language options for the table, specified by
 \code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}

@@ -2,6 +2,7 @@ import React from 'react'
 import reactR from 'reactR'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
+import { matchers } from 'jest-emotion'
 
 import Reactable from '../Reactable'
 
@@ -9,6 +10,8 @@ jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
 
 afterEach(cleanup)
+
+expect.extend(matchers)
 
 test('basic table rendering', () => {
   const { getAllByText } = render(
@@ -2734,6 +2737,53 @@ describe('no data', () => {
 
     const tbody = getTbody(container)
     expect(tbody).not.toHaveClass('rt-tbody-noData')
+  })
+})
+
+describe('theme', () => {
+  const getTable = container => container.querySelector('.ReactTable')
+
+  it('applies theme styles to the table', () => {
+    const props = {
+      data: { a: [] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      theme: {
+        style: { color: 'red' },
+        cellPadding: '24px',
+        cellStyle: { backgroundColor: '#eee' },
+        tableStyle: { border: '1px solid black' }
+      }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const table = getTable(container)
+    expect(table).toHaveStyleRule('color', 'red')
+    expect(table).toHaveStyleRule('padding', '24px', { target: '.rt-td' })
+    expect(table).toHaveStyleRule('padding', '24px', { target: '.rt-th' })
+    expect(table).toHaveStyleRule('background-color', '#eee', { target: '.rt-td' })
+    expect(table).toHaveStyleRule('border', '1px solid black', { target: '.rt-table' })
+  })
+
+  it('theme styles are scoped to their tables', () => {
+    const props = {
+      data: { a: [] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    const { container } = render(
+      <div>
+        <Reactable {...props} className="tbl-a" theme={{ style: { background: 'blue' } }} />
+        <Reactable
+          {...props}
+          className="tbl-b"
+          theme={{ style: { background: 'red', color: 'red' } }}
+        />
+      </div>
+    )
+    const tableA = container.querySelector('.tbl-a')
+    const tableB = container.querySelector('.tbl-b')
+    expect(tableA).toHaveStyleRule('background', 'blue')
+    expect(tableB).toHaveStyleRule('background', 'red')
+    expect(tableA).not.toHaveStyleRule('color', 'red')
+    expect(tableB).toHaveStyleRule('color', 'red')
   })
 })
 

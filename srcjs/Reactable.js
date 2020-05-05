@@ -3,12 +3,14 @@ import ReactTable from '@glin/react-table'
 import { ReactTableDefaults } from '@glin/react-table'
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
+import { css } from 'emotion'
 
 import Pagination from './Pagination'
 import selectTableHOC from './selectTable'
 import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
+import { createTheme } from './theme'
 import { defaultLanguage, renderTemplate } from './language'
 import { classNames, getFirstDefined, get, set } from './utils'
 
@@ -656,7 +658,8 @@ class Reactable extends React.Component {
       width,
       height,
       language,
-      dataKey
+      dataKey,
+      theme
     } = this.props
 
     language = { ...defaultLanguage, ...language }
@@ -879,6 +882,9 @@ class Reactable extends React.Component {
       }
     }
 
+    const themeCls = theme ? css(createTheme(theme)) : null
+    className = classNames(className, themeCls)
+
     return (
       <Table
         data={data}
@@ -981,6 +987,7 @@ Reactable.propTypes = {
   inline: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  theme: PropTypes.object,
   language: PropTypes.object,
   dataKey: PropTypes.string,
   nested: PropTypes.bool
