@@ -291,7 +291,7 @@ ReactTable.propTypes = fixedReactTablePropTypes
 // increases performance when selecting or expanding rows in a very large table.
 ReactTable.prototype.oldComponentWillReceiveProps =
   ReactTable.prototype.UNSAFE_componentWillReceiveProps
-ReactTable.prototype.UNSAFE_componentWillReceiveProps = function(newProps, newState) {
+ReactTable.prototype.UNSAFE_componentWillReceiveProps = function (newProps, newState) {
   newProps = { ...newProps }
   if (this.props.dataKey && this.props.dataKey === newProps.dataKey) {
     newProps.data = this.props.data
@@ -315,7 +315,12 @@ ReactTable.prototype.UNSAFE_componentWillReceiveProps = function(newProps, newSt
 // are only applied for visible (show = true) columns, we pass the dummy column
 // directly to filterData to avoid having to hide the column.
 ReactTable.prototype.oldFilterData = ReactTable.prototype.filterData
-ReactTable.prototype.filterData = function(data, filtered, defaultFilterMethod, allVisibleColumns) {
+ReactTable.prototype.filterData = function (
+  data,
+  filtered,
+  defaultFilterMethod,
+  allVisibleColumns
+) {
   let filterColumns = allVisibleColumns
   if (this.props.searchable) {
     // Exclude unfilterable columns (e.g. selection columns)
@@ -721,7 +726,7 @@ class Reactable extends React.Component {
           props.className = classNames(props.className, 'rt-tr-highlight')
         }
         if (rowInfo && rowInfo.selected) {
-            props.className = classNames(props.className, 'rt-tr-selected')
+          props.className = classNames(props.className, 'rt-tr-selected')
         }
         if (rowClassName) {
           let rowCls

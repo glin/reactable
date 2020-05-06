@@ -1,11 +1,4 @@
-import {
-  classNames,
-  getFirstDefined,
-  getStrIncludesLocale,
-  strIncludes,
-  get,
-  set,
-} from '../utils'
+import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes, get, set } from '../utils'
 
 test('classNames', () => {
   expect(classNames('')).toEqual('')
