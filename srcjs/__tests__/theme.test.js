@@ -96,7 +96,7 @@ describe('createTheme', () => {
         footerStyle: 'footerStyle'
       },
 
-      '.rt-th.-headerGroup': {
+      '.rt-th-group': {
         groupHeaderStyle: 'groupHeaderStyle'
       },
 
@@ -267,7 +267,7 @@ describe('createTheme', () => {
         borderWidth: 'borderWidth'
       },
 
-      '.rt-th.-headerGroup::after': {
+      '.rt-th-group::after': {
         backgroundColor: 'borderColor',
         height: 'borderWidth'
       },

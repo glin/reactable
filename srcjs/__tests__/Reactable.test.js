@@ -53,10 +53,8 @@ describe('ARIA roles', () => {
   const getTheads = container => container.querySelectorAll('.rt-thead')
   const getTbody = container => container.querySelector('.rt-tbody')
   const getTfoot = container => container.querySelector('.rt-tfoot')
-  const getGroupHeaders = container =>
-    container.querySelectorAll('.-headerGroups .-headerGroup.rt-th')
-  const getUngroupedHeaders = container =>
-    container.querySelectorAll('.-headerGroups :not(.-headerGroup).rt-th')
+  const getGroupHeaders = container => container.querySelectorAll('.rt-th-group')
+  const getUngroupedHeaders = container => container.querySelectorAll('.rt-th-group-none')
   const getHeaderRows = container => container.querySelectorAll('.rt-thead .rt-tr')
   const getHeaders = container => container.querySelectorAll('.-header .rt-th')
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
@@ -1967,7 +1965,7 @@ describe('header rendering', () => {
 })
 
 describe('column group header rendering', () => {
-  const getGroupHeaders = container => container.querySelectorAll('.-headerGroup.rt-th')
+  const getGroupHeaders = container => container.querySelectorAll('.rt-th-group')
   const props = {
     data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
     columns: [

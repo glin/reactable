@@ -96,11 +96,11 @@ export function createTheme(options) {
       ...footerStyle
     },
 
-    '.rt-th.-headerGroup': {
+    '.rt-th-group': {
       ...groupHeaderStyle
     },
 
-    '.rt-th.-headerGroup::after': {
+    '.rt-th-group::after': {
       backgroundColor: groupHeaderBorderColor,
       height: groupHeaderBorderWidth
     },

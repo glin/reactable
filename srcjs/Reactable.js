@@ -66,8 +66,11 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
       'aria-colspan': column.columns.length,
       role: 'columnheader',
       // Add bottom border
-      className: classNames('-headerGroup', column.className)
+      className: classNames('rt-th-group', column.className)
     }
+  } else {
+    // Ungrouped column groups
+    props.className = 'rt-th-group-none'
   }
 
   return props

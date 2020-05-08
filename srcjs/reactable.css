@@ -98,11 +98,12 @@ input[type='radio'].rt-select-input {
 }
 
 /* Header group borders */
-.-headerGroups .rt-th {
+.rt-th-group,
+.rt-th-group-none {
   border-bottom: none;
 }
 
-.rt-th.-headerGroup::after {
+.rt-th-group::after {
   /* Custom borders with spacing */
   content: '';
   position: absolute;
@@ -115,8 +116,8 @@ input[type='radio'].rt-select-input {
   background-color: hsl(0, 0%, 90%);
 }
 
-.rt-outlined .rt-th.-headerGroup::after,
-.rt-bordered .rt-th.-headerGroup::after {
+.rt-outlined .rt-th-group::after,
+.rt-bordered .rt-th-group::after {
   /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
