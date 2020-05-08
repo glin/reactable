@@ -259,9 +259,33 @@ input[type='radio'].rt-select-input {
 }
 
 .rt-expander {
+  display: inline-block;
+  position: relative;
   padding: 0 8px;
+  color: transparent;
   outline-width: 0;
   outline-style: solid;
+}
+
+.rt-expander::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%) rotate(-90deg);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  border-left: 5.04px solid transparent;
+  border-right: 5.04px solid transparent;
+  border-top: 7px solid rgba(0, 0, 0, 0.8);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.rt-expander.-open::after {
+  -webkit-transform: translate(-50%, -50%) rotate(0);
+  transform: translate(-50%, -50%) rotate(0);
 }
 
 /* Pagination */
