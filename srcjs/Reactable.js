@@ -969,7 +969,7 @@ Reactable.propTypes = {
   defaultSorted: PropTypes.arrayOf(PropTypes.object),
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
-  paginationType: Pagination.propTypes.paginationType,
+  paginationType: PropTypes.oneOf(['numbers', 'jump', 'simple']),
   showPagination: PropTypes.bool,
   showPageSizeOptions: PropTypes.bool,
   showPageInfo: Pagination.propTypes.showPageInfo,
