@@ -3,25 +3,33 @@ import ReactTable from '@glin/react-table'
 import { ReactTableDefaults } from '@glin/react-table'
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
-import { css } from 'emotion'
 
 import Pagination from './Pagination'
 import selectTableHOC from './selectTable'
 import WidgetContainer from './WidgetContainer'
 import fixedReactTablePropTypes from './propTypes'
 import { columnsToRows, buildColumnDefs } from './columns'
-import { createTheme } from './theme'
+import { createTheme, css } from './theme'
 import { defaultLanguage, renderTemplate } from './language'
 import { classNames, getFirstDefined, get, set } from './utils'
 
 import './react-table.css'
 import './reactable.css'
 
+const getTableProps = state => {
+  let props = {
+    role: 'table',
+    className: css(state.theme.tableStyle)
+  }
+  return props
+}
+
 const getTheadThProps = (state, rowInfo, column) => {
   let props = {}
   // Assign cell role to selectable column headers to prevent input labels
   // from being read as column names ("select all rows column").
   props.role = column.selectable ? 'cell' : 'columnheader'
+  props.className = css(state.theme.headerStyle)
   const isSortable = getFirstDefined(column.sortable, state.sortable)
   if (isSortable) {
     const sort = state.sorted.find(d => d.id === column.id)
@@ -65,8 +73,8 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
       ...props,
       'aria-colspan': column.columns.length,
       role: 'columnheader',
-      // Add bottom border
-      className: classNames('rt-th-group', column.className)
+      // Add class for custom bottom border
+      className: classNames('rt-th-group', column.className, css(state.theme.groupHeaderStyle))
     }
   } else {
     // Ungrouped column groups
@@ -76,7 +84,6 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
   return props
 }
 
-// Add ARIA roles to rows and cells
 const getTheadGroupTrProps = () => {
   return { role: 'row' }
 }
@@ -85,55 +92,68 @@ const getTheadTrProps = () => {
   return { role: 'row' }
 }
 
-const getTheadFilterTrProps = () => {
-  return { role: 'row' }
+const getTheadFilterTrProps = state => {
+  return {
+    role: 'row',
+    className: classNames(css(state.theme.rowStyle))
+  }
 }
 
-const getTheadFilterThProps = () => {
+const getTheadFilterThProps = state => {
   // Treat filter cells as table cells, rather than headers
-  return { role: 'cell', className: 'rt-td-filter' }
+  return {
+    role: 'cell',
+    className: classNames('rt-td-filter', css(state.theme.filterCellStyle))
+  }
 }
 
 const getTrGroupProps = (state, rowInfo) => {
+  let props = {}
+  props.className = css(state.theme.rowGroupStyle)
   // Hide padding rows (consisting of empty "space" cells) from screen readers
   if (!rowInfo) {
-    return { 'aria-hidden': 'true' }
+    props['aria-hidden'] = 'true'
   }
-  return {}
+  return props
 }
 
 const getTrProps = (state, rowInfo) => {
+  let props = {}
+  props.className = css(state.theme.rowStyle)
   // Ignore padding rows, although they don't receive custom props
   if (!rowInfo) {
-    return {}
+    return props
   }
-  return { role: 'row' }
+  props.role = 'row'
+  return props
 }
 
 const getTdProps = (state, rowInfo) => {
+  let props = {}
+  props.className = css(state.theme.cellStyle)
   // Ignore padding rows
   if (!rowInfo) {
-    return {}
+    return props
   }
-  return { role: 'cell' }
+  props.role = 'cell'
+  return props
 }
 
 const getTfootTrProps = () => {
   return { role: 'row' }
 }
 
-const getTfootTdProps = () => {
-  return { role: 'cell', className: 'rt-tfoot-td' }
+const getTfootTdProps = state => {
+  return {
+    role: 'cell',
+    className: classNames('rt-tfoot-td', css(state.theme.footerStyle))
+  }
 }
 
-// Add ARIA roles to table, table headers, and table footer
-const DefaultTableComponent = ReactTableDefaults.TableComponent
+// Add ARIA roles to table headers and table foot
 const DefaultTheadComponent = ReactTableDefaults.TheadComponent
 const DefaultTfootComponent = ReactTableDefaults.TfootComponent
 Object.assign(ReactTableDefaults, {
-  TableComponent(props) {
-    return <DefaultTableComponent role="table" {...props} />
-  },
   TheadComponent(props) {
     return <DefaultTheadComponent role="rowgroup" {...props} />
   },
@@ -224,12 +244,13 @@ const DefaultTbodyComponent = ReactTableDefaults.TbodyComponent
 const DefaultNoDataComponent = ReactTableDefaults.NoDataComponent
 Object.assign(ReactTableDefaults, {
   TbodyComponent({ state, className, children, ...rest }) {
-    const { pageRows, language } = state
+    const { pageRows, theme, language } = state
     const noData = !pageRows.length && (
       <DefaultNoDataComponent>{language.noData}</DefaultNoDataComponent>
     )
     // Hide cell borders when table has no data
     className = noData ? classNames(className, 'rt-tbody-noData') : className
+    className = classNames(className, css(theme.tableBodyStyle))
     return (
       <DefaultTbodyComponent role="rowgroup" className={className} {...rest}>
         {children}
@@ -245,15 +266,16 @@ Object.assign(ReactTableDefaults, {
 // Add className and aria-label to filter inputs
 Object.assign(ReactTableDefaults, {
   FilterComponent({ column, filter, onChange }) {
+    const { name, theme, language } = column
     return (
       <input
         type="text"
-        className="rt-filter"
+        className={classNames('rt-filter', css(theme.filterInputStyle))}
         style={{ width: '100%' }}
         value={filter ? filter.value : ''}
         onChange={event => onChange(event.target.value)}
-        placeholder={column.language.filterPlaceholder}
-        aria-label={renderTemplate(column.language.filterLabel, { name: column.name })}
+        placeholder={language.filterPlaceholder}
+        aria-label={renderTemplate(language.filterLabel, { name })}
       />
     )
   }
@@ -262,12 +284,12 @@ Object.assign(ReactTableDefaults, {
 // Enable keyboard navigation and add aria-label to expanders
 Object.assign(ReactTableDefaults, {
   ExpanderComponent({ isExpanded, column }) {
-    const { language } = column
+    const { theme, language } = column
     const label = isExpanded ? language.detailsCollapseLabel : language.detailsExpandLabel
     return (
       <button className="rt-expander-button" aria-label={label}>
         <span
-          className={classNames('rt-expander', isExpanded && '-open')}
+          className={classNames('rt-expander', isExpanded && '-open', css(theme.expanderStyle))}
           tabIndex="-1"
           aria-hidden="true"
         >
@@ -368,6 +390,7 @@ const SearchTableComponent = ({
   onSearchChange,
   searchPlaceholder,
   searchLabel,
+  searchClassName,
   ...rest
 }) => {
   const searchInput = (
@@ -375,7 +398,7 @@ const SearchTableComponent = ({
       type="text"
       value={searchValue}
       onChange={onSearchChange}
-      className="rt-search"
+      className={classNames('rt-search', searchClassName)}
       placeholder={searchPlaceholder}
       aria-label={searchLabel}
     />
@@ -392,7 +415,8 @@ SearchTableComponent.propTypes = {
   searchValue: PropTypes.string.isRequired,
   onSearchChange: PropTypes.func.isRequired,
   searchPlaceholder: PropTypes.string,
-  searchLabel: PropTypes.string
+  searchLabel: PropTypes.string,
+  searchClassName: PropTypes.string
 }
 
 const SelectTable = selectTableHOC(ReactTable)
@@ -670,6 +694,9 @@ class Reactable extends React.Component {
       theme
     } = this.props
 
+    theme = createTheme(theme) || {}
+    className = classNames(className, css(theme.style))
+
     language = { ...defaultLanguage, ...language }
     for (let key in language) {
       language[key] = language[key] || null
@@ -682,6 +709,7 @@ class Reactable extends React.Component {
       showSortable,
       isExpanded: this.isExpanded,
       onExpanderClick: this.toggleExpand,
+      theme,
       language
     })
 
@@ -723,7 +751,10 @@ class Reactable extends React.Component {
         let props = getTrProps(state, rowInfo)
         // Add row stripe and highlight styles to prevent bleed-through to nested tables
         if (striped && rowInfo) {
-          props.className = rowInfo.viewIndex % 2 ? null : 'rt-tr-striped'
+          props.className = classNames(
+            props.className,
+            rowInfo.viewIndex % 2 ? null : 'rt-tr-striped'
+          )
         }
         if (highlight && rowInfo) {
           props.className = classNames(props.className, 'rt-tr-highlight')
@@ -872,26 +903,26 @@ class Reactable extends React.Component {
       }
     }
 
-    let TableComponent, getTableProps
+    let TableComponent
+    let newGetTableProps = getTableProps
     if (searchable) {
       TableComponent = SearchTableComponent
-      getTableProps = (state, rowInfo, column, instance) => {
+      newGetTableProps = (state, rowInfo, column, instance) => {
         const filter = state.filtered.find(filter => filter.id === state.searchKey)
         const searchValue = filter ? filter.value : ''
         const onSearchChange = event => {
           instance.filterColumn({ id: state.searchKey }, event.target.value)
         }
         return {
+          ...getTableProps(state, rowInfo),
           searchValue,
           onSearchChange,
           searchPlaceholder: state.language.searchPlaceholder,
-          searchLabel: state.language.searchLabel
+          searchLabel: state.language.searchLabel,
+          searchClassName: css(state.theme.searchInputStyle)
         }
       }
     }
-
-    const themeCls = theme ? css(createTheme(theme)) : null
-    className = classNames(className, themeCls)
 
     return (
       <Table
@@ -923,7 +954,7 @@ class Reactable extends React.Component {
         onExpandedChange={onExpandedChange}
         onPageChange={collapseExpanded}
         onSortedChange={collapseExpanded}
-        getTableProps={getTableProps}
+        getTableProps={newGetTableProps}
         getTheadGroupTrProps={getTheadGroupTrProps}
         getTheadGroupThProps={getTheadGroupThProps}
         getTheadTrProps={getTheadTrProps}
@@ -939,6 +970,7 @@ class Reactable extends React.Component {
         TableComponent={TableComponent}
         SubComponent={SubComponent}
         {...selectProps}
+        theme={theme}
         language={language}
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}

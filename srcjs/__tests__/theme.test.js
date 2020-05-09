@@ -1,4 +1,4 @@
-import { createTheme } from '../theme'
+import { createTheme, css } from '../theme'
 
 describe('createTheme', () => {
   test('handles empty options', () => {
@@ -60,133 +60,127 @@ describe('createTheme', () => {
 
     const theme = createTheme(options)
     const expected = {
-      color: 'color',
-      backgroundColor: 'backgroundColor',
-      style: 'style',
+      style: {
+        color: 'color',
+        backgroundColor: 'backgroundColor',
+        style: 'style'
+      },
 
-      '.rt-table': {
+      tableStyle: {
         borderColor: 'tableBorderColor',
         borderWidth: 'tableBorderWidth',
         tableStyle: 'tableStyle'
       },
 
-      '.rt-th, .rt-td': {
-        padding: 'cellPadding'
-      },
-
-      '.rt-th': {
+      headerStyle: {
         borderColor: 'headerBorderColor',
         borderWidth: 'headerBorderWidth',
+        padding: 'cellPadding',
         headerStyle: 'headerStyle'
       },
 
-      '.rt-tbody': {
+      groupHeaderStyle: {
+        groupHeaderStyle: 'groupHeaderStyle',
+        '&::after': {
+          backgroundColor: 'groupHeaderBorderColor',
+          height: 'groupHeaderBorderWidth'
+        }
+      },
+
+      tableBodyStyle: {
         tableBodyStyle: 'tableBodyStyle'
       },
 
-      '.rt-td': {
+      cellStyle: {
         borderColor: 'cellBorderColor',
         borderWidth: 'cellBorderWidth',
+        padding: 'cellPadding',
         cellStyle: 'cellStyle'
       },
 
-      '.rt-tfoot-td': {
+      footerStyle: {
         borderColor: 'footerBorderColor',
         borderWidth: 'footerBorderWidth',
+        padding: 'cellPadding',
         footerStyle: 'footerStyle'
       },
 
-      '.rt-th-group': {
-        groupHeaderStyle: 'groupHeaderStyle'
-      },
-
-      '.rt-th.-headerGroup::after': {
-        backgroundColor: 'groupHeaderBorderColor',
-        height: 'groupHeaderBorderWidth'
-      },
-
-      '.rt-tr-group': {
+      rowGroupStyle: {
         rowGroupStyle: 'rowGroupStyle'
       },
 
-      '.rt-tr': {
-        rowStyle: 'rowStyle'
+      rowStyle: {
+        rowStyle: 'rowStyle',
+        '&.rt-tr-striped': {
+          backgroundColor: 'stripedColor',
+          rowStripedStyle: 'rowStripedStyle'
+        },
+        '&.rt-tr-highlight:hover': {
+          backgroundColor: 'highlightColor',
+          rowHighlightStyle: 'rowHighlightStyle'
+        },
+        '&.rt-tr-selected': {
+          rowSelectedStyle: 'rowSelectedStyle'
+        }
       },
 
-      '.rt-tr-striped': {
-        backgroundColor: 'stripedColor',
-        rowStripedStyle: 'rowStripedStyle'
-      },
-
-      '.rt-tr-highlight:hover': {
-        backgroundColor: 'highlightColor',
-        rowHighlightStyle: 'rowHighlightStyle'
-      },
-
-      '.rt-tr-selected': {
-        rowSelectedStyle: 'rowSelectedStyle'
-      },
-
-      '.rt-td-filter': {
+      filterCellStyle: {
         borderColor: 'cellBorderColor',
-        borderWidth: 'cellBorderWidth'
+        borderWidth: 'cellBorderWidth',
+        padding: 'cellPadding',
+        cellStyle: 'cellStyle'
       },
 
-      '.rt-expander::after': {
-        borderTopColor: 'color'
+      expanderStyle: {
+        '&::after': {
+          borderTopColor: 'color'
+        }
       },
 
-      '.rt-pagination': {
-        paginationStyle: 'paginationStyle',
-        borderTopColor: 'cellBorderColor',
-        borderTopWidth: 'cellBorderWidth'
-      },
-
-      '.rt-filter': {
+      filterInputStyle: {
         inputStyle: 'inputStyle',
         filterInputStyle: 'filterInputStyle'
       },
 
-      '.rt-search': {
+      searchInputStyle: {
         inputStyle: 'inputStyle',
         searchInputStyle: 'searchInputStyle'
       },
 
-      '.rt-page-jump': {
-        inputStyle: 'inputStyle'
-      },
+      paginationStyle: {
+        borderTopColor: 'cellBorderColor',
+        borderTopWidth: 'cellBorderWidth',
+        paginationStyle: 'paginationStyle',
 
-      '.rt-page-size-select': {
-        selectStyle: 'selectStyle'
-      },
+        '.rt-page-jump': {
+          inputStyle: 'inputStyle'
+        },
 
-      '@supports (-moz-appearance: none)': {
         '.rt-page-size-select': {
-          backgroundImage:
-            `url('data:image/svg+xml;charset=US-ASCII,` +
-            `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
-            `<path fill="color" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
+          selectStyle: 'selectStyle',
+          '@supports (-moz-appearance: none)': {
+            backgroundImage:
+              `url('data:image/svg+xml;charset=US-ASCII,` +
+              `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
+              `<path fill="color" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
+          }
+        },
+
+        '.rt-page-button-content': {
+          pageButtonStyle: 'pageButtonStyle'
+        },
+        '.rt-page-button:not(:disabled):hover > .rt-page-button-content': {
+          pageButtonHoverStyle: 'pageButtonHoverStyle'
+        },
+        '.rt-page-button:not(:disabled):active > .rt-page-button-content': {
+          pageButtonActiveStyle: 'pageButtonActiveStyle'
+        },
+        '.rt-page-button:focus > .rt-page-button-content': {
+          pageButtonHoverStyle: 'pageButtonHoverStyle'
+        },
+        '.rt-page-button-current > .rt-page-button-content': {
+          pageButtonCurrentStyle: 'pageButtonCurrentStyle'
         }
-      },
-
-      '.rt-page-button-content': {
-        pageButtonStyle: 'pageButtonStyle'
-      },
-
-      '.rt-page-button:not(:disabled):hover > .rt-page-button-content': {
-        pageButtonHoverStyle: 'pageButtonHoverStyle'
-      },
-
-      '.rt-page-button:not(:disabled):active > .rt-page-button-content': {
-        pageButtonActiveStyle: 'pageButtonActiveStyle'
-      },
-
-      '.rt-page-button:focus > .rt-page-button-content': {
-        pageButtonHoverStyle: 'pageButtonHoverStyle'
-      },
-
-      '.rt-page-button-current > .rt-page-button-content': {
-        pageButtonCurrentStyle: 'pageButtonCurrentStyle'
       }
     }
 
@@ -199,7 +193,7 @@ describe('createTheme', () => {
       style: { color: 'blue' }
     }
     const theme = createTheme(options)
-    expect(theme.color).toEqual('blue')
+    expect(theme.style.color).toEqual('blue')
   })
 
   test('expander color', () => {
@@ -208,11 +202,11 @@ describe('createTheme', () => {
       style: { color: 'blue' }
     }
     let theme = createTheme(options)
-    expect(theme['.rt-expander::after']).toEqual({ borderTopColor: 'blue' })
+    expect(theme.expanderStyle['&::after']).toEqual({ borderTopColor: 'blue' })
     for (let prop of ['tableStyle', 'tableBodyStyle', 'rowStyle', 'cellStyle']) {
       options[prop] = { color: `${prop}-color` }
       theme = createTheme(options)
-      expect(theme['.rt-expander::after']).toEqual({ borderTopColor: `${prop}-color` })
+      expect(theme.expanderStyle['&::after']).toEqual({ borderTopColor: `${prop}-color` })
     }
   })
 
@@ -222,20 +216,22 @@ describe('createTheme', () => {
       color: '#555 hsl(0, 0%, 25%)'
     }
     let theme = createTheme(options)
-    expect(theme['@supports (-moz-appearance: none)']).toEqual({
-      '.rt-page-size-select': {
-        backgroundImage:
-          `url('data:image/svg+xml;charset=US-ASCII,` +
-          `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
-          `<path fill="%23555%20hsl%280%2C%200%25%2C%2025%25%29" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
-      }
+    expect(
+      theme.paginationStyle['.rt-page-size-select']['@supports (-moz-appearance: none)']
+    ).toEqual({
+      backgroundImage:
+        `url('data:image/svg+xml;charset=US-ASCII,` +
+        `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
+        `<path fill="%23555%20hsl%280%2C%200%25%2C%2025%25%29" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
     })
 
     // Defaults
     for (let prop of ['style', 'selectStyle']) {
       options[prop] = { color: `${prop}-color` }
       theme = createTheme(options)
-      const url = theme['@supports (-moz-appearance: none)']['.rt-page-size-select'].backgroundImage
+      const url =
+        theme.paginationStyle['.rt-page-size-select']['@supports (-moz-appearance: none)']
+          .backgroundImage
       expect(url.includes(`fill="${prop}-color"`)).toEqual(true)
     }
   })
@@ -247,37 +243,39 @@ describe('createTheme', () => {
     }
     const theme = createTheme(options)
     const expected = {
-      '.rt-table': {
+      tableStyle: {
         borderColor: 'borderColor',
         borderWidth: 'borderWidth'
       },
 
-      '.rt-th': {
+      headerStyle: {
         borderColor: 'borderColor',
         borderWidth: 'borderWidth'
       },
 
-      '.rt-td': {
+      cellStyle: {
         borderColor: 'borderColor',
         borderWidth: 'borderWidth'
       },
 
-      '.rt-tfoot-td': {
+      footerStyle: {
         borderColor: 'borderColor',
         borderWidth: 'borderWidth'
       },
 
-      '.rt-th-group::after': {
-        backgroundColor: 'borderColor',
-        height: 'borderWidth'
+      groupHeaderStyle: {
+        '&::after': {
+          backgroundColor: 'borderColor',
+          height: 'borderWidth'
+        }
       },
 
-      '.rt-td-filter': {
+      filterCellStyle: {
         borderColor: 'borderColor',
         borderWidth: 'borderWidth'
       },
 
-      '.rt-pagination': {
+      paginationStyle: {
         borderTopColor: 'borderColor',
         borderTopWidth: 'borderWidth'
       }
@@ -292,11 +290,19 @@ describe('createTheme', () => {
       headerBorderColor: '#fff'
     }
     const theme = createTheme(options)
-    expect(theme.background).toEqual('background')
-    expect(theme['.rt-th'].borderColor).toEqual('#fff')
-    expect(theme['.rt-th'].borderWidth).toBeUndefined()
-    expect(theme['.rt-table']).toBeUndefined()
-    expect(theme['.rt-tr-striped']).toBeUndefined()
+    expect(theme.style.background).toEqual('background')
+    expect(theme.headerStyle.borderColor).toEqual('#fff')
+    expect(theme.headerStyle.borderWidth).toBeUndefined()
+    expect(theme.tableStyle).toBeUndefined()
     expect(createTheme()).toBeNull()
   })
+})
+
+test('css', () => {
+  expect(css()).toEqual(null)
+  expect(css(null)).toEqual(null)
+  expect(css(undefined, null)).toEqual(null)
+  expect(css('')).toMatch(/.+/)
+  expect(css({})).toMatch(/.+/)
+  expect(css('', {})).toMatch(/.+/)
 })

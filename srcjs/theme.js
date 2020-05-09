@@ -1,3 +1,5 @@
+import { css as emotionCss } from 'emotion'
+
 export function createTheme(options) {
   if (!options) return null
   let {
@@ -60,135 +62,125 @@ export function createTheme(options) {
   const selectColor = getFirstDefinedProp([selectStyle, style], 'color', color)
 
   let css = {
-    color,
-    backgroundColor,
-    ...style,
+    style: {
+      color,
+      backgroundColor,
+      ...style
+    },
 
-    '.rt-table': {
+    tableStyle: {
       borderColor: tableBorderColor,
       borderWidth: tableBorderWidth,
       ...tableStyle
     },
 
-    '.rt-th, .rt-td': {
-      padding: cellPadding
-    },
-
-    '.rt-th': {
+    headerStyle: {
       borderColor: headerBorderColor,
       borderWidth: headerBorderWidth,
+      padding: cellPadding,
       ...headerStyle
     },
 
-    '.rt-tbody': {
-      ...tableBodyStyle
+    groupHeaderStyle: {
+      ...groupHeaderStyle,
+      '&::after': {
+        backgroundColor: groupHeaderBorderColor,
+        height: groupHeaderBorderWidth
+      }
     },
 
-    '.rt-td': {
+    tableBodyStyle,
+
+    cellStyle: {
       borderColor: cellBorderColor,
       borderWidth: cellBorderWidth,
+      padding: cellPadding,
       ...cellStyle
     },
 
-    '.rt-tfoot-td': {
+    footerStyle: {
       borderColor: footerBorderColor,
       borderWidth: footerBorderWidth,
+      padding: cellPadding,
       ...footerStyle
     },
 
-    '.rt-th-group': {
-      ...groupHeaderStyle
+    rowGroupStyle,
+
+    rowStyle: {
+      ...rowStyle,
+      '&.rt-tr-striped': {
+        backgroundColor: stripedColor,
+        ...rowStripedStyle
+      },
+      '&.rt-tr-highlight:hover': {
+        backgroundColor: highlightColor,
+        ...rowHighlightStyle
+      },
+      '&.rt-tr-selected': {
+        ...rowSelectedStyle
+      }
     },
 
-    '.rt-th-group::after': {
-      backgroundColor: groupHeaderBorderColor,
-      height: groupHeaderBorderWidth
-    },
-
-    '.rt-tr-group': {
-      ...rowGroupStyle
-    },
-
-    '.rt-tr': {
-      ...rowStyle
-    },
-
-    '.rt-tr-striped': {
-      backgroundColor: stripedColor,
-      ...rowStripedStyle
-    },
-
-    '.rt-tr-highlight:hover': {
-      backgroundColor: highlightColor,
-      ...rowHighlightStyle
-    },
-
-    '.rt-tr-selected': {
-      ...rowSelectedStyle
-    },
-
-    '.rt-td-filter': {
+    filterCellStyle: {
       borderColor: cellBorderColor,
-      borderWidth: cellBorderWidth
+      borderWidth: cellBorderWidth,
+      padding: cellPadding,
+      ...cellStyle
     },
 
-    '.rt-expander::after': {
-      borderTopColor: expanderColor
+    expanderStyle: {
+      '&::after': {
+        borderTopColor: expanderColor
+      }
     },
 
-    '.rt-pagination': {
-      borderTopColor: cellBorderColor,
-      borderTopWidth: cellBorderWidth,
-      ...paginationStyle
-    },
-
-    '.rt-filter': {
+    filterInputStyle: {
       ...inputStyle,
       ...filterInputStyle
     },
 
-    '.rt-search': {
+    searchInputStyle: {
       ...inputStyle,
       ...searchInputStyle
     },
 
-    '.rt-page-jump': {
-      ...inputStyle
-    },
+    paginationStyle: {
+      borderTopColor: cellBorderColor,
+      borderTopWidth: cellBorderWidth,
+      ...paginationStyle,
 
-    '.rt-page-size-select': {
-      ...selectStyle
-    },
+      '.rt-page-jump': {
+        ...inputStyle
+      },
 
-    '@supports (-moz-appearance: none)': {
       '.rt-page-size-select': {
-        backgroundImage:
-          selectColor &&
-          `url('data:image/svg+xml;charset=US-ASCII,` +
-            `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
-            // Colors should be URL encoded since they may contain # or parentheses
-            `<path fill="${urlEncode(selectColor)}" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
+        ...selectStyle,
+        '@supports (-moz-appearance: none)': {
+          backgroundImage:
+            selectColor &&
+            `url('data:image/svg+xml;charset=US-ASCII,` +
+              `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">` +
+              // Colors should be URL encoded since they may contain # or parentheses
+              `<path fill="${urlEncode(selectColor)}" d="M24 1.5l-12 21-12-21h24z"/></svg>')`
+        }
+      },
+
+      '.rt-page-button-content': {
+        ...pageButtonStyle
+      },
+      '.rt-page-button:not(:disabled):hover > .rt-page-button-content': {
+        ...pageButtonHoverStyle
+      },
+      '.rt-page-button:not(:disabled):active > .rt-page-button-content': {
+        ...pageButtonActiveStyle
+      },
+      '.rt-page-button:focus > .rt-page-button-content': {
+        ...pageButtonHoverStyle
+      },
+      '.rt-page-button-current > .rt-page-button-content': {
+        ...pageButtonCurrentStyle
       }
-    },
-
-    '.rt-page-button-content': {
-      ...pageButtonStyle
-    },
-
-    '.rt-page-button:not(:disabled):hover > .rt-page-button-content': {
-      ...pageButtonHoverStyle
-    },
-
-    '.rt-page-button:not(:disabled):active > .rt-page-button-content': {
-      ...pageButtonActiveStyle
-    },
-
-    '.rt-page-button:focus > .rt-page-button-content': {
-      ...pageButtonHoverStyle
-    },
-
-    '.rt-page-button-current > .rt-page-button-content': {
-      ...pageButtonCurrentStyle
     }
   }
 
@@ -219,4 +211,10 @@ function removeEmptyProps(obj) {
       delete obj[key]
     }
   }
+}
+
+// Emotion css wrapper that returns null instead of an unused class
+export function css(...args) {
+  args = args.filter(arg => arg != null)
+  return args.length ? emotionCss(args) : null
 }

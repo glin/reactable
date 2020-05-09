@@ -2739,26 +2739,112 @@ describe('no data', () => {
 })
 
 describe('theme', () => {
-  const getTable = container => container.querySelector('.ReactTable')
+  const getRoot = container => container.querySelector('.ReactTable')
+  const getTable = container => container.querySelector('.rt-table')
+  const getTbody = container => container.querySelector('.rt-tbody')
+  const getHeaders = container => container.querySelectorAll('.-header .rt-th')
+  const getGroupHeaders = container => container.querySelectorAll('.rt-th-group')
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
+  const getHeaderRows = container => container.querySelectorAll('.-header .rt-tr')
+  const getFilterRow = container => container.querySelector('.-filters .rt-tr')
+  const getPadRows = container => container.querySelectorAll('.rt-tbody .rt-tr.-padRow')
+  const getFooterRow = container => container.querySelector('.rt-tfoot .rt-tr')
+  const getCells = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow) .rt-td')
+  const getFilterCells = container => container.querySelectorAll('.rt-td-filter')
+  const getExpanders = container => container.querySelectorAll('.rt-expander')
+  const getFilterInputs = container => container.querySelectorAll('.rt-filter')
+  const getSearchInput = container => container.querySelector('.rt-search')
+  const getPagination = container => container.querySelector('.rt-pagination')
 
   it('applies theme styles to the table', () => {
     const props = {
-      data: { a: [] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a', footer: 'footer-a', details: () => 'details' },
+        { name: 'colB', accessor: 'b', footer: 'footer-b' }
+      ],
+      columnGroups: [{ columns: ['a'], name: 'group-a' }],
+      minRows: 4,
+      filterable: true,
+      searchable: true,
       theme: {
         style: { color: 'red' },
-        cellPadding: '24px',
-        cellStyle: { backgroundColor: '#eee' },
-        tableStyle: { border: '1px solid black' }
+        tableStyle: { border: '1px solid black' },
+        tableBodyStyle: { content: '"tableBody"' },
+        headerStyle: { content: '"header"' },
+        groupHeaderStyle: { content: '"groupHeader"' },
+        rowStyle: { content: '"row"' },
+        cellStyle: { content: '"cell"' },
+        inputStyle: { content: '"input"' }
       }
     }
     const { container } = render(<Reactable {...props} />)
+
+    const rootContainer = getRoot(container)
+    expect(rootContainer).toHaveStyleRule('color', 'red')
     const table = getTable(container)
-    expect(table).toHaveStyleRule('color', 'red')
-    expect(table).toHaveStyleRule('padding', '24px', { target: '.rt-td' })
-    expect(table).toHaveStyleRule('padding', '24px', { target: '.rt-th' })
-    expect(table).toHaveStyleRule('background-color', '#eee', { target: '.rt-td' })
-    expect(table).toHaveStyleRule('border', '1px solid black', { target: '.rt-table' })
+    expect(table).toHaveStyleRule('border', '1px solid black')
+    const tbody = getTbody(container)
+    expect(tbody).toHaveStyleRule('content', '"tableBody"')
+
+    const headers = getHeaders(container)
+    headers.forEach(header => expect(header).toHaveStyleRule('content', '"header"'))
+    const groupHeaders = getGroupHeaders(container)
+    groupHeaders.forEach(header => expect(header).toHaveStyleRule('content', '"groupHeader"'))
+
+    const rows = getRows(container)
+    rows.forEach(row => expect(row).toHaveStyleRule('content', '"row"'))
+    const padRows = getPadRows(container)
+    padRows.forEach(row => expect(row).toHaveStyleRule('content', '"row"'))
+    const filterRow = getFilterRow(container)
+    expect(filterRow).toHaveStyleRule('content', '"row"')
+    const headerRows = getHeaderRows(container)
+    headerRows.forEach(row => expect(row).not.toHaveStyleRule('content', '"row"'))
+    const footerRow = getFooterRow(container)
+    expect(footerRow).not.toHaveStyleRule('content', '"row"')
+
+    const cells = getCells(container)
+    cells.forEach(cell => expect(cell).toHaveStyleRule('content', '"cell"'))
+    const filterCells = getFilterCells(container)
+    filterCells.forEach(cell => expect(cell).toHaveStyleRule('content', '"cell"'))
+
+    const expanders = getExpanders(container)
+    expanders.forEach(expander =>
+      expect(expander).toHaveStyleRule('border-top-color', 'red', { target: '::after' })
+    )
+
+    const filterInputs = getFilterInputs(container)
+    filterInputs.forEach(input => expect(input).toHaveStyleRule('content', '"input"'))
+    const searchInput = getSearchInput(container)
+    expect(searchInput).toHaveStyleRule('content', '"input"')
+  })
+
+  it('applies theme styles to pagination', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ],
+      defaultPageSize: 1,
+      showPageSizeOptions: true,
+      paginationType: 'jump',
+      theme: {
+        inputStyle: { content: '"input"' },
+        selectStyle: { content: '"select"' },
+        paginationStyle: { content: '"pagination"' },
+        pageButtonStyle: { content: '"pageButton"' }
+      }
+    }
+    const { container } = render(<Reactable {...props} />)
+
+    const pagination = getPagination(container)
+    expect(pagination).toHaveStyleRule('content', '"pagination"')
+    expect(pagination).toHaveStyleRule('content', '"select"', { target: '.rt-page-size-select' })
+    expect(pagination).toHaveStyleRule('content', '"input"', { target: '.rt-page-jump' })
+    expect(pagination).toHaveStyleRule('content', '"pageButton"', {
+      target: '.rt-page-button-content'
+    })
   })
 
   it('theme styles are scoped to their tables', () => {

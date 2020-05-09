@@ -5,6 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import reactTablePropTypes from './propTypes'
+import { css } from './theme'
 import { defaultLanguage, renderTemplate } from './language'
 import { classNames } from './utils'
 
@@ -170,6 +171,7 @@ export default class Pagination extends React.Component {
       canNext,
       className,
       style,
+      theme,
       language
     } = this.props
 
@@ -260,7 +262,10 @@ export default class Pagination extends React.Component {
     )
 
     return (
-      <div className={classNames(className, 'rt-pagination')} style={style}>
+      <div
+        className={classNames(className, 'rt-pagination', css(theme.paginationStyle))}
+        style={style}
+      >
         <div className="rt-pagination-info">
           {pageInfo}
           {pageSizeOptions}
@@ -284,6 +289,9 @@ Pagination.propTypes = {
   paginationType: PropTypes.oneOf(['numbers', 'jump', 'simple']),
   autoHidePagination: PropTypes.bool,
   showPageInfo: PropTypes.bool,
+  theme: PropTypes.shape({
+    paginationStyle: PropTypes.object
+  }),
   language: PropTypes.shape({
     pageNext: PropTypes.string,
     pagePrevious: PropTypes.string,
