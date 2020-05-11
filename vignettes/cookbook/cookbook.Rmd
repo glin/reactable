@@ -638,7 +638,7 @@ reactable(
 
 Tables don't have a default font, and just inherit the font properties
 from their parent elements. (This may explain why tables look different in
-in R Markdown documents or Shiny apps vs. standalone pages).
+R Markdown documents or Shiny apps vs. standalone pages).
 
 To customize the table font, you can set a font on the page, or on the table itself:
 
