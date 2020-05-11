@@ -1254,7 +1254,7 @@ reactable(
   MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")],
   groupBy = "Manufacturer",
   selection = "multiple",
-  defaultSelected = c(1, 3),
+  defaultSelected = c(1, 2),
   borderless = TRUE,
   onClick = "select",
   rowStyle = JS("function(rowInfo) {
