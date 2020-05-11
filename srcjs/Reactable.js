@@ -77,8 +77,8 @@ const getTheadGroupThProps = (state, rowInfo, column) => {
       className: classNames('rt-th-group', column.className, css(state.theme.groupHeaderStyle))
     }
   } else {
-    // Ungrouped column groups
-    props.className = 'rt-th-group-none'
+    // Ungrouped column groups. These still take theme styles for, e.g., border theming.
+    props.className = classNames('rt-th-group-none', css(state.theme.groupHeaderStyle))
   }
 
   return props

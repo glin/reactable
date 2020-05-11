@@ -59,14 +59,21 @@ input[type='radio'].rt-select-input {
 }
 
 /* Outer table borders */
+.rt-table {
+  border-width: 1px;
+  border-color: hsl(0, 0%, 90%);
+}
+
 .rt-outlined .rt-table,
 .rt-bordered .rt-table {
-  border: 1px solid hsl(0, 0%, 90%);
+  border-style: solid;
 }
 
 /* Header borders */
 .rt-th {
   border-bottom: 2px solid hsl(0, 0%, 90%);
+  border-left-width: 1px;
+  border-left-color: rgba(0, 0, 0, 0.05);
 }
 
 .rt-outlined .rt-th,
@@ -77,6 +84,8 @@ input[type='radio'].rt-select-input {
 /* Cell and footer borders */
 .rt-td {
   border-top: 1px solid hsl(0, 0%, 95%);
+  border-left-width: 1px;
+  border-left-color: rgba(0, 0, 0, 0.05);
 }
 
 .rt-tr-group:first-child > .rt-tr:first-child .rt-td {
@@ -89,7 +98,7 @@ input[type='radio'].rt-select-input {
 
 .rt-bordered .rt-td,
 .rt-bordered .rt-th {
-  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  border-left-style: solid;
 }
 
 .rt-bordered .rt-td:first-child,

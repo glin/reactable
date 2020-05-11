@@ -61,6 +61,9 @@ export function createTheme(options) {
   )
   const selectColor = getFirstDefinedProp([selectStyle, style], 'color', color)
 
+  // Allow easier override of header border width in an outlined/bordered table
+  headerBorderWidth = getFirstDefinedProp([headerStyle], 'borderWidth', headerBorderWidth)
+
   let css = {
     style: {
       color,
@@ -78,11 +81,18 @@ export function createTheme(options) {
       borderColor: headerBorderColor,
       borderWidth: headerBorderWidth,
       padding: cellPadding,
-      ...headerStyle
+      ...headerStyle,
+      '.rt-bordered &, .rt-outlined &': {
+        borderWidth: headerBorderWidth
+      }
     },
 
     groupHeaderStyle: {
+      // For vertical borders
+      borderColor: groupHeaderBorderColor,
+      borderWidth: groupHeaderBorderWidth,
       ...groupHeaderStyle,
+      // For horizontal borders
       '&::after': {
         backgroundColor: groupHeaderBorderColor,
         height: groupHeaderBorderWidth

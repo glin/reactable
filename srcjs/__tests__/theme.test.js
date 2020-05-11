@@ -76,10 +76,15 @@ describe('createTheme', () => {
         borderColor: 'headerBorderColor',
         borderWidth: 'headerBorderWidth',
         padding: 'cellPadding',
-        headerStyle: 'headerStyle'
+        headerStyle: 'headerStyle',
+        '.rt-bordered &, .rt-outlined &': {
+          borderWidth: 'headerBorderWidth'
+        }
       },
 
       groupHeaderStyle: {
+        borderColor: 'groupHeaderBorderColor',
+        borderWidth: 'groupHeaderBorderWidth',
         groupHeaderStyle: 'groupHeaderStyle',
         '&::after': {
           backgroundColor: 'groupHeaderBorderColor',
@@ -250,7 +255,10 @@ describe('createTheme', () => {
 
       headerStyle: {
         borderColor: 'borderColor',
-        borderWidth: 'borderWidth'
+        borderWidth: 'borderWidth',
+        '.rt-bordered &, .rt-outlined &': {
+          borderWidth: 'borderWidth'
+        }
       },
 
       cellStyle: {
@@ -264,6 +272,8 @@ describe('createTheme', () => {
       },
 
       groupHeaderStyle: {
+        borderColor: 'borderColor',
+        borderWidth: 'borderWidth',
         '&::after': {
           backgroundColor: 'borderColor',
           height: 'borderWidth'
@@ -281,6 +291,25 @@ describe('createTheme', () => {
       }
     }
 
+    expect(theme).toEqual(expected)
+  })
+
+  test('header borderWidth', () => {
+    const options = {
+      headerBorderWidth: 'headerBorderWidth',
+      headerStyle: {
+        borderWidth: 'headerStyleBorderWidth'
+      }
+    }
+    const theme = createTheme(options)
+    const expected = {
+      headerStyle: {
+        borderWidth: 'headerStyleBorderWidth',
+        '.rt-bordered &, .rt-outlined &': {
+          borderWidth: 'headerStyleBorderWidth'
+        }
+      }
+    }
     expect(theme).toEqual(expected)
   })
 

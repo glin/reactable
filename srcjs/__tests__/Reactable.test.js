@@ -2774,6 +2774,7 @@ describe('theme', () => {
   const getTbody = container => container.querySelector('.rt-tbody')
   const getHeaders = container => container.querySelectorAll('.-header .rt-th')
   const getGroupHeaders = container => container.querySelectorAll('.rt-th-group')
+  const getUngroupedHeaders = container => container.querySelectorAll('.rt-th-group-none')
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
   const getHeaderRows = container => container.querySelectorAll('.-header .rt-tr')
   const getFilterRow = container => container.querySelector('.-filters .rt-tr')
@@ -2821,6 +2822,8 @@ describe('theme', () => {
     headers.forEach(header => expect(header).toHaveStyleRule('content', '"header"'))
     const groupHeaders = getGroupHeaders(container)
     groupHeaders.forEach(header => expect(header).toHaveStyleRule('content', '"groupHeader"'))
+    const ungroupedHeaders = getUngroupedHeaders(container)
+    ungroupedHeaders.forEach(header => expect(header).toHaveStyleRule('content', '"groupHeader"'))
 
     const rows = getRows(container)
     rows.forEach(row => expect(row).toHaveStyleRule('content', '"row"'))
