@@ -980,8 +980,24 @@ class Reactable extends React.Component {
         getProps={() => {
           // Send reactable state to Shiny on ReactTable state changes
           this.onTableUpdate()
-          // Get the table's DOM element
-          return { ref: this.tableElement }
+          return {
+            // Get the table's DOM element
+            ref: this.tableElement,
+            // Add keyboard-only focus styles
+            onMouseDown: () => {
+              this.tableElement.current.classList.remove('rt-keyboard-active')
+            },
+            onKeyDown: () => {
+              this.tableElement.current.classList.add('rt-keyboard-active')
+            },
+            onKeyUp: e => {
+              // Detect keyboard use when tabbing into the table
+              const keyCode = e.which || e.keyCode
+              if (keyCode === 9) {
+                this.tableElement.current.classList.add('rt-keyboard-active')
+              }
+            }
+          }
         }}
       />
     )

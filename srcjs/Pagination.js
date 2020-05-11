@@ -13,9 +13,7 @@ const PageButton = ({ isCurrent, className, ...props }) => {
   className = classNames(className, 'rt-page-button', isCurrent ? ' rt-page-button-current' : null)
   return (
     <button type="button" className={className} {...props}>
-      <span className="rt-page-button-content" tabIndex="-1">
-        {props.children}
-      </span>
+      {props.children}
     </button>
   )
 }

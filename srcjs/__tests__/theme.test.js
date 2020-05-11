@@ -166,19 +166,19 @@ describe('createTheme', () => {
           }
         },
 
-        '.rt-page-button-content': {
+        '.rt-page-button': {
           pageButtonStyle: 'pageButtonStyle'
         },
-        '.rt-page-button:not(:disabled):hover > .rt-page-button-content': {
+        '.rt-page-button:not(:disabled):hover': {
           pageButtonHoverStyle: 'pageButtonHoverStyle'
         },
-        '.rt-page-button:not(:disabled):active > .rt-page-button-content': {
+        '.rt-page-button:not(:disabled):active': {
           pageButtonActiveStyle: 'pageButtonActiveStyle'
         },
-        '.rt-page-button:focus > .rt-page-button-content': {
+        '.rt-keyboard-active & .rt-page-button:not(:disabled):focus': {
           pageButtonHoverStyle: 'pageButtonHoverStyle'
         },
-        '.rt-page-button-current > .rt-page-button-content': {
+        '.rt-page-button-current': {
           pageButtonCurrentStyle: 'pageButtonCurrentStyle'
         }
       }

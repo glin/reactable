@@ -164,6 +164,36 @@ describe('ARIA roles', () => {
   })
 })
 
+describe('keyboard focus styles', () => {
+  const getRoot = container => container.querySelector('.ReactTable')
+
+  const props = {
+    data: { a: [1, 2] },
+    columns: [{ name: 'colA', accessor: 'a' }]
+  }
+
+  it('applies keyboard focus styles when using the keyboard', () => {
+    const { container } = render(<Reactable {...props} />)
+    const rootContainer = getRoot(container)
+    expect(rootContainer).not.toHaveClass('rt-keyboard-active')
+    fireEvent.mouseDown(rootContainer)
+    expect(rootContainer).not.toHaveClass('rt-keyboard-active')
+
+    fireEvent.keyDown(rootContainer)
+    expect(rootContainer).toHaveClass('rt-keyboard-active')
+
+    fireEvent.mouseDown(rootContainer)
+    expect(rootContainer).not.toHaveClass('rt-keyboard-active')
+
+    // Should detect tabbing into the table
+    fireEvent.keyUp(rootContainer)
+    expect(rootContainer).not.toHaveClass('rt-keyboard-active')
+
+    fireEvent.keyUp(rootContainer, { key: 'Tab', keyCode: 9, charCode: 9 })
+    expect(rootContainer).toHaveClass('rt-keyboard-active')
+  })
+})
+
 describe('sorting', () => {
   const getHeaders = container => container.querySelectorAll('.rt-th')
 
@@ -2842,9 +2872,7 @@ describe('theme', () => {
     expect(pagination).toHaveStyleRule('content', '"pagination"')
     expect(pagination).toHaveStyleRule('content', '"select"', { target: '.rt-page-size-select' })
     expect(pagination).toHaveStyleRule('content', '"input"', { target: '.rt-page-jump' })
-    expect(pagination).toHaveStyleRule('content', '"pageButton"', {
-      target: '.rt-page-button-content'
-    })
+    expect(pagination).toHaveStyleRule('content', '"pageButton"', { target: '.rt-page-button' })
   })
 
   it('theme styles are scoped to their tables', () => {

@@ -352,12 +352,19 @@ input[type='radio'].rt-select-input {
 }
 
 .rt-page-button {
-  padding: 0;
-  border: none;
+  padding: 6px 12px;
   background-color: transparent;
+  border: none;
+  border-radius: 3px;
   outline-width: 0;
   outline-style: solid;
   cursor: pointer;
+}
+
+/* Remove inner focus ring on Firefox */
+.rt-page-button::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
 }
 
 .rt-page-button:disabled {
@@ -365,31 +372,25 @@ input[type='radio'].rt-select-input {
   cursor: default;
 }
 
-.rt-page-button:hover:disabled {
-  background-color: transparent;
-}
-
-.rt-page-button-content {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 3px;
-  outline-width: 0;
-  outline-style: solid;
-}
-
-.rt-page-button:not(:disabled):hover > .rt-page-button-content {
+.rt-page-button:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.rt-page-button:not(:disabled):active > .rt-page-button-content {
+.rt-page-button:active {
   background-color: rgba(0, 0, 0, 0.08);
 }
 
-.rt-page-button:focus > .rt-page-button-content {
+.rt-keyboard-active .rt-page-button:focus {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.rt-page-button-current > .rt-page-button-content {
+/* For browsers that leave focus on disabled buttons, like Firefox */
+.rt-page-button:disabled:hover,
+.rt-page-button:disabled:focus {
+  background-color: transparent;
+}
+
+.rt-page-button-current {
   font-weight: 700;
 }
 
