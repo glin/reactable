@@ -361,15 +361,15 @@ describe('sorting', () => {
 
     fireEvent.click(headers[0])
     const colA = container.querySelectorAll('.col-a')
-    expect([...colA].map(el => el.textContent)).toEqual(['1', '2', '3', ''])
+    expect([...colA].map(el => el.textContent)).toEqual(['1', '2', '3', '\u200b'])
     fireEvent.click(headers[0])
-    expect([...colA].map(el => el.textContent)).toEqual(['3', '2', '1', ''])
+    expect([...colA].map(el => el.textContent)).toEqual(['3', '2', '1', '\u200b'])
 
     fireEvent.click(headers[1])
     const colB = container.querySelectorAll('.col-b')
-    expect([...colB].map(el => el.textContent)).toEqual(['aa', 'BB', '', ''])
+    expect([...colB].map(el => el.textContent)).toEqual(['aa', 'BB', '\u200b', '\u200b'])
     fireEvent.click(headers[1])
-    expect([...colB].map(el => el.textContent)).toEqual(['BB', 'aa', '', ''])
+    expect([...colB].map(el => el.textContent)).toEqual(['BB', 'aa', '\u200b', '\u200b'])
   })
 })
 

@@ -206,12 +206,12 @@ describe('buildColumnDefs', () => {
   test('NA and NaN rendering', () => {
     // Default rendering of numeric NAs
     let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('')
+    expect(cols[0].Cell({ value: 'NA' })).toEqual('\u200b')
+    expect(cols[0].Cell({ value: 'NaN' })).toEqual('\u200b')
 
     // Default rendering of non-numeric NAs (serialized as nulls)
     cols = buildColumnDefs([{ accessor: 'x' }])
-    expect(cols[0].Cell({ value: null })).toEqual('')
+    expect(cols[0].Cell({ value: null })).toEqual('\u200b')
 
     // Custom NA strings
     cols = buildColumnDefs([

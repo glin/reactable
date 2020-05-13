@@ -103,6 +103,11 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         }
       }
 
+      // Use zero-width spaces to preserve the height of blank cells
+      if (value == null || value === '') {
+        value = '\u200b'
+      }
+
       let content
       if (React.isValidElement(value)) {
         content = value
@@ -110,7 +115,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         // Render inline to align with the expander
         content = <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: value }} />
       } else {
-        content = value != null ? String(value) : ''
+        content = String(value)
       }
 
       // Render expander for custom row details
