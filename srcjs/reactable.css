@@ -35,8 +35,13 @@
 /* Selectable cells */
 .rt-td-select {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
+}
+
+.rt-select {
+  display: flex;
+  align-items: center;
 }
 
 input[type='checkbox'].rt-select-input,

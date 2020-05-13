@@ -31,6 +31,7 @@
 * Row striping and highlighting styles no longer affect nested tables.
 * Text selection now works in column headers.
 * Dark themes no longer affect text color in RStudio R Notebooks ([#21](https://github.com/glin/reactable/issues/21)).
+* Checkboxes and radio buttons now align with multi-line text in selectable tables.
 
 # reactable 0.1.0.1
 

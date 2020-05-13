@@ -9,26 +9,31 @@ import { classNames } from './utils'
 
 const DefaultSelectInputComponent = props => {
   const { selectType, checked, label, rows, row, onClick } = props
+  // Use zero-width space character to properly align checkboxes with first
+  // line of text in other cells, even if the text spans multiple lines.
   return (
-    <input
-      type={selectType || 'checkbox'}
-      className="rt-select-input"
-      aria-label={label}
-      checked={checked}
-      onClick={e => {
-        e.stopPropagation()
-        if (rows) {
-          // Select all
-          const indices = rows.map(row => row._index)
-          onClick(indices, !checked)
-        } else if (row) {
-          // Select single
-          const index = row._index
-          onClick(index)
-        }
-      }}
-      onChange={() => {}}
-    />
+    <div className="rt-select">
+      <input
+        type={selectType || 'checkbox'}
+        className="rt-select-input"
+        aria-label={label}
+        checked={checked}
+        onClick={e => {
+          e.stopPropagation()
+          if (rows) {
+            // Select all
+            const indices = rows.map(row => row._index)
+            onClick(indices, !checked)
+          } else if (row) {
+            // Select single
+            const index = row._index
+            onClick(index)
+          }
+        }}
+        onChange={() => {}}
+      />
+      &#8203;
+    </div>
   )
 }
 
