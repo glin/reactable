@@ -64,7 +64,7 @@ dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
 temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
 
 # Excel-inspired 3-color scale
-GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f8696b"))(x), maxColorValue = 255)
+GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
 
 reactable(
   temps,
