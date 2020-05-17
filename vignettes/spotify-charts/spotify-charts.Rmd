@@ -1,0 +1,261 @@
+---
+title: "Spotify Charts"
+output: html_document
+resource_files:
+  - '.'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r table, echo=FALSE}
+library(reactable)
+library(htmltools)
+
+top_tracks <- jsonlite::fromJSON("top_tracks.json")
+top_tracks <- top_tracks[, c("position", "trend", "name", "explicit", "artists", "daily_plays", "url")]
+
+# artists is a list-column of data frames containing artist metadata (one artist per row).
+# Convert this to a character string of artist names so it can be searched,
+# and attach the metadata as an attribute so we can insert links later.
+top_tracks$artists <- lapply(top_tracks$artists, function(x) {
+  structure(paste(x$name, collapse = ", "), metadata = x)
+})
+
+tracks_table <- function(data) {
+  reactable(
+    data,
+    searchable = TRUE,
+    highlight = TRUE,
+    wrap = FALSE,
+    paginationType = "simple",
+    minRows = 10,
+    columns = list(
+      position = colDef(
+        header = tagList(
+          span("#", "aria-hidden" = "true", title = "Position"),
+          # Column label for screen readers (sr-only comes from Bootstrap)
+          span("Position", class = "sr-only")
+        ),
+        width = 40
+      ),
+      trend = colDef(
+        header = span("Trend", class = "sr-only"),
+        sortable = FALSE,
+        align = "center",
+        width = 40,
+        cell = function(value) trend_indicator(value)
+      ),
+      name = colDef(
+        name = "Title",
+        resizable = TRUE,
+        cell = function(value, index) {
+          title <- tags$a(href = data[index, "url"], value)
+          if (data[index, "explicit"]) {
+            explicit_tag <- div(style = list(float = "right"), span(class = "tag", "EXPLICIT"))
+            title <- tagList(title, explicit_tag)
+          }
+          title
+        },
+        minWidth = 200
+      ),
+      artists = colDef(
+        name = "Artist",
+        resizable = TRUE,
+        html = TRUE,
+        cell = function(value) {
+          # Create comma-separated list of artist links
+          metadata <- attr(value, "metadata")
+          links <- apply(metadata, 1, function(artist) {
+            sprintf('<a href="%s">%s</a>', artist["external_urls.spotify"], artist["name"])
+          })
+          paste(links, collapse = ", ")
+        },
+        minWidth = 100
+      ),
+      daily_plays = colDef(
+        name = "Daily Plays",
+        defaultSortOrder = "desc",
+        format = colFormat(separators = TRUE),
+        width = 120,
+        class = "number"
+      ),
+      explicit = colDef(show = FALSE),
+      url = colDef(show = FALSE)
+    ),
+    language = reactableLang(
+      searchPlaceholder = "Filter tracks",
+      noData = "No tracks found",
+      pageInfo = "{rowStart}\u2013{rowEnd} of {rows} tracks",
+      pagePrevious = "\u276e",
+      pageNext = "\u276f",
+    ),
+    theme = spotify_theme()
+  )
+}
+
+# Icon to indicate trend: unchanged, up, down, or new
+trend_indicator <- function(value = c("unchanged", "up", "down", "new")) {
+  value <- match.arg(value)
+  label <- switch(value,
+                  unchanged = "Unchanged", up = "Trending up",
+                  down = "Trending down", new = "New")
+
+  # Add img role and tooltip/label for accessibility
+  args <- list(role = "img", title = label)
+
+  if (value == "unchanged") {
+    args <- c(args, list("–", style = "color: #666; font-weight: 700"))
+  } else if (value == "up") {
+    args <- c(args, list(shiny::icon("caret-up"), style = "color: #1ed760"))
+  } else if (value == "down") {
+    args <- c(args, list(shiny::icon("caret-down"), style = "color: #cd1a2b"))
+  } else {
+    args <- c(args, list(shiny::icon("circle"), style = "color: #2e77d0; font-size: 10px"))
+  }
+  do.call(span, args)
+}
+
+spotify_theme <- function() {
+  search_icon <- function(fill = "none") {
+    # Icon from https://boxicons.com
+    svg <- sprintf('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%s" d="M10 18c1.85 0 3.54-.64 4.9-1.69l4.4 4.4 1.4-1.42-4.39-4.4A8 8 0 102 10a8 8 0 008 8.01zm0-14a6 6 0 11-.01 12.01A6 6 0 0110 4z"/></svg>', fill)
+    sprintf("url('data:image/svg+xml;base64,%s')", jsonlite::base64_enc(svg))
+  }
+
+  text_color <- "hsl(0, 0%, 95%)"
+  text_color_light <- "hsl(0, 0%, 70%)"
+  text_color_lighter <- "hsl(0, 0%, 55%)"
+  bg_color <- "hsl(0, 0%, 10%)"
+
+  reactableTheme(
+    color = text_color,
+    backgroundColor = bg_color,
+    borderColor = "hsl(0, 0%, 16%)",
+    borderWidth = "1px",
+    highlightColor = "rgba(255, 255, 255, 0.1)",
+    cellPadding = "10px 8px",
+    style = list(
+      fontFamily = "Work Sans, Helvetica Neue, Helvetica, Arial, sans-serif",
+      fontSize = "14px",
+      "a" = list(
+        color = text_color,
+        "&:hover, &:focus" = list(
+          textDecoration = "none",
+          borderBottom = "1px solid currentColor"
+        )
+      ),
+      ".number" = list(
+        color = text_color_light,
+        fontFamily = "Source Code Pro, Consolas, Monaco, monospace"
+      ),
+      ".tag" = list(
+        padding = "2px 4px",
+        color = "hsl(0, 0%, 40%)",
+        fontSize = "12px",
+        border = "1px solid hsl(0, 0%, 24%)",
+        borderRadius = "2px"
+      )
+    ),
+    headerStyle = list(
+      color = text_color_light,
+      fontWeight = 400,
+      fontSize = "12px",
+      letterSpacing = "1px",
+      textTransform = "uppercase",
+      "&:hover, &:focus" = list(color = text_color)
+    ),
+    rowHighlightStyle = list(
+      ".tag" = list(color = text_color, borderColor = text_color_lighter)
+    ),
+    # Full-width search bar with search icon
+    searchInputStyle = list(
+      paddingLeft = "30px",
+      paddingTop = "8px",
+      paddingBottom = "8px",
+      width = "100%",
+      border = "none",
+      backgroundColor = bg_color,
+      backgroundImage = search_icon(text_color_light),
+      backgroundSize = "16px",
+      backgroundPosition = "left 8px center",
+      backgroundRepeat = "no-repeat",
+      "&:focus" = list(backgroundColor = "rgba(255, 255, 255, 0.1)", border = "none"),
+      "&:hover, &:focus" = list(backgroundImage = search_icon(text_color)),
+      "::placeholder" = list(color = text_color_lighter),
+      "&:hover::placeholder, &:focus::placeholder" = list(color = text_color)
+    ),
+    paginationStyle = list(color = text_color_light),
+    pageButtonHoverStyle = list(backgroundColor = "hsl(0, 0%, 20%)"),
+    pageButtonActiveStyle = list(backgroundColor = "hsl(0, 0%, 24%)")
+  )
+}
+
+
+div(class = "spotify-charts",
+  h2(class = "title", "Global Top 50"),
+  tracks_table(top_tracks)
+)
+```
+
+---
+
+Source: [Spotify Charts](https://spotifycharts.com/regional/global/weekly/latest),
+[Spotify](https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF) via [spotifyr](https://github.com/charlie86/spotifyr)
+
+Raw data: [`top_tracks.json`](top_tracks.json), [`get-top-tracks.R`](get-top-tracks.R)
+
+
+```{r ref.label="table", eval=FALSE}
+```
+
+```{r}
+tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700|Source+Code+Pro:400&display=fallback",
+          rel = "stylesheet")
+```
+
+```{css}
+.spotify-charts {
+  padding: 12px 12px 0;
+  font-family: "Work Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: hsl(0, 0%, 95%);
+  background-color: hsl(0, 0%, 10%);
+}
+
+.title {
+  margin: 12px 6px 24px;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+```
+
+```{css, echo=FALSE}
+/* Bootstrap's sr-only CSS. Add this if Bootstrap styles aren't included. */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+h1.title {
+  display: none;
+}
+
+/* pkgdown articles */
+.contents {
+  width: 100%;
+  max-width: 960px;
+}
+```

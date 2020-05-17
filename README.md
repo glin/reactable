@@ -23,6 +23,7 @@ Interactive data tables for R, based on the
 - [Women's World Cup Predictions](https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html)
 - [NBA Box Score](https://glin.github.io/reactable/articles/nba-box-score/nba-box-score.html)
 - [CRAN Packages](https://glin.github.io/reactable/articles/cran-packages/cran-packages.html)
+- [Spotify Charts](https://glin.github.io/reactable/articles/spotify-charts/spotify-charts.html)
 - [Demo Cookbook](https://glin.github.io/reactable/articles/cookbook/cookbook.html)
 - [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
 - [Shiny Demo](https://glin.github.io/reactable/articles/shiny-demo.html)
