@@ -1,6 +1,8 @@
 ---
 title: "CRAN Packages"
 output: html_document
+resource_files:
+  - '.'
 ---
 
 ```{r setup, include=FALSE}

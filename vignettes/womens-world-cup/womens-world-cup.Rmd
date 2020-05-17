@@ -2,7 +2,7 @@
 title: "Women's World Cup Predictions"
 output: html_document
 resource_files:
-  - images
+  - '.'
 ---
 
 ```{r setup, include=FALSE}

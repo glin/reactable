@@ -1,6 +1,8 @@
 ---
 title: "Twitter Followers"
 output: html_document
+resource_files:
+  - '.'
 ---
 
 ```{r setup, include=FALSE}
