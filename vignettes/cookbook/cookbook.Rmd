@@ -5,6 +5,7 @@ output:
     toc: true
     toc_float:
       smooth_scroll: false
+    self_contained: false
 resource_files:
   - images
 ---
@@ -259,6 +260,31 @@ reactable(data, columns = list(
   }),
   Body = colDef(name = "Body (kg)"),
   Brain = colDef(name = "Brain (g)")
+))
+```
+
+> If using a local image file, make sure the image can be found from the rendered document.
+>
+> In pkgdown, you can add external resource files using the `resource_files` field:
+> https://pkgdown.r-lib.org/reference/build_articles.html#external-files.
+>
+> In Shiny, you can add external resource files using the `www/` directory or `addResourcePath()`:
+> https://shiny.rstudio.com/reference/shiny/latest/resourcePaths.html.
+
+Images can also be embedded into the document as a base64-encoded data URL
+using `knitr::image_uri()`. This can be more portable, but is not recommended
+for large images.
+
+```{r}
+reactable(data, columns = list(
+  Animal = colDef(cell = function(value) {
+    img_src <- knitr::image_uri(sprintf("images/%s.png", value))
+    image <- img(src = img_src, height = "24px", alt = "")
+    tagList(
+      div(style = list(display = "inline-block", width = "45px"), image),
+      value
+    )
+  })
 ))
 ```
 
