@@ -239,7 +239,7 @@ reactable(data, bordered = TRUE, columns = list(
 
 To embed an image, render an [`<img>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
 element into the table. Make sure to add [`alt` text](https://webaim.org/techniques/alttext/)
-for accessibility, if the image is not purely decorative.
+for accessibility, even if the image is purely decorative (use a null `alt=""` in this case).
 
 ```{r}
 library(htmltools)
