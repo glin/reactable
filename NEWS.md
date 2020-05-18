@@ -30,6 +30,7 @@
 * Aggregated cells in columns with row details no longer throw an error when clicked.
 * Row striping and highlighting styles no longer affect nested tables.
 * Text selection now works in column headers.
+* Column headers now truncate long text properly.
 * Dark themes no longer affect text color in RStudio R Notebooks ([#21](https://github.com/glin/reactable/issues/21)).
 * Checkboxes and radio buttons now align with multi-line text in selectable tables.
 

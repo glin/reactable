@@ -842,7 +842,13 @@ by setting `wrap` to `FALSE`:
 ```{r}
 data <- aggregate(. ~ Species, iris, toString)
 
-reactable(data, wrap = FALSE, resizable = TRUE)
+reactable(
+  data,
+  wrap = FALSE,
+  resizable = TRUE,
+  bordered = TRUE,
+  columns = list(Petal.Length = colDef(name = "Petal Length (cm)", width = 100))
+)
 ```
 
 ### Fixed height + sticky header/footer

@@ -32,6 +32,11 @@
   text-overflow: ellipsis;
 }
 
+.rt-th-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Selectable cells */
 .rt-td-select {
   display: flex;

@@ -85,21 +85,27 @@ describe('buildColumnDefs', () => {
 
     // Header
     cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])
-    expect(cols[0].Header()).toEqual('x')
+    expect(cols[0].Header()).toEqual(<div className="rt-th-content">x</div>)
     cols = buildColumnDefs([{ accessor: 'x', header: () => 'header' }])
-    expect(cols[0].Header()).toEqual('header')
-    cols = buildColumnDefs([{ accessor: 'x', header: React.createElement('div', null, 'header') }])
-    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
+    expect(cols[0].Header()).toEqual(<div className="rt-th-content">header</div>)
+    cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div> }])
+    expect(cols[0].Header()).toEqual(
+      <div className="rt-th-content">
+        <div>header</div>
+      </div>
+    )
     cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
     expect(cols[0].Header()).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
+      <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
     )
 
     // React elements and HTML rendering don't clash
-    cols = buildColumnDefs([
-      { accessor: 'x', header: React.createElement('div', null, 'header'), html: true }
-    ])
-    expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
+    cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div>, html: true }])
+    expect(cols[0].Header()).toEqual(
+      <div className="rt-th-content">
+        <div>header</div>
+      </div>
+    )
 
     // Footer
     cols = buildColumnDefs([{ accessor: 'x' }])
@@ -414,12 +420,12 @@ describe('buildColumnDefs', () => {
   test('header sort icons', () => {
     // No sort
     let cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }])
-    expect(cols[0].Header()).toEqual('xy')
+    expect(cols[0].Header()).toEqual(<div className="rt-th-content">xy</div>)
     cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }], null, {
       sortable: false,
       showSortIcon: true
     })
-    expect(cols[0].Header()).toEqual('xy')
+    expect(cols[0].Header()).toEqual(<div className="rt-th-content">xy</div>)
 
     // Table sort
     cols = buildColumnDefs([{ name: 'x', accessor: 'x' }], null, {
@@ -428,7 +434,7 @@ describe('buildColumnDefs', () => {
     })
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        {'x'}
+        <div className="rt-th-content">x</div>
         <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
@@ -440,7 +446,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         <span aria-hidden="true" className="rt-sort-left" />
-        {'x'}
+        <div className="rt-th-content">x</div>
       </div>
     )
 
@@ -451,7 +457,7 @@ describe('buildColumnDefs', () => {
     })
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        {'xy'}
+        <div className="rt-th-content">xy</div>
         <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
@@ -468,8 +474,8 @@ describe('buildColumnDefs', () => {
         showSortIcon: false
       }
     )
-    expect(cols[0].Header()).toEqual('x')
-    expect(cols[1].Header()).toEqual('y')
+    expect(cols[0].Header()).toEqual(<div className="rt-th-content">x</div>)
+    expect(cols[1].Header()).toEqual(<div className="rt-th-content">y</div>)
 
     // showSortable
     cols = buildColumnDefs(
@@ -487,12 +493,12 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         <span aria-hidden="true" className="rt-sort rt-sort-left" />
-        {'x'}
+        <div className="rt-th-content">x</div>
       </div>
     )
     expect(cols[1].Header()).toEqual(
       <div className="rt-sort-header">
-        {'y'}
+        <div className="rt-th-content">y</div>
         <span aria-hidden="true" className="rt-sort rt-sort-right" />
       </div>
     )
