@@ -168,13 +168,14 @@ input[type='radio'].rt-select-input {
     position: sticky;
     top: 0;
     background: inherit;
-    z-index: 1;
+    z-index: 2;
   }
 
   .ReactTable .rt-tfoot {
     position: sticky;
     bottom: 0;
     background: inherit;
+    z-index: 2;
   }
 }
 
