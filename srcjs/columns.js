@@ -184,7 +184,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
       // Since header content can be nested in wrapper divs (either sort container
       // or resizable container), header content must be wrapped in their own
-      // block-level container to handle text overflow and ellipsis truncation properly.
+      // container to handle text overflow and ellipsis truncation properly.
       // Note that ellipsis truncation may still not work if custom header content
       // is a block element.
       let content
@@ -193,7 +193,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       } else if (col.html) {
         content = <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: header }} />
       } else {
-        content = <div className="rt-th-content">{header != null ? String(header) : ''}</div>
+        content = <span className="rt-th-content">{header != null ? String(header) : ''}</span>
       }
 
       // Add sort icon to column header

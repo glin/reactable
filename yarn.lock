@@ -919,10 +919,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@glin/react-table@6.7.0-7":
-  version "6.7.0-7"
-  resolved "https://registry.yarnpkg.com/@glin/react-table/-/react-table-6.7.0-7.tgz#ba948ed9713216c1fa3168148ef75631699ea7ad"
-  integrity sha512-7n4Bcdm2GdKNRUQw2UnWeiLLkGsgDzlzJSyeTjM1yOoedWV1ySPfAt2X92irV5P2S52yxchi+hvtZHMjRdHFag==
+"@glin/react-table@6.7.0-8":
+  version "6.7.0-8"
+  resolved "https://registry.yarnpkg.com/@glin/react-table/-/react-table-6.7.0-8.tgz#fde545a6c5e6a2f4937e921973470428082dfb28"
+  integrity sha512-3GKrRikciA6KpVNjurdGeKSoFyetY4EwIjEYJzxNsrejeqYbkjI3YHxj2i3lqLLymCIKPPCVdn0Ydc7mem5TVQ==
   dependencies:
     classnames "^2.2.5"
 
