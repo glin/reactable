@@ -3303,6 +3303,64 @@ describe('Crosstalk', () => {
     expect(mockSelection.set).toHaveBeenCalledTimes(4)
   })
 
+  it('clears selection filter on selection from table', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    const onSelection = mockSelection.on.mock.calls[0][1]
+    const onFilter = mockFilter.on.mock.calls[0][1]
+
+    onFilter({ sender: 'some other widget', value: ['key2', 'key3'] })
+    onSelection({ sender: 'some other widget', value: ['key2'] })
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    const selectRow2Checkbox = selectRowCheckboxes[1]
+
+    fireEvent.click(selectRow2Checkbox)
+    onSelection({ sender: mockSelection, value: ['key2'] })
+    expect(mockSelection.set).toHaveBeenLastCalledWith(['key2'])
+    expect(getRows(container)).toHaveLength(2)
+    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('ccc')).toBeTruthy()
+  })
+
+  it('clears selection state on selection changes from other widgets', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    const { container } = render(<Reactable {...props} />)
+    const onSelection = mockSelection.on.mock.calls[0][1]
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    const selectRow1Checkbox = selectRowCheckboxes[1]
+    const selectRow2Checkbox = selectRowCheckboxes[2]
+
+    fireEvent.click(selectRow1Checkbox)
+    fireEvent.click(selectRow2Checkbox)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    expect(selectRow2Checkbox.checked).toEqual(true)
+
+    onSelection({ sender: 'some other widget', value: null })
+    expect(selectRow1Checkbox.checked).toEqual(false)
+    expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
   it('does not create filter/selection handles when Crosstalk is not used', () => {
     const props = {
       data: { a: [1, 2] },

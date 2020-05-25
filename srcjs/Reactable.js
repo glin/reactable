@@ -522,11 +522,11 @@ class Reactable extends React.Component {
     this.setState({ selected }, this.onSelectedChange)
   }
 
-  setSelection(indices) {
-    this.setState({ selected: new Set(indices) }, this.onSelectedChange)
+  setSelection(indices, updateCrosstalk = true) {
+    this.setState({ selected: new Set(indices) }, () => this.onSelectedChange(updateCrosstalk))
   }
 
-  onSelectedChange() {
+  onSelectedChange(updateCrosstalk = true) {
     const { selection, selectionId } = this.props
     if (selection && selectionId && window.Shiny) {
       // Convert to R's 1-based indices
@@ -534,7 +534,7 @@ class Reactable extends React.Component {
       window.Shiny.onInputChange(selectionId, selected)
     }
 
-    if (this.ctSelection) {
+    if (this.ctSelection && updateCrosstalk) {
       const selected = [...this.state.selected].map(i => this.props.crosstalkKey[i])
       this.ctSelection.set(selected)
     }
@@ -667,49 +667,67 @@ class Reactable extends React.Component {
 
     const { crosstalkKey, crosstalkGroup } = this.props
     if (crosstalkGroup && window.crosstalk) {
-      const instance = this.tableInstance.current
-      const column = { id: instance.props.crosstalkId }
-      const rowByKey = crosstalkKey.reduce((obj, key, index) => {
-        obj[key] = index
-        return obj
-      }, {})
-
       this.ctSelection = new window.crosstalk.SelectionHandle(crosstalkGroup)
       this.ctFilter = new window.crosstalk.FilterHandle(crosstalkGroup)
       // Keep track of selected and filtered state updated by other widgets.
       // SelectionHandle and FilterHandle also track state, but will include changes
-      // coming from this table as well.
+      // coming from the table as well.
       this.ctSelected = null
       this.ctFiltered = null
 
-      const getFilteredRows = () => {
+      const rowByKey = crosstalkKey.reduce((obj, key, index) => {
+        obj[key] = index
+        return obj
+      }, {})
+      const instance = this.tableInstance.current
+      const column = { id: instance.props.crosstalkId }
+      const applyCrosstalkFilter = () => {
         // Selection value is an array of keys, or null or empty array if empty
         // Filter value is an an array of keys, or null if empty
         const selectedKeys = this.ctSelected && this.ctSelected.length > 0 ? this.ctSelected : null
         const filteredKeys = this.ctFiltered
-        if (!selectedKeys && !filteredKeys) return null
         let keys
-        if (!selectedKeys) {
+        if (!selectedKeys && !filteredKeys) {
+          keys = null
+        } else if (!selectedKeys) {
           keys = filteredKeys
         } else if (!filteredKeys) {
           keys = selectedKeys
         } else {
           keys = selectedKeys.filter(key => filteredKeys.includes(key))
         }
-        return keys.map(key => rowByKey[key])
+        const filteredRows = keys ? keys.map(key => rowByKey[key]) : null
+        instance.filterColumn(column, filteredRows)
+      }
+
+      const setCrosstalkSelection = value => {
+        if (this.ctSelected !== value) {
+          this.ctSelected = value
+          applyCrosstalkFilter()
+        }
+      }
+
+      const setCrosstalkFilter = value => {
+        if (this.ctFiltered !== value) {
+          this.ctFiltered = value
+          applyCrosstalkFilter()
+        }
       }
 
       this.ctSelection.on('change', e => {
         if (e.sender !== this.ctSelection) {
-          this.ctSelected = e.value
-          instance.filterColumn(column, getFilteredRows())
+          setCrosstalkSelection(e.value)
+          // Selections from other widgets should clear table selection state
+          this.setSelection([], false)
+        } else {
+          // Selections from table should clear selections from other widgets
+          setCrosstalkSelection(null)
         }
       })
 
       this.ctFilter.on('change', e => {
         if (e.sender !== this.ctFilter) {
-          this.ctFiltered = e.value
-          instance.filterColumn(column, getFilteredRows())
+          setCrosstalkFilter(e.value)
         }
       })
     }
