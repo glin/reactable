@@ -6,8 +6,7 @@
 \alias{renderReactable}
 \title{Shiny bindings for reactable}
 \usage{
-reactableOutput(outputId, width = "auto", height = "auto",
-  inline = FALSE)
+reactableOutput(outputId, width = "auto", height = "auto", inline = FALSE)
 
 renderReactable(expr, env = parent.frame(), quoted = FALSE)
 }

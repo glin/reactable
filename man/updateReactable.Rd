@@ -4,8 +4,13 @@
 \alias{updateReactable}
 \title{Update a reactable instance}
 \usage{
-updateReactable(outputId, selected = NULL, expanded = NULL,
-  page = NULL, session = NULL)
+updateReactable(
+  outputId,
+  selected = NULL,
+  expanded = NULL,
+  page = NULL,
+  session = NULL
+)
 }
 \arguments{
 \item{outputId}{The Shiny output ID of the \code{reactable} instance.}

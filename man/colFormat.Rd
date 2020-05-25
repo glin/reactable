@@ -4,10 +4,19 @@
 \alias{colFormat}
 \title{Column formatting options}
 \usage{
-colFormat(prefix = NULL, suffix = NULL, digits = NULL,
-  separators = FALSE, percent = FALSE, currency = NULL,
-  datetime = FALSE, date = FALSE, time = FALSE, hour12 = NULL,
-  locales = NULL)
+colFormat(
+  prefix = NULL,
+  suffix = NULL,
+  digits = NULL,
+  separators = FALSE,
+  percent = FALSE,
+  currency = NULL,
+  datetime = FALSE,
+  date = FALSE,
+  time = FALSE,
+  hour12 = NULL,
+  locales = NULL
+)
 }
 \arguments{
 \item{prefix}{Prefix string.}
@@ -59,7 +68,7 @@ data <- data.frame(
 reactable(data, columns = list(
   price_USD = colDef(format = colFormat(prefix = "$", separators = TRUE, digits = 2)),
   price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locale = "hi-IN")),
-  temp = colDef(format = colFormat(suffix = " °C")),
+  temp = colDef(format = colFormat(suffix = " \u00b0C")),
   percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
   date = colDef(format = colFormat(date = TRUE, locale = "en-GB"))
 ))

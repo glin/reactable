@@ -4,8 +4,15 @@
 \alias{colGroup}
 \title{Column group definitions}
 \usage{
-colGroup(name = NULL, columns = NULL, header = NULL, html = FALSE,
-  align = NULL, headerClass = NULL, headerStyle = NULL)
+colGroup(
+  name = NULL,
+  columns = NULL,
+  header = NULL,
+  html = FALSE,
+  align = NULL,
+  headerClass = NULL,
+  headerStyle = NULL
+)
 }
 \arguments{
 \item{name}{Column group header name.}

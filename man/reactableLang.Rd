@@ -4,15 +4,23 @@
 \alias{reactableLang}
 \title{Language options}
 \usage{
-reactableLang(sortLabel = "Sort {name}", filterPlaceholder = "",
-  filterLabel = "Filter {name}", searchPlaceholder = "Search",
-  searchLabel = "Search", noData = "No rows found",
-  pageNext = "Next", pagePrevious = "Previous",
+reactableLang(
+  sortLabel = "Sort {name}",
+  filterPlaceholder = "",
+  filterLabel = "Filter {name}",
+  searchPlaceholder = "Search",
+  searchLabel = "Search",
+  noData = "No rows found",
+  pageNext = "Next",
+  pagePrevious = "Previous",
   pageNumbers = "{page} of {pages}",
   pageInfo = "{rowStart}–{rowEnd} of {rows} rows",
-  pageSizeOptions = "Show {rows}", pageNextLabel = "Next page",
-  pagePreviousLabel = "Previous page", pageNumberLabel = "Page {page}",
-  pageJumpLabel = "Go to page", pageSizeOptionsLabel = "Rows per page",
+  pageSizeOptions = "Show {rows}",
+  pageNextLabel = "Next page",
+  pagePreviousLabel = "Previous page",
+  pageNumberLabel = "Page {page}",
+  pageJumpLabel = "Go to page",
+  pageSizeOptionsLabel = "Rows per page",
   defaultGroupHeader = "Grouped",
   detailsExpandLabel = "Expand details",
   detailsCollapseLabel = "Collapse details",
@@ -20,7 +28,9 @@ reactableLang(sortLabel = "Sort {name}", filterPlaceholder = "",
   deselectAllRowsLabel = "Deselect all rows",
   selectAllSubRowsLabel = "Select all rows in group",
   deselectAllSubRowsLabel = "Deselect all rows in group",
-  selectRowLabel = "Select row", deselectRowLabel = "Deselect row")
+  selectRowLabel = "Select row",
+  deselectRowLabel = "Deselect row"
+)
 }
 \arguments{
 \item{sortLabel}{Accessible label for column sort buttons.
@@ -112,9 +122,9 @@ reactable(
   language = reactableLang(
     searchPlaceholder = "Search...",
     noData = "No entries found",
-    pageInfo = "{rowStart}\\u2013{rowEnd} of {rows} entries",
-    pagePrevious = "\\u276e",
-    pageNext = "\\u276f",
+    pageInfo = "{rowStart}\u2013{rowEnd} of {rows} entries",
+    pagePrevious = "\u276e",
+    pageNext = "\u276f",
 
     # Accessible labels for assistive technology, such as screen readers
     pagePreviousLabel = "Previous page",

@@ -4,23 +4,54 @@
 \alias{reactable}
 \title{Create an interactive data table}
 \usage{
-reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
-  groupBy = NULL, sortable = TRUE, resizable = FALSE,
-  filterable = FALSE, searchable = FALSE, defaultColDef = NULL,
-  defaultColGroup = NULL, defaultSortOrder = "asc",
-  defaultSorted = NULL, pagination = TRUE, defaultPageSize = 10,
-  showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
-  paginationType = "numbers", showPagination = NULL,
-  showPageInfo = TRUE, minRows = 1, details = NULL,
-  defaultExpanded = FALSE, selection = NULL, selectionId = NULL,
-  defaultSelected = NULL, onClick = NULL, highlight = FALSE,
-  outlined = FALSE, bordered = FALSE, borderless = FALSE,
-  striped = FALSE, compact = FALSE, wrap = TRUE,
-  showSortIcon = TRUE, showSortable = FALSE, class = NULL,
-  style = NULL, rowClass = NULL, rowStyle = NULL, fullWidth = TRUE,
-  width = "auto", height = "auto",
+reactable(
+  data,
+  columns = NULL,
+  columnGroups = NULL,
+  rownames = NULL,
+  groupBy = NULL,
+  sortable = TRUE,
+  resizable = FALSE,
+  filterable = FALSE,
+  searchable = FALSE,
+  defaultColDef = NULL,
+  defaultColGroup = NULL,
+  defaultSortOrder = "asc",
+  defaultSorted = NULL,
+  pagination = TRUE,
+  defaultPageSize = 10,
+  showPageSizeOptions = FALSE,
+  pageSizeOptions = c(10, 25, 50, 100),
+  paginationType = "numbers",
+  showPagination = NULL,
+  showPageInfo = TRUE,
+  minRows = 1,
+  details = NULL,
+  defaultExpanded = FALSE,
+  selection = NULL,
+  selectionId = NULL,
+  defaultSelected = NULL,
+  onClick = NULL,
+  highlight = FALSE,
+  outlined = FALSE,
+  bordered = FALSE,
+  borderless = FALSE,
+  striped = FALSE,
+  compact = FALSE,
+  wrap = TRUE,
+  showSortIcon = TRUE,
+  showSortable = FALSE,
+  class = NULL,
+  style = NULL,
+  rowClass = NULL,
+  rowStyle = NULL,
+  fullWidth = TRUE,
+  width = "auto",
+  height = "auto",
   theme = getOption("reactable.theme"),
-  language = getOption("reactable.language"), elementId = NULL)
+  language = getOption("reactable.language"),
+  elementId = NULL
+)
 }
 \arguments{
 \item{data}{A data frame or matrix.
@@ -183,7 +214,7 @@ reactable(iris, groupBy = "Species", columns = list(
 reactable(iris, details = function(index) {
   htmltools::div(
     "Details for row: ", index,
-    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\\n"))
+    htmltools::tags$pre(paste(capture.output(iris[index, ]), collapse = "\n"))
   )
 })
 

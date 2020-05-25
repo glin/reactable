@@ -4,18 +4,36 @@
 \alias{reactableTheme}
 \title{Theme options}
 \usage{
-reactableTheme(color = NULL, backgroundColor = NULL,
-  borderColor = NULL, borderWidth = NULL, stripedColor = NULL,
-  highlightColor = NULL, cellPadding = NULL, style = NULL,
-  tableStyle = NULL, headerStyle = NULL, groupHeaderStyle = NULL,
-  tableBodyStyle = NULL, rowGroupStyle = NULL, rowStyle = NULL,
-  rowStripedStyle = NULL, rowHighlightStyle = NULL,
-  rowSelectedStyle = NULL, cellStyle = NULL, footerStyle = NULL,
-  inputStyle = NULL, filterInputStyle = NULL,
-  searchInputStyle = NULL, selectStyle = NULL,
-  paginationStyle = NULL, pageButtonStyle = NULL,
-  pageButtonHoverStyle = NULL, pageButtonActiveStyle = NULL,
-  pageButtonCurrentStyle = NULL)
+reactableTheme(
+  color = NULL,
+  backgroundColor = NULL,
+  borderColor = NULL,
+  borderWidth = NULL,
+  stripedColor = NULL,
+  highlightColor = NULL,
+  cellPadding = NULL,
+  style = NULL,
+  tableStyle = NULL,
+  headerStyle = NULL,
+  groupHeaderStyle = NULL,
+  tableBodyStyle = NULL,
+  rowGroupStyle = NULL,
+  rowStyle = NULL,
+  rowStripedStyle = NULL,
+  rowHighlightStyle = NULL,
+  rowSelectedStyle = NULL,
+  cellStyle = NULL,
+  footerStyle = NULL,
+  inputStyle = NULL,
+  filterInputStyle = NULL,
+  searchInputStyle = NULL,
+  selectStyle = NULL,
+  paginationStyle = NULL,
+  pageButtonStyle = NULL,
+  pageButtonHoverStyle = NULL,
+  pageButtonActiveStyle = NULL,
+  pageButtonCurrentStyle = NULL
+)
 }
 \arguments{
 \item{color}{Default text color.}
@@ -89,8 +107,8 @@ To set the default theme for all tables, use the global \code{reactable.theme} o
 \details{
 You can use nested CSS selectors in \code{style} arguments to target
 the current element, using \code{&} as the selector, or other child elements
-(just like in Sass). This is useful for adding pseudo-classes like \code{&:hover},
-or adding styles in a certain context like \code{.outer-container &}.
+(just like in Sass). This is useful for adding pseudo-classes like \verb{&:hover},
+or adding styles in a certain context like \verb{.outer-container &}.
 }
 \examples{
 reactable(

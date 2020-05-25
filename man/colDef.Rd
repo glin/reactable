@@ -4,14 +4,34 @@
 \alias{colDef}
 \title{Column definitions}
 \usage{
-colDef(name = NULL, aggregate = NULL, sortable = NULL,
-  resizable = NULL, filterable = NULL, show = TRUE,
-  defaultSortOrder = NULL, sortNALast = FALSE, format = NULL,
-  cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
-  details = NULL, html = FALSE, na = "", minWidth = NULL,
-  maxWidth = NULL, width = NULL, align = NULL, class = NULL,
-  style = NULL, headerClass = NULL, headerStyle = NULL,
-  footerClass = NULL, footerStyle = NULL)
+colDef(
+  name = NULL,
+  aggregate = NULL,
+  sortable = NULL,
+  resizable = NULL,
+  filterable = NULL,
+  show = TRUE,
+  defaultSortOrder = NULL,
+  sortNALast = FALSE,
+  format = NULL,
+  cell = NULL,
+  aggregated = NULL,
+  header = NULL,
+  footer = NULL,
+  details = NULL,
+  html = FALSE,
+  na = "",
+  minWidth = NULL,
+  maxWidth = NULL,
+  width = NULL,
+  align = NULL,
+  class = NULL,
+  style = NULL,
+  headerClass = NULL,
+  headerStyle = NULL,
+  footerClass = NULL,
+  footerStyle = NULL
+)
 }
 \arguments{
 \item{name}{Column header name.}
