@@ -379,8 +379,33 @@ ReactTable.prototype.filterData = function (
         return rows
       }
     }
-    filterColumns = allVisibleColumns.concat(searchColumn)
+    filterColumns = filterColumns.concat(searchColumn)
   }
+
+  if (this.props.crosstalkGroup) {
+    const ctColumn = {
+      id: this.props.crosstalkId,
+      filterAll: true,
+      filterable: true,
+      filterMethod: (filter, rows) => {
+        if (!filter.value) {
+          return rows
+        }
+        rows = rows.filter(row => {
+          // Don't filter on aggregated rows
+          if (row._subRows) {
+            return true
+          }
+          if (filter.value.includes(row._index)) {
+            return true
+          }
+        })
+        return rows
+      }
+    }
+    filterColumns = filterColumns.concat(ctColumn)
+  }
+
   return this.oldFilterData(data, filtered, defaultFilterMethod, filterColumns)
 }
 
@@ -508,6 +533,11 @@ class Reactable extends React.Component {
       const selected = [...this.state.selected].map(i => i + 1)
       window.Shiny.onInputChange(selectionId, selected)
     }
+
+    if (this.ctSelection) {
+      const selected = [...this.state.selected].map(i => this.props.crosstalkKey[i])
+      this.ctSelection.set(selected)
+    }
   }
 
   toggleExpand(rowInfo, column) {
@@ -634,6 +664,55 @@ class Reactable extends React.Component {
 
     // Send initial reactable state to Shiny
     this.onTableUpdate()
+
+    const { crosstalkKey, crosstalkGroup } = this.props
+    if (crosstalkGroup && window.crosstalk) {
+      const instance = this.tableInstance.current
+      const column = { id: instance.props.crosstalkId }
+      const rowByKey = crosstalkKey.reduce((obj, key, index) => {
+        obj[key] = index
+        return obj
+      }, {})
+
+      this.ctSelection = new window.crosstalk.SelectionHandle(crosstalkGroup)
+      this.ctFilter = new window.crosstalk.FilterHandle(crosstalkGroup)
+      // Keep track of selected and filtered state updated by other widgets.
+      // SelectionHandle and FilterHandle also track state, but will include changes
+      // coming from this table as well.
+      this.ctSelected = null
+      this.ctFiltered = null
+
+      const getFilteredRows = () => {
+        // Selection value is an array of keys, or null or empty array if empty
+        // Filter value is an an array of keys, or null if empty
+        const selectedKeys = this.ctSelected && this.ctSelected.length > 0 ? this.ctSelected : null
+        const filteredKeys = this.ctFiltered
+        if (!selectedKeys && !filteredKeys) return null
+        let keys
+        if (!selectedKeys) {
+          keys = filteredKeys
+        } else if (!filteredKeys) {
+          keys = selectedKeys
+        } else {
+          keys = selectedKeys.filter(key => filteredKeys.includes(key))
+        }
+        return keys.map(key => rowByKey[key])
+      }
+
+      this.ctSelection.on('change', e => {
+        if (e.sender !== this.ctSelection) {
+          this.ctSelected = e.value
+          instance.filterColumn(column, getFilteredRows())
+        }
+      })
+
+      this.ctFilter.on('change', e => {
+        if (e.sender !== this.ctFilter) {
+          this.ctFiltered = e.value
+          instance.filterColumn(column, getFilteredRows())
+        }
+      })
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -649,6 +728,15 @@ class Reactable extends React.Component {
         const expanded = defaultExpanded || {}
         this.setState({ expanded })
       }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.ctSelection) {
+      this.ctSelection.close()
+    }
+    if (this.ctFilter) {
+      this.ctFilter.close()
     }
   }
 
@@ -690,6 +778,8 @@ class Reactable extends React.Component {
       width,
       height,
       language,
+      crosstalkGroup,
+      crosstalkKey,
       dataKey,
       theme
     } = this.props
@@ -972,6 +1062,9 @@ class Reactable extends React.Component {
         {...selectProps}
         theme={theme}
         language={language}
+        crosstalkGroup={crosstalkGroup}
+        crosstalkKey={crosstalkKey}
+        crosstalkId="__crosstalk__"
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}
         // Used to deep compare data and columns props
@@ -1045,6 +1138,8 @@ Reactable.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   theme: PropTypes.object,
   language: PropTypes.object,
+  crosstalkKey: PropTypes.array,
+  crosstalkGroup: PropTypes.string,
   dataKey: PropTypes.string,
   nested: PropTypes.bool
 }

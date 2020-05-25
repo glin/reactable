@@ -2,6 +2,8 @@
 
 ### New features
 
+* `reactable()` now supports linked selection and filtering with Crosstalk-compatible
+  HTML widgets ([#46](https://github.com/glin/reactable/issues/46)).
 * `reactable()` gains a `defaultSelected` argument to set default selected rows.
 * `reactable()` gains a `defaultExpanded` argument to set default expanded rows.
 * New `updateReactable()` function to update the selected rows, expanded rows, or

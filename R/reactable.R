@@ -15,11 +15,13 @@
 #' R console.
 #'
 #' @param data A data frame or matrix.
+#'
+#'   Can also be a [`crosstalk::SharedData`] object that wraps a data frame.
 #' @param columns Named list of column definitions. See [colDef()].
 #' @param columnGroups List of column group definitions. See [colGroup()].
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
 #'
-#'  To customize the row names column, use `".rownames"` as the column name.
+#'   To customize the row names column, use `".rownames"` as the column name.
 #' @param groupBy Character vector of column names to group by.
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
@@ -160,6 +162,18 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       theme = getOption("reactable.theme"),
                       language = getOption("reactable.language"),
                       elementId = NULL) {
+
+  crosstalkKey <- NULL
+  crosstalkGroup <- NULL
+  dependencies <- list()
+  if (requireNamespace("crosstalk", quietly = TRUE)) {
+    if (crosstalk::is.SharedData(data)) {
+      crosstalkKey <- data$key()
+      crosstalkGroup <- data$groupName()
+      data <- data$origData()
+      dependencies <- crosstalk::crosstalkLibs()
+    }
+  }
 
   if (!(is.data.frame(data) || is.matrix(data))) {
     stop("`data` must be a data frame or matrix")
@@ -421,7 +435,6 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     stop("`language` must be a reactable language options object")
   }
 
-  dependencies <- list()
   addDependencies <- function(x) {
     # Dedupe dependencies
     for (dep in htmltools::findDependencies(x)) {
@@ -564,6 +577,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     height = if (height != "auto") height,
     theme = theme,
     language = language,
+    crosstalkKey = crosstalkKey,
+    crosstalkGroup = crosstalkGroup,
     dataKey = digest::digest(list(data, cols))
   ))
 

@@ -24,7 +24,9 @@ Imports:
     reactR
 Suggests:
     covr,
+    crosstalk,
     dplyr,
+    leaflet,
     rmarkdown,
     shiny,
     sparkline,

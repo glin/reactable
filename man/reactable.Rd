@@ -23,7 +23,9 @@ reactable(data, columns = NULL, columnGroups = NULL, rownames = NULL,
   language = getOption("reactable.language"), elementId = NULL)
 }
 \arguments{
-\item{data}{A data frame or matrix.}
+\item{data}{A data frame or matrix.
+
+Can also be a \code{\link[crosstalk:SharedData]{crosstalk::SharedData}} object that wraps a data frame.}
 
 \item{columns}{Named list of column definitions. See \code{\link[=colDef]{colDef()}}.}
 

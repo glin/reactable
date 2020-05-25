@@ -1399,6 +1399,118 @@ shinyApp(ui, server)
 ```
 
 
+## Cross-Widget Interactions
+
+```{r, echo=FALSE}
+# pkgdown puts HTML dependencies in the body, which means added styles
+# like Bootstrap can mess with default/custom pkgdown styles.
+# Since pkgdown and html_document already include Bootstrap, remove
+# Bootstrap dependencies from the crosstalk widgets.
+
+library(crosstalk)
+
+without_bootstrap <- function(func) {
+  func_without_bs <- function(...) {
+    x <- func(...)
+    htmlDependencies(x) <- Filter(function(d) d$name != "bootstrap", htmlDependencies(x))
+    x
+  }
+}
+
+filter_checkbox <- without_bootstrap(crosstalk::filter_checkbox)
+filter_slider <- without_bootstrap(crosstalk::filter_slider)
+filter_select <- without_bootstrap(crosstalk::filter_select)
+bscols <- without_bootstrap(crosstalk::bscols)
+```
+
+> **New in v0.1.0.9000**
+
+You can link selection and filtering with other HTML widgets in an R Markdown
+document or Shiny app using [Crosstalk](https://rstudio.github.io/crosstalk).
+To get started, install the `crosstalk` package and wrap your data frame in a
+`crosstalk::SharedData` object:
+
+```{r, eval=FALSE}
+install.packages("crosstalk")
+
+library(crosstalk)
+
+data <- SharedData$new(iris)
+```
+
+Then, pass the shared data to `reactable()` and any other Crosstalk-compatible
+HTML widget or filter input:
+
+```{r, eval=FALSE}
+reactable(data)
+
+filter_slider("sepal_length", "Sepal Length", data, ~Sepal.Length)
+```
+
+For more examples and a list of Crosstalk-compatible widgets, check out the
+Crosstalk documentation: https://rstudio.github.io/crosstalk/using.html
+
+### Filtering
+
+Tables can be filtered by widgets that support Crosstalk's filtering API,
+such as Crosstalk's `filter_checkbox()`, `filter_slider()`, and `filter_select()` inputs:
+
+```{r}
+library(crosstalk)
+
+cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
+data <- SharedData$new(cars)
+
+bscols(
+  widths = c(3, 9),
+  list(
+    filter_checkbox("type", "Type", data, ~Type),
+    filter_slider("price", "Price", data, ~Price, width = "100%"),
+    filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+  ),
+  reactable(data, minRows = 10)
+)
+```
+
+### Linked selection
+
+Table selection state can be linked with other widgets that support Crosstalk's
+linked selection (or linked brushing) API.
+
+In this example, you can select rows to highlight points on the map, or select areas
+on the map to highlight rows in the table.
+
+```{r, message=FALSE}
+library(crosstalk)
+library(leaflet)
+library(dplyr)
+
+# A SpatialPointsDataFrame for the map.
+# Set a group name to share data points with the table.
+brew_sp <- SharedData$new(breweries91, group = "breweries")
+
+# A regular data frame (without coordinates) for the table.
+# Use the same group name as the map data.
+brew_data <- as_tibble(breweries91) %>%
+  select(brewery, address, village, founded) %>%
+  SharedData$new(group = "breweries")
+
+map <- leaflet(brew_sp) %>%
+  addTiles() %>%
+  addMarkers()
+
+tbl <- reactable(
+  brew_data,
+  selection = "multiple",
+  onClick = "select",
+  rowStyle = list(cursor = "pointer"),
+  minRows = 10
+)
+
+htmltools::tagList(map, tbl)
+```
+
+
 ```{css echo=FALSE}
 /* rmarkdown html documents */
 .main-container {

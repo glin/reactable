@@ -207,6 +207,15 @@ test_that("dates/datetimes are serialized in ISO 8601", {
   expect_equal(as.character(attribs$data), '{"x":["2019-05-06T03:22:15"],"y":["2010-12-30"]}')
 })
 
+test_that("supports Crosstalk", {
+  data <- crosstalk::SharedData$new(data.frame(x = 1, y = "2"))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[1],"y":["2"]}')
+  expect_equal(attribs$crosstalkKey, data$key())
+  expect_equal(attribs$crosstalkGroup, data$groupName())
+})
+
 test_that("rownames", {
   # Integer row names
   tbl <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)

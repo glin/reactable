@@ -3131,3 +3131,188 @@ describe('sends reactable state to Shiny', () => {
     )
   })
 })
+
+describe('Crosstalk', () => {
+  const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.-padRow)')
+  const getSelectRowCheckboxes = container =>
+    container.querySelectorAll('.rt-select-input[type="checkbox"]')
+
+  let mockSelection, mockFilter
+
+  beforeEach(() => {
+    mockSelection = { on: jest.fn(), close: jest.fn(), set: jest.fn() }
+    mockFilter = { on: jest.fn(), close: jest.fn() }
+    window.crosstalk = {
+      SelectionHandle: jest.fn().mockReturnValueOnce(mockSelection),
+      FilterHandle: jest.fn().mockReturnValueOnce(mockFilter)
+    }
+  })
+
+  afterEach(() => {
+    mockSelection = null
+    mockFilter = null
+    delete window.crosstalk
+  })
+
+  it('handles selection changes', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+
+    const { container, getByText, unmount } = render(<Reactable {...props} />)
+    expect(window.crosstalk.SelectionHandle).toHaveBeenCalledTimes(1)
+    expect(window.crosstalk.SelectionHandle).toHaveBeenCalledWith('group')
+    expect(mockSelection.on).toHaveBeenCalledTimes(1)
+
+    const [selectionType, onSelection] = mockSelection.on.mock.calls[0]
+    expect(selectionType).toEqual('change')
+
+    // Select one value
+    onSelection({ sender: 'some other widget', value: ['key2'] })
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    // Clear selection
+    onSelection({ sender: 'some other widget', value: [] })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Select multiple values
+    onSelection({ sender: 'some other widget', value: ['key3', 'key1', 'key2'] })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Clear selection
+    onSelection({ sender: 'some other widget', value: null })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Should ignore selections from same sender
+    onSelection({ sender: mockSelection, value: ['key2'] })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Should cleanup
+    unmount()
+    expect(mockSelection.close).toHaveBeenCalledTimes(1)
+  })
+
+  it('handles filter changes', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    const { container, getByText, unmount } = render(<Reactable {...props} />)
+    expect(window.crosstalk.FilterHandle).toHaveBeenCalledTimes(1)
+    expect(window.crosstalk.FilterHandle).toHaveBeenCalledWith('group')
+    expect(mockFilter.on).toHaveBeenCalledTimes(1)
+
+    const [filterType, onFilter] = mockFilter.on.mock.calls[0]
+    expect(filterType).toEqual('change')
+
+    // Filter one value
+    onFilter({ sender: 'some other widget', value: ['key2'] })
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    // Filter multiple values
+    onFilter({ sender: 'some other widget', value: ['key3', 'key1'] })
+    expect(getRows(container)).toHaveLength(2)
+    expect(getByText('ccc')).toBeTruthy()
+    expect(getByText('aaa')).toBeTruthy()
+
+    // Clear filter
+    onFilter({ sender: 'some other widget', value: null })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Should ignore selections from same sender
+    onFilter({ sender: mockFilter, value: ['key2'] })
+    expect(getRows(container)).toHaveLength(3)
+
+    // Should cleanup
+    unmount()
+    expect(mockFilter.close).toHaveBeenCalledTimes(1)
+  })
+
+  it('handles both selection and filter changes', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+
+    const onSelection = mockSelection.on.mock.calls[0][1]
+    const onFilter = mockFilter.on.mock.calls[0][1]
+
+    // Filter with existing selection
+    onSelection({ sender: 'some other widget', value: ['key2'] })
+    onFilter({ sender: 'some other widget', value: ['key2', 'key3'] })
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    // Selection with existing filter
+    onFilter({ sender: 'some other widget', value: ['key1', 'key3'] })
+    onSelection({ sender: 'some other widget', value: ['key3'] })
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('ccc')).toBeTruthy()
+
+    // Clear selection and filter
+    onSelection({ sender: 'some other widget', value: [] })
+    expect(getRows(container)).toHaveLength(2)
+    onFilter({ sender: 'some other widget', value: null })
+    expect(getRows(container)).toHaveLength(3)
+  })
+
+  it('sends selection changes', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    const { container } = render(<Reactable {...props} />)
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    const selectAllCheckbox = selectRowCheckboxes[0]
+    const selectRow1Checkbox = selectRowCheckboxes[1]
+    const selectRow2Checkbox = selectRowCheckboxes[2]
+
+    fireEvent.click(selectRow2Checkbox)
+    expect(mockSelection.set).toHaveBeenLastCalledWith(['key2'])
+    fireEvent.click(selectRow1Checkbox)
+    expect(mockSelection.set).toHaveBeenLastCalledWith(['key2', 'key1'])
+    fireEvent.click(selectAllCheckbox)
+    expect(mockSelection.set).toHaveBeenLastCalledWith(['key2', 'key1', 'key3'])
+    fireEvent.click(selectAllCheckbox)
+    expect(mockSelection.set).toHaveBeenLastCalledWith([])
+    expect(mockSelection.set).toHaveBeenCalledTimes(4)
+  })
+
+  it('does not create filter/selection handles when Crosstalk is not used', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    render(<Reactable {...props} />)
+    expect(window.crosstalk.FilterHandle).not.toHaveBeenCalled()
+    expect(window.crosstalk.SelectionHandle).not.toHaveBeenCalled()
+
+    window.crosstalk = undefined
+    render(<Reactable {...props} crosstalkGroup="group" />)
+  })
+})
