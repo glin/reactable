@@ -62,3 +62,7 @@ pre {
 .contents h4 {
   margin-top: -52px;
 }
+
+.contents li + li {
+  margin-top: 4px;
+}

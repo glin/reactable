@@ -4,7 +4,7 @@ home:
 navbar:
   structure:
     left: [reference, examples, demos, articles]
-    right: [github]
+    right: [news, github]
   components:
     home: ~
     articles:
@@ -36,7 +36,9 @@ navbar:
         href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
-    news: ~
+    news:
+      text: News
+      href: news/index.html
 
 reference:
 - title: Create tables
