@@ -866,6 +866,31 @@ reactable(
 )
 ```
 
+### Sticky columns
+You can freeze columns by applying the [`position: sticky`](https://developer.mozilla.org/en-US/docs/Web/CSS/position)
+and appropriate [`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left)
+or [`right`](https://developer.mozilla.org/en-US/docs/Web/CSS/right) CSS properties
+to columns. This gets complicated when freezing multiple columns, but reactable
+will make this easier in a future release.
+
+See [Sticky Columns](sticky-columns.html) for more details and examples.
+
+```{r}
+sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
+                     borderRight = "1px solid #eee")
+
+reactable(
+  MASS::Cars93[1:5, ],
+  columns = list(
+    Manufacturer = colDef(
+      style = sticky_style,
+      headerStyle = sticky_style
+    )
+  ),
+  defaultColDef = colDef(minWidth = 150)
+)
+```
+
 ### No full width
 Tables are full width by default, but you can shrink the table to fit its
 contents by setting `fullWidth` to `FALSE`:
