@@ -11,9 +11,6 @@
     "node": true,
     "es6": true
   },
-  "globals": {
-    "Shiny": true
-  },
   "plugins": ["react", "jsx-a11y"],
   "rules": {
     "jsx-a11y/no-onchange": "off",
