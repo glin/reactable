@@ -4,6 +4,7 @@
 ^\.babelrc$
 ^\.eslintignore$
 ^\.eslintrc\.json$
+^\.github$
 ^\.prettierrc\.json$
 ^coverage$
 ^docs$
