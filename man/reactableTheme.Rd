@@ -122,7 +122,9 @@ reactable(
     stripedColor = "#f6f8fa",
     highlightColor = "#f0f5f9",
     cellPadding = "8px 12px",
-    style = list(fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"),
+    style = list(
+      fontFamily = "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"
+    ),
     searchInputStyle = list(width = "100\%")
   )
 )
