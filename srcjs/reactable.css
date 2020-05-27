@@ -157,6 +157,15 @@ input[type='radio'].rt-select-input {
   user-select: none;
 }
 
+/**
+ * Fix flexbox bug in Safari and Chrome where table body can shrink below its
+ * min height when overflowed, causing footers to show up in table body.
+ * Fixed in Chrome 72+: https://github.com/philipwalton/flexbugs#flexbug-1
+ */
+.ReactTable .rt-tbody {
+  flex-shrink: 0;
+}
+
 /* Sticky headers/footers */
 @supports (position: sticky) {
   .ReactTable .rt-table {

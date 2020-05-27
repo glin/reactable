@@ -37,6 +37,7 @@
 * Aggregated cells in columns with row details no longer throw an error when clicked.
 * In `colDef()`, the `class` and `style` R functions now handle list-columns correctly.
 * Column headers now truncate long text properly.
+* Footers now display properly in fixed height tables for Safari and Chrome ([#41](https://github.com/glin/reactable/issues/41)).
 * Dark themes no longer affect text color in RStudio R Notebooks ([#21](https://github.com/glin/reactable/issues/21)).
 * Checkboxes and radio buttons now align with multi-line text in selectable tables.
 * Text selection now works in column headers.
