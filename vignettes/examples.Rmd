@@ -859,7 +859,6 @@ reactable(
   iris[1:20, ],
   height = 270,
   striped = TRUE,
-  borderless = TRUE,
   defaultColDef = colDef(
     footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
   )
