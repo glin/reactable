@@ -139,17 +139,6 @@
   -ms-flex-direction: column;
   flex-direction: column;
 }
-.ReactTable .rt-noData {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-  z-index: 1;
-  pointer-events: none;
-}
 .ReactTable .-loading {
   display: block;
   position: absolute;
