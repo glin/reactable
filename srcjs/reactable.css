@@ -153,6 +153,10 @@ input[type='radio'].rt-select-input {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.rt-tr.-padRow {
+  user-select: none;
+}
+
 /* Sticky headers/footers */
 @supports (position: sticky) {
   .ReactTable .rt-table {
