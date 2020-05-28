@@ -25,6 +25,9 @@ to collapse all rows.}
 
 \item{session}{The Shiny session object. Defaults to the current Shiny session.}
 }
+\value{
+None
+}
 \description{
 \code{updateReactable()} updates a reactable instance within a Shiny application.
 }

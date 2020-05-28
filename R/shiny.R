@@ -9,6 +9,7 @@
 #'   to collapse all rows.
 #' @param page The current page. A single, positive integer.
 #' @param session The Shiny session object. Defaults to the current Shiny session.
+#' @return None
 #'
 #' @examples
 #' # Run in an interactive R session
