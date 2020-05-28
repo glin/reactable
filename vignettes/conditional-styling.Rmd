@@ -192,7 +192,7 @@ props <- tibble::tribble(
   "aggregated", "true", "whether the row is aggregated",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected (new in v0.1.0.9000)"
+  "selected", "true", "whether the row is selected (new in v0.2.0)"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -302,7 +302,7 @@ props <- tibble::tribble(
   "aggregated", "true", "whether the row is aggregated",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected (new in v0.1.0.9000)"
+  "selected", "true", "whether the row is selected (new in v0.2.0)"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(

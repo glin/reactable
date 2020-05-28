@@ -316,7 +316,7 @@ props <- tibble::tribble(
   "viewIndex", "0", "row index within the page (zero-based)",
   "page", "2", "page index (zero-based)",
   "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected (new in v0.1.0.9000)"
+  "selected", "true", "whether the row is selected (new in v0.2.0)"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(

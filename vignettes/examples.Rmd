@@ -688,7 +688,7 @@ reactable(iris[1:5, ],
 
 ### Default expanded rows
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can expand all rows by default by setting `defaultExpanded` to `TRUE`:
 ```{r}
@@ -962,7 +962,7 @@ or to Shiny apps [here](https://shiny.rstudio.com/articles/css.html).
 
 ## Theming
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 Themes provide a powerful way to customize table styling that can be reused
 across tables. You can either set theme variables to change the default styles
@@ -1150,7 +1150,7 @@ reactable(iris[1:5, ], onClick = JS("
 
 ## Language Options
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can customize the language in the table by providing a set of `reactableLang()`
 options to `language`:
@@ -1253,7 +1253,7 @@ shinyApp(ui, server)
 
 #### Default selected rows
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can preselect rows by specifying a vector of row indices in `defaultSelected`:
 ```{r}
@@ -1262,7 +1262,7 @@ reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
 
 #### Style selected rows
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can style selected rows using `rowSelectedStyle` in `reactableTheme()`:
 ```{r}
@@ -1297,7 +1297,7 @@ reactable(
 
 #### Customize the selection column
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can customize the selection column using `".selection"` as the column name:
 ```{r}
@@ -1317,7 +1317,7 @@ reactable(
 
 ### Update a reactable instance
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can update the selected rows, expanded rows, or current page using `updateReactable()`:
 ```{r, eval=FALSE}
@@ -1373,7 +1373,7 @@ shinyApp(ui, server)
 
 ### Get the state of a reactable instance
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can get the current page, page size, number of pages, or selected rows
 using `getReactableState()`:
@@ -1447,7 +1447,7 @@ filter_select <- without_bootstrap(crosstalk::filter_select)
 bscols <- without_bootstrap(crosstalk::bscols)
 ```
 
-> **New in v0.1.0.9000**
+> **New in v0.2.0**
 
 You can link selection and filtering with other HTML widgets in an R Markdown
 document or Shiny app using [Crosstalk](https://rstudio.github.io/crosstalk).
