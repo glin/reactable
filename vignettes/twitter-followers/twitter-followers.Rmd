@@ -73,8 +73,8 @@ tbl <- reactable(
 )
 
 div(class = "twitter-followers",
-  div(class = "title",
-    h2("Candidates whose followers are loyal only to them"),
+  div(class = "followers-header",
+    h2(class = "followers-title", "Candidates whose followers are loyal only to them"),
     "Share of each 2020 candidate's followers who don't follow any other candidates"
   ),
   tbl
@@ -102,12 +102,12 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.title {
+.followers-header {
   margin: 18px 0;
   font-size: 16px;
 }
 
-.title h2 {
+.followers-title {
   font-size: 20px;
   font-weight: 600;
 }
