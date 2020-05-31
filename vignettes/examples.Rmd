@@ -1038,6 +1038,31 @@ reactable(
 )
 ```
 
+Or to apply a dark theme when a parent element has a certain class, like `.dark`:
+```{r theme_toggle, eval=FALSE}
+theme <- reactableTheme(
+  style = list(".dark &" = list(color = "#fff", background = "#282a36")),
+  cellStyle = list(".dark &" = list(borderColor = "rgba(255, 255, 255, 0.15)")),
+  headerStyle = list(".dark &" = list(borderColor = "rgba(255, 255, 255, 0.15)")),
+  paginationStyle = list(".dark &" = list(borderColor = "rgba(255, 255, 255, 0.15)")),
+  rowHighlightStyle = list(".dark &" = list(background = "rgba(255, 255, 255, 0.04)")),
+  pageButtonHoverStyle = list(".dark &" = list(background = "rgba(255, 255, 255, 0.08)")),
+  pageButtonActiveStyle = list(".dark &" = list(background = "rgba(255, 255, 255, 0.1)"))
+)
+
+tbl <- reactable(iris[1:12, ], highlight = TRUE, defaultPageSize = 6, theme = theme)
+
+# Simple theme toggle button
+tags$button(onclick = "document.querySelector('.themeable-tbl').classList.toggle('dark')",
+            "Toggle light/dark")
+
+# Start with the dark theme enabled
+div(class = "themeable-tbl dark", tbl)
+```
+
+```{r ref.label="theme_toggle", echo=FALSE}
+```
+
 ### Dynamic theming
 Themes can also be functions that return a `reactableTheme()` for
 context-specific styling.
