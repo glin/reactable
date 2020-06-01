@@ -3,7 +3,7 @@ home:
 
 navbar:
   structure:
-    left: [reference, examples, demos, articles]
+    left: [reference, examples, demos, articles, tutorials]
     right: [news, github]
   components:
     home: ~
@@ -36,6 +36,11 @@ navbar:
         href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
+    tutorials:
+      text: Tutorials
+      menu:
+      - text: Building the Twitter Followers Demo
+        href: articles/building-twitter-followers.html
     news:
       text: News
       href: news/index.html
