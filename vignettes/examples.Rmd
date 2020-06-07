@@ -1164,7 +1164,8 @@ reactable(iris[1:5, ], onClick = JS("
   function(rowInfo, colInfo) {
     window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
 
-    // Send the click event to Shiny (note that the row indices start at 0 in JavaScript)
+    // Send the click event to Shiny, which will be available at input$clicked
+    // (Note that the row index starts at 0 in JavaScript, so we add 1)
     if (window.Shiny) {
       Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
     }
