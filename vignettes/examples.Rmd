@@ -1112,9 +1112,9 @@ reactable(
 
 
 ## Column Resizing
-You can make columns resizable using `resizable`:
+You can make columns resizable by setting `resizable` to `TRUE`:
 ```{r}
-reactable(iris[1:5, ], resizable = TRUE, bordered = TRUE)
+reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 ```
 
 
