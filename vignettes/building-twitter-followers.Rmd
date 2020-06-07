@@ -328,7 +328,7 @@ reactable(
 
 The FiveThirtyEight table has a nifty little detail of only showing the percent
 sign in first row of the "exclusive followers" column to reduce repetition. If
-you sort table, you'll notice that the percent always shows in the first row,
+you sort the table, you'll notice that the percent always shows in the first row
 regardless of row order.
 
 To achieve dynamic behavior like this, we'll have to write some JavaScript.

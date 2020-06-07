@@ -87,6 +87,8 @@ Source: [FiveThirtyEight](https://fivethirtyeight.com/features/which-2020-candid
 
 Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 
+How it was made: [Building the Twitter Followers Demo](../building-twitter-followers.html)
+
 ```{r ref.label="table", eval=FALSE}
 ```
 
