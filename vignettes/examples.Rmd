@@ -1192,7 +1192,9 @@ reactable(
     pagePrevious = "\u276e",
     pageNext = "\u276f",
 
-    # Accessible labels for assistive technologies such as screen readers
+    # Accessible labels for assistive technologies such as screen readers.
+    # These are already set by default, but don't forget to update them when
+    # changing visible text.
     pagePreviousLabel = "Previous page",
     pageNextLabel = "Next page"
   )
