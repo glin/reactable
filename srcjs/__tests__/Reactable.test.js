@@ -3303,6 +3303,23 @@ describe('Crosstalk', () => {
     expect(mockSelection.set).toHaveBeenCalledTimes(4)
   })
 
+  it('sends selection changes for defaultSelected rows', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      selection: 'multiple',
+      defaultSelected: [2, 0],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+    render(<Reactable {...props} />)
+    expect(mockSelection.set).toHaveBeenLastCalledWith(['key3', 'key1'])
+    expect(mockSelection.set).toHaveBeenCalledTimes(1)
+  })
+
   it('clears selection filter on selection from table', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },

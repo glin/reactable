@@ -534,7 +534,13 @@ class Reactable extends React.Component {
       window.Shiny.onInputChange(selectionId, selected)
     }
 
-    if (this.ctSelection && updateCrosstalk) {
+    if (updateCrosstalk) {
+      this.updateCrosstalkSelection()
+    }
+  }
+
+  updateCrosstalkSelection() {
+    if (this.ctSelection) {
       const selected = [...this.state.selected].map(i => this.props.crosstalkKey[i])
       this.ctSelection.set(selected)
     }
@@ -730,6 +736,11 @@ class Reactable extends React.Component {
           setCrosstalkFilter(e.value)
         }
       })
+
+      // Send initial Crosstalk state (just selection state for now)
+      if (this.props.defaultSelected) {
+        this.updateCrosstalkSelection()
+      }
     }
   }
 

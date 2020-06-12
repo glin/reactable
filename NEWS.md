@@ -1,3 +1,9 @@
+# reactable 0.2.0.9000
+
+### Bug fixes
+
+* `defaultSelected` now works correctly with Crosstalk linked selection.
+
 # reactable 0.2.0
 
 ### New features
