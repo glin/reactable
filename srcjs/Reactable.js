@@ -745,10 +745,12 @@ class Reactable extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { defaultSelected, defaultExpanded } = this.props
+    const { dataKey, defaultSelected, defaultExpanded } = this.props
+    if (prevProps.dataKey !== dataKey) {
+      this.setSelection([])
+    }
     if (prevProps.defaultSelected !== defaultSelected) {
-      const selected = new Set(defaultSelected)
-      this.setState({ selected }, this.onSelectedChange)
+      this.setSelection(defaultSelected)
     }
     if (prevProps.defaultExpanded !== defaultExpanded) {
       if (defaultExpanded === true) {

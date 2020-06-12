@@ -2697,6 +2697,9 @@ describe('pagination', () => {
 })
 
 describe('table updates correctly when data props change', () => {
+  const getSelectRowCheckboxes = container =>
+    container.querySelectorAll('.rt-select-input[type="checkbox"]')
+
   const props = {
     data: { a: ['a-1', 'a-2'] },
     columns: [{ name: 'a', accessor: 'a' }]
@@ -2710,7 +2713,9 @@ describe('table updates correctly when data props change', () => {
   })
 
   it('updates with data key', () => {
-    const { getByText, queryByText, rerender } = render(<Reactable {...props} dataKey="a12" />)
+    const { container, getByText, queryByText, rerender } = render(
+      <Reactable {...props} dataKey="a12" />
+    )
     expect(getByText('a-1')).toBeTruthy()
 
     // Same data key: should not update
@@ -2722,6 +2727,15 @@ describe('table updates correctly when data props change', () => {
     rerender(<Reactable {...props} dataKey="b12" data={{ a: ['b-1', 'b-2'] }} />)
     expect(getByText('b-1')).toBeTruthy()
     expect(queryByText('a-1')).toEqual(null)
+
+    // Different data key: selection state should reset
+    rerender(<Reactable {...props} dataKey="b12" selection="multiple" />)
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    const selectAllCheckbox = selectRowCheckboxes[0]
+    fireEvent.click(selectAllCheckbox)
+    selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(true))
+    rerender(<Reactable {...props} dataKey="c12" selection="multiple" />)
+    selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(false))
   })
 
   it('updates when pivotBy changes', () => {
