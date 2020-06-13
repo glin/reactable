@@ -3008,6 +3008,28 @@ describe('update reactable state from Shiny', () => {
     expect(getByText('1–1 of 3 rows')).toBeTruthy()
   })
 
+  it('updates selected, expanded, and current page state', () => {
+    const props = {
+      data: { a: [1, 2, 3] },
+      columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2', 'detail-3'] }],
+      defaultPageSize: 1,
+      selection: 'multiple'
+    }
+    const { getByLabelText, getByText } = render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__shiny-output-container')
+
+    updateState({ selected: [2], expanded: true, page: 2 })
+    expect(getByLabelText('Deselect row').checked).toBeTruthy()
+    expect(getByText('detail-3')).toBeTruthy()
+    expect(getByText('3–3 of 3 rows')).toBeTruthy()
+  })
+
   it('does not enable updateState when parent element has no data-reactable-output ID', () => {
     const props = {
       data: { a: [1, 2] },
