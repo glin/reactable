@@ -48,7 +48,11 @@ export function set(obj, path, value) {
         subObj[key] = value
       }
     } else {
-      subObj[key] = { ...subObj[key] }
+      if (typeof subObj[key] === 'object') {
+        subObj[key] = { ...subObj[key] }
+      } else {
+        subObj[key] = {}
+      }
       subObj = subObj[key]
     }
   })

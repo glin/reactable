@@ -63,6 +63,11 @@ test('set', () => {
   expect(set({ 1: 2 }, [1], 5)).toEqual({ 1: 5 })
   expect(set({ 1: 2 }, [1, 3, 7], 9)).toEqual({ 1: { 3: { 7: 9 } } })
   expect(set({ 1: 2 }, [0, 0, 0], 9)).toEqual({ 1: 2, 0: { 0: { 0: 9 } } })
+  // Should overwrite different types of values
+  expect(set({ 0: 'column-id' }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
+  expect(set({ 0: null }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
+  expect(set({ 0: true }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
+  expect(set({ 0: false }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
   // Deletes
   expect(set({ 1: 2 }, [1], undefined)).toEqual({})
   expect(set({ 1: { 2: { 3: 4 } }, 5: 6 }, [1, 2, 3], undefined)).toEqual({ 1: { 2: {} }, 5: 6 })

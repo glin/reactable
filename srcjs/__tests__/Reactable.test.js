@@ -1725,6 +1725,86 @@ describe('expandable row details and pivot rows', () => {
     expect(getByText('js-row-details')).toBeTruthy()
   })
 
+  it('details row expansion persists when adding pivoting', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', accessor: 'b' },
+        { name: 'col-c', accessor: 'c' }
+      ],
+      defaultPageSize: 2
+    }
+    const { container, queryByText, rerender } = render(<Reactable {...props} />)
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    // Unintended side effect: expansion from details rows currently persists to
+    // pivot rows when adding pivoting. This may be "fixed" in the future, since
+    // it only makes sense for expansion to persist from one pivot row to another.
+    fireEvent.click(expanders[0])
+    expect(queryByText('row-details-1')).toBeTruthy()
+    expect(getRows(container)).toHaveLength(2)
+    rerender(<Reactable {...props} pivotBy={['c']} />)
+    expect(queryByText('row-details-1')).toBeFalsy()
+    expect(getRows(container)).toHaveLength(3)
+
+    // Remove pivoting
+    rerender(<Reactable {...props} pivotBy={null} />)
+    expect(queryByText('row-details-1')).toBeTruthy()
+    expect(getRows(container)).toHaveLength(2)
+  })
+
+  it('pivot row expansion persists when adding pivoting', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', accessor: 'b' },
+        { name: 'col-c', accessor: 'c' }
+      ],
+      pivotBy: ['c'],
+      defaultPageSize: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(3)
+    rerender(<Reactable {...props} pivotBy={['c', 'b']} />)
+    expect(getRows(container)).toHaveLength(3)
+
+    rerender(<Reactable {...props} pivotBy={['c']} />)
+    expect(getRows(container)).toHaveLength(3)
+  })
+
+  it('pivot row expansion does not persist when removing pivoting', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
+      columns: [
+        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', accessor: 'b' },
+        { name: 'col-c', accessor: 'c' }
+      ],
+      pivotBy: ['c'],
+      defaultPageSize: 2
+    }
+    const { container, queryByText, rerender } = render(<Reactable {...props} />)
+    let expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    expect(getRows(container)).toHaveLength(2)
+
+    fireEvent.click(expanders[0])
+    expect(getRows(container)).toHaveLength(3)
+    rerender(<Reactable {...props} pivotBy={null} />)
+    // Rows should be collapsed
+    expect(queryByText('row-details-1')).toEqual(null)
+    expect(getRows(container)).toHaveLength(2)
+  })
+
   it('row details work with column groups', () => {
     const columns = [
       { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },

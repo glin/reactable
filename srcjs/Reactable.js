@@ -926,6 +926,13 @@ class Reactable extends React.Component {
       SubComponent = rowInfo => {
         const expandedId = get(this.state.expanded, rowInfo.nestingPath)
         const column = dataColumns.find(col => col.id === expandedId)
+        if (!column) {
+          // When adding or removing pivot columns, expanded state persists as
+          // a convenience. However, this can result in mixups between expanded
+          // row details and pivot rows. Ensure that this is an expanded details row,
+          // not a pivot row, before rendering row details.
+          return null
+        }
         const { details, html } = column
         let props = {}
         if (typeof details === 'function') {
