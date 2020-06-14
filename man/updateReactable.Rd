@@ -6,6 +6,7 @@
 \usage{
 updateReactable(
   outputId,
+  data = NULL,
   selected = NULL,
   expanded = NULL,
   page = NULL,
@@ -14,6 +15,13 @@ updateReactable(
 }
 \arguments{
 \item{outputId}{The Shiny output ID of the \code{reactable} instance.}
+
+\item{data}{Table data. A data frame or matrix.
+
+\code{data} should have the same columns as the original table data.
+When updating \code{data}, the selected rows, expanded rows, and current page
+will reset unless explicitly specified. All other state will persist,
+including sorting, filtering, and grouping state.}
 
 \item{selected}{Selected rows. Either a numeric vector of row indices,
 or \code{NA} to deselect all rows.}
@@ -38,19 +46,24 @@ if (interactive()) {
 library(shiny)
 library(reactable)
 
+data <- MASS::Cars93[, 1:7]
+
 ui <- fluidPage(
   actionButton("select_btn", "Select rows"),
   actionButton("clear_btn", "Clear selection"),
   actionButton("expand_btn", "Expand rows"),
   actionButton("collapse_btn", "Collapse rows"),
   actionButton("page_btn", "Change page"),
+  selectInput("filter_type", "Filter type", unique(data$Type), multiple = TRUE),
   reactableOutput("table")
 )
 
 server <- function(input, output) {
   output$table <- renderReactable({
     reactable(
-      iris,
+      data,
+      filterable = TRUE,
+      searchable = TRUE,
       selection = "multiple",
       details = function(index) paste("Details for row:", index)
     )
@@ -79,6 +92,16 @@ server <- function(input, output) {
   observeEvent(input$page_btn, {
     # Change current page
     updateReactable("table", page = 3)
+  })
+
+  observe({
+    # Filter data
+    filtered <- if (length(input$filter_type) > 0) {
+      data[data$Type \%in\% input$filter_type, ]
+    } else {
+      data
+    }
+    updateReactable("table", data = filtered)
   })
 }
 

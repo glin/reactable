@@ -481,7 +481,9 @@ class Reactable extends React.Component {
     super(props)
     this.state = {
       selected: new Set(props.defaultSelected),
-      expanded: props.defaultExpanded || {}
+      expanded: props.defaultExpanded || {},
+      data: null,
+      dataKey: null
     }
     this.isSelected = this.isSelected.bind(this)
     this.toggleSelection = this.toggleSelection.bind(this)
@@ -652,6 +654,9 @@ class Reactable extends React.Component {
       const outputId = this.tableElement.current.parentElement.getAttribute('data-reactable-output')
       if (outputId) {
         const updateState = state => {
+          if (state.data != null) {
+            this.setState({ data: state.data, dataKey: state.dataKey })
+          }
           if (state.selected != null) {
             this.setSelection(state.selected)
           }
@@ -825,7 +830,7 @@ class Reactable extends React.Component {
       language[key] = language[key] || null
     }
 
-    data = columnsToRows(data)
+    data = columnsToRows(this.state.data || data)
     columns = buildColumnDefs(columns, columnGroups, {
       sortable,
       showSortIcon,
@@ -1100,8 +1105,8 @@ class Reactable extends React.Component {
         crosstalkId="__crosstalk__"
         // Force ReactTable to rerender when default page size changes
         key={`${defaultPageSize}`}
-        // Used to deep compare data and columns props
-        dataKey={dataKey}
+        // Used to deep compare data and/or columns props
+        dataKey={this.state.dataKey || dataKey}
         ref={this.tableInstance}
         getProps={() => {
           // Send reactable state to Shiny on ReactTable state changes

@@ -18,16 +18,46 @@ mockSession <- function(namespace = NULL) {
 
 test_that("updateReactable", {
   session <- mockSession()
-  expect_error(updateReactable(123, session = session), "`outputId` must be a character string")
-  expect_error(updateReactable("id", selected = TRUE, session = session), "`selected` must be numeric")
-  expect_error(updateReactable("id", expanded = 123, session = session), "`expanded` must be TRUE or FALSE")
-  expect_error(updateReactable("id", page = TRUE, session = session), "`page` must be a single, positive integer")
-  expect_error(updateReactable("id", page = c(1, 3), session = session), "`page` must be a single, positive integer")
-  expect_error(updateReactable("id", page = 0, session = session), "`page` must be a single, positive integer")
+  expect_error(updateReactable(123, session = session),
+               "`outputId` must be a character string")
+  expect_error(updateReactable("id", data = list(), session = session),
+               "`data` must be a data frame or matrix")
+  expect_error(updateReactable("id", selected = TRUE, session = session),
+               "`selected` must be numeric")
+  expect_error(updateReactable("id", expanded = 123, session = session),
+               "`expanded` must be TRUE or FALSE")
+  expect_error(updateReactable("id", page = TRUE, session = session),
+               "`page` must be a single, positive integer")
+  expect_error(updateReactable("id", page = c(1, 3), session = session),
+               "`page` must be a single, positive integer")
+  expect_error(updateReactable("id", page = 0, session = session),
+               "`page` must be a single, positive integer")
 
   expect_null(updateReactable("id"))
   updateReactable("id", session = session)
   expect_null(session$lastMsg)
+
+  # Update data
+  updateReactable("mytbl", data = data.frame(x = 1), session = session)
+  expected <- list(
+    data = data.frame(x = 1),
+    dataKey = digest::digest(data.frame(x = 1)),
+    selected = list(),
+    expanded = FALSE,
+    page = 0
+  )
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = expected))
+  # Override state resets
+  updateReactable("mytbl", data = matrix(4), selected = 3, expanded = TRUE,
+                  page = 2, session = session)
+  expected <- list(
+    data = matrix(4),
+    dataKey = digest::digest(matrix(4)),
+    selected = list(2),
+    expanded = TRUE,
+    page = 1
+  )
+  expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = expected))
 
   # Update selected rows
   updateReactable("mytbl", selected = 1, session = session)

@@ -3,6 +3,12 @@
 #' `updateReactable()` updates a reactable instance within a Shiny application.
 #'
 #' @param outputId The Shiny output ID of the `reactable` instance.
+#' @param data Table data. A data frame or matrix.
+#'
+#'   `data` should have the same columns as the original table data.
+#'   When updating `data`, the selected rows, expanded rows, and current page
+#'   will reset unless explicitly specified. All other state will persist,
+#'   including sorting, filtering, and grouping state.
 #' @param selected Selected rows. Either a numeric vector of row indices,
 #'   or `NA` to deselect all rows.
 #' @param expanded Expanded rows. Either `TRUE` to expand all rows, or `FALSE`
@@ -18,19 +24,24 @@
 #' library(shiny)
 #' library(reactable)
 #'
+#' data <- MASS::Cars93[, 1:7]
+#'
 #' ui <- fluidPage(
 #'   actionButton("select_btn", "Select rows"),
 #'   actionButton("clear_btn", "Clear selection"),
 #'   actionButton("expand_btn", "Expand rows"),
 #'   actionButton("collapse_btn", "Collapse rows"),
 #'   actionButton("page_btn", "Change page"),
+#'   selectInput("filter_type", "Filter type", unique(data$Type), multiple = TRUE),
 #'   reactableOutput("table")
 #' )
 #'
 #' server <- function(input, output) {
 #'   output$table <- renderReactable({
 #'     reactable(
-#'       iris,
+#'       data,
+#'       filterable = TRUE,
+#'       searchable = TRUE,
 #'       selection = "multiple",
 #'       details = function(index) paste("Details for row:", index)
 #'     )
@@ -60,13 +71,24 @@
 #'     # Change current page
 #'     updateReactable("table", page = 3)
 #'   })
+#'
+#'   observe({
+#'     # Filter data
+#'     filtered <- if (length(input$filter_type) > 0) {
+#'       data[data$Type %in% input$filter_type, ]
+#'     } else {
+#'       data
+#'     }
+#'     updateReactable("table", data = filtered)
+#'   })
 #' }
 #'
 #' shinyApp(ui, server)
 #' }
 #'
 #' @export
-updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = NULL, session = NULL) {
+updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = NULL,
+                            page = NULL, session = NULL) {
   if (is.null(session)) {
     if (requireNamespace("shiny", quietly = TRUE)) {
       session <- shiny::getDefaultReactiveDomain()
@@ -81,6 +103,18 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
     stop("`outputId` must be a character string")
   }
   outputId <- session$ns(outputId)
+
+  dataKey <- NULL
+  if (!is.null(data)) {
+    if (!is.data.frame(data) && !is.matrix(data)) {
+      stop("`data` must be a data frame or matrix")
+    }
+    dataKey <- digest::digest(data)
+    # Reset selected, expanded, and page state by default
+    selected <- if (is.null(selected)) NA else selected
+    expanded <- if (is.null(expanded)) FALSE else expanded
+    page <- if (is.null(page)) 1 else page
+  }
 
   if (!is.null(selected)) {
     if (!is.numeric(selected) && !is.na(selected)) {
@@ -104,6 +138,8 @@ updateReactable <- function(outputId, selected = NULL, expanded = NULL, page = N
   }
 
   newState <- filterNulls(list(
+    data = data,
+    dataKey = dataKey,
     selected = selected,
     expanded = expanded,
     page = page

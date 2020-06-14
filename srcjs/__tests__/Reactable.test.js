@@ -3008,7 +3008,28 @@ describe('update reactable state from Shiny', () => {
     expect(getByText('1–1 of 3 rows')).toBeTruthy()
   })
 
-  it('updates selected, expanded, and current page state', () => {
+  it('updates data', () => {
+    const props = {
+      data: { a: ['c1', 'c2', 'c3'] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    const { getByText } = render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__shiny-output-container')
+
+    expect(getByText('c1')).toBeTruthy()
+    updateState({ data: { a: ['newc1', 'newc2', 'newc3'] } })
+    expect(getByText('newc1')).toBeTruthy()
+    expect(getByText('newc2')).toBeTruthy()
+    expect(getByText('newc3')).toBeTruthy()
+  })
+
+  it('updates data, selected, expanded, and current page state', () => {
     const props = {
       data: { a: [1, 2, 3] },
       columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2', 'detail-3'] }],
@@ -3024,7 +3045,8 @@ describe('update reactable state from Shiny', () => {
     const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
     expect(outputId).toEqual('__reactable__shiny-output-container')
 
-    updateState({ selected: [2], expanded: true, page: 2 })
+    updateState({ data: { a: ['c1', 'c2', 'c3'] }, selected: [2], expanded: true, page: 2 })
+    expect(getByText('c3')).toBeTruthy()
     expect(getByLabelText('Deselect row').checked).toBeTruthy()
     expect(getByText('detail-3')).toBeTruthy()
     expect(getByText('3–3 of 3 rows')).toBeTruthy()

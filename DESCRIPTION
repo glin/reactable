@@ -27,6 +27,7 @@ Suggests:
     crosstalk,
     dplyr,
     leaflet,
+    MASS,
     rmarkdown,
     shiny,
     sparkline,

@@ -1,5 +1,10 @@
 # reactable 0.2.0.9000
 
+### New features
+
+* `updateReactable()` gains a `data` argument to update the data of a reactable
+  instance in Shiny ([#49](https://github.com/glin/reactable/issues/49)).
+
 ### Bug fixes
 
 * `defaultSelected` now works correctly with Crosstalk linked selection.
