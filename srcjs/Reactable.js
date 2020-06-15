@@ -953,8 +953,11 @@ class Reactable extends React.Component {
           }
           props.children = hydrate({ Reactable, Fragment, WidgetContainer }, content)
         }
-        // Set a key to force updates when expanding a different column
-        return <RowDetails key={expandedId} {...props} />
+        // Set key to force updates when expanding a different column.
+        // And also to unmount properly when changing page. Since expanded state
+        // is controlled, we only collapse rows via onPageChange AFTER the page
+        // has changed.
+        return <RowDetails key={`${expandedId}-${rowInfo.index}`} {...props} />
       }
 
       // Add a dummy expander column to prevent react-table from adding one

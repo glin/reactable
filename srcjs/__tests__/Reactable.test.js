@@ -1460,6 +1460,7 @@ describe('expandable row details and pivot rows', () => {
   const getExpandableCells = container => container.querySelectorAll('.rt-expandable')
   const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
   const getCells = container => container.querySelectorAll('.rt-td')
+  const getNextButton = container => container.querySelector('.rt-next-button')
   const props = {
     data: { a: [1, 2], b: ['a', 'b'] }
   }
@@ -1596,13 +1597,17 @@ describe('expandable row details and pivot rows', () => {
     expect(expanderCells[1]).not.toHaveStyle('text-overflow: inherit')
   })
 
-  it('handles Shiny elements in content', () => {
+  it('handles Shiny elements in details content', () => {
     window.Shiny = { bindAll: jest.fn(), unbindAll: jest.fn(), addCustomMessageHandler: jest.fn() }
-    const columns = [
-      { name: 'a', accessor: 'a', details: ['row details: a'] },
-      { name: 'b', accessor: 'b', details: ['row details: b'] }
-    ]
-    const { container } = render(<Reactable {...props} columns={columns} />)
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        { name: 'a', accessor: 'a', details: ['row details: a'] },
+        { name: 'b', accessor: 'b', details: ['row details: b'] }
+      ],
+      defaultPageSize: 2
+    }
+    const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     fireEvent.click(expanders[0])
@@ -1623,6 +1628,11 @@ describe('expandable row details and pivot rows', () => {
     fireEvent.click(expanders[0])
     expect(window.Shiny.bindAll).toHaveBeenCalledTimes(4)
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(3)
+
+    // Row details content should be cleaned up properly when changing page
+    const nextButton = getNextButton(container)
+    fireEvent.click(nextButton)
+    expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(4)
 
     delete window.Shiny
   })

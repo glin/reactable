@@ -8,6 +8,8 @@
 ### Bug fixes
 
 * `defaultSelected` now works correctly with Crosstalk linked selection.
+* Shiny UI elements in expanded row details are now properly removed when
+  collapsed on page changes.
 
 # reactable 0.2.0
 
