@@ -536,6 +536,11 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE, digits = NA,
                            POSIXt = "ISO8601", Date = "ISO8601")
 
+  # Create a unique key for the data. The key is used to optimize performance of
+  # row selection and expansion, and to fully reset state on data changes (for
+  # tables in Shiny).
+  dataKey <- digest::digest(list(data, cols))
+
   component <- reactR::component("Reactable", list(
     data = data,
     columns = cols,
@@ -579,7 +584,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     language = language,
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
-    dataKey = digest::digest(list(data, cols))
+    dataKey = dataKey,
+    key = dataKey
   ))
 
   htmlwidgets::createWidget(

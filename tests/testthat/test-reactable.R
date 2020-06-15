@@ -79,7 +79,8 @@ test_that("reactable", {
     paginationType = "numbers",
     showPageInfo = TRUE,
     minRows = 1,
-    dataKey = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns)),
+    key = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "auto")
@@ -147,7 +148,8 @@ test_that("reactable", {
     inline = TRUE,
     width = "400px",
     height = "100%",
-    dataKey = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns)),
+    key = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "400px")
