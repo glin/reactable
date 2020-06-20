@@ -10,6 +10,8 @@
 * `defaultSelected` now works correctly with Crosstalk linked selection.
 * Shiny UI elements in expanded row details are now properly removed when
   collapsed on page changes.
+* `colFormat()` now always formats numbers as a localized string when `locales`
+  is specified.
 
 # reactable 0.2.0
 

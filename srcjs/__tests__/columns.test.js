@@ -680,6 +680,12 @@ describe('createCompareFunction', () => {
 })
 
 describe('formatValue', () => {
+  test('no options', () => {
+    expect(formatValue(125253.125, {})).toEqual(125253.125)
+    expect(formatValue('string', {})).toEqual('string')
+    expect(formatValue(true, {})).toEqual(true)
+  })
+
   test('prefix/suffix', () => {
     expect(formatValue(123, { prefix: 'a' })).toEqual('a123')
     expect(formatValue(123, { suffix: 'b' })).toEqual('123b')
@@ -739,5 +745,12 @@ describe('formatValue', () => {
 
     // YYYY-MM-DD dates should be formatted in local time
     expect(formatValue('2018-03-22', { date: true, locales: 'en-US' })).toEqual('3/22/2018')
+  })
+
+  test('locales', () => {
+    expect(formatValue(125253.125, { locales: 'en-US' })).toEqual('125253.125')
+    expect(formatValue(125253.125, { locales: ['en-US'] })).toEqual('125253.125')
+    // Fallback locale
+    expect(formatValue(125253.125, { locales: ['xx-XX', 'en-US'] })).toEqual('125253.125')
   })
 })
