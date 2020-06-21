@@ -282,6 +282,7 @@ You can format data in a column by providing `colFormat()` options to `format`:
 data <- data.frame(
   price_USD = c(123456.56, 132, 5650.12),
   price_INR = c(350, 23208.552, 1773156.4),
+  number_FR = c(123456.56, 132, 5650.12),
   temp = c(22, NA, 31),
   percent = c(0.9525556, 0.5, 0.112),
   date = as.Date(c("2019-01-02", "2019-03-15", "2019-09-22"))
@@ -290,46 +291,21 @@ data <- data.frame(
 reactable(data, columns = list(
   price_USD = colDef(format = colFormat(prefix = "$", separators = TRUE, digits = 2)),
   price_INR = colDef(format = colFormat(currency = "INR", separators = TRUE, locales = "hi-IN")),
+  number_FR = colDef(format = colFormat(locales = "fr-FR")),
   temp = colDef(format = colFormat(suffix = " °C")),
   percent = colDef(format = colFormat(percent = TRUE, digits = 1)),
   date = colDef(format = colFormat(date = TRUE, locales = "en-GB"))
 ))
 ```
 
-### Formatting aggregated cells
-Column formatters apply to both standard and aggregated cells by default. If you
-want to format aggregated cells separately, provide a named list of `cell` and
-`aggregated` options:
-```{r, eval=FALSE}
-colDef(
-  format = list(
-    cell = colFormat(...),       # Standard cells
-    aggregated = colFormat(...)  # Aggregated cells
-  )
-)
-```
+By default, numbers, dates, times, and currencies are formatted in the locale of
+the browser. This means users may see different results, depending on the language
+preferences for their browser.
 
-For example, only the aggregated `States` are formatted here:
-```{r}
-data <- data.frame(
-  States = state.name,
-  Region = state.region,
-  Area = state.area
-)
-
-reactable(data, groupBy = "Region", columns = list(
-  States = colDef(
-    aggregate = "count",
-    format = list(
-      aggregated = colFormat(suffix = " states")
-    )
-  ),
-  Area = colDef(
-    aggregate = "sum",
-    format = colFormat(suffix = " mi²", separators = TRUE)
-  )
-))
-```
+To use a specific locale for data formatting, provide a vector of BCP 47 language
+tags in the `locales` argument. See
+[here](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
+for a list of common BCP 47 language tags.
 
 ### Date formatting
 ```{r}
@@ -376,6 +352,41 @@ reactable(data, columns = list(
   ),
   MAD = colDef(
     format = colFormat(currency = "MAD", separators = TRUE, locales = "ar-MA")
+  )
+))
+```
+
+### Formatting aggregated cells
+Column formatters apply to both standard and aggregated cells by default. If you
+want to format aggregated cells separately, provide a named list of `cell` and
+`aggregated` options:
+```{r, eval=FALSE}
+colDef(
+  format = list(
+    cell = colFormat(...),       # Standard cells
+    aggregated = colFormat(...)  # Aggregated cells
+  )
+)
+```
+
+For example, only the aggregated `States` are formatted here:
+```{r}
+data <- data.frame(
+  States = state.name,
+  Region = state.region,
+  Area = state.area
+)
+
+reactable(data, groupBy = "Region", columns = list(
+  States = colDef(
+    aggregate = "count",
+    format = list(
+      aggregated = colFormat(suffix = " states")
+    )
+  ),
+  Area = colDef(
+    aggregate = "sum",
+    format = colFormat(suffix = " mi²", separators = TRUE)
   )
 ))
 ```

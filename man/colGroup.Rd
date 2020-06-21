@@ -38,7 +38,7 @@ A column group definition object that can be used to create column
 groups in \code{reactable()}.
 }
 \description{
-Column group definitions
+Use \code{colGroup()} to create column groups in a table.
 }
 \examples{
 reactable(

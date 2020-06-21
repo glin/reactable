@@ -124,7 +124,7 @@ A column definition object that can be used to customize columns
 in \code{reactable()}.
 }
 \description{
-Column definitions
+Use \code{colDef()} to customize the columns in a table.
 }
 \examples{
 reactable(
