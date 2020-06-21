@@ -252,7 +252,7 @@ data <- data.frame(
 
 reactable(data, columns = list(
   Animal = colDef(cell = function(value) {
-    image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = "")
+    image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = value)
     tagList(
       div(style = list(display = "inline-block", width = "45px"), image),
       value
@@ -279,7 +279,7 @@ for large images.
 reactable(data, columns = list(
   Animal = colDef(cell = function(value) {
     img_src <- knitr::image_uri(sprintf("images/%s.png", value))
-    image <- img(src = img_src, height = "24px", alt = "")
+    image <- img(src = img_src, height = "24px", alt = value)
     tagList(
       div(style = list(display = "inline-block", width = "45px"), image),
       value

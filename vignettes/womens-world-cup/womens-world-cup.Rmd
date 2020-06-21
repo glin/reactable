@@ -82,7 +82,7 @@ tbl <- reactable(
       cell = function(value, index) {
         div(
           class = "team",
-          img(class = "flag", alt = "", src = sprintf("images/%s.png", value)),
+          img(class = "flag", alt = paste(value, "flag"), src = sprintf("images/%s.png", value)),
           div(class = "team-name", value),
           div(class = "record", sprintf("%s pts.", forecasts[index, "points"]))
         )
