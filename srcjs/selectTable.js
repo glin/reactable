@@ -46,7 +46,7 @@ DefaultSelectInputComponent.propTypes = {
   rows: PropTypes.arrayOf(PropTypes.object)
 }
 
-export default (Component, options) => {
+export default Component => {
   class RTSelectTable extends React.Component {
     constructor(props) {
       super(props)
@@ -104,19 +104,32 @@ export default (Component, options) => {
     }
 
     render() {
-      const { columns: originalCols, selectWidth, forwardedRef, ...rest } = this.props
+      let { columns, selectWidth, forwardedRef, ...rest } = this.props
       const { isSelected, selectType, toggleAll, toggleSelection, selectId } = this.props
 
       let origSelectCol = {}
-      for (let i = 0; i < originalCols.length; i++) {
-        if (originalCols[i].id === selectId) {
-          origSelectCol = originalCols.splice(i, 1)[0]
-          break
+      const findSelectionCol = columns => {
+        for (const [i, col] of columns.entries()) {
+          if (col.id === selectId) {
+            origSelectCol = col
+            columns[i] = { ...col }
+            return columns[i]
+          }
+          if (col.columns) {
+            const found = findSelectionCol(col.columns)
+            if (found) return found
+          }
         }
+        return null
       }
 
-      const selectCol = {
-        ...origSelectCol,
+      let selectCol = findSelectionCol(columns)
+      if (!selectCol) {
+        selectCol = {}
+        columns = [selectCol, ...columns]
+      }
+
+      Object.assign(selectCol, {
         id: selectId,
         accessor: () => '', // this value is not important
         Header: cellInfo => {
@@ -183,17 +196,9 @@ export default (Component, options) => {
         className: classNames('rt-td-select', origSelectCol.className),
         headerClassName: classNames('rt-td-select', origSelectCol.headerClassName),
         width: origSelectCol.width || selectWidth
-      }
+      })
 
-      const columns =
-        options !== undefined && options.floatingLeft === true
-          ? [...originalCols, selectCol]
-          : [selectCol, ...originalCols]
-      const extra = {
-        columns
-      }
-
-      return <Component ref={forwardedRef} {...rest} {...extra} />
+      return <Component ref={forwardedRef} {...rest} columns={columns} />
     }
   }
 

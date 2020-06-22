@@ -946,6 +946,9 @@ describe('row selection', () => {
   const getSelectRowCheckboxes = container =>
     container.querySelectorAll('.rt-select-input[type="checkbox"]')
   const getSelectRowCells = container => container.querySelectorAll('.rt-td-select')
+  const getHeaders = container => container.querySelectorAll('.-header .rt-th')
+  const getGroupHeaders = container => container.querySelectorAll('.rt-th-group')
+  const getUngroupedHeaders = container => container.querySelectorAll('.rt-th-group-none')
 
   beforeEach(() => {
     window.Shiny = {
@@ -1452,6 +1455,28 @@ describe('row selection', () => {
     expect(selectAllCell).toHaveClass('header-cls')
     expect(selectRow1Cell).toHaveClass('cell-cls')
     expect(selectRow2Cell).toHaveClass('cell-cls')
+  })
+
+  it('row selection works with column groups', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        {
+          name: '',
+          accessor: '.selection'
+        }
+      ],
+      columnGroups: [{ columns: ['a'], name: 'group-a' }],
+      selection: 'multiple',
+      minRows: 2
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    expect(getByText('group-a')).toBeTruthy()
+    expect(getHeaders(container)).toHaveLength(2)
+    expect(getGroupHeaders(container)).toHaveLength(1)
+    expect(getUngroupedHeaders(container)).toHaveLength(1)
+    expect(getSelectRowCells(container)).toHaveLength(3)
   })
 })
 
