@@ -96,6 +96,9 @@ export function createTheme(options) {
       '&::after': {
         backgroundColor: groupHeaderBorderColor,
         height: groupHeaderBorderWidth
+      },
+      '.rt-bordered &': {
+        borderWidth: groupHeaderBorderWidth
       }
     },
 

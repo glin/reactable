@@ -89,6 +89,9 @@ describe('createTheme', () => {
         '&::after': {
           backgroundColor: 'groupHeaderBorderColor',
           height: 'groupHeaderBorderWidth'
+        },
+        '.rt-bordered &': {
+          borderWidth: 'groupHeaderBorderWidth'
         }
       },
 
@@ -277,6 +280,9 @@ describe('createTheme', () => {
         '&::after': {
           backgroundColor: 'borderColor',
           height: 'borderWidth'
+        },
+        '.rt-bordered &': {
+          borderWidth: 'borderWidth'
         }
       },
 

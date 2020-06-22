@@ -119,7 +119,7 @@ input[type='radio'].rt-select-input {
 /* Header group borders */
 .rt-th-group,
 .rt-th-group-none {
-  border-bottom: none;
+  border-bottom-style: none;
 }
 
 .rt-th-group::after {
@@ -140,6 +140,10 @@ input[type='radio'].rt-select-input {
   /* Remove spacing with outlined/bordered style */
   left: 0;
   right: 0;
+}
+
+.rt-bordered .rt-th-group-none {
+  border-bottom-style: solid;
 }
 
 /* Custom row stripe style to prevent bleed-through to nested tables */
