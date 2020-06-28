@@ -209,7 +209,7 @@ colDef(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2}, ...]', "array of row data objects"
+  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "array of row data objects"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -260,7 +260,7 @@ colDef(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2}, ...]', "array of row data objects"
+  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "array of row data objects"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(

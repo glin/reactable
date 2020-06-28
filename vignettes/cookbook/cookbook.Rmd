@@ -368,6 +368,31 @@ reactable(
 )
 ```
 
+#### Totals with aggregated rows
+
+```{r}
+reactable(
+  data,
+  groupBy = "Manufacturer",
+  searchable = TRUE,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(
+      aggregate = "sum",
+      format = colFormat(currency = "USD"),
+      footer = JS("function(colInfo) {
+        var total = 0
+        colInfo.data.forEach(function(row) {
+          total += row[colInfo.column.id]
+        })
+        return '$' + total.toFixed(2)
+      }")
+    )
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
 ## Nested tables
 
 To create nested tables, use `reactable()` in a row details renderer:
