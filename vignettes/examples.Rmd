@@ -901,11 +901,58 @@ reactable(
 )
 ```
 
+### Column widths
+By default, columns have a minimum width of 100px and stretch to fill the table.
+You can control the width of a column using the following arguments in `colDef()`:
+
+- `minWidth` - minimum width of the column in pixels (defaults to `100`)
+- `maxWidth` - maximum width of the column in pixels
+- `width` - fixed width of the column in pixels (overrides `minWidth` and `maxWidth`)
+
+When columns stretch, `minWidth` also controls the ratio at which columns grow.
+For example, if a table consists of 3 columns having `minWidth = 100` each,
+the columns will stretch at a ratio of `100:100:100`. Each column will take up 1/3
+of the table's width and not shrink below 100px.
+
+Another example: if a table consists of three columns having minimum widths of
+200px, 100px, and 100px, the columns will take up 50%, 25%, and 25% of the table's
+width respectively:
+
+```{r}
+reactable(
+  MASS::Cars93[1:6, c("Make", "Type", "Weight")],
+  columns = list(
+    Make = colDef(minWidth = 200),   # 50% width, 200px minimum
+    Type = colDef(minWidth = 100),   # 25% width, 100px minimum
+    Weight = colDef(minWidth = 100)  # 25% width, 100px minimum
+  ),
+  bordered = TRUE
+)
+```
+
 ### No full width
 Tables are full width by default, but you can shrink the table to fit its
 contents by setting `fullWidth` to `FALSE`:
 ```{r}
-reactable(iris[1:5, ], fullWidth = FALSE, bordered = TRUE, defaultColDef = colDef(minWidth = 120))
+reactable(
+  MASS::Cars93[1:5, 1:5],
+  fullWidth = FALSE,
+  bordered = TRUE,
+  defaultColDef = colDef(minWidth = 120)
+)
+```
+
+You can also set a maximum or fixed width on the table:
+```{r}
+reactable(
+  MASS::Cars93[1:5, 1:5],
+  bordered = TRUE,
+  defaultColDef = colDef(minWidth = 120),
+  # Set a maximum width on the table:
+  style = list(maxWidth = 650),
+  # Or a fixed width:
+  width = 650
+)
 ```
 
 ### Custom CSS
