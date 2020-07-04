@@ -99,7 +99,7 @@ reactable(
 
 ### No sorting
 You can disable sorting by setting `sortable` to `FALSE` on the table or column.
-When only some columns are sortable, it can be helpful to indicate sortable
+When only some columns are sortable, it can help to indicate sortable
 columns using `showSortable`:
 ```{r}
 reactable(
@@ -114,9 +114,9 @@ reactable(
 ```
 
 ### Hide sort icons
-You can hide sort icons by setting `showSortIcon` to `FALSE`. This may be
-useful if want to use a
-[custom sort indicator](cookbook/cookbook.html#custom-sort-indicators).
+You can hide sort icons by setting `showSortIcon` to `FALSE`. This can be
+used to show a [custom sort indicator](cookbook/cookbook.html#custom-sort-indicators),
+for example.
 ```{r}
 reactable(iris[1:5, ], showSortIcon = FALSE)
 ```
