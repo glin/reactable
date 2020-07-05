@@ -82,11 +82,11 @@ as an argument. Cannot be used on a grouping column.}
 \item{na}{String to display for missing values (i.e. \link{NA} or \link{NaN}).
 By default, missing values are displayed as blank cells.}
 
-\item{minWidth}{Min width of the column in pixels.}
+\item{minWidth}{Minimum width of the column in pixels.}
 
-\item{maxWidth}{Max width of the column in pixels.}
+\item{maxWidth}{Maximum width of the column in pixels.}
 
-\item{width}{Fixed width of the column in pixels. Overrides minWidth and maxWidth.}
+\item{width}{Fixed width of the column in pixels. Overrides \code{minWidth} and \code{maxWidth}.}
 
 \item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
 

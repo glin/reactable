@@ -90,8 +90,10 @@
 #'   camelCased property names.
 #' @param fullWidth Stretch the table to fill the full width of its container?
 #'   Defaults to `TRUE`.
-#' @param width Width in pixels. Defaults to `"auto"` for automatic sizing.
-#' @param height Height in pixels. Defaults to `"auto"` for automatic sizing.
+#' @param width Width of the table in pixels. Defaults to `"auto"` for automatic sizing.
+#'
+#'   To set the width of a column, see [colDef()].
+#' @param height Height of the table in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -105,8 +107,11 @@
 #' See the [online documentation](https://glin.github.io/reactable) for
 #' additional details and examples.
 #'
-#' @seealso [renderReactable()] and [reactableOutput()] for using reactable
+#' @seealso
+#' * [renderReactable()] and [reactableOutput()] for using reactable
 #'   in Shiny applications or interactive R Markdown documents.
+#' * [colDef()], [colFormat()], and [colGroup()] to customize columns.
+#' * [reactableTheme()] and [reactableLang()] to customize the table.
 #'
 #' @examples
 #' # Basic usage

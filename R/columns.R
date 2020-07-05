@@ -34,9 +34,9 @@
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
-#' @param minWidth Min width of the column in pixels.
-#' @param maxWidth Max width of the column in pixels.
-#' @param width Fixed width of the column in pixels. Overrides minWidth and maxWidth.
+#' @param minWidth Minimum width of the column in pixels.
+#' @param maxWidth Maximum width of the column in pixels.
+#' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
 #' @param class Additional CSS classes to apply to cells. Can also be an R function
 #'   that takes the cell value, row index, and column name as arguments, or a [JS()]

@@ -171,9 +171,11 @@ camelCased property names.}
 \item{fullWidth}{Stretch the table to fill the full width of its container?
 Defaults to \code{TRUE}.}
 
-\item{width}{Width in pixels. Defaults to \code{"auto"} for automatic sizing.}
+\item{width}{Width of the table in pixels. Defaults to \code{"auto"} for automatic sizing.
 
-\item{height}{Height in pixels. Defaults to \code{"auto"} for automatic sizing.}
+To set the width of a column, see \code{\link[=colDef]{colDef()}}.}
+
+\item{height}{Height of the table in pixels. Defaults to \code{"auto"} for automatic sizing.}
 
 \item{theme}{Theme options for the table, specified by
 \code{\link[=reactableTheme]{reactableTheme()}}. Defaults to the global \code{reactable.theme} option.
@@ -234,6 +236,10 @@ reactable(sleep, columns = list(
 
 }
 \seealso{
-\code{\link[=renderReactable]{renderReactable()}} and \code{\link[=reactableOutput]{reactableOutput()}} for using reactable
+\itemize{
+\item \code{\link[=renderReactable]{renderReactable()}} and \code{\link[=reactableOutput]{reactableOutput()}} for using reactable
 in Shiny applications or interactive R Markdown documents.
+\item \code{\link[=colDef]{colDef()}}, \code{\link[=colFormat]{colFormat()}}, and \code{\link[=colGroup]{colGroup()}} to customize columns.
+\item \code{\link[=reactableTheme]{reactableTheme()}} and \code{\link[=reactableLang]{reactableLang()}} to customize the table.
+}
 }
