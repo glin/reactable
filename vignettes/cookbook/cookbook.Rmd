@@ -323,6 +323,77 @@ reactable(ratings, columns = list(
 ))
 ```
 
+## Show data from other columns
+
+To access data from another column, get the current row data using the
+row index argument in an R render function, or `cellInfo.row` in a
+JavaScript render function. This example shows both ways.
+
+```{r, message=FALSE}
+library(dplyr)
+library(htmltools)
+
+data <- starwars %>%
+  select(character = name, height, mass, gender, homeworld, species)
+```
+
+### R render function {#show-data-from-other-columns-r}
+
+```{r}
+reactable(
+  data,
+  columns = list(
+    character = colDef(
+      # Show species under character names
+      cell = function(value, index) {
+        species <- data$species[index]
+        species <- if (!is.na(species)) species else "Unknown"
+        tagList(
+          div(style = list(fontWeight = 600), value),
+          div(style = list(fontSize = 12), species)
+        )
+      }
+    ),
+    species = colDef(show = FALSE)
+  ),
+  defaultPageSize = 6,
+  theme = reactableTheme(
+    # Vertically center cells
+    cellStyle = list(display = "flex", flexDirection = "column", justifyContent = "center")
+  )
+)
+```
+
+### JavaScript render function {#show-data-from-other-columns-js}
+
+```{r}
+reactable(
+  data,
+  columns = list(
+    character = colDef(
+      # Show species under character names
+      cell = JS("function(cellInfo) {
+        const species = cellInfo.row.species || 'Unknown'
+        return (
+          '<div style=\"font-weight: 600\">' + cellInfo.value + '</div>' +
+          '<div style=\"font-size: 12px\">' + species + '</div>'
+        )
+      }"),
+      html = TRUE
+    ),
+    species = colDef(show = FALSE)
+  ),
+  defaultPageSize = 6,
+  theme = reactableTheme(
+    # Vertically center cells
+    cellStyle = list(display = "flex", flexDirection = "column", justifyContent = "center")
+  )
+)
+```
+
+> If the column name contains a period, use bracket notation to access the
+> `cellInfo.row` object: `cellInfo.row['species']`
+
 ## Total rows
 
 ```{r, message=FALSE}
