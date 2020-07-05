@@ -527,8 +527,10 @@ reactable(
     Sales = colDef(aggregated = JS("
       function(cellInfo) {
         // Calculate sum of all values in visible rows
-        var values = cellInfo.subRows.map(function(row) { return row.Sales })
-        var total = values.reduce(function(a, b) { return a + b }, 0)
+        var total = 0
+        cellInfo.subRows.forEach(function(row) {
+          total += row.Sales
+        })
         return '$' + total.toFixed(1)
       }
     "))

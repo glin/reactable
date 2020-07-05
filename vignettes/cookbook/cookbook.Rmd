@@ -358,8 +358,10 @@ reactable(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
       footer = JS("function(colInfo) {
-        var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
-        var total = values.reduce(function(a, b) { return a + b }, 0)
+        var total = 0
+        colInfo.data.forEach(function(row) {
+          total += row[colInfo.column.id]
+        })
         return '$' + total.toFixed(2)
       }")
     )
