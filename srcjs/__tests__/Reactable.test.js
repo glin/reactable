@@ -3537,6 +3537,24 @@ describe('Crosstalk', () => {
     expect(selectRow2Checkbox.checked).toEqual(false)
   })
 
+  it('handles missing keys', () => {
+    // crosstalkKey can be null when there are no rows in the table
+    const props = {
+      data: { a: [], b: [] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: null,
+      crosstalkGroup: 'group'
+    }
+
+    render(<Reactable {...props} />)
+    expect(window.crosstalk.SelectionHandle).toHaveBeenCalledTimes(1)
+    expect(window.crosstalk.SelectionHandle).toHaveBeenCalledWith('group')
+    expect(mockSelection.on).toHaveBeenCalledTimes(1)
+  })
+
   it('does not create filter/selection handles when Crosstalk is not used', () => {
     const props = {
       data: { a: [1, 2] },

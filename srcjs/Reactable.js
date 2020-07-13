@@ -678,7 +678,7 @@ class Reactable extends React.Component {
     // Send initial reactable state to Shiny
     this.onTableUpdate()
 
-    const { crosstalkKey, crosstalkGroup } = this.props
+    const crosstalkGroup = this.props.crosstalkGroup
     if (crosstalkGroup && window.crosstalk) {
       this.ctSelection = new window.crosstalk.SelectionHandle(crosstalkGroup)
       this.ctFilter = new window.crosstalk.FilterHandle(crosstalkGroup)
@@ -688,6 +688,7 @@ class Reactable extends React.Component {
       this.ctSelected = null
       this.ctFiltered = null
 
+      const crosstalkKey = this.props.crosstalkKey || []
       const rowByKey = crosstalkKey.reduce((obj, key, index) => {
         obj[key] = index
         return obj

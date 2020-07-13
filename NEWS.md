@@ -10,6 +10,7 @@
 * Row selection columns now display correctly in tables with column groups
   ([#52](https://github.com/glin/reactable/issues/52)).
 * `defaultSelected` now works correctly with Crosstalk linked selection.
+* Tables now display correctly for Crosstalk `SharedData` objects with zero or one rows.
 * Shiny UI elements in expanded row details are now properly removed when
   collapsed on page changes.
 * `colFormat()` now always formats numbers as a localized string when `locales`

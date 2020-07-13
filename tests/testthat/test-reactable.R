@@ -210,11 +210,31 @@ test_that("dates/datetimes are serialized in ISO 8601", {
 })
 
 test_that("supports Crosstalk", {
+  data <- crosstalk::SharedData$new(
+    data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE),
+    key = ~y,
+    group = "group"
+  )
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[1,2],"y":["a","b"]}')
+  expect_equal(attribs$crosstalkKey, list("a", "b"))
+  expect_equal(attribs$crosstalkGroup, "group")
+
+  # Keys with length 1 should be serialized as arrays
   data <- crosstalk::SharedData$new(data.frame(x = 1, y = "2"))
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[1],"y":["2"]}')
-  expect_equal(attribs$crosstalkKey, data$key())
+  expect_equal(attribs$crosstalkKey, list("1"))
+  expect_equal(attribs$crosstalkGroup, data$groupName())
+
+  # Data with list-columns
+  data <- crosstalk::SharedData$new(data.frame(x = I(list(list(1,2,3), list(x = 1)))), key = ~x)
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":[[[1],[2],[3]],{"x":[1]}]}')
+  expect_equal(attribs$crosstalkKey, I(list(list(1,2,3), list(x = 1))))
   expect_equal(attribs$crosstalkGroup, data$groupName())
 })
 

@@ -173,7 +173,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   dependencies <- list()
   if (requireNamespace("crosstalk", quietly = TRUE)) {
     if (crosstalk::is.SharedData(data)) {
-      crosstalkKey <- data$key()
+      crosstalkKey <- as.list(data$key())
       crosstalkGroup <- data$groupName()
       data <- data$origData()
       dependencies <- crosstalk::crosstalkLibs()
