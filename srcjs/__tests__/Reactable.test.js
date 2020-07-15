@@ -3358,6 +3358,27 @@ describe('Crosstalk', () => {
     expect(mockSelection.close).toHaveBeenCalledTimes(1)
   })
 
+  it('handles initial selection value', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+
+    mockSelection.value = ['key2']
+    const { container, getByText } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    const onSelection = mockSelection.on.mock.calls[0][1]
+    onSelection({ sender: 'some other widget', value: [] })
+    expect(getRows(container)).toHaveLength(3)
+  })
+
   it('handles filter changes', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
@@ -3398,6 +3419,27 @@ describe('Crosstalk', () => {
     // Should cleanup
     unmount()
     expect(mockFilter.close).toHaveBeenCalledTimes(1)
+  })
+
+  it('handles initial filter value', () => {
+    const props = {
+      data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      crosstalkKey: ['key1', 'key2', 'key3'],
+      crosstalkGroup: 'group'
+    }
+
+    mockFilter.filteredKeys = ['key2']
+    const { container, getByText } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(1)
+    expect(getByText('bbb')).toBeTruthy()
+
+    const onFilter = mockFilter.on.mock.calls[0][1]
+    onFilter({ sender: 'some other widget', value: null })
+    expect(getRows(container)).toHaveLength(3)
   })
 
   it('handles both selection and filter changes', () => {

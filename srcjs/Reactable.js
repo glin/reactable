@@ -685,8 +685,8 @@ class Reactable extends React.Component {
       // Keep track of selected and filtered state updated by other widgets.
       // SelectionHandle and FilterHandle also track state, but will include changes
       // coming from the table as well.
-      this.ctSelected = null
-      this.ctFiltered = null
+      this.ctSelected = this.ctSelection.value
+      this.ctFiltered = this.ctFilter.filteredKeys
 
       const crosstalkKey = this.props.crosstalkKey || []
       const rowByKey = crosstalkKey.reduce((obj, key, index) => {
@@ -744,6 +744,9 @@ class Reactable extends React.Component {
           setCrosstalkFilter(e.value)
         }
       })
+
+      // Apply initial filter/selection for dynamically rendered tables (e.g., nested tables)
+      applyCrosstalkFilter()
 
       // Send initial Crosstalk state (just selection state for now)
       if (this.props.defaultSelected) {
