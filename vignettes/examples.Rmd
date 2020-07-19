@@ -230,8 +230,8 @@ You can use one of the built-in aggregate functions:
 ```r
 colDef(aggregate = "sum")        # Sum of numbers
 colDef(aggregate = "mean")       # Mean of numbers
-colDef(aggregate = "max")        # Max of numbers
-colDef(aggregate = "min")        # Min of numbers
+colDef(aggregate = "max")        # Maximum of numbers
+colDef(aggregate = "min")        # Minimum of numbers
 colDef(aggregate = "median")     # Median of numbers
 colDef(aggregate = "count")      # Count of values
 colDef(aggregate = "unique")     # Comma-separated list of unique values
@@ -245,7 +245,7 @@ colDef(
     function(values, rows) {
       // input:
       //  - values: an array of all values in the group
-      //  - rows: an array of row info objects for all rows in the group
+      //  - rows: an array of row data objects for all rows in the group (optional)
       //
       // output:
       //  - an aggregated value, e.g. a comma-separated list
@@ -275,6 +275,66 @@ reactable(
 )
 ```
 
+### Custom aggregate function
+Custom aggregate functions are useful when none of the built-in aggregate functions
+apply, or when you want to aggregate values from multiple columns. For example,
+when calculating aggregate averages or percentages.
+
+Within a custom aggregate function, you can access the values in the column using
+the `values` argument, and the values in other columns using the `rows` argument:
+```js
+columns = list(
+  Price = colDef(
+    aggregate = JS("function(values, rows) {
+      values
+      // [46.8, 27.6, 57]
+
+      rows
+      // [
+      //   { "Model": "Dynasty", "Manufacturer": "Dodge", "Price": 46.8, "Units": 2 },
+      //   { "Model": "Colt", "Manufacturer": "Dodge", "Price": 27.6, "Units": 5 },
+      //   { "Model": "Caravan", "Manufacturer": "Dodge", "Price": 57, "Units": 5 }
+      // ]
+    }")
+  )
+)
+```
+
+Here's an example that calculates an aggregate average price by dividing the
+the sum of two columns, `Price` and `Units`:
+
+```{r, message=FALSE}
+library(dplyr)
+
+set.seed(10)
+
+data <- sample_n(MASS::Cars93[23:40, ], 30, replace = TRUE) %>%
+  mutate(Price = Price * 3, Units = sample(1:5, 30, replace = TRUE)) %>%
+  mutate(Avg.Price = Price / Units) %>%
+  select(Model, Manufacturer, Price, Units, Avg.Price)
+
+reactable(
+  data,
+  groupBy = "Manufacturer",
+  columns = list(
+    Price = colDef(aggregate = "sum", format = colFormat(currency = "USD")),
+    Units = colDef(aggregate = "sum"),
+    Avg.Price = colDef(
+      # Calculate the aggregate Avg.Price as `sum(Price) / sum(Units)`
+      aggregate = JS("function(values, rows) {
+        var totalPrice = 0
+        var totalUnits = 0
+        rows.forEach(function(row) {
+          totalPrice += row['Price']
+          totalUnits += row['Units']
+        })
+        return totalPrice / totalUnits
+      }"),
+      format = colFormat(currency = "USD")
+    )
+  )
+)
+```
 
 ## Column Formatting
 You can format data in a column by providing `colFormat()` options to `format`:
@@ -516,24 +576,21 @@ reactable(
   searchable = TRUE,
   columns = list(
     Model = colDef(aggregate = "unique"),
-    Type = colDef(aggregated = JS("
-      function(cellInfo) {
-        // Get comma-separated list of unique values in visible rows
+    Type = colDef(
+      # Render aggregated value as a comma-separated list of unique values
+      aggregated = JS("function(cellInfo) {
         var values = cellInfo.subRows.map(function(row) { return row['Type'] })
         var unique = values.reduce(function(obj, v) { obj[v] = true; return obj }, {})
         return Object.keys(unique).join(', ')
-      }
-    ")),
-    Sales = colDef(aggregated = JS("
-      function(cellInfo) {
-        // Calculate sum of all values in visible rows
-        var total = 0
-        cellInfo.subRows.forEach(function(row) {
-          total += row['Sales']
-        })
-        return '$' + total.toFixed(1)
-      }
-    "))
+      }")
+    ),
+    Sales = colDef(
+      aggregate = "sum",
+      # Render aggregated cell as currency
+      aggregated = JS("function(cellInfo) {
+        return '$' + cellInfo.value.toFixed(2)
+      }")
+    )
   )
 )
 ```
