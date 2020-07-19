@@ -459,7 +459,7 @@ reactable(data, columns = list(
   Model = colDef(html = TRUE, cell = JS("
     function(cellInfo) {
       // Render as a link
-      var url = 'https://wikipedia.org/wiki/' + cellInfo.row.Manufacturer + '_' + cellInfo.value
+      var url = 'https://wikipedia.org/wiki/' + cellInfo.row['Manufacturer'] + '_' + cellInfo.value
       return '<a href=\"' + url + '\" target=\"_blank\">' + cellInfo.value + '</a>'
     }
   ")),
@@ -519,7 +519,7 @@ reactable(
     Type = colDef(aggregated = JS("
       function(cellInfo) {
         // Get comma-separated list of unique values in visible rows
-        var values = cellInfo.subRows.map(function(row) { return row.Type })
+        var values = cellInfo.subRows.map(function(row) { return row['Type'] })
         var unique = values.reduce(function(obj, v) { obj[v] = true; return obj }, {})
         return Object.keys(unique).join(', ')
       }
@@ -529,7 +529,7 @@ reactable(
         // Calculate sum of all values in visible rows
         var total = 0
         cellInfo.subRows.forEach(function(row) {
-          total += row.Sales
+          total += row['Sales']
         })
         return '$' + total.toFixed(1)
       }
@@ -599,8 +599,10 @@ reactable(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
       footer = JS("function(colInfo) {
-        var values = colInfo.data.map(function(row) { return row[colInfo.column.id] })
-        var total = values.reduce(function(a, b) { return a + b }, 0)
+        var total = 0
+        colInfo.data.forEach(function(row) {
+          total += row[colInfo.column.id]
+        })
         return '$' + total.toFixed(2)
       }")
     )
@@ -742,7 +744,7 @@ reactable(sleep[1:6, ], columns = list(
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(style = JS("
     function(rowInfo) {
-      var value = rowInfo.row.extra
+      var value = rowInfo.row['extra']
       if (value > 0) {
         var color = '#008000'
       } else if (value < 0) {
@@ -784,12 +786,12 @@ reactable(sleep[1:6, ],
 ```{r}
 reactable(sleep[1:6, ],
   rowStyle = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
+    if (rowInfo.row['extra'] < -1) {
       return { background: 'rgba(0, 0, 0, 0.05)' }
     }
   }"),
   rowClass = JS("function(rowInfo) {
-    if (rowInfo.row.extra < -1) {
+    if (rowInfo.row['extra'] < -1) {
       return 'bold'
     }
   }")

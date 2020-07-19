@@ -373,7 +373,7 @@ reactable(
     character = colDef(
       # Show species under character names
       cell = JS("function(cellInfo) {
-        const species = cellInfo.row.species || 'Unknown'
+        var species = cellInfo.row['species'] || 'Unknown'
         return (
           '<div style=\"font-weight: 600\">' + cellInfo.value + '</div>' +
           '<div style=\"font-size: 12px\">' + species + '</div>'
