@@ -23,6 +23,8 @@
 #'
 #'   To customize the row names column, use `".rownames"` as the column name.
 #' @param groupBy Character vector of column names to group by.
+#'
+#'   To aggregate data when rows are grouped, use the `aggregate` argument in [colDef()].
 #' @param sortable Enable sorting? Defaults to `TRUE`.
 #' @param resizable Enable column resizing?
 #' @param filterable Enable column filtering?
@@ -32,7 +34,7 @@
 #'   See [colGroup()].
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Defaults to `"asc"`.
-#' @param defaultSorted Optional vector of column names to sort by default.
+#' @param defaultSorted Character vector of column names to sort by default.
 #'   Or to customize sort order, a named list with values of `"asc"` or `"desc"`.
 #' @param pagination Enable pagination? Defaults to `TRUE`.
 #' @param defaultPageSize Default page size for the table. Defaults to 10.

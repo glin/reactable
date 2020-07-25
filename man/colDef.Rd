@@ -36,10 +36,12 @@ colDef(
 \arguments{
 \item{name}{Column header name.}
 
-\item{aggregate}{Aggregate function. The name of a built-in aggregate
-function or a custom \code{\link[=JS]{JS()}} aggregate function. Built-in aggregate functions
-are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"}, \code{"median"}, \code{"count"},
-\code{"unique"}, \code{"frequency"}.}
+\item{aggregate}{Aggregate function to use when rows are grouped. The name
+of a built-in aggregate function or a custom \code{\link[=JS]{JS()}} aggregate function.
+Built-in aggregate functions are: \code{"mean"}, \code{"sum"}, \code{"max"}, \code{"min"},
+\code{"median"}, \code{"count"}, \code{"unique"}, and \code{"frequency"}.
+
+To enable row grouping, use the \code{groupBy} argument in \code{\link[=reactable]{reactable()}}.}
 
 \item{sortable}{Enable sorting? Overrides the table option.}
 

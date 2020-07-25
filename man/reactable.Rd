@@ -66,7 +66,9 @@ Can also be a \code{\link[crosstalk:SharedData]{crosstalk::SharedData}} object t
 
 To customize the row names column, use \code{".rownames"} as the column name.}
 
-\item{groupBy}{Character vector of column names to group by.}
+\item{groupBy}{Character vector of column names to group by.
+
+To aggregate data when rows are grouped, use the \code{aggregate} argument in \code{\link[=colDef]{colDef()}}.}
 
 \item{sortable}{Enable sorting? Defaults to \code{TRUE}.}
 
@@ -84,7 +86,7 @@ See \code{\link[=colGroup]{colGroup()}}.}
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Defaults to \code{"asc"}.}
 
-\item{defaultSorted}{Optional vector of column names to sort by default.
+\item{defaultSorted}{Character vector of column names to sort by default.
 Or to customize sort order, a named list with values of \code{"asc"} or \code{"desc"}.}
 
 \item{pagination}{Enable pagination? Defaults to \code{TRUE}.}

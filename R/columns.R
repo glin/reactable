@@ -3,10 +3,12 @@
 #' Use `colDef()` to customize the columns in a table.
 #'
 #' @param name Column header name.
-#' @param aggregate Aggregate function. The name of a built-in aggregate
-#'   function or a custom [JS()] aggregate function. Built-in aggregate functions
-#'   are: `"mean"`, `"sum"`, `"max"`, `"min"`, `"median"`, `"count"`,
-#'   `"unique"`, `"frequency"`.
+#' @param aggregate Aggregate function to use when rows are grouped. The name
+#'   of a built-in aggregate function or a custom [JS()] aggregate function.
+#'   Built-in aggregate functions are: `"mean"`, `"sum"`, `"max"`, `"min"`,
+#'   `"median"`, `"count"`, `"unique"`, and `"frequency"`.
+#'
+#'   To enable row grouping, use the `groupBy` argument in [reactable()].
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
