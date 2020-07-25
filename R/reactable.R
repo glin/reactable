@@ -700,7 +700,7 @@ reactable_html <- function(id, style, class, ...) {
     style <- paste0("color: #333;", style)
   }
   htmltools::tagList(
-    # Necessary for RStudio viewer version < 1.2
+    # Necessary for RStudio Viewer version < 1.2 and IE11
     reactR::html_dependency_corejs(),
     reactR::html_dependency_react(),
     reactR::html_dependency_reacttools(),
