@@ -144,7 +144,7 @@ The [Twitter Followers](twitter-followers/twitter-followers.html) demo is a
 re-creation of the table from the FiveThirtyEight article,
 [Which 2020 Candidates Have The Most In Common ... On Twitter?](https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/)
 
-It's a nice interactive table with sorting, data formatting, embedded bar charts,
+It's an interactive HTML table with sorting, data formatting, embedded bar charts,
 and custom styling. In this article, we'll walk through how we made this table using
 reactable, and show a typical workflow for building tables.
 
@@ -217,13 +217,13 @@ We'll generate the bar chart HTML with help from the `htmltools` package,
 and render them in the cells via [custom render functions](examples.html#custom-rendering).
 
 Since we're taking over cell rendering with custom render functions, we'll also
-have to format the numbers and percentages manually now. Column formatters are
-currently overridden by custom cell renderers, although this may change in the future.
+have to manually format the numbers and percentages now. Custom cell renderers
+override column formatters, but this may change in the future.
 
 > If you're ever curious to see how an HTML table was made, you can open
 > your browser's [developer tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
 > and inspect the HTML and CSS behind the table. This is how we figured out
-> how the bar charts were made, what colors and fonts were used, and etc.
+> how the bar charts were made, which colors and fonts were used, and so on.
 
 ```{r}
 library(htmltools)
@@ -275,8 +275,8 @@ reactable(
 The bar charts look good, but they aren't aligned because the numbers
 have different widths. Let's fix this by giving each numeric label the same width.
 One way to do this would be to format the labels as fixed-width strings, and use
-a monospaced font so that each character takes up the same width. (An alternate way
-is shown in the [Demo Cookbook](cookbook/cookbook.html#units-on-first-row-only).)
+a monospaced font so that each character takes up the same width. (An alternate
+method is shown in the [Demo Cookbook](cookbook/cookbook.html#units-on-first-row-only).)
 
 > Some fonts have numerals that are all equal in width, others do not.
 > In tables with numeric columns, using a font with tabular (or monospaced)
@@ -328,19 +328,19 @@ reactable(
 
 The FiveThirtyEight table has a nifty little detail of only showing the percent
 sign in first row of the "exclusive followers" column to reduce repetition. If
-you sort the table, you'll notice that the percent always shows in the first row
+you sort the table, you'll notice that the percent always appears in the first row
 regardless of row order.
 
 To achieve dynamic behavior like this, we'll have to write some JavaScript.
-We need access to the client-side state of the table to know which row is
-first in the table after sorting. This isn't possible to do with R (at least
-without Shiny), so we'll render the cells using a custom JavaScript render function
+We need access to the client-side (browser) state of the table to know which row
+is first after sorting. This isn't possible to do with R (at least without Shiny),
+so we'll render the cells using a custom JavaScript render function
 as shown in the [Demo Cookbook](cookbook/cookbook.html#units-on-first-row-only).
 
 Since we're switching to a JavaScript render function, we'll unfortunately have
 to reformat the data and recreate the bar chart in JavaScript. We'll generate
 the same bar chart HTML by concatenating strings, and it'll be kind of ugly
-written in a character string in R.
+written as a character string in R.
 
 ```{r}
 reactable(
@@ -399,22 +399,29 @@ reactable(
 Finally, we'll style the table and add some extra niceties.
 
 We'll display everything on one page using `pagination = FALSE` and reduce
-the white space in the table using `compact = TRUE`. We'll apply CSS to the
-table and headers by adding custom class names through the `class` and `headerClass`
-arguments.
+the white space in the table with `compact = TRUE`. We'll apply custom styling
+by adding our own CSS classes to the table and column headers. This will be used
+to fix the table width, highlight column headers on hover, and change the font
+of the table.
 
 FiveThirtyEight uses two commercial fonts for their table: Atlas Grotesk for
 text, and Decima Mono for numbers. We'll use similar-looking free fonts from
 Google Fonts instead: [Karla](https://fonts.google.com/specimen/Karla) for text,
 and [Fira Mono](https://fonts.google.com/specimen/Fira+Mono) for numbers.
-(See the [Demo Cookbook](cookbook/cookbook.html#custom-fonts) for how to add
-web fonts to an HTML document).
 
 We'll also insert links to Twitter accounts using custom cell renderers
-(see [Demo Cookbook](cookbook/cookbook.html#insert-links)) and move the bar
-chart styles to CSS for better organization.
+and move the bar chart styles to CSS for better organization.
 
-The final table and code is shown below.
+While we won't go into detail here, you can check out the Examples and
+Demo Cookbook to learn more about:
+
+- [Adding custom CSS to a table](examples.html#custom-css)
+- [Adding custom web fonts to an R Markdown document](cookbook/cookbook.html#custom-fonts)
+- [Highlighting column headers on hover](cookbook/cookbook.html#highlight-sorted-headers)
+- [Inserting links in a table](cookbook/cookbook.html#insert-links)
+
+The final table and code is shown below. You can also find the source code
+for the demo at [`vignettes/twitter-followers/twitter-followers.Rmd`](https://github.com/glin/reactable/blob/master/vignettes/twitter-followers/twitter-followers.Rmd).
 
 ---
 
@@ -436,11 +443,15 @@ div(class = "twitter-followers",
 ```
 
 ```{r}
+# Add Google Fonts to the page
 tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
           rel = "stylesheet")
 ```
 
 ```{css}
+/* CSS for the R Markdown document, inserted through a ```{css} code chunk */
+
+/* Styles for the table container, title, and subtitle */
 .twitter-followers {
   /* Center the table */
   margin: 0 auto;
@@ -459,6 +470,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   font-weight: 600;
 }
 
+/* Styles for the table */
 .followers-tbl {
   font-size: 14px;
   line-height: 18px;
@@ -468,6 +480,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   color: inherit;
 }
 
+/* Styles for the column headers */
 .header {
   border-bottom: 2px solid #555;
   font-size: 13px;
@@ -479,6 +492,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
   background-color: #eee;
 }
 
+/* Styles for the bar charts */
 .bar-cell {
   display: flex;
   align-items: center;
