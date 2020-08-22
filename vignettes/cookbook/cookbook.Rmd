@@ -542,24 +542,64 @@ reactable(data, class = "car-specs", columns = list(
 
 ## Tooltips
 
-To add tooltips to column headers, render the headers with a
-[`title`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/title)
-attribute:
+To add tooltips to a column header, you can render the header as an
+[`<abbr>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr)
+element with a `title` attribute:
 
 ```{r}
-data <- mtcars[1:5, c("mpg", "cyl", "disp", "hp")]
+library(htmltools)
+library(dplyr)
+
+data <- as_tibble(mtcars[1:6, ], rownames = "car") %>%
+  select(car:hp)
 
 with_tooltip <- function(value, tooltip) {
-  span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+  tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+            title = tooltip, value)
 }
 
 reactable(
   data,
   columns = list(
-    mpg = colDef(header = with_tooltip("mpg", "Miles/(US) gallon")),
+    mpg = colDef(header = with_tooltip("mpg", "Miles per US gallon")),
     cyl = colDef(header = with_tooltip("cyl", "Number of cylinders")),
-    disp = colDef(header = with_tooltip("disp", "Displacement (cu.in.)")),
+    disp = colDef(header = with_tooltip("disp", "Displacement (cubic inches)")),
     hp = colDef(header = with_tooltip("hp", "Gross horsepower"))
+  )
+)
+```
+
+The `title` attribute is
+[inaccessible](https://developer.paciellogroup.com/blog/2013/01/using-the-html-title-attribute-updated/)
+to most keyboard, mobile, and screen reader users, however, so creating tooltips
+like this is generally discouraged.
+
+An alternate way would be to use a package like [tippy](http://tippy.john-coene.com/),
+which provides a JavaScript based tooltip that supports keyboard, touch, and screen
+reader use.
+
+```{r}
+# Install tippy (version >= 0.1.0 recommended).
+# remotes::install_github("JohnCoene/tippy")
+
+library(htmltools)
+library(dplyr)
+library(tippy)
+
+data <- as_tibble(mtcars[1:6, ], rownames = "car") %>%
+  select(car:hp)
+
+# See the ?tippy documentation for how to customize tooltips
+with_tooltip <- function(value, tooltip, ...) {
+  div(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+      tippy(value, tooltip, ...))
+}
+
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(header = with_tooltip("mpg", "Miles per US gallon")),
+    cyl = colDef(header = with_tooltip("cyl", "Number of cylinders"))
   )
 )
 ```
