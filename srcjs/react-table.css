@@ -30,9 +30,6 @@
   overflow: auto;
 }
 .ReactTable .rt-thead {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 0 auto;
-  flex: 1 0 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -64,9 +61,6 @@
   text-overflow: ellipsis;
 }
 .ReactTable .rt-tbody {
-  -webkit-box-flex: 99999;
-  -ms-flex: 99999 1 auto;
-  flex: 99999 1 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -128,9 +122,6 @@
   z-index: 10;
 }
 .ReactTable .rt-tfoot {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 0 auto;
-  flex: 1 0 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

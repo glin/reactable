@@ -17,6 +17,9 @@
   collapsed on page changes.
 * `colFormat()` now always formats numbers as a localized string when `locales`
   is specified.
+* Table rows no longer stretch to fill the height of the container
+  ([#69](https://github.com/glin/reactable/issues/69)). To make rows stretch
+  again, use a theme like `reactableTheme(tableBodyStyle = list(flex = "auto"))`.
 
 # reactable 0.2.0
 
