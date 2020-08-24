@@ -199,8 +199,8 @@ class ThComponent extends React.Component {
           }
         },
         onMouseDown: e => {
-          // Prevent text selection on double clicks, only when sorting
-          if (e.detail > 1) {
+          // Prevent text selection when sorting (double clicks or shift clicks)
+          if (e.detail > 1 || e.shiftKey) {
             e.preventDefault()
           }
           this.setState({ clicked: true })

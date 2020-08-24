@@ -20,6 +20,7 @@
 * Table rows no longer stretch to fill the height of the container
   ([#69](https://github.com/glin/reactable/issues/69)). To make rows stretch
   again, use a theme like `reactableTheme(tableBodyStyle = list(flex = "auto"))`.
+* Multi-sorting no longer selects text in column headers.
 
 # reactable 0.2.0
 
