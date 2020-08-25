@@ -764,7 +764,8 @@ test_that("column class functions", {
     p = colDef(class = function(value) value)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[4]]$class, list("2019-01-01", "2019-05-01", "2019-07-05"))
+  expect_equal(attribs$columns[[4]]$className,
+               list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05")))
 
   # JS functions
   tbl <- reactable(data, columns = list(
@@ -801,7 +802,8 @@ test_that("column style functions", {
     p = colDef(style = function(value) value)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[4]]$style, list("2019-01-01", "2019-05-01", "2019-07-05"))
+  expect_equal(attribs$columns[[4]]$style,
+               list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05")))
 
   # JS functions
   tbl <- reactable(data, columns = list(
