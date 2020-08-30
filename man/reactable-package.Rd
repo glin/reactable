@@ -11,13 +11,13 @@ Interactive data tables for R, based on the 'React Table'
     documents and 'Shiny' applications, or viewed from an R console.
 }
 \details{
-See the \href{https://glin.github.io/reactable}{online documentation} for
+See the \href{https://glin.github.io/reactable/}{online documentation} for
 examples and an extensive usage guide.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://glin.github.io/reactable}
+  \item \url{https://glin.github.io/reactable/}
   \item \url{https://github.com/glin/reactable}
   \item Report bugs at \url{https://github.com/glin/reactable/issues}
 }

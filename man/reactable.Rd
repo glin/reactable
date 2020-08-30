@@ -199,7 +199,7 @@ used in R Markdown documents and Shiny applications, or viewed from an
 R console.
 }
 \note{
-See the \href{https://glin.github.io/reactable}{online documentation} for
+See the \href{https://glin.github.io/reactable/}{online documentation} for
 additional details and examples.
 }
 \examples{

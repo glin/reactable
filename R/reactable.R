@@ -1,5 +1,5 @@
 #' @details
-#' See the [online documentation](https://glin.github.io/reactable) for
+#' See the [online documentation](https://glin.github.io/reactable/) for
 #' examples and an extensive usage guide.
 #' @keywords internal
 #' @import htmlwidgets
@@ -106,7 +106,7 @@
 #'   and Shiny applications, or viewed from an R console.
 #'
 #' @note
-#' See the [online documentation](https://glin.github.io/reactable) for
+#' See the [online documentation](https://glin.github.io/reactable/) for
 #' additional details and examples.
 #'
 #' @seealso
