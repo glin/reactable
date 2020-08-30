@@ -36,7 +36,7 @@
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
-#' @param minWidth Minimum width of the column in pixels.
+#' @param minWidth Minimum width of the column in pixels. Defaults to 100.
 #' @param maxWidth Maximum width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.

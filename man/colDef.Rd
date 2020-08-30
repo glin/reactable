@@ -84,7 +84,7 @@ as an argument. Cannot be used on a grouping column.}
 \item{na}{String to display for missing values (i.e. \link{NA} or \link{NaN}).
 By default, missing values are displayed as blank cells.}
 
-\item{minWidth}{Minimum width of the column in pixels.}
+\item{minWidth}{Minimum width of the column in pixels. Defaults to 100.}
 
 \item{maxWidth}{Maximum width of the column in pixels.}
 
