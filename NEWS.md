@@ -1,4 +1,4 @@
-# reactable 0.2.0.9000
+# reactable 0.2.1
 
 ### New features
 
