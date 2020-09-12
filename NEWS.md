@@ -1,4 +1,4 @@
-# reactable 0.2.1.9000
+# reactable 0.2.2
 
 ### Bug fixes
 
