@@ -1,3 +1,10 @@
+# reactable 0.2.1.9000
+
+### Bug fixes
+
+* Headers in fixed height tables now display properly in Safari, Chrome, and
+  the RStudio Viewer ([#76](https://github.com/glin/reactable/issues/76)).
+
 # reactable 0.2.1
 
 ### New features
