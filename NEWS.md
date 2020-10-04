@@ -1,4 +1,6 @@
-# reactable 0.2.2.9000
+# reactable 0.2.3
+
+### Bug fixes
 
 * Fixed a character encoding issue in the documentation.
 
