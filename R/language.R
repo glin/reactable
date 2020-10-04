@@ -59,6 +59,34 @@
 #' @return A language options object that can be used to customize the language
 #'   strings in `reactable()`.
 #'
+#' @usage reactableLang(
+#'   sortLabel = "Sort {name}",
+#'   filterPlaceholder = "",
+#'   filterLabel = "Filter {name}",
+#'   searchPlaceholder = "Search",
+#'   searchLabel = "Search",
+#'   noData = "No rows found",
+#'   pageNext = "Next",
+#'   pagePrevious = "Previous",
+#'   pageNumbers = "{page} of {pages}",
+#'   pageInfo = "{rowStart}\u2013{rowEnd} of {rows} rows",
+#'   pageSizeOptions = "Show {rows}",
+#'   pageNextLabel = "Next page",
+#'   pagePreviousLabel = "Previous page",
+#'   pageNumberLabel = "Page {page}",
+#'   pageJumpLabel = "Go to page",
+#'   pageSizeOptionsLabel = "Rows per page",
+#'   defaultGroupHeader = "Grouped",
+#'   detailsExpandLabel = "Expand details",
+#'   detailsCollapseLabel = "Collapse details",
+#'   selectAllRowsLabel = "Select all rows",
+#'   deselectAllRowsLabel = "Deselect all rows",
+#'   selectAllSubRowsLabel = "Select all rows in group",
+#'   deselectAllSubRowsLabel = "Deselect all rows in group",
+#'   selectRowLabel = "Select row",
+#'   deselectRowLabel = "Deselect row"
+#' )
+#'
 #' @examples
 #' reactable(
 #'   iris[1:30, ],
