@@ -332,8 +332,11 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   if (!is.logical(showPageSizeOptions)) {
     stop("`showPageSizeOptions` must be TRUE or FALSE")
   }
-  if (!is.numeric(pageSizeOptions)) {
-    stop("`pageSizeOptions` must be numeric")
+  if (!is.null(pageSizeOptions)) {
+    if (!is.numeric(pageSizeOptions)) {
+      stop("`pageSizeOptions` must be numeric")
+    }
+    pageSizeOptions <- as.list(pageSizeOptions)
   }
   if (!paginationType %in% c("numbers", "jump", "simple")) {
     stop('`paginationType` must be one of "numbers", "jump", "simple"')

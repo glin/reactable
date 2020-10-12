@@ -126,7 +126,7 @@ test_that("reactable", {
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 1,
     showPageSizeOptions = TRUE,
-    pageSizeOptions = c(1, 2),
+    pageSizeOptions = list(1, 2),
     paginationType = "simple",
     showPagination = FALSE,
     showPageInfo = FALSE,
@@ -462,6 +462,15 @@ test_that("pagination", {
     attribs <- getAttribs(tbl)
     expect_equal(attribs$paginationType, type)
   }
+
+  # pageSizeOptions should be serialized as an array
+  tbl <- reactable(data.frame(x = 1), showPageSizeOptions = TRUE, pageSizeOptions = c(1, 3))
+  expect_equal(getAttribs(tbl)$pageSizeOptions, list(1, 3))
+  tbl <- reactable(data.frame(x = 1), showPageSizeOptions = TRUE, pageSizeOptions = 5)
+  expect_equal(getAttribs(tbl)$pageSizeOptions, list(5))
+  # pageSizeOptions should be unset when page size options are hidden
+  tbl <- reactable(data.frame(x = 1), pageSizeOptions = 5)
+  expect_null(getAttribs(tbl)$pageSizeOptions)
 })
 
 test_that("column renderers", {

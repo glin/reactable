@@ -3,6 +3,7 @@
 ### Bug fixes
 
 * Setting `show = FALSE` as a default value in `defaultColDef()` now works (@csgillespie, [#105](https://github.com/glin/reactable/pull/105)).
+* Using a single value for `pageSizeOptions` in `reactable()` now works.
 
 # reactable 0.2.3
 
