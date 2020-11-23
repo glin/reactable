@@ -100,7 +100,7 @@ bsStyleMap <- list(
     fontFamily = "$headings-font-family"
   ),
   rowHighlightStyle = list(
-    color = "color-yiq($primary)"
+    color = "color-contrast($primary)"
   ),
   inputStyle = list(
     color = "$input-color",
