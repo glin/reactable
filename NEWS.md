@@ -1,3 +1,9 @@
+# reactable 0.2.4
+
+### Bug fixes
+
+* Setting `show = FALSE` as a default value now works
+
 # reactable 0.2.3
 
 ### Bug fixes
