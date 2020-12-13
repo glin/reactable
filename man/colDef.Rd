@@ -10,7 +10,7 @@ colDef(
   sortable = NULL,
   resizable = NULL,
   filterable = NULL,
-  show = TRUE,
+  show = NULL,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
   format = NULL,
@@ -49,7 +49,7 @@ To enable row grouping, use the \code{groupBy} argument in \code{\link[=reactabl
 
 \item{filterable}{Enable column filtering? Overrides the table option.}
 
-\item{show}{Show the column? Defaults to \code{TRUE}.}
+\item{show}{Show the column? Overrides the table option.}
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}

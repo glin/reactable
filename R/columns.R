@@ -12,7 +12,7 @@
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
-#' @param show Show the column? Defaults to `TRUE`.
+#' @param show Show the column? Overrides the table option.
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param sortNALast Always sort missing values ([NA] or [NaN]) last?
@@ -79,7 +79,7 @@
 #'
 #' @export
 colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
-                   resizable = NULL, filterable = NULL, show = TRUE,
+                   resizable = NULL, filterable = NULL, show = NULL,
                    defaultSortOrder = NULL, sortNALast = FALSE, format = NULL,
                    cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
                    details = NULL, html = FALSE, na = "", minWidth = NULL,
@@ -110,7 +110,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   if (!is.null(filterable) && !is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
-  if (!is.logical(show)) {
+  if (!is.null(show) && !is.logical(show)) {
     stop("`show` must be TRUE or FALSE")
   }
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
