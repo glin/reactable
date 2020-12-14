@@ -1,3 +1,9 @@
+# reactable 0.2.3.9000
+
+### Bug fixes
+
+* Setting `show = FALSE` as a default value in `defaultColDef()` now works (@csgillespie, [#105](https://github.com/glin/reactable/pull/105)).
+
 # reactable 0.2.3
 
 ### Bug fixes
