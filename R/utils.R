@@ -246,3 +246,7 @@ callFunc <- function(func, ...) {
   numArgs <- length(formals(func))
   do.call(func, args[seq_len(numArgs)])
 }
+
+"%||%" <- function(x, y) {
+  if (is.null(x)) y else x
+}

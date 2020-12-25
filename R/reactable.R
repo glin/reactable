@@ -597,12 +597,15 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
 
   htmlwidgets::createWidget(
     name = "reactable",
-    reactR::reactMarkup(component),
+    x = reactR::reactMarkup(component),
     width = width,
     height = height,
     package = "reactable",
     dependencies = dependencies,
-    elementId = elementId
+    elementId = elementId,
+    preRenderHook = function(instance) {
+      supplyBsThemeDefaults(instance)
+    }
   )
 }
 
