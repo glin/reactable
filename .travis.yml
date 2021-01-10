@@ -26,3 +26,7 @@ matrix:
         local_dir: docs
         skip_cleanup: true
         github_token: $GITHUB_TOKEN
+
+apt_packages:
+  - libfribidi-dev
+  - libharfbuzz-dev
