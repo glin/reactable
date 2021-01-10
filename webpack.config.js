@@ -5,10 +5,13 @@ module.exports = (env, argv) => {
   process.env.NODE_ENV = argv.mode
 
   return {
-    entry: path.join(__dirname, 'srcjs', 'index.js'),
+    entry: {
+      reactable: path.join(__dirname, 'srcjs', 'index.v2.js'),
+      reactable_v1: path.join(__dirname, 'srcjs', 'index.js')
+    },
 
     output: {
-      filename: 'reactable.js',
+      filename: '[name].js',
       path: path.join(__dirname, 'inst', 'htmlwidgets')
     },
 

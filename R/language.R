@@ -43,8 +43,8 @@
 #'   the `"jump"` pagination type.
 #' @param pageSizeOptionsLabel Accessible label for the page size options input.
 #'
-#' @param defaultGroupHeader Header for default column groups. Only used for
-#'   `groupBy` columns.
+#' @param groupExpandLabel Accessible label for the row group expand button.
+#' @param groupCollapseLabel Accessible label for the row group collapse button.
 #'
 #' @param detailsExpandLabel Accessible label for the row details expand button.
 #' @param detailsCollapseLabel Accessible label for the row details collapse button.
@@ -55,6 +55,8 @@
 #' @param deselectAllSubRowsLabel Accessible label for the deselect all sub rows checkbox.
 #' @param selectRowLabel Accessible label for the select row checkbox
 #' @param deselectRowLabel Accessible label for the deselect row checkbox.
+#'
+#' @param defaultGroupHeader Deprecated and no longer used.
 #'
 #' @return A language options object that can be used to customize the language
 #'   strings in `reactable()`.
@@ -76,7 +78,8 @@
 #'   pageNumberLabel = "Page {page}",
 #'   pageJumpLabel = "Go to page",
 #'   pageSizeOptionsLabel = "Rows per page",
-#'   defaultGroupHeader = "Grouped",
+#'   groupExpandLabel = "Expand group",
+#'   groupCollapseLabel = "Collapse group",
 #'   detailsExpandLabel = "Expand details",
 #'   detailsCollapseLabel = "Collapse details",
 #'   selectAllRowsLabel = "Select all rows",
@@ -84,7 +87,8 @@
 #'   selectAllSubRowsLabel = "Select all rows in group",
 #'   deselectAllSubRowsLabel = "Deselect all rows in group",
 #'   selectRowLabel = "Select row",
-#'   deselectRowLabel = "Deselect row"
+#'   deselectRowLabel = "Deselect row",
+#'   defaultGroupHeader = NULL
 #' )
 #'
 #' @examples
@@ -142,8 +146,9 @@ reactableLang <- function(
   pageJumpLabel = "Go to page",
   pageSizeOptionsLabel = "Rows per page",
 
-  # Column groups
-  defaultGroupHeader = "Grouped",
+  # Row grouping
+  groupExpandLabel = "Expand group",
+  groupCollapseLabel = "Collapse group",
 
   # Row details
   detailsExpandLabel = "Expand details",
@@ -155,8 +160,19 @@ reactableLang <- function(
   selectAllSubRowsLabel = "Select all rows in group",
   deselectAllSubRowsLabel = "Deselect all rows in group",
   selectRowLabel = "Select row",
-  deselectRowLabel = "Deselect row"
+  deselectRowLabel = "Deselect row",
+
+  # Deprecated and no longer used
+  defaultGroupHeader = NULL
 ) {
+
+  if (!is.null(defaultGroupHeader)) {
+    warning(
+      "`defaultGroupHeader` is deprecated and no longer used. ",
+      "Use the `columnGroups` argument in `reactable()` to customize the column ",
+      "group header for `groupBy` columns."
+    )
+  }
 
   defaultArgs <- formals()
   args <- as.list(match.call())

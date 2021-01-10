@@ -27,6 +27,8 @@ export const defaultLanguage = {
 
   // Column groups
   defaultGroupHeader: 'Grouped',
+  groupExpandLabel: 'Expand group',
+  groupCollapseLabel: 'Collapse group',
 
   // Row details
   detailsExpandLabel: 'Expand details',

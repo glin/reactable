@@ -99,20 +99,6 @@ describe('createTheme', () => {
         tableBodyStyle: 'tableBodyStyle'
       },
 
-      cellStyle: {
-        borderColor: 'cellBorderColor',
-        borderWidth: 'cellBorderWidth',
-        padding: 'cellPadding',
-        cellStyle: 'cellStyle'
-      },
-
-      footerStyle: {
-        borderColor: 'footerBorderColor',
-        borderWidth: 'footerBorderWidth',
-        padding: 'cellPadding',
-        footerStyle: 'footerStyle'
-      },
-
       rowGroupStyle: {
         rowGroupStyle: 'rowGroupStyle'
       },
@@ -130,6 +116,20 @@ describe('createTheme', () => {
         '&.rt-tr-selected': {
           rowSelectedStyle: 'rowSelectedStyle'
         }
+      },
+
+      cellStyle: {
+        borderColor: 'cellBorderColor',
+        borderWidth: 'cellBorderWidth',
+        padding: 'cellPadding',
+        cellStyle: 'cellStyle'
+      },
+
+      footerStyle: {
+        borderColor: 'footerBorderColor',
+        borderWidth: 'footerBorderWidth',
+        padding: 'cellPadding',
+        footerStyle: 'footerStyle'
       },
 
       filterCellStyle: {

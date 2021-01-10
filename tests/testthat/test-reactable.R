@@ -79,8 +79,7 @@ test_that("reactable", {
     paginationType = "numbers",
     showPageInfo = TRUE,
     minRows = 1,
-    dataKey = digest::digest(list(data, columns)),
-    key = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "auto")
@@ -105,12 +104,13 @@ test_that("reactable", {
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(accessor = ".selection", name = "", type = "NULL"),
+    list(accessor = ".selection", name = "", type = "NULL", resizable = FALSE,
+         width = 45, selectable = TRUE),
     list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
          resizable = FALSE, filterable = FALSE,  width = 45, align = "center",
          details = list("1")),
     list(accessor = ".rownames", name = "", type = "numeric",
-         sortable = FALSE, filterable = FALSE),
+         sortable = FALSE, filterable = FALSE, isRowHeader = TRUE),
     list(accessor = "x", name = "x", type = "factor")
   )
   expected <- list(
@@ -148,8 +148,7 @@ test_that("reactable", {
     inline = TRUE,
     width = "400px",
     height = "100%",
-    dataKey = digest::digest(list(data, columns)),
-    key = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns))
   )
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "400px")
@@ -245,7 +244,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "numeric",
-    sortable = FALSE, filterable = FALSE
+    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
   ))
 
   # Character row names
@@ -254,7 +253,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE
+    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
   ))
 
   # Custom rownames colDef
@@ -264,7 +263,7 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "N",  type = "numeric",
-    sortable = TRUE, filterable = FALSE, headerClassName = "hdr"
+    sortable = TRUE, filterable = FALSE, headerClassName = "hdr", isRowHeader = TRUE
   ))
 
   # Row names can be part of column groups
@@ -284,7 +283,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE
+    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
   ))
   # Handles matrices
   tbl <- reactable(matrix(c(1,2,3), dimnames = list(c(1, 2, 3), "x")))
@@ -292,7 +291,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE
+    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
   ))
 
   # If no row names, should not be shown by default
@@ -702,6 +701,10 @@ test_that("row selection", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$selection, "single")
   expect_equal(attribs$selectionId, "selected")
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".selection", name = "", type = "NULL", resizable = FALSE,
+    width = 45, selectable = TRUE
+  ))
 
   tbl <- reactable(data, selection = "multiple", defaultSelected = c(1, 3, 2))
   attribs <- getAttribs(tbl)
@@ -715,12 +718,13 @@ test_that("row selection", {
 
   # Selection column should be customizable
   tbl <- reactable(data, selection = "single", columns = list(
-    .selection = colDef(width = 100, class = "my-cls")
+    .selection = colDef(width = 100, class = "my-cls", resizable = TRUE)
   ))
   attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$name, "")
-  expect_equal(attribs$columns[[1]]$width, 100)
-  expect_equal(attribs$columns[[1]]$className, "my-cls")
+  expect_equal(attribs$columns[[1]], list(
+    accessor = ".selection", name = "", type = "NULL", resizable = TRUE,
+    width = 100, selectable = TRUE, className = "my-cls"
+  ))
 
   # Selection column can be part of column groups
   tbl <- reactable(data.frame(x = c(1, 2)), selection = "multiple", columnGroups = list(

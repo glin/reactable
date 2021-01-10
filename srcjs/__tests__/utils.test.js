@@ -1,4 +1,13 @@
-import { classNames, getFirstDefined, getStrIncludesLocale, strIncludes, get, set } from '../utils'
+import {
+  classNames,
+  getFirstDefined,
+  getStrIncludesLocale,
+  strIncludes,
+  get,
+  set,
+  getLeafColumns,
+  convertRowsToV6
+} from '../utils'
 
 test('classNames', () => {
   expect(classNames('')).toEqual('')
@@ -75,4 +84,93 @@ test('set', () => {
   const obj = { 1: 2 }
   set(obj, [1], 5)
   expect(obj[1]).toEqual(2)
+})
+
+test('getLeafColumns', () => {
+  expect(getLeafColumns({ name: 'col' })).toEqual([{ name: 'col' }])
+  expect(getLeafColumns({ name: 'col', columns: [] })).toEqual([])
+  expect(getLeafColumns({ name: 'col', columns: undefined })).toEqual([
+    { name: 'col', columns: undefined }
+  ])
+  const colA = { name: 'a' }
+  const colB = { name: 'b' }
+  const colC = { name: 'c' }
+  const colD = { name: 'd' }
+  expect(getLeafColumns({ columns: [colA] })).toEqual([colA])
+  expect(getLeafColumns({ columns: [colA, colB] })).toEqual([colA, colB])
+  expect(
+    getLeafColumns({
+      columns: [{ columns: [colA, colB] }, { columns: [colC] }, colD]
+    })
+  ).toEqual([colA, colB, colC, colD])
+})
+
+test('convertRowsToV6', () => {
+  expect(convertRowsToV6([])).toEqual([])
+  expect(convertRowsToV6([{ values: {} }])).toEqual([{}])
+  expect(convertRowsToV6([{ values: { a: 1, b: 2 } }])).toEqual([{ a: 1, b: 2 }])
+
+  expect(
+    convertRowsToV6([
+      { values: { a: 1, b: 2 }, otherProps: 'shouldnotappear' },
+      { values: { c: 'c', d: true } }
+    ])
+  ).toEqual([
+    { a: 1, b: 2 },
+    { c: 'c', d: true }
+  ])
+
+  // Sub rows
+  expect(
+    convertRowsToV6([
+      {
+        values: { a: 1, b: 2 },
+        subRows: [{ values: { a: 33, b: 44 } }, { values: { e: 'f', g: 'h' } }]
+      },
+      {
+        values: { A: 11, B: 22 },
+        subRows: [{ values: { a: 33, b: 44 } }]
+      },
+      {
+        values: { a: 3, b: 4 }
+      }
+    ])
+  ).toEqual([
+    {
+      a: 1,
+      b: 2,
+      _subRows: [
+        { a: 33, b: 44 },
+        { e: 'f', g: 'h' }
+      ]
+    },
+    { A: 11, B: 22, _subRows: [{ a: 33, b: 44 }] },
+    { a: 3, b: 4 }
+  ])
+
+  // Multi-level sub rows
+  expect(
+    convertRowsToV6([
+      {
+        values: { a: 1, b: 2 },
+        subRows: [
+          { values: { a: 33, b: 44 }, subRows: [{ values: { a: 's', b: 't' } }] },
+          { values: { e: 'f', g: 'h' } }
+        ]
+      },
+      {
+        values: { a: 3, b: 4 }
+      }
+    ])
+  ).toEqual([
+    {
+      a: 1,
+      b: 2,
+      _subRows: [
+        { a: 33, b: 44, _subRows: [{ a: 's', b: 't' }] },
+        { e: 'f', g: 'h' }
+      ]
+    },
+    { a: 3, b: 4 }
+  ])
 })

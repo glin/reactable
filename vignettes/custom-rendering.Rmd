@@ -126,9 +126,10 @@ Or a JavaScript function, wrapped in `JS()`, with a single argument:
 ```{r, eval=FALSE}
 colDef(
   cell = JS("
-    function(cellInfo) {
+    function(cellInfo, state) {
       // input:
-      //  - cellInfo, an object containing cell and row info
+      //  - cellInfo, an object containing cell info
+      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -142,7 +143,9 @@ colDef(
 With JavaScript functions, you can also customize rendering of aggregated cells:
 ```{r, eval=FALSE}
 colDef(
-  aggregated = JS("function(cellInfo) { return cellInfo.value }")
+  aggregated = JS("function(cellInfo, state) {
+    return cellInfo.value
+  }")
 )
 ```
 
@@ -155,10 +158,11 @@ props <- tibble::tribble(
   "column", '{id: "Species"}', "column info object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
-  "page", "2", "page index (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
+  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated cells only)",
-  "level", "0", "row nesting depth (zero-based)"
+  "level", "0", "row nesting depth (zero-based)",
+  "selected", "true", "whether the row is selected (new in v0.2.3.9000)"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -167,6 +171,24 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 ))
 ```
 
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
 
 ## Headers
 
@@ -191,9 +213,10 @@ Or a JavaScript function with a single argument:
 ```{r, eval=FALSE}
 colDef(
   header = JS("
-    function(colInfo) {
+    function(colInfo, state) {
       // input:
       //  - colInfo, an object containing column info
+      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -209,7 +232,7 @@ colDef(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "array of row data objects"
+  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "sorted array of row data objects in the table"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -218,6 +241,24 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 ))
 ```
 
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
 
 ## Footers
 
@@ -242,9 +283,10 @@ Or a JavaScript function with a single argument:
 ```{r, eval=FALSE}
 colDef(
   footer = JS("
-    function(colInfo) {
+    function(colInfo, state) {
       // input:
       //  - colInfo, an object containing column info
+      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -260,7 +302,7 @@ colDef(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "array of row data objects"
+  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "sorted array of row data objects in the table"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -269,6 +311,24 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 ))
 ```
 
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
 
 ## Expandable Row Details
 
@@ -295,13 +355,14 @@ Or a JavaScript function with a single argument:
 ```{r, eval=FALSE}
 reactable(
   details = JS("
-    function(rowInfo) {
+    function(rowInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
+      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>' + JSON.stringify(rowInfo) + '</div>'
+      return '<div>Details for row: ' + rowInfo.index + '</div>'
     }
   ")
 )
@@ -314,9 +375,28 @@ props <- tibble::tribble(
   "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
-  "page", "2", "page index (zero-based)",
+  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.2.0)"
+)
+
+reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
+  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
+  Example = colDef(cell = function(value) htmltools::code(value))
+))
+```
+
+#### `state` properties
+```{r, echo=FALSE}
+props <- tibble::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
+  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(

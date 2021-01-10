@@ -1,9 +1,79 @@
 # reactable 0.2.3.9000
 
-### Bug fixes
+This release upgrades to a new major version of React Table
+([#35](https://github.com/glin/reactable/issues/35)), which introduces many
+new features, improvements, and bug fixes. Backward compatibility was kept
+where possible, but note that there are several breaking changes.
 
-* Setting `show = FALSE` as a default value in `defaultColDef()` now works (@csgillespie, [#105](https://github.com/glin/reactable/pull/105)).
+### New features
+
+* Column group headers can now be resized.
+* Column group headers and filters are now sticky. Previously, only column
+  headers were sticky ([#107](https://github.com/glin/reactable/issues/107)).
+* Expanded rows now stay expanded on sorting, filtering, and pagination changes.
+  Previously, expanded rows were always collapsed on sorting and pagination
+  changes, and incorrectly persisted on filtering changes
+  ([#39](https://github.com/glin/reactable/issues/39)).
+* The row selection column is now always placed as the first column in the
+  table, even before the `groupBy` and row details columns
+  ([#71](https://github.com/glin/reactable/issues/71)).
+* Aggregated rows can now be selected when multiple selection is enabled.
+* JavaScript render functions and style functions receive several new properties:
+  * `rowInfo.expanded` and `cellInfo.expanded` indicating whether the row is expanded
+  * `cellInfo.selected` property indicating whether the cell's row is selected
+  * `state.page`, `state.pageSize`, and `state.pages` for the current page index,
+    page size, and number of pages in the table
+* JavaScript render functions for cells, headers, footers, and row details
+  can now access the table state using a new `state` argument
+  ([#88](https://github.com/glin/reactable/issues/88)).
+* Custom cell click actions can now access the table state using a new `state`
+  argument.
+
+### Breaking changes
+
+* When expanding grouped rows, sub rows are now paginated and included in the
+  row count.
+* When both `columnGroups` and `groupBy` arguments are provided, `groupBy`
+  columns are no longer added to a column group automatically
+  ([#87](https://github.com/glin/reactable/issues/87)).
+* The `defaultGroupHeader` argument in `reactableLang()` is now deprecated and
+  no longer used. Use the `columnGroups` argument in `reactable()` to customize
+  the column group header for `groupBy` columns.
+* The `state.expanded` property has been removed from JavaScript render
+  functions and style functions. To check whether a row is expanded, use
+  `rowInfo.expanded` instead.
+* The `rowInfo.page` and `cellInfo.page` properties have been removed from
+  JavaScript render functions and style functions. To get the current page
+  index of the table, use `state.page` instead.
+
+### Minor improvements and bug fixes
+
+* Setting `show = FALSE` as a default value in `defaultColDef()` now works
+  (@csgillespie, [#105](https://github.com/glin/reactable/pull/105)).
 * Using a single value for `pageSizeOptions` in `reactable()` now works.
+* Column resizing is now limited by the min and max width of the column.
+* Column group headers and filter cells in fixed height tables now display
+  properly in Safari, Chrome, and the RStudio Viewer
+  ([#76](https://github.com/glin/reactable/issues/76)).
+* In `reactable()`, `defaultExpanded = TRUE` now expands all rows in the table,
+  not just rows on the first page.
+* In `reactable()`, `defaultExpanded = TRUE` now works when column groups are present.
+* Aggregated cell values are now recalculated when filtering or searching the table.
+* Aggregate functions now always take the unaggregated values in the column.
+  Previously, if there were multiple `groupBy` columns, aggregate functions
+  could take aggregated values which could produce inaccurate calculations
+  (e.g., when calculating the mean of values).
+* Searching now properly ignores the row details and selection columns.
+* Increased the width of the row selection column to match the row details column.
+* Selected rows now reset when the table data changes in Shiny
+  ([#110](https://github.com/glin/reactable/issues/110)).
+* When selecting rows, errors from other Crosstalk widgets no longer cause the
+  table to disappear.
+* Row group expander buttons are now labeled as "Expand group" and
+  "Collapse group" instead of "Expand details" and "Collapse details". Use the
+  new `groupExpandLabel` and `groupCollapseLabel` arguments in `reactableLang()`
+  to customize the accessible labels for row group expander buttons.
+* Row name cells are now marked up as row headers for assistive technologies.
 
 # reactable 0.2.3
 

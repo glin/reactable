@@ -62,3 +62,28 @@ export function set(obj, path, value) {
 export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
+
+// Get leaf columns as an array
+export function getLeafColumns(column) {
+  const leafColumns = []
+  const recurseColumn = column => {
+    if (column.columns) {
+      column.columns.forEach(recurseColumn)
+    } else {
+      leafColumns.push(column)
+    }
+  }
+  recurseColumn(column)
+  return leafColumns
+}
+
+// Convert row data for react-table v6 compatibility
+export function convertRowsToV6(rows) {
+  return rows.map(row => {
+    if (row.subRows && row.subRows.length > 0) {
+      return { _subRows: convertRowsToV6(row.subRows), ...row.values }
+    } else {
+      return row.values
+    }
+  })
+}

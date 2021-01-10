@@ -40,7 +40,8 @@ reactable(
   details = colDef(
     html = TRUE,
     details = JS("function(rowInfo) {
-      return '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+      return 'Details for row: ' + rowInfo.index +
+        '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
     }")
   )
 )

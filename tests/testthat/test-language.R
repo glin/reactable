@@ -32,8 +32,9 @@ test_that("reactableLang", {
     pageJumpLabel = "_Go to page",
     pageSizeOptionsLabel = "_Rows per page",
 
-    # Column groups
-    defaultGroupHeader = "_Grouped",
+    # Row grouping
+    groupExpandLabel = "_Expand group",
+    groupCollapseLabel = "_Collapse group",
 
     # Row details
     detailsExpandLabel = "_Expand details",
@@ -57,6 +58,9 @@ test_that("reactableLang", {
   # Errors
   expect_error(reactableLang(noData = 123, detailsExpandLabel = TRUE), "`noData` must be a character string")
   expect_error(reactableLang(selectRowLabel = list()), "`selectRowLabel` must be a character string")
+
+  # Deprecations
+  expect_warning(reactableLang(defaultGroupHeader = "deprecated"), "`defaultGroupHeader` is deprecated and no longer used")
 })
 
 test_that("is.reactableLang", {

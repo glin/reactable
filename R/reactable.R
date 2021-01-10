@@ -211,6 +211,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     if (rownamesKey %in% names(columns)) {
       rownamesColumn <- mergeLists(rownamesColumn, columns[[rownamesKey]])
     }
+    rownamesColumn$isRowHeader <- TRUE
     columns[[rownamesKey]] <- rownamesColumn
   }
 
@@ -252,7 +253,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   if (!is.null(selection)) {
     selectionKey <- ".selection"
     columnKeys <- c(selectionKey, columnKeys)
-    selectionColumn <- colDef(name = "")
+    selectionColumn <- colDef(name = "", resizable = FALSE, width = 45)
+    selectionColumn$selectable <- TRUE
     if (selectionKey %in% names(columns)) {
       selectionColumn <- mergeLists(selectionColumn, columns[[selectionKey]])
     }
@@ -546,10 +548,16 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE, digits = NA,
                            POSIXt = "ISO8601", Date = "ISO8601")
 
-  # Create a unique key for the data. The key is used to optimize performance of
-  # row selection and expansion, and to fully reset state on data changes (for
-  # tables in Shiny).
+  # Create a unique key for the data. The key is used to fully reset state when
+  # the data changes (for tables in Shiny).
   dataKey <- digest::digest(list(data, cols))
+
+  if (isV2()) {
+    widgetName <- "reactable"
+  } else {
+    widgetName <- "reactable_v1"
+    class <- paste("reactable", class)
+  }
 
   component <- reactR::component("Reactable", list(
     data = data,
@@ -595,11 +603,11 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
     dataKey = dataKey,
-    key = dataKey
+    key = if (!isV2()) dataKey
   ))
 
   htmlwidgets::createWidget(
-    name = "reactable",
+    name = widgetName,
     reactR::reactMarkup(component),
     width = width,
     height = height,
@@ -668,7 +676,8 @@ columnSortDefs <- function(defaultSorted) {
 #'
 #' @export
 reactableOutput <- function(outputId, width = "auto", height = "auto", inline = FALSE) {
-  output <- htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
+  widgetName <- if (isV2()) "reactable" else "reactable_v1"
+  output <- htmlwidgets::shinyWidgetOutput(outputId, widgetName, width, height,
                                            inline = inline, package = "reactable")
   # Add attribute to Shiny output containers to differentiate them from static widgets
   addOutputId <- function(x) {
@@ -712,3 +721,15 @@ reactable_html <- function(id, style, class, ...) {
     htmltools::tags$div(id = id, class = class, style = style)
   )
 }
+
+isV2 <- function() {
+  getOption("reactable.v2", TRUE)
+}
+
+reactable_v1 <- function(..., class = NULL) {
+  old <- options(reactable.v2 = FALSE)
+  on.exit(options(old))
+  reactable(...)
+}
+
+reactable_v1_html <- reactable_html

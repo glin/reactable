@@ -133,7 +133,7 @@ colDef(
     #   - a named list with camelCased property names
     list(color = "red", marginLeft = "30px")
     #   - or an inline style string
-    else "color: red; margin-left: 30px;"
+    "color: red; margin-left: 30px;"
   },
   class = function(value, index, name) {
     # input:
@@ -188,8 +188,8 @@ props <- tibble::tribble(
   "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
-  "page", "2", "page index (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
+  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.2.0)"
@@ -220,10 +220,12 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
+  "pageSize", "10", "page size (new in v0.2.3.9000)",
+  "pages", "5", "number of pages (new in v0.2.3.9000)",
   "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
   "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table",
-  "expanded", '{2: "Species"} or {2: {0: "Species"}}', "expanded rows in the table (can be nested)"
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
@@ -298,8 +300,8 @@ props <- tibble::tribble(
   "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
-  "page", "2", "page index (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
+  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
   "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.2.0)"
@@ -316,10 +318,12 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 props <- tibble::tribble(
   ~Property, ~Example, ~Description,
   "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
+  "pageSize", "10", "page size (new in v0.2.3.9000)",
+  "pages", "5", "number of pages (new in v0.2.3.9000)",
   "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
   "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table",
-  "expanded", '{2: "Species"} or {2: {0: "Species"}}', "expanded rows in the table (can be nested)"
+  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
 )
 
 reactable(props, sortable = FALSE, bordered = TRUE, columns = list(

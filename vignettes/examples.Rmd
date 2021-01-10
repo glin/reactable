@@ -705,7 +705,7 @@ reactable(iris[1:5, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
     return 'Details for row: ' + rowInfo.index +
-      '<pre>' + JSON.stringify(rowInfo, null, 2) + '</pre>'
+      '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
   }"),
   html = TRUE,
   width = 60
@@ -1280,8 +1280,8 @@ reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 ### Custom action
 ```{r}
 reactable(iris[1:5, ], onClick = JS("
-  function(rowInfo, colInfo) {
-    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id)
+  function(rowInfo, colInfo, state) {
+    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id + ', on page ' + state.page)
 
     // Send the click event to Shiny, which will be available at input$clicked
     // (Note that the row index starts at 0 in JavaScript, so we add 1)

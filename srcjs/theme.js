@@ -104,20 +104,6 @@ export function createTheme(options) {
 
     tableBodyStyle,
 
-    cellStyle: {
-      borderColor: cellBorderColor,
-      borderWidth: cellBorderWidth,
-      padding: cellPadding,
-      ...cellStyle
-    },
-
-    footerStyle: {
-      borderColor: footerBorderColor,
-      borderWidth: footerBorderWidth,
-      padding: cellPadding,
-      ...footerStyle
-    },
-
     rowGroupStyle,
 
     rowStyle: {
@@ -133,6 +119,20 @@ export function createTheme(options) {
       '&.rt-tr-selected': {
         ...rowSelectedStyle
       }
+    },
+
+    cellStyle: {
+      borderColor: cellBorderColor,
+      borderWidth: cellBorderWidth,
+      padding: cellPadding,
+      ...cellStyle
+    },
+
+    footerStyle: {
+      borderColor: footerBorderColor,
+      borderWidth: footerBorderWidth,
+      padding: cellPadding,
+      ...footerStyle
     },
 
     filterCellStyle: {
