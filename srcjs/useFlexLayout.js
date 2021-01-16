@@ -103,8 +103,8 @@ function useInstance(instance) {
   function calculateFlexWidths(columns) {
     let totalFlexWidth = 0
     columns.forEach(column => {
-      if (column.columns) {
-        column.flexWidth = calculateFlexWidths(column.columns)
+      if (column.headers) {
+        column.flexWidth = calculateFlexWidths(column.headers)
       } else {
         // If the column has been resized or has fixed width, flex width = 0.
         // Otherwise, flex width = min width.

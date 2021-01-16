@@ -1725,6 +1725,37 @@ describe('column widths and flex layout', () => {
     )
   })
 
+  it('column group widths with groupBy columns', () => {
+    const props = {
+      data: { a: [1], b: [1], c: [1], d: [1] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' },
+        { name: 'c', accessor: 'c' },
+        { name: 'd', accessor: 'd' }
+      ],
+      columnGroups: [{ name: 'group', columns: ['a', 'b'] }],
+      pivotBy: ['d']
+    }
+    const { container } = render(<Reactable {...props} />)
+    const groupHeaders = getGroupHeaders(container)
+    expect(groupHeaders).toHaveLength(1)
+    const ungroupedHeaders = getUngroupedHeaders(container)
+    expect(ungroupedHeaders).toHaveLength(2)
+
+    expect(groupHeaders[0]).toHaveStyle(
+      'flex: 200 0 auto; min-width: 200px; width: 200px; max-width:'
+    )
+    // Column groups for groupBy columns pulled out of a 2+ column group should
+    // have correct widths for the new column count (1 column in this case).
+    expect(ungroupedHeaders[0]).toHaveStyle(
+      'flex: 100 0 auto; min-width: 100px; width: 100px; max-width:'
+    )
+    expect(ungroupedHeaders[1]).toHaveStyle(
+      'flex: 100 0 auto; min-width: 100px; width: 100px; max-width:'
+    )
+  })
+
   it('should have min-width on thead, tbody, and tfoot', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
