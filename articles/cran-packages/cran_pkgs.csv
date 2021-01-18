@@ -1,0 +1,921 @@
+"Package","Title","Version","Author","Maintainer","Description","Date","License","URL","NeedsCompilation","SystemRequirements","Downloads","Depends","Imports","LinkingTo","Suggests"
+"rlang","Functions for Base Types and Core R and 'Tidyverse' Features","0.4.0","Lionel Henry [aut, cre],
+Hadley Wickham [aut],
+RStudio [cph]","Lionel Henry <lionel@rstudio.com>","A toolbox for working with base types, core R features
+like the condition system, and core 'Tidyverse' features like tidy
+evaluation.","2019-06-25","GPL-3","http://rlang.r-lib.org, https://github.com/r-lib/rlang","yes",NA,6550350,"R (>= 3.2.0)",NA,NA,"covr, crayon, magrittr, methods, pillar, rmarkdown, testthat (>= 2.0.0)"
+"magrittr","A Forward-Pipe Operator for R","1.5","Stefan Milton Bache <stefan@stefanbache.dk> and Hadley Wickham <h.wickham@gmail.com>","Stefan Milton Bache <stefan@stefanbache.dk>","Provides a mechanism for chaining commands with a new forward-pipe operator, %>%. This operator will forward a value, or the result of an expression, into the next function call/expression. There is flexible support for the type of right-hand side expressions. For more information, see package vignette. To quote Rene Magritte, ""Ceci n'est pas un pipe.""","2014-11-22","MIT + file LICENSE",NA,"no",NA,6143027,NA,NA,NA,"testthat, knitr"
+"Rcpp","Seamless R and C++ Integration","1.0.1","Dirk Eddelbuettel, Romain Francois, JJ Allaire, Kevin Ushey, Qiang Kou,
+Nathan Russell, Douglas Bates and John Chambers","Dirk Eddelbuettel <edd@debian.org>","The 'Rcpp' package provides R functions as well as C++ classes which
+offer a seamless integration of R and C++. Many R data types and objects can be
+mapped back and forth to C++ equivalents which facilitates both writing of new
+code as well as easier integration of third-party libraries. Documentation
+about 'Rcpp' is provided by several vignettes included in this package, via the
+'Rcpp Gallery' site at <http://gallery.rcpp.org>, the paper by Eddelbuettel and
+Francois (2011, <doi:10.18637/jss.v040.i08>), the book by Eddelbuettel (2013,
+<doi:10.1007/978-1-4614-6868-4>) and the paper by Eddelbuettel and Balamuta (2018,
+<doi:10.1080/00031305.2017.1375990>); see 'citation(""Rcpp"")' for details.","2019-03-17","GPL (>= 2)","http://www.rcpp.org, http://dirk.eddelbuettel.com/code/rcpp.html,
+https://github.com/RcppCore/Rcpp","yes",NA,6003023,"R (>= 3.0.0)","methods, utils",NA,"RUnit, inline, rbenchmark, knitr, rmarkdown, pinp, pkgKitten (>= 0.1.2)"
+"dplyr","A Grammar of Data Manipulation","0.8.3","Hadley Wickham [aut, cre] (<https://orcid.org/0000-0003-4757-117X>),
+Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),
+Lionel Henry [aut],
+Kirill Müller [aut] (<https://orcid.org/0000-0002-1416-3412>),
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","A fast, consistent tool for working with data frame like objects,
+both in memory and out of memory.","2019-07-04","MIT + file LICENSE","http://dplyr.tidyverse.org, https://github.com/tidyverse/dplyr","yes",NA,5497363,"R (>= 3.2.0)","assertthat (>= 0.2.0), glue (>= 1.3.0), magrittr (>= 1.5), methods, pkgconfig, R6, Rcpp (>= 1.0.1), rlang (>= 0.4.0), tibble (>= 2.0.0), tidyselect (>= 0.2.5), utils","BH, plogr (>= 0.2.0), Rcpp (>= 1.0.1)","bit64, callr, covr, crayon (>= 1.3.4), DBI, dbplyr, dtplyr, ggplot2, hms, knitr, Lahman, lubridate, MASS, mgcv, microbenchmark, nycflights13, rmarkdown, RMySQL, RPostgreSQL, RSQLite, testthat, withr, broom, purrr, readr"
+"tibble","Simple Data Frames","2.1.3","Kirill Müller [aut, cre],
+Hadley Wickham [aut],
+Romain Francois [ctb],
+Jennifer Bryan [ctb],
+RStudio [cph]","Kirill Müller <krlmlr+r@mailbox.org>","Provides a 'tbl_df' class (the 'tibble') that provides
+stricter checking and better formatting than the traditional data frame.","2019-06-06","MIT + file LICENSE","http://tibble.tidyverse.org/, https://github.com/tidyverse/tibble","yes",NA,5233800,"R (>= 3.1.0)","cli, crayon (>= 1.3.4), fansi (>= 0.4.0), methods, pillar (>= 1.3.1), pkgconfig, rlang (>= 0.3.0), utils",NA,"bench, covr, dplyr, htmltools, import, knitr, mockr, nycflights13, rmarkdown, testthat, withr"
+"ggplot2","Create Elegant Data Visualisations Using the Grammar of Graphics","3.2.0","Hadley Wickham [aut, cre],
+Winston Chang [aut],
+Lionel Henry [aut],
+Thomas Lin Pedersen [aut],
+Kohske Takahashi [aut],
+Claus Wilke [aut],
+Kara Woo [aut],
+Hiroaki Yutani [aut],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","A system for 'declaratively' creating graphics,
+based on ""The Grammar of Graphics"". You provide the data, tell 'ggplot2'
+how to map variables to aesthetics, what graphical primitives to use,
+and it takes care of the details.","2019-06-16","GPL-2 | file LICENSE","http://ggplot2.tidyverse.org, https://github.com/tidyverse/ggplot2","no",NA,5111181,"R (>= 3.2)","digest, grDevices, grid, gtable (>= 0.1.1), lazyeval, MASS, mgcv, reshape2, rlang (>= 0.3.0), scales (>= 0.5.0), stats, tibble, viridisLite, withr (>= 2.0.0)",NA,"covr, dplyr, ggplot2movies, hexbin, Hmisc, knitr, lattice, mapproj, maps, maptools, multcomp, munsell, nlme, profvis, quantreg, rgeos, rmarkdown, rpart, sf (>= 0.7-3), svglite (>= 1.2.0.9001), testthat (>= 0.11.0), vdiffr (>= 0.3.0)"
+"glue","Interpreted String Literals","1.3.1","Jim Hester [aut, cre]","Jim Hester <james.f.hester@gmail.com>","An implementation of interpreted string literals, inspired by
+Python's Literal String Interpolation <https://www.python.org/dev/peps/pep-0498/> and Docstrings
+<https://www.python.org/dev/peps/pep-0257/> and Julia's Triple-Quoted String Literals
+<https://docs.julialang.org/en/stable/manual/strings/#triple-quoted-string-literals>.","2019-03-12","MIT + file LICENSE","https://github.com/tidyverse/glue","yes",NA,4487818,"R (>= 3.1)","methods",NA,"testthat, covr, magrittr, crayon, knitr, rmarkdown, DBI, RSQLite, R.utils, forcats, microbenchmark, rprintf, stringr, ggplot2, dplyr, withr"
+"pillar","Coloured Formatting for Columns","1.4.2","Kirill Müller [aut, cre],
+Hadley Wickham [aut],
+RStudio [cph]","Kirill Müller <krlmlr+r@mailbox.org>","Provides 'pillar' and 'colonnade' generics designed for formatting columns
+of data using the full range of colours provided by modern terminals.","2019-06-29","GPL-3","https://github.com/r-lib/pillar","no",NA,4481377,NA,"cli, crayon (>= 1.3.4), fansi, rlang (>= 0.3.0), utf8 (>= 1.1.0), vctrs",NA,"knitr, lubridate, testthat, withr"
+"data.table","Extension of `data.frame`","1.12.2","Matt Dowle [aut, cre],
+Arun Srinivasan [aut],
+Jan Gorecki [ctb],
+Michael Chirico [ctb],
+Pasha Stetsenko [ctb],
+Tom Short [ctb],
+Steve Lianoglou [ctb],
+Eduard Antonyan [ctb],
+Markus Bonsch [ctb],
+Hugh Parsonage [ctb],
+Scott Ritchie [ctb],
+Kun Ren [ctb],
+Xianying Tan [ctb],
+Rick Saporta [ctb],
+Otto Seiskari [ctb],
+Xianghui Dong [ctb],
+Michel Lang [ctb],
+Watal Iwasaki [ctb],
+Seth Wenchel [ctb],
+Karl Broman [ctb],
+Tobias Schmidt [ctb],
+David Arenburg [ctb],
+Ethan Smith [ctb],
+Francois Cocquemas [ctb],
+Matthieu Gomez [ctb],
+Philippe Chataignon [ctb],
+Declan Groves [ctb],
+Daniel Possenriede [ctb],
+Felipe Parages [ctb],
+Denes Toth [ctb],
+Mus Yaramaz-David [ctb],
+Ayappan Perumal [ctb],
+James Sams [ctb],
+Martin Morgan [ctb],
+Michael Quinn [ctb],
+@javrucebo [ctb],
+@marc-outins [ctb]","Matt Dowle <mattjdowle@gmail.com>","Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins, fast add/modify/delete of columns by group using no copies at all, list columns, friendly and fast character-separated-value read/write. Offers a natural and flexible syntax, for faster development.","2019-04-07","MPL-2.0 | file LICENSE","http://r-datatable.com","yes",NA,4161900,"R (>= 3.1.0)","methods",NA,"bit64, curl, R.utils, knitr, xts, nanotime, zoo"
+"R6","Encapsulated Classes with Reference Semantics","2.4.0","Winston Chang [aut, cre]","Winston Chang <winston@stdout.org>","Creates classes with reference semantics, similar to R's built-in
+reference classes. Compared to reference classes, R6 classes are simpler
+and lighter-weight, and they are not built on S4 classes so they do not
+require the methods package. These classes allow public and private
+members, and they support inheritance, even when the classes are defined in
+different packages.","2019-02-14","MIT + file LICENSE","https://r6.r-lib.org, https://github.com/r-lib/R6/","no",NA,4116156,"R (>= 3.0)",NA,NA,"knitr, microbenchmark, pryr, testthat, ggplot2, scales"
+"cli","Helpers for Developing Command Line Interfaces","1.1.0","Gábor Csárdi [aut, cre],
+Hadley Wickham [ctb],
+Kirill Müller [ctb]","Gábor Csárdi <csardi.gabor@gmail.com>","A suite of tools designed to build attractive command line
+interfaces ('CLIs'). Includes tools for drawing rules, boxes, trees, and
+'Unicode' symbols with 'ASCII' alternatives.","2019-03-19","MIT + file LICENSE","https://github.com/r-lib/cli#readme","no",NA,4050925,"R (>= 2.10)","assertthat, crayon (>= 1.3.4), methods, utils",NA,"covr, fansi, mockery, testthat, webshot, withr"
+"stringr","Simple, Consistent Wrappers for Common String Operations","1.4.0","Hadley Wickham [aut, cre, cph],
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","A consistent, simple and easy to use set of
+wrappers around the fantastic 'stringi' package. All function and
+argument names (and positions) are consistent, all functions deal with
+""NA""'s and zero length vectors in the same way, and the output from
+one function is easy to feed into the input of another.","2019-02-10","GPL-2 | file LICENSE","http://stringr.tidyverse.org, https://github.com/tidyverse/stringr","no",NA,3979438,"R (>= 3.1)","glue (>= 1.2.0), magrittr, stringi (>= 1.1.7)",NA,"covr, htmltools, htmlwidgets, knitr, rmarkdown, testthat"
+"digest","Create Compact Hash Digests of R Objects","0.6.20","Dirk Eddelbuettel <edd@debian.org> with contributions
+by Antoine Lucas, Jarek Tuszynski, Henrik Bengtsson, Simon Urbanek,
+Mario Frasca, Bryan Lewis, Murray Stokely, Hannes Muehleisen,
+Duncan Murdoch, Jim Hester, Wush Wu, Qiang Kou, Thierry Onkelinx,
+Michel Lang, Viliam Simko, Kurt Hornik, Radford Neal, and Kendon Bell.","Dirk Eddelbuettel <edd@debian.org>","Implementation of a function 'digest()' for the creation
+of hash digests of arbitrary R objects (using the 'md5', 'sha-1', 'sha-256',
+'crc32', 'xxhash', 'murmurhash' and 'spookyhash' algorithms) permitting easy
+comparison of R language objects, as well as functions such as'hmac()' to
+create hash-based message authentication code. Please note that this package
+is not meant to be deployed for cryptographic purposes for which more
+comprehensive (and widely tested) libraries such as 'OpenSSL' should be
+used.","2019-07-04","GPL (>= 2)","http://dirk.eddelbuettel.com/code/digest.html","yes",NA,3932862,"R (>= 3.1.0)",NA,NA,"tinytest, knitr, rmarkdown"
+"stringi","Character String Processing Facilities","1.4.3","Marek Gagolewski [aut, cre] (<https://orcid.org/0000-0003-0637-6028>),
+Bartek Tartanus [ctb],
+and other contributors (stringi source code);
+IBM, Unicode, Inc., and other contributors (ICU4C source code);
+Unicode, Inc. (Unicode Character Database)","Marek Gagolewski <marek@gagolewski.com>","Fast, correct, consistent, portable,
+as well as convenient character string/text processing in every locale
+and any native encoding. Owing to the use of the 'ICU'
+(International Components for Unicode) library,
+the package provides 'R' users with platform-independent functions
+known to 'Java', 'Perl', 'Python', 'PHP', and 'Ruby' programmers. Available
+features include: pattern searching (e.g., with 'Java'-like regular
+expressions or the 'Unicode' collation algorithm), random string generation,
+case mapping, string transliteration, concatenation,
+Unicode normalization, date-time formatting and parsing, and many more.","2019-03-12","file LICENSE","http://www.gagolewski.com/software/stringi/
+http://site.icu-project.org/ http://www.unicode.org/","yes","ICU4C (>= 52, optional)",3895419,"R (>= 2.14)","tools, utils, stats",NA,NA
+"yaml","Methods to Convert R Data to YAML and Back","2.2.0","Jeremy Stephens [aut, cre], Kirill Simonov [aut], Yihui Xie [ctb],
+Zhuoer Dong [ctb], Hadley Wickham [ctb], Jeffrey Horner [ctb], reikoch [ctb],
+Will Beasley [ctb], Brendan O'Connor [ctb], Gregory R. Warnes [ctb]","Jeremy Stephens <jeremy.f.stephens@vumc.org>","Implements the 'libyaml' 'YAML' 1.1 parser and emitter
+(<http://pyyaml.org/wiki/LibYAML>) for R.","2018-07-25","BSD_3_clause + file LICENSE","https://github.com/viking/r-yaml/","yes",NA,3894389,NA,NA,NA,"RUnit"
+"assertthat","Easy Pre and Post Assertions","0.2.1","Hadley Wickham [aut, cre]","Hadley Wickham <hadley@rstudio.com>","An extension to stopifnot() that makes it easy to declare
+the pre and post conditions that you code should satisfy, while also
+producing friendly error messages so that your users know what's gone
+wrong.","2019-03-21","GPL-3",NA,"no",NA,3880896,NA,"tools",NA,"testthat, covr"
+"fansi","ANSI Control Sequence Aware String Functions","0.4.0","Brodie Gaslam [aut, cre],
+Elliott Sales De Andrade [ctb],
+R Core Team [cph] (UTF8 byte length calcs from src/util.c)","Brodie Gaslam <brodie.gaslam@yahoo.com>","Counterparts to R string manipulation functions that account for
+the effects of ANSI text formatting control sequences.","2018-10-05","GPL (>= 2)","https://github.com/brodieG/fansi","yes",NA,3849160,"R (>= 3.1.0)",NA,NA,"unitizer, knitr, rmarkdown"
+"aws.s3","'AWS S3' Client Package","0.3.12","Thomas J. Leeper [aut, cre] (<https://orcid.org/0000-0003-4097-6326>),
+Boettiger Carl [ctb],
+Andrew Martin [ctb],
+Mark Thompson [ctb],
+Tyler Hunt [ctb],
+Steven Akins [ctb],
+Bao Nguyen [ctb],
+Thierry Onkelinx [ctb]","Thomas J. Leeper <thosjleeper@gmail.com>","A simple client package for the Amazon Web Services ('AWS') Simple
+Storage Service ('S3') 'REST' 'API' <https://aws.amazon.com/s3/>.","2018-05-25","GPL (>= 2)","https://github.com/cloudyr/aws.s3","no",NA,3640248,NA,"utils, tools, httr, xml2 (> 1.0.0), base64enc, digest, aws.signature (>= 0.3.7)",NA,"testthat, datasets"
+"pkgconfig","Private Configuration for 'R' Packages","2.0.2","Gábor Csárdi","Gábor Csárdi <csardi.gabor@gmail.com>","Set configuration options on a per-package basis.
+Options set by a given package only apply to that package,
+other packages are unaffected.","2018-08-16","MIT + file LICENSE","https://github.com/r-lib/pkgconfig#readme","no",NA,3634207,NA,"utils",NA,"covr, testthat, disposables (>= 1.0.3)"
+"curl","A Modern and Flexible Web Client for R","4.0","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
+Hadley Wickham [ctb],
+RStudio [cph]","Jeroen Ooms <jeroen@berkeley.edu>","The curl() and curl_download() functions provide highly
+configurable drop-in replacements for base url() and download.file() with
+better performance, support for encryption (https, ftps), gzip compression,
+authentication, and other 'libcurl' goodies. The core of the package implements a
+framework for performing fully customized requests where data can be processed
+either in memory, on disk, or streaming via the callback or connection
+interfaces. Some knowledge of 'libcurl' is recommended; for a more-user-friendly
+web client see the 'httr' package which builds on this package with http
+specific tools and logic.","2019-07-22","MIT + file LICENSE","https://github.com/jeroen/curl#readme (devel)
+https://curl.haxx.se/libcurl/ (upstream)","yes","libcurl: libcurl-devel (rpm) or
+libcurl4-openssl-dev (deb).",3624286,"R (>= 3.0.0)",NA,NA,"askpass, spelling, testthat (>= 1.0.0), knitr, jsonlite, rmarkdown, magrittr, httpuv (>= 1.4.4), webutils"
+"BH","Boost C++ Header Files","1.69.0-1","Dirk Eddelbuettel, John W. Emerson and Michael J. Kane","Dirk Eddelbuettel <edd@debian.org>","Boost provides free peer-reviewed portable C++ source
+libraries.  A large part of Boost is provided as C++ template code
+which is resolved entirely at compile-time without linking.  This
+package aims to provide the most useful subset of Boost libraries
+for template use among CRAN package. By placing these libraries in
+this package, we offer a more efficient distribution system for CRAN
+as replication of this code in the sources of other packages is
+avoided. As of release 1.69.0-1, the following Boost libraries are
+included: 'algorithm' 'align' 'any' 'atomic' 'bimap' 'bind'
+'circular_buffer' 'compute' 'concept' 'config' 'container' 'date_time'
+'detail' 'dynamic_bitset' 'exception' 'filesystem' 'flyweight' 'foreach'
+'functional' 'fusion' 'geometry' 'graph' 'heap' 'icl' 'integer'
+'interprocess' 'intrusive' 'io' 'iostreams' 'iterator' 'math' 'move' 'mpl'
+'multiprcecision' 'numeric' 'pending' 'phoenix' 'preprocessor'
+'propery_tree' 'random' 'range' 'scope_exit' 'smart_ptr' 'sort' 'spirit'
+'tuple' 'type_traits' 'typeof' 'unordered' 'utility' 'uuid'.","2019-01-07","BSL-1.0",NA,"no",NA,3568714,NA,NA,NA,NA
+"crayon","Colored Terminal Output","1.3.4","Gábor Csárdi [aut, cre],
+Brodie Gaslam [ctb]","Gábor Csárdi <csardi.gabor@gmail.com>","Colored terminal output on terminals that support 'ANSI'
+color and highlight codes. It also works in 'Emacs' 'ESS'. 'ANSI'
+color support is automatically detected. Colors and highlighting can
+be combined and nested. New styles can also be created easily.
+This package was inspired by the 'chalk' 'JavaScript' project.","2017-09-16","MIT + file LICENSE","https://github.com/r-lib/crayon#readme","no",NA,3485870,NA,"grDevices, methods, utils",NA,"mockery, rstudioapi, testthat, withr"
+"purrr","Functional Programming Tools","0.3.2","Lionel Henry [aut, cre],
+Hadley Wickham [aut],
+RStudio [cph, fnd]","Lionel Henry <lionel@rstudio.com>","A complete and consistent functional programming toolkit for R.","2019-03-15","GPL-3 | file LICENSE","http://purrr.tidyverse.org, https://github.com/tidyverse/purrr","yes",NA,3447170,"R (>= 3.1)","magrittr (>= 1.5), rlang (>= 0.3.1)",NA,"covr, crayon, dplyr (>= 0.7.8), knitr, rmarkdown, testthat, tibble, tidyselect"
+"knitr","A General-Purpose Package for Dynamic Report Generation in R","1.23","Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>),
+Adam Vogt [ctb],
+Alastair Andrew [ctb],
+Alex Zvoleff [ctb],
+Andre Simon [ctb] (the CSS files under inst/themes/ were derived from
+the Highlight package http://www.andre-simon.de),
+Aron Atkins [ctb],
+Aaron Wolen [ctb],
+Ashley Manton [ctb],
+Atsushi Yasumoto [ctb] (<https://orcid.org/0000-0002-8335-495X>),
+Ben Baumer [ctb],
+Brian Diggs [ctb],
+Brian Zhang [ctb],
+Cassio Pereira [ctb],
+Christophe Dervieux [ctb],
+David Hugh-Jones [ctb],
+David Robinson [ctb],
+Doug Hemken [ctb],
+Duncan Murdoch [ctb],
+Elio Campitelli [ctb],
+Emily Riederer [ctb],
+Fabian Hirschmann [ctb],
+Fitch Simeon [ctb],
+Forest Fang [ctb],
+Frank E Harrell Jr [ctb] (the Sweavel package at inst/misc/Sweavel.sty),
+Garrick Aden-Buie [ctb],
+Gregoire Detrez [ctb],
+Hadley Wickham [ctb],
+Hao Zhu [ctb],
+Heewon Jeon [ctb],
+Henrik Bengtsson [ctb],
+Hiroaki Yutani [ctb],
+Ian Lyttle [ctb],
+Hodges Daniel [ctb],
+Jake Burkhead [ctb],
+James Manton [ctb],
+Jared Lander [ctb],
+Jason Punyon [ctb],
+Javier Luraschi [ctb],
+Jeff Arnold [ctb],
+Jenny Bryan [ctb],
+Jeremy Ashkenas [ctb, cph] (the CSS file at
+inst/misc/docco-classic.css),
+Jeremy Stephens [ctb],
+Jim Hester [ctb],
+Joe Cheng [ctb],
+Johannes Ranke [ctb],
+John Honaker [ctb],
+John Muschelli [ctb],
+Jonathan Keane [ctb],
+JJ Allaire [ctb],
+Johan Toloe [ctb],
+Jonathan Sidi [ctb],
+Joseph Larmarange [ctb],
+Julien Barnier [ctb],
+Kaiyin Zhong [ctb],
+Kamil Slowikowski [ctb],
+Karl Forner [ctb],
+Kevin K. Smith [ctb],
+Kirill Mueller [ctb],
+Kohske Takahashi [ctb],
+Lorenz Walthert [ctb],
+Lucas Gallindo [ctb],
+Marius Hofert [ctb],
+Martin Modrák [ctb],
+Michael Chirico [ctb],
+Michael Friendly [ctb],
+Michal Bojanowski [ctb],
+Michel Kuhlmann [ctb],
+Miller Patrick [ctb],
+Nacho Caballero [ctb],
+Nick Salkowski [ctb],
+Noam Ross [ctb],
+Obada Mahdi [ctb],
+Qiang Li [ctb],
+Ramnath Vaidyanathan [ctb],
+Richard Cotton [ctb],
+Robert Krzyzanowski [ctb],
+Romain Francois [ctb],
+Ruaridh Williamson [ctb],
+Scott Kostyshak [ctb],
+Sebastian Meyer [ctb],
+Sietse Brouwer [ctb],
+Simon de Bernard [ctb],
+Sylvain Rousseau [ctb],
+Taiyun Wei [ctb],
+Thibaut Assus [ctb],
+Thibaut Lamadon [ctb],
+Thomas Leeper [ctb],
+Tim Mastny [ctb],
+Tom Torsney-Weir [ctb],
+Trevor Davis [ctb],
+Viktoras Veitas [ctb],
+Weicheng Zhu [ctb],
+Wush Wu [ctb],
+Zachary Foster [ctb]","Yihui Xie <xie@yihui.name>","Provides a general-purpose tool for dynamic report generation in R
+using Literate Programming techniques.","2019-05-18","GPL","https://yihui.name/knitr/","no","Package vignettes based on R Markdown v2 or
+reStructuredText require Pandoc (http://pandoc.org). The
+function rst2pdf() require rst2pdf
+(https://github.com/rst2pdf/rst2pdf).",3418383,"R (>= 3.2.3)","evaluate (>= 0.10), highr, markdown, stringr (>= 0.6), yaml (>= 2.1.19), methods, xfun, tools",NA,"formatR, testit, digest, rgl (>= 0.95.1201), codetools, rmarkdown, htmlwidgets (>= 0.7), webshot, tikzDevice (>= 0.10), tinytex, reticulate (>= 1.4), JuliaCall (>= 0.11.1), magick, png, jpeg, gifski, xml2 (>= 1.2.0), httr, DBI (>= 0.4-1), showtext, tibble, styler"
+"htmltools","Tools for HTML","0.3.6","RStudio, Inc.","Joe Cheng <joe@rstudio.com>","Tools for HTML generation and output.","2017-04-28","GPL (>= 2)","https://github.com/rstudio/htmltools","yes",NA,3396437,"R (>= 2.14.1)","utils, digest, Rcpp","Rcpp","markdown, testthat"
+"utf8","Unicode Text Processing","1.1.4","Patrick O. Perry [aut, cph, cre],
+Unicode, Inc. [cph, dtc] (Unicode Character Database)","Patrick O. Perry <patperry@gmail.com>","Process and print 'UTF-8' encoded international text (Unicode). Input, validate, normalize, encode, format, and display.","2018-05-24","Apache License (== 2.0) | file LICENSE","https://github.com/patperry/r-utf8","yes",NA,3317447,"R (>= 2.10)",NA,NA,"knitr, rmarkdown, testthat"
+"jsonlite","A Robust, High Performance JSON Parser and Generator for R","1.6","Jeroen Ooms, Duncan Temple Lang, Lloyd Hilaiel","Jeroen Ooms <jeroen@berkeley.edu>","A fast JSON parser and generator optimized for statistical data
+and the web. Started out as a fork of 'RJSONIO', but has been completely
+rewritten in recent versions. The package offers flexible, robust, high
+performance tools for working with JSON in R and is particularly powerful
+for building pipelines and interacting with a web API. The implementation is
+based on the mapping described in the vignette (Ooms, 2014). In addition to
+converting JSON data from/to R objects, 'jsonlite' contains functions to
+stream, validate, and prettify JSON data. The unit tests included with the
+package verify that all edge cases are encoded and decoded consistently for
+use with dynamic data in systems and applications.","2018-12-07","MIT + file LICENSE","https://arxiv.org/abs/1403.2805,
+https://www.opencpu.org/posts/jsonlite-a-smarter-json-encoder","yes",NA,3305575,"methods",NA,NA,"httr, curl, plyr, testthat, knitr, rmarkdown, R.rsp, sp"
+"openssl","Toolkit for Encryption, Signatures and Certificates Based on
+OpenSSL","1.4.1","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
+Oliver Keyes [ctb]","Jeroen Ooms <jeroen@berkeley.edu>","Bindings to OpenSSL libssl and libcrypto, plus custom SSH key parsers.
+Supports RSA, DSA and EC curves P-256, P-384, P-521, and curve25519. Cryptographic
+signatures can either be created and verified manually or via x509 certificates.
+AES can be used in cbc, ctr or gcm mode for symmetric encryption; RSA for asymmetric
+(public key) encryption or EC for Diffie Hellman. High-level envelope functions
+combine RSA and AES for encrypting arbitrary sized data. Other utilities include key
+generators, hash functions (md5, sha1, sha256, etc), base64 encoder, a secure random
+number generator, and 'bignum' math methods for manually performing crypto
+calculations on large multibyte integers.","2019-07-18","MIT + file LICENSE","https://github.com/jeroen/openssl#readme","yes","OpenSSL >= 1.0.1",3239819,NA,"askpass",NA,"testthat, digest, knitr, rmarkdown, jsonlite, jose, sodium"
+"devtools","Tools to Make Developing R Packages Easier","2.1.0","Hadley Wickham [aut],
+Jim Hester [aut, cre],
+Winston Chang [aut],
+RStudio [cph],
+R Core team [ctb] (Some namespace and vignette code extracted from base
+R)","Jim Hester <jim.hester@rstudio.com>","Collection of package development tools.","2019-07-06","GPL (>= 2)","https://github.com/r-lib/devtools","no",NA,3235194,"R (>= 3.0.2), usethis (>= 1.5.0)","callr, cli, digest, git2r (>= 0.23.0), httr (>= 0.4), jsonlite, memoise (>= 1.0.0), pkgbuild (>= 1.0.3), pkgload (>= 1.0.2), rcmdcheck (>= 1.3.3), remotes (>= 2.1.0), roxygen2 (>= 6.1.1), rstudioapi (>= 0.7), sessioninfo (>= 1.1.1), stats, testthat (>= 2.1.1), tools, utils, withr",NA,"BiocManager, bitops, covr (>= 3.2.0), crayon, curl (>= 0.9), evaluate, foghorn (>= 1.1.0), gmailr (> 0.7.0), knitr, lintr (>= 0.2.1), mockery, pingr, MASS, pkgdown, Rcpp (>= 0.10.0), rhub (>= 1.0.2), rmarkdown, rversions, spelling (>= 1.1), whisker"
+"xfun","Miscellaneous Functions by 'Yihui Xie'","0.8","Yihui Xie [aut, cre, cph] (<https://orcid.org/0000-0003-0645-5666>),
+Daijiang Li [ctb],
+Xianying Tan [ctb]","Yihui Xie <xie@yihui.name>","Miscellaneous functions commonly used in other packages maintained by 'Yihui Xie'.","2019-06-25","MIT + file LICENSE","https://github.com/yihui/xfun","no",NA,3153020,NA,"stats, tools",NA,"testit, parallel, rstudioapi, tinytex, mime, markdown, knitr, htmltools, base64enc, remotes, rmarkdown"
+"scales","Scale Functions for Visualization","1.0.0","Hadley Wickham [aut, cre],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Graphical scales map data to aesthetics, and provide
+methods for automatically determining breaks and labels
+for axes and legends.","2018-08-09","MIT + file LICENSE","https://scales.r-lib.org, https://github.com/r-lib/scales","yes",NA,3126493,"R (>= 3.1)","labeling, munsell (>= 0.5), R6, RColorBrewer, Rcpp, viridisLite","Rcpp","dichromat, bit64, covr, hms, testthat (>= 2.0)"
+"colorspace","A Toolbox for Manipulating and Assessing Colors and Palettes","1.4-1","Ross Ihaka [aut],
+Paul Murrell [aut] (<https://orcid.org/0000-0002-3224-8858>),
+Kurt Hornik [aut] (<https://orcid.org/0000-0003-4198-9911>),
+Jason C. Fisher [aut] (<https://orcid.org/0000-0001-9032-8912>),
+Reto Stauffer [aut] (<https://orcid.org/0000-0002-3798-5507>),
+Claus O. Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),
+Claire D. McWhite [aut] (<https://orcid.org/0000-0001-7346-3047>),
+Achim Zeileis [aut, cre] (<https://orcid.org/0000-0003-0918-3766>)","Achim Zeileis <Achim.Zeileis@R-project.org>","Carries out mapping between assorted color spaces including RGB, HSV, HLS,
+CIEXYZ, CIELUV, HCL (polar CIELUV), CIELAB and polar CIELAB.
+Qualitative, sequential, and diverging color palettes based on HCL colors
+are provided along with corresponding ggplot2 color scales.
+Color palette choice is aided by an interactive app (with either a Tcl/Tk
+or a shiny GUI) and shiny apps with an HCL color picker and a
+color vision deficiency emulator. Plotting functions for displaying
+and assessing palettes include color swatches, visualizations of the
+HCL space, and trajectories in HCL and/or RGB spectrum. Color manipulation
+functions include: desaturation, lightening/darkening, mixing, and
+simulation of color vision deficiencies (deutanomaly, protanomaly, tritanomaly).","2019-03-18","BSD_3_clause + file LICENSE","http://colorspace.R-Forge.R-project.org, http://hclwizard.org/","yes",NA,3095415,"R (>= 3.0.0), methods","graphics, grDevices, stats",NA,"datasets, utils, KernSmooth, MASS, kernlab, mvtnorm, vcd, tcltk, shiny, shinyjs, ggplot2, dplyr, scales, grid, png, jpeg, knitr, rmarkdown, RColorBrewer, rcartocolor, scico, viridis, wesanderson"
+"markdown","Render Markdown with the C Library 'Sundown'","1.0","JJ Allaire [aut],
+Jeffrey Horner [aut],
+Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>),
+Henrik Bengtsson [ctb],
+Jim Hester [ctb],
+Yixuan Qiu [ctb],
+Kohske Takahashi [ctb],
+Adam November [ctb],
+Nacho Caballero [ctb],
+Jeroen Ooms [ctb],
+Thomas Leeper [ctb],
+Joe Cheng [ctb],
+Andrzej Oles [ctb],
+Vicent Marti [aut, cph] (The Sundown library),
+Natacha Porte [aut, cph] (The Sundown library),
+RStudio [cph]","Yihui Xie <xie@yihui.name>","Provides R bindings to the 'Sundown' Markdown rendering library
+(<https://github.com/vmg/sundown>). Markdown is a plain-text formatting
+syntax that can be converted to 'XHTML' or other formats. See
+<http://en.wikipedia.org/wiki/Markdown> for more information about Markdown.","2019-06-07","GPL-2","https://github.com/rstudio/markdown","yes",NA,3091817,"R (>= 2.11.1)","utils, mime (>= 0.3)",NA,"knitr, RCurl"
+"evaluate","Parsing and Evaluation Tools that Provide More Details than the
+Default","0.14","Hadley Wickham [aut],
+Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>),
+Michael Lawrence [ctb],
+Thomas Kluyver [ctb],
+Jeroen Ooms [ctb],
+Barret Schloerke [ctb],
+Adam Ryczkowski [ctb],
+Hiroaki Yutani [ctb],
+Michel Lang [ctb],
+Karolis Koncevicius [ctb]","Yihui Xie <xie@yihui.name>","Parsing and evaluation tools that make it easy to recreate the
+command line behaviour of R.","2019-05-28","MIT + file LICENSE","https://github.com/r-lib/evaluate","no",NA,3087504,"R (>= 3.0.2)","methods",NA,"testthat, lattice, ggplot2"
+"httr","Tools for Working with URLs and HTTP","1.4.0","Hadley Wickham [aut, cre],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Useful tools for working with HTTP organised by
+HTTP verbs (GET(), POST(), etc). Configuration functions make it easy
+to control additional request components (authenticate(),
+add_headers() and so on).","2018-12-11","MIT + file LICENSE","https://github.com/r-lib/httr","no",NA,3080731,"R (>= 3.1)","curl (>= 0.9.1), jsonlite, mime, openssl (>= 0.8), R6",NA,"covr, httpuv, jpeg, knitr, png, readr, rmarkdown, testthat (>= 0.8.0), xml2"
+"plyr","Tools for Splitting, Applying and Combining Data","1.8.4","Hadley Wickham [aut, cre]","Hadley Wickham <hadley@rstudio.com>","A set of tools that solves a common set of problems: you
+need to break a big problem down into manageable pieces, operate on each
+piece and then put all the pieces back together.  For example, you might
+want to fit a model to each spatial location or time point in your study,
+summarise data by panels or collapse high-dimensional arrays to simpler
+summary statistics. The development of 'plyr' has been generously supported
+by 'Becton Dickinson'.","2016-06-08","MIT + file LICENSE","http://had.co.nz/plyr, https://github.com/hadley/plyr","yes",NA,3063520,"R (>= 3.1.0)","Rcpp (>= 0.11.0)","Rcpp","abind, testthat, tcltk, foreach, doParallel, itertools, iterators, covr"
+"backports","Reimplementations of Functions Introduced Since R-3.0.0","1.1.4","Michel Lang [cre, aut] (<https://orcid.org/0000-0001-9754-0393>),
+R Core Team [aut]","Michel Lang <michellang@gmail.com>","
+Functions introduced or changed since R v3.0.0 are re-implemented in this
+package. The backports are conditionally exported in order to let R resolve
+the function name to either the implemented backport, or the respective base
+version, if available. Package developers can make use of new functions or
+arguments by selectively importing specific backports to
+support older installations.","2019-04-10","GPL-2","https://github.com/r-lib/backports","yes",NA,3060836,"R (>= 3.0.0)","utils",NA,NA
+"mime","Map Filenames to MIME Types","0.7","Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>),
+Jeffrey Horner [ctb],
+Beilei Bian [ctb]","Yihui Xie <xie@yihui.name>","Guesses the MIME type from a filename extension using the data
+derived from /etc/mime.types in UNIX-type systems.","2019-06-11","GPL","https://github.com/yihui/mime","yes",NA,3011482,NA,"tools",NA,NA
+"reshape2","Flexibly Reshape Data: A Reboot of the Reshape Package","1.4.3","Hadley Wickham <h.wickham@gmail.com>","Hadley Wickham <h.wickham@gmail.com>","Flexibly restructure and aggregate data using just two
+functions: melt and 'dcast' (or 'acast').","2017-12-11","MIT + file LICENSE","https://github.com/hadley/reshape","yes",NA,3010405,"R (>= 3.1)","plyr (>= 1.8.1), Rcpp, stringr","Rcpp","covr, lattice, testthat (>= 0.8.0)"
+"lazyeval","Lazy (Non-Standard) Evaluation","0.2.2","Hadley Wickham [aut, cre],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","An alternative approach to non-standard evaluation using
+formulas. Provides a full implementation of LISP style 'quasiquotation',
+making it easier to generate code with other code.","2019-03-15","GPL-3",NA,"yes",NA,2996757,"R (>= 3.1.0)",NA,NA,"knitr, rmarkdown (>= 0.2.65), testthat, covr"
+"base64enc","Tools for base64 encoding","0.1-3","Simon Urbanek <Simon.Urbanek@r-project.org>","Simon Urbanek <Simon.Urbanek@r-project.org>","This package provides tools for handling base64 encoding. It is more flexible than the orphaned base64 package.","2015-07-28","GPL-2 | GPL-3","http://www.rforge.net/base64enc","yes",NA,2925657,"R (>= 2.9.0)",NA,NA,NA
+"tidyselect","Select from a Set of Strings","0.2.5","Lionel Henry [aut, cre],
+Hadley Wickham [aut],
+RStudio [cph]","Lionel Henry <lionel@rstudio.com>","A backend for the selecting functions of the 'tidyverse'.
+It makes it easy to implement select-like functions in your own
+packages in a way that is consistent with other 'tidyverse'
+interfaces for selection.","2018-10-11","GPL-3",NA,"yes",NA,2918933,"R (>= 3.1)","glue (>= 1.3.0), purrr, rlang (>= 0.2.2), Rcpp (>= 0.12.0)","Rcpp (>= 0.12.0),","covr, dplyr, testthat"
+"withr","Run Code 'With' Temporarily Modified Global State","2.1.2","Jim Hester [aut, cre],
+Kirill Müller [aut],
+Kevin Ushey [aut],
+Hadley Wickham [aut],
+Winston Chang [aut],
+Richard Cotton [ctb],
+RStudio [cph]","Jim Hester <james.f.hester@gmail.com>","A set of functions to run code 'with' safely and temporarily
+modified global state. Many of these functions were originally a part of the
+'devtools' package, this provides a simple package with limited dependencies
+to provide access to these functions.","2018-03-15","GPL (>= 2)","http://withr.r-lib.org, http://github.com/r-lib/withr#readme","no",NA,2903046,"R (>= 3.0.2)","stats, graphics, grDevices",NA,"testthat, covr, lattice, DBI, RSQLite, methods, knitr, rmarkdown"
+"tidyr","Easily Tidy Data with 'spread()' and 'gather()' Functions","0.8.3","Hadley Wickham [aut, cre],
+Lionel Henry [aut],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","An evolution of 'reshape2'. It's designed
+specifically for data tidying (not general reshaping or aggregating)
+and works well with 'dplyr' data pipelines.","2019-03-01","MIT + file LICENSE","http://tidyr.tidyverse.org, https://github.com/tidyverse/tidyr","yes",NA,2893280,"R (>= 3.1)","dplyr (>= 0.7.0), glue, magrittr, purrr, Rcpp, rlang, stringi, tibble, tidyselect (>= 0.2.5), utils","Rcpp","covr, gapminder, knitr, rmarkdown, testthat"
+"rsconnect","Deployment Interface for R Markdown Documents and Shiny
+Applications","0.8.15","JJ Allaire","Jonathan McPherson <jonathan@rstudio.com>","Programmatic deployment interface for 'RPubs', 'shinyapps.io', and
+'RStudio Connect'. Supported content types include R Markdown documents,
+Shiny applications, Plumber APIs, plots, and static web content.","2019-07-22","GPL-2",NA,"no",NA,2851113,"R (>= 3.0.0)","curl, jsonlite, openssl, packrat (>= 0.4.8-1), rstudioapi (>= 0.5), yaml (>= 2.1.5)",NA,"RCurl, callr, httpuv, knitr, plumber (>= 0.3.2), reticulate, rmarkdown (>= 1.1), shiny, sourcetools, testthat, xtable"
+"highr","Syntax Highlighting for R Source Code","0.8","Christopher Gandrud [ctb],
+Qiang Li [ctb],
+Yixuan Qiu [aut],
+Yihui Xie [aut, cre]","Yihui Xie <xie@yihui.name>","Provides syntax highlighting for R source code. Currently it
+supports LaTeX and HTML output. Source code of other languages is supported
+via Andre Simon's highlight package (<http://www.andre-simon.de>).","2019-03-20","GPL","https://github.com/yihui/highr","no",NA,2847404,"R (>= 3.2.3)",NA,NA,"knitr, testit"
+"clipr","Read and Write from the System Clipboard","0.7.0","Matthew Lincoln [aut, cre] (<https://orcid.org/0000-0002-4387-3384>),
+Louis Maddox [ctb],
+Steve Simpson [ctb],
+Jennifer Bryan [ctb]","Matthew Lincoln <matthew.d.lincoln@gmail.com>","Simple utility functions to read from and write to
+the Windows, OS X, and X11 clipboards.","2019-07-23","GPL-3","https://github.com/mdlincoln/clipr","no","xclip (https://github.com/astrand/xclip) or xsel
+(http://www.vergenet.net/~conrad/software/xsel/) for accessing
+the X11 clipboard",2835229,NA,"utils",NA,"covr, knitr, rmarkdown, rstudioapi (>= 0.5), testthat (>= 2.0.0)"
+"zoo","S3 Infrastructure for Regular and Irregular Time Series (Z's
+Ordered Observations)","1.8-6","Achim Zeileis [aut, cre] (<https://orcid.org/0000-0003-0918-3766>),
+Gabor Grothendieck [aut],
+Jeffrey A. Ryan [aut],
+Joshua M. Ulrich [ctb],
+Felix Andrews [ctb]","Achim Zeileis <Achim.Zeileis@R-project.org>","An S3 class with methods for totally ordered indexed
+observations. It is particularly aimed at irregular time series
+of numeric vectors/matrices and factors. zoo's key design goals
+are independence of a particular index/date/time class and
+consistency with ts and base R by providing methods to extend
+standard generics.","2019-05-28","GPL-2 | GPL-3","http://zoo.R-Forge.R-project.org/","yes",NA,2805290,"R (>= 3.1.0), stats","utils, graphics, grDevices, lattice (>= 0.20-27)",NA,"coda, chron, DAAG, fts, ggplot2, mondate, scales, strucchange, timeDate, timeSeries, tis, tseries, xts"
+"RColorBrewer","ColorBrewer Palettes","1.1-2","Erich Neuwirth [aut, cre]","Erich Neuwirth <erich.neuwirth@univie.ac.at>","Provides color schemes for maps (and other graphics) designed by Cynthia Brewer as described at http://colorbrewer2.org","2014-12-07","Apache License 2.0",NA,"no",NA,2785551,"R (>= 2.0.0)",NA,NA,NA
+"gtable","Arrange 'Grobs' in Tables","0.3.0","Hadley Wickham [aut, cre],
+Thomas Lin Pedersen [aut],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Tools to make it easier to work with ""tables"" of
+'grobs'. The 'gtable' package defines a 'gtable' grob class that specifies a
+grid along with a list of grobs and their placement in the grid. Further the
+package makes it easy to manipulate and combine 'gtable' objects so that
+complex compositions can be build up sequentially.","2019-03-25","GPL-2","https://github.com/r-lib/gtable","no",NA,2750909,"R (>= 3.0)","grid",NA,"covr, testthat, knitr, rmarkdown, ggplot2, profvis"
+"rmarkdown","Dynamic Documents for R","1.14","JJ Allaire [aut],
+Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>),
+Jonathan McPherson [aut],
+Javier Luraschi [aut],
+Kevin Ushey [aut],
+Aron Atkins [aut],
+Hadley Wickham [aut],
+Joe Cheng [aut],
+Winston Chang [aut],
+Richard Iannone [aut] (<https://orcid.org/0000-0003-3925-190X>),
+Barret Schloerke [ctb],
+Christophe Dervieux [ctb],
+Frederik Aust [ctb] (<https://orcid.org/0000-0003-4900-788X>),
+Jeff Allen [ctb],
+Malcolm Barrett [ctb],
+Rob Hyndman [ctb],
+Romain Lesur [ctb],
+Roy Storey [ctb],
+Ruben Arslan [ctb],
+RStudio, Inc. [cph],
+jQuery Foundation [cph] (jQuery library),
+jQuery contributors [ctb, cph] (jQuery library; authors listed in
+inst/rmd/h/jquery-AUTHORS.txt),
+jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in
+inst/rmd/h/jqueryui-AUTHORS.txt),
+Mark Otto [ctb] (Bootstrap library),
+Jacob Thornton [ctb] (Bootstrap library),
+Bootstrap contributors [ctb] (Bootstrap library),
+Twitter, Inc [cph] (Bootstrap library),
+Alexander Farkas [ctb, cph] (html5shiv library),
+Scott Jehl [ctb, cph] (Respond.js library),
+Ivan Sagalaev [ctb, cph] (highlight.js library),
+Greg Franko [ctb, cph] (tocify library),
+John MacFarlane [ctb, cph] (Pandoc templates),
+Google, Inc. [ctb, cph] (ioslides library),
+Dave Raggett [ctb] (slidy library),
+W3C [cph] (slidy library),
+Dave Gandy [ctb, cph] (Font-Awesome),
+Ben Sperry [ctb] (Ionicons),
+Drifty [cph] (Ionicons),
+Aidan Lister [ctb, cph] (jQuery StickyTabs)","Yihui Xie <xie@yihui.name>","Convert R Markdown documents into a variety of formats.","2019-07-12","GPL-3","https://github.com/rstudio/rmarkdown","no","pandoc (>= 1.12.3) - http://pandoc.org",2701357,"R (>= 3.0)","tools, utils, knitr (>= 1.22), yaml (>= 2.1.19), htmltools (>= 0.3.5), evaluate (>= 0.13), base64enc, jsonlite, mime, tinytex (>= 0.11), xfun, methods, stringr (>= 1.2.0)",NA,"shiny (>= 0.11), tufte, testthat, digest, dygraphs, tibble, fs, pkgdown, callr (>= 2.0.0)"
+"aws.ec2metadata","Get EC2 Instance Metadata","0.2.0","Thomas J. Leeper [aut] (<https://orcid.org/0000-0003-4097-6326>),
+Jonathan Stott [cre, aut]","Jonathan Stott <jonathan.stott@magairports.com>","Retrieve Amazon EC2 instance metadata from within the running instance.","2019-07-15","GPL (>= 2)","https://github.com/cloudyr/aws.ec2metadata","no",NA,2682090,NA,"curl, jsonlite",NA,NA
+"munsell","Utilities for Using Munsell Colours","0.5.0","Charlotte Wickham <cwickham@gmail.com>","Charlotte Wickham <cwickham@gmail.com>","Provides easy access to, and manipulation of, the Munsell
+colours. Provides a mapping between Munsell's
+original notation (e.g. ""5R 5/10"") and hexadecimal strings suitable
+for use directly in R graphics. Also provides utilities
+to explore slices through the Munsell colour tree, to transform
+Munsell colours and display colour palettes.","2018-06-12","MIT + file LICENSE","https://cran.r-project.org/package=munsell,
+https://github.com/cwickham/munsell/","no",NA,2657790,NA,"colorspace, methods",NA,"ggplot2, testthat"
+"readr","Read Rectangular Text Data","1.3.1","Hadley Wickham [aut],
+Jim Hester [aut, cre],
+Romain Francois [aut],
+R Core Team [ctb] (Date time code adapted from R),
+RStudio [cph, fnd],
+Jukka Jylänki [ctb, cph] (grisu3 implementation),
+Mikkel Jørgensen [ctb, cph] (grisu3 implementation)","Jim Hester <james.hester@rstudio.com>","The goal of 'readr' is to provide a fast and friendly way to read
+rectangular data (like 'csv', 'tsv', and 'fwf'). It is designed to flexibly
+parse many types of data found in the wild, while still cleanly failing when
+data unexpectedly changes.","2018-12-21","GPL (>= 2) | file LICENSE","http://readr.tidyverse.org, https://github.com/tidyverse/readr","yes","GNU make",2637284,"R (>= 3.1)","Rcpp (>= 0.12.0.5), tibble, hms (>= 0.4.1), R6, clipr, crayon, methods","Rcpp, BH","curl, testthat, knitr, rmarkdown, stringi, covr, spelling"
+"readxl","Read Excel Files","1.3.1","Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),
+Jennifer Bryan [aut, cre] (<https://orcid.org/0000-0002-6983-2759>),
+RStudio [cph, fnd] (Copyright holder of all R code and all C/C++ code
+without explicit copyright attribution),
+Marcin Kalicinski [ctb, cph] (Author of included RapidXML code),
+Komarov Valery [ctb, cph] (Author of included libxls code),
+Christophe Leitienne [ctb, cph] (Author of included libxls code),
+Bob Colbert [ctb, cph] (Author of included libxls code),
+David Hoerl [ctb, cph] (Author of included libxls code),
+Evan Miller [ctb, cph] (Author of included libxls code)","Jennifer Bryan <jenny@rstudio.com>","Import excel files into R. Supports '.xls' via the
+embedded 'libxls' C library <https://github.com/libxls/libxls> and
+'.xlsx' via the embedded 'RapidXML' C++ library
+<http://rapidxml.sourceforge.net>.  Works on Windows, Mac and Linux
+without external dependencies.","2019-03-13","GPL-3","https://readxl.tidyverse.org, https://github.com/tidyverse/readxl","yes",NA,2594305,NA,"cellranger, Rcpp (>= 0.12.18), tibble (>= 1.3.1), utils","progress, Rcpp","covr, knitr, rmarkdown, rprojroot (>= 1.1), testthat"
+"tinytex","Helper Functions to Install and Maintain 'TeX Live', and Compile
+'LaTeX' Documents","0.14","Yihui Xie [aut, cre, cph] (<https://orcid.org/0000-0003-0645-5666>),
+RStudio, Inc. [cph],
+Fernando Cagua [ctb],
+Ethan Heinzen [ctb]","Yihui Xie <xie@yihui.name>","Helper functions to install and maintain the 'LaTeX' distribution
+named 'TinyTeX' (<https://yihui.name/tinytex/>), a lightweight, cross-platform,
+portable, and easy-to-maintain version of 'TeX Live'. This package also
+contains helper functions to compile 'LaTeX' documents, and install missing
+'LaTeX' packages automatically.","2019-06-25","MIT + file LICENSE","https://github.com/yihui/tinytex","no",NA,2590926,NA,"xfun (>= 0.5)",NA,"testit, rstudioapi"
+"viridisLite","Default Color Maps from 'matplotlib' (Lite Version)","0.3.0","Simon Garnier [aut, cre],
+Noam Ross [ctb, cph],
+Bob Rudis [ctb, cph],
+Marco Sciaini [ctb, cph],
+Cédric Scherer [ctb, cph]","Simon Garnier <garnier@njit.edu>","Implementation of the 'viridis' - the default -, 'magma', 'plasma',
+'inferno', and 'cividis' color maps for 'R'. 'viridis', 'magma', 'plasma',
+and 'inferno' are ported from 'matplotlib' <http://matplotlib.org/>, a
+popular plotting library for 'python'. 'cividis', was developed by Jamie R.
+Nuñez and Sean M. Colby. These color maps are designed in such a way that
+they will analytically be perfectly perceptually-uniform, both in regular
+form and also when converted to black-and-white. They are also designed to
+be perceived by readers with the most common form of color blindness (all
+color maps in this package) and color vision deficiency ('cividis' only).
+This is the 'lite' version of the more complete 'viridis' package that can
+be found at <https://cran.r-project.org/package=viridis>.","2018-02-01","MIT + file LICENSE","https://github.com/sjmgarnier/viridisLite","no",NA,2584747,"R (>= 2.10)",NA,NA,"hexbin (>= 1.27.0), ggplot2 (>= 1.0.1), testthat, covr"
+"prettyunits","Pretty, Human Readable Formatting of Quantities","1.0.2","Gabor Csardi","Gabor Csardi <csardi.gabor@gmail.com>","Pretty, human readable formatting of quantities.
+Time intervals: 1337000 -> 15d 11h 23m 20s.
+Vague time intervals: 2674000 -> about a month ago.
+Bytes: 1337 -> 1.34 kB.","2015-07-13","MIT + file LICENSE","https://github.com/gaborcsardi/prettyunits","no",NA,2566273,NA,"magrittr, assertthat, methods",NA,"testthat"
+"hms","Pretty Time of Day","0.5.0","Kirill Müller [aut, cre],
+The R Consortium [fnd],
+RStudio [fnd]","Kirill Müller <krlmlr+r@mailbox.org>","Implements an S3 class for storing and formatting time-of-day
+values, based on the 'difftime' class.","2019-07-09","GPL-3","https://github.com/tidyverse/hms","no",NA,2499887,NA,"methods, pkgconfig, rlang, vctrs (>= 0.2.0)",NA,"crayon, lubridate, pillar (>= 1.1.0), testthat"
+"xml2","Parse XML","1.2.0","Hadley Wickham [aut],
+James Hester [aut, cre],
+Jeroen Ooms [aut],
+RStudio [cph],
+R Foundation [ctb] (Copy of R-project homepage cached as example)","James Hester <james.hester@rstudio.com>","Work with XML files using a simple, consistent interface. Built on
+top of the 'libxml2' C library.","2018-01-24","GPL (>= 2)","https://github.com/r-lib/xml2","yes","libxml2: libxml2-dev (deb), libxml2-devel (rpm)",2479853,"R (>= 3.1.0)","Rcpp","Rcpp (>= 0.12.12)","testthat, curl, covr, knitr, rmarkdown, magrittr, httr"
+"httpuv","HTTP and WebSocket Server Library","1.5.1","Joe Cheng, Hector Corrada Bravo [ctb], Jeroen Ooms [ctb],
+Winston Chang [ctb]","Joe Cheng <joe@rstudio.com>","Provides low-level socket and protocol support for handling
+HTTP and WebSocket requests directly from within R. It is primarily
+intended as a building block for other packages, rather than making it
+particularly easy to create complete web applications using httpuv alone.
+httpuv is built on top of the libuv and http-parser C libraries, both of
+which were developed by Joyent, Inc. (See LICENSE file for libuv and
+http-parser license information.)","2019-04-05","GPL (>= 2) | file LICENSE","https://github.com/rstudio/httpuv","yes","GNU make",2479787,"R (>= 2.15.1)","Rcpp (>= 0.11.0), utils, R6, promises, later (>= 0.8.0)","Rcpp, BH, later","testthat, callr, curl"
+"shiny","Web Application Framework for R","1.3.2","Winston Chang [aut, cre],
+Joe Cheng [aut],
+JJ Allaire [aut],
+Yihui Xie [aut],
+Jonathan McPherson [aut],
+RStudio [cph],
+jQuery Foundation [cph] (jQuery library and jQuery UI library),
+jQuery contributors [ctb, cph] (jQuery library; authors listed in
+inst/www/shared/jquery-AUTHORS.txt),
+jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in
+inst/www/shared/jqueryui/AUTHORS.txt),
+Mark Otto [ctb] (Bootstrap library),
+Jacob Thornton [ctb] (Bootstrap library),
+Bootstrap contributors [ctb] (Bootstrap library),
+Twitter, Inc [cph] (Bootstrap library),
+Alexander Farkas [ctb, cph] (html5shiv library),
+Scott Jehl [ctb, cph] (Respond.js library),
+Stefan Petre [ctb, cph] (Bootstrap-datepicker library),
+Andrew Rowls [ctb, cph] (Bootstrap-datepicker library),
+Dave Gandy [ctb, cph] (Font-Awesome font),
+Brian Reavis [ctb, cph] (selectize.js library),
+Kristopher Michael Kowal [ctb, cph] (es5-shim library),
+es5-shim contributors [ctb, cph] (es5-shim library),
+Denis Ineshin [ctb, cph] (ion.rangeSlider library),
+Sami Samhuri [ctb, cph] (Javascript strftime library),
+SpryMedia Limited [ctb, cph] (DataTables library),
+John Fraser [ctb, cph] (showdown.js library),
+John Gruber [ctb, cph] (showdown.js library),
+Ivan Sagalaev [ctb, cph] (highlight.js library),
+R Core Team [ctb, cph] (tar implementation from R)","Winston Chang <winston@rstudio.com>","Makes it incredibly easy to build interactive web
+applications with R. Automatic ""reactive"" binding between inputs and
+outputs and extensive prebuilt widgets make it possible to build
+beautiful, responsive, and powerful applications with minimal effort.","2019-04-22","GPL-3 | file LICENSE","http://shiny.rstudio.com","no",NA,2478903,"R (>= 3.0.2), methods","utils, grDevices, httpuv (>= 1.5.0), mime (>= 0.3), jsonlite (>= 0.9.16), xtable, digest, htmltools (>= 0.3.6), R6 (>= 2.0), sourcetools, later (>= 0.7.2), promises (>= 1.0.1), tools, crayon, rlang",NA,"datasets, Cairo (>= 1.5-5), testthat, knitr (>= 1.6), markdown, rmarkdown, ggplot2, reactlog (>= 1.0.0), magrittr"
+"htmlwidgets","HTML Widgets for R","1.3","Ramnath Vaidyanathan [aut, cph],
+Yihui Xie [aut],
+JJ Allaire [aut],
+Joe Cheng [aut, cre],
+Kenton Russell [aut, cph],
+RStudio [cph]","Joe Cheng <joe@rstudio.com>","A framework for creating HTML widgets that render in various
+contexts including the R console, 'R Markdown' documents, and 'Shiny'
+web applications.","2018-09-30","MIT + file LICENSE","https://github.com/ramnathv/htmlwidgets","no",NA,2475617,NA,"grDevices, htmltools (>= 0.3), jsonlite (>= 0.9.16), yaml",NA,"knitr (>= 1.8)"
+"plogr","The 'plog' C++ Logging Library","0.2.0","Kirill Müller [aut, cre],
+Sergey Podobry [cph] (Author of the bundled plog library)","Kirill Müller <krlmlr+r@mailbox.org>","
+A simple header-only logging library for C++.
+Add 'LinkingTo: plogr' to 'DESCRIPTION', and '#include <plogr.h>' in your C++ modules to use it.","2018-03-25","MIT + file LICENSE","https://github.com/krlmlr/plogr#readme","no",NA,2449010,NA,NA,NA,"Rcpp"
+"processx","Execute and Control System Processes","3.4.1","Gábor Csárdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
+Winston Chang [aut],
+RStudio [cph, fnd],
+Mango Solutions [cph, fnd]","Gábor Csárdi <csardi.gabor@gmail.com>","Tools to run system processes in the background.
+It can check if a background process is running; wait on a background
+process to finish; get the exit status of finished processes; kill
+background processes. It can read the standard output and error of
+the processes, using non-blocking connections. 'processx' can poll
+a process for standard output or error, with a timeout. It can also
+poll several processes at once.","2019-07-18","MIT + file LICENSE","https://processx.r-lib.org,
+https://github.com/r-lib/processx#readme","yes",NA,2445900,NA,"ps (>= 1.2.0), R6, utils",NA,"callr (>= 3.2.0), codetools, covr, crayon, curl, debugme, parallel, testthat, withr"
+"sys","Powerful and Reliable Tools for Running System Commands in R","3.2","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
+Gábor Csárdi [ctb]","Jeroen Ooms <jeroen@berkeley.edu>","Drop-in replacements for the base system2() function with fine control
+and consistent behavior across platforms. Supports clean interruption, timeout,
+background tasks, and streaming STDIN / STDOUT / STDERR over binary or text
+connections. Arguments on Windows automatically get encoded and quoted to work
+on different locales.","2019-04-23","MIT + file LICENSE","https://github.com/jeroen/sys#readme","yes",NA,2429136,NA,NA,NA,"unix (>= 1.4), spelling, testthat"
+"labeling","Axis Labeling","0.3","Justin Talbot","Justin Talbot <justintalbot@gmail.com>","Provides a range of axis labeling algorithms","2014-08-23","MIT + file LICENSE | Unlimited",NA,"no",NA,2425915,NA,NA,NA,NA
+"callr","Call R from R","3.3.1","Gábor Csárdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
+Winston Chang [aut],
+RStudio [cph, fnd],
+Mango Solutions [cph, fnd]","Gábor Csárdi <csardi.gabor@gmail.com>","It is sometimes useful to perform a computation in a
+separate R process, without affecting the current R process at all.
+This packages does exactly that.","2019-07-18","MIT + file LICENSE","https://github.com/r-lib/callr#readme","no",NA,2380631,NA,"processx (>= 3.4.0), R6, utils",NA,"cliapp, covr, crayon, knitr, pingr, ps, rmarkdown, rprojroot, spelling, testthat, tibble, withr"
+"rstudioapi","Safely Access the RStudio API","0.10","Kevin Ushey [aut, cre],
+JJ Allaire [aut],
+Hadley Wickham [aut],
+Gary Ritchie [aut],
+RStudio [cph]","Kevin Ushey <kevin@rstudio.com>","Access the RStudio API (if available) and provide informative error
+messages when it's not.","2019-03-19","MIT + file LICENSE","https://github.com/rstudio/rstudioapi","no",NA,2363883,NA,NA,NA,"testthat, knitr, rmarkdown"
+"later","Utilities for Delaying Function Execution","0.8.0","Joe Cheng [aut, cre],
+RStudio [cph],
+Winston Chang [aut],
+Marcus Geelnard [ctb, cph] (TinyCThread library,
+https://tinycthread.github.io/),
+Evan Nemerson [ctb, cph] (TinyCThread library,
+https://tinycthread.github.io/)","Joe Cheng <joe@rstudio.com>","Executes arbitrary R or C functions some time after the current
+time, after the R execution stack has emptied.","2019-02-11","GPL (>= 2)","https://github.com/r-lib/later","yes",NA,2314492,NA,"Rcpp (>= 0.12.9), rlang","Rcpp, BH","knitr, rmarkdown, testthat"
+"progress","Terminal Progress Bars","1.2.2","Gábor Csárdi [aut, cre], Rich FitzJohn [aut]","Gábor Csárdi <csardi.gabor@gmail.com>","Configurable Progress bars, they may include percentage,
+elapsed time, and/or the estimated completion time. They work in
+terminals, in 'Emacs' 'ESS', 'RStudio', 'Windows' 'Rgui' and the
+'macOS' 'R.app'. The package also provides a 'C++' 'API', that works
+with or without 'Rcpp'.","2019-05-16","MIT + file LICENSE","https://github.com/r-lib/progress#readme","no",NA,2278104,NA,"hms, prettyunits, R6, crayon",NA,"Rcpp, testthat, withr"
+"lubridate","Make Dealing with Dates a Little Easier","1.7.4","Vitalie Spinu [aut, cre],
+Garrett Grolemund [aut],
+Hadley Wickham [aut],
+Ian Lyttle [ctb],
+Imanuel Constigan [ctb],
+Jason Law [ctb],
+Doug Mitarotonda [ctb],
+Joseph Larmarange [ctb],
+Jonathan Boiser [ctb],
+Chel Hee Lee [ctb]","Vitalie Spinu <spinuvit@gmail.com>","Functions to work with date-times and time-spans: fast and user
+friendly parsing of date-time data, extraction and updating of components of
+a date-time (years, months, days, hours, minutes, and seconds), algebraic
+manipulation on date-time and time-span objects. The 'lubridate' package has
+a consistent and memorable syntax that makes working with dates easy and
+fun.
+Parts of the 'CCTZ' source code, released under the Apache 2.0 License,
+are included in this package. See <https://github.com/google/cctz> for more
+details.","2018-04-11","GPL (>= 2)","http://lubridate.tidyverse.org,
+https://github.com/tidyverse/lubridate","yes","A system with zoneinfo data (e.g.
+/usr/share/zoneinfo) as well as a recent-enough C++11 compiler
+(such as g++-4.8 or later). On Windows the zoneinfo included
+with R is used.",2262699,"methods, R (>= 3.0.0)","stringr, Rcpp (>= 0.12.13),","Rcpp,","testthat, knitr, covr"
+"askpass","Safe Password Entry for R, Git, and SSH","1.1","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>)","Jeroen Ooms <jeroen@berkeley.edu>","Cross-platform utilities for prompting the user for credentials or a
+passphrase, for example to authenticate with a server or read a protected key.
+Includes native programs for MacOS and Windows, hence no 'tcltk' is required.
+Password entry can be invoked in two different ways: directly from R via the
+askpass() function, or indirectly as password-entry back-end for 'ssh-agent'
+or 'git-credential' via the SSH_ASKPASS and GIT_ASKPASS environment variables.
+Thereby the user can be prompted for credentials or a passphrase if needed
+when R calls out to git or ssh.","2019-01-13","MIT + file LICENSE","https://github.com/jeroen/askpass#readme","yes",NA,2141747,NA,"sys (>= 2.1)",NA,"testthat"
+"dbplyr","A 'dplyr' Back End for Databases","1.4.2","Hadley Wickham [aut, cre],
+Edgar Ruiz [aut],
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","A 'dplyr' back end for databases that allows you to
+work with remote database tables as if they are in-memory data frames.
+Basic features works with any database that has a 'DBI' back end; more
+advanced features require 'SQL' translation to be provided by the
+package author.","2019-06-17","MIT + file LICENSE","https://dbplyr.tidyverse.org/, https://github.com/tidyverse/dbplyr","no",NA,2141165,"R (>= 3.1)","assertthat (>= 0.2.0), DBI (>= 1.0.0), dplyr (>= 0.8.0), glue (>= 1.2.0), methods, purrr (>= 0.2.5), R6 (>= 2.2.2), rlang (>= 0.2.0), tibble (>= 1.4.2), tidyselect (>= 0.2.4), utils",NA,"bit64, covr, knitr, Lahman, nycflights13, RMariaDB (>= 1.0.2), rmarkdown, RMySQL (>= 0.10.11), RPostgreSQL (>= 0.4.1), RSQLite (>= 2.1.0), testthat (>= 2.0.0), withr (>= 2.1.2)"
+"xtable","Export Tables to LaTeX or HTML","1.8-4","David B. Dahl [aut],
+David Scott [aut, cre],
+Charles Roosen [aut],
+Arni Magnusson [aut],
+Jonathan Swinton [aut],
+Ajay Shah [ctb],
+Arne Henningsen [ctb],
+Benno Puetz [ctb],
+Bernhard Pfaff [ctb],
+Claudio Agostinelli [ctb],
+Claudius Loehnert [ctb],
+David Mitchell [ctb],
+David Whiting [ctb],
+Fernando da Rosa [ctb],
+Guido Gay [ctb],
+Guido Schulz [ctb],
+Ian Fellows [ctb],
+Jeff Laake [ctb],
+John Walker [ctb],
+Jun Yan [ctb],
+Liviu Andronic [ctb],
+Markus Loecher [ctb],
+Martin Gubri [ctb],
+Matthieu Stigler [ctb],
+Robert Castelo [ctb],
+Seth Falcon [ctb],
+Stefan Edwards [ctb],
+Sven Garbade [ctb],
+Uwe Ligges [ctb]","David Scott <d.scott@auckland.ac.nz>","Coerce data to LaTeX and HTML tables.","2019-04-21","GPL (>= 2)","http://xtable.r-forge.r-project.org/","no",NA,2128945,"R (>= 2.10.0)","stats, utils",NA,"knitr, plm, zoo, survival"
+"ellipsis","Tools for Working with ...","0.2.0.1","Hadley Wickham [aut, cre],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","The ellipsis is a powerful tool for extending functions. Unfortunately
+this power comes at a cost: misspelled arguments will be silently ignored.
+The ellipsis package provides a collection of functions to catch problems
+and alert the user.","2019-07-02","GPL-3","https://github.com/r-lib/ellipsis","yes",NA,2102110,"R (>= 3.1)","rlang (>= 0.3.0)",NA,"covr, testthat"
+"ps","List, Query, Manipulate System Processes","1.3.0","Jay Loden [aut],
+Dave Daeschler [aut],
+Giampaolo Rodola' [aut],
+Gábor Csárdi [aut, cre],
+RStudio [cph]","Gábor Csárdi <csardi.gabor@gmail.com>","List, query and manipulate all system processes, on 'Windows',
+'Linux' and 'macOS'.","2018-12-21","BSD_3_clause + file LICENSE","https://github.com/r-lib/ps#readme","yes",NA,2078196,"R (>= 3.1)","utils",NA,"callr, covr, curl, pingr, processx (>= 3.1.0), R6, rlang, testthat, tibble"
+"fs","Cross-Platform File System Operations Based on 'libuv'","1.3.1","Jim Hester [aut, cre],
+Hadley Wickham [aut],
+libuv project contributors [cph] (libuv library),
+Joyent, Inc. and other Node contributors [cph] (libuv library),
+RStudio [cph, fnd]","Jim Hester <james.f.hester@gmail.com>","A cross-platform interface to file system operations, built on
+top of the 'libuv' C library.","2019-05-06","GPL-3","http://fs.r-lib.org, https://github.com/r-lib/fs","yes","GNU make",2036878,"R (>= 3.1)","methods, Rcpp","Rcpp","testthat, covr, pillar (>= 1.0.0), crayon, rmarkdown, knitr, withr, spelling"
+"DBI","R Database Interface","1.0.0","R Special Interest Group on Databases (R-SIG-DB) [aut],
+Hadley Wickham [aut],
+Kirill Müller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>),
+R Consortium [fnd]","Kirill Müller <krlmlr+r@mailbox.org>","A database interface definition for communication
+between R and relational database management systems.  All
+classes in this package are virtual and need to be extended by
+the various R/DBMS implementations.","2018-05-02","LGPL (>= 2)","http://r-dbi.github.io/DBI","no",NA,2027103,"R (>= 3.0.0), methods",NA,NA,"blob, covr, hms, knitr, magrittr, rprojroot, rmarkdown, RSQLite (>= 1.1-2), testthat, xml2"
+"promises","Abstractions for Promise-Based Asynchronous Programming","1.0.1","Joe Cheng [aut, cre],
+RStudio [cph, fnd]","Joe Cheng <joe@rstudio.com>","Provides fundamental abstractions for doing asynchronous programming
+in R using promises. Asynchronous programming is useful for allowing a single
+R process to orchestrate multiple tasks in the background while also attending
+to something else. Semantics are similar to 'JavaScript' promises, but with a
+syntax that is idiomatic R.","2018-04-13","MIT + file LICENSE","https://rstudio.github.io/promises,
+https://github.com/rstudio/promises","yes",NA,2017635,NA,"R6, Rcpp, later, rlang, stats, magrittr","later, Rcpp","testthat, future, knitr, rmarkdown"
+"broom","Convert Statistical Analysis Objects into Tidy Tibbles","0.5.2","David Robinson [aut],
+Alex Hayes [aut, cre] (<https://orcid.org/0000-0002-4985-5160>),
+Matthieu Gomez [ctb],
+Boris Demeshev [ctb],
+Dieter Menne [ctb],
+Benjamin Nutter [ctb],
+Luke Johnston [ctb],
+Ben Bolker [ctb],
+Francois Briatte [ctb],
+Jeffrey Arnold [ctb],
+Jonah Gabry [ctb],
+Luciano Selzer [ctb],
+Gavin Simpson [ctb],
+Jens Preussner [ctb],
+Jay Hesselberth [ctb],
+Hadley Wickham [ctb],
+Matthew Lincoln [ctb],
+Alessandro Gasparini [ctb],
+Lukasz Komsta [ctb],
+Frederick Novometsky [ctb],
+Wilson Freitas [ctb],
+Michelle Evans [ctb],
+Jason Cory Brunson [ctb],
+Simon Jackson [ctb],
+Ben Whalley [ctb],
+Michael Kuehn [ctb],
+Jorge Cimentada [ctb],
+Erle Holgersen [ctb],
+Karl Dunkle Werner [ctb]","Alex Hayes <alexpghayes@gmail.com>","Summarizes key information about statistical
+objects in tidy tibbles. This makes it easy to report results, create
+plots and consistently work with large numbers of models at once.
+Broom provides three verbs that each provide different types of
+information about a model. tidy() summarizes information about model
+components such as coefficients of a regression. glance() reports
+information about an entire model, such as goodness of fit measures
+like AIC and BIC. augment() adds information about individual
+observations to a dataset, such as fitted values or influence
+measures.","2019-04-07","MIT + file LICENSE","http://github.com/tidyverse/broom","no",NA,2014455,"R (>= 3.1)","backports, dplyr, generics (>= 0.0.2), methods, nlme, purrr, reshape2, stringr, tibble, tidyr",NA,"AER, akima, AUC, bbmle, betareg, biglm, binGroup, boot, brms, btergm, car, caret, coda, covr, e1071, emmeans, ergm, gam (>= 1.15), gamlss, gamlss.data, gamlss.dist, geepack, ggplot2, glmnet, gmm, Hmisc, irlba, joineRML, Kendall, knitr, ks, Lahman, lavaan, lfe, lme4, lmodel2, lmtest, lsmeans, maps, maptools, MASS, Matrix, mclust, mgcv, muhaz, multcomp, network, nnet, orcutt (>= 2.2), ordinal, plm, plyr, poLCA, psych, quantreg, rgeos, rmarkdown, robust, rsample, rstan, rstanarm, sp, speedglm, statnet.common, survey, survival, testthat, tseries, xergm, zoo"
+"tidyverse","Easily Install and Load the 'Tidyverse'","1.2.1","Hadley Wickham [aut, cre],
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","The 'tidyverse' is a set of packages that work in harmony
+because they share common data representations and 'API' design. This
+package is designed to make it easy to install and load multiple
+'tidyverse' packages in a single step. Learn more about the 'tidyverse'
+at <https://tidyverse.org>.","2017-11-14","GPL-3 | file LICENSE","http://tidyverse.tidyverse.org,
+https://github.com/tidyverse/tidyverse","no",NA,1986576,NA,"broom (>= 0.4.2), cli (>= 1.0.0), crayon (>= 1.3.4), dplyr (>= 0.7.4), dbplyr (>= 1.1.0), forcats (>= 0.2.0), ggplot2 (>= 2.2.1), haven (>= 1.1.0), hms (>= 0.3), httr (>= 1.3.1), jsonlite (>= 1.5), lubridate (>= 1.7.1), magrittr (>= 1.5), modelr (>= 0.1.1), purrr (>= 0.2.4), readr (>= 1.1.1), readxl (>= 1.0.0), reprex (>= 0.1.1), rlang (>= 0.1.4), rstudioapi (>= 0.7), rvest (>= 0.3.2), stringr (>= 1.2.0), tibble (>= 1.3.4), tidyr (>= 0.7.2), xml2 (>= 1.1.1)",NA,"feather (>= 0.3.1), knitr (>= 1.17), rmarkdown (>= 1.7.4)"
+"haven","Import and Export 'SPSS', 'Stata' and 'SAS' Files","2.1.1","Hadley Wickham [aut, cre],
+Evan Miller [aut, cph] (Author of included ReadStat code),
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","Import foreign statistical formats into R via the
+embedded 'ReadStat' C library,
+<https://github.com/WizardMac/ReadStat>.","2019-07-04","MIT + file LICENSE","http://haven.tidyverse.org, https://github.com/tidyverse/haven,
+https://github.com/WizardMac/ReadStat","yes","GNU make",1978498,"R (>= 3.2)","forcats (>= 0.2.0), hms, Rcpp (>= 0.11.4), readr (>= 0.1.0), tibble","Rcpp","covr, fs, knitr, rmarkdown, testthat, pillar (>= 1.1.1), cli, crayon"
+"gridExtra","Miscellaneous Functions for ""Grid"" Graphics","2.3","Baptiste Auguie [aut, cre],
+Anton Antonov [ctb]","Baptiste Auguie <baptiste.auguie@gmail.com>","Provides a number of user-level functions to work with ""grid""
+graphics, notably to arrange multiple grid-based plots on a page, and draw
+tables.","2017-09-09","GPL (>= 2)",NA,"no",NA,1861299,NA,"gtable, grid, grDevices, graphics, utils",NA,"ggplot2, egg, lattice, knitr, testthat"
+"igraph","Network Analysis and Visualization","1.2.4.1","See AUTHORS file.","Gábor Csárdi <csardi.gabor@gmail.com>","Routines for simple graphs and network analysis. It can
+handle large graphs very well and provides functions for generating random
+and regular graphs, graph visualization, centrality methods and much more.","2019-04-22","GPL (>= 2)","http://igraph.org","yes","gmp (optional), libxml2 (optional), glpk (optional)",1830935,"methods","graphics, grDevices, magrittr, Matrix, pkgconfig (>= 2.0.0), stats, utils",NA,"ape, digest, graph, igraphdata, rgl, scales, stats4, tcltk, testthat"
+"generics","Common S3 Generics not Provided by Base R Methods Related to
+Model Fitting","0.0.2","Max Kuhn [aut, cre],
+Hadley Wickham [aut],
+Davis Vaughan [aut],
+RStudio [cph]","Max Kuhn <max@rstudio.com>","In order to reduce potential package dependencies and conflicts,
+generics provides a number of commonly used S3 generics.","2018-11-29","GPL-2","https://github.com/r-lib/generics","no",NA,1797487,"R (>= 3.1)","methods",NA,"covr, pkgload, testthat, tibble"
+"sourcetools","Tools for Reading, Tokenizing and Parsing R Code","0.1.7","Kevin Ushey","Kevin Ushey <kevinushey@gmail.com>","Tools for the reading and tokenization of R code. The
+'sourcetools' package provides both an R and C++ interface for the tokenization
+of R code, and helpers for interacting with the tokenized representation of R
+code.","2018-04-25","MIT + file LICENSE",NA,"yes",NA,1791116,"R (>= 3.0.2)",NA,NA,"testthat"
+"forcats","Tools for Working with Categorical Variables (Factors)","0.4.0","Hadley Wickham [aut, cre],
+RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","Helpers for reordering factor levels (including
+moving specified levels to front, ordering by first appearance,
+reversing, and randomly shuffling), and tools for modifying factor
+levels (including collapsing rare levels into other, 'anonymising',
+and manually 'recoding').","2019-02-17","GPL-3","http://forcats.tidyverse.org, https://github.com/tidyverse/forcats","no",NA,1789443,"R (>= 3.1)","ellipsis, magrittr, rlang, tibble",NA,"covr, ggplot2, testthat, readr, knitr, rmarkdown, dplyr"
+"cellranger","Translate Spreadsheet Cell Ranges to Rows and Columns","1.1.0","Jennifer Bryan [cre, aut],
+Hadley Wickham [ctb]","Jennifer Bryan <jenny@stat.ubc.ca>","Helper functions to work with spreadsheets and the ""A1:D10"" style
+of cell range specification.","2016-07-27","MIT + file LICENSE","https://github.com/rsheets/cellranger","no",NA,1772608,"R (>= 3.0.0)","rematch, tibble",NA,"covr, testthat (>= 1.0.0), knitr, rmarkdown"
+"rematch","Match Regular Expressions with a Nicer 'API'","1.0.1","Gabor Csardi","Gabor Csardi <gcsardi@mango-solutions.com>","A small wrapper on 'regexpr' to extract the matches and
+captured groups from the match of a regular expression to a character
+vector.","2016-04-21","MIT + file LICENSE","https://github.com/MangoTheCat/rematch","no",NA,1753708,NA,NA,NA,"covr, testthat"
+"rvest","Easily Harvest (Scrape) Web Pages","0.3.4","Hadley Wickham [aut, cre],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Wrappers around the 'xml2' and 'httr' packages to
+make it easy to download, then manipulate, HTML and XML.","2019-05-15","GPL-3","http://rvest.tidyverse.org/, https://github.com/tidyverse/rvest","no",NA,1749438,"R (>= 3.2), xml2","httr (>= 0.5), magrittr, selectr",NA,"covr, knitr, png, rmarkdown, spelling, stringi (>= 0.3.1), testthat"
+"remotes","R Package Installation from Remote Repositories, Including
+'GitHub'","2.1.0","Jim Hester [aut, cre],
+Gábor Csárdi [aut],
+Hadley Wickham [aut],
+Winston Chang [aut],
+RStudio [cph],
+Martin Morgan [aut],
+Dan Tenenbaum [aut],
+Mango Solutions [cph]","Jim Hester <james.hester@rstudio.com>","Download and install R packages stored in 'GitHub',
+'BitBucket', or plain 'subversion' or 'git' repositories. This package
+provides the 'install_*' functions in 'devtools'.
+Indeed most of the code was copied over from 'devtools'.","2019-06-24","GPL (>= 2)","https://github.com/r-lib/remotes#readme","no","Subversion for install_svn, git for install_git",1693372,"R (>= 3.0.0)","methods, stats, tools, utils",NA,"brew, callr, codetools, curl, covr, git2r (>= 0.23.0), knitr, mockery, pkgbuild (>= 1.0.1), pingr, rmarkdown, rprojroot, testthat, withr"
+"vctrs","Vector Helpers","0.2.0","Hadley Wickham [aut, cre],
+Lionel Henry [aut],
+Davis Vaughan [aut],
+RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Defines new notions of prototype and size that are
+used to provide tools for consistent and well-founded type-coercion
+and size-recycling, and are in turn connected to ideas of type- and
+size-stability useful for analyzing function interfaces.","2019-07-05","GPL-3","https://github.com/r-lib/vctrs","yes",NA,1592780,"R (>= 3.2)","backports, ellipsis (>= 0.2.0), digest, glue, rlang (>= 0.4.0), zeallot",NA,"bit64, covr, crayon, generics, knitr, pillar (>= 1.4.1), pkgdown, rmarkdown, testthat, tibble"
+"rprojroot","Finding Files in Project Subdirectories","1.3-2","Kirill Müller [aut, cre]","Kirill Müller <krlmlr+r@mailbox.org>","Robust, reliable and flexible paths to files below a
+project root. The 'root' of a project is defined as a directory
+that matches a certain criterion, e.g., it contains a certain
+regular file.","2018-01-03","GPL-3","https://github.com/krlmlr/rprojroot,
+https://krlmlr.github.io/rprojroot","no",NA,1584853,"R (>= 3.0.0)","backports",NA,"testthat, mockr, knitr, withr, rmarkdown"
+"zeallot","Multiple, Unpacking, and Destructuring Assignment","0.1.0","Nathan Teetor [aut, cre],
+Paul Teetor [ctb]","Nathan Teetor <nathanteetor@gmail.com>","Provides a %<-% operator to perform multiple,
+unpacking, and destructuring assignment in R. The
+operator unpacks the right-hand side of an assignment
+into multiple values and assigns these values to
+variables on the left-hand side of the assignment.","2018-01-28","MIT + file LICENSE","https://github.com/nteetor/zeallot","no",NA,1576543,NA,NA,NA,"testthat, knitr, rmarkdown, purrr, magrittr"
+"whisker","{{mustache}} for R, logicless templating","0.3-2","Edwin de Jonge","Edwin de Jonge <edwindjonge@gmail.com>","logicless templating, reuse templates in many programming languages including R","2013-04-28","GPL-3","http://github.com/edwindj/whisker","no",NA,1558273,NA,NA,NA,"markdown"
+"git2r","Provides Access to Git Repositories","0.26.1","See AUTHORS file.","Stefan Widgren <stefan.widgren@gmail.com>","Interface to the 'libgit2' library, which is a pure C
+implementation of the 'Git' core methods. Provides access to 'Git'
+repositories to extract data and running some basic 'Git'
+commands.","2019-06-29","GPL-2","https://github.com/ropensci/git2r","yes","By default, git2r uses a system installation of the
+libgit2 headers and library. However, if a system installation
+is not available, builds and uses a bundled version of the
+libgit2 source. zlib headers and library. OpenSSL headers and
+library (non-macOS). LibSSH2 (optional on non-Windows) to
+enable the SSH transport.",1555239,"R (>= 3.1)","graphics, utils",NA,"getPass"
+"xts","eXtensible Time Series","0.11-2","Jeffrey A. Ryan [aut, cph],
+Joshua M. Ulrich [cre, aut],
+Ross Bennett [ctb],
+Corwin Joy [ctb]","Joshua M. Ulrich <josh.m.ulrich@gmail.com>","Provide for uniform handling of R's different time-based data classes by extending zoo, maximizing native format information preservation and allowing for user level customization and extension, while simplifying cross-class interoperability.","2018-11-05","GPL (>= 2)","https://github.com/joshuaulrich/xts","yes",NA,1531609,"zoo (>= 1.7-12)","methods","zoo","timeSeries, timeDate, tseries, chron, fts, tis, RUnit"
+"RcppArmadillo","'Rcpp' Integration for the 'Armadillo' Templated Linear Algebra
+Library","0.9.600.4.0","Dirk Eddelbuettel, Romain Francois, Doug Bates and Binxiang Ni","Dirk Eddelbuettel <edd@debian.org>","'Armadillo' is a templated C++ linear algebra library (by Conrad
+Sanderson) that aims towards a good balance between speed and ease of use. Integer,
+floating point and complex numbers are supported, as well as a subset of
+trigonometric and statistics functions. Various matrix decompositions are
+provided through optional integration with LAPACK and ATLAS libraries.
+The 'RcppArmadillo' package includes the header files from the templated
+'Armadillo' library. Thus users do not need to install 'Armadillo' itself in
+order to use 'RcppArmadillo'. From release 7.800.0 on, 'Armadillo' is
+licensed under Apache License 2; previous releases were under licensed as
+MPL 2.0 from version 3.800.0 onwards and LGPL-3 prior to that;
+'RcppArmadillo' (the 'Rcpp' bindings/bridge to Armadillo) is licensed under
+the GNU GPL version 2 or later, as is the rest of 'Rcpp'. Note that
+Armadillo requires a fairly recent compiler; for the g++ family at least
+version 4.6.* is required.","2019-07-15","GPL (>= 2)","http://dirk.eddelbuettel.com/code/rcpp.armadillo.html","yes",NA,1501226,"R (>= 3.3.0)","Rcpp (>= 0.11.0), stats, utils, methods","Rcpp","RUnit, Matrix, pkgKitten, reticulate, rmarkdown, knitr, pinp, slam"
+"usethis","Automate Package and Project Setup","1.5.1","Hadley Wickham [aut] (<https://orcid.org/0000-0003-4757-117X>),
+Jennifer Bryan [aut, cre] (<https://orcid.org/0000-0002-6983-2759>),
+RStudio [cph, fnd]","Jennifer Bryan <jenny@rstudio.com>","Automate package and project setup tasks that are otherwise
+performed manually. This includes setting up unit testing, test
+coverage, continuous integration, Git, 'GitHub', licenses, 'Rcpp', 'RStudio'
+projects, and more.","2019-07-04","GPL-3","https://usethis.r-lib.org, https://github.com/r-lib/usethis","no",NA,1497023,"R (>= 3.2)","clipr (>= 0.3.0), clisymbols, crayon, curl (>= 2.7), desc, fs (>= 1.3.0), gh, git2r (>= 0.23), glue (>= 1.3.0), purrr, rlang, rprojroot (>= 1.2), rstudioapi, stats, utils, whisker, withr, yaml",NA,"covr, knitr, magick, pkgdown (>= 1.1.0), rmarkdown, roxygen2, spelling (>= 1.2), styler (>= 1.0.2), testthat (>= 2.1.0)"

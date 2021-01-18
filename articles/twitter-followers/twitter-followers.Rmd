@@ -1,0 +1,164 @@
+---
+title: "Twitter Followers"
+output: html_document
+resource_files:
+  - '.'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r table, echo=FALSE}
+library(reactable)
+library(htmltools)
+
+data <- read.csv("twitter_followers.csv", stringsAsFactors = FALSE)
+
+tbl <- reactable(
+  data,
+  pagination = FALSE,
+  defaultSorted = "exclusive_followers_pct",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    account = colDef(
+      cell = function(value) {
+        url <- paste0("https://twitter.com/", value)
+        tags$a(href = url, target = "_blank", paste0("@", value))
+      },
+      width = 150
+    ),
+    followers = colDef(
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        value <- format(value, big.mark = ",")
+        value <- format(value, width = 9, justify = "right")
+        bar <- div(
+          class = "bar-chart",
+          style = list(marginRight = "6px"),
+          div(class = "bar", style = list(width = width, backgroundColor = "#3fc1c9"))
+        )
+        div(class = "bar-cell", span(class = "number", value), bar)
+      }
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      cell = JS("function(cellInfo) {
+        // Format as percentage
+        const pct = (cellInfo.value * 100).toFixed(1) + '%'
+        // Pad single-digit numbers
+        let value = pct.padStart(5)
+        // Show % on first row only
+        if (cellInfo.viewIndex > 0) {
+          value = value.replace('%', ' ')
+        }
+        // Render bar chart
+        return (
+          '<div class=\"bar-cell\">' +
+            '<span class=\"number\">' + value + '</span>' +
+            '<div class=\"bar-chart\" style=\"background-color: #e1e1e1\">' +
+              '<div class=\"bar\" style=\"width: ' + pct + '; background-color: #fc5185\"></div>' +
+            '</div>' +
+          '</div>'
+        )
+      }"),
+      html = TRUE
+    )
+  ),
+  compact = TRUE,
+  class = "followers-tbl"
+)
+
+div(class = "twitter-followers",
+  div(class = "followers-header",
+    h2(class = "followers-title", "Candidates whose followers are loyal only to them"),
+    "Share of each 2020 candidate's followers who don't follow any other candidates"
+  ),
+  tbl
+)
+```
+
+---
+
+Source: [FiveThirtyEight](https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/)
+
+Raw data: [`twitter_followers.csv`](twitter_followers.csv)
+
+How it was made: [Building the Twitter Followers Demo](../building-twitter-followers.html)
+
+```{r ref.label="table", eval=FALSE}
+```
+
+```{r}
+tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
+          rel = "stylesheet")
+```
+
+```{css}
+.twitter-followers {
+  margin: 0 auto;
+  width: 575px;
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.followers-header {
+  margin: 18px 0;
+  font-size: 16px;
+}
+
+.followers-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.followers-tbl {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.followers-tbl a {
+  color: inherit;
+}
+
+.header {
+  border-bottom: 2px solid #555;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.header:hover {
+  background-color: #eee;
+}
+
+.bar-cell {
+  display: flex;
+  align-items: center;
+}
+
+.number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 13.5px;
+  white-space: pre;
+}
+
+.bar-chart {
+  flex-grow: 1;
+  margin-left: 6px;
+  height: 14px;
+}
+
+.bar {
+  height: 100%;
+}
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+h1.title {
+  display: none;
+}
+```

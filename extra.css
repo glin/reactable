@@ -1,0 +1,68 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  overflow-y: scroll;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+h4 {
+  font-size: 18px;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+li {
+  line-height: 1.5;
+}
+
+pre {
+  padding: 12px;
+  border: 1px solid #f2f2f2;
+}
+
+.navbar {
+  background-color: hsl(0, 0%, 98%);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu {
+  font-size: 15px;
+}
+
+#sidebar h2 {
+  font-size: 20px;
+}
+
+#toc li {
+  line-height: 1.625;
+}
+
+.ref-arguments {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contents h1,
+.contents h2,
+.contents h3,
+.contents h4 {
+  margin-top: -52px;
+}
+
+.contents li + li {
+  margin-top: 4px;
+}
