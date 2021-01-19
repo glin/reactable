@@ -336,6 +336,20 @@ reactable(
 )
 ```
 
+### Exclude sub rows from pagination
+
+> New in v0.2.3.9000
+
+Sub rows are paginated and included in the row count by default, but you can
+exclude sub rows by setting `paginateSubRows` to `FALSE`:
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
+
+reactable(data, groupBy = "Type", paginateSubRows = FALSE)
+```
+
+
 ## Column Formatting
 You can format data in a column by providing `colFormat()` options to `format`:
 ```{r}

@@ -468,6 +468,12 @@ test_that("pagination", {
   # pageSizeOptions should be unset when page size options are hidden
   tbl <- reactable(data.frame(x = 1), pageSizeOptions = 5)
   expect_null(getAttribs(tbl)$pageSizeOptions)
+
+  # paginateSubRows
+  expect_equal(getAttribs(reactable(data.frame(x = 1)))$paginateSubRows, NULL)
+  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = TRUE))$paginateSubRows, NULL)
+  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = FALSE))$paginateSubRows, FALSE)
+  expect_error(reactable(data.frame(x = 1), paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
 })
 
 test_that("column renderers", {

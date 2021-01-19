@@ -26,6 +26,7 @@ reactable(
   showPagination = NULL,
   showPageInfo = TRUE,
   minRows = 1,
+  paginateSubRows = TRUE,
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
@@ -107,6 +108,8 @@ than one page.}
 \item{showPageInfo}{Show page info? Defaults to \code{TRUE}.}
 
 \item{minRows}{Minimum number of rows to show per page. Defaults to 1.}
+
+\item{paginateSubRows}{When rows are grouped, paginate sub rows? Defaults to \code{TRUE}.}
 
 \item{details}{Additional content to display when expanding a row. An R function
 that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes

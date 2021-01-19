@@ -32,7 +32,8 @@ where possible, but note that there are several breaking changes.
 ### Breaking changes
 
 * When expanding grouped rows, sub rows are now paginated and included in the
-  row count.
+  row count. Use `reactable(paginateSubRows = FALSE)` to exclude sub rows from
+  pagination like before.
 * When both `columnGroups` and `groupBy` arguments are provided, `groupBy`
   columns are no longer added to a column group automatically
   ([#87](https://github.com/glin/reactable/issues/87)).
