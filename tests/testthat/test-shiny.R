@@ -1,5 +1,3 @@
-context("shiny")
-
 mockSession <- function(namespace = NULL) {
   e <- new.env()
   e$input <- list()

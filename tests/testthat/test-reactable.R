@@ -1,5 +1,3 @@
-context("reactable")
-
 library(htmltools)
 
 getAttribs <- function(widget) widget$x$tag$attribs

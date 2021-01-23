@@ -1,5 +1,3 @@
-context("theme")
-
 test_that("reactableTheme", {
   expect_equal(reactableTheme(), structure(list(), .Names = character(0), class = "reactableTheme"))
   expect_equal(

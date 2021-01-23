@@ -1,5 +1,3 @@
-context("columns")
-
 test_that("colDef", {
   # Default args
   expect_equal(colDef(), structure(list(), .Names = character(0), class = "colDef"))

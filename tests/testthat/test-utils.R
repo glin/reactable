@@ -1,5 +1,3 @@
-context("utils")
-
 library(htmltools)
 
 test_that("mergeLists", {

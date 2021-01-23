@@ -1,5 +1,3 @@
-context("language")
-
 test_that("reactableLang", {
   expect_equal(reactableLang(), structure(list(), class = "reactableLang"))
   expect_equal(reactableLang(sortLabel = "_Sort {name}", searchPlaceholder = "", noData = NULL),
