@@ -14,9 +14,6 @@ where possible, but note that there are several breaking changes.
   Previously, expanded rows were always collapsed on sorting and pagination
   changes, and incorrectly persisted on filtering changes
   ([#39](https://github.com/glin/reactable/issues/39)).
-* The row selection column is now always placed as the first column in the
-  table, even before the `groupBy` and row details columns
-  ([#71](https://github.com/glin/reactable/issues/71)).
 * Aggregated rows can now be selected when multiple selection is enabled.
 * JavaScript render functions and style functions receive several new properties:
   * `rowInfo.expanded` and `cellInfo.expanded` indicating whether the row is expanded
@@ -34,6 +31,11 @@ where possible, but note that there are several breaking changes.
 * When expanding grouped rows, sub rows are now paginated and included in the
   row count. Use `reactable(paginateSubRows = FALSE)` to exclude sub rows from
   pagination like before.
+* The row selection column is now always placed as the first column in the
+  table, even before the `groupBy` and row details columns
+  ([#71](https://github.com/glin/reactable/issues/71)).
+* Increased the default width of the row selection column to match the row
+  details column (45px).
 * When both `columnGroups` and `groupBy` arguments are provided, `groupBy`
   columns are no longer added to a column group automatically
   ([#87](https://github.com/glin/reactable/issues/87)).
@@ -65,7 +67,6 @@ where possible, but note that there are several breaking changes.
   could take aggregated values which could produce inaccurate calculations
   (e.g., when calculating the mean of values).
 * Searching now properly ignores the row details and selection columns.
-* Increased the width of the row selection column to match the row details column.
 * Selected rows now reset when the table data changes in Shiny
   ([#110](https://github.com/glin/reactable/issues/110)).
 * When selecting rows, errors from other Crosstalk widgets no longer cause the
