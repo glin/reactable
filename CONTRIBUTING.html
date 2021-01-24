@@ -198,13 +198,13 @@
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_dev_deps</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Install dependencies for JS:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">yarn</span> install</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">yarn</span> install</span></code></pre></div>
 </div>
 <div id="building" class="section level3">
 <h3 class="hasAnchor">
 <a href="#building" class="anchor"></a>Building</h3>
 <p>Build the JS/CSS bundle (outputs to <code>inst/htmlwidgets</code>):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">yarn</span> build</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">yarn</span> build</span></code></pre></div>
 <p>Then reload (<code>devtools::load_all()</code>) or reinstall the package.</p>
 <p>These generated files should be added in their own, separate commit, preferably only once per branch.</p>
 </div>
@@ -219,17 +219,17 @@
 <span class="co"># install.packages("DT")</span>
 <span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/report.html">report</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Run JS tests:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">yarn</span> test</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co"># With test coverage</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="ex">yarn</span> test:cover</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">yarn</span> test</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># With test coverage</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="ex">yarn</span> test:cover</span></code></pre></div>
 </div>
 <div id="linting-and-formatting" class="section level3">
 <h3 class="hasAnchor">
 <a href="#linting-and-formatting" class="anchor"></a>Linting and Formatting</h3>
 <p>Lint and format the JS/CSS:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="ex">yarn</span> lint</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="ex">yarn</span> format</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">yarn</span> lint</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="ex">yarn</span> format</span></code></pre></div>
 </div>
 </div>
 </div>
