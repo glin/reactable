@@ -187,7 +187,6 @@
 <li>Column group headers can now be resized.</li>
 <li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107"><a href='https://github.com/glin/reactable/issues/107'>#107</a></a>).</li>
 <li>Expanded rows now stay expanded on sorting, filtering, and pagination changes. Previously, expanded rows were always collapsed on sorting and pagination changes, and incorrectly persisted on filtering changes (<a href="https://github.com/glin/reactable/issues/39"><a href='https://github.com/glin/reactable/issues/39'>#39</a></a>).</li>
-<li>The row selection column is now always placed as the first column in the table, even before the <code>groupBy</code> and row details columns (<a href="https://github.com/glin/reactable/issues/71"><a href='https://github.com/glin/reactable/issues/71'>#71</a></a>).</li>
 <li>Aggregated rows can now be selected when multiple selection is enabled.</li>
 <li>JavaScript render functions and style functions receive several new properties:
 <ul>
@@ -208,6 +207,8 @@
 <a href="#breaking-changes" class="anchor"></a>Breaking changes</h3>
 <ul>
 <li>When expanding grouped rows, sub rows are now paginated and included in the row count. Use <code><a href="../reference/reactable.html">reactable(paginateSubRows = FALSE)</a></code> to exclude sub rows from pagination like before.</li>
+<li>The row selection column is now always placed as the first column in the table, even before the <code>groupBy</code> and row details columns (<a href="https://github.com/glin/reactable/issues/71"><a href='https://github.com/glin/reactable/issues/71'>#71</a></a>).</li>
+<li>Increased the default width of the row selection column to match the row details column (45px).</li>
 <li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87"><a href='https://github.com/glin/reactable/issues/87'>#87</a></a>).</li>
 <li>The <code>defaultGroupHeader</code> argument in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> is now deprecated and no longer used. Use the <code>columnGroups</code> argument in <code><a href="../reference/reactable.html">reactable()</a></code> to customize the column group header for <code>groupBy</code> columns.</li>
 <li>The <code>state.expanded</code> property has been removed from JavaScript render functions and style functions. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</li>
@@ -227,7 +228,6 @@
 <li>Aggregated cell values are now recalculated when filtering or searching the table.</li>
 <li>Aggregate functions now always take the unaggregated values in the column. Previously, if there were multiple <code>groupBy</code> columns, aggregate functions could take aggregated values which could produce inaccurate calculations (e.g., when calculating the mean of values).</li>
 <li>Searching now properly ignores the row details and selection columns.</li>
-<li>Increased the width of the row selection column to match the row details column.</li>
 <li>Selected rows now reset when the table data changes in Shiny (<a href="https://github.com/glin/reactable/issues/110"><a href='https://github.com/glin/reactable/issues/110'>#110</a></a>).</li>
 <li>When selecting rows, errors from other Crosstalk widgets no longer cause the table to disappear.</li>
 <li>Row group expander buttons are now labeled as “Expand group” and “Collapse group” instead of “Expand details” and “Collapse details”. Use the new <code>groupExpandLabel</code> and <code>groupCollapseLabel</code> arguments in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> to customize the accessible labels for row group expander buttons.</li>
