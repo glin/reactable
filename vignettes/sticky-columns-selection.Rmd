@@ -19,11 +19,11 @@ reactable(
     .selection = colDef(
       style = list(position = "sticky", left = 0, background = "#fff", zIndex = 1),
       headerStyle = list(position = "sticky", left = 0, background = "#fff", zIndex = 1),
-      width = 36
+      width = 45
     ),
     Manufacturer = colDef(
-      style = list(position = "sticky", left = "36px", background = "#fff", zIndex = 1),
-      headerStyle = list(position = "sticky", left = "36px", background = "#fff", zIndex = 1)
+      style = list(position = "sticky", left = 45, background = "#fff", zIndex = 1),
+      headerStyle = list(position = "sticky", left = 45, background = "#fff", zIndex = 1)
     )
   ),
   onClick = "select",
@@ -41,7 +41,7 @@ reactable(
     .selection = colDef(
       class = "sticky left-col-1",
       headerClass = "sticky left-col-1",
-      width = 36
+      width = 45
     ),
     Manufacturer = colDef(
       class = "sticky left-col-2",
@@ -69,11 +69,11 @@ reactable(
 }
 
 .left-col-2 {
-  left: 36px;
+  left: 45px;
 }
 
 .left-col-3 {
-  left: 136px;
+  left: 145px;
   border-right: 1px solid #eee !important;
 }
 ```
