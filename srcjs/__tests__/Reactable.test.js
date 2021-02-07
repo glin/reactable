@@ -1867,9 +1867,9 @@ describe('expandable row details and pivot rows', () => {
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Expand details')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle details')
     fireEvent.click(expanders[0])
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Collapse details')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle details')
   })
 
   it('expanders language', () => {

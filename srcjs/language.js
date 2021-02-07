@@ -27,12 +27,12 @@ export const defaultLanguage = {
 
   // Column groups
   defaultGroupHeader: 'Grouped',
-  groupExpandLabel: 'Expand group',
-  groupCollapseLabel: 'Collapse group',
+  groupExpandLabel: 'Toggle group',
+  groupCollapseLabel: 'Toggle group',
 
   // Row details
-  detailsExpandLabel: 'Expand details',
-  detailsCollapseLabel: 'Collapse details',
+  detailsExpandLabel: 'Toggle details',
+  detailsCollapseLabel: 'Toggle details',
 
   // Selection
   selectAllRowsLabel: 'Select all rows',

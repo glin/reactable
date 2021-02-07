@@ -71,11 +71,13 @@ where possible, but note that there are several breaking changes.
   ([#110](https://github.com/glin/reactable/issues/110)).
 * When selecting rows, errors from other Crosstalk widgets no longer cause the
   table to disappear.
-* Row group expander buttons are now labeled as "Expand group" and
-  "Collapse group" instead of "Expand details" and "Collapse details". Use the
-  new `groupExpandLabel` and `groupCollapseLabel` arguments in `reactableLang()`
-  to customize the accessible labels for row group expander buttons.
-* Row name cells are now marked up as row headers for assistive technologies.
+* Row expand buttons now set the `aria-expanded` attribute to indicate expanded
+  or collapsed state. The default label for row expand buttons is now
+  "Toggle details" instead of "Expand details" or "Collapse details".
+* `reactableLang()` gains the `groupExpandLabel` and `groupCollapseLabel`
+  arguments to customize the accessible labels for row group expand buttons.
+* Cells in the row names column are now marked up as row headers for assistive
+  technologies.
 
 # reactable 0.2.3
 

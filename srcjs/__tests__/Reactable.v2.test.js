@@ -4597,7 +4597,10 @@ describe('expandable row details', () => {
 
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
-    expanders.forEach(expander => expect(expander).toHaveAttribute('aria-label', 'Expand details'))
+    expanders.forEach(expander => {
+      expect(expander).toHaveAttribute('aria-label', 'Toggle details')
+      expect(expander).toHaveAttribute('aria-expanded', 'false')
+    })
     const expanderIcons = getExpanderIcons(container)
     expanderIcons.forEach(icon => expect(icon).not.toHaveClass('rt-expander-open'))
     const expandableCells = getExpandableCells(container)
@@ -4619,14 +4622,16 @@ describe('expandable row details', () => {
     rowGroups = getRowGroups(container)
     expect(rowGroups[1].children[1]).toEqual(rowDetails[1])
 
-    expanders.forEach(expander =>
-      expect(expander).toHaveAttribute('aria-label', 'Collapse details')
-    )
+    expanders.forEach(expander => {
+      expect(expander).toHaveAttribute('aria-label', 'Toggle details')
+      expect(expander).toHaveAttribute('aria-expanded', 'true')
+    })
     expanderIcons.forEach(icon => expect(icon).toHaveClass('rt-expander-open'))
 
     // Row details should collapse
     fireEvent.click(expanders[0])
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Expand details')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle details')
+    expect(expanders[0]).toHaveAttribute('aria-expanded', 'false')
     expect(expanderIcons[0]).not.toHaveClass('rt-expander-open')
     expect(getRowDetails(container)).toHaveLength(1)
 
@@ -5087,9 +5092,10 @@ describe('expandable row details', () => {
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Expand details')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle details')
+    expect(expanders[0]).toHaveAttribute('aria-expanded', 'false')
     fireEvent.click(expanders[0])
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Collapse details')
+    expect(expanders[0]).toHaveAttribute('aria-expanded', 'true')
   })
 
   it('defaultExpanded works with row details', () => {
@@ -5236,8 +5242,10 @@ describe('grouping and aggregation', () => {
     const expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     expect(getRows(container)).toHaveLength(2)
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Expand group')
-    expect(expanders[1]).toHaveAttribute('aria-label', 'Expand group')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle group')
+    expect(expanders[1]).toHaveAttribute('aria-label', 'Toggle group')
+    expect(expanders[0]).toHaveAttribute('aria-expanded', 'false')
+    expect(expanders[1]).toHaveAttribute('aria-expanded', 'false')
 
     const expandableCells = getExpandableCells(container)
     expect(expandableCells).toHaveLength(2)
@@ -5249,8 +5257,10 @@ describe('grouping and aggregation', () => {
     expect(getRows(container)).toHaveLength(4)
     fireEvent.click(getExpanders(container)[1])
     expect(getRows(container)).toHaveLength(5)
-    expect(expanders[0]).toHaveAttribute('aria-label', 'Collapse group')
-    expect(getExpanders(container)[1]).toHaveAttribute('aria-label', 'Collapse group')
+    expect(expanders[0]).toHaveAttribute('aria-label', 'Toggle group')
+    expect(expanders[0]).toHaveAttribute('aria-expanded', 'true')
+    expect(getExpanders(container)[1]).toHaveAttribute('aria-label', 'Toggle group')
+    expect(getExpanders(container)[1]).toHaveAttribute('aria-expanded', 'true')
 
     // Expandable cells should be clickable
     fireEvent.click(expandableCells[0])

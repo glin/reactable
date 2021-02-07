@@ -78,10 +78,10 @@
 #'   pageNumberLabel = "Page {page}",
 #'   pageJumpLabel = "Go to page",
 #'   pageSizeOptionsLabel = "Rows per page",
-#'   groupExpandLabel = "Expand group",
-#'   groupCollapseLabel = "Collapse group",
-#'   detailsExpandLabel = "Expand details",
-#'   detailsCollapseLabel = "Collapse details",
+#'   groupExpandLabel = "Toggle group",
+#'   groupCollapseLabel = "Toggle group",
+#'   detailsExpandLabel = "Toggle details",
+#'   detailsCollapseLabel = "Toggle details",
 #'   selectAllRowsLabel = "Select all rows",
 #'   deselectAllRowsLabel = "Deselect all rows",
 #'   selectAllSubRowsLabel = "Select all rows in group",
@@ -147,12 +147,12 @@ reactableLang <- function(
   pageSizeOptionsLabel = "Rows per page",
 
   # Row grouping
-  groupExpandLabel = "Expand group",
-  groupCollapseLabel = "Collapse group",
+  groupExpandLabel = "Toggle group",
+  groupCollapseLabel = "Toggle group",
 
   # Row details
-  detailsExpandLabel = "Expand details",
-  detailsCollapseLabel = "Collapse details",
+  detailsExpandLabel = "Toggle details",
+  detailsCollapseLabel = "Toggle details",
 
   # Selection
   selectAllRowsLabel = "Select all rows",

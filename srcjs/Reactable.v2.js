@@ -236,7 +236,11 @@ RowDetails.propTypes = {
 
 const ExpanderComponent = ({ isExpanded, className, 'aria-label': ariaLabel }) => {
   return (
-    <button className="rt-expander-button" aria-label={ariaLabel}>
+    <button
+      className="rt-expander-button"
+      aria-label={ariaLabel}
+      aria-expanded={isExpanded ? 'true' : 'false'}
+    >
       <span
         className={classNames('rt-expander', isExpanded && 'rt-expander-open', className)}
         tabIndex="-1"
