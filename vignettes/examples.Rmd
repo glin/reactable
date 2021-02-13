@@ -777,7 +777,8 @@ reactable(iris[1:5, ],
 You can expand all rows by default by setting `defaultExpanded` to `TRUE`:
 ```{r}
 reactable(
-  iris[1:4, ],
+  iris[1:12, ],
+  defaultPageSize = 4,
   details = function(index) paste("Details for row:", index),
   defaultExpanded = TRUE
 )
