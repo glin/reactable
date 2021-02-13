@@ -233,18 +233,18 @@ to collapse all rows.</p></td>
     <pre class="examples"><div class='input'><span class='co'># Run in an interactive R session</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://shiny.rstudio.com'>shiny</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://shiny.rstudio.com/'>shiny</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://glin.github.io/reactable/'>reactable</a></span><span class='op'>)</span>
 
 <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>MASS</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/MASS/man/Cars93.html'>Cars93</a></span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>7</span><span class='op'>]</span>
 
-<span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"select_btn"</span>, <span class='st'>"Select rows"</span><span class='op'>)</span>,
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"clear_btn"</span>, <span class='st'>"Clear selection"</span><span class='op'>)</span>,
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"expand_btn"</span>, <span class='st'>"Expand rows"</span><span class='op'>)</span>,
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"collapse_btn"</span>, <span class='st'>"Collapse rows"</span><span class='op'>)</span>,
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"page_btn"</span>, <span class='st'>"Change page"</span><span class='op'>)</span>,
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"filter_type"</span>, <span class='st'>"Filter type"</span>, <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>Type</span><span class='op'>)</span>, multiple <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+<span class='va'>ui</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"select_btn"</span>, <span class='st'>"Select rows"</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"clear_btn"</span>, <span class='st'>"Clear selection"</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"expand_btn"</span>, <span class='st'>"Expand rows"</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"collapse_btn"</span>, <span class='st'>"Collapse rows"</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/actionButton.html'>actionButton</a></span><span class='op'>(</span><span class='st'>"page_btn"</span>, <span class='st'>"Change page"</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span><span class='op'>(</span><span class='st'>"filter_type"</span>, <span class='st'>"Filter type"</span>, <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>$</span><span class='va'>Type</span><span class='op'>)</span>, multiple <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
   <span class='fu'><a href='reactable-shiny.html'>reactableOutput</a></span><span class='op'>(</span><span class='st'>"table"</span><span class='op'>)</span>
 <span class='op'>)</span>
 
@@ -259,32 +259,32 @@ to collapse all rows.</p></td>
     <span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>select_btn</span>, <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>select_btn</span>, <span class='op'>{</span>
     <span class='co'># Select rows</span>
     <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"table"</span>, selected <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>clear_btn</span>, <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>clear_btn</span>, <span class='op'>{</span>
     <span class='co'># Clear row selection</span>
     <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"table"</span>, selected <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>expand_btn</span>, <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>expand_btn</span>, <span class='op'>{</span>
     <span class='co'># Expand all rows</span>
     <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"table"</span>, expanded <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>collapse_btn</span>, <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>collapse_btn</span>, <span class='op'>{</span>
     <span class='co'># Collapse all rows</span>
     <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"table"</span>, expanded <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>page_btn</span>, <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observeEvent.html'>observeEvent</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>page_btn</span>, <span class='op'>{</span>
     <span class='co'># Change current page</span>
     <span class='fu'>updateReactable</span><span class='op'>(</span><span class='st'>"table"</span>, page <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 
-  <span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/observe.html'>observe</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/shiny/man/observe.html'>observe</a></span><span class='op'>(</span><span class='op'>{</span>
     <span class='co'># Filter data</span>
     <span class='va'>filtered</span> <span class='op'>&lt;-</span> <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>input</span><span class='op'>$</span><span class='va'>filter_type</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
       <span class='va'>data</span><span class='op'>[</span><span class='va'>data</span><span class='op'>$</span><span class='va'>Type</span> <span class='op'>%in%</span> <span class='va'>input</span><span class='op'>$</span><span class='va'>filter_type</span>, <span class='op'>]</span>
@@ -295,7 +295,7 @@ to collapse all rows.</p></td>
   <span class='op'>}</span><span class='op'>)</span>
 <span class='op'>}</span>
 
-<span class='fu'><a href='https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html'>shinyApp</a></span><span class='op'>(</span><span class='va'>ui</span>, <span class='va'>server</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/shiny/man/shinyApp.html'>shinyApp</a></span><span class='op'>(</span><span class='va'>ui</span>, <span class='va'>server</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 </div></pre>

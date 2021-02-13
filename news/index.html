@@ -230,8 +230,11 @@
 <li>Searching now properly ignores the row details and selection columns.</li>
 <li>Selected rows now reset when the table data changes in Shiny (<a href="https://github.com/glin/reactable/issues/110"><a href='https://github.com/glin/reactable/issues/110'>#110</a></a>).</li>
 <li>When selecting rows, errors from other Crosstalk widgets no longer cause the table to disappear.</li>
-<li>Row group expander buttons are now labeled as “Expand group” and “Collapse group” instead of “Expand details” and “Collapse details”. Use the new <code>groupExpandLabel</code> and <code>groupCollapseLabel</code> arguments in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> to customize the accessible labels for row group expander buttons.</li>
-<li>Row name cells are now marked up as row headers for assistive technologies.</li>
+<li>HTML widgets and HTML dependencies in nested tables now render correctly (<a href="https://github.com/glin/reactable/issues/125"><a href='https://github.com/glin/reactable/issues/125'>#125</a></a>).</li>
+<li>Row expand buttons now set the <code>aria-expanded</code> attribute to indicate expanded or collapsed state. The default label for row expand buttons is now “Toggle details” instead of “Expand details” or “Collapse details”.</li>
+<li>
+<code><a href="../reference/reactableLang.html">reactableLang()</a></code> gains the <code>groupExpandLabel</code> and <code>groupCollapseLabel</code> arguments to customize the accessible labels for row group expand buttons.</li>
+<li>Cells in the row names column are now marked up as row headers for assistive technologies.</li>
 </ul>
 </div>
 </div>
