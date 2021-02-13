@@ -84,10 +84,10 @@ test_that("asReactTag", {
   # NULLs should be left as-is
   expect_equal(asReactTag(NULL), NULL)
 
-  # Tags should be extracted from subtables
+  # Tags should be extracted from nested tables
   tag <- asReactTag(reactable(data.frame(x = 1)))
   expect_true(is.tag(tag))
-  # Subtables / nested tables should be marked
+  # Nested tables should be marked
   expect_true(tag$attribs$nested)
 
   # All other htmlwidgets should be converted to tags

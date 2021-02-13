@@ -73,7 +73,7 @@ isTagList <- function(x) {
 asReactTag <- function(x) {
   if (is.htmlwidget(x)) {
     if (inherits(x, "reactable")) {
-      # Extract tag for subtables / nested tables
+      # Extract tag for nested tables
       x$x$tag <- htmltools::tagAppendAttributes(x$x$tag, nested = TRUE)
       tag <- asReactTag(x$x$tag)
       tag <- htmltools::attachDependencies(tag, x$dependencies)

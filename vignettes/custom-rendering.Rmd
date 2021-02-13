@@ -341,7 +341,7 @@ reactable(
     #   - index, the row index
     #
     # output:
-    #   - content to render (e.g. an HTML tag or subtable), or NULL to hide details for the row
+    #   - content to render (e.g. an HTML tag or nested table), or NULL to hide details for the row
     htmltools::div(
       paste("Details for row:", index),
       reactable(data[index, ])
