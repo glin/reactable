@@ -71,6 +71,8 @@ where possible, but note that there are several breaking changes.
   ([#110](https://github.com/glin/reactable/issues/110)).
 * When selecting rows, errors from other Crosstalk widgets no longer cause the
   table to disappear.
+* HTML widgets and HTML dependencies in nested tables now render correctly
+  ([#125](https://github.com/glin/reactable/issues/125)).
 * Row expand buttons now set the `aria-expanded` attribute to indicate expanded
   or collapsed state. The default label for row expand buttons is now
   "Toggle details" instead of "Expand details" or "Collapse details".

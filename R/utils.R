@@ -75,7 +75,9 @@ asReactTag <- function(x) {
     if (inherits(x, "reactable")) {
       # Extract tag for subtables / nested tables
       x$x$tag <- htmltools::tagAppendAttributes(x$x$tag, nested = TRUE)
-      return(asReactTag(x$x$tag))
+      tag <- asReactTag(x$x$tag)
+      tag <- htmltools::attachDependencies(tag, x$dependencies)
+      return(tag)
     } else {
       tags <- htmltools::as.tags(x)
       tags <- asReactTag(tags)
