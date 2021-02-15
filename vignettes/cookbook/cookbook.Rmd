@@ -163,13 +163,12 @@ reactable(orders, columns = list(
 
 ## Bar charts
 
-There are different ways to create bar charts, but here's one way
-[using HTML and CSS](https://css-tricks.com/making-charts-with-css/):
+There are different ways to create bar charts, but here's
+[one way](https://css-tricks.com/making-charts-with-css/)
+using HTML and CSS:
 
 ```{r}
 library(htmltools)
-
-data <- MASS::Cars93[20:49, c("Make", "MPG.city", "MPG.highway")]
 
 # Render a bar chart with a label on the left
 bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", background = NULL) {
@@ -177,6 +176,8 @@ bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", 
   chart <- div(style = list(flexGrow = 1, marginLeft = "8px", background = background), bar)
   div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
+
+data <- MASS::Cars93[20:49, c("Make", "MPG.city", "MPG.highway")]
 
 reactable(data, columns = list(
   MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
@@ -231,6 +232,47 @@ reactable(data, bordered = TRUE, columns = list(
     },
     align = "center",
     minWidth = 400
+  )
+))
+```
+
+### Background bar charts
+
+Another way to create bar charts is to render them as background images.
+This example creates bar images using the
+[`linear-gradient()`](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient())
+CSS function, and was inspired by an example from https://rstudio.github.io/DT/010-style.html.
+
+```{r}
+# Render a bar chart in the background of the cell
+bar_style <- function(width = 1, fill = "#ddd", height = "75%", right = FALSE) {
+  if (right) {
+    position <- paste0(100 - width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
+  } else {
+    position <- paste0(width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, %1$s %2$s, transparent %2$s)", fill, position)
+  }
+  list(
+    backgroundImage = image,
+    backgroundSize = paste("100%", height),
+    backgroundRepeat = "no-repeat",
+    backgroundPosition = "center"
+  )
+}
+
+data <- mtcars[, 1:4]
+
+reactable(data, columns = list(
+  mpg = colDef(
+    style = function(value) {
+      bar_style(width = value / max(data$mpg), fill = "#a5d6f3")
+    }
+  ),
+  disp = colDef(
+    style = function(value) {
+      bar_style(width = value / max(data$disp), height = "90%", right = TRUE)
+    }
   )
 ))
 ```
