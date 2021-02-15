@@ -795,25 +795,30 @@ use style functions, and the [Demo Cookbook](cookbook/cookbook.html)
 for even more examples of conditional styling.
 
 ### Cell styling
+
+#### R style function
 ```{r}
 reactable(sleep[1:6, ], columns = list(
-  extra = colDef(style = function(value) {
-    if (value > 0) {
-      color <- "#008000"
-    } else if (value < 0) {
-      color <- "#e00000"
-    } else {
-      color <- "#777"
+  extra = colDef(
+    style = function(value) {
+      if (value > 0) {
+        color <- "#008000"
+      } else if (value < 0) {
+        color <- "#e00000"
+      } else {
+        color <- "#777"
+      }
+      list(color = color, fontWeight = "bold")
     }
-    list(color = color, fontWeight = "bold")
-  })
+  )
 ))
 ```
 
+#### JavaScript style function
 ```{r}
 reactable(sleep[1:6, ], columns = list(
-  extra = colDef(style = JS("
-    function(rowInfo) {
+  extra = colDef(
+    style = JS("function(rowInfo) {
       var value = rowInfo.row['extra']
       if (value > 0) {
         var color = '#008000'
@@ -823,12 +828,14 @@ reactable(sleep[1:6, ], columns = list(
         var color = '#777'
       }
       return { color: color, fontWeight: 'bold' }
-    }
-  "))
+    }")
+  )
 ))
 ```
 
 ### Row styling
+
+#### R style function
 ```{r row_styling, eval=FALSE}
 reactable(sleep[1:6, ], 
   rowStyle = function(index) {
@@ -853,6 +860,7 @@ reactable(sleep[1:6, ],
 ```{r ref.label="row_styling", echo=FALSE}
 ```
 
+#### JavaScript style function
 ```{r}
 reactable(sleep[1:6, ],
   rowStyle = JS("function(rowInfo) {
