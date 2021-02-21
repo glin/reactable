@@ -2661,15 +2661,24 @@ describe('sorting', () => {
     const { container, getByText } = render(<Reactable {...props} />)
     // Should sort grouped cells
     fireEvent.click(getByText('col-group'))
-    expect(getCellsText(container, '.col-group')).toEqual(['•group-x (3)', '•group-y (1)'])
+    expect(getCellsText(container, '.col-group')).toEqual([
+      '\u200bgroup-x (3)',
+      '\u200bgroup-y (1)'
+    ])
     fireEvent.click(getByText('col-group'))
-    expect(getCellsText(container, '.col-group')).toEqual(['•group-y (1)', '•group-x (3)'])
+    expect(getCellsText(container, '.col-group')).toEqual([
+      '\u200bgroup-y (1)',
+      '\u200bgroup-x (3)'
+    ])
 
     // Numeric columns
     fireEvent.click(getByText('col-a'))
     // Should sort by aggregate values first, then leaf values.
     // group-y has the highest leaf value, but lowest aggregate value.
-    expect(getCellsText(container, '.col-group')).toEqual(['•group-y (1)', '•group-x (3)'])
+    expect(getCellsText(container, '.col-group')).toEqual([
+      '\u200bgroup-y (1)',
+      '\u200bgroup-x (3)'
+    ])
     fireEvent.click(getExpanders(container)[0])
     fireEvent.click(getExpanders(container)[1])
     expect(getCellsText(container, '.col-a')).toEqual(['1', '5', '10', '-3', '0', '2'])
@@ -3094,7 +3103,7 @@ describe('filtering', () => {
     fireEvent.change(filters[1], { target: { value: '1' } })
     expect(getRows(container)).toHaveLength(1)
     expect([...getDataCells(container)].map(cell => cell.textContent)).toEqual([
-      '•group-x (2)',
+      '\u200bgroup-x (2)',
       '2', // Aggregate functions should work on filtered data
       'ccc'
     ])
@@ -3102,7 +3111,7 @@ describe('filtering', () => {
     // Non-numeric column
     fireEvent.change(filters[2], { target: { value: 'b' } })
     expect([...getDataCells(container)].map(cell => cell.textContent)).toEqual([
-      '•group-x (1)',
+      '\u200bgroup-x (1)',
       '1',
       'ccc'
     ])
@@ -3112,7 +3121,7 @@ describe('filtering', () => {
     fireEvent.change(filters[2], { target: { value: '' } })
     fireEvent.change(filters[0], { target: { value: 'group-x' } })
     expect([...getDataCells(container)].map(cell => cell.textContent)).toEqual([
-      '•group-x (3)',
+      '\u200bgroup-x (3)',
       '4',
       'ccc'
     ])
@@ -3536,7 +3545,7 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: '1' } })
     expect(getRows(container)).toHaveLength(1)
     expect(getCellsText(container)).toEqual([
-      '•group-x (2)',
+      '\u200bgroup-x (2)',
       '2', // Aggregate functions should work on filtered data
       'ccc'
     ])
@@ -3544,17 +3553,17 @@ describe('searching', () => {
     // Non-numeric column
     fireEvent.change(searchInput, { target: { value: 'b' } })
     expect(getCellsText(container)).toEqual([
-      '•group-x (1)',
+      '\u200bgroup-x (1)',
       '1',
       'ccc',
-      '•group-y (1)',
+      '\u200bgroup-y (1)',
       '41',
       'ccc'
     ])
 
     // Searching should work on grouped cells
     fireEvent.change(searchInput, { target: { value: 'group-x' } })
-    expect(getCellsText(container)).toEqual(['•group-x (3)', '4', 'ccc'])
+    expect(getCellsText(container)).toEqual(['\u200bgroup-x (3)', '4', 'ccc'])
   })
 
   it('searched state should be available in state info', () => {
@@ -4426,9 +4435,9 @@ describe('row selection', () => {
 
     const rows = getRows(container)
     expect(getCellsText(container, '.col-a')).toEqual([
-      '•1 selected? yes',
-      '•2 selected? no',
-      '•3 selected? no'
+      '\u200b1 selected? yes',
+      '\u200b2 selected? no',
+      '\u200b3 selected? no'
     ])
     expect(rows[0]).toHaveClass('i-am-selected')
     expect(rows[1]).not.toHaveClass('i-am-selected')
@@ -5249,8 +5258,8 @@ describe('grouping and aggregation', () => {
 
     const expandableCells = getExpandableCells(container)
     expect(expandableCells).toHaveLength(2)
-    expect(expandableCells[0].textContent).toEqual('•1 (2)')
-    expect(expandableCells[1].textContent).toEqual('•2 (1)')
+    expect(expandableCells[0].textContent).toEqual('\u200b1 (2)')
+    expect(expandableCells[1].textContent).toEqual('\u200b2 (1)')
 
     // Expand grouped cell
     fireEvent.click(expanders[0])
@@ -5269,7 +5278,7 @@ describe('grouping and aggregation', () => {
     expect(getRows(container)).toHaveLength(5)
 
     expect(getCellsText(container)).toEqual([
-      '•1 (2)',
+      '\u200b1 (2)',
       '',
       '',
       '',
@@ -5278,7 +5287,7 @@ describe('grouping and aggregation', () => {
       '',
       'c',
       'z',
-      '•2 (1)',
+      '\u200b2 (1)',
       '',
       '',
       '',
@@ -5316,26 +5325,26 @@ describe('grouping and aggregation', () => {
     expect(getRows(container)).toHaveLength(8)
 
     expect(getCellsText(container)).toEqual([
-      '•x (2)', // 1
+      '\u200bx (2)', // 1
       '',
       '',
       '', // 2
-      '•1 (1)',
+      '\u200b1 (1)',
       '',
       '', // 3
       '',
       'a',
       '', // 4
-      '•2 (1)',
+      '\u200b2 (1)',
       '',
       '', // 5
       '',
       'b',
-      '•z (1)', // 6
+      '\u200bz (1)', // 6
       '',
       '',
       '', // 7
-      '•3 (1)',
+      '\u200b3 (1)',
       '',
       '', // 8
       '',
@@ -5369,8 +5378,8 @@ describe('grouping and aggregation', () => {
     expect(getCellsText(container, '.col-grouped')).toEqual([
       // cellInfo.aggregated should be the same as row.aggregated,
       // NOT cell.isAggregated, which is false for grouped columns.
-      '•1: aggregated=true, isGrouped=true, row=0, page=0 (2)',
-      '•2: aggregated=true, isGrouped=true, row=1, page=0 (1)'
+      '\u200b1: aggregated=true, isGrouped=true, row=0, page=0 (2)',
+      '\u200b2: aggregated=true, isGrouped=true, row=1, page=0 (1)'
     ])
   })
 
@@ -5409,7 +5418,7 @@ describe('grouping and aggregation', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(aggregateCount).toEqual(2)
-    expect(getCellsText(container)).toEqual(['•x (2)', '3', 'a, b', '•z (1)', '1', 'c'])
+    expect(getCellsText(container)).toEqual(['\u200bx (2)', '3', 'a, b', '\u200bz (1)', '1', 'c'])
   })
 
   it('aggregates values with multiple groupBy columns', () => {
@@ -5479,14 +5488,14 @@ describe('grouping and aggregation', () => {
     expect(aggregateCount).toEqual(3)
     fireEvent.click(getExpanders(container)[0])
     expect(getCellsText(container)).toEqual([
-      '•x (2)',
+      '\u200bx (2)',
       'a, a, b',
       '6',
       '',
-      '•a (2)',
+      '\u200ba (2)',
       '3',
       '',
-      '•b (1)',
+      '\u200bb (1)',
       '3'
     ])
   })
@@ -5510,7 +5519,7 @@ describe('grouping and aggregation', () => {
     }
     const { container } = render(<Reactable {...props} />)
     fireEvent.change(getSearchInput(container), { target: { value: 'a' } })
-    expect(getCellsText(container)).toEqual(['•x (2)', '', '1,2 1,2 1,2'])
+    expect(getCellsText(container)).toEqual(['\u200bx (2)', '', '1,2 1,2 1,2'])
   })
 
   it('renders aggregated cells', () => {
@@ -5652,16 +5661,16 @@ describe('grouping and aggregation', () => {
     fireEvent.click(getExpanders(container)[0])
     expect(aggregatedCount).toEqual(2)
     expect(getCellsText(container)).toEqual([
-      '•x (2)',
+      '\u200bx (2)',
       'agg-a',
       'mean: 2',
       'agg-d',
       '',
-      '•a (2)',
+      '\u200ba (2)',
       'mean: 1.5',
       'agg-d',
       '',
-      '•b (1)',
+      '\u200bb (1)',
       'mean: 3',
       'agg-d'
     ])
@@ -7856,7 +7865,7 @@ describe('Crosstalk', () => {
     act(() => onFilter({ sender: 'some other widget', value: ['key1', 'key2'] }))
     expect(getRows(container)).toHaveLength(1)
     expect(getCellsText(container)).toEqual([
-      '•group-x (2)',
+      '\u200bgroup-x (2)',
       '2', // Aggregate functions should work on filtered data
       'ccc'
     ])

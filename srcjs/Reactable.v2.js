@@ -246,7 +246,7 @@ const ExpanderComponent = ({ isExpanded, className, 'aria-label': ariaLabel }) =
         tabIndex="-1"
         aria-hidden="true"
       >
-        &bull;
+        &#8203;
       </span>
     </button>
   )
