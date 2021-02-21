@@ -712,7 +712,7 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @param class Element class.
 #' @param ... Additional arguments.
 #' @keywords internal
-reactable_html <- function(id, style, class, ...) {
+widget_html.reactable <- function(id, style, class, ...) {
   # Set text color in R Notebooks to prevent contrast issues when
   # using a dark editor theme and htmltools 0.4.0.
   if (isTRUE(getOption("rstudio.notebook.executing"))) {
@@ -727,6 +727,9 @@ reactable_html <- function(id, style, class, ...) {
   )
 }
 
+# Deprecated convention for htmlwidgets <= 1.5.2 support
+reactable_html <- widget_html.reactable
+
 isV2 <- function() {
   getOption("reactable.v2", TRUE)
 }
@@ -737,4 +740,4 @@ reactable_v1 <- function(..., class = NULL) {
   reactable(...)
 }
 
-reactable_v1_html <- reactable_html
+reactable_v1_html <- widget_html.reactable
