@@ -940,7 +940,7 @@ reactable(
   wrap = FALSE,
   resizable = TRUE,
   bordered = TRUE,
-  columns = list(Petal.Length = colDef(name = "Petal Length (cm)", width = 100))
+  columns = list(Petal.Length = colDef(name = "Petal Length (cm)", minWidth = 50))
 )
 ```
 
