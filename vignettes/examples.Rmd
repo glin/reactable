@@ -1273,11 +1273,12 @@ reactable(iris[1:5, ], rownames = TRUE)
 
 
 ## Cell Click Actions
-You can add cell click actions using `onClick`, which accepts the following values:
+You can add cell click actions using the `onClick` argument, which accepts the
+following values:
 
 - `"expand"` to expand the row
 - `"select"` to select the row
-- a JavaScript function for a custom action, e.g., sending the click event to Shiny
+- A JavaScript function for a custom action, e.g., sending the click event to Shiny
 
 ### Expand on click
 ```{r}
@@ -1297,19 +1298,50 @@ reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 ```
 
 ### Custom action
-```{r}
-reactable(iris[1:5, ], onClick = JS("
-  function(rowInfo, colInfo, state) {
-    window.alert('clicked row ' + rowInfo.index + ', column ' + colInfo.id + ', on page ' + state.page)
 
-    // Send the click event to Shiny, which will be available at input$clicked
-    // (Note that the row index starts at 0 in JavaScript, so we add 1)
-    if (window.Shiny) {
-      Shiny.onInputChange('clicked', { column: colInfo.id, index: rowInfo.index + 1 })
+This example uses a custom click action to create custom "show details" action
+buttons in each row of the table:
+
+```{r}
+data <- cbind(
+  MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")],
+  details = NA
+)
+
+reactable(
+  data,
+  columns = list(
+    # Render a "show details" button in the last column of the table.
+    # This button won't do anything by itself, but will trigger the custom
+    # click action on the column.
+    details = colDef(
+      name = "",
+      sortable = FALSE,
+      cell = function() htmltools::tags$button("Show details")
+    )
+  ),
+  onClick = JS("function(rowInfo, colInfo) {
+    // Only handle click events on the 'details' column
+    if (colInfo.id !== 'details') {
+      return
     }
-  }
-"))
+
+    // Display an alert dialog with details for the row
+    window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.row, null, 2))
+
+    // Send the click event to Shiny, which will be available in input$show_details
+    // Note that the row index starts at 0 in JavaScript, so we add 1
+    if (window.Shiny) {
+      Shiny.setInputValue('show_details', { index: rowInfo.index + 1 })
+    }
+  }")
+)
 ```
+
+> **WARNING:** Custom click actions are currently not accessible to keyboard
+> users, and are generally not recommended. If they must be used, ensure that
+> they can be triggered by a keyboard through other means, such as a button
+> in the example above.
 
 
 ## Language Options
