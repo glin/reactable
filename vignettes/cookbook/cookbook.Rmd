@@ -334,7 +334,13 @@ reactable(data, columns = list(
 
 This example uses Font Awesome icons
 ([via Shiny](https://shiny.rstudio.com/reference/shiny/latest/icon.html))
-to render rating stars in a table:
+to render rating stars in a table.
+
+To make the rating star icons accessible, wrap them in a container with the
+[ARIA `img` role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Role_Img)
+and add alternative text using an `aria-label` or `title` attribute. This
+ensures that the multiple icons are identified as a single image by assistive
+technologies.
 
 ```{r}
 library(htmltools)
@@ -350,8 +356,8 @@ rating_stars <- function(rating, max_rating = 5) {
   stars <- lapply(seq_len(max_rating), function(i) {
     if (i <= rounded_rating) star_icon() else star_icon(empty = TRUE)
   })
-  label <- sprintf("%s out of %s", rating, max_rating)
-  div(title = label, "aria-label" = label, role = "img", stars)
+  label <- sprintf("%s out of %s stars", rating, max_rating)
+  div(title = label, role = "img", stars)
 }
 
 ratings <- data.frame(
