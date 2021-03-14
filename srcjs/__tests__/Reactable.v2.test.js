@@ -5676,6 +5676,28 @@ describe('grouping and aggregation', () => {
     ])
   })
 
+  it('leaf rows should have a nesting depth > 0', () => {
+    const props = {
+      data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
+      columns: [
+        { name: 'col-a', accessor: 'a' },
+        {
+          name: 'col-b',
+          accessor: 'b',
+          cell: cellInfo => cellInfo.depth,
+          aggregated: cellInfo => cellInfo.depth,
+          className: 'col-b'
+        },
+        { name: 'col-c', accessor: 'c' },
+        { name: 'col-d', accessor: 'd' }
+      ],
+      pivotBy: ['c', 'a'],
+      defaultExpanded: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCellsText(container, '.col-b')).toEqual(['0', '1', '2', '2', '1', '2'])
+  })
+
   it('aggregated cell formatting', () => {
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },

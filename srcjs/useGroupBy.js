@@ -1,6 +1,7 @@
 // useGroupBy hook modified to:
 // - Pass row objects and aggregated row objects to aggregate functions
 // - Include groupBy columns in aggregations
+// - Set nesting depth for leaf rows
 
 import React from 'react'
 import {
@@ -285,6 +286,10 @@ function useInstance(instance) {
     const groupUpRecursively = (rows, depth = 0, parentId) => {
       // This is the last level, just return the rows
       if (depth === existingGroupBy.length) {
+        // Set nesting depth for leaf rows
+        rows.forEach(row => {
+          row.depth = depth
+        })
         return rows
       }
 
