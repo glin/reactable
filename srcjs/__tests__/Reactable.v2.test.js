@@ -5709,103 +5709,63 @@ describe('grouping and aggregation', () => {
   })
 
   it('applies classes and styles to aggregated cells', () => {
-    let groupXExpanded = false
-    let groupAExpanded = false
+    let isExpanded = false
     const assertProps = (rowInfo, colInfo, state) => {
-      if (!groupXExpanded) {
-        // First grouped row
-        expect(colInfo.id).toEqual('b')
-        expect(colInfo.name).toEqual('col-b')
-        expect(rowInfo.index).toEqual(0)
-        expect(rowInfo.viewIndex).toEqual(0)
-        expect(rowInfo.aggregated).toEqual(true)
-        expect(rowInfo.level).toEqual(0)
-        expect(rowInfo.expanded).toBeFalsy()
-        expect(rowInfo.selected).toEqual(false)
-        expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
-        expect(rowInfo.subRows).toEqual([
-          {
-            a: 'a',
-            b: 1.5,
-            c: 'x',
-            d: null,
-            _subRows: [
-              { a: 'a', b: 1, c: 'x', d: 1 },
-              { a: 'a', b: 2, c: 'x', d: 2 }
-            ]
-          },
-          { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ a: 'b', b: 3, c: 'x', d: 3 }] }
-        ])
-        expect(state.page).toEqual(0)
-        expect(state.pageSize).toEqual(10)
-        expect(state.pages).toEqual(1)
-        expect(state.sorted).toEqual([])
-        expect(state.groupBy).toEqual(['c', 'a'])
-        expect(state.filters).toEqual([])
-        expect(state.searchValue).toEqual(undefined)
-        expect(state.pageRows).toEqual([
-          {
-            c: 'x',
-            a: null,
-            b: 2,
-            d: null,
-            _subRows: [
-              {
-                a: 'a',
-                b: 1.5,
-                c: 'x',
-                d: null,
-                _subRows: [
-                  { b: 1, d: 1, a: 'a', c: 'x' },
-                  { b: 2, d: 2, a: 'a', c: 'x' }
-                ]
-              },
-              { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
-            ]
-          }
-        ])
-        expect(state.sortedData).toEqual([
-          {
-            c: 'x',
-            a: null,
-            b: 2,
-            d: null,
-            _subRows: [
-              {
-                a: 'a',
-                b: 1.5,
-                c: 'x',
-                d: null,
-                _subRows: [
-                  { b: 1, d: 1, a: 'a', c: 'x' },
-                  { b: 2, d: 2, a: 'a', c: 'x' }
-                ]
-              },
-              { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
-            ]
-          }
-        ])
-        expect(state.data).toEqual([
-          { a: 'a', b: 1, c: 'x', d: 1 },
-          { a: 'a', b: 2, c: 'x', d: 2 },
-          { a: 'b', b: 3, c: 'x', d: 3 }
-        ])
-      } else if (rowInfo.level > 0) {
-        // Two sub-grouped rows
-        expect(rowInfo.index === 0 || rowInfo.index === 1).toEqual(true)
-        expect(rowInfo.aggregated).toEqual(true)
-        expect(rowInfo.level).toEqual(1)
-        if (groupAExpanded && rowInfo.row.a === 'a') {
-          expect(rowInfo.expanded).toEqual(true)
-        }
-        expect(rowInfo.row).toEqual(
-          [
-            { a: 'a', b: 1.5, c: 'x', d: null },
-            { a: 'b', b: 3, c: 'x', d: null }
-          ][rowInfo.index]
-        )
-        expect(rowInfo.subRows.length).toEqual([2, 1][rowInfo.index])
+      // Check props for initial state only (one row)
+      if (isExpanded) {
+        return
       }
+      expect(colInfo.id).toEqual('b')
+      expect(colInfo.name).toEqual('col-b')
+      expect(rowInfo.index).toEqual(0)
+      expect(rowInfo.viewIndex).toEqual(0)
+      expect(rowInfo.aggregated).toEqual(true)
+      expect(rowInfo.level).toEqual(0)
+      expect(rowInfo.expanded).toBeFalsy()
+      expect(rowInfo.selected).toEqual(false)
+      expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
+      expect(rowInfo.subRows).toEqual([
+        {
+          a: 'a',
+          b: 1.5,
+          c: 'x',
+          d: null,
+          _subRows: [
+            { a: 'a', b: 1, c: 'x', d: 1 },
+            { a: 'a', b: 2, c: 'x', d: 2 }
+          ]
+        },
+        { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ a: 'b', b: 3, c: 'x', d: 3 }] }
+      ])
+      expect(state.page).toEqual(0)
+      expect(state.pageSize).toEqual(10)
+      expect(state.pages).toEqual(1)
+      expect(state.sorted).toEqual([])
+      expect(state.groupBy).toEqual(['c', 'a'])
+      expect(state.filters).toEqual([])
+      expect(state.searchValue).toEqual(undefined)
+      expect(state.pageRows).toEqual([
+        {
+          c: 'x',
+          a: null,
+          b: 2,
+          d: null,
+          _subRows: [
+            {
+              a: 'a',
+              b: 1.5,
+              c: 'x',
+              d: null,
+              _subRows: [
+                { b: 1, d: 1, a: 'a', c: 'x' },
+                { b: 2, d: 2, a: 'a', c: 'x' }
+              ]
+            },
+            { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
+          ]
+        }
+      ])
+      expect(state.sortedData).toEqual(state.pageRows)
     }
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
@@ -5838,8 +5798,8 @@ describe('grouping and aggregation', () => {
     }
     const { container, getByText } = render(<Reactable {...props} />)
     // Expand group x (2)
-    groupXExpanded = true
-    fireEvent.click(getExpanders(container)[0])
+    isExpanded = true
+    fireEvent.click(getByText('x (2)'))
     // Grouped cells in groupBy columns should be styled
     const groupedCellsA = getCells(container, '.grouped-a')
     expect(groupedCellsA).toHaveLength(3)
@@ -5849,8 +5809,7 @@ describe('grouping and aggregation', () => {
     expect(groupedCellsB).toHaveLength(3)
     groupedCellsB.forEach(cell => expect(cell).toHaveStyle('color: #bbb'))
 
-    // Expand group a (2)
-    groupAExpanded = true
+    // Expand the second group
     fireEvent.click(getByText('a (2)'))
     // Ungrouped cells should be styled
     const ungroupedCellsA = getCells(container, '.ungrouped-a')
@@ -5859,101 +5818,66 @@ describe('grouping and aggregation', () => {
   })
 
   it('applies row classes and styles to aggregated rows', () => {
-    let groupXExpanded = false
-    let groupAExpanded = false
+    let isExpanded = false
     const assertProps = (rowInfo, state) => {
-      if (!groupXExpanded) {
-        // First grouped row
-        expect(rowInfo.index).toEqual(0)
-        expect(rowInfo.viewIndex).toEqual(0)
-        expect(rowInfo.aggregated).toEqual(true)
-        expect(rowInfo.level).toEqual(0)
-        expect(rowInfo.expanded).toBeFalsy()
-        expect(rowInfo.selected).toEqual(false)
-        expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
-        expect(rowInfo.subRows).toEqual([
-          {
-            a: 'a',
-            b: 1.5,
-            c: 'x',
-            d: null,
-            _subRows: [
-              { a: 'a', b: 1, c: 'x', d: 1 },
-              { a: 'a', b: 2, c: 'x', d: 2 }
-            ]
-          },
-          { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ a: 'b', b: 3, c: 'x', d: 3 }] }
-        ])
-        expect(state.page).toEqual(0)
-        expect(state.pageSize).toEqual(10)
-        expect(state.pages).toEqual(1)
-        expect(state.sorted).toEqual([])
-        expect(state.groupBy).toEqual(['c', 'a'])
-        expect(state.filters).toEqual([])
-        expect(state.searchValue).toEqual(undefined)
-        expect(state.pageRows).toEqual([
-          {
-            c: 'x',
-            a: null,
-            b: 2,
-            d: null,
-            _subRows: [
-              {
-                a: 'a',
-                b: 1.5,
-                c: 'x',
-                d: null,
-                _subRows: [
-                  { b: 1, d: 1, a: 'a', c: 'x' },
-                  { b: 2, d: 2, a: 'a', c: 'x' }
-                ]
-              },
-              { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
-            ]
-          }
-        ])
-        expect(state.sortedData).toEqual([
-          {
-            c: 'x',
-            a: null,
-            b: 2,
-            d: null,
-            _subRows: [
-              {
-                a: 'a',
-                b: 1.5,
-                c: 'x',
-                d: null,
-                _subRows: [
-                  { b: 1, d: 1, a: 'a', c: 'x' },
-                  { b: 2, d: 2, a: 'a', c: 'x' }
-                ]
-              },
-              { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
-            ]
-          }
-        ])
-        expect(state.data).toEqual([
-          { a: 'a', b: 1, c: 'x', d: 1 },
-          { a: 'a', b: 2, c: 'x', d: 2 },
-          { a: 'b', b: 3, c: 'x', d: 3 }
-        ])
-      } else if (rowInfo.level > 0) {
-        // Two sub-grouped rows
-        expect(rowInfo.index === 0 || rowInfo.index === 1).toEqual(true)
-        expect(rowInfo.aggregated).toEqual(true)
-        expect(rowInfo.level).toEqual(1)
-        if (groupAExpanded && rowInfo.row.a === 'a') {
-          expect(rowInfo.expanded).toEqual(true)
-        }
-        expect(rowInfo.row).toEqual(
-          [
-            { a: 'a', b: 1.5, c: 'x', d: null },
-            { a: 'b', b: 3, c: 'x', d: null }
-          ][rowInfo.index]
-        )
-        expect(rowInfo.subRows.length).toEqual([2, 1][rowInfo.index])
+      // Check props for initial state only (one row)
+      if (isExpanded) {
+        return
       }
+      expect(rowInfo.index).toEqual(0)
+      expect(rowInfo.viewIndex).toEqual(0)
+      expect(rowInfo.aggregated).toEqual(true)
+      expect(rowInfo.level).toEqual(0)
+      expect(rowInfo.expanded).toBeFalsy()
+      expect(rowInfo.selected).toEqual(false)
+      expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
+      expect(rowInfo.subRows).toEqual([
+        {
+          a: 'a',
+          b: 1.5,
+          c: 'x',
+          d: null,
+          _subRows: [
+            { a: 'a', b: 1, c: 'x', d: 1 },
+            { a: 'a', b: 2, c: 'x', d: 2 }
+          ]
+        },
+        { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ a: 'b', b: 3, c: 'x', d: 3 }] }
+      ])
+      expect(state.page).toEqual(0)
+      expect(state.pageSize).toEqual(10)
+      expect(state.pages).toEqual(1)
+      expect(state.sorted).toEqual([])
+      expect(state.groupBy).toEqual(['c', 'a'])
+      expect(state.filters).toEqual([])
+      expect(state.searchValue).toEqual(undefined)
+      expect(state.pageRows).toEqual([
+        {
+          c: 'x',
+          a: null,
+          b: 2,
+          d: null,
+          _subRows: [
+            {
+              a: 'a',
+              b: 1.5,
+              c: 'x',
+              d: null,
+              _subRows: [
+                { b: 1, d: 1, a: 'a', c: 'x' },
+                { b: 2, d: 2, a: 'a', c: 'x' }
+              ]
+            },
+            { a: 'b', b: 3, c: 'x', d: null, _subRows: [{ b: 3, d: 3, a: 'b', c: 'x' }] }
+          ]
+        }
+      ])
+      expect(state.sortedData).toEqual(state.pageRows)
+      expect(state.data).toEqual([
+        { a: 'a', b: 1, c: 'x', d: 1 },
+        { a: 'a', b: 2, c: 'x', d: 2 },
+        { a: 'b', b: 3, c: 'x', d: 3 }
+      ])
     }
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
@@ -5974,16 +5898,15 @@ describe('grouping and aggregation', () => {
       }
     }
     const { container, getByText } = render(<Reactable {...props} />)
-    // Expand group x (2)
-    groupXExpanded = true
-    fireEvent.click(getExpanders(container)[0])
+    // Expand first group
+    isExpanded = true
+    fireEvent.click(getByText('x (2)'))
     // Grouped cells in groupBy columns should be styled
     const groupedRows = getRows(container, '.grouped')
     expect(groupedRows).toHaveLength(3)
     groupedRows.forEach(row => expect(row).toHaveStyle('color: #bbb'))
 
-    // Expand group a (2)
-    groupAExpanded = true
+    // Expand second group
     fireEvent.click(getByText('a (2)'))
     // Ungrouped rows should be styled
     const ungroupedRows = getRows(container, '.ungrouped')
