@@ -632,9 +632,6 @@ which provides a JavaScript based tooltip that supports keyboard, touch, and scr
 reader use.
 
 ```{r}
-# Install tippy (version >= 0.1.0 recommended).
-# remotes::install_github("JohnCoene/tippy")
-
 library(htmltools)
 library(dplyr)
 library(tippy)
@@ -642,7 +639,7 @@ library(tippy)
 data <- as_tibble(mtcars[1:6, ], rownames = "car") %>%
   select(car:hp)
 
-# See the ?tippy documentation for how to customize tooltips
+# See the ?tippy documentation to learn how to customize tooltips
 with_tooltip <- function(value, tooltip, ...) {
   div(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
       tippy(value, tooltip, ...))

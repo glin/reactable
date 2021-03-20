@@ -99,7 +99,6 @@ jobs:
         if: matrix.config.release
         run: |
           Rscript -e 'remotes::install_cran("pkgdown")'
-          Rscript -e 'remotes::install_github("JohnCoene/tippy")'
           R CMD INSTALL .
           Rscript pkgdown/build-docs.R
 
