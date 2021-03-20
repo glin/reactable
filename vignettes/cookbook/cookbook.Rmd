@@ -241,23 +241,26 @@ reactable(data, bordered = TRUE, columns = list(
 Another way to create bar charts is to render them as background images.
 This example creates bar images using the
 [`linear-gradient()`](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient())
-CSS function, and was inspired by an example from https://rstudio.github.io/DT/010-style.html.
+CSS function, and was inspired by an example from
+[DT](https://rstudio.github.io/DT/010-style.html).
 
 ```{r}
 # Render a bar chart in the background of the cell
-bar_style <- function(width = 1, fill = "#ddd", height = "75%", right = FALSE) {
-  if (right) {
-    position <- paste0(100 - width * 100, "%")
-    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
-  } else {
+bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%", align = c("left", "right"), color = NULL) {
+  align <- match.arg(align)
+  if (align == "left") {
     position <- paste0(width * 100, "%")
     image <- sprintf("linear-gradient(90deg, %1$s %2$s, transparent %2$s)", fill, position)
+  } else {
+    position <- paste0(100 - width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
   }
   list(
     backgroundImage = image,
     backgroundSize = paste("100%", height),
     backgroundRepeat = "no-repeat",
-    backgroundPosition = "center"
+    backgroundPosition = "center",
+    color = color
   )
 }
 
@@ -266,12 +269,14 @@ data <- mtcars[, 1:4]
 reactable(data, columns = list(
   mpg = colDef(
     style = function(value) {
-      bar_style(width = value / max(data$mpg), fill = "#a5d6f3")
-    }
+      bar_style(width = value / max(data$mpg), fill = "#2c5e77", color = "#fff")
+    },
+    align = "left",
+    format = colFormat(digits = 1)
   ),
   disp = colDef(
     style = function(value) {
-      bar_style(width = value / max(data$disp), height = "90%", right = TRUE)
+      bar_style(width = value / max(data$disp), height = "90%", align = "right")
     }
   )
 ))
