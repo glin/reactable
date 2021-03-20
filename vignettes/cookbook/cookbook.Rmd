@@ -63,8 +63,8 @@ reactable(data, columns = list(
 dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
 temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
 
-# Excel-inspired 3-color scale
-GnYlRd <- function(x) rgb(colorRamp(c("#63be7b", "#ffeb84", "#f87274"))(x), maxColorValue = 255)
+# ColorBrewer-inspired 3-color scale
+BuYlRd <- function(x) rgb(colorRamp(c("#7fb7d7", "#ffffbf", "#fc8d59"))(x), maxColorValue = 255)
 
 reactable(
   temps,
@@ -72,7 +72,7 @@ reactable(
     style = function(value) {
       if (!is.numeric(value)) return()
       normalized <- (value - min(nottem)) / (max(nottem) - min(nottem))
-      color <- GnYlRd(normalized)
+      color <- BuYlRd(normalized)
       list(background = color)
     },
     format = colFormat(digits = 1),
