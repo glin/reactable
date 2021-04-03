@@ -118,17 +118,20 @@ set.seed(20)
 ```
 
 ```{r tags, eval=FALSE}
+library(htmltools)
+
 orders <- data.frame(
   Order = 2300:2304,
   Created = seq(as.Date("2019-04-01"), by = "day", length.out = 5),
   Customer = sample(rownames(MASS::painters), 5),
-  Status = sample(c("Pending", "Paid", "Canceled"), 5, replace = TRUE)
+  Status = sample(c("Pending", "Paid", "Canceled"), 5, replace = TRUE),
+  stringsAsFactors = FALSE
 )
 
 reactable(orders, columns = list(
   Status = colDef(cell = function(value) {
     class <- paste0("tag status-", tolower(value))
-    htmltools::div(class = class, value)
+    div(class = class, value)
   })
 ))
 ```
@@ -159,6 +162,34 @@ reactable(orders, columns = list(
 ```
 
 ```{r ref.label="tags", echo=FALSE}
+```
+
+```{r}
+library(htmltools)
+
+status_badge <- function(color = "#aaa", width = "9px", height = width) {
+  span(style = list(
+    display = "inline-block",
+    marginRight = "8px",
+    width = width,
+    height = height,
+    backgroundColor = color,
+    borderRadius = "50%"
+  ))
+}
+
+reactable(orders, columns = list(
+  Status = colDef(cell = function(value) {
+    color <- switch(
+      value,
+      Paid = "hsl(214, 45%, 50%)",
+      Pending = "hsl(30, 97%, 70%)",
+      Canceled = "hsl(3, 69%, 50%)"
+    )
+    badge <- status_badge(color = color)
+    tagList(badge, value)
+  })
+))
 ```
 
 ## Bar charts
