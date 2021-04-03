@@ -26,11 +26,14 @@ reactable(iris)
 Columns can be customized by providing a named list of column definitions
 created by `colDef()` to `columns`:
 ```{r}
-reactable(iris[1:5, ], columns = list(
-  Sepal.Length = colDef(name = "Sepal Length"),
-  Sepal.Width = colDef(name = "Sepal Width"),
-  Species = colDef(align = "center")
-))
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Sepal.Length = colDef(name = "Sepal Length"),
+    Sepal.Width = colDef(name = "Sepal Width"),
+    Species = colDef(align = "center")
+  )
+)
 ```
 
 For convenience, you can also specify a default `colDef()` to use for all
@@ -55,12 +58,14 @@ reactable(
 
 
 ## Sorting
-Tables are sortable by default. You can sort on a column by clicking on its
-header, or sort on multiple columns by holding the shift key while sorting.
+Tables are sortable by default. You can sort a column by clicking on its
+header, or sort multiple columns by holding down the shift key while sorting.
+
+You can also clear the sort of a column by holding the shift key while sorting.
 
 ### Default sort order
 Tables are sorted in ascending order first by default. To customize the sort order,
-set `defaultSortOrder` on a table or column to either `"asc"` (ascending) or
+set `defaultSortOrder` in a table or column to either `"asc"` (ascending) or
 `"desc"` (descending):
 ```{r}
 reactable(
@@ -73,7 +78,8 @@ reactable(
 ```
 
 ### Default sorted columns
-You can pre-sort columns by specifying a vector of column names in `defaultSorted`:
+You can set the default sorted columns by providing a vector of column names
+to `defaultSorted`:
 ```{r}
 reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
 ```
