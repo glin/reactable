@@ -266,20 +266,29 @@ bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%", align = c("le
 
 data <- mtcars[, 1:4]
 
-reactable(data, columns = list(
-  mpg = colDef(
-    style = function(value) {
-      bar_style(width = value / max(data$mpg), fill = "#2c5e77", color = "#fff")
-    },
-    align = "left",
-    format = colFormat(digits = 1)
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$mpg), fill = "#2c5e77", color = "#fff")
+      },
+      align = "left",
+      format = colFormat(digits = 1)
+    ),
+    disp = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$disp), fill = "hsl(208, 70%, 90%)")
+      }
+    ),
+    hp = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$hp), height = "90%", align = "right")
+      }
+    )
   ),
-  disp = colDef(
-    style = function(value) {
-      bar_style(width = value / max(data$disp), height = "90%", align = "right")
-    }
-  )
-))
+  bordered = TRUE
+)
 ```
 
 ## Embed images
