@@ -147,4 +147,8 @@ jobs:
       run: yarn lint
 
     - name: Test coverage
-      run: bash <(curl -s --retry 5 --retry-delay 2 --connect-timeout 2 https://codecov.io/bash)
+      run: |
+        curl -s https://codecov.io/bash > codecov
+        VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2)
+        sha256sum -c <(curl -s https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA256SUM)
+        bash codecov
