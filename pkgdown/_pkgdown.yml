@@ -30,6 +30,8 @@ navbar:
         href: articles/cran-packages/cran-packages.html
       - text: Spotify Charts
         href: articles/spotify-charts/spotify-charts.html
+      - text: Popular Movies
+        href: articles/popular-movies/popular-movies.html
       - text: Demo Cookbook
         href: articles/cookbook/cookbook.html
       - text: 100k Rows
