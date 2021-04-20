@@ -330,7 +330,7 @@ Raw data: [`tmdb_movies.json`](tmdb_movies.json)
 
 This product uses the TMDb API but is not endorsed or certified by TMDb.
 
-## Source Code
+<h2>Source Code</h2>
 
 ```{r ref.label="table", eval=FALSE}
 ```
