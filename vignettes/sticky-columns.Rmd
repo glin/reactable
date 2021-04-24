@@ -166,6 +166,44 @@ reactable(
 )
 ```
 
+```{r eval=FALSE, echo=FALSE}
+# Proof-of-concept of using row highlighting with sticky columns.
+# WARNING: This relies on undocumented CSS classes and is not guaranteed
+# to work in a future release. Last tested with reactable 0.2.3.
+sticky_style <- function(left = TRUE) {
+  style <- list(position = "sticky", background = "#fff", zIndex = 1)
+  if (left) {
+    style <- c(style, list(left = 0, borderRight = "1px solid #eee"))
+  } else {
+    style <- c(style, list(right = 0, borderLeft = "1px solid #eee"))
+  }
+  style
+}
+
+sticky_theme <- reactableTheme(
+  cellStyle = list(
+    ".rt-tr-highlight:hover &" = list(backgroundColor = "hsl(0, 0%, 95%) !important")
+  )
+)
+
+reactable(
+  MASS::Cars93,
+  columns = list(
+    Manufacturer = colDef(
+      style = sticky_style(),
+      headerStyle = sticky_style()
+    ),
+    Make = colDef(
+      style = sticky_style(left = FALSE),
+      headerStyle = sticky_style(left = FALSE)
+    )
+  ),
+  defaultColDef = colDef(minWidth = 150),
+  highlight = TRUE,
+  theme = sticky_theme
+)
+```
+
 ```{css echo=FALSE}
 /* rmarkdown html documents */
 .main-container {
