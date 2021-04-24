@@ -89,6 +89,8 @@ Raw data: [`twitter_followers.csv`](twitter_followers.csv)
 
 How it was made: [Building the Twitter Followers Demo](../building-twitter-followers.html)
 
+<h2>Source Code</h2>
+
 ```{r ref.label="table", eval=FALSE}
 ```
 

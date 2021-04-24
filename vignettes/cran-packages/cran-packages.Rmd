@@ -95,7 +95,7 @@ tbl <- reactable(
 )
 
 div(class = "cran-packages",
-  div(class = "title", "Top CRAN Packages of 2019"),
+  h2(class = "title", "Top CRAN Packages of 2019"),
   tbl
 )
 ```
@@ -103,6 +103,8 @@ div(class = "cran-packages",
 ---
 
 Source: [crandb](https://github.com/r-hub/crandb), [cranlogs](https://github.com/r-hub/cranlogs)
+
+<h2>Source Code</h2>
 
 ```{r ref.label="table", eval=FALSE}
 ```
@@ -118,11 +120,11 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&dis
 }
 
 .title {
-  margin: 12px 0;
   font-size: 22px;
 }
 
 .packages-table {
+  margin-top: 16px;
   border: 1px solid hsl(213, 33%, 93%);
   border-radius: 4px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);

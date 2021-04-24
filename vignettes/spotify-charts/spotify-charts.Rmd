@@ -207,6 +207,7 @@ Source: [Spotify Charts](https://spotifycharts.com/regional/global/weekly/latest
 
 Raw data: [`top_tracks.json`](top_tracks.json), [`get-top-tracks.R`](get-top-tracks.R)
 
+<h2>Source Code</h2>
 
 ```{r ref.label="table", eval=FALSE}
 ```
