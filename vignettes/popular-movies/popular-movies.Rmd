@@ -469,10 +469,14 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
   height: 32px;
 }
 
-.filter-input input[type="search"],
+.filter-input input[type="search"] {
+  /* Reset Bootstrap 3 styles */
+  -webkit-appearance: searchfield;
+}
+
 .filter-input input[type="search"]::-webkit-search-cancel-button {
-  /* Reset Bootstrap styles */
-  -webkit-appearance: textfield;
+  /* Reset Bootstrap 3 styles */
+  -webkit-appearance: searchfield-cancel-button;
 }
 
 .filter-input input[type="range"] {
