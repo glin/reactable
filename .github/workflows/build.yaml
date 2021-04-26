@@ -150,5 +150,5 @@ jobs:
       run: |
         curl -s https://codecov.io/bash > codecov
         VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2)
-        sha256sum -c <(curl -s https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA256SUM)
+        sha256sum -c --ignore-missing <(curl -s https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA256SUM)
         bash codecov
