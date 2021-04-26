@@ -153,7 +153,9 @@ Source: [FiveThirtyEight](https://projects.fivethirtyeight.com/2019-womens-world
 
 Raw data: [`wwc_forecasts.csv`](wwc_forecasts.csv)
 
-Code: [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.com/glin/reactable/blob/master/vignettes/womens-world-cup/womens-world-cup.Rmd)
+<h2>Source Code</h2>
+
+Full source: [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.com/glin/reactable/blob/master/vignettes/womens-world-cup/womens-world-cup.Rmd)
 
 ```{r ref.label="table", eval=FALSE}
 ```

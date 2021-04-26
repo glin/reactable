@@ -168,6 +168,8 @@ Source: [NBA.com](https://stats.nba.com/game/0041800403)
 
 Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.csv), [`team_stats.csv`](team_stats.csv)
 
+<h2>Source Code</h2>
+
 ```{r ref.label="box_score", eval=FALSE}
 ```
 
