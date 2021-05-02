@@ -26,9 +26,9 @@
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.1",
     "autoprefixer": "^9.6.1",
-    "babel-loader": "^8.0.5",
+    "babel-loader": "^8.2.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "css-loader": "^2.1.1",
+    "css-loader": "^3.6.0",
     "cssnano": "^4.1.10",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^22.4.1",
@@ -40,9 +40,9 @@
     "jest-emotion": "^10.0.32",
     "postcss-loader": "^3.0.0",
     "prettier": "^2.0.5",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.0"
+    "style-loader": "^2.0.0",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0"
   },
   "browserslist": [
     "> 1%",
