@@ -219,6 +219,7 @@ input[type='radio'].rt-select-input {
 
 .rt-filter {
   padding: 5px 7px;
+  margin: 0; /* Reset for Safari */
   width: 100%;
   color: inherit;
   background-color: #fff;
@@ -476,7 +477,7 @@ input[type='radio'].rt-select-input {
 .rt-search {
   display: block;
   align-self: flex-end;
-  margin-bottom: 8px;
+  margin: 0 0 8px 0; /* Reset for Safari */
   padding: 5px 7px;
   color: inherit;
   background-color: #fff;
