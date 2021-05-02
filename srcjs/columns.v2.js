@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
-import { aggregators, isNA, normalizeNumber } from './aggregators.v2'
+import { getAggregateFunction, isNA, normalizeNumber } from './aggregators.v2'
 import { classNames, escapeRegExp, getFirstDefined, getLeafColumns } from './utils'
 
 // Use zero-width spaces to preserve the height of empty cells
@@ -40,9 +40,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.accessor = data => data[col.id]
     }
 
-    if (typeof col.aggregate === 'string' && aggregators[col.aggregate]) {
-      const type = col.aggregate
-      col.aggregate = aggregators[type]
+    if (typeof col.aggregate === 'string') {
+      col.aggregate = getAggregateFunction(col.aggregate, col.type)
     }
 
     const sortMethod = createCompareFunction({ type: col.type, naLast: col.sortNALast })

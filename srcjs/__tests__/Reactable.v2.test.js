@@ -5388,7 +5388,7 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 1], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'col-a', accessor: 'a', aggregate: 'sum' },
+        { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum' },
         {
           name: 'col-b',
           accessor: 'b',
@@ -5541,6 +5541,7 @@ describe('grouping and aggregation', () => {
         {
           name: 'col-b',
           accessor: 'b',
+          type: 'numeric',
           aggregate: 'mean',
           aggregated: (cellInfo, state) => {
             const rows = [
@@ -5803,6 +5804,7 @@ describe('grouping and aggregation', () => {
         {
           name: 'col-b',
           accessor: 'b',
+          type: 'numeric',
           aggregate: 'mean',
           className: (rowInfo, colInfo, state) => {
             assertProps(rowInfo, colInfo, state)
@@ -5905,7 +5907,7 @@ describe('grouping and aggregation', () => {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
       columns: [
         { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b', aggregate: 'mean' },
+        { name: 'col-b', accessor: 'b', type: 'numeric', aggregate: 'mean' },
         { name: 'col-c', accessor: 'c' },
         { name: 'col-d', accessor: 'd' }
       ],

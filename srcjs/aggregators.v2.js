@@ -18,7 +18,7 @@ export function mean(values) {
   return round(result, 12)
 }
 
-export function max(values) {
+export function maxNumber(values) {
   const numbers = toNumbers(values)
   if (numbers.length === 0) {
     return NaN
@@ -26,7 +26,7 @@ export function max(values) {
   return Math.max.apply(null, numbers)
 }
 
-export function min(values) {
+export function minNumber(values) {
   const numbers = toNumbers(values)
   if (numbers.length === 0) {
     return NaN
@@ -45,6 +45,26 @@ export function median(values) {
   } else {
     return mean(numbers.slice(numbers.length / 2 - 1, numbers.length / 2 + 1))
   }
+}
+
+export function max(values) {
+  let maxValue
+  values.forEach(value => {
+    if (maxValue == null || value > maxValue) {
+      maxValue = value
+    }
+  })
+  return maxValue
+}
+
+export function min(values) {
+  let minValue
+  values.forEach(value => {
+    if (minValue == null || value < minValue) {
+      minValue = value
+    }
+  })
+  return minValue
 }
 
 export function count(values) {
@@ -67,15 +87,27 @@ export function frequency(values) {
   return strs.join(', ')
 }
 
-export const aggregators = {
+const numericAggregators = {
   mean,
   sum,
+  max: maxNumber,
+  min: minNumber,
+  median
+}
+
+const defaultAggregators = {
   max,
   min,
-  median,
   count,
   unique,
   frequency
+}
+
+export function getAggregateFunction(name, type) {
+  if (type === 'numeric' && numericAggregators[name]) {
+    return numericAggregators[name]
+  }
+  return defaultAggregators[name]
 }
 
 export function round(n, digits = 3) {

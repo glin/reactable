@@ -3,12 +3,14 @@ import {
   mean,
   max,
   min,
+  maxNumber,
+  minNumber,
   median,
   round,
   count,
   unique,
   frequency,
-  aggregators,
+  getAggregateFunction,
   normalizeNumber
 } from '../aggregators.v2'
 
@@ -20,7 +22,6 @@ test('sum', () => {
   expect(sum([1, 2, 'Inf'])).toEqual(Infinity)
   expect(sum([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(sum([])).toEqual(0)
-  expect(aggregators.sum).toEqual(sum)
 })
 
 test('mean', () => {
@@ -32,29 +33,26 @@ test('mean', () => {
   expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
   expect(mean(['Inf', '-Inf'])).toEqual(NaN)
   expect(mean([])).toEqual(NaN)
-  expect(aggregators.mean).toEqual(mean)
 })
 
-test('max', () => {
-  expect(max([1, 2, 3, 4, 0])).toEqual(4)
-  expect(max([1])).toEqual(1)
-  expect(max([0.1, 0.2])).toEqual(0.2)
-  expect(max([1, 2, 'NA'])).toEqual(2)
-  expect(max([1, 2, 'Inf'])).toEqual(Infinity)
-  expect(max([1, 2, '-Inf'])).toEqual(2)
-  expect(max([])).toEqual('')
-  expect(aggregators.max).toEqual(max)
+test('maxNumber', () => {
+  expect(maxNumber([1, 2, 3, 4, 0])).toEqual(4)
+  expect(maxNumber([1])).toEqual(1)
+  expect(maxNumber([0.1, 0.2])).toEqual(0.2)
+  expect(maxNumber([1, 2, 'NA'])).toEqual(2)
+  expect(maxNumber([1, 2, 'Inf'])).toEqual(Infinity)
+  expect(maxNumber([1, 2, '-Inf'])).toEqual(2)
+  expect(maxNumber([])).toEqual(NaN)
 })
 
-test('min', () => {
-  expect(min([1, 2, 3, 4, 0])).toEqual(0)
-  expect(min([1])).toEqual(1)
-  expect(min([-0.1, 0.2])).toEqual(-0.1)
-  expect(min([1, 2, 'NA'])).toEqual(1)
-  expect(min([1, 2, 'Inf'])).toEqual(1)
-  expect(min([1, 2, '-Inf'])).toEqual(-Infinity)
-  expect(min([])).toEqual('')
-  expect(aggregators.min).toEqual(min)
+test('minNumber', () => {
+  expect(minNumber([1, 2, 3, 4, 0])).toEqual(0)
+  expect(minNumber([1])).toEqual(1)
+  expect(minNumber([-0.1, 0.2])).toEqual(-0.1)
+  expect(minNumber([1, 2, 'NA'])).toEqual(1)
+  expect(minNumber([1, 2, 'Inf'])).toEqual(1)
+  expect(minNumber([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(minNumber([])).toEqual(NaN)
 })
 
 test('median', () => {
@@ -66,7 +64,6 @@ test('median', () => {
   expect(median(['Inf', 'Inf', '-Inf'])).toEqual(Infinity)
   expect(median(['Inf', '-Inf'])).toEqual(NaN)
   expect(median([])).toEqual(NaN)
-  expect(aggregators.median).toEqual(median)
 })
 
 test('round', () => {
@@ -84,10 +81,47 @@ test('round', () => {
   expect(round(-1.5, 0)).toEqual(-2)
 })
 
+test('max', () => {
+  expect(max([])).toEqual(undefined)
+  expect(max(['a'])).toEqual('a')
+  expect(max(['a', 'b', 'c'])).toEqual('c')
+  expect(max(['A', null, 'C'])).toEqual('C')
+  expect(max(['a', 'aaa', 'AAA'])).toEqual('aaa')
+  expect(max(['2020-03-04', '2020-03-04', '2020-03-05'])).toEqual('2020-03-05')
+  expect(max(['2021-03-01T19:00:00', '2021-03-01T19:00:01', '2020-12-01T19:00:00'])).toEqual(
+    '2021-03-01T19:00:01'
+  )
+  expect(max([true, false, true, null])).toEqual(true)
+  expect(
+    max([
+      ['a', 'b'],
+      ['c', 'd', 'e']
+    ])
+  ).toEqual(['c', 'd', 'e'])
+})
+
+test('min', () => {
+  expect(min([])).toEqual(undefined)
+  expect(min(['a'])).toEqual('a')
+  expect(min(['a', 'b', 'c'])).toEqual('a')
+  expect(min(['A', null, 'C'])).toEqual('A')
+  expect(min(['a', 'aaa', 'AAA'])).toEqual('AAA')
+  expect(min(['2020-03-04', '2020-03-04', '2020-03-05'])).toEqual('2020-03-04')
+  expect(min(['2020-03-01T19:00:00', '2020-03-01T19:00:01', '2021-12-01T19:00:00'])).toEqual(
+    '2020-03-01T19:00:00'
+  )
+  expect(min([true, false, false, null])).toEqual(false)
+  expect(
+    min([
+      ['a', 'b'],
+      ['c', 'd', 'e']
+    ])
+  ).toEqual(['a', 'b'])
+})
+
 test('count', () => {
   expect(count([])).toEqual(0)
   expect(count([1, 2, 3])).toEqual(3)
-  expect(aggregators.count).toEqual(count)
 })
 
 test('unique', () => {
@@ -96,15 +130,33 @@ test('unique', () => {
   expect(unique([1, 2, 3])).toEqual('1, 2, 3')
   expect(unique(['a', 'b', 'a'])).toEqual('a, b')
   expect(unique(['x', 'y', 'y', 'z', 'z', 'x'])).toEqual('x, y, z')
-  expect(aggregators.unique).toEqual(unique)
 })
 
 test('frequency', () => {
+  expect(frequency([])).toEqual('')
   expect(frequency([1])).toEqual('1')
   expect(frequency([1, 2, 3])).toEqual('1, 2, 3')
   expect(frequency(['a', 'b', 'a'])).toEqual('a (2), b')
   expect(frequency(['x', 'y', 'y', 'z', 'z', 'x'])).toEqual('x (2), y (2), z (2)')
-  expect(aggregators.frequency).toEqual(frequency)
+})
+
+test('getAggregateFunction', () => {
+  expect(getAggregateFunction('sum', 'numeric')).toEqual(sum)
+  expect(getAggregateFunction('sum')).toEqual(undefined)
+  expect(getAggregateFunction('mean', 'numeric')).toEqual(mean)
+  expect(getAggregateFunction('mean')).toEqual(undefined)
+  expect(getAggregateFunction('max', 'numeric')).toEqual(maxNumber)
+  expect(getAggregateFunction('max')).toEqual(max)
+  expect(getAggregateFunction('min', 'numeric')).toEqual(minNumber)
+  expect(getAggregateFunction('min')).toEqual(min)
+  expect(getAggregateFunction('median', 'numeric')).toEqual(median)
+  expect(getAggregateFunction('median')).toEqual(undefined)
+  expect(getAggregateFunction('count', 'numeric')).toEqual(count)
+  expect(getAggregateFunction('count')).toEqual(count)
+  expect(getAggregateFunction('unique', 'numeric')).toEqual(unique)
+  expect(getAggregateFunction('unique')).toEqual(unique)
+  expect(getAggregateFunction('frequency', 'numeric')).toEqual(frequency)
+  expect(getAggregateFunction('frequency')).toEqual(frequency)
 })
 
 test('normalizeNumber', () => {

@@ -8,7 +8,7 @@ import {
   buildColumnDefs,
   formatValue
 } from '../columns.v2'
-import { aggregators } from '../aggregators.v2'
+import * as aggregators from '../aggregators.v2'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
@@ -35,10 +35,18 @@ describe('buildColumnDefs', () => {
   })
 
   test('aggregators', () => {
-    let cols = buildColumnDefs([{ accessor: 'x', aggregate: 'mean' }])
+    let cols = buildColumnDefs([{ accessor: 'x', aggregate: 'mean', type: 'numeric' }])
     expect(cols[0].aggregate).toEqual(aggregators.mean)
-    cols = buildColumnDefs([{ accessor: 'x', aggregate: 'justastring' }])
-    expect(cols[0].aggregate).toEqual('justastring')
+
+    cols = buildColumnDefs([{ accessor: 'x', aggregate: 'count' }])
+    expect(cols[0].aggregate).toEqual(aggregators.count)
+
+    const customFn = values => values.length
+    cols = buildColumnDefs([{ accessor: 'x', aggregate: customFn }])
+    expect(cols[0].aggregate).toEqual(customFn)
+
+    cols = buildColumnDefs([{ accessor: 'x', aggregate: 'invalid-aggregator' }])
+    expect(cols[0].aggregate).toEqual(undefined)
     expect(cols[0].Aggregated({ value: undefined })).toEqual('')
   })
 
