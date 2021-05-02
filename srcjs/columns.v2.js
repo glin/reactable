@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
-import { aggregators, isNA, normalizeNumber } from './aggregators'
+import { aggregators, isNA, normalizeNumber } from './aggregators.v2'
 import { classNames, escapeRegExp, getFirstDefined, getLeafColumns } from './utils'
 
 // Use zero-width spaces to preserve the height of empty cells
@@ -374,6 +374,8 @@ export function createCompareFunction({ type, naLast } = {}) {
     if (type === 'numeric') {
       a = normalizeNumber(a)
       b = normalizeNumber(b)
+      a = Number.isNaN(a) ? null : a
+      b = Number.isNaN(b) ? null : b
     } else {
       a = typeof a === 'string' ? a.toLowerCase() : a
       b = typeof b === 'string' ? b.toLowerCase() : b

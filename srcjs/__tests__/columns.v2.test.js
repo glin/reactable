@@ -8,7 +8,7 @@ import {
   buildColumnDefs,
   formatValue
 } from '../columns.v2'
-import { aggregators } from '../aggregators'
+import { aggregators } from '../aggregators.v2'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
