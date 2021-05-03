@@ -54,7 +54,7 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
     expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
-    expect(cols[0].Aggregated({ value: 123.12 })).toEqual(123.12)
+    expect(cols[0].Aggregated({ value: 123.12 })).toEqual('123.12')
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
@@ -80,16 +80,39 @@ describe('buildColumnDefs', () => {
       <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>cell</div>' }} />
     )
 
-    // React elements and HTML rendering don't clash
-    cols = buildColumnDefs([
-      { accessor: 'x', cell: [React.createElement('div', null, 'Z')], html: true }
-    ])
-    expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(React.createElement('div', null, 'Z'))
-
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cellInfo => cellInfo.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
+
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        aggregated: function Aggregated(cellInfo) {
+          return React.createElement('div', null, cellInfo.value)
+        }
+      }
+    ])
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(React.createElement('div', null, 'x'))
+
+    cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].Aggregated({ value: true })).toEqual('true')
+
+    // React elements and HTML rendering don't clash
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        cell: [React.createElement('div', null, 'Z')],
+        aggregated: function Aggregated(cellInfo) {
+          return React.createElement('div', null, cellInfo.value)
+        },
+        html: true
+      }
+    ])
+    expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(React.createElement('div', null, 'Z'))
+    expect(cols[0].Aggregated({ value: 'x', index: 0 })).toEqual(
+      React.createElement('div', null, 'x')
+    )
 
     // Header
     cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])

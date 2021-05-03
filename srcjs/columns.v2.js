@@ -173,11 +173,15 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (col.aggregated) {
         value = col.aggregated({ ...cellInfo, value }, state)
       }
-      if (col.html) {
+      let content
+      if (React.isValidElement(value)) {
+        content = value
+      } else if (col.html) {
         return <div dangerouslySetInnerHTML={{ __html: value }} />
       } else {
-        return value
+        content = String(value)
       }
+      return content
     }
 
     col.Header = function Header(colInfo, stateInfo) {

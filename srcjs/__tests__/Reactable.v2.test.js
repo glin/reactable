@@ -5523,6 +5523,60 @@ describe('grouping and aggregation', () => {
   })
 
   it('renders aggregated cells', () => {
+    const props = {
+      data: {
+        groupA: ['a', 'a'],
+        groupB: [3, 4],
+        a: [1, 2],
+        b: ['x', 'x'],
+        c: [1, 2],
+        d: ['g', 'h']
+      },
+      columns: [
+        { name: 'col-groupA', accessor: 'groupA' },
+        {
+          // Aggregated cell renderers should work for aggregated cells in groupBy
+          // columns, as long as they aren't the first groupBy column.
+          name: 'col-groupB',
+          accessor: 'groupB',
+          type: 'numeric',
+          aggregate: 'sum'
+        },
+        { name: 'col-a', accessor: 'a', aggregate: 'unique' },
+        { name: 'col-b', accessor: 'b', aggregated: () => 123 },
+        { name: 'col-c', accessor: 'c', aggregated: () => true },
+        {
+          // HTML rendering
+          name: 'col-d',
+          accessor: 'd',
+          aggregated: () => '<div>col-d</div>',
+          html: true
+        },
+        {
+          // React elements and HTML rendering should not clash
+          name: 'col-e',
+          accessor: 'e',
+          aggregated: function Aggregated() {
+            return <div>col-e</div>
+          },
+          html: true
+        }
+      ],
+      pivotBy: ['groupA', 'groupB']
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCellsText(container)).toEqual([
+      '\u200ba (2)',
+      '7',
+      '1, 2',
+      '123',
+      'true',
+      'col-d',
+      'col-e'
+    ])
+  })
+
+  it('aggregated cell render function', () => {
     let isExpanded = false
     let aggregatedCount = 0
     const props = {
