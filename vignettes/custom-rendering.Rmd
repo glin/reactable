@@ -31,9 +31,9 @@ reactable(iris, columns = list(
   Species = colDef(
     cell = function(value) {
       htmltools::tags$b(value)
-    })
+    }
   )
-)
+))
 ```
 
 </td><td>
