@@ -164,14 +164,15 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     }
 
     col.Aggregated = function Aggregated(cellInfo, state) {
-      // If no aggregated value, use empty string (instead of zero-width space)
-      // so it's easier to work with in formatters, custom aggregated renderers.
-      let value = cellInfo.value != null ? cellInfo.value : ''
-      if (col.format && col.format.aggregated) {
+      let value = cellInfo.value
+      if (value != null && col.format && col.format.aggregated) {
         value = formatValue(value, col.format.aggregated)
       }
       if (col.aggregated) {
         value = col.aggregated({ ...cellInfo, value }, state)
+      }
+      if (value == null) {
+        value = ''
       }
       let content
       if (React.isValidElement(value)) {

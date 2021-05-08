@@ -68,6 +68,7 @@ where possible, but note that there are several breaking changes.
   (e.g., when calculating the mean of values).
 * The `"max"` and `"min"` aggregate functions now work on dates, date-times,
   and strings ([#130](https://github.com/glin/reactable/issues/130)).
+* Column formatters no longer apply to empty aggregated cell values.
 * Searching now properly ignores the row details and selection columns.
 * Selected rows now reset when the table data changes in Shiny
   ([#110](https://github.com/glin/reactable/issues/110)).

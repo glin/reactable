@@ -5530,7 +5530,9 @@ describe('grouping and aggregation', () => {
         a: [1, 2],
         b: ['x', 'x'],
         c: [1, 2],
-        d: ['g', 'h']
+        d: ['g', 'h'],
+        e: [1, 2],
+        f: [1, 2]
       },
       columns: [
         { name: 'col-groupA', accessor: 'groupA' },
@@ -5560,6 +5562,12 @@ describe('grouping and aggregation', () => {
             return <div>col-e</div>
           },
           html: true
+        },
+        {
+          // Formatters should not apply to empty aggregate values
+          name: 'col-f',
+          accessor: 'f',
+          format: { aggregated: { prefix: '!!', date: true } }
         }
       ],
       pivotBy: ['groupA', 'groupB']
@@ -5572,7 +5580,8 @@ describe('grouping and aggregation', () => {
       '123',
       'true',
       'col-d',
-      'col-e'
+      'col-e',
+      ''
     ])
   })
 
@@ -5588,7 +5597,7 @@ describe('grouping and aggregation', () => {
           // Aggregated cell renderers should work for aggregated cells in groupBy
           // columns, as long as they aren't the first groupBy column.
           aggregated: cellInfo => {
-            expect(cellInfo.value).toEqual('')
+            expect(cellInfo.value).toEqual(null)
             return 'agg-a'
           }
         },
@@ -5703,7 +5712,7 @@ describe('grouping and aggregation', () => {
           name: 'col-d',
           accessor: 'd',
           aggregated: cellInfo => {
-            expect(cellInfo.value).toEqual('')
+            expect(cellInfo.value).toEqual(null)
             return 'agg-d'
           },
           html: true
@@ -5762,6 +5771,7 @@ describe('grouping and aggregation', () => {
           name: 'col-b',
           accessor: 'b',
           format: { cell: { suffix: '__cell' }, aggregated: { prefix: 'agg__' } },
+          aggregate: () => '',
           // Formatting should be applied before aggregated cell renderers
           aggregated: cellInfo => `${cellInfo.value}b-${cellInfo.level}-${cellInfo.index}`,
           className: 'col-b'

@@ -60,6 +60,8 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
     expect(cols[0].Cell({ value: 'xyz' })).toEqual('xyz')
     expect(cols[0].Aggregated({ value: 'xyz' })).toEqual('xyz!')
+    // Formatters should not apply to empty aggregate values
+    expect(cols[0].Aggregated({ value: null })).toEqual('')
   })
 
   test('renderers', () => {
@@ -84,6 +86,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', aggregated: cellInfo => cellInfo.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
+    expect(cols[0].Aggregated({ value: null })).toEqual('null!!')
 
     cols = buildColumnDefs([
       {
