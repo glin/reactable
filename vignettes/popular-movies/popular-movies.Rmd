@@ -115,7 +115,7 @@ tbl <- reactable(
         const sliceLength = 2 * Math.PI * 24
         const sliceOffset = sliceLength * (1 - cellInfo.value / 100)
         const donutChart = (
-          '<svg width=60 height=60 style=\"transform: rotate(-90deg)\">' +
+          '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' +
             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' +
             '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor +
             ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' +
