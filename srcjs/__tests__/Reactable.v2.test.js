@@ -5352,7 +5352,7 @@ describe('grouping and aggregation', () => {
     ])
   })
 
-  it('grouped cells use cell render functions', () => {
+  it('grouped cells use JS cell render functions', () => {
     const props = {
       data: { a: [1, 2, 1], b: ['a', 'b', 'c'], c: ['x', 'y', 'z'] },
       columns: [
@@ -5381,6 +5381,28 @@ describe('grouping and aggregation', () => {
       '\u200b1: aggregated=true, isGrouped=true, row=0, page=0 (2)',
       '\u200b2: aggregated=true, isGrouped=true, row=1, page=0 (1)'
     ])
+  })
+
+  it('grouped cells do not use R cell render functions', () => {
+    // Grouped cells could support R cell render functions, but they currently
+    // do not because the row index of a grouped cell does not correspond to
+    // any specific row in the data.
+    const props = {
+      data: { a: [1, 2, 1], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'col-a',
+          accessor: 'a',
+          className: 'col-grouped',
+          cell: ['not-shown', 'not-shown', 'not-shown']
+        },
+        { name: 'col-b', accessor: 'b' }
+      ],
+      pivotBy: ['a']
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(2)
+    expect(getCellsText(container, '.col-grouped')).toEqual(['\u200b1 (2)', '\u200b2 (1)'])
   })
 
   it('aggregates values', () => {
