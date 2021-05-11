@@ -122,7 +122,7 @@ colDef(
 ```
 
 ### JavaScript render function
-Or a JavaScript function, wrapped in `JS()`, with a single argument:
+Or a JavaScript function, wrapped in `JS()`, with up to 2 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   cell = JS("
@@ -209,7 +209,7 @@ colDef(
 ```
 
 ### JavaScript render function
-Or a JavaScript function with a single argument:
+Or a JavaScript function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   header = JS("
@@ -279,7 +279,7 @@ colDef(
 ```
 
 ### JavaScript render function
-Or a JavaScript function with a single argument:
+Or a JavaScript function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   footer = JS("
@@ -351,7 +351,7 @@ reactable(
 ```
 
 ### JavaScript render function
-Or a JavaScript function with a single argument:
+Or a JavaScript function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 reactable(
   details = JS("

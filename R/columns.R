@@ -21,18 +21,18 @@
 #'   cells (`"cell"`) and aggregated cells (`"aggregated"`) separately.
 #' @param cell Custom cell renderer. An R function that takes the cell value,
 #'   row index, and column name as arguments, or a [JS()] function that takes a
-#'   cell info object as an argument.
+#'   cell info object and table state object as arguments.
 #' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
-#'   a cell info object as an argument.
+#'   a cell info object and table state object as arguments.
 #' @param header Custom header renderer. An R function that takes the header value
 #'   and column name as arguments, or a [JS()] function that takes a column info
-#'   object as an argument.
+#'   object and table state object as arguments.
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes two arguments, the column values and column name, or a
-#'   [JS()] function that takes a column info object as an argument.
+#'   [JS()] function that takes a column info object and table state object as arguments.
 #' @param details Additional content to display when expanding a row. An R function
-#'   that takes a row index argument or a [JS()] function that takes a row info object
-#'   as an argument. Cannot be used on a grouping column.
+#'   that takes a row index argument, or a [JS()] function that takes a row info object
+#'   and table state object as arguments. Cannot be used on a `groupBy` column.
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.

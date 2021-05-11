@@ -62,22 +62,22 @@ cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
 \item{cell}{Custom cell renderer. An R function that takes the cell value,
 row index, and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a
-cell info object as an argument.}
+cell info object and table state object as arguments.}
 
 \item{aggregated}{Custom aggregated cell renderer. A \code{\link[=JS]{JS()}} function that takes
-a cell info object as an argument.}
+a cell info object and table state object as arguments.}
 
 \item{header}{Custom header renderer. An R function that takes the header value
 and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a column info
-object as an argument.}
+object and table state object as arguments.}
 
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a
-\code{\link[=JS]{JS()}} function that takes a column info object as an argument.}
+\code{\link[=JS]{JS()}} function that takes a column info object and table state object as arguments.}
 
 \item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes a row info object
-as an argument. Cannot be used on a grouping column.}
+that takes a row index argument, or a \code{\link[=JS]{JS()}} function that takes a row info object
+and table state object as arguments. Cannot be used on a \code{groupBy} column.}
 
 \item{html}{Render content as HTML? Raw HTML strings are escaped by default.}
 
