@@ -195,6 +195,7 @@
   sortNALast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   format <span class='op'>=</span> <span class='cn'>NULL</span>,
   cell <span class='op'>=</span> <span class='cn'>NULL</span>,
+  grouped <span class='op'>=</span> <span class='cn'>NULL</span>,
   aggregated <span class='op'>=</span> <span class='cn'>NULL</span>,
   header <span class='op'>=</span> <span class='cn'>NULL</span>,
   footer <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -263,30 +264,35 @@ cells (<code>"cell"</code>) and aggregated cells (<code>"aggregated"</code>) sep
       <th>cell</th>
       <td><p>Custom cell renderer. An R function that takes the cell value,
 row index, and column name as arguments, or a <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a
-cell info object as an argument.</p></td>
+cell info object and table state object as arguments.</p></td>
+    </tr>
+    <tr>
+      <th>grouped</th>
+      <td><p>Custom grouped cell renderer. A <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a
+cell info object and table state object as arguments.</p></td>
     </tr>
     <tr>
       <th>aggregated</th>
       <td><p>Custom aggregated cell renderer. A <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes
-a cell info object as an argument.</p></td>
+a cell info object and table state object as arguments.</p></td>
     </tr>
     <tr>
       <th>header</th>
       <td><p>Custom header renderer. An R function that takes the header value
 and column name as arguments, or a <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a column info
-object as an argument.</p></td>
+object and table state object as arguments.</p></td>
     </tr>
     <tr>
       <th>footer</th>
       <td><p>Footer content or render function. Render functions can be an
 R function that takes two arguments, the column values and column name, or a
-<code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a column info object as an argument.</p></td>
+<code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a column info object and table state object as arguments.</p></td>
     </tr>
     <tr>
       <th>details</th>
       <td><p>Additional content to display when expanding a row. An R function
-that takes a row index argument or a <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a row info object
-as an argument. Cannot be used on a grouping column.</p></td>
+that takes a row index argument, or a <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'>JS()</a></code> function that takes a row info object
+and table state object as arguments. Cannot be used on a <code>groupBy</code> column.</p></td>
     </tr>
     <tr>
       <th>html</th>

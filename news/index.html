@@ -191,6 +191,8 @@
 <li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107"><a href='https://github.com/glin/reactable/issues/107'>#107</a></a>).</li>
 <li>Expanded rows now stay expanded on sorting, filtering, and pagination changes. Previously, expanded rows were always collapsed on sorting and pagination changes, and incorrectly persisted on filtering changes (<a href="https://github.com/glin/reactable/issues/39"><a href='https://github.com/glin/reactable/issues/39'>#39</a></a>).</li>
 <li>Aggregated rows can now be selected when multiple selection is enabled.</li>
+<li>
+<code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>grouped</code> argument to customize rendering for grouped cells in <code>groupBy</code> columns (<a href="https://github.com/glin/reactable/issues/33"><a href='https://github.com/glin/reactable/issues/33'>#33</a></a>, <a href="https://github.com/glin/reactable/issues/94"><a href='https://github.com/glin/reactable/issues/94'>#94</a></a>, <a href="https://github.com/glin/reactable/issues/148"><a href='https://github.com/glin/reactable/issues/148'>#148</a></a>).</li>
 <li>JavaScript render functions and style functions receive several new properties:
 <ul>
 <li>
@@ -230,6 +232,8 @@
 <li>In <code><a href="../reference/reactable.html">reactable()</a></code>, <code>defaultExpanded = TRUE</code> now works when column groups are present.</li>
 <li>Aggregated cell values are now recalculated when filtering or searching the table.</li>
 <li>Aggregate functions now always take the unaggregated values in the column. Previously, if there were multiple <code>groupBy</code> columns, aggregate functions could take aggregated values which could produce inaccurate calculations (e.g., when calculating the mean of values).</li>
+<li>The <code>"max"</code> and <code>"min"</code> aggregate functions now work on dates, date-times, and strings (<a href="https://github.com/glin/reactable/issues/130"><a href='https://github.com/glin/reactable/issues/130'>#130</a></a>).</li>
+<li>Column formatters no longer apply to empty aggregated cell values.</li>
 <li>Searching now properly ignores the row details and selection columns.</li>
 <li>Selected rows now reset when the table data changes in Shiny (<a href="https://github.com/glin/reactable/issues/110"><a href='https://github.com/glin/reactable/issues/110'>#110</a></a>).</li>
 <li>When selecting rows, errors from other Crosstalk widgets no longer cause the table to disappear.</li>
