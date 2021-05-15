@@ -15,6 +15,7 @@ colDef(
   sortNALast = FALSE,
   format = NULL,
   cell = NULL,
+  grouped = NULL,
   aggregated = NULL,
   header = NULL,
   footer = NULL,
@@ -62,6 +63,9 @@ cells (\code{"cell"}) and aggregated cells (\code{"aggregated"}) separately.}
 
 \item{cell}{Custom cell renderer. An R function that takes the cell value,
 row index, and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a
+cell info object and table state object as arguments.}
+
+\item{grouped}{Custom grouped cell renderer. A \code{\link[=JS]{JS()}} function that takes a
 cell info object and table state object as arguments.}
 
 \item{aggregated}{Custom aggregated cell renderer. A \code{\link[=JS]{JS()}} function that takes

@@ -140,9 +140,13 @@ colDef(
 )
 ```
 
-With JavaScript functions, you can also customize rendering of aggregated cells:
+With JavaScript functions, you can also customize rendering of grouped cells and
+aggregated cells:
 ```{r, eval=FALSE}
 colDef(
+  grouped = JS("function(cellInfo, state) {
+    return cellInfo.value
+  }"),
   aggregated = JS("function(cellInfo, state) {
     return cellInfo.value
   }")

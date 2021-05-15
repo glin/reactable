@@ -54,11 +54,23 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
     expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
+    expect(cols[0].Grouped({ value: 123.12, subRows: [] })).toEqual(
+      <React.Fragment>
+        {'$123.1'}
+        {' (0)'}
+      </React.Fragment>
+    )
     expect(cols[0].Aggregated({ value: 123.12 })).toEqual('123.12')
 
     // Aggregated
     cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
     expect(cols[0].Cell({ value: 'xyz' })).toEqual('xyz')
+    expect(cols[0].Grouped({ value: 'xyz', subRows: [{}] })).toEqual(
+      <React.Fragment>
+        {'xyz'}
+        {' (1)'}
+      </React.Fragment>
+    )
     expect(cols[0].Aggregated({ value: 'xyz' })).toEqual('xyz!')
     // Formatters should not apply to empty aggregate values
     expect(cols[0].Aggregated({ value: null })).toEqual('')
@@ -80,6 +92,35 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>cell</div>'] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
       <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>cell</div>' }} />
+    )
+
+    // Grouped
+    cols = buildColumnDefs([
+      { accessor: 'x', cell: () => 'overridden', grouped: cellInfo => cellInfo.value }
+    ])
+    expect(cols[0].Grouped({ value: 'x' })).toEqual('x')
+
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        cell: () => 'overridden',
+        grouped: function Grouped(cellInfo) {
+          return <div>{cellInfo.value}</div>
+        }
+      }
+    ])
+    expect(cols[0].Grouped({ value: 'x' })).toEqual(<div>{'x'}</div>)
+
+    cols = buildColumnDefs([
+      {
+        accessor: 'x',
+        cell: () => 'overridden',
+        html: true,
+        grouped: cellInfo => `<div>${cellInfo.value}</div>`
+      }
+    ])
+    expect(cols[0].Grouped({ value: 'x' })).toEqual(
+      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>x</div>' }} />
     )
 
     // Aggregated
@@ -106,16 +147,18 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         cell: [React.createElement('div', null, 'Z')],
+        grouped: function Grouped(cellInfo) {
+          return <span>{cellInfo.value}</span>
+        },
         aggregated: function Aggregated(cellInfo) {
-          return React.createElement('div', null, cellInfo.value)
+          return <div>{cellInfo.value}</div>
         },
         html: true
       }
     ])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(React.createElement('div', null, 'Z'))
-    expect(cols[0].Aggregated({ value: 'x', index: 0 })).toEqual(
-      React.createElement('div', null, 'x')
-    )
+    expect(cols[0].Grouped({ value: 'x' })).toEqual(<span>{'x'}</span>)
+    expect(cols[0].Aggregated({ value: 'x', index: 0 })).toEqual(<div>{'x'}</div>)
 
     // Header
     cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])
@@ -170,10 +213,12 @@ describe('buildColumnDefs', () => {
       {
         accessor: 'x',
         format: { cell: { prefix: '@' } },
-        cell: cellInfo => `__${cellInfo.value}__`
+        cell: cellInfo => `__${cellInfo.value}__`,
+        grouped: cellInfo => `/${cellInfo.value}/`
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
+    expect(cols[0].Grouped({ value: 'x' })).toEqual('/@x/')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
     // Aggregated
@@ -185,6 +230,12 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
+    expect(cols[0].Grouped({ value: 'x', subRows: [{}] })).toEqual(
+      <React.Fragment>
+        {'x'}
+        {' (1)'}
+      </React.Fragment>
+    )
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('__@x__')
   })
 
@@ -219,6 +270,7 @@ describe('buildColumnDefs', () => {
         accessor: 'x',
         format: { cell: { prefix: '@' }, aggregated: { prefix: '$' } },
         cell: cellInfo => `__${cellInfo.value}__`,
+        grouped: cellInfo => `__${cellInfo.value}__`,
         aggregated: cellInfo => `__${cellInfo.value}__`,
         html: true
       }
@@ -226,12 +278,15 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Cell({ value: 'x' })).toEqual(
       <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '__@x__' }} />
     )
+    expect(cols[0].Grouped({ value: 'x' })).toEqual(
+      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+    )
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(
       <div dangerouslySetInnerHTML={{ __html: '__$x__' }} />
     )
   })
 
-  test('grouped cells render the same as regular cells', () => {
+  test('grouped cells render the same as regular cells by default', () => {
     let cols = buildColumnDefs([
       {
         accessor: 'x',
@@ -241,30 +296,39 @@ describe('buildColumnDefs', () => {
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual('__@x__')
     expect(cols[0].Grouped({ value: 'x', subRows: [{}, {}] })).toEqual(
-      <>
-        {'__@x__'} {'(2)'}
-      </>
+      <React.Fragment>
+        {'__@x__'}
+        {' (2)'}
+      </React.Fragment>
     )
   })
 
   test('NA and NaN rendering', () => {
     // Default rendering of numeric NAs
-    let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    let cols = buildColumnDefs([
+      { accessor: 'x', type: 'numeric', grouped: cellInfo => cellInfo.value }
+    ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('\u200b')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('\u200b')
+    expect(cols[0].Grouped({ value: 'NA' })).toEqual('\u200b')
+    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('\u200b')
 
     // Default rendering of non-numeric NAs (serialized as nulls)
-    cols = buildColumnDefs([{ accessor: 'x' }])
+    cols = buildColumnDefs([{ accessor: 'x', grouped: cellInfo => cellInfo.value }])
     expect(cols[0].Cell({ value: null })).toEqual('\u200b')
+    expect(cols[0].Grouped({ value: null })).toEqual('\u200b')
 
     // Custom NA strings
     cols = buildColumnDefs([
-      { accessor: 'x', type: 'numeric', na: '---' },
-      { accessor: 'y', na: 'missing' }
+      { accessor: 'x', type: 'numeric', na: '---', grouped: cellInfo => cellInfo.value },
+      { accessor: 'y', na: 'missing', grouped: cellInfo => cellInfo.value }
     ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('---')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('---')
     expect(cols[1].Cell({ value: null })).toEqual('missing')
+    expect(cols[0].Grouped({ value: 'NA' })).toEqual('---')
+    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('---')
+    expect(cols[1].Grouped({ value: null })).toEqual('missing')
 
     // Works with renderers, ignored by formatters
     cols = buildColumnDefs([
@@ -272,17 +336,22 @@ describe('buildColumnDefs', () => {
         accessor: 'x',
         type: 'numeric',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
-        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
+        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`,
+        grouped: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       },
       {
         accessor: 'y',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
-        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
+        cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`,
+        grouped: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       }
     ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('__missing__')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('__missing__')
     expect(cols[1].Cell({ value: null })).toEqual('__missing__')
+    expect(cols[0].Grouped({ value: 'NA' })).toEqual('__missing__')
+    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('__missing__')
+    expect(cols[1].Grouped({ value: null })).toEqual('__missing__')
   })
 
   test('sortType', () => {

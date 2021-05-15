@@ -94,7 +94,12 @@ test_that("colDef renderers", {
   col <- colDef(cell = function(value, index) value)
   expect_equal(col$cell, function(value, index) value)
 
-  # Aggregated renderer
+  # Grouped cell renderer
+  col <- colDef(grouped = JS("cellInfo => cellInfo.value"))
+  expect_equal(col$grouped, JS("cellInfo => cellInfo.value"))
+  expect_error(colDef(grouped = function() {}), "`grouped` renderer must be a JS function")
+
+  # Aggregated cell renderer
   col <- colDef(aggregated = JS("cellInfo => cellInfo.value"))
   expect_equal(col$aggregated, JS("cellInfo => cellInfo.value"))
 

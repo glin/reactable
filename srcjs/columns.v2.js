@@ -153,14 +153,49 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       return content
     }
 
-    // Render grouped values the same as regular cells
-    col.Grouped = function Grouped(cellInfo, state) {
-      const value = col.Cell(cellInfo, state)
-      return (
-        <React.Fragment>
-          {value} {cellInfo.subRows && `(${cellInfo.subRows.length})`}
-        </React.Fragment>
-      )
+    if (col.grouped) {
+      col.Grouped = function Grouped(cellInfo, state) {
+        let value = cellInfo.value
+
+        const isMissingValue = value == null || (col.type === 'numeric' && isNA(value))
+        if (isMissingValue) {
+          value = col.na
+        }
+
+        if (!isMissingValue && col.format && col.format.cell) {
+          value = formatValue(value, col.format.cell)
+        }
+
+        value = col.grouped({ ...cellInfo, value }, state)
+
+        // Use zero-width spaces to preserve the height of blank cells
+        if (value == null || value === '') {
+          value = emptyValue
+        }
+
+        let content
+        if (React.isValidElement(value)) {
+          content = value
+        } else if (col.html) {
+          // Render inline to align with the expander
+          content = (
+            <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: value }} />
+          )
+        } else {
+          content = String(value)
+        }
+        return content
+      }
+    } else {
+      // Render grouped values the same as regular cells
+      col.Grouped = function Grouped(cellInfo, state) {
+        const value = col.Cell(cellInfo, state)
+        return (
+          <React.Fragment>
+            {value}{cellInfo.subRows && ` (${cellInfo.subRows.length})`}
+          </React.Fragment>
+        )
+      }
     }
 
     col.Aggregated = function Aggregated(cellInfo, state) {

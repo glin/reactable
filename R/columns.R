@@ -22,6 +22,8 @@
 #' @param cell Custom cell renderer. An R function that takes the cell value,
 #'   row index, and column name as arguments, or a [JS()] function that takes a
 #'   cell info object and table state object as arguments.
+#' @param grouped Custom grouped cell renderer. A [JS()] function that takes a
+#'   cell info object and table state object as arguments.
 #' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
 #'   a cell info object and table state object as arguments.
 #' @param header Custom header renderer. An R function that takes the header value
@@ -78,14 +80,35 @@
 #' )
 #'
 #' @export
-colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
-                   resizable = NULL, filterable = NULL, show = NULL,
-                   defaultSortOrder = NULL, sortNALast = FALSE, format = NULL,
-                   cell = NULL, aggregated = NULL, header = NULL, footer = NULL,
-                   details = NULL, html = FALSE, na = "", minWidth = NULL,
-                   maxWidth = NULL, width = NULL, align = NULL, class = NULL,
-                   style = NULL, headerClass = NULL, headerStyle = NULL,
-                   footerClass = NULL, footerStyle = NULL) {
+colDef <- function(
+  name = NULL,
+  aggregate = NULL,
+  sortable = NULL,
+  resizable = NULL,
+  filterable = NULL,
+  show = NULL,
+  defaultSortOrder = NULL,
+  sortNALast = FALSE,
+  format = NULL,
+  cell = NULL,
+  grouped = NULL,
+  aggregated = NULL,
+  header = NULL,
+  footer = NULL,
+  details = NULL,
+  html = FALSE,
+  na = "",
+  minWidth = NULL,
+  maxWidth = NULL,
+  width = NULL,
+  align = NULL,
+  class = NULL,
+  style = NULL,
+  headerClass = NULL,
+  headerStyle = NULL,
+  footerClass = NULL,
+  footerStyle = NULL
+) {
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
@@ -137,6 +160,9 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
   }
   if (!is.null(cell) && !is.JS(cell) && !is.function(cell)) {
     stop("`cell` renderer must be an R function or JS function")
+  }
+  if (!is.null(grouped) && !is.JS(grouped)) {
+    stop("`grouped` renderer must be a JS function")
   }
   if (!is.null(aggregated) && !is.JS(aggregated)) {
     stop("`aggregated` renderer must be a JS function")
@@ -196,6 +222,7 @@ colDef <- function(name = NULL, aggregate = NULL, sortable = NULL,
       sortNALast = if (sortNALast) TRUE,
       format = format,
       cell = cell,
+      grouped = grouped,
       aggregated = aggregated,
       header = header,
       footer = footer,

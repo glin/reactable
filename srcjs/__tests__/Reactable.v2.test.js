@@ -5405,6 +5405,65 @@ describe('grouping and aggregation', () => {
     expect(getCellsText(container, '.col-grouped')).toEqual(['\u200b1 (2)', '\u200b2 (1)'])
   })
 
+  it('grouped cell render function', () => {
+    const props = {
+      data: { a: ['a', '', null], b: [1, 2, 3] },
+      columns: [
+        {
+          name: 'col-a',
+          accessor: 'a',
+          na: 'missing',
+          cell: () => 'overridden',
+          grouped: (cellInfo, state) => {
+            const rows = [
+              { a: 'a', b: null, _subRows: [{ a: 'a', b: 1 }] },
+              { a: '', b: null, _subRows: [{ a: '', b: 2 }] },
+              { a: null, b: null, _subRows: [{ a: null, b: 3 }] }
+            ]
+            expect(cellInfo.column.id).toEqual('a')
+            expect(cellInfo.column.name).toEqual('col-a')
+            expect(cellInfo.index >= 0).toEqual(true)
+            expect(cellInfo.viewIndex >= 0).toEqual(true)
+            expect(cellInfo.page).toEqual(0)
+            expect(cellInfo.value).toEqual(['a', '', 'missing'][cellInfo.index])
+            expect(cellInfo.aggregated).toEqual(true)
+            expect(cellInfo.level).toEqual(0)
+            expect(cellInfo.expanded).toBeFalsy()
+            expect(cellInfo.selected).toEqual(false)
+            expect(cellInfo.row).toEqual(
+              [
+                { a: 'a', b: null },
+                { a: '', b: null },
+                { a: null, b: null }
+              ][cellInfo.index]
+            )
+            expect(cellInfo.subRows).toEqual(rows[cellInfo.index]._subRows)
+            expect(state.page).toEqual(0)
+            expect(state.pageSize).toEqual(10)
+            expect(state.pages).toEqual(1)
+            expect(state.sorted).toEqual([])
+            expect(state.groupBy).toEqual(['a'])
+            expect(state.filters).toEqual([])
+            expect(state.searchValue).toEqual(undefined)
+            expect(state.pageRows).toEqual(rows)
+            expect(state.sortedData).toEqual(rows)
+            expect(state.data).toEqual([
+              { a: 'a', b: 1 },
+              { a: '', b: 2 },
+              { a: null, b: 3 }
+            ])
+            return cellInfo.value
+          },
+          className: 'col-a'
+        },
+        { name: 'col-b', accessor: 'b' }
+      ],
+      pivotBy: ['a']
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCellsText(container, '.col-a')).toEqual(['\u200ba', '\u200b\u200b', '\u200bmissing'])
+  })
+
   it('aggregates values', () => {
     let aggregateCount = 0
     const props = {

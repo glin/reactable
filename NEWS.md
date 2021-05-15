@@ -15,6 +15,10 @@ where possible, but note that there are several breaking changes.
   changes, and incorrectly persisted on filtering changes
   ([#39](https://github.com/glin/reactable/issues/39)).
 * Aggregated rows can now be selected when multiple selection is enabled.
+* `colDef()` gains a `grouped` argument to customize rendering for grouped cells
+  in `groupBy` columns ([#33](https://github.com/glin/reactable/issues/33),
+  [#94](https://github.com/glin/reactable/issues/94),
+  [#148](https://github.com/glin/reactable/issues/148)).
 * JavaScript render functions and style functions receive several new properties:
   * `rowInfo.expanded` and `cellInfo.expanded` indicating whether the row is expanded
   * `cellInfo.selected` property indicating whether the cell's row is selected

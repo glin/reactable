@@ -581,6 +581,33 @@ reactable(data, columns = list(
 ))
 ```
 
+### Grouped cell rendering
+```{r}
+data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
+
+reactable(
+  data,
+  groupBy = c("Manufacturer", "Type"),
+  columns = list(
+    Manufacturer = colDef(
+      # Render grouped cells without the row count
+      grouped = JS("function(cellInfo) {
+        return cellInfo.value
+      }")
+    ),
+    Type = colDef(
+      # Render grouped cells with the row count, only if there are multiple sub rows
+      grouped = JS("function(cellInfo) {
+        if (cellInfo.subRows.length > 1) {
+          return cellInfo.value + ' (' + cellInfo.subRows.length + ')'
+        }
+        return cellInfo.value
+      }")
+    )
+  )
+)
+```
+
 ### Aggregated cell rendering
 ```{r, message=FALSE}
 library(dplyr)
