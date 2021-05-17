@@ -506,7 +506,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     details <- column[["details"]]
     if (is.function(details)) {
       details <- lapply(seq_len(nrow(data)), function(index) {
-        callFunc(details, index)
+        callFunc(details, index, key)
       })
       column$details <- lapply(details, asReactTag)
       addDependencies(column$details)
