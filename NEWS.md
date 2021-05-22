@@ -29,6 +29,8 @@ where possible, but note that there are several breaking changes.
   ([#88](https://github.com/glin/reactable/issues/88)).
 * Custom cell click actions can now access the table state using a new `state`
   argument.
+* R render functions for row details now receive an additional argument for
+  the column name (@ksnap28, [#155](https://github.com/glin/reactable/issues/155)).
 
 ### Breaking changes
 

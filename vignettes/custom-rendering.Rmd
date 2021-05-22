@@ -337,12 +337,13 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 ## Expandable Row Details
 
 ### R render function
-To add expandable row details, provide an R function with a single argument:
+To add expandable row details, provide an R function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 reactable(
-  details = function(index) {
+  details = function(index, name) {
     # input:
     #   - index, the row index
+    #   - name, the column name (optional)
     #
     # output:
     #   - content to render (e.g. an HTML tag or nested table), or NULL to hide details for the row
