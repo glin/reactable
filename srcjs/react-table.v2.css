@@ -57,7 +57,7 @@
 
 .ReactTable .rt-tr {
   flex: 1 0 auto;
-  display: inline-flex;
+  display: flex;
 }
 
 .ReactTable .rt-th,
