@@ -89,6 +89,9 @@ where possible, but note that there are several breaking changes.
   arguments to customize the accessible labels for row group expand buttons.
 * Cells in the row names column are now marked up as row headers for assistive
   technologies.
+* The page info and "no rows found" message are now marked as ARIA live regions
+  so that page changes can be announced by assistive technologies when searching,
+  filtering, or paging through the table.
 
 # reactable 0.2.3
 

@@ -2323,6 +2323,7 @@ describe('no data', () => {
     const { container, queryAllByText, rerender } = render(<Reactable {...props} />)
     const noData = queryAllByText('No rows found')
     expect(noData).toHaveLength(1)
+    expect(noData[0]).toHaveAttribute('aria-live', 'polite')
     const tbody = getTbody(container)
     expect(getNoData(tbody)).toBeTruthy()
     expect(tbody).toHaveClass('rt-tbody-no-data')
@@ -2348,6 +2349,19 @@ describe('no data', () => {
 
     const tbody = getTbody(container)
     expect(tbody).not.toHaveClass('rt-tbody-no-data')
+  })
+
+  it('no data message element exists with data present', () => {
+    // Element must exist on page for ARIA live region to be announced
+    const props = {
+      data: { a: [1] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const tbody = getTbody(container)
+    const noData = getNoData(tbody)
+    expect(noData).toHaveTextContent('')
+    expect(noData).toHaveAttribute('aria-live', 'polite')
   })
 })
 
@@ -6730,6 +6744,7 @@ describe('pagination', () => {
     let { container, rerender } = render(<Reactable {...props} />)
     let pageInfo = getPageInfo(container)
     expect(pageInfo.textContent).toEqual('1–2 of 5 rows')
+    expect(pageInfo).toHaveAttribute('aria-live', 'polite')
 
     const nextButton = getNextButton(container)
     fireEvent.click(nextButton)

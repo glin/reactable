@@ -295,7 +295,7 @@ SearchComponent.propTypes = {
 }
 
 const NoDataComponent = ({ className, ...rest }) => {
-  return <div className={classNames('rt-no-data', className)} {...rest} />
+  return <div className={classNames('rt-no-data', className)} aria-live="polite" {...rest} />
 }
 
 const SelectInputComponent = ({ type, checked, onChange, 'aria-label': ariaLabel }) => {
@@ -1100,6 +1100,9 @@ function Table({
       noData = <NoDataComponent>{language.noData}</NoDataComponent>
       // Hide cell borders when table has no data
       className = classNames('rt-tbody-no-data', className)
+    } else {
+      // Must be on the page for the ARIA live region to be announced
+      noData = <NoDataComponent />
     }
     const tbodyProps = instance.getTableBodyProps({ className })
 

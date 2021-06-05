@@ -88,7 +88,7 @@ export default class Pagination extends React.Component {
     const rowStart = Math.min(page * pageSize + 1, rowCount)
     const rowEnd = Math.min(page * pageSize + pageSize, rowCount)
     const pageInfo = renderTemplate(language.pageInfo, { rowStart, rowEnd, rows: rowCount })
-    return <div className="rt-page-info">{pageInfo}</div>
+    return <div className="rt-page-info" aria-live="polite">{pageInfo}</div>
   }
 
   renderPageSizeOptions({ pageSize, pageSizeOptions, onPageSizeChange, language }) {
