@@ -197,16 +197,15 @@ reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaul
 ```
 
 ### Always show pagination
-By default, pagination is hidden if the table only has one page. To always show
-pagination, set `showPagination` to `TRUE`. This may be useful if you want to
-show page info:
-
+By default, pagination is hidden if the table only has one page. To keep the
+pagination shown, set `showPagination` to `TRUE`. This is especially useful if
+you want to keep the page info showing the number of rows in the table.
 ```{r}
 reactable(iris[1:5, ], showPagination = TRUE)
 ```
 
 ### No pagination
-Tables are paged by default, but you can disable pagination by setting `pagination` to `FALSE`:
+Tables are paginated by default, but you can disable pagination by setting `pagination` to `FALSE`:
 ```{r}
 reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 ```
@@ -347,7 +346,9 @@ reactable(
 > New in v0.2.3.9000
 
 Sub rows are paginated and included in the row count by default, but you can
-exclude sub rows by setting `paginateSubRows` to `FALSE`:
+exclude sub rows by setting `paginateSubRows` to `FALSE`. This will show all
+expanded sub rows on the same page, so it is not recommended for tables with
+large row groups.
 
 ```{r}
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
