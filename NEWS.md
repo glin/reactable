@@ -82,6 +82,8 @@ where possible, but note that there are several breaking changes.
   table to disappear.
 * HTML widgets and HTML dependencies in nested tables now render correctly
   ([#125](https://github.com/glin/reactable/issues/125)).
+* Tables are now displayed with full width when rendered inside an R Markdown
+  document or R Notebook ([#163](https://github.com/glin/reactable/issues/163)).
 * Row expand buttons now set the `aria-expanded` attribute to indicate expanded
   or collapsed state. The default label for row expand buttons is now
   "Toggle details" instead of "Expand details" or "Collapse details".

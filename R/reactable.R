@@ -616,6 +616,8 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     reactR::reactMarkup(component),
     width = width,
     height = height,
+    # Don't limit width when rendered inside an R Notebook
+    sizingPolicy = htmlwidgets::sizingPolicy(knitr.figure = FALSE),
     package = "reactable",
     dependencies = dependencies,
     elementId = elementId

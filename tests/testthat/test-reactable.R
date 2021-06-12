@@ -151,6 +151,7 @@ test_that("reactable", {
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "400px")
   expect_equal(tbl$height, "100%")
+  expect_equal(tbl$sizingPolicy$knitr$figure, FALSE)
   expect_equal(tbl$elementId, "tbl")
 
   # Column overrides
