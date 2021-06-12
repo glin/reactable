@@ -1765,7 +1765,9 @@ tbl <- reactable(
   minRows = 10
 )
 
-htmltools::tagList(map, tbl)
+htmltools::browsable(
+  htmltools::tagList(map, tbl)
+)
 ```
 
 
