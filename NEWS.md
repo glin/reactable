@@ -84,6 +84,8 @@ where possible, but note that there are several breaking changes.
   ([#125](https://github.com/glin/reactable/issues/125)).
 * Tables are now displayed with full width when rendered inside an R Markdown
   document or R Notebook ([#163](https://github.com/glin/reactable/issues/163)).
+* `reactable()` now works for data frames with `difftime` objects and objects
+  with custom classes ([#164](https://github.com/glin/reactable/issues/164)).
 * Row expand buttons now set the `aria-expanded` attribute to indicate expanded
   or collapsed state. The default label for row expand buttons is now
   "Toggle details" instead of "Expand details" or "Collapse details".

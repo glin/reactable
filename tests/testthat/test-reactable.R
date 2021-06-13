@@ -207,6 +207,21 @@ test_that("dates/datetimes are serialized in ISO 8601", {
   expect_equal(as.character(attribs$data), '{"x":["2019-05-06T03:22:15"],"y":["2010-12-30"]}')
 })
 
+test_that("data with custom classes not supported by jsonlite are serialized", {
+  data <- data.frame(
+    difftime = as.Date("2021-06-11") - as.Date("2021-03-05"),
+    custom = I(structure("custom", class = "unsupported_custom_class"))
+  )
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  serialized <- jsonlite::fromJSON(attribs$data)
+  expect_equal(serialized$custom, "custom")
+  # jsonlite may support difftime objects at some point, so don't throw an error
+  if (serialized$difftime != 98) {
+    warning(paste("Unexpected result from serializing difftime:", serialized$difftime))
+  }
+})
+
 test_that("supports Crosstalk", {
   data <- crosstalk::SharedData$new(
     data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE),
