@@ -550,7 +550,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
 
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE, digits = NA,
-                           POSIXt = "ISO8601", Date = "ISO8601", force = TRUE)
+                           POSIXt = "ISO8601", Date = "ISO8601", UTC = TRUE, force = TRUE)
 
   # Create a unique key for the data. The key is used to fully reset state when
   # the data changes (for tables in Shiny).

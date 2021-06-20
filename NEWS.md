@@ -86,6 +86,7 @@ where possible, but note that there are several breaking changes.
   document or R Notebook ([#163](https://github.com/glin/reactable/issues/163)).
 * `reactable()` now works for data frames with `difftime` objects and objects
   with custom classes ([#164](https://github.com/glin/reactable/issues/164)).
+* `colFormat()` no longer ignores time zones when formatting dates and times.
 * Row expand buttons now set the `aria-expanded` attribute to indicate expanded
   or collapsed state. The default label for row expand buttons is now
   "Toggle details" instead of "Expand details" or "Collapse details".

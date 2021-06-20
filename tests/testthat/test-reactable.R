@@ -201,10 +201,10 @@ test_that("numbers are serialized with max precision", {
 })
 
 test_that("dates/datetimes are serialized in ISO 8601", {
-  data <- data.frame(x = as.POSIXct("2019-05-06 3:22:15"), y = as.Date("2010-12-30"))
+  data <- data.frame(x = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"), y = as.Date("2010-12-30"))
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":["2019-05-06T03:22:15"],"y":["2010-12-30"]}')
+  expect_equal(as.character(attribs$data), '{"x":["2019-05-06T03:22:15Z"],"y":["2010-12-30"]}')
 })
 
 test_that("data with custom classes not supported by jsonlite are serialized", {
