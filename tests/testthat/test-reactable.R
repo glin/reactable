@@ -1,6 +1,6 @@
 library(htmltools)
 
-getAttribs <- function(widget) widget$x$tag$attribs
+getAttribs <- function(widget) widget$x$tag$children[[1]]$attribs
 
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
