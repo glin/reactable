@@ -655,10 +655,10 @@ reactable <- function(data,
 
   if(is.null(logoStyle)) logoStyle <- "float: right;margin-right:10px;width:200px;"
 
-  content_tags$style_tag <- htmltools::tags$style(paste0("#reactable-title {",titleStyle,"}
-                                                          #reactable-subtitle {",subtitleStyle,"}
-                                                          #reactable-caption {",captionStyle,"}
-                                                          #reactable-logo img {",logoStyle,"}"))
+  content_tags$style_tag <-
+    htmltools::tags$style(
+      paste0(
+        "#reactable-title {",titleStyle,"} #reactable-subtitle {",subtitleStyle,"} #reactable-caption {",captionStyle,"} #reactable-logo img {",logoStyle,"}"))
 
 
   content <- htmltools::tag("div", unname(content_tags))
