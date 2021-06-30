@@ -646,14 +646,8 @@ reactable <- function(data,
     htmltools::tags$div(x, id = paste0("reactable-",name))
   })
 
-  # content_tags <- list()
-  #
-  # if(!is.null(title)) content_tags$title_tag <- htmltools::tags$div(title, id = "reactable-title")
-  # if(!is.null(subtitle)) content_tags$subtitle_tag <- htmltools::tags$div(subtitle, id = "reactable-subtitle")
-  # content_tags$component <- component
-  # if(!is.null(caption)) content_tags$caption_tag <- htmltools::tags$div(caption, id = "reactable-caption")
-  # if(!is.null(logo)) content_tags$logo_tag <- htmltools::tags$div(logo, id = "reactable-logo")
 
+  # import fonts if font param is not null
   if(!is.null(fonts)){
     font_import <- import_fonts(fonts)
     font_tag <- htmltools::tags$style(font_import)
@@ -667,8 +661,8 @@ reactable <- function(data,
                                                           #reactable-caption {",captionStyle,"}
                                                           #reactable-logo img {",logoStyle,"}"))
 
-  content_tags <- unname(content_tags)
-  content <- htmltools::tag("div", content_tags)
+
+  content <- htmltools::tag("div", unname(content_tags))
 
   htmlwidgets::createWidget(
     name = widgetName,
