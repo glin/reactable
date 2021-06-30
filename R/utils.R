@@ -2,6 +2,12 @@
 #' @export
 htmlwidgets::JS
 
+import_googlefonts <- function(fonts){
+  font_names <- gsub(" ", "+", unlist(fonts))
+  imports <- paste0("@import url('https://fonts.googleapis.com/css?family=",font_names,"');")
+  paste0(imports, collapse = "")
+}
+
 mergeLists <- function(a, b) {
   if (is.null(a)) {
     a <- list()
