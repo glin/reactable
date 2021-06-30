@@ -97,6 +97,15 @@
 #'
 #'   To set the width of a column, see [colDef()].
 #' @param height Height of the table in pixels. Defaults to `"auto"` for automatic sizing.
+#' @param title String of title to appear above table, defaults to NULL.
+#' @param subtitle String of subtitle to appear above table, defaults to NULL.
+#' @param caption String of title to appear below table, defaults to NULL.
+#' @param logo Logo (htmltools::img object) to appear below table, defaults to NULL.
+#' @param titleStyle CSS styling of title, defaults to NULL,
+#' @param subtitleStyle CSS styling of subtitle, defaults to NULL,
+#' @param captionStyle CSS styling of caption underneath table, defaults to NULL.
+#' @param logoStyle CSS styling of logo underneath table, defaults to `float: right;margin-right:10px;width:200px;`.
+#' @param fonts List of Google fonts to import.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -151,7 +160,8 @@
 #' ))
 #'
 #' @export
-reactable <- function(data, columns = NULL, columnGroups = NULL,
+reactable <- function(data,
+                      columns = NULL, columnGroups = NULL,
                       rownames = NULL, groupBy = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
                       searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
@@ -167,6 +177,15 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       showSortIcon = TRUE, showSortable = FALSE,
                       class = NULL, style = NULL, rowClass = NULL, rowStyle = NULL,
                       fullWidth = TRUE, width = "auto", height = "auto",
+                      title = NULL,
+                      subtitle = NULL,
+                      caption = NULL,
+                      logo = NULL,
+                      titleStyle = NULL,
+                      subtitleStyle = NULL,
+                      captionStyle = NULL,
+                      logoStyle = NULL,
+                      fonts = NULL,
                       theme = getOption("reactable.theme"),
                       language = getOption("reactable.language"),
                       elementId = NULL) {
@@ -611,9 +630,49 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     key = if (!isV2()) dataKey
   ))
 
+  # add elements (title, subtitle, caption, logo)
+  content_tags <- list(title = title,
+                       subtitle = subtitle,
+                       table = component,
+                       caption = caption,
+                       logo = logo)
+
+  content_tags <- Filter(Negate(is.null), content_tags)
+
+  content_tags <- lapply(seq_along(content_tags), function(i){
+    name <- names(content_tags)[[i]]
+    x <- content_tags[[i]]
+    if("reactR_component" %in% class(x)) return(x)
+    htmltools::tags$div(x, id = paste0("reactable-",name))
+  })
+
+  # content_tags <- list()
+  #
+  # if(!is.null(title)) content_tags$title_tag <- htmltools::tags$div(title, id = "reactable-title")
+  # if(!is.null(subtitle)) content_tags$subtitle_tag <- htmltools::tags$div(subtitle, id = "reactable-subtitle")
+  # content_tags$component <- component
+  # if(!is.null(caption)) content_tags$caption_tag <- htmltools::tags$div(caption, id = "reactable-caption")
+  # if(!is.null(logo)) content_tags$logo_tag <- htmltools::tags$div(logo, id = "reactable-logo")
+
+  if(!is.null(fonts)){
+    font_import <- import_fonts(fonts)
+    font_tag <- htmltools::tags$style(font_import)
+    content_tags$font_tag <- font_tag
+  }
+
+  if(is.null(logoStyle)) logoStyle <- "float: right;margin-right:10px;width:200px;"
+
+  content_tags$style_tag <- htmltools::tags$style(paste0("#reactable-title {",titleStyle,"}
+                                                          #reactable-subtitle {",subtitleStyle,"}
+                                                          #reactable-caption {",captionStyle,"}
+                                                          #reactable-logo img {",logoStyle,"}"))
+
+  content_tags <- unname(content_tags)
+  content <- htmltools::tag("div", content_tags)
+
   htmlwidgets::createWidget(
     name = widgetName,
-    reactR::reactMarkup(component),
+    reactR::reactMarkup(content),
     width = width,
     height = height,
     # Don't limit width when rendered inside an R Notebook
