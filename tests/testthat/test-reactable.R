@@ -487,8 +487,8 @@ test_that("pagination", {
 
   # paginateSubRows
   expect_equal(getAttribs(reactable(data.frame(x = 1)))$paginateSubRows, NULL)
-  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = TRUE))$paginateSubRows, NULL)
-  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = FALSE))$paginateSubRows, FALSE)
+  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = TRUE))$paginateSubRows, TRUE)
+  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = FALSE))$paginateSubRows, NULL)
   expect_error(reactable(data.frame(x = 1), paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
 })
 

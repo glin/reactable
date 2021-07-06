@@ -10,6 +10,9 @@ where possible, but note that there are several breaking changes.
 * Column group headers can now be resized.
 * Column group headers and filters are now sticky. Previously, only column
   headers were sticky ([#107](https://github.com/glin/reactable/issues/107)).
+* `reactable()` gains a `paginateSubRows` argument to include grouped sub rows
+  in pagination. This is recommended for larger tables with row groups that may
+  not all fit on the page when expanded.
 * Expanded rows now stay expanded on sorting, filtering, and pagination changes.
   Previously, expanded rows were always collapsed on sorting and pagination
   changes, and incorrectly persisted on filtering changes
@@ -34,9 +37,6 @@ where possible, but note that there are several breaking changes.
 
 ### Breaking changes
 
-* When expanding grouped rows, sub rows are now paginated and included in the
-  row count. Use `reactable(paginateSubRows = FALSE)` to exclude sub rows from
-  pagination like before.
 * The row selection column is now always placed as the first column in the
   table, even before the `groupBy` and row details columns
   ([#71](https://github.com/glin/reactable/issues/71)).

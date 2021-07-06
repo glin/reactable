@@ -341,19 +341,19 @@ reactable(
 )
 ```
 
-### Exclude sub rows from pagination
+### Include sub rows in pagination
 
 > New in v0.2.3.9000
 
-Sub rows are paginated and included in the row count by default, but you can
-exclude sub rows by setting `paginateSubRows` to `FALSE`. This will show all
-expanded sub rows on the same page, so it is not recommended for tables with
-large row groups.
+By default, sub rows are excluded from pagination and always shown on the same
+page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
+to `TRUE`. This is recommended for larger tables with row groups that may not all
+fit on one page.
 
 ```{r}
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
-reactable(data, groupBy = "Type", paginateSubRows = FALSE)
+reactable(data, groupBy = "Type", paginateSubRows = TRUE)
 ```
 
 

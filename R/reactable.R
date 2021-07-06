@@ -47,7 +47,7 @@
 #'   than one page.
 #' @param showPageInfo Show page info? Defaults to `TRUE`.
 #' @param minRows Minimum number of rows to show per page. Defaults to 1.
-#' @param paginateSubRows When rows are grouped, paginate sub rows? Defaults to `TRUE`.
+#' @param paginateSubRows When rows are grouped, paginate sub rows? Defaults to `FALSE`.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes a row index argument or a [JS()] function that takes
 #'   a row info object as an argument. Can also be a [colDef()] to customize the
@@ -159,7 +159,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
-                      minRows = 1, paginateSubRows = TRUE, details = NULL, defaultExpanded = FALSE,
+                      minRows = 1, paginateSubRows = FALSE, details = NULL, defaultExpanded = FALSE,
                       selection = NULL, selectionId = NULL,
                       defaultSelected = NULL, onClick = NULL,
                       highlight = FALSE, outlined = FALSE, bordered = FALSE,
@@ -581,7 +581,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     showPagination = if (!is.null(showPagination)) showPagination,
     showPageInfo = showPageInfo,
     minRows = minRows,
-    paginateSubRows = if (!paginateSubRows) FALSE,
+    paginateSubRows = if (paginateSubRows) TRUE,
     defaultExpanded = if (defaultExpanded) defaultExpanded,
     selection = selection,
     selectionId = selectionId,

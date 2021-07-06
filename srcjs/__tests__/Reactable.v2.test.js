@@ -3945,8 +3945,7 @@ describe('row selection', () => {
       ],
       selection: 'multiple',
       pivotBy: ['a'],
-      defaultExpanded: true,
-      paginateSubRows: false
+      defaultExpanded: true
     }
     const { getAllByLabelText } = render(<Reactable {...props} />)
     const selectAllSubRowsCheckboxes = getAllByLabelText('Select all rows in group')
@@ -5821,7 +5820,8 @@ describe('grouping and aggregation', () => {
           html: true
         }
       ],
-      pivotBy: ['c', 'a']
+      pivotBy: ['c', 'a'],
+      paginateSubRows: true
     }
     const { container } = render(<Reactable {...props} />)
     isExpanded = true
@@ -6710,7 +6710,7 @@ describe('pagination', () => {
     expect(getPagination(container)).toBeTruthy()
   })
 
-  it('auto-shows pagination when table spans multiple pages when rows are expanded', () => {
+  it('auto-shows pagination when expanded rows would cause table to span multiple pages', () => {
     const props = {
       data: {
         group: ['a', 'a', 'a', 'a'],
@@ -6722,15 +6722,18 @@ describe('pagination', () => {
       ],
       defaultPageSize: 4,
       pivotBy: ['group'],
+      paginateSubRows: true,
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
     expect(getPagination(container)).toBeTruthy()
+    expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
 
     fireEvent.click(getExpanders(container)[0])
     expect(getRows(container)).toHaveLength(4)
     expect(getPagination(container)).toBeTruthy()
+    expect(getPageInfo(container).textContent).toEqual('1–4 of 5 rows')
 
     // Known issue: filtering can cause pagination to disappear as initial row
     // count falls back to original data length.
@@ -7051,7 +7054,8 @@ describe('pagination', () => {
         { name: 'col-a', accessor: 'a' }
       ],
       defaultPageSize: 2,
-      pivotBy: ['group']
+      pivotBy: ['group'],
+      paginateSubRows: true
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
@@ -7062,6 +7066,29 @@ describe('pagination', () => {
     expect(getPageInfo(container).textContent).toEqual('1–2 of 5 rows')
 
     rerender(<Reactable {...props} paginateSubRows={false} />)
+    expect(getRows(container)).toHaveLength(5)
+    expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
+  })
+
+  it('does not paginate sub rows by default', () => {
+    const props = {
+      data: {
+        group: ['a', 'a', 'a', 'a'],
+        a: [111, 111, 222, 33]
+      },
+      columns: [
+        { name: 'group', accessor: 'group' },
+        { name: 'col-a', accessor: 'a' }
+      ],
+      defaultPageSize: 2,
+      pivotBy: ['group']
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(1)
+    expect(getPagination(container)).toBeTruthy()
+
+    fireEvent.click(getExpanders(container)[0])
+    rerender(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(5)
     expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
   })

@@ -465,7 +465,7 @@ function Table({
           : {}
       },
       globalFilter,
-      paginateExpandedRows: paginateSubRows,
+      paginateExpandedRows: paginateSubRows ? true : false,
       // Disable manual row expansion
       manualExpandedKey: null,
       // Maintain grouped state when the data changes
@@ -1500,7 +1500,6 @@ Reactable.propTypes = {
 Reactable.defaultProps = {
   sortable: true,
   defaultPageSize: 10,
-  paginateSubRows: true,
   showSortIcon: true,
   crosstalkId: '__crosstalk__'
 }
