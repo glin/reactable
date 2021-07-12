@@ -239,6 +239,8 @@ input[type='radio'].rt-select-input {
 /* Sorting */
 .rt-sort-header {
   display: flex;
+  /* Allow content to shrink if header is a flex or grid container */
+  min-width: 0;
 }
 
 .rt-align-center .rt-sort-header {
