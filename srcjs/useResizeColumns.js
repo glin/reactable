@@ -2,6 +2,7 @@
 // - Resize based on actual DOM width of column, like in v6. Requires a
 //   getDOMWidth() method to be defined on each column header and header group.
 // - Clean up touchend listeners properly (https://github.com/tannerlinsley/react-table/issues/2622)
+// - Optimize number of calls to dispatch (https://github.com/tannerlinsley/react-table/pull/3231)
 
 import React from 'react'
 import {
@@ -77,15 +78,31 @@ const defaultGetResizerProps = (props, { instance, header }) => {
 
     const clientX = isTouchEvent ? Math.round(e.touches[0].clientX) : e.clientX
 
-    const dispatchMove = clientXPos => {
-      dispatch({ type: actions.columnResizing, clientX: clientXPos })
+    let raf
+    let mostRecentClientX
+
+    const dispatchMove = () => {
+      window.cancelAnimationFrame(raf)
+      raf = null
+      dispatch({ type: actions.columnResizing, clientX: mostRecentClientX })
     }
-    const dispatchEnd = () => dispatch({ type: actions.columnDoneResizing })
+    const dispatchEnd = () => {
+      window.cancelAnimationFrame(raf)
+      raf = null
+      dispatch({ type: actions.columnDoneResizing })
+    }
+
+    const scheduleDispatchMoveOnNextAnimationFrame = clientXPos => {
+      mostRecentClientX = clientXPos
+      if (!raf) {
+        raf = window.requestAnimationFrame(dispatchMove)
+      }
+    }
 
     const handlersAndEvents = {
       mouse: {
         moveEvent: 'mousemove',
-        moveHandler: e => dispatchMove(e.clientX),
+        moveHandler: e => scheduleDispatchMoveOnNextAnimationFrame(e.clientX),
         upEvent: 'mouseup',
         upHandler: () => {
           document.removeEventListener('mousemove', handlersAndEvents.mouse.moveHandler)
@@ -100,7 +117,7 @@ const defaultGetResizerProps = (props, { instance, header }) => {
             e.preventDefault()
             e.stopPropagation()
           }
-          dispatchMove(e.touches[0].clientX)
+          scheduleDispatchMoveOnNextAnimationFrame(e.touches[0].clientX)
           return false
         },
         upEvent: 'touchend',

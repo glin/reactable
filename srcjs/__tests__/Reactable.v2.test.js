@@ -1783,6 +1783,14 @@ describe('column widths and flex layout', () => {
 })
 
 describe('column resizing', () => {
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb())
+  })
+
+  afterEach(() => {
+    window.requestAnimationFrame.mockRestore()
+  })
+
   it('is not resizable by default', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
