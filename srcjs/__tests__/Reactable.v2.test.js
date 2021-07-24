@@ -469,6 +469,14 @@ describe('pad rows', () => {
     const padRows = getPadRows(container)
     expect(padRows).toHaveLength(6)
     rows.forEach(row => expect(row).toHaveAttribute('role', 'row'))
+    padRows.forEach(row => {
+      const cells = getCells(row)
+      expect(cells).toHaveLength(2)
+      cells.forEach(cell =>
+        // Should not have colspan attribute (from react-table)
+        expect(cell).not.toHaveAttribute('colspan')
+      )
+    })
   })
 
   it('pad rows should be hidden from accessibility tree', () => {
