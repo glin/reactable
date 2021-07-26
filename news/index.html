@@ -189,6 +189,9 @@
 <ul>
 <li>Column group headers can now be resized.</li>
 <li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107"><a href='https://github.com/glin/reactable/issues/107'>#107</a></a>).</li>
+<li>Sticky columns are now supported using a new <code>sticky</code> argument in <code><a href="../reference/colDef.html">colDef()</a></code> and <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/19"><a href='https://github.com/glin/reactable/issues/19'>#19</a></a>, <a href="https://github.com/glin/reactable/issues/72"><a href='https://github.com/glin/reactable/issues/72'>#72</a></a>, <a href="https://github.com/glin/reactable/issues/141"><a href='https://github.com/glin/reactable/issues/141'>#141</a></a>).</li>
+<li>
+<code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>paginateSubRows</code> argument to include grouped sub rows in pagination. This is recommended for larger tables with row groups that may not all fit on the page when expanded.</li>
 <li>Expanded rows now stay expanded on sorting, filtering, and pagination changes. Previously, expanded rows were always collapsed on sorting and pagination changes, and incorrectly persisted on filtering changes (<a href="https://github.com/glin/reactable/issues/39"><a href='https://github.com/glin/reactable/issues/39'>#39</a></a>).</li>
 <li>Aggregated rows can now be selected when multiple selection is enabled.</li>
 <li>
@@ -212,7 +215,6 @@
 <h3 class="hasAnchor">
 <a href="#breaking-changes" class="anchor"></a>Breaking changes</h3>
 <ul>
-<li>When expanding grouped rows, sub rows are now paginated and included in the row count. Use <code><a href="../reference/reactable.html">reactable(paginateSubRows = FALSE)</a></code> to exclude sub rows from pagination like before.</li>
 <li>The row selection column is now always placed as the first column in the table, even before the <code>groupBy</code> and row details columns (<a href="https://github.com/glin/reactable/issues/71"><a href='https://github.com/glin/reactable/issues/71'>#71</a></a>).</li>
 <li>Increased the default width of the row selection column to match the row details column (45px).</li>
 <li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87"><a href='https://github.com/glin/reactable/issues/87'>#87</a></a>).</li>

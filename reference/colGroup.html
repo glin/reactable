@@ -190,6 +190,7 @@
   header <span class='op'>=</span> <span class='cn'>NULL</span>,
   html <span class='op'>=</span> <span class='cn'>FALSE</span>,
   align <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sticky <span class='op'>=</span> <span class='cn'>NULL</span>,
   headerClass <span class='op'>=</span> <span class='cn'>NULL</span>,
   headerStyle <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
@@ -217,6 +218,13 @@ as an argument, or a <code><a href='https://rdrr.io/pkg/htmlwidgets/man/JS.html'
     <tr>
       <th>align</th>
       <td><p>Column group header alignment. One of <code>"left"</code>, <code>"right"</code>, <code>"center"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>sticky</th>
+      <td><p>Make the column group sticky when scrolling horizontally? Either
+<code>"left"</code> or <code>"right"</code> to make the column group stick to the left or right side.</p>
+<p>If a column group is sticky, all columns in the group will automatically
+be made sticky.</p></td>
     </tr>
     <tr>
       <th>headerClass</th>

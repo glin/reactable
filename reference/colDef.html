@@ -206,6 +206,7 @@
   maxWidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   align <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sticky <span class='op'>=</span> <span class='cn'>NULL</span>,
   class <span class='op'>=</span> <span class='cn'>NULL</span>,
   style <span class='op'>=</span> <span class='cn'>NULL</span>,
   headerClass <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -318,6 +319,13 @@ By default, missing values are displayed as blank cells.</p></td>
     <tr>
       <th>align</th>
       <td><p>Column alignment. One of <code>"left"</code>, <code>"right"</code>, <code>"center"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>sticky</th>
+      <td><p>Make the column sticky when scrolling horizontally? Either
+<code>"left"</code> or <code>"right"</code> to make the column stick to the left or right side.</p>
+<p>If a sticky column is in a column group, all columns in the group will
+automatically be made sticky, including the column group header.</p></td>
     </tr>
     <tr>
       <th>class</th>
