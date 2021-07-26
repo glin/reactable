@@ -98,6 +98,7 @@ To learn more about using reactable, check out the examples below.
 - [Theming](https://glin.github.io/reactable/articles/examples.html#theming)
 - [Column Groups](https://glin.github.io/reactable/articles/examples.html#column-groups)
 - [Column Resizing](https://glin.github.io/reactable/articles/examples.html#column-resizing)
+- [Sticky Columns](https://glin.github.io/reactable/articles/examples.html#sticky-columns)
 - [Row Names](https://glin.github.io/reactable/articles/examples.html#row-names)
 - [Cell Click Actions](https://glin.github.io/reactable/articles/examples.html#cell-click-actions)
 - [Language Options](https://glin.github.io/reactable/articles/examples.html#language-options)
