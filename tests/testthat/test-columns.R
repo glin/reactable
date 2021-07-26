@@ -128,6 +128,14 @@ test_that("colDef renderers", {
   expect_equal(col$details, list(1, 2, 3))
 })
 
+test_that("colDef sticky", {
+  expect_error(colDef(sticky = TRUE), '`sticky` must be "left" or "right"')
+  col <- colDef(sticky = "left")
+  expect_equal(col$sticky, "left")
+  col <- colDef(sticky = "right")
+  expect_equal(col$sticky, "right")
+})
+
 test_that("colDef class", {
   col <- colDef(class = "cell")
   expect_equal(col$className, "cell")
@@ -192,7 +200,14 @@ test_that("colGroup", {
   group <- colDef(header = function(value) value)
   expect_equal(group$header, function(value) value)
 
-  # Style
+  # sticky
+  expect_error(colGroup(sticky = TRUE), '`sticky` must be "left" or "right"')
+  group <- colGroup(sticky = "left")
+  expect_equal(group$sticky, "left")
+  group <- colDef(sticky = "right")
+  expect_equal(group$sticky, "right")
+
+  # style
   test_that("colDef style", {
     group <- colGroup("grp", "col", headerStyle = " border: 1px solid; top: 25px;;df")
     expect_equal(group$headerStyle, list("border" = "1px solid", top = "25px"))

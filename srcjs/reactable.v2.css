@@ -68,6 +68,18 @@ input[type='radio'].rt-select-input {
   text-align: center;
 }
 
+/* Sticky columns */
+.rt-tr,
+.rt-tr-group,
+.rt-tbody {
+  background-color: inherit;
+}
+
+.rt-sticky {
+  background-color: inherit;
+  z-index: 1;
+}
+
 /* Outer table borders */
 .rt-table {
   border-width: 1px;
@@ -151,10 +163,19 @@ input[type='radio'].rt-select-input {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
+/* Sticky cells need to be opaque to prevent bleed-through */
+.rt-tr-striped-sticky {
+  background-color: hsl(0, 0%, 97%);
+}
+
 /* Custom highlight style to prevent bleed-through to nested tables */
-.rt-tr-highlight:hover,
-.rt-tr-striped.rt-tr-highlight:hover {
+.rt-tr-highlight:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Sticky cells need to be opaque to prevent bleed-through */
+.rt-tr-highlight-sticky:hover {
+  background-color: hsl(0, 0%, 95%);
 }
 
 .rt-tr-pad {

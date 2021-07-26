@@ -26,6 +26,7 @@ colDef(
   maxWidth = NULL,
   width = NULL,
   align = NULL,
+  sticky = NULL,
   class = NULL,
   style = NULL,
   headerClass = NULL,
@@ -95,6 +96,12 @@ By default, missing values are displayed as blank cells.}
 \item{width}{Fixed width of the column in pixels. Overrides \code{minWidth} and \code{maxWidth}.}
 
 \item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
+
+\item{sticky}{Make the column sticky when scrolling horizontally? Either
+\code{"left"} or \code{"right"} to make the column stick to the left or right side.
+
+If a sticky column is in a column group, all columns in the group will
+automatically be made sticky, including the column group header.}
 
 \item{class}{Additional CSS classes to apply to cells. Can also be an R function
 that takes the cell value, row index, and column name as arguments, or a \code{\link[=JS]{JS()}}

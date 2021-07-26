@@ -15,6 +15,7 @@ import { hydrate } from 'reactR'
 import Pagination from './Pagination.v2'
 import WidgetContainer from './WidgetContainer'
 import useFlexLayout from './useFlexLayout'
+import useStickyColumns from './useStickyColumns'
 import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
@@ -488,6 +489,7 @@ function Table({
     },
     useResizeColumns,
     useFlexLayout,
+    useStickyColumns,
     useFilters,
     useGlobalFilter,
     useGroupBy,
@@ -830,6 +832,10 @@ function Table({
   }
 
   const makeTbody = () => {
+    const hasStickyColumns = instance.visibleColumns.some(column => column.sticky)
+    let rowHighlightClass = hasStickyColumns ? 'rt-tr-highlight-sticky' : 'rt-tr-highlight'
+    let rowStripedClass = hasStickyColumns ? 'rt-tr-striped-sticky' : 'rt-tr-striped'
+
     const rows = instance.page.map((row, viewIndex) => {
       instance.prepareRow(row)
 
@@ -848,8 +854,8 @@ function Table({
 
       const rowProps = {
         className: classNames(
-          striped && (viewIndex % 2 ? null : 'rt-tr-striped'),
-          highlight && 'rt-tr-highlight',
+          striped && (viewIndex % 2 ? null : rowStripedClass),
+          highlight && rowHighlightClass,
           row.isSelected && 'rt-tr-selected',
           css(theme.rowStyle)
         )
@@ -1075,13 +1081,16 @@ function Table({
           <TrGroupComponent key={viewIndex} className={css(theme.rowGroupStyle)} aria-hidden>
             <TrComponent {...rowProps}>
               {instance.visibleColumns.map(column => {
-                // Get flex styles from footer props. useFlexLayout doesn't have
-                // built-in support for pad cells.
-                const { style } = column.getFooterProps()
+                const cellProps = {
+                  className: css(theme.cellStyle)
+                }
+                // Get layout styles (flex, sticky) from footer props. useFlexLayout
+                // doesn't have built-in support for pad cells.
+                const { className, style } = column.getFooterProps(cellProps)
                 return (
                   <TdComponent
                     key={`${viewIndex}_${column.id}`}
-                    className={css(theme.cellStyle)}
+                    className={className}
                     style={style}
                   >
                     &nbsp;

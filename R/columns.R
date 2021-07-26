@@ -42,6 +42,11 @@
 #' @param maxWidth Maximum width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
 #' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
+#' @param sticky Make the column sticky when scrolling horizontally? Either
+#'   `"left"` or `"right"` to make the column stick to the left or right side.
+#'
+#'   If a sticky column is in a column group, all columns in the group will
+#'   automatically be made sticky, including the column group header.
 #' @param class Additional CSS classes to apply to cells. Can also be an R function
 #'   that takes the cell value, row index, and column name as arguments, or a [JS()]
 #'   function that takes a row info object, column info object, and table state
@@ -102,6 +107,7 @@ colDef <- function(
   maxWidth = NULL,
   width = NULL,
   align = NULL,
+  sticky = NULL,
   class = NULL,
   style = NULL,
   headerClass = NULL,
@@ -190,6 +196,11 @@ colDef <- function(
       stop('`align` must be one of "left", "right", "center"')
     }
   }
+  if (!is.null(sticky)) {
+    if (!isTRUE(sticky %in% c("left", "right"))) {
+      stop('`sticky` must be "left" or "right"')
+    }
+  }
   if (!is.null(class) && !is.character(class) && !is.JS(class) && !is.function(class)) {
     stop("`class` must be a character string, JS function, or R function")
   }
@@ -233,6 +244,7 @@ colDef <- function(
       maxWidth = maxWidth,
       width = width,
       align = align,
+      sticky = sticky,
       className = class,
       style = if (is.function(style) || is.JS(style)) style else asReactStyle(style),
       headerClassName = headerClass,
@@ -266,6 +278,11 @@ isDescOrder <- function(x) {
 #'   as an argument, or a [JS()] function that takes a column info object as an argument.
 #' @param html Render header content as HTML? Raw HTML strings are escaped by default.
 #' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
+#' @param sticky Make the column group sticky when scrolling horizontally? Either
+#'   `"left"` or `"right"` to make the column group stick to the left or right side.
+#'
+#'   If a column group is sticky, all columns in the group will automatically
+#'   be made sticky.
 #' @param headerClass Additional CSS classes to apply to the header.
 #' @param headerStyle Inline styles to apply to the header. A named list or
 #'   character string.
@@ -291,7 +308,7 @@ isDescOrder <- function(x) {
 #'
 #' @export
 colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
-                     align = NULL, headerClass = NULL, headerStyle = NULL) {
+                     align = NULL, sticky = NULL, headerClass = NULL, headerStyle = NULL) {
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
   }
@@ -310,6 +327,7 @@ colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
       header = header,
       html = html,
       align = align,
+      sticky = sticky,
       headerClass = headerClass,
       headerStyle = headerStyle
     )

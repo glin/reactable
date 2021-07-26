@@ -10,6 +10,10 @@ where possible, but note that there are several breaking changes.
 * Column group headers can now be resized.
 * Column group headers and filters are now sticky. Previously, only column
   headers were sticky ([#107](https://github.com/glin/reactable/issues/107)).
+* Sticky columns are now supported using a new `sticky` argument in `colDef()`
+  and `colGroup()` ([#19](https://github.com/glin/reactable/issues/19),
+  [#72](https://github.com/glin/reactable/issues/72),
+  [#141](https://github.com/glin/reactable/issues/141)).
 * `reactable()` gains a `paginateSubRows` argument to include grouped sub rows
   in pagination. This is recommended for larger tables with row groups that may
   not all fit on the page when expanded.

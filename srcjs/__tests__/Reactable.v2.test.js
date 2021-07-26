@@ -2330,6 +2330,366 @@ describe('column resizing', () => {
   })
 })
 
+describe('sticky columns', () => {
+  // For testing resizing
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb())
+  })
+
+  afterEach(() => {
+    window.requestAnimationFrame.mockRestore()
+  })
+
+  it('sticky left', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'], d: ['e', 'f'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-a',
+          headerClassName: 'col-a',
+          footerClassName: 'col-a'
+        },
+        {
+          name: 'b',
+          accessor: 'b',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-b',
+          headerClassName: 'col-b',
+          footerClassName: 'col-b'
+        },
+        {
+          name: 'c',
+          accessor: 'c',
+          footer: 'ftr',
+          className: 'col-c',
+          headerClassName: 'col-c',
+          footerClassName: 'col-c'
+        },
+        {
+          name: 'd',
+          accessor: 'd',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-d',
+          headerClassName: 'col-d',
+          footerClassName: 'col-d'
+        }
+      ],
+      columnGroups: [
+        { name: 'group-ab', columns: ['a', 'b'], sticky: 'left' },
+        { name: 'group-c', columns: ['c'] },
+        { name: 'group-d', columns: ['d'], sticky: 'left' }
+      ],
+      filterable: true,
+      minRows: 3
+    }
+    const { container } = render(<Reactable {...props} />)
+    const [padCellA, padCellB, padCellC, padCellD] = getCells(getPadRows(container)[0])
+
+    const cellsA = [...container.querySelectorAll('.col-a'), padCellA]
+    cellsA.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 0'))
+    cellsA.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsB = [...container.querySelectorAll('.col-b'), padCellB]
+    cellsB.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 100px'))
+    cellsB.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsC = [...container.querySelectorAll('.col-c'), padCellC]
+    cellsC.forEach(cell => expect(cell).not.toHaveStyle('position: sticky'))
+    cellsC.forEach(cell => expect(cell).not.toHaveClass('rt-sticky'))
+    const cellsD = [...container.querySelectorAll('.col-d'), padCellD]
+    cellsD.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 200px'))
+    cellsD.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+
+    const [groupAB, groupC, groupD] = getGroupHeaders(container)
+    expect(groupAB).toHaveStyle('position: sticky; left: 0')
+    expect(groupAB).toHaveClass('rt-sticky')
+    expect(groupC).not.toHaveStyle('position: sticky')
+    expect(groupC).not.toHaveClass('rt-sticky')
+    expect(groupD).toHaveStyle('position: sticky; left: 200px')
+    expect(groupD).toHaveClass('rt-sticky')
+  })
+
+  it('sticky right', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'], d: ['e', 'f'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          footer: 'ftr',
+          sticky: 'right',
+          className: 'col-a',
+          headerClassName: 'col-a',
+          footerClassName: 'col-a'
+        },
+        {
+          name: 'b',
+          accessor: 'b',
+          footer: 'ftr',
+          sticky: 'right',
+          className: 'col-b',
+          headerClassName: 'col-b',
+          footerClassName: 'col-b'
+        },
+        {
+          name: 'c',
+          accessor: 'c',
+          footer: 'ftr',
+          className: 'col-c',
+          headerClassName: 'col-c',
+          footerClassName: 'col-c'
+        },
+        {
+          name: 'd',
+          accessor: 'd',
+          footer: 'ftr',
+          sticky: 'right',
+          className: 'col-d',
+          headerClassName: 'col-d',
+          footerClassName: 'col-d'
+        }
+      ],
+      columnGroups: [
+        { name: 'group-ab', columns: ['a', 'b'], sticky: 'right' },
+        { name: 'group-c', columns: ['c'] },
+        { name: 'group-d', columns: ['d'], sticky: 'right' }
+      ],
+      filterable: true,
+      minRows: 3
+    }
+    const { container } = render(<Reactable {...props} />)
+    const [padCellA, padCellB, padCellC, padCellD] = getCells(getPadRows(container)[0])
+
+    const cellsD = [...container.querySelectorAll('.col-d'), padCellD]
+    cellsD.forEach(cell => expect(cell).toHaveStyle('position: sticky; right: 0'))
+    cellsD.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsC = [...container.querySelectorAll('.col-c'), padCellC]
+    cellsC.forEach(cell => expect(cell).not.toHaveStyle('position: sticky'))
+    cellsC.forEach(cell => expect(cell).not.toHaveClass('rt-sticky'))
+    const cellsB = [...container.querySelectorAll('.col-b'), padCellB]
+    cellsB.forEach(cell => expect(cell).toHaveStyle('position: sticky; right: 100px'))
+    cellsB.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsA = [...container.querySelectorAll('.col-a'), padCellA]
+    cellsA.forEach(cell => expect(cell).toHaveStyle('position: sticky; right: 200px'))
+    cellsA.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+
+    const [groupAB, groupC, groupD] = getGroupHeaders(container)
+    expect(groupD).toHaveStyle('position: sticky; right: 0')
+    expect(groupD).toHaveClass('rt-sticky')
+    expect(groupC).not.toHaveStyle('position: sticky')
+    expect(groupC).not.toHaveClass('rt-sticky')
+    expect(groupAB).toHaveStyle('position: sticky; right: 100px')
+    expect(groupAB).toHaveClass('rt-sticky')
+  })
+
+  it('sticky columns work with resizing', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'], d: ['e', 'f'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-a',
+          headerClassName: 'col-a',
+          footerClassName: 'col-a'
+        },
+        {
+          name: 'b',
+          accessor: 'b',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-b',
+          headerClassName: 'col-b',
+          footerClassName: 'col-b'
+        },
+        {
+          name: 'c',
+          accessor: 'c',
+          footer: 'ftr',
+          className: 'col-c',
+          headerClassName: 'col-c',
+          footerClassName: 'col-c'
+        },
+        {
+          name: 'd',
+          accessor: 'd',
+          footer: 'ftr',
+          sticky: 'left',
+          className: 'col-d',
+          headerClassName: 'col-d',
+          footerClassName: 'col-d'
+        }
+      ],
+      columnGroups: [
+        { name: 'group-ab', columns: ['a', 'b'], sticky: 'left' },
+        { name: 'group-c', columns: ['c'] },
+        { name: 'group-d', columns: ['d'], sticky: 'left' }
+      ],
+      filterable: true,
+      resizable: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    const [headerA, headerB] = getColumnHeaders(container)
+    const resizerA = getResizers(headerA)[0]
+    const resizerB = getResizers(headerB)[0]
+    expect(headerA).toHaveStyle('width: 100px; flex: 100 0 auto')
+    expect(headerB).toHaveStyle('width: 100px; flex: 100 0 auto')
+
+    // Mock the DOM widths, which can be different from style.width
+    headerA.getBoundingClientRect = jest.fn(() => ({ width: 120 }))
+    headerB.getBoundingClientRect = jest.fn(() => ({ width: 120 }))
+
+    // Resizing header 120+70px
+    fireEvent.mouseDown(resizerA, { clientX: 0 })
+    fireEvent.mouseMove(resizerA, { clientX: 70 })
+    fireEvent.mouseUp(resizerA, { clientX: 70 })
+    expect(headerA).toHaveStyle('width: 190px; flex: 0 0 auto')
+
+    // Resizing header 120+50px
+    fireEvent.mouseDown(resizerB, { clientX: 0 })
+    fireEvent.mouseMove(resizerB, { clientX: 50 })
+    fireEvent.mouseUp(resizerB, { clientX: 50 })
+    expect(headerB).toHaveStyle('width: 170px; flex: 0 0 auto')
+
+    const cellsA = container.querySelectorAll('.col-a')
+    cellsA.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 0'))
+    cellsA.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsB = container.querySelectorAll('.col-b')
+    cellsB.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 190px'))
+    cellsB.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsC = container.querySelectorAll('.col-c')
+    cellsC.forEach(cell => expect(cell).not.toHaveStyle('position: sticky'))
+    cellsC.forEach(cell => expect(cell).not.toHaveClass('rt-sticky'))
+    const cellsD = container.querySelectorAll('.col-d')
+    cellsD.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 360px'))
+    cellsD.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+
+    const [groupAB, groupC, groupD] = getGroupHeaders(container)
+    expect(groupAB).toHaveStyle('position: sticky; left: 0')
+    expect(groupAB).toHaveClass('rt-sticky')
+    expect(groupC).not.toHaveStyle('position: sticky')
+    expect(groupC).not.toHaveClass('rt-sticky')
+    expect(groupD).toHaveStyle('position: sticky; left: 360px')
+    expect(groupD).toHaveClass('rt-sticky')
+  })
+
+  it('all columns in a group have the same sticky property', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'], d: ['e', 'f'], e: [3, 4] },
+      columns: [
+        {
+          name: 'a - sticky col with ungrouped header',
+          accessor: 'a',
+          sticky: 'left',
+          className: 'col-a',
+          headerClassName: 'col-a'
+        },
+        {
+          name: 'b - group with different sticky props',
+          accessor: 'b',
+          sticky: 'left',
+          className: 'col-b',
+          headerClassName: 'col-b'
+        },
+        {
+          name: 'c - group with different sticky props',
+          accessor: 'c',
+          sticky: 'right',
+          className: 'col-c',
+          headerClassName: 'col-c'
+        },
+        {
+          name: 'd - non-sticky col with sticky group header',
+          accessor: 'd',
+          className: 'col-d',
+          headerClassName: 'col-d'
+        },
+        {
+          name: 'e - sticky col with sticky group header',
+          accessor: 'e',
+          sticky: 'left',
+          className: 'col-e',
+          headerClassName: 'col-e'
+        }
+      ],
+      columnGroups: [
+        { name: 'group-bc', columns: ['b', 'c'] },
+        { name: 'group-de', columns: ['d', 'e'], sticky: 'right' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const [ungroupedA] = getUngroupedHeaders(container)
+    const [groupBC, groupDE] = getGroupHeaders(container)
+
+    expect(ungroupedA).toHaveStyle('position: sticky; left: 0')
+    expect(ungroupedA).toHaveClass('rt-sticky')
+    const cellsA = container.querySelectorAll('.col-a')
+    cellsA.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 0'))
+    cellsA.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+
+    expect(groupBC).toHaveStyle('position: sticky; left: 100px')
+    expect(groupBC).toHaveClass('rt-sticky')
+    const cellsB = container.querySelectorAll('.col-b')
+    cellsB.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 100px'))
+    cellsB.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsC = container.querySelectorAll('.col-c')
+    cellsC.forEach(cell => expect(cell).toHaveStyle('position: sticky; left: 200px'))
+    cellsC.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+
+    expect(groupDE).toHaveStyle('position: sticky; right: 0')
+    expect(groupDE).toHaveClass('rt-sticky')
+    const cellsD = container.querySelectorAll('.col-d')
+    cellsD.forEach(cell => expect(cell).toHaveStyle('position: sticky; right: 100px'))
+    cellsD.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+    const cellsE = container.querySelectorAll('.col-e')
+    cellsE.forEach(cell => expect(cell).toHaveStyle('position: sticky; right: 0'))
+    cellsE.forEach(cell => expect(cell).toHaveClass('rt-sticky'))
+  })
+
+  it('sticky columns work with row highlighting and row striping', () => {
+    const props = {
+      data: { a: [1, 2], b: ['a', 'b'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      columnGroups: [{ name: 'group-ab', columns: ['a', 'b'] }],
+      highlight: true,
+      striped: true,
+      minRows: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    let rows = getRows(container)
+    rows.forEach((row, index) => {
+      expect(row).toHaveClass('rt-tr-highlight')
+      if (index % 2 === 0) {
+        expect(row).toHaveClass('rt-tr-striped')
+      }
+    })
+
+    const columns = [
+      { name: 'a', accessor: 'a', sticky: 'left' },
+      { name: 'b', accessor: 'b' }
+    ]
+    rerender(<Reactable {...props} columns={columns} />)
+    rows = getRows(container)
+    rows.forEach((row, index) => {
+      expect(row).not.toHaveClass('rt-tr-highlight')
+      expect(row).toHaveClass('rt-tr-highlight-sticky')
+      if (index % 2 === 0) {
+        expect(row).not.toHaveClass('rt-tr-striped')
+        expect(row).toHaveClass('rt-tr-striped-sticky')
+      }
+    })
+  })
+})
+
 describe('no data', () => {
   it('renders no data message in table body', () => {
     const props = {

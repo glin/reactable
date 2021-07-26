@@ -993,31 +993,6 @@ reactable(
 )
 ```
 
-### Sticky columns
-You can freeze columns by applying the [`position: sticky`](https://developer.mozilla.org/en-US/docs/Web/CSS/position)
-and appropriate [`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left)
-or [`right`](https://developer.mozilla.org/en-US/docs/Web/CSS/right) CSS properties
-to columns. This gets complicated when freezing multiple columns, but reactable
-will make this easier in a future release.
-
-See [Sticky Columns](sticky-columns.html) for more details and examples.
-
-```{r}
-sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
-                     borderRight = "1px solid #eee")
-
-reactable(
-  MASS::Cars93[1:5, ],
-  columns = list(
-    Manufacturer = colDef(
-      style = sticky_style,
-      headerStyle = sticky_style
-    )
-  ),
-  defaultColDef = colDef(minWidth = 150)
-)
-```
-
 ### Column widths
 By default, columns have a minimum width of 100px and stretch to fill the table.
 You can control the width of a column using the following arguments in `colDef()`:
@@ -1291,6 +1266,93 @@ reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 ```
 
 
+## Sticky Columns
+
+> New in v0.2.3.9000
+
+You can make columns sticky when scrolling horizontally using the `sticky`
+argument in `colDef()` or `colGroup()`. Set `sticky` to either `"left"`
+or `"right"` to make the column stick to the left or right side.
+
+```{r}
+reactable(
+  MASS::Cars93[1:5, ],
+  columns = list(
+    Manufacturer = colDef(
+      sticky = "left",
+      # Add a right border style to visually distinguish the sticky column
+      style = list(borderRight = "1px solid #eee"),
+      headerStyle = list(borderRight = "1px solid #eee")
+    ),
+    Make = colDef(
+      sticky = "right",
+      # Add a left border style to visually distinguish the sticky column
+      style = list(borderLeft = "1px solid #eee"),
+      headerStyle = list(borderLeft = "1px solid #eee")
+    )
+  ),
+  defaultColDef = colDef(minWidth = 150)
+)
+```
+
+> **NOTE:** Sticky columns are not supported in IE11.
+
+Before v0.2.3.9000, columns could be made sticky by applying custom styles.
+This method was harder to use and did not work well with column resizing,
+row highlighting, or row striping. See [Sticky Columns](sticky-columns.html)
+for examples of the previous method.
+
+### Multiple sticky columns
+
+```{r}
+# Background style to visually distinguish sticky columns
+sticky_style <- list(backgroundColor = "#f7f7f7")
+
+reactable(
+  MASS::Cars93[1:5, ],
+  columns = list(
+    Manufacturer = colDef(
+      sticky = "left",
+      style = sticky_style,
+      headerStyle = sticky_style
+    ),
+    Model = colDef(
+      sticky = "left",
+      style = sticky_style,
+      headerStyle = sticky_style
+    ),
+    Type = colDef(
+      sticky = "left",
+      style = sticky_style,
+      headerStyle = sticky_style
+    )
+  ),
+  resizable = TRUE,
+  wrap = FALSE,
+  bordered = TRUE
+)
+```
+
+### Sticky column groups
+
+If a column group is sticky, all columns in the group will automatically be
+made sticky.
+
+```{r}
+reactable(
+  MASS::Cars93[1:5, ],
+  columnGroups = list(
+    colGroup("Make", columns = c("Manufacturer", "Model"), sticky = "left"),
+    colGroup("Price", columns = c("Min.Price", "Price", "Max.Price"), sticky = "left")
+  ),
+  defaultColDef = colDef(footer = "Footer"),
+  resizable = TRUE,
+  wrap = FALSE,
+  bordered = TRUE
+)
+```
+
+
 ## Row Names
 Row names are shown by default, if present. You can customize the row names column
 using `".rownames"` as the column name:
@@ -1527,15 +1589,19 @@ reactable(
 You can customize the selection column using `".selection"` as the column name:
 ```{r}
 reactable(
-  iris[1:4, ],
-  selection = "multiple",
+  MASS::Cars93[1:4, ],
   columns = list(
     .selection = colDef(
       width = 80,
+      sticky = "left",
       style = list(cursor = "pointer"),
       headerStyle = list(cursor = "pointer")
     )
   ),
+  selection = "multiple",
+  onClick = "select",
+  resizable = TRUE,
+  wrap = FALSE,
   bordered = TRUE
 )
 ```
