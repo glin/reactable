@@ -797,6 +797,9 @@ reactable(
   borderless = TRUE,
   rowStyle = JS("
     function(rowInfo, state) {
+      // Ignore padding rows
+      if (!rowInfo) return
+
       // Add horizontal separators between groups when sorting by school
       var firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'School') {
