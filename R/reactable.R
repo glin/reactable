@@ -106,6 +106,7 @@
 #' @param captionStyle CSS styling of caption underneath table, defaults to NULL.
 #' @param logoStyle CSS styling of logo underneath table, defaults to `float: right;margin-right:10px;width:200px;`.
 #' @param googlefonts List of Google fonts to import.
+#' @param tableBackground Background color behind table.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -185,6 +186,7 @@ reactable <- function(data,
                       subtitleStyle = NULL,
                       captionStyle = NULL,
                       logoStyle = NULL,
+                      tableBackground = NULL,
                       googlefonts = NULL,
                       theme = getOption("reactable.theme"),
                       language = getOption("reactable.language"),
@@ -658,7 +660,7 @@ reactable <- function(data,
   content_tags$style_tag <-
     htmltools::tags$style(
       paste0(
-        "#reactable-title {",titleStyle,"} #reactable-subtitle {",subtitleStyle,"} #reactable-caption {",captionStyle,"} #reactable-logo img {",logoStyle,"}"))
+        "body {background-color: ",tableBackground,";} #reactable-title {",titleStyle,"} #reactable-subtitle {",subtitleStyle,"} #reactable-caption {",captionStyle,"} #reactable-logo img {",logoStyle,"}"))
 
 
   content <- htmltools::tag("div", unname(content_tags))
