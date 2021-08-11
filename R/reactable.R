@@ -660,8 +660,7 @@ reactable <- function(data,
   content_tags$style_tag <-
     htmltools::tags$style(
       paste0(
-        "body {background-color: ",tableBackground,";} #reactable-title {",titleStyle,"} #reactable-subtitle {",subtitleStyle,"} #reactable-caption {",captionStyle,"} #reactable-logo img {",logoStyle,"}"))
-
+        ".reactable {background-color:",tableBackground,";} #reactable-title {",titleStyle,"} #reactable-subtitle {",subtitleStyle,"} #reactable-caption {",captionStyle,"} #reactable-logo img {",logoStyle,"}"))
 
   content <- htmltools::tag("div", unname(content_tags))
 
