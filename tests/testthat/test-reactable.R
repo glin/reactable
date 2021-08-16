@@ -18,7 +18,7 @@ getElement <- function(widget, elementType){
 
   type <- paste0("reactable-", elementType)
 
-  if(!type %in% element_ids) stop("Table does not have ", elementType, " element.")
+  if(!type %in% element_ids) stop("Table does not have a ", elementType, " element.")
 
   element_index <- match(type, element_ids)
 
@@ -195,12 +195,28 @@ test_that("reactable", {
 })
 
 test_that("extra elements created", {
-  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
-                   title = "some title",
-                   subtitle = "some subtitle",
-                   caption = "some caption",
-                   logo = "some logo")
+  title <- "some title"
+  subtitle <- "some subtitle"
+  caption <- "some caption"
+  logo <- "logo"
 
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
+                   title = title,
+                   subtitle = subtitle,
+                   caption = caption,
+                   logo = logo)
+
+  expect_equal(getElement(tbl, elementType = "title"), title)
+  expect_equal(getElement(tbl, elementType = "subtitle"), subtitle)
+  expect_equal(getElement(tbl, elementType = "caption"), caption)
+  expect_equal(getElement(tbl, elementType = "logo"), logo)
+
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
+                   subtitle = subtitle,
+                   caption = caption,
+                   logo = logo)
+
+  expect_error(getElement(tbl, elementType = "title"), "Table does not have a title element.")
 
 })
 
