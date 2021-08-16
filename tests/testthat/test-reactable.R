@@ -1,6 +1,18 @@
 library(htmltools)
 
-getAttribs <- function(widget) widget$x$tag$children[[1]]$attribs
+# getAttribs <- function(widget) widget$x$tag$children[[3]]$attribs
+
+getChildrenAttribs <- function(widget) widget$x$tag$children %>% purrr::map(~ .x$attribs)
+
+getAttribs <- function(widget){
+  children_attribs <- getChildrenAttribs(widget)
+  table_attribs <- children_attribs %>% purrr::keep(~ !is.null(.x$data))
+  table_attribs[[1]]
+}
+
+
+
+# ls <- widget$x$tag$children %>% purrr::map(function(.x){grepl("id=\\\"reactable-", .x)})
 
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
@@ -167,6 +179,16 @@ test_that("reactable", {
   tbl <- reactable(data.frame(x = 1), style = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$style, list("border-bottom" = "1px solid", top = "50px"))
+})
+
+test_that("extra elements created", {
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
+                   title = "some title",
+                   subtitle = "some subtitle",
+                   caption = "some caption",
+                   logo = "some logo")
+
+
 })
 
 test_that("data can be a matrix", {
