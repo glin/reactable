@@ -1,18 +1,31 @@
 library(htmltools)
 
-# getAttribs <- function(widget) widget$x$tag$children[[3]]$attribs
-
 getChildrenAttribs <- function(widget) widget$x$tag$children %>% purrr::map(~ .x$attribs)
 
 getAttribs <- function(widget){
   children_attribs <- getChildrenAttribs(widget)
-  table_attribs <- children_attribs %>% purrr::keep(~ !is.null(.x$data))
+  table_attribs <- children_attribs %>% purrr::compact("data")
   table_attribs[[1]]
 }
 
+getElement <- function(widget, elementType){
+  children_attribs <- getChildrenAttribs(widget)
+  element_ids <- children_attribs %>% purrr::compact("id") %>% unlist()
 
+  if(length(element_ids) == 0) return(warning("Table does not have extra elements."))
 
-# ls <- widget$x$tag$children %>% purrr::map(function(.x){grepl("id=\\\"reactable-", .x)})
+  if(!elementType %in% c("title", "subtitle", "caption", "logo")) return(warning("Not a valid elementType."))
+
+  type <- paste0("reactable-", elementType)
+
+  if(!type %in% element_ids) stop("Table does not have ", elementType, " element.")
+
+  element_index <- match(type, element_ids)
+
+  if(elementType %in% c("caption", "logo")) element_index <- element_index + 1
+
+  widget$x$tag$children[[element_index]][[3]][[1]]
+}
 
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
