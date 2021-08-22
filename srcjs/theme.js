@@ -91,6 +91,7 @@ export function createTheme(options) {
       // For vertical borders
       borderColor: groupHeaderBorderColor,
       borderWidth: groupHeaderBorderWidth,
+      padding: cellPadding,
       ...groupHeaderStyle,
       // For horizontal borders
       '&::after': {

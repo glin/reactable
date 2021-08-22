@@ -103,6 +103,7 @@ where possible, but note that there are several breaking changes.
   filtering, or paging through the table.
 * In `reactableTheme()`, `filterInputStyle` now applies correctly when rerendering
   a table in Shiny ([#186](https://github.com/glin/reactable/issues/186)).
+* In `reactableTheme()`, `cellPadding` now applies to column group headers correctly.
 * Columns with square brackets (`[` or `]`) in their column name now render correctly
   ([#187](https://github.com/glin/reactable/issues/187)).
 

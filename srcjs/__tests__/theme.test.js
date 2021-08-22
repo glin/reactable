@@ -85,6 +85,7 @@ describe('createTheme', () => {
       groupHeaderStyle: {
         borderColor: 'groupHeaderBorderColor',
         borderWidth: 'groupHeaderBorderWidth',
+        padding: 'cellPadding',
         groupHeaderStyle: 'groupHeaderStyle',
         '&::after': {
           backgroundColor: 'groupHeaderBorderColor',
