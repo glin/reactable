@@ -713,6 +713,23 @@ describe('cells', () => {
     expect(cellsB[1].textContent).toEqual('\u200b')
   })
 
+  it('renders cells with path characters in accessor', () => {
+    const props = {
+      data: {
+        'a.b': [1],
+        'x[]': ['a'],
+        'x[0].b': ['b']
+      },
+      columns: [
+        { name: 'a.b', accessor: 'a.b' },
+        { name: 'x[]', accessor: 'x[]' },
+        { name: 'x[0].b', accessor: 'x[0].b' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCellsText(container)).toEqual(['1', 'a', 'b'])
+  })
+
   it('cell formatting', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },

@@ -35,8 +35,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
   columns = columns.map(column => {
     let col = { ...column }
     col.id = col.accessor
-    if (col.accessor.includes('.')) {
-      // Interpret column names with dots as IDs, not paths
+    // Interpret column names with dots and square brackets as IDs, not paths
+    if (col.accessor.includes('.') || col.accessor.includes('[') || col.accessor.includes(']')) {
       col.accessor = data => data[col.id]
     }
 

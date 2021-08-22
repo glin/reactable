@@ -101,6 +101,8 @@ where possible, but note that there are several breaking changes.
 * The page info and "no rows found" message are now marked as ARIA live regions
   so that page changes can be announced by assistive technologies when searching,
   filtering, or paging through the table.
+* Columns with square brackets (`[` or `]`) in their column name now render correctly
+  ([#187](https://github.com/glin/reactable/issues/187)).
 
 # reactable 0.2.3
 

@@ -29,9 +29,15 @@ describe('buildColumnDefs', () => {
     cols.forEach(col => expect(col.id).toEqual(col.accessor))
   })
 
-  test('accessors with dots', () => {
-    const cols = buildColumnDefs([{ accessor: 'petal.width' }])
+  test('accessors with path characters (dots or square brackets) work', () => {
+    const cols = buildColumnDefs([
+      { accessor: 'petal.width' },
+      { accessor: 'x[' },
+      { accessor: 'y]' }
+    ])
     expect(cols[0].accessor({ 'petal.width': 5 })).toEqual(5)
+    expect(cols[1].accessor({ 'x[': 6 })).toEqual(6)
+    expect(cols[2].accessor({ 'y]': 7 })).toEqual(7)
   })
 
   test('aggregators', () => {
