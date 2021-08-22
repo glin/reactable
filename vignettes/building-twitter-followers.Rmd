@@ -153,7 +153,7 @@ reactable, and show a typical workflow for building tables.
 FiveThirtyEight shares the data for many of their articles online at
 https://data.fivethirtyeight.com, licensed under [CC by 4.0](https://github.com/fivethirtyeight/data/blob/master/LICENSE).
 
-You can find the raw data for this article [here](https://github.com/fivethirtyeight/twitter-overlap),
+You can download the [raw data](https://github.com/fivethirtyeight/twitter-overlap) for this article,
 but we'll conveniently begin working with a cleaned CSV file:
 https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv
 
@@ -221,7 +221,7 @@ have to manually format the numbers and percentages now. Custom cell renderers
 override column formatters, but this may change in the future.
 
 > If you're ever curious to see how an HTML table was made, you can open
-> your browser's [developer tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+> your [browser's developer tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
 > and inspect the HTML and CSS behind the table. This is how we figured out
 > how the bar charts were made, which colors and fonts were used, and so on.
 
@@ -278,11 +278,11 @@ One way to do this would be to format the labels as fixed-width strings, and use
 a monospaced font so that each character takes up the same width. (An alternate
 method is shown in the [Demo Cookbook](cookbook/cookbook.html#units-on-first-row-only).)
 
-> Some fonts have numerals that are all equal in width, others do not.
-> In tables with numeric columns, using a font with tabular (or monospaced)
+> Some fonts have numerals that are all equal in width, but others do not.
+> In tables with numeric columns, using a font with tabular or monospaced
 > figures can make the numbers easier to align and read. You can learn more
-> about the different types of fonts
-> [here](https://www.fonts.com/content/learning/fontology/level-3/numbers/proportional-vs-tabular-figures).
+> about the different types of fonts in this article,
+> [Proportional vs. Tabular Figures](https://www.fonts.com/content/learning/fontology/level-3/numbers/proportional-vs-tabular-figures).
 
 ```{r}
 reactable(

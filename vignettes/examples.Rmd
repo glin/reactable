@@ -384,9 +384,9 @@ the browser. This means users may see different results, depending on the langua
 preferences for their browser.
 
 To use a specific locale for data formatting, provide a vector of BCP 47 language
-tags in the `locales` argument. See
-[here](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
-for a list of common BCP 47 language tags.
+tags in the `locales` argument. See a list of
+[common BCP 47 language tags](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
+for reference.
 
 ### Date formatting
 ```{r}
@@ -1774,8 +1774,9 @@ reactable(data)
 filter_slider("sepal_length", "Sepal Length", data, ~Sepal.Length)
 ```
 
-For more examples and a list of Crosstalk-compatible widgets, check out the
-Crosstalk documentation: https://rstudio.github.io/crosstalk/using.html
+For more examples and a list of Crosstalk-compatible widgets, check out
+[Using Crosstalk](https://rstudio.github.io/crosstalk/using.html)
+in the Crosstalk package documentation.
 
 ### Filtering
 
