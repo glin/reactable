@@ -1104,10 +1104,12 @@ cat('```{css, echo=FALSE}
 ```')
 ```
 
-The examples here embed CSS for demonstration, but it's often better to put CSS
-in an external style sheet. You can learn more about adding custom CSS to R Markdown
-documents [here](https://bookdown.org/yihui/rmarkdown/html-document.html#custom-css),
-or to Shiny apps [here](https://shiny.rstudio.com/articles/css.html).
+The examples here embed CSS for demonstration, but it's sometimes better to add CSS
+through an external style sheet. To learn more about adding custom CSS through an
+external style sheet:
+
+- [Using custom CSS in R Markdown documents](https://bookdown.org/yihui/rmarkdown/html-document.html#custom-css)
+- [Using custom CSS in Shiny apps](https://shiny.rstudio.com/articles/css.html)
 
 
 ## Theming
