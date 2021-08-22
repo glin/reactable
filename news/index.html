@@ -251,6 +251,8 @@
 <code><a href="../reference/reactableLang.html">reactableLang()</a></code> gains the <code>groupExpandLabel</code> and <code>groupCollapseLabel</code> arguments to customize the accessible labels for row group expand buttons.</li>
 <li>Cells in the row names column are now marked up as row headers for assistive technologies.</li>
 <li>The page info and “no rows found” message are now marked as ARIA live regions so that page changes can be announced by assistive technologies when searching, filtering, or paging through the table.</li>
+<li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>filterInputStyle</code> now applies correctly when rerendering a table in Shiny (<a href="https://github.com/glin/reactable/issues/186"><a href='https://github.com/glin/reactable/issues/186'>#186</a></a>).</li>
+<li>Columns with square brackets (<code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> or <code>]</code>) in their column name now render correctly (<a href="https://github.com/glin/reactable/issues/187"><a href='https://github.com/glin/reactable/issues/187'>#187</a></a>).</li>
 </ul>
 </div>
 </div>
