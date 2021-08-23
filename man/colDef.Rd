@@ -95,7 +95,9 @@ By default, missing values are displayed as blank cells.}
 
 \item{width}{Fixed width of the column in pixels. Overrides \code{minWidth} and \code{maxWidth}.}
 
-\item{align}{Column alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
+\item{align}{Horizontal alignment of content in the column. One of
+\code{"left"}, \code{"right"}, \code{"center"}. By default, all numbers are right-aligned,
+while all other content is left-aligned.}
 
 \item{sticky}{Make the column sticky when scrolling horizontally? Either
 \code{"left"} or \code{"right"} to make the column stick to the left or right side.

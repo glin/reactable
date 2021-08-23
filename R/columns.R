@@ -41,7 +41,9 @@
 #' @param minWidth Minimum width of the column in pixels. Defaults to 100.
 #' @param maxWidth Maximum width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
-#' @param align Column alignment. One of `"left"`, `"right"`, `"center"`.
+#' @param align Horizontal alignment of content in the column. One of
+#'   `"left"`, `"right"`, `"center"`. By default, all numbers are right-aligned,
+#'   while all other content is left-aligned.
 #' @param sticky Make the column sticky when scrolling horizontally? Either
 #'   `"left"` or `"right"` to make the column stick to the left or right side.
 #'
@@ -277,7 +279,8 @@ isDescOrder <- function(x) {
 #' @param header Custom header renderer. An R function that takes the header value
 #'   as an argument, or a [JS()] function that takes a column info object as an argument.
 #' @param html Render header content as HTML? Raw HTML strings are escaped by default.
-#' @param align Column group header alignment. One of `"left"`, `"right"`, `"center"`.
+#' @param align Horizontal alignment of content in the column group header. One of
+#'   `"left"`, `"right"`, `"center"` (the default).
 #' @param sticky Make the column group sticky when scrolling horizontally? Either
 #'   `"left"` or `"right"` to make the column group stick to the left or right side.
 #'

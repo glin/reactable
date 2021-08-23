@@ -25,7 +25,8 @@ as an argument, or a \code{\link[=JS]{JS()}} function that takes a column info o
 
 \item{html}{Render header content as HTML? Raw HTML strings are escaped by default.}
 
-\item{align}{Column group header alignment. One of \code{"left"}, \code{"right"}, \code{"center"}.}
+\item{align}{Horizontal alignment of content in the column group header. One of
+\code{"left"}, \code{"right"}, \code{"center"} (the default).}
 
 \item{sticky}{Make the column group sticky when scrolling horizontally? Either
 \code{"left"} or \code{"right"} to make the column group stick to the left or right side.
