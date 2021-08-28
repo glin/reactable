@@ -144,7 +144,8 @@ box_score_tbl <- function(player_stats, team_stats, team) {
     showSortIcon = FALSE,
     highlight = TRUE,
     striped = TRUE,
-    class = "box-score-tbl"
+    class = "box-score-tbl",
+    theme = reactableTheme(cellPadding = "8px")
   )
 }
 
@@ -240,7 +241,6 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
 }
 
 .box-score-header {
-  padding: 8px !important;
   border-bottom-width: 1px;
   background-color: hsl(205, 93%, 16%);
   color: hsl(0, 0%, 98%);
