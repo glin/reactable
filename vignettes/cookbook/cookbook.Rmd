@@ -441,7 +441,7 @@ reactable(
       cell = function(value, index) {
         species <- data$species[index]
         species <- if (!is.na(species)) species else "Unknown"
-        tagList(
+        div(
           div(style = list(fontWeight = 600), value),
           div(style = list(fontSize = 12), species)
         )
@@ -468,8 +468,10 @@ reactable(
       cell = JS("function(cellInfo) {
         var species = cellInfo.row['species'] || 'Unknown'
         return (
+          '<div>' +
           '<div style=\"font-weight: 600\">' + cellInfo.value + '</div>' +
-          '<div style=\"font-size: 12px\">' + species + '</div>'
+          '<div style=\"font-size: 12px\">' + species + '</div>' +
+          '</div>'
         )
       }"),
       html = TRUE
