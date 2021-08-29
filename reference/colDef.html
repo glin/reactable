@@ -206,6 +206,8 @@
   maxWidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   align <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vAlign <span class='op'>=</span> <span class='cn'>NULL</span>,
+  headerVAlign <span class='op'>=</span> <span class='cn'>NULL</span>,
   sticky <span class='op'>=</span> <span class='cn'>NULL</span>,
   class <span class='op'>=</span> <span class='cn'>NULL</span>,
   style <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -318,7 +320,19 @@ By default, missing values are displayed as blank cells.</p></td>
     </tr>
     <tr>
       <th>align</th>
-      <td><p>Column alignment. One of <code>"left"</code>, <code>"right"</code>, <code>"center"</code>.</p></td>
+      <td><p>Horizontal alignment of content in the column. One of
+<code>"left"</code>, <code>"right"</code>, <code>"center"</code>. By default, all numbers are right-aligned,
+while all other content is left-aligned.</p></td>
+    </tr>
+    <tr>
+      <th>vAlign</th>
+      <td><p>Vertical alignment of content in data cells. One of <code>"top"</code>
+(the default), <code>"center"</code>, <code>"bottom"</code>.</p></td>
+    </tr>
+    <tr>
+      <th>headerVAlign</th>
+      <td><p>Vertical alignment of content in header cells. One of
+<code>"top"</code> (the default), <code>"center"</code>, <code>"bottom"</code>.</p></td>
     </tr>
     <tr>
       <th>sticky</th>

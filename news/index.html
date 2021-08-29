@@ -190,6 +190,7 @@
 <li>Column group headers can now be resized.</li>
 <li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107"><a href='https://github.com/glin/reactable/issues/107'>#107</a></a>).</li>
 <li>Sticky columns are now supported using a new <code>sticky</code> argument in <code><a href="../reference/colDef.html">colDef()</a></code> and <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/19"><a href='https://github.com/glin/reactable/issues/19'>#19</a></a>, <a href="https://github.com/glin/reactable/issues/72"><a href='https://github.com/glin/reactable/issues/72'>#72</a></a>, <a href="https://github.com/glin/reactable/issues/141"><a href='https://github.com/glin/reactable/issues/141'>#141</a></a>).</li>
+<li>Cell content can now be vertically aligned using the new <code>vAlign</code> and <code>headerVAlign</code> arguments in <code><a href="../reference/colDef.html">colDef()</a></code>, and the new <code>headerVAlign</code> argument in <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/142"><a href='https://github.com/glin/reactable/issues/142'>#142</a></a>, <a href="https://github.com/glin/reactable/issues/177"><a href='https://github.com/glin/reactable/issues/177'>#177</a></a>).</li>
 <li>
 <code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>paginateSubRows</code> argument to include grouped sub rows in pagination. This is recommended for larger tables with row groups that may not all fit on the page when expanded.</li>
 <li>Expanded rows now stay expanded on sorting, filtering, and pagination changes. Previously, expanded rows were always collapsed on sorting and pagination changes, and incorrectly persisted on filtering changes (<a href="https://github.com/glin/reactable/issues/39"><a href='https://github.com/glin/reactable/issues/39'>#39</a></a>).</li>
@@ -252,6 +253,7 @@
 <li>Cells in the row names column are now marked up as row headers for assistive technologies.</li>
 <li>The page info and “no rows found” message are now marked as ARIA live regions so that page changes can be announced by assistive technologies when searching, filtering, or paging through the table.</li>
 <li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>filterInputStyle</code> now applies correctly when rerendering a table in Shiny (<a href="https://github.com/glin/reactable/issues/186"><a href='https://github.com/glin/reactable/issues/186'>#186</a></a>).</li>
+<li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>cellPadding</code> now applies to column group headers correctly.</li>
 <li>Columns with square brackets (<code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> or <code>]</code>) in their column name now render correctly (<a href="https://github.com/glin/reactable/issues/187"><a href='https://github.com/glin/reactable/issues/187'>#187</a></a>).</li>
 </ul>
 </div>
