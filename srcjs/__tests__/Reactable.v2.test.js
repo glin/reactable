@@ -706,10 +706,12 @@ describe('cells', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const cellsA = getCells(container, '.col-a')
-    expect(cellsA[0].innerHTML).toEqual(`<div style="display: inline;"><span>cellA</span></div>`)
+    expect(cellsA[0].innerHTML).toEqual(
+      `<div class="rt-td-inner"><div style="display: inline;"><span>cellA</span></div></div>`
+    )
     expect(cellsA[1].textContent).toEqual('\u200b')
     const cellsB = getCells(container, '.col-b')
-    expect(cellsB[0].innerHTML).toEqual('<div>cellB</div>')
+    expect(cellsB[0].innerHTML).toEqual('<div class="rt-td-inner"><div>cellB</div></div>')
     expect(cellsB[1].textContent).toEqual('\u200b')
   })
 
@@ -815,11 +817,10 @@ describe('cells', () => {
       defaultSorted: [{ id: 'a', desc: false }],
       defaultPageSize: 7
     }
-    const { getByText } = render(<Reactable {...props} />)
-    const cellA = getByText('cellA')
+    const { container } = render(<Reactable {...props} />)
+    const [cellA, cellB] = getCells(container)
     expect(cellA).toHaveClass('my-cell')
     expect(cellA).toHaveStyle('background-color: red;')
-    const cellB = getByText('cellB')
     expect(cellB).not.toHaveClass('my-cell')
     expect(cellB).not.toHaveStyle('background-color: red;')
   })
@@ -836,11 +837,10 @@ describe('cells', () => {
         }
       ]
     }
-    const { getByText } = render(<Reactable {...props} />)
-    const cellA = getByText('cellA')
+    const { container } = render(<Reactable {...props} />)
+    const [cellA, cellB] = getCells(container)
     expect(cellA).toHaveClass('my-cell')
     expect(cellA).toHaveStyle('background-color: red;')
-    const cellB = getByText('cellB')
     expect(cellB).not.toHaveClass('my-cell')
     expect(cellB).not.toHaveStyle('background-color: red;')
   })
@@ -862,6 +862,25 @@ describe('cells', () => {
     expect(getCells(container, '.left')[0]).toHaveClass('rt-align-left')
     expect(getCells(container, '.right')[0]).toHaveClass('rt-align-right')
     expect(getCells(container, '.center')[0]).toHaveClass('rt-align-center')
+  })
+
+  it('cell vertical alignment', () => {
+    const props = {
+      data: { a: ['a'], b: [1], c: [3], d: [5] },
+      columns: [
+        { name: 'default', accessor: 'a', className: 'default' },
+        { name: 'top', accessor: 'b', vAlign: 'top', className: 'top' },
+        { name: 'center', accessor: 'c', vAlign: 'center', className: 'center' },
+        { name: 'bottom', accessor: 'd', vAlign: 'bottom', className: 'bottom' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCells(container, '.default')[0]).not.toHaveClass('rt-valign-center')
+    expect(getCells(container, '.default')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getCells(container, '.top')[0]).not.toHaveClass('rt-valign-center')
+    expect(getCells(container, '.top')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getCells(container, '.center')[0]).toHaveClass('rt-valign-center')
+    expect(getCells(container, '.bottom')[0]).toHaveClass('rt-valign-bottom')
   })
 
   it('cells rerender without unmounting', () => {
@@ -1016,6 +1035,25 @@ describe('headers', () => {
     expect(getHeaders(container, '.left')[0]).toHaveClass('rt-align-left')
     expect(getHeaders(container, '.right')[0]).toHaveClass('rt-align-right')
     expect(getHeaders(container, '.center')[0]).toHaveClass('rt-align-center')
+  })
+
+  it('header vertical alignment', () => {
+    const props = {
+      data: { a: ['a'], b: [1], c: [3], d: [5] },
+      columns: [
+        { name: 'default', accessor: 'a', headerClassName: 'default' },
+        { name: 'top', accessor: 'b', headerVAlign: 'top', headerClassName: 'top' },
+        { name: 'center', accessor: 'c', headerVAlign: 'center', headerClassName: 'center' },
+        { name: 'bottom', accessor: 'd', headerVAlign: 'bottom', headerClassName: 'bottom' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getHeaders(container, '.default')[0]).not.toHaveClass('rt-valign-center')
+    expect(getHeaders(container, '.default')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getHeaders(container, '.top')[0]).not.toHaveClass('rt-valign-center')
+    expect(getHeaders(container, '.top')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getHeaders(container, '.center')[0]).toHaveClass('rt-valign-center')
+    expect(getHeaders(container, '.bottom')[0]).toHaveClass('rt-valign-bottom')
   })
 })
 
@@ -1273,6 +1311,43 @@ describe('column groups', () => {
     expect(getGroupHeaders(container, '.right')[0]).toHaveClass('rt-align-right')
     expect(getGroupHeaders(container, '.center')[0]).toHaveClass('rt-align-center')
   })
+
+  it('group header vertical alignment', () => {
+    const props = {
+      data: { a: ['a'], b: [1], c: [3], d: [5] },
+      columns: [
+        { name: 'default', accessor: 'a' },
+        { name: 'left', accessor: 'b' },
+        { name: 'right', accessor: 'c' },
+        { name: 'center', accessor: 'd' }
+      ],
+      columnGroups: [
+        { name: 'default', columns: ['a'], accessor: 'a', headerClassName: 'default' },
+        { name: 'top', columns: ['b'], accessor: 'b', headerVAlign: 'top', headerClassName: 'top' },
+        {
+          name: 'center',
+          columns: ['c'],
+          accessor: 'c',
+          headerVAlign: 'center',
+          headerClassName: 'center'
+        },
+        {
+          name: 'bottom',
+          columns: ['d'],
+          accessor: 'd',
+          headerVAlign: 'bottom',
+          headerClassName: 'bottom'
+        }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getGroupHeaders(container, '.default')[0]).not.toHaveClass('rt-valign-center')
+    expect(getGroupHeaders(container, '.default')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getGroupHeaders(container, '.top')[0]).not.toHaveClass('rt-valign-center')
+    expect(getGroupHeaders(container, '.top')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getGroupHeaders(container, '.center')[0]).toHaveClass('rt-valign-center')
+    expect(getGroupHeaders(container, '.bottom')[0]).toHaveClass('rt-valign-bottom')
+  })
 })
 
 describe('footers', () => {
@@ -1401,6 +1476,25 @@ describe('footers', () => {
     expect(getFooters(container, '.left')[0]).toHaveClass('rt-align-left')
     expect(getFooters(container, '.right')[0]).toHaveClass('rt-align-right')
     expect(getFooters(container, '.center')[0]).toHaveClass('rt-align-center')
+  })
+
+  it('footer vertical alignment', () => {
+    const props = {
+      data: { a: ['a'], b: [1], c: [3], d: [5] },
+      columns: [
+        { name: 'default', accessor: 'a', footer: '', footerClassName: 'default' },
+        { name: 'top', accessor: 'b', vAlign: 'top', footerClassName: 'top' },
+        { name: 'center', accessor: 'c', vAlign: 'center', footerClassName: 'center' },
+        { name: 'bottom', accessor: 'd', vAlign: 'bottom', footerClassName: 'bottom' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getFooters(container, '.default')[0]).not.toHaveClass('rt-valign-center')
+    expect(getFooters(container, '.default')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getFooters(container, '.top')[0]).not.toHaveClass('rt-valign-center')
+    expect(getFooters(container, '.top')[0]).not.toHaveClass('rt-valign-bottom')
+    expect(getFooters(container, '.center')[0]).toHaveClass('rt-valign-center')
+    expect(getFooters(container, '.bottom')[0]).toHaveClass('rt-valign-bottom')
   })
 
   it('renders footers with column groups', () => {
@@ -1710,36 +1804,36 @@ describe('column widths and flex layout', () => {
         { name: 'j', accessor: 'j' }
       ],
       columnGroups: [
-        { name: 'default-1-col', columns: ['a'] },
-        { name: 'minWidth-2-col', columns: ['b', 'c'] },
-        { name: 'width-1-col', columns: ['d'] },
-        { name: 'width-2-col', columns: ['e', 'f'] },
-        { name: 'maxWidth-1-col', columns: ['g'] },
-        { name: 'maxWidth-2-col', columns: ['h', 'i'] }
+        { name: 'default-1-col', columns: ['a'], headerClassName: 'default-1-col' },
+        { name: 'minWidth-2-col', columns: ['b', 'c'], headerClassName: 'minWidth-2-col' },
+        { name: 'width-1-col', columns: ['d'], headerClassName: 'width-1-col' },
+        { name: 'width-2-col', columns: ['e', 'f'], headerClassName: 'width-2-col' },
+        { name: 'maxWidth-1-col', columns: ['g'], headerClassName: 'maxWidth-1-col' },
+        { name: 'maxWidth-2-col', columns: ['h', 'i'], headerClassName: 'maxWidth-2-col' }
       ]
     }
-    const { container, getByText } = render(<Reactable {...props} />)
+    const { container } = render(<Reactable {...props} />)
     expect(getGroupHeaders(container)).toHaveLength(6)
-    expect(getByText('default-1-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.default-1-col')[0]).toHaveStyle(
       'flex: 100 0 auto; min-width: 100px; width: 100px; max-width:'
     )
-    expect(getByText('minWidth-2-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.minWidth-2-col')[0]).toHaveStyle(
       'flex: 140 0 auto; min-width: 140px; width: 140px; max-width:'
     )
     // Fixed width columns should be ignored when calculating flex width
-    expect(getByText('width-1-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.width-1-col')[0]).toHaveStyle(
       'flex: 0 0 auto; min-width: 50px; width: 50px; max-width: 50px'
     )
-    expect(getByText('width-2-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.width-2-col')[0]).toHaveStyle(
       'flex: 100 0 auto; min-width: 220px; width: 220px; max-width:'
     )
-    expect(getByText('maxWidth-1-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.maxWidth-1-col')[0]).toHaveStyle(
       'flex: 50 0 auto; min-width: 50px; width: 50px; max-width: 140px'
     )
     // Should not have max width if at least one column has no max width.
     // Known issue: this can cause group headers to be misaligned if the column
     // grows to hit its max width.
-    expect(getByText('maxWidth-2-col')).toHaveStyle(
+    expect(getGroupHeaders(container, '.maxWidth-2-col')[0]).toHaveStyle(
       'flex: 100 0 auto; min-width: 160px; width: 160px; max-width:'
     )
 
@@ -7655,6 +7749,53 @@ describe('themes', () => {
     expect(pagination).toHaveStyleRule('color', 'pageButtonCurrent', {
       target: '.rt-page-button-current'
     })
+  })
+
+  it('applies cell padding styles correctly', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a', footer: 'footer-a' },
+        { name: 'colB', accessor: 'b', footer: 'footer-b' }
+      ],
+      columnGroups: [{ columns: ['a'], name: 'group-a' }],
+      minRows: 4,
+      filterable: true,
+      theme: {
+        cellPadding: '99px'
+      }
+    }
+    const { container } = render(<Reactable {...props} />)
+
+    const assertHeader = el => {
+      const innerEl = el.querySelector('.rt-th-inner')
+      expect(innerEl).toBeTruthy()
+      expect(el).not.toHaveStyleRule('padding', '99px')
+      expect(innerEl).toHaveStyleRule('padding', '99px')
+    }
+    const assertCell = el => {
+      const innerEl = el.querySelector('.rt-td-inner')
+      expect(innerEl).toBeTruthy()
+      expect(el).not.toHaveStyleRule('padding', '99px')
+      expect(innerEl).toHaveStyleRule('padding', '99px')
+    }
+
+    const headers = getColumnHeaders(container)
+    headers.forEach(assertHeader)
+
+    const groupHeaders = getGroupHeaders(container)
+    groupHeaders.forEach(assertHeader)
+    const ungroupedHeaders = getUngroupedHeaders(container)
+    ungroupedHeaders.forEach(assertHeader)
+
+    const filterCells = getFilterCells(container)
+    filterCells.forEach(assertCell)
+
+    const cells = getCells(container) // Includes pad cells
+    cells.forEach(assertCell)
+
+    const footers = getFooters(container)
+    footers.forEach(assertCell)
   })
 
   it('theme styles are scoped to their tables', () => {

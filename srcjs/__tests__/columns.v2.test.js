@@ -168,17 +168,13 @@ describe('buildColumnDefs', () => {
 
     // Header
     cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">x</div>)
+    expect(cols[0].Header()).toEqual('x')
     cols = buildColumnDefs([{ accessor: 'x', name: 'x', header: '' }])
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">{''}</div>)
+    expect(cols[0].Header()).toEqual('')
     cols = buildColumnDefs([{ accessor: 'x', header: () => 'header' }])
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">header</div>)
+    expect(cols[0].Header()).toEqual('header')
     cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div> }])
-    expect(cols[0].Header()).toEqual(
-      <div className="rt-th-content">
-        <div>header</div>
-      </div>
-    )
+    expect(cols[0].Header()).toEqual(<div>header</div>)
     cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
     expect(cols[0].Header()).toEqual(
       <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
@@ -186,11 +182,7 @@ describe('buildColumnDefs', () => {
 
     // React elements and HTML rendering don't clash
     cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div>, html: true }])
-    expect(cols[0].Header()).toEqual(
-      <div className="rt-th-content">
-        <div>header</div>
-      </div>
-    )
+    expect(cols[0].Header()).toEqual(<div>header</div>)
 
     // Footer
     cols = buildColumnDefs([{ accessor: 'x' }])
@@ -521,6 +513,47 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-center ftr')
   })
 
+  test('column vertical alignment', () => {
+    // Default: top
+    let cols = buildColumnDefs([{ accessor: 'x' }])
+    expect(cols[0].vAlign).toEqual('top')
+    expect(cols[0].headerVAlign).toEqual('top')
+    expect(cols[0].getProps().className).toEqual('rt-align-left')
+    expect(cols[0].headerClassName).toEqual('rt-align-left')
+    expect(cols[0].footerClassName).toEqual('rt-align-left')
+
+    // Top
+    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'top', headerVAlign: 'top' }])
+    expect(cols[0].vAlign).toEqual('top')
+    expect(cols[0].headerVAlign).toEqual('top')
+    expect(cols[0].getProps().className).toEqual('rt-align-left')
+    expect(cols[0].headerClassName).toEqual('rt-align-left')
+    expect(cols[0].footerClassName).toEqual('rt-align-left')
+
+    // Center
+    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'center' }])
+    expect(cols[0].vAlign).toEqual('center')
+    expect(cols[0].headerVAlign).toEqual('top')
+    expect(cols[0].getProps().className).toEqual('rt-align-left rt-valign-center')
+    expect(cols[0].headerClassName).toEqual('rt-align-left')
+    expect(cols[0].footerClassName).toEqual('rt-align-left rt-valign-center')
+
+    cols = buildColumnDefs([{ accessor: 'x', headerVAlign: 'center' }])
+    expect(cols[0].vAlign).toEqual('top')
+    expect(cols[0].headerVAlign).toEqual('center')
+    expect(cols[0].getProps().className).toEqual('rt-align-left')
+    expect(cols[0].headerClassName).toEqual('rt-align-left rt-valign-center')
+    expect(cols[0].footerClassName).toEqual('rt-align-left')
+
+    // Bottom
+    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'bottom', headerVAlign: 'bottom' }])
+    expect(cols[0].vAlign).toEqual('bottom')
+    expect(cols[0].headerVAlign).toEqual('bottom')
+    expect(cols[0].getProps().className).toEqual('rt-align-left rt-valign-bottom')
+    expect(cols[0].headerClassName).toEqual('rt-align-left rt-valign-bottom')
+    expect(cols[0].footerClassName).toEqual('rt-align-left rt-valign-bottom')
+  })
+
   test('column widths', () => {
     // Default widths
     let cols = buildColumnDefs([{ accessor: 'x' }])
@@ -558,14 +591,14 @@ describe('buildColumnDefs', () => {
   test('header sort icons', () => {
     // No sort
     let cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }])
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">xy</div>)
+    expect(cols[0].Header()).toEqual('xy')
     cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }], null, {
       sortable: false,
       showSortIcon: true
     })
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">xy</div>)
+    expect(cols[0].Header()).toEqual('xy')
 
-    // Table sort
+    // Table sort - left aligned
     cols = buildColumnDefs([{ name: 'x', accessor: 'x' }], null, {
       sortable: true,
       showSortIcon: true
@@ -577,6 +610,7 @@ describe('buildColumnDefs', () => {
       </div>
     )
 
+    // Table sort - right aligned
     cols = buildColumnDefs([{ name: 'x', accessor: 'x', align: 'right' }], null, {
       sortable: true,
       showSortIcon: true
@@ -585,6 +619,22 @@ describe('buildColumnDefs', () => {
       <div className="rt-sort-header">
         <span aria-hidden="true" className="rt-sort-left" />
         <div className="rt-th-content">x</div>
+      </div>
+    )
+
+    // Raw HTML
+    cols = buildColumnDefs(
+      [{ name: 'x', accessor: 'x', html: true, header: '<div>header</div>' }],
+      null,
+      {
+        sortable: true,
+        showSortIcon: true
+      }
+    )
+    expect(cols[0].Header()).toEqual(
+      <div className="rt-sort-header">
+        <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
+        <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
 
@@ -612,8 +662,8 @@ describe('buildColumnDefs', () => {
         showSortIcon: false
       }
     )
-    expect(cols[0].Header()).toEqual(<div className="rt-th-content">x</div>)
-    expect(cols[1].Header()).toEqual(<div className="rt-th-content">y</div>)
+    expect(cols[0].Header()).toEqual('x')
+    expect(cols[1].Header()).toEqual('y')
 
     // showSortable
     cols = buildColumnDefs(
@@ -711,6 +761,32 @@ describe('buildColumnDefs', () => {
     groups = [{ name: 'xy', columns: ['x', 'y'], align: 'center' }]
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-align-center')
+  })
+
+  test('column group vertical alignment', () => {
+    // Default: top
+    let groups = [{ name: 'xy', columns: ['x', 'y'] }]
+    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerVAlign).toEqual('top')
+    expect(cols[0].headerClassName).toEqual('rt-align-center')
+
+    // Top
+    groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'top' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerVAlign).toEqual('top')
+    expect(cols[0].headerClassName).toEqual('rt-align-center')
+
+    // Center
+    groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'center' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerVAlign).toEqual('center')
+    expect(cols[0].headerClassName).toEqual('rt-align-center rt-valign-center')
+
+    // Bottom
+    groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'bottom' }]
+    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    expect(cols[0].headerVAlign).toEqual('bottom')
+    expect(cols[0].headerClassName).toEqual('rt-align-center rt-valign-bottom')
   })
 
   test("columns and groups aren't mutated", () => {

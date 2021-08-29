@@ -26,6 +26,8 @@ colDef(
   maxWidth = NULL,
   width = NULL,
   align = NULL,
+  vAlign = NULL,
+  headerVAlign = NULL,
   sticky = NULL,
   class = NULL,
   style = NULL,
@@ -98,6 +100,12 @@ By default, missing values are displayed as blank cells.}
 \item{align}{Horizontal alignment of content in the column. One of
 \code{"left"}, \code{"right"}, \code{"center"}. By default, all numbers are right-aligned,
 while all other content is left-aligned.}
+
+\item{vAlign}{Vertical alignment of content in data cells. One of \code{"top"}
+(the default), \code{"center"}, \code{"bottom"}.}
+
+\item{headerVAlign}{Vertical alignment of content in header cells. One of
+\code{"top"} (the default), \code{"center"}, \code{"bottom"}.}
 
 \item{sticky}{Make the column sticky when scrolling horizontally? Either
 \code{"left"} or \code{"right"} to make the column stick to the left or right side.

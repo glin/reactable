@@ -325,14 +325,19 @@ test_that("defaultColDef", {
   expect_equal(attribs$columns[[2]]$width, 22)
   expect_equal(attribs$columns[[2]]$class, "cls")
 
-  # Defaults can be overrided
-  tbl <- reactable(data.frame(x = 1, y = "2"),
-                   defaultColDef = colDef(width = 22, class = "default-cls"),
-                   columns = list(y = colDef(width = 44)))
+  # Defaults can be overridden
+  tbl <- reactable(
+    data.frame(x = 1, y = "2"),
+    defaultColDef = colDef(width = 22, class = "default-cls", vAlign = "center"),
+    columns = list(y = colDef(width = 44, vAlign = "top"))
+  )
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$width, 22)
   expect_equal(attribs$columns[[2]]$width, 44)
+  expect_equal(attribs$columns[[1]]$class, "default-cls")
   expect_equal(attribs$columns[[2]]$class, "default-cls")
+  expect_equal(attribs$columns[[1]]$vAlign, "center")
+  expect_equal(attribs$columns[[2]]$vAlign, "top")
 
   # Defaults should apply to row name column
   tbl <- reactable(data.frame(x = 1, y = "2"),

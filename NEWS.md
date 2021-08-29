@@ -14,6 +14,10 @@ where possible, but note that there are several breaking changes.
   and `colGroup()` ([#19](https://github.com/glin/reactable/issues/19),
   [#72](https://github.com/glin/reactable/issues/72),
   [#141](https://github.com/glin/reactable/issues/141)).
+* Cell content can now be vertically aligned using the new `vAlign` and `headerVAlign`
+  arguments in `colDef()`, and the new `headerVAlign` argument in `colGroup()`
+  ([#142](https://github.com/glin/reactable/issues/142),
+  [#177](https://github.com/glin/reactable/issues/177)).
 * `reactable()` gains a `paginateSubRows` argument to include grouped sub rows
   in pagination. This is recommended for larger tables with row groups that may
   not all fit on the page when expanded.

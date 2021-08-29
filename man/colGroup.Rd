@@ -10,6 +10,7 @@ colGroup(
   header = NULL,
   html = FALSE,
   align = NULL,
+  headerVAlign = NULL,
   sticky = NULL,
   headerClass = NULL,
   headerStyle = NULL
@@ -27,6 +28,9 @@ as an argument, or a \code{\link[=JS]{JS()}} function that takes a column info o
 
 \item{align}{Horizontal alignment of content in the column group header. One of
 \code{"left"}, \code{"right"}, \code{"center"} (the default).}
+
+\item{headerVAlign}{Vertical alignment of content in the column group header. One of
+\code{"top"} (the default), \code{"center"}, \code{"bottom"}.}
 
 \item{sticky}{Make the column group sticky when scrolling horizontally? Either
 \code{"left"} or \code{"right"} to make the column group stick to the left or right side.

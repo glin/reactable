@@ -111,6 +111,8 @@ const ThComponent = React.forwardRef(function ThComponent(props, ref) {
     canResize,
     isResizing,
     className,
+    innerClassName,
+    children,
     ...thProps
   } = props
 
@@ -161,13 +163,18 @@ const ThComponent = React.forwardRef(function ThComponent(props, ref) {
     }
   }
 
+  // The inner wrapper is a block container that prevents the outer flex container from
+  // breaking text overflow and ellipsis truncation. Text nodes can't shrink below their
+  // minimum content size.
   return (
     <div
       className={classNames('rt-th', canResize && 'rt-th-resizable', className)}
       role="columnheader"
       ref={ref}
       {...thProps}
-    />
+    >
+      <div className={classNames('rt-th-inner', innerClassName)}>{children}</div>
+    </div>
   )
 })
 
@@ -180,11 +187,36 @@ ThComponent.propTypes = {
   toggleSortBy: PropTypes.func,
   canResize: PropTypes.bool,
   isResizing: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  innerClassName: PropTypes.string,
+  children: PropTypes.node
 }
 
-const TdComponent = ({ className, ...rest }) => {
-  return <div className={classNames('rt-td', className)} role="cell" {...rest}></div>
+const TdComponent = ({ className, innerClassName, children, ...rest }) => {
+  // The inner wrapper is a block container that prevents the outer flex container from
+  // breaking text overflow and ellipsis truncation. Text nodes can't shrink below their
+  // minimum content size.
+  return (
+    <div className={classNames('rt-td', className)} role="cell" {...rest}>
+      <div className={classNames('rt-td-inner', innerClassName)}>{children}</div>
+    </div>
+  )
+}
+
+// Get class names for a cell theme. Padding is set on the inner wrapper to prevent
+// the inner wrapper (with overflow hidden) from clipping borders, box shadows, etc.
+function getCellTheme(style) {
+  if (!style) {
+    return {}
+  }
+  if (style.padding != null) {
+    const { padding, ...cellStyle } = style
+    return {
+      className: css(cellStyle),
+      innerClassName: css({ padding })
+    }
+  }
+  return { className: css(style) }
 }
 
 const ResizerComponent = ({ onMouseDown, onTouchStart, className, ...rest }) => {
@@ -623,24 +655,28 @@ function Table({
               ref: el => (headerRefs.current[column.id] = el)
             }
             if (isGroupHeader) {
+              const { className: themeClass, innerClassName } = getCellTheme(theme.groupHeaderStyle)
               headerProps = {
                 ...headerProps,
                 'aria-colspan': column.totalVisibleHeaderCount,
                 className: classNames(
                   !column.isUngrouped ? 'rt-th-group' : 'rt-th-group-none',
                   column.headerClassName,
-                  css(theme.groupHeaderStyle)
+                  themeClass
                 ),
+                innerClassName,
                 style: column.headerStyle,
                 canResize: column.canResize
               }
             } else {
+              const { className: themeClass, innerClassName } = getCellTheme(theme.headerStyle)
               headerProps = {
                 ...headerProps,
                 // Assign cell role to selectable column headers to prevent input labels
                 // from being read as column names ("select all rows column").
                 role: column.selectable ? 'cell' : 'columnheader',
-                className: classNames(column.headerClassName, css(theme.headerStyle)),
+                className: classNames(column.headerClassName, themeClass),
+                innerClassName,
                 style: column.headerStyle,
                 canResize: column.canResize,
                 isResizing: column.isResizing
@@ -753,15 +789,13 @@ function Table({
             filter = <ResolvedFilterComponent {...filterProps} />
           }
 
+          const { className: themeClass, innerClassName } = getCellTheme(theme.filterCellStyle)
           const filterCellProps = {
             role: 'cell',
             // colspan doesn't apply to ARIA tables, but react-table adds it. Remove it.
             colSpan: null,
-            className: classNames(
-              'rt-td-filter',
-              column.headerClassName,
-              css(theme.filterCellStyle)
-            ),
+            className: classNames('rt-td-filter', column.headerClassName, themeClass),
+            innerClassName,
             style: column.headerStyle
           }
           const { key, ...resolvedFilterCellProps } = column.getHeaderProps(filterCellProps)
@@ -903,9 +937,11 @@ function Table({
             {row.cells.map((cell, colIndex) => {
               const { column } = cell
               let cellProps = column.getProps ? column.getProps(rowInfo, column, stateInfo) : {}
+              const { className: themeClass, innerClassName } = getCellTheme(theme.cellStyle)
               cellProps = {
                 ...cellProps,
-                className: classNames(cellProps.className, css(theme.cellStyle)),
+                className: classNames(cellProps.className, themeClass),
+                innerClassName,
                 role: column.isRowHeader ? 'rowheader' : 'cell'
               }
               const cellInfo = {
@@ -1081,8 +1117,9 @@ function Table({
           <TrGroupComponent key={viewIndex} className={css(theme.rowGroupStyle)} aria-hidden>
             <TrComponent {...rowProps}>
               {instance.visibleColumns.map(column => {
+                const { className: themeClass, innerClassName } = getCellTheme(theme.cellStyle)
                 const cellProps = {
-                  className: css(theme.cellStyle)
+                  className: themeClass
                 }
                 // Get layout styles (flex, sticky) from footer props. useFlexLayout
                 // doesn't have built-in support for pad cells.
@@ -1091,6 +1128,7 @@ function Table({
                   <TdComponent
                     key={`${viewIndex}_${column.id}`}
                     className={className}
+                    innerClassName={innerClassName}
                     style={style}
                   >
                     &nbsp;
@@ -1140,8 +1178,11 @@ function Table({
               typeof column.Footer === 'function'
                 ? column.Footer(colInfo, stateInfo)
                 : column.render('Footer')
+
+            const { className: themeClass, innerClassName } = getCellTheme(theme.footerStyle)
             const footerProps = {
-              className: classNames('rt-td-footer', column.footerClassName, css(theme.footerStyle)),
+              className: classNames('rt-td-footer', column.footerClassName, themeClass),
+              innerClassName,
               style: column.footerStyle,
               // colspan doesn't apply to ARIA tables, but react-table adds it. Remove it.
               colSpan: null

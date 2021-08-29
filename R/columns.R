@@ -44,6 +44,10 @@
 #' @param align Horizontal alignment of content in the column. One of
 #'   `"left"`, `"right"`, `"center"`. By default, all numbers are right-aligned,
 #'   while all other content is left-aligned.
+#' @param vAlign Vertical alignment of content in data cells. One of `"top"`
+#'   (the default), `"center"`, `"bottom"`.
+#' @param headerVAlign Vertical alignment of content in header cells. One of
+#'   `"top"` (the default), `"center"`, `"bottom"`.
 #' @param sticky Make the column sticky when scrolling horizontally? Either
 #'   `"left"` or `"right"` to make the column stick to the left or right side.
 #'
@@ -109,6 +113,8 @@ colDef <- function(
   maxWidth = NULL,
   width = NULL,
   align = NULL,
+  vAlign = NULL,
+  headerVAlign = NULL,
   sticky = NULL,
   class = NULL,
   style = NULL,
@@ -198,6 +204,16 @@ colDef <- function(
       stop('`align` must be one of "left", "right", "center"')
     }
   }
+  if (!is.null(vAlign)) {
+    if (!isTRUE(vAlign %in% c("top", "center", "bottom"))) {
+      stop('`vAlign` must be one of "top", "center", "bottom"')
+    }
+  }
+  if (!is.null(headerVAlign)) {
+    if (!isTRUE(headerVAlign %in% c("top", "center", "bottom"))) {
+      stop('`headerVAlign` must be one of "top", "center", "bottom"')
+    }
+  }
   if (!is.null(sticky)) {
     if (!isTRUE(sticky %in% c("left", "right"))) {
       stop('`sticky` must be "left" or "right"')
@@ -246,6 +262,8 @@ colDef <- function(
       maxWidth = maxWidth,
       width = width,
       align = align,
+      vAlign = vAlign,
+      headerVAlign = headerVAlign,
       sticky = sticky,
       className = class,
       style = if (is.function(style) || is.JS(style)) style else asReactStyle(style),
@@ -281,6 +299,8 @@ isDescOrder <- function(x) {
 #' @param html Render header content as HTML? Raw HTML strings are escaped by default.
 #' @param align Horizontal alignment of content in the column group header. One of
 #'   `"left"`, `"right"`, `"center"` (the default).
+#' @param headerVAlign Vertical alignment of content in the column group header. One of
+#'   `"top"` (the default), `"center"`, `"bottom"`.
 #' @param sticky Make the column group sticky when scrolling horizontally? Either
 #'   `"left"` or `"right"` to make the column group stick to the left or right side.
 #'
@@ -310,8 +330,17 @@ isDescOrder <- function(x) {
 #' )
 #'
 #' @export
-colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
-                     align = NULL, sticky = NULL, headerClass = NULL, headerStyle = NULL) {
+colGroup <- function(
+  name = NULL,
+  columns = NULL,
+  header = NULL,
+  html = FALSE,
+  align = NULL,
+  headerVAlign = NULL,
+  sticky = NULL,
+  headerClass = NULL,
+  headerStyle = NULL
+) {
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
   }
@@ -330,6 +359,7 @@ colGroup <- function(name = NULL, columns = NULL, header = NULL, html = FALSE,
       header = header,
       html = html,
       align = align,
+      headerVAlign = headerVAlign,
       sticky = sticky,
       headerClass = headerClass,
       headerStyle = headerStyle

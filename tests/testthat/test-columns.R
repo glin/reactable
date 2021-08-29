@@ -128,12 +128,24 @@ test_that("colDef renderers", {
   expect_equal(col$details, list(1, 2, 3))
 })
 
+test_that("colDef vAlign and headerVAlign", {
+  expect_error(colDef(vAlign = TRUE), '`vAlign` must be one of "top", "center", "bottom"')
+  expect_null(colDef()$vAlign)
+  expect_equal(colDef(vAlign = "top")$vAlign, "top")
+  expect_equal(colDef(vAlign = "center")$vAlign, "center")
+  expect_equal(colDef(vAlign = "bottom")$vAlign, "bottom")
+
+  expect_error(colDef(headerVAlign = TRUE), '`headerVAlign` must be one of "top", "center", "bottom"')
+  expect_null(colDef()$headerVAlign)
+  expect_equal(colDef(headerVAlign = "top")$headerVAlign, "top")
+  expect_equal(colDef(headerVAlign = "center")$headerVAlign, "center")
+  expect_equal(colDef(headerVAlign = "bottom")$headerVAlign, "bottom")
+})
+
 test_that("colDef sticky", {
   expect_error(colDef(sticky = TRUE), '`sticky` must be "left" or "right"')
-  col <- colDef(sticky = "left")
-  expect_equal(col$sticky, "left")
-  col <- colDef(sticky = "right")
-  expect_equal(col$sticky, "right")
+  expect_equal(colDef(sticky = "left")$sticky, "left")
+  expect_equal(colDef(sticky = "right")$sticky, "right")
 })
 
 test_that("colDef class", {
@@ -199,6 +211,13 @@ test_that("colGroup", {
   expect_equal(group$header, JS("colInfo => colInfo.column.name"))
   group <- colDef(header = function(value) value)
   expect_equal(group$header, function(value) value)
+
+  # headerVAlign
+  expect_error(colGroup(headerVAlign = TRUE), '`headerVAlign` must be one of "top", "center", "bottom"')
+  expect_null(colGroup()$headerVAlign)
+  expect_equal(colGroup(headerVAlign = "top")$headerVAlign, "top")
+  expect_equal(colGroup(headerVAlign = "center")$headerVAlign, "center")
+  expect_equal(colGroup(headerVAlign = "bottom")$headerVAlign, "bottom")
 
   # sticky
   expect_error(colGroup(sticky = TRUE), '`sticky` must be "left" or "right"')

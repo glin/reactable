@@ -93,6 +93,9 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.align = col.align || 'left'
     }
 
+    col.vAlign = col.vAlign || 'top'
+    col.headerVAlign = col.headerVAlign || 'top'
+
     const { width, minWidth, maxWidth } = col
     col.minWidth = getFirstDefined(width, minWidth, 100)
     col.maxWidth = getFirstDefined(width, maxWidth, Number.MAX_SAFE_INTEGER)
@@ -192,7 +195,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         const value = col.Cell(cellInfo, state)
         return (
           <React.Fragment>
-            {value}{cellInfo.subRows && ` (${cellInfo.subRows.length})`}
+            {value}
+            {cellInfo.subRows && ` (${cellInfo.subRows.length})`}
           </React.Fragment>
         )
       }
@@ -231,23 +235,25 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         }
       }
 
-      // Since header content can be nested in a wrapper div (sort container),
-      // header content must be wrapped in its own container to handle
-      // text overflow and ellipsis truncation properly.
-      // Note that ellipsis truncation may still not work if custom header content
-      // is a block element.
       let content
       if (React.isValidElement(header)) {
-        content = <div className="rt-th-content">{header}</div>
+        content = header
       } else if (col.html) {
+        // Truncate raw HTML content. The ellipsis may not appear if custom header
+        // content is a block element.
         content = <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: header }} />
       } else {
-        content = <div className="rt-th-content">{header != null ? String(header) : ''}</div>
+        content = header != null ? String(header) : ''
       }
 
       // Add sort icon to column header
       if (col.sortable && showSortIcon) {
         const sortClass = showSortable ? 'rt-sort' : ''
+        // The inner wrapper is a block container that prevents the outer flex container from
+        // breaking text overflow and ellipsis truncation. Text nodes can't shrink below their
+        // minimum content size.
+        content = col.html ? content : <div className="rt-th-content">{content}</div>
+
         if (col.align === 'right') {
           return (
             <div className="rt-sort-header">
@@ -288,13 +294,16 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.Footer = emptyValue
     }
 
-    const colAlignClass = `rt-align-${col.align}`
-    col.headerClassName = classNames(colAlignClass, col.headerClassName)
-    col.footerClassName = classNames(colAlignClass, col.footerClassName)
+    const colAlignClass = getAlignClass(col.align)
+    const cellVAlignClass = getVAlignClass(col.vAlign)
+    const headerVAlignClass = getVAlignClass(col.headerVAlign)
+
+    col.headerClassName = classNames(colAlignClass, headerVAlignClass, col.headerClassName)
+    col.footerClassName = classNames(colAlignClass, cellVAlignClass, col.footerClassName)
 
     col.getProps = (rowInfo, column, state) => {
       let props = {
-        className: colAlignClass
+        className: classNames(colAlignClass, cellVAlignClass)
       }
       if (col.className) {
         let className
@@ -358,7 +367,12 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       }
 
       col.align = col.align || 'center'
-      col.headerClassName = classNames(`rt-align-${col.align}`, col.headerClassName)
+      col.headerVAlign = col.headerVAlign || 'top'
+
+      const colAlignClass = getAlignClass(col.align)
+      const headerVAlignClass = getVAlignClass(col.headerVAlign)
+
+      col.headerClassName = classNames(colAlignClass, headerVAlignClass, col.headerClassName)
     })
   }
 
@@ -515,4 +529,15 @@ function createStartsWithMatcher(str) {
 function createSubstringMatcher(str) {
   const regex = new RegExp(escapeRegExp(str), 'i')
   return value => regex.test(value)
+}
+
+function getAlignClass(align) {
+  return `rt-align-${align}`
+}
+
+function getVAlignClass(vAlign) {
+  if (vAlign === 'top') {
+    return ''
+  }
+  return `rt-valign-${vAlign}`
 }

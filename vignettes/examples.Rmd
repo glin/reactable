@@ -1047,6 +1047,46 @@ reactable(
 )
 ```
 
+### Vertical alignment
+
+> New in v0.2.3.9000
+
+You can change the vertical alignment of cell content using the `vAlign` or
+`headerVAlign` arguments in `colDef()` and `colGroup()`. `vAlign` controls the
+alignment of data cells, while `headerVAlign` controls the alignment of header cells.
+Possible options are `"top"` (the default), `"center"`, and `"bottom"`.
+
+```{r}
+library(dplyr)
+library(htmltools)
+
+data <- starwars[1:6, ] %>%
+  select(character = name, height, mass, gender, homeworld, species)
+
+reactable(
+  data,
+  columns = list(
+    character = colDef(
+      name = "Character / Species",
+      # Show species under character names
+      cell = function(value, index) {
+        species <- data$species[index]
+        species <- if (!is.na(species)) species else "Unknown"
+        div(
+          div(style = list(fontWeight = 600), value),
+          div(style = list(fontSize = 12), species)
+        )
+      }
+    ),
+    species = colDef(show = FALSE)
+  ),
+  # Vertically center cells and bottom-align headers
+  defaultColDef = colDef(vAlign = "center", headerVAlign = "bottom"),
+  bordered = TRUE,
+  width = 600
+)
+```
+
 ### Custom CSS
 For more control over styling, you can add custom class names to the table and
 apply your own CSS:

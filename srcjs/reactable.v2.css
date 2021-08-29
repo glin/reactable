@@ -14,39 +14,41 @@
 
 .rt-th,
 .rt-td {
-  padding: 7px 8px;
+  display: flex;
   overflow-wrap: break-word;
   /* For IE 11 */
   max-width: 100%;
   word-wrap: break-word;
 }
 
-.rt-compact .rt-th,
-.rt-compact .rt-td {
-  padding: 4px 6px;
-}
-
-.rt-nowrap .rt-th,
-.rt-nowrap .rt-td {
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.rt-th-inner,
+.rt-td-inner {
+  padding: 7px 8px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .rt-th-content {
   overflow: hidden;
+}
+
+.rt-compact .rt-th-inner,
+.rt-compact .rt-td-inner {
+  padding: 4px 6px;
+}
+
+.rt-nowrap .rt-th-inner,
+.rt-nowrap .rt-td-inner,
+.rt-nowrap .rt-th-content {
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 /* Selectable cells */
-.rt-td-select {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-}
-
 .rt-select {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 input[type='checkbox'].rt-select-input,
@@ -66,6 +68,14 @@ input[type='radio'].rt-select-input {
 
 .rt-align-center {
   text-align: center;
+}
+
+.rt-valign-center {
+  align-items: center;
+}
+
+.rt-valign-bottom {
+  align-items: flex-end;
 }
 
 /* Sticky columns */
@@ -260,8 +270,6 @@ input[type='radio'].rt-select-input {
 /* Sorting */
 .rt-sort-header {
   display: flex;
-  /* Allow content to shrink if header is a flex or grid container */
-  min-width: 0;
 }
 
 .rt-align-center .rt-sort-header {
