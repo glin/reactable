@@ -155,7 +155,7 @@ https://data.fivethirtyeight.com, licensed under [CC by 4.0](https://github.com/
 
 You can download the [raw data](https://github.com/fivethirtyeight/twitter-overlap) for this article,
 but we'll conveniently begin working with a cleaned CSV file:
-https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv
+[`twitter_followers.csv`](https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv).
 
 ```{r}
 data <- read.csv("https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv",
@@ -180,7 +180,7 @@ sort in ascending order (smallest to largest) by default.
 Let's customize the default sorting, add proper column names, and format the data.
 
 We'll use reactable's [built-in column formatters](examples.html#column-formatting)
-to add an `@` symbol to the Twitter handles, add thousands separators to the
+to add an @ symbol to the Twitter handles, add thousands separators to the
 follower counts, and format the percentages with 1 decimal place.
 
 ```{r}

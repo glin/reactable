@@ -26,37 +26,42 @@ data <- data.frame(
   Site = c("Google", "Yahoo", "DuckDuckGo")
 )
 
-reactable(data, columns = list(
-  # Using htmltools to render a link
-  Address = colDef(cell = function(value) {
-    htmltools::tags$a(href = value, target = "_blank", value)
-  }),
-  # Or using raw HTML
-  Site = colDef(html = TRUE, cell = function(value, index) {
-    sprintf('<a href="%s" target="_blank">%s</a>', data$Address[index], value)
-  })
-))
+reactable(
+  data,
+  columns = list(
+    # Using htmltools to render a link
+    Address = colDef(cell = function(value) {
+      htmltools::tags$a(href = value, target = "_blank", value)
+    }),
+    # Or using raw HTML
+    Site = colDef(html = TRUE, cell = function(value, index) {
+      sprintf('<a href="%s" target="_blank">%s</a>', data$Address[index], value)
+    })
+  )
+)
 ```
 
 ## Conditional formatting
 
 ### Color scales
 
-To add color scales, you can use R's built-in
-[color utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
+To add color scales, you can use [R's built-in color utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
 (or other color manipulation package):
 
 ```{r}
 data <- iris[10:29, ]
 orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
 
-reactable(data, columns = list(
-  Petal.Length = colDef(style = function(value) {
-    normalized <- (value - min(data$Petal.Length)) / (max(data$Petal.Length) - min(data$Petal.Length))
-    color <- orange_pal(normalized)
-    list(background = color)
-  })
-))
+reactable(
+  data,
+  columns = list(
+    Petal.Length = colDef(style = function(value) {
+      normalized <- (value - min(data$Petal.Length)) / (max(data$Petal.Length) - min(data$Petal.Length))
+      color <- orange_pal(normalized)
+      list(background = color)
+    })
+  )
+)
 ```
 
 ```{r}
@@ -94,21 +99,24 @@ stocks <- data.frame(
   Change = c(4.14, 1.51, -19.45, 5.32, -12.45)
 )
 
-reactable(stocks, columns = list(
-  Change = colDef(
-    cell = function(value) {
-      if (value >= 0) paste0("+", value) else value
-    },
-    style = function(value) {
-      color <- if (value > 0) {
-        "#008000"
-      } else if (value < 0) {
-        "#e00000"
+reactable(
+  stocks,
+  columns = list(
+    Change = colDef(
+      cell = function(value) {
+        if (value >= 0) paste0("+", value) else value
+      },
+      style = function(value) {
+        color <- if (value > 0) {
+          "#008000"
+        } else if (value < 0) {
+          "#e00000"
+        }
+        list(fontWeight = 600, color = color)
       }
-      list(fontWeight = 600, color = color)
-    }
+    )
   )
-))
+)
 ```
 
 ### Tags and badges
@@ -128,12 +136,15 @@ orders <- data.frame(
   stringsAsFactors = FALSE
 )
 
-reactable(orders, columns = list(
-  Status = colDef(cell = function(value) {
-    class <- paste0("tag status-", tolower(value))
-    div(class = class, value)
-  })
-))
+reactable(
+  orders,
+  columns = list(
+    Status = colDef(cell = function(value) {
+      class <- paste0("tag status-", tolower(value))
+      div(class = class, value)
+    })
+  )
+)
 ```
 
 ```{css}
@@ -178,25 +189,27 @@ status_badge <- function(color = "#aaa", width = "9px", height = width) {
   ))
 }
 
-reactable(orders, columns = list(
-  Status = colDef(cell = function(value) {
-    color <- switch(
-      value,
-      Paid = "hsl(214, 45%, 50%)",
-      Pending = "hsl(30, 97%, 70%)",
-      Canceled = "hsl(3, 69%, 50%)"
-    )
-    badge <- status_badge(color = color)
-    tagList(badge, value)
-  })
-))
+reactable(
+  orders,
+  columns = list(
+    Status = colDef(cell = function(value) {
+      color <- switch(
+        value,
+        Paid = "hsl(214, 45%, 50%)",
+        Pending = "hsl(30, 97%, 70%)",
+        Canceled = "hsl(3, 69%, 50%)"
+      )
+      badge <- status_badge(color = color)
+      tagList(badge, value)
+    })
+  )
+)
 ```
 
 ## Bar charts
 
-There are different ways to create bar charts, but here's
-[one way](https://css-tricks.com/making-charts-with-css/)
-using HTML and CSS:
+There are many ways to create bar charts using HTML and CSS, but here's one way
+inspired by [Making Charts with CSS](https://css-tricks.com/making-charts-with-css/).
 
 ```{r}
 library(htmltools)
@@ -210,16 +223,19 @@ bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", 
 
 data <- MASS::Cars93[20:49, c("Make", "MPG.city", "MPG.highway")]
 
-reactable(data, columns = list(
-  MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
-    width <- paste0(value / max(data$MPG.city) * 100, "%")
-    bar_chart(value, width = width)
-  }),
-  MPG.highway = colDef(name = "MPG (highway)", align = "left", cell = function(value) {
-    width <- paste0(value / max(data$MPG.highway) * 100, "%")
-    bar_chart(value, width = width, fill = "#fc5185", background = "#e1e1e1")
-  })
-))
+reactable(
+  data,
+  columns = list(
+    MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
+      width <- paste0(value / max(data$MPG.city) * 100, "%")
+      bar_chart(value, width = width)
+    }),
+    MPG.highway = colDef(name = "MPG (highway)", align = "left", cell = function(value) {
+      width <- paste0(value / max(data$MPG.highway) * 100, "%")
+      bar_chart(value, width = width, fill = "#fc5185", background = "#e1e1e1")
+    })
+  )
+)
 ```
 
 ### Positive and negative values
@@ -252,28 +268,31 @@ data <- data.frame(
   profit_chg = c(0.2, 0.685, 0.917, 0.284, 0.105, -0.701, -0.528, -0.808, -0.957, -0.11)
 )
 
-reactable(data, bordered = TRUE, columns = list(
-  company = colDef(name = "Company", minWidth = 100),
-  profit_chg = colDef(
-    name = "Change in Profit",
-    defaultSortOrder = "desc",
-    cell = function(value) {
-      label <- paste0(round(value * 100), "%")
-      bar_chart_pos_neg(label, value)
-    },
-    align = "center",
-    minWidth = 400
+reactable(
+  data,
+  bordered = TRUE,
+  columns = list(
+    company = colDef(name = "Company", minWidth = 100),
+    profit_chg = colDef(
+      name = "Change in Profit",
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        label <- paste0(round(value * 100), "%")
+        bar_chart_pos_neg(label, value)
+      },
+      align = "center",
+      minWidth = 400
+    )
   )
-))
+)
 ```
 
 ### Background bar charts
 
 Another way to create bar charts is to render them as background images.
 This example creates bar images using the
-[`linear-gradient()`](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient())
-CSS function, and was inspired by an example from
-[DT](https://rstudio.github.io/DT/010-style.html).
+[`linear-gradient()` CSS function](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient()),
+inspired by an [example from the DT package](https://rstudio.github.io/DT/010-style.html).
 
 ```{r}
 # Render a bar chart in the background of the cell
@@ -324,9 +343,12 @@ reactable(
 
 ## Embed images
 
-To embed an image, render an [`<img>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
-element into the table. Make sure to add [`alt` text](https://webaim.org/techniques/alttext/)
-for accessibility, even if the image is purely decorative (use a null `alt=""` in this case).
+To embed an image, render an [`<img>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
+into the table. Be sure to add [`alt` text](https://webaim.org/techniques/alttext/)
+for accessibility, even if the image is purely decorative
+(use a null `alt=""` attribute in this case).
+
+### External image files
 
 ```{r}
 library(htmltools)
@@ -337,42 +359,61 @@ data <- data.frame(
   Brain = c(8.1, 423, 119.5, 115)
 )
 
-reactable(data, columns = list(
-  Animal = colDef(cell = function(value) {
-    image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = value)
-    tagList(
-      div(style = list(display = "inline-block", width = "45px"), image),
-      value
-    )
-  }),
-  Body = colDef(name = "Body (kg)"),
-  Brain = colDef(name = "Brain (g)")
-))
+reactable(
+  data,
+  columns = list(
+    Animal = colDef(cell = function(value) {
+      image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = value)
+      tagList(
+        div(style = list(display = "inline-block", width = "45px"), image),
+        value
+      )
+    }),
+    Body = colDef(name = "Body (kg)"),
+    Brain = colDef(name = "Brain (g)")
+  )
+)
 ```
 
-> If using a local image file, make sure the image can be found from the rendered document.
->
-> In pkgdown, you can add external resource files using the `resource_files` field:
-> https://pkgdown.r-lib.org/reference/build_articles.html#external-files.
->
-> In Shiny, you can add external resource files using the `www/` directory or `addResourcePath()`:
-> https://shiny.rstudio.com/reference/shiny/latest/resourcePaths.html.
+If the image file is local, ensure the image can be found from the rendered document:
 
-Images can also be embedded into the document as a base64-encoded data URL
-using `knitr::image_uri()`. This can be more portable, but is not recommended
-for large images.
+- In pkgdown, you can include local images in your document using the `resource_files`
+YAML field. See [External files in pkgdown](https://pkgdown.r-lib.org/reference/build_articles.html#external-files)
+for details.
+- In Shiny, you can include local images in your app using either the
+`www/` directory or `shiny::addResourcePath()` function.
+See [Resource Publishing in Shiny](https://shiny.rstudio.com/reference/shiny/latest/resourcePaths.html)
+for details.
+
+### Inline embedded images
+
+Images can also be embedded into documents as a
+[base64-encoded data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs)
+using `knitr::image_uri()`. This can be more portable, but is usually only
+recommended for small image files.
 
 ```{r}
-reactable(data, columns = list(
-  Animal = colDef(cell = function(value) {
-    img_src <- knitr::image_uri(sprintf("images/%s.png", value))
-    image <- img(src = img_src, height = "24px", alt = value)
-    tagList(
-      div(style = list(display = "inline-block", width = "45px"), image),
-      value
-    )
-  })
-))
+library(htmltools)
+
+data <- data.frame(
+  Animal = c("beaver", "cow", "wolf", "goat"),
+  Body = c(1.35, 465, 36.33, 27.66),
+  Brain = c(8.1, 423, 119.5, 115)
+)
+
+reactable(
+  data,
+  columns = list(
+    Animal = colDef(cell = function(value) {
+      img_src <- knitr::image_uri(sprintf("images/%s.png", value))
+      image <- img(src = img_src, height = "24px", alt = value)
+      tagList(
+        div(style = list(display = "inline-block", width = "45px"), image),
+        value
+      )
+    })
+  )
+)
 ```
 
 ## Rating stars
@@ -589,9 +630,9 @@ reactable(
 
 ## Units on first row only
 
-To show a label on the first row only (even when sorting), use a JavaScript
-render function to add the label when the cell's
-[`viewIndex`](../custom-rendering.html#cellinfo-properties) is 0.
+To display a label on the first row only (even when sorting), use a JavaScript render function
+to add the label when the [cell's `viewIndex` property](../custom-rendering.html#cellinfo-properties)
+is `0`.
 
 If the label breaks the alignment of values in the column, realign the values
 by adding white space to the cells without units. Two ways to do this are shown below.
@@ -599,25 +640,29 @@ by adding white space to the cells without units. Two ways to do this are shown 
 ```{r units_first_row, eval=FALSE}
 data <- MASS::Cars93[40:44, c("Make", "Length", "Luggage.room")]
 
-reactable(data, class = "car-specs", columns = list(
-  # Align values using white space (and a monospaced font)
-  Length = colDef(
-    cell = JS("function(cellInfo) {
-      var units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
-      return cellInfo.value + units
-    }"),
-    class = "number"
-  ),
-  # Align values using a fixed-width container for units
-  Luggage.room = colDef(
-    name = "Luggage Room",
-    cell = JS("function(cellInfo) {
-      var units = cellInfo.viewIndex === 0 ? ' ft³' : ''
-      return cellInfo.value + '<div class=\"units\">' + units + '</div>'
-    }"),
-    html = TRUE
+reactable(
+  data,
+  class = "car-specs",
+  columns = list(
+    # Align values using white space (and a monospaced font)
+    Length = colDef(
+      cell = JS("function(cellInfo) {
+        var units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
+        return cellInfo.value + units
+      }"),
+      class = "number"
+    ),
+    # Align values using a fixed-width container for units
+    Luggage.room = colDef(
+      name = "Luggage Room",
+      cell = JS("function(cellInfo) {
+        var units = cellInfo.viewIndex === 0 ? ' ft³' : ''
+        return cellInfo.value + '<div class=\"units\">' + units + '</div>'
+      }"),
+      html = TRUE
+    )
   )
-))
+)
 ```
 
 ```{css}
@@ -638,8 +683,8 @@ reactable(data, class = "car-specs", columns = list(
 ## Tooltips
 
 To add tooltips to a column header, you can render the header as an
-[`<abbr>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr)
-element with a `title` attribute:
+[`<abbr>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr)
+with a `title` attribute:
 
 ```{r}
 library(htmltools)
@@ -664,13 +709,12 @@ reactable(
 )
 ```
 
-The `title` attribute is
-[inaccessible](https://developer.paciellogroup.com/blog/2013/01/using-the-html-title-attribute-updated/)
+The [`title` attribute is inaccessible](https://developer.paciellogroup.com/blog/2013/01/using-the-html-title-attribute-updated/)
 to most keyboard, mobile, and screen reader users, however, so creating tooltips
 like this is generally discouraged.
 
-An alternate way would be to use a package like [tippy](http://tippy.john-coene.com/),
-which provides a JavaScript based tooltip that supports keyboard, touch, and screen
+An alternate method would be to use the [tippy package](http://tippy.john-coene.com/),
+which provides a JavaScript-based tooltip that supports keyboard, touch, and screen
 reader use.
 
 ```{r}
@@ -701,30 +745,39 @@ reactable(
 ```{r}
 data <- MASS::road[11:17, ]
 
-reactable(data, defaultColDef = colDef(
-  style = function(value, index, name) {
-    if (is.numeric(value) && value == max(data[[name]])) {
-      list(fontWeight = "bold")
+reactable(
+  data,
+  defaultColDef = colDef(
+    style = function(value, index, name) {
+      if (is.numeric(value) && value == max(data[[name]])) {
+        list(fontWeight = "bold")
+      }
     }
-  })
+  )
 )
 ```
 
 ## Highlight columns
 
 ```{r}
-reactable(iris[1:5, ], columns = list(
-  Petal.Length = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
-))
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Petal.Length = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
+  )
+)
 ```
 
 ## Highlight rows
 
 ```{r}
-reactable(iris[1:5, ], rowStyle = function(index) {
-  if (index == 2) list(fontWeight = "bold")
-  else if (iris[index, "Petal.Length"] >= 1.5) list(background = "rgba(0, 0, 0, 0.05)")
-})
+reactable(
+  iris[1:5, ],
+  rowStyle = function(index) {
+    if (index == 2) list(fontWeight = "bold")
+    else if (iris[index, "Petal.Length"] >= 1.5) list(background = "rgba(0, 0, 0, 0.05)")
+  }
+)
 ```
 
 ## Highlight sorted headers
@@ -868,7 +921,7 @@ reactable(
 ## Style nested rows
 
 To style nested rows, use a JavaScript function to style rows based on their
-nesting [`level`](../conditional-styling.html#rowinfo-properties-1):
+[nesting `level` property](../conditional-styling.html#rowinfo-properties):
 
 ```{r}
 data <- MASS::Cars93[4:8, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
@@ -915,9 +968,11 @@ htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:4
                      rel = "stylesheet")
 ```
 
-> Side note: these docs use a [system font stack](https://css-tricks.com/snippets/css/system-font-stack):
+> Side note: the reactable package documentation uses a [system font stack](https://css-tricks.com/snippets/css/system-font-stack):
 >
-> `font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;`
+> ```css
+> font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+> ```
 
 ## Custom sort indicators
 
