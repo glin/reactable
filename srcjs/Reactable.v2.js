@@ -77,27 +77,27 @@ const RootComponent = React.forwardRef(function RootComponent({ className, ...re
   return <div className={classNames('ReactTable', className)} ref={ref} {...rest} />
 })
 
-const TableComponent = ({ className, ...rest }) => {
+function TableComponent({ className, ...rest }) {
   return <div className={classNames('rt-table', className)} role="table" {...rest} />
 }
 
-const TheadComponent = ({ className, ...rest }) => {
+function TheadComponent({ className, ...rest }) {
   return <div className={classNames('rt-thead', className)} role="rowgroup" {...rest} />
 }
 
-const TbodyComponent = ({ className, ...rest }) => {
+function TbodyComponent({ className, ...rest }) {
   return <div className={classNames('rt-tbody', className)} role="rowgroup" {...rest} />
 }
 
-const TfootComponent = ({ className, ...rest }) => {
+function TfootComponent({ className, ...rest }) {
   return <div className={classNames('rt-tfoot', className)} role="rowgroup" {...rest} />
 }
 
-const TrGroupComponent = ({ className, ...rest }) => {
+function TrGroupComponent({ className, ...rest }) {
   return <div className={classNames('rt-tr-group', className)} {...rest} />
 }
 
-const TrComponent = ({ className, ...rest }) => {
+function TrComponent({ className, ...rest }) {
   return <div className={classNames('rt-tr', className)} role="row" {...rest} />
 }
 
@@ -192,7 +192,7 @@ ThComponent.propTypes = {
   children: PropTypes.node
 }
 
-const TdComponent = ({ className, innerClassName, children, ...rest }) => {
+function TdComponent({ className, innerClassName, children, ...rest }) {
   // The inner wrapper is a block container that prevents the outer flex container from
   // breaking text overflow and ellipsis truncation. Text nodes can't shrink below their
   // minimum content size.
@@ -219,7 +219,7 @@ function getCellTheme(style) {
   return { className: css(style) }
 }
 
-const ResizerComponent = ({ onMouseDown, onTouchStart, className, ...rest }) => {
+function ResizerComponent({ onMouseDown, onTouchStart, className, ...rest }) {
   return (
     <div
       className={classNames('rt-resizer', className)}
@@ -267,7 +267,7 @@ RowDetails.propTypes = {
   html: PropTypes.string
 }
 
-const ExpanderComponent = ({ isExpanded, className, 'aria-label': ariaLabel }) => {
+function ExpanderComponent({ isExpanded, className, 'aria-label': ariaLabel }) {
   return (
     <button
       className="rt-expander-button"
@@ -327,11 +327,11 @@ SearchComponent.propTypes = {
   className: PropTypes.string
 }
 
-const NoDataComponent = ({ className, ...rest }) => {
+function NoDataComponent({ className, ...rest }) {
   return <div className={classNames('rt-no-data', className)} aria-live="polite" {...rest} />
 }
 
-const SelectInputComponent = ({ type, checked, onChange, 'aria-label': ariaLabel }) => {
+function SelectInputComponent({ type, checked, onChange, 'aria-label': ariaLabel }) {
   // Use zero-width space character to properly align checkboxes with first
   // line of text in other cells, even if the text spans multiple lines.
   return (
