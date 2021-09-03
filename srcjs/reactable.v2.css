@@ -28,18 +28,18 @@
   overflow: hidden;
 }
 
-.rt-th-content {
-  overflow: hidden;
-}
-
 .rt-compact .rt-th-inner,
 .rt-compact .rt-td-inner {
   padding: 4px 6px;
 }
 
+.rt-text-content {
+  overflow: hidden;
+}
+
 .rt-nowrap .rt-th-inner,
 .rt-nowrap .rt-td-inner,
-.rt-nowrap .rt-th-content {
+.rt-nowrap .rt-text-content {
   white-space: nowrap;
   text-overflow: ellipsis;
 }

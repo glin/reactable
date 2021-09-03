@@ -707,7 +707,7 @@ describe('cells', () => {
     const { container } = render(<Reactable {...props} />)
     const cellsA = getCells(container, '.col-a')
     expect(cellsA[0].innerHTML).toEqual(
-      `<div class="rt-td-inner"><div style="display: inline;"><span>cellA</span></div></div>`
+      `<div class="rt-td-inner"><div class="rt-text-content" style="display: inline;"><span>cellA</span></div></div>`
     )
     expect(cellsA[1].textContent).toEqual('\u200b')
     const cellsB = getCells(container, '.col-b')

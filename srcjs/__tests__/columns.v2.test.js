@@ -1,8 +1,10 @@
 import React from 'react'
 import reactR from 'reactR'
+import { render } from '@testing-library/react'
 
 import {
   columnsToRows,
+  RawHTML,
   addColumnGroups,
   createCompareFunction,
   buildColumnDefs,
@@ -21,6 +23,16 @@ test('columnsToRows', () => {
     { a: 2, b: 'y' },
     { a: 3, b: 'z' }
   ])
+})
+
+test('RawHTML', () => {
+  const { container, rerender } = render(<RawHTML html="<div>html</div>" />)
+  expect(container.innerHTML).toEqual('<div class="rt-text-content"><div>html</div></div>')
+
+  rerender(<RawHTML className="extra" style={{ display: 'inline' }} html="html" />)
+  expect(container.innerHTML).toEqual(
+    '<div class="rt-text-content extra" style="display: inline;">html</div>'
+  )
 })
 
 describe('buildColumnDefs', () => {
@@ -97,7 +109,7 @@ describe('buildColumnDefs', () => {
 
     cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>cell</div>'] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>cell</div>' }} />
+      <RawHTML style={{ display: 'inline' }} html="<div>cell</div>" />
     )
 
     // Grouped
@@ -126,7 +138,7 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].Grouped({ value: 'x' })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '<div>x</div>' }} />
+      <RawHTML style={{ display: 'inline' }} html="<div>x</div>" />
     )
 
     // Aggregated
@@ -176,9 +188,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div> }])
     expect(cols[0].Header()).toEqual(<div>header</div>)
     cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
-    expect(cols[0].Header()).toEqual(
-      <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
-    )
+    expect(cols[0].Header()).toEqual(<RawHTML html="<div>header</div>" />)
 
     // React elements and HTML rendering don't clash
     cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div>, html: true }])
@@ -194,9 +204,7 @@ describe('buildColumnDefs', () => {
     cols = buildColumnDefs([{ accessor: 'x', footer: React.createElement('div', null, 'footer') }])
     expect(cols[0].Footer()).toEqual(React.createElement('div', null, 'footer'))
     cols = buildColumnDefs([{ accessor: 'x', html: true, footer: '<div>footer</div>' }])
-    expect(cols[0].Footer()).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '<div>footer</div>' }} />
-    )
+    expect(cols[0].Footer()).toEqual(<RawHTML html="<div>footer</div>" />)
 
     // React elements and HTML rendering don't clash
     cols = buildColumnDefs([
@@ -239,12 +247,8 @@ describe('buildColumnDefs', () => {
 
   test('html', () => {
     let cols = buildColumnDefs([{ accessor: 'x', html: true }])
-    expect(cols[0].Cell({ value: 'x' })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: 'x' }} />
-    )
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: 'x' }} />
-    )
+    expect(cols[0].Cell({ value: 'x' })).toEqual(<RawHTML style={{ display: 'inline' }} html="x" />)
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(<RawHTML html="x" />)
 
     // render html
     cols = buildColumnDefs([
@@ -256,11 +260,9 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: 'x!' }} />
+      <RawHTML style={{ display: 'inline' }} html="x!" />
     )
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: 'x!!' }} />
-    )
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(<RawHTML html="x!!" />)
 
     // format html
     cols = buildColumnDefs([
@@ -274,14 +276,12 @@ describe('buildColumnDefs', () => {
       }
     ])
     expect(cols[0].Cell({ value: 'x' })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+      <RawHTML style={{ display: 'inline' }} html="__@x__" />
     )
     expect(cols[0].Grouped({ value: 'x' })).toEqual(
-      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: '__@x__' }} />
+      <RawHTML style={{ display: 'inline' }} html="__@x__" />
     )
-    expect(cols[0].Aggregated({ value: 'x' })).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '__$x__' }} />
-    )
+    expect(cols[0].Aggregated({ value: 'x' })).toEqual(<RawHTML html="__$x__" />)
   })
 
   test('grouped cells render the same as regular cells by default', () => {
@@ -605,7 +605,7 @@ describe('buildColumnDefs', () => {
     })
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        <div className="rt-th-content">x</div>
+        <div className="rt-text-content">x</div>
         <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
@@ -618,7 +618,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         <span aria-hidden="true" className="rt-sort-left" />
-        <div className="rt-th-content">x</div>
+        <div className="rt-text-content">x</div>
       </div>
     )
 
@@ -633,7 +633,7 @@ describe('buildColumnDefs', () => {
     )
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
+        <RawHTML html="<div>header</div>" />
         <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
@@ -645,7 +645,7 @@ describe('buildColumnDefs', () => {
     })
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
-        <div className="rt-th-content">xy</div>
+        <div className="rt-text-content">xy</div>
         <span aria-hidden="true" className="rt-sort-right" />
       </div>
     )
@@ -681,12 +681,12 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Header()).toEqual(
       <div className="rt-sort-header">
         <span aria-hidden="true" className="rt-sort rt-sort-left" />
-        <div className="rt-th-content">x</div>
+        <div className="rt-text-content">x</div>
       </div>
     )
     expect(cols[1].Header()).toEqual(
       <div className="rt-sort-header">
-        <div className="rt-th-content">y</div>
+        <div className="rt-text-content">y</div>
         <span aria-hidden="true" className="rt-sort rt-sort-right" />
       </div>
     )
@@ -713,9 +713,7 @@ describe('buildColumnDefs', () => {
 
     groups = [{ name: 'xy', columns: ['x', 'y'], header: '<div>header</div>', html: true }]
     cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
-    expect(cols[0].Header()).toEqual(
-      <div dangerouslySetInnerHTML={{ __html: '<div>header</div>' }} />
-    )
+    expect(cols[0].Header()).toEqual(<RawHTML html="<div>header</div>" />)
 
     // React elements and HTML rendering don't clash
     groups = [

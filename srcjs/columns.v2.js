@@ -22,6 +22,17 @@ export function columnsToRows(columns) {
   return rows
 }
 
+export function RawHTML({ html, className, ...props }) {
+  return (
+    <div
+      // Ensure text is truncated with ellipsis when text wrapping is off
+      className={classNames('rt-text-content', className)}
+      dangerouslySetInnerHTML={{ __html: html }}
+      {...props}
+    />
+  )
+}
+
 export function buildColumnDefs(columns, groups, tableProps = {}) {
   const {
     sortable,
@@ -148,7 +159,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         content = value
       } else if (col.html) {
         // Render inline to align with the expander
-        content = <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: value }} />
+        content = <RawHTML style={{ display: 'inline' }} html={value} />
       } else {
         content = String(value)
       }
@@ -181,9 +192,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           content = value
         } else if (col.html) {
           // Render inline to align with the expander
-          content = (
-            <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: value }} />
-          )
+          content = <RawHTML style={{ display: 'inline' }} html={value} />
         } else {
           content = String(value)
         }
@@ -217,7 +226,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (React.isValidElement(value)) {
         content = value
       } else if (col.html) {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />
+        return <RawHTML html={value} />
       } else {
         content = String(value)
       }
@@ -239,9 +248,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       if (React.isValidElement(header)) {
         content = header
       } else if (col.html) {
-        // Truncate raw HTML content. The ellipsis may not appear if custom header
-        // content is a block element.
-        content = <div className="rt-th-content" dangerouslySetInnerHTML={{ __html: header }} />
+        content = <RawHTML html={header} />
       } else {
         content = header != null ? String(header) : ''
       }
@@ -249,10 +256,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       // Add sort icon to column header
       if (col.sortable && showSortIcon) {
         const sortClass = showSortable ? 'rt-sort' : ''
-        // The inner wrapper is a block container that prevents the outer flex container from
-        // breaking text overflow and ellipsis truncation. Text nodes can't shrink below their
-        // minimum content size.
-        content = col.html ? content : <div className="rt-th-content">{content}</div>
+        // Ensure text is truncated with an ellipsis when text wrapping is off.
+        // The outer container is a flex container, so we need to wrap text in a
+        // block element to allow text to shrink below their minimum content size.
+        content = col.html ? content : <div className="rt-text-content">{content}</div>
 
         if (col.align === 'right') {
           return (
@@ -284,7 +291,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (React.isValidElement(footer)) {
           return footer
         } else if (col.html) {
-          return <div dangerouslySetInnerHTML={{ __html: footer }} />
+          return <RawHTML html={footer} />
         } else {
           return footer != null ? String(footer) : ''
         }
@@ -351,7 +358,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           if (React.isValidElement(header)) {
             return header
           } else if (col.html) {
-            return <div dangerouslySetInnerHTML={{ __html: header }} />
+            return <RawHTML html={header} />
           } else {
             return header != null ? String(header) : ''
           }
