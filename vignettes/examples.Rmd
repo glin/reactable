@@ -138,9 +138,13 @@ reactable(data, filterable = TRUE, minRows = 10)
 
 To make specific columns filterable (or not), set `filterable` in the column definition:
 ```{r}
-reactable(data, filterable = TRUE, columns = list(
-  Price = colDef(filterable = FALSE)
-))
+reactable(
+  data,
+  filterable = TRUE,
+  columns = list(
+    Price = colDef(filterable = FALSE)
+  )
+)
 ```
 
 
@@ -223,12 +227,16 @@ When rows are grouped, you can aggregate data in a column using an `aggregate` f
 ```{r}
 data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
 
-reactable(data, groupBy = "Type", columns = list(
-  Price = colDef(aggregate = "max"),
-  MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1)),
-  DriveTrain = colDef(aggregate = "unique"),
-  Man.trans.avail = colDef(aggregate = "frequency")
-))
+reactable(
+  data,
+  groupBy = "Type",
+  columns = list(
+    Price = colDef(aggregate = "max"),
+    MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    DriveTrain = colDef(aggregate = "unique"),
+    Man.trans.avail = colDef(aggregate = "frequency")
+  )
+)
 ```
 
 You can use one of the built-in aggregate functions:
@@ -459,18 +467,22 @@ data <- data.frame(
   Area = state.area
 )
 
-reactable(data, groupBy = "Region", columns = list(
-  States = colDef(
-    aggregate = "count",
-    format = list(
-      aggregated = colFormat(suffix = " states")
+reactable(
+  data,
+  groupBy = "Region",
+  columns = list(
+    States = colDef(
+      aggregate = "count",
+      format = list(
+        aggregated = colFormat(suffix = " states")
+      )
+    ),
+    Area = colDef(
+      aggregate = "sum",
+      format = colFormat(suffix = " mi²", separators = TRUE)
     )
-  ),
-  Area = colDef(
-    aggregate = "sum",
-    format = colFormat(suffix = " mi²", separators = TRUE)
   )
-))
+)
 ```
 
 ### Displaying missing values

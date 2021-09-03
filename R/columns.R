@@ -485,18 +485,22 @@ is.colGroup <- function(x) {
 #'   Area = state.area
 #' )
 #'
-#' reactable(data, groupBy = "Region", columns = list(
-#'   States = colDef(
-#'     aggregate = "count",
-#'     format = list(
-#'       aggregated = colFormat(suffix = " states")
+#' reactable(
+#'   data,
+#'   groupBy = "Region",
+#'   columns = list(
+#'     States = colDef(
+#'       aggregate = "count",
+#'       format = list(
+#'         aggregated = colFormat(suffix = " states")
+#'       )
+#'     ),
+#'     Area = colDef(
+#'       aggregate = "sum",
+#'       format = colFormat(suffix = " mi\u00b2", separators = TRUE)
 #'     )
-#'   ),
-#'   Area = colDef(
-#'     aggregate = "sum",
-#'     format = colFormat(suffix = " mi\u00b2", separators = TRUE)
 #'   )
-#' ))
+#' )
 #'
 #' @export
 colFormat <- function(prefix = NULL, suffix = NULL, digits = NULL,

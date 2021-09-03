@@ -210,12 +210,16 @@ additional details and examples.
 reactable(iris)
 
 # Grouping and aggregation
-reactable(iris, groupBy = "Species", columns = list(
-  Sepal.Length = colDef(aggregate = "count"),
-  Sepal.Width = colDef(aggregate = "mean"),
-  Petal.Length = colDef(aggregate = "sum"),
-  Petal.Width = colDef(aggregate = "max")
-))
+reactable(
+  iris,
+  groupBy = "Species",
+  columns = list(
+    Sepal.Length = colDef(aggregate = "count"),
+    Sepal.Width = colDef(aggregate = "mean"),
+    Petal.Length = colDef(aggregate = "sum"),
+    Petal.Width = colDef(aggregate = "max")
+  )
+)
 
 # Row details
 reactable(iris, details = function(index) {
