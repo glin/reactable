@@ -523,8 +523,8 @@ reactable(data, columns = list(
     htmltools::tags$a(href = url, target = "_blank", as.character(value))
   }),
   AirBags = colDef(cell = function(value) {
-    # Render as ✘ or ✓
-    if (value == "None") "\u2718" else "\u2713"
+    # Render as an X mark or check mark
+    if (value == "None") "\u274c No" else "\u2714\ufe0f Yes"
   }),
   Price = colDef(cell = function(value) {
     # Render as currency
@@ -547,8 +547,8 @@ reactable(data, columns = list(
   ")),
   AirBags = colDef(cell = JS("
     function(cellInfo) {
-      // Render as ✘ or ✓ 
-      return cellInfo.value === 'None' ? '\u2718' : '\u2713'
+      // Render as an X mark or check mark
+      return cellInfo.value === 'None' ? '\u274c No' : '\u2714\ufe0f Yes'
     }
   ")),
   Price = colDef(cell = JS("
