@@ -23,7 +23,7 @@ describe('static rendering', () => {
         <div>xyz</div>
       </WidgetContainer>
     )
-    expect(getByText('xyz')).toBeTruthy()
+    expect(getByText('xyz')).toBeVisible()
     expect(window.HTMLWidgets.staticRender).toHaveBeenCalledTimes(1)
   })
 
@@ -55,5 +55,5 @@ test('works without HTMLWidgets', () => {
       <div>xyz</div>
     </WidgetContainer>
   )
-  expect(getByText('xyz')).toBeTruthy()
+  expect(getByText('xyz')).toBeVisible()
 })

@@ -76,9 +76,9 @@ describe('tables', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const rootContainer = getRoot(container)
-    expect(rootContainer).toBeTruthy()
+    expect(rootContainer).toBeVisible()
     const table = getTable(container)
-    expect(table).toBeTruthy()
+    expect(table).toBeVisible()
     expect(table).toHaveAttribute('role', 'table')
   })
 
@@ -156,9 +156,9 @@ describe('tables', () => {
       columns: [{ name: 'col-a', accessor: 'a', className: 'cell-a' }]
     }
     const { container, getByText, rerender } = render(<Reactable {...props} />)
-    expect(getByText('a-1')).toBeTruthy()
+    expect(getByText('a-1')).toBeVisible()
     rerender(<Reactable {...props} data={{ a: ['b-1', 'b-2'] }} />)
-    expect(getByText('b-1')).toBeTruthy()
+    expect(getByText('b-1')).toBeVisible()
     getCells(container).forEach(cell => expect(cell).toHaveClass('cell-a'))
     rerender(<Reactable {...props} columns={[{ name: 'col-a', accessor: 'a' }]} />)
     getCells(container).forEach(cell => expect(cell).not.toHaveClass('cell-a'))
@@ -174,14 +174,14 @@ describe('tables', () => {
     const { container, getByText, rerender } = render(<Reactable {...props} />)
     let searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: 'a-2' } })
-    expect(getByText('a-2')).toBeTruthy()
+    expect(getByText('a-2')).toBeVisible()
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
 
     rerender(<Reactable {...props} />)
     searchInput = getSearchInput(container)
     expect(searchInput.value).toEqual('a-2')
-    expect(getByText('a-2')).toBeTruthy()
+    expect(getByText('a-2')).toBeVisible()
     rows = getDataRows(container)
     expect(rows).toHaveLength(1)
 
@@ -1383,7 +1383,7 @@ describe('footers', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const tfoot = getTfoot(container)
-    expect(tfoot).toBeTruthy()
+    expect(tfoot).toBeVisible()
     expect(tfoot).toHaveAttribute('role', 'rowgroup')
     const footerRow = getFooterRow(container)
     expect(footerRow).toHaveAttribute('role', 'row')
@@ -1634,7 +1634,7 @@ describe('hidden columns', () => {
     const { container, queryByText, rerender } = render(<Reactable {...props} />)
     expect(getHeaders(container)).toHaveLength(1)
     expect(queryByText('col-a')).toEqual(null)
-    expect(queryByText('col-b')).toBeTruthy()
+    expect(queryByText('col-b')).toBeVisible()
 
     const columns = [
       { name: 'col-a', accessor: 'a', show: false },
@@ -2810,7 +2810,7 @@ describe('no data', () => {
     expect(noData).toHaveLength(1)
     expect(noData[0]).toHaveAttribute('aria-live', 'polite')
     const tbody = getTbody(container)
-    expect(getNoData(tbody)).toBeTruthy()
+    expect(getNoData(tbody)).toBeVisible()
     expect(tbody).toHaveClass('rt-tbody-no-data')
 
     const dataRows = getDataRows(container)
@@ -3304,9 +3304,9 @@ describe('sorting', () => {
     }
     const { container } = render(<Reactable {...props} />)
     const headers = getHeaders(container)
-    expect(headers[0].querySelector('.rt-sort-left.rt-sort')).toBeTruthy()
+    expect(headers[0].querySelector('.rt-sort-left.rt-sort')).toBeVisible()
     expect(headers[1].querySelector('.rt-sort')).toEqual(null)
-    expect(headers[2].querySelector('.rt-sort-right.rt-sort')).toBeTruthy()
+    expect(headers[2].querySelector('.rt-sort-right.rt-sort')).toBeVisible()
   })
 
   it('sorts missing values last', () => {
@@ -3457,14 +3457,14 @@ describe('filtering', () => {
     fireEvent.change(filter, { target: { value: '11' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('111')).toBeTruthy()
-    expect(getByText('115')).toBeTruthy()
+    expect(getByText('111')).toBeVisible()
+    expect(getByText('115')).toBeVisible()
 
     // No matches
     fireEvent.change(filter, { target: { value: '5' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
     const padRows = getPadRows(container)
     expect(padRows).toHaveLength(1)
 
@@ -3491,20 +3491,20 @@ describe('filtering', () => {
     fireEvent.change(filters[0], { target: { value: 'Bb' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Substring matches
     fireEvent.change(filters[0], { target: { value: 'c' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('aaac')).toBeTruthy()
-    expect(getByText('CCC')).toBeTruthy()
+    expect(getByText('aaac')).toBeVisible()
+    expect(getByText('CCC')).toBeVisible()
 
     // No matches
     fireEvent.change(filters[0], { target: { value: 'cccc' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear filter
     fireEvent.change(filters[0], { target: { value: '' } })
@@ -3515,7 +3515,7 @@ describe('filtering', () => {
     fireEvent.change(filters[1], { target: { value: 'á' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(queryByText('ááád')).toBeTruthy()
+    expect(queryByText('ááád')).toBeVisible()
   })
 
   it('filters other types of columns', () => {
@@ -3532,19 +3532,19 @@ describe('filtering', () => {
     fireEvent.change(filter, { target: { value: 'acc' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('acCC')).toBeTruthy()
+    expect(getByText('acCC')).toBeVisible()
 
     // Substring matches
     fireEvent.change(filter, { target: { value: '03-05' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('2018-03-05')).toBeTruthy()
+    expect(getByText('2018-03-05')).toBeVisible()
 
     // Not locale-sensitive
     fireEvent.change(filter, { target: { value: 'aaa' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear filter
     fireEvent.change(filter, { target: { value: '' } })
@@ -3576,7 +3576,7 @@ describe('filtering', () => {
     fireEvent.change(filters[0], { target: { value: 'Bb' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
   })
 
   it('filtering works with grouping and sub-rows', () => {
@@ -3688,12 +3688,12 @@ describe('filtering', () => {
     fireEvent.change(filter, { target: { value: 'aaa2' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('aaa2')).toBeTruthy()
+    expect(getByText('aaa2')).toBeVisible()
     rerender(<Reactable {...props} data={{ a: ['aaa2', 'aaa222', 'bcd'], b: ['a', 'b', 'c'] }} />)
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('aaa2')).toBeTruthy()
-    expect(getByText('aaa222')).toBeTruthy()
+    expect(getByText('aaa2')).toBeVisible()
+    expect(getByText('aaa222')).toBeVisible()
     expect(filter.value).toEqual('aaa2')
   })
 
@@ -3710,7 +3710,7 @@ describe('filtering', () => {
     let filter = getFilters(container)[0]
     fireEvent.change(filter, { target: { value: 'aaa2' } })
     expect(getDataRows(container)).toHaveLength(1)
-    expect(getByText('aaa2')).toBeTruthy()
+    expect(getByText('aaa2')).toBeVisible()
 
     // All other state should persist, including searched state
     let searchInput = getSearchInput(container)
@@ -3794,26 +3794,26 @@ describe('filtering', () => {
     expect(defaultFilters).toHaveLength(0)
 
     const filter = container.querySelector('.custom-filter')
-    expect(filter).toBeTruthy()
+    expect(filter).toBeVisible()
 
     // Case-insensitive
     fireEvent.change(filter, { target: { value: 'Bb' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Substring matches
     fireEvent.change(filter, { target: { value: 'c' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('aaac')).toBeTruthy()
-    expect(getByText('CCC')).toBeTruthy()
+    expect(getByText('aaac')).toBeVisible()
+    expect(getByText('CCC')).toBeVisible()
 
     // No matches
     fireEvent.change(filter, { target: { value: 'cccc' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear filter
     fireEvent.change(filter, { target: { value: '' } })
@@ -3836,7 +3836,7 @@ describe('searching', () => {
     expect(searchInput).toEqual(null)
     rerender(<Reactable {...props} searchable />)
     searchInput = getSearchInput(container)
-    expect(searchInput).toBeTruthy()
+    expect(searchInput).toBeVisible()
   })
 
   it('searches numeric columns', () => {
@@ -3852,14 +3852,14 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: '11' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('111')).toBeTruthy()
-    expect(getByText('115')).toBeTruthy()
+    expect(getByText('111')).toBeVisible()
+    expect(getByText('115')).toBeVisible()
 
     // No matches
     fireEvent.change(searchInput, { target: { value: '5' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear search
     fireEvent.change(searchInput, { target: { value: '' } })
@@ -3884,20 +3884,20 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: 'Bb' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Substring matches
     fireEvent.change(searchInput, { target: { value: 'c' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('aaac')).toBeTruthy()
-    expect(getByText('CCC')).toBeTruthy()
+    expect(getByText('aaac')).toBeVisible()
+    expect(getByText('CCC')).toBeVisible()
 
     // No matches
     fireEvent.change(searchInput, { target: { value: 'cccc' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear search
     fireEvent.change(searchInput, { target: { value: '' } })
@@ -3908,7 +3908,7 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: 'á' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(queryByText('ááád')).toBeTruthy()
+    expect(queryByText('ááád')).toBeVisible()
   })
 
   it('searches other types of columns', () => {
@@ -3925,19 +3925,19 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: 'acc' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('acCC')).toBeTruthy()
+    expect(getByText('acCC')).toBeVisible()
 
     // Substring matches
     fireEvent.change(searchInput, { target: { value: '03-05' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('2018-03-05')).toBeTruthy()
+    expect(getByText('2018-03-05')).toBeVisible()
 
     // Not locale-sensitive
     fireEvent.change(searchInput, { target: { value: 'aaa' } })
     rows = getDataRows(container)
     expect(rows).toHaveLength(0)
-    expect(getByText('No rows found')).toBeTruthy()
+    expect(getByText('No rows found')).toBeVisible()
 
     // Clear search
     fireEvent.change(searchInput, { target: { value: '' } })
@@ -3966,7 +3966,7 @@ describe('searching', () => {
     fireEvent.change(searchInput, { target: { value: 'Bb' } })
     let rows = getDataRows(container)
     expect(rows).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
   })
 
   it('ignores hidden columns', () => {
@@ -4116,8 +4116,8 @@ describe('searching', () => {
     rerender(<Reactable {...props} data={{ a: ['a', 'b', 'c'], b: ['x', 'y', 'bz'] }} />)
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
-    expect(getByText('y')).toBeTruthy()
-    expect(getByText('bz')).toBeTruthy()
+    expect(getByText('y')).toBeVisible()
+    expect(getByText('bz')).toBeVisible()
     expect(searchInput.value).toEqual('b')
   })
 
@@ -4132,14 +4132,14 @@ describe('searching', () => {
 
     fireEvent.change(searchInput, { target: { value: '11' } })
     expect(getDataRows(container)).toHaveLength(2)
-    expect(getByText('111')).toBeTruthy()
-    expect(getByText('115')).toBeTruthy()
+    expect(getByText('111')).toBeVisible()
+    expect(getByText('115')).toBeVisible()
 
     rerender(<Reactable {...props} columns={[{ name: 'a', accessor: 'a', type: 'character' }]} />)
     expect(getDataRows(container)).toHaveLength(3)
-    expect(getByText('111')).toBeTruthy()
-    expect(getByText('115')).toBeTruthy()
-    expect(getByText('32.11')).toBeTruthy()
+    expect(getByText('111')).toBeVisible()
+    expect(getByText('115')).toBeVisible()
+    expect(getByText('32.11')).toBeVisible()
   })
 
   it('searched state resets when searchable changes to false', () => {
@@ -4155,7 +4155,7 @@ describe('searching', () => {
     let searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: 'b' } })
     expect(getDataRows(container)).toHaveLength(1)
-    expect(getByText('aaa2')).toBeTruthy()
+    expect(getByText('aaa2')).toBeVisible()
 
     // All other state should persist, including filtered state
     let filter = getFilters(container)[0]
@@ -4941,8 +4941,8 @@ describe('row selection', () => {
     expect(rows[1]).not.toHaveClass('i-am-selected')
     expect(rows[0]).toHaveStyle('background-color: red')
     expect(rows[1]).not.toHaveStyle('background-color: red')
-    expect(getByText('row 0 selected? yes')).toBeTruthy()
-    expect(getByText('row 1 selected? no')).toBeTruthy()
+    expect(getByText('row 0 selected? yes')).toBeVisible()
+    expect(getByText('row 1 selected? no')).toBeVisible()
   })
 
   it('selection column can be customized', () => {
@@ -5267,7 +5267,7 @@ describe('expandable row details', () => {
 
     expect(queryByText('row details: 1')).toEqual(null)
     fireEvent.click(expanders[0])
-    expect(getByText('row details: 1')).toBeTruthy()
+    expect(getByText('row details: 1')).toBeVisible()
   })
 
   it('renders empty row details', () => {
@@ -5298,22 +5298,22 @@ describe('expandable row details', () => {
     expect(expanders).toHaveLength(4)
 
     fireEvent.click(expanders[0])
-    expect(getByText('detail-a1')).toBeTruthy()
+    expect(getByText('detail-a1')).toBeVisible()
     expect(queryByText('detail-b1')).toEqual(null)
 
     // Row 1, col b
     fireEvent.click(expanders[1])
-    expect(getByText('detail-b1')).toBeTruthy()
+    expect(getByText('detail-b1')).toBeVisible()
     expect(queryByText('detail-a1')).toEqual(null)
 
     // Row 2, col a
     fireEvent.click(expanders[2])
-    expect(getByText('detail-a2')).toBeTruthy()
+    expect(getByText('detail-a2')).toBeVisible()
     expect(queryByText('detail-b2')).toEqual(null)
 
     // Row 2, col b
     fireEvent.click(expanders[3])
-    expect(getByText('detail-b2')).toBeTruthy()
+    expect(getByText('detail-b2')).toBeVisible()
     expect(queryByText('detail-a2')).toEqual(null)
   })
 
@@ -5344,7 +5344,7 @@ describe('expandable row details', () => {
     let expanderCells = container.querySelectorAll('.expander-no-content')
     expect(expanderCells).toHaveLength(2)
     fireEvent.click(expanderCells[0])
-    expect(getByText('detail-1')).toBeTruthy()
+    expect(getByText('detail-1')).toBeVisible()
     // Expander-only cells without content should have special styles
     expect(expanderCells[0]).toHaveStyle('text-overflow: clip; user-select: none; color: blue')
     expect(expanderCells[1]).not.toHaveStyle('text-overflow: clip; user-select: none')
@@ -5399,37 +5399,37 @@ describe('expandable row details', () => {
 
     // Pagination
     fireEvent.click(expanders[0])
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(getNextButton(container))
     expect(queryByText('row-details-1')).toEqual(null)
     expect(queryByText('row-details-2')).toEqual(null)
     fireEvent.click(getPrevButton(container))
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(expanders[0])
     expect(queryByText('row-details-1')).toEqual(null)
 
     // Sorting
     fireEvent.click(expanders[0])
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(getByText('col-b'))
     expect(queryByText('row-details-1')).toEqual(null)
     expect(queryByText('row-details-2')).toEqual(null)
     fireEvent.click(getByText('col-b'))
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(expanders[0])
     expect(queryByText('row-details-1')).toEqual(null)
 
     // Filtering
     fireEvent.click(expanders[0])
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     const filter = getFilters(container)[0]
     fireEvent.change(filter, { target: { value: 'cell-1' } })
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.change(filter, { target: { value: 'cell-2' } })
     expect(queryByText('row-details-1')).toEqual(null)
     expect(queryByText('row-details-2')).toEqual(null)
     fireEvent.change(filter, { target: { value: '' } })
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(expanders[0])
     expect(queryByText('row-details-1')).toEqual(null)
   })
@@ -5455,10 +5455,10 @@ describe('expandable row details', () => {
     fireEvent.click(expanders[0])
     fireEvent.click(expanders[1])
     expect(getRowDetails(container)).toHaveLength(2)
-    expect(getByText('row details: 0-1-a')).toBeTruthy()
+    expect(getByText('row details: 0-1-a')).toBeVisible()
     rerender(<Reactable {...props} data={{ a: [22, 44, 66], b: ['x', 'y', 'z'] }} />)
     expect(getRowDetails(container)).toHaveLength(2)
-    expect(getByText('row details: 0-22-a')).toBeTruthy()
+    expect(getByText('row details: 0-22-a')).toBeVisible()
   })
 
   it('handles Shiny elements in row details content', () => {
@@ -5494,17 +5494,17 @@ describe('expandable row details', () => {
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(3)
 
     // Row details content should be cleaned up properly when changing page
-    expect(getByText('details-a-1')).toBeTruthy()
+    expect(getByText('details-a-1')).toBeVisible()
     fireEvent.click(getNextButton(container))
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(4)
 
     // Content should update properly when changing page
     fireEvent.click(getExpanders(container)[0])
-    expect(getByText('details-a-3')).toBeTruthy()
+    expect(getByText('details-a-3')).toBeVisible()
     expect(window.Shiny.bindAll).toHaveBeenCalledTimes(5)
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(4)
     fireEvent.click(getPrevButton(container))
-    expect(getByText('details-a-1')).toBeTruthy()
+    expect(getByText('details-a-1')).toBeVisible()
     expect(window.Shiny.bindAll).toHaveBeenCalledTimes(6)
     expect(window.Shiny.unbindAll).toHaveBeenCalledTimes(5)
 
@@ -5524,9 +5524,9 @@ describe('expandable row details', () => {
     let expanders = getExpanders(container)
     expect(expanders).toHaveLength(2)
     fireEvent.click(expanders[0])
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(expanders[1])
-    expect(getByText('row-details-2')).toBeTruthy()
+    expect(getByText('row-details-2')).toBeVisible()
   })
 
   it('row details do not use manual expanded key', () => {
@@ -5570,22 +5570,22 @@ describe('expandable row details', () => {
     expanders = getExpanders(container)
     expect(expanders).toHaveLength(4)
     fireEvent.click(expanders[1]) // Expand col-a
-    expect(getByText('r-row-details')).toBeTruthy()
+    expect(getByText('r-row-details')).toBeVisible()
     fireEvent.click(expanders[2]) // Expand col-b
-    expect(getByText('js-row-details')).toBeTruthy()
+    expect(getByText('js-row-details')).toBeVisible()
 
     // Aggregated cells in columns with JS row details should not be clickable
     const cells = getCells(container)
     const aggregatedCell = cells[2]
     expect(aggregatedCell.textContent).toEqual('')
     fireEvent.click(aggregatedCell)
-    expect(getByText('js-row-details')).toBeTruthy()
+    expect(getByText('js-row-details')).toBeVisible()
 
     // Placeholder cells under grouped cells should not be clickable
     const groupedChildCell = cells[3]
     expect(groupedChildCell.textContent).toEqual('')
     fireEvent.click(groupedChildCell)
-    expect(getByText('js-row-details')).toBeTruthy()
+    expect(getByText('js-row-details')).toBeVisible()
   })
 
   it('expanders have aria labels', () => {
@@ -5616,8 +5616,8 @@ describe('expandable row details', () => {
       defaultExpanded: true
     }
     const { container, getByText, queryByText, rerender } = render(<Reactable {...props} />)
-    expect(getByText('details: 1-a')).toBeTruthy()
-    expect(getByText('details: 2-a')).toBeTruthy()
+    expect(getByText('details: 1-a')).toBeVisible()
+    expect(getByText('details: 2-a')).toBeVisible()
 
     // defaultExpanded should work with conditional row details
     expect(getRowDetails(container)).toHaveLength(2)
@@ -5631,8 +5631,8 @@ describe('expandable row details', () => {
     expect(queryByText('details:')).toEqual(null)
     expect(getRowDetails(container)).toHaveLength(0)
     rerender(<Reactable {...props} defaultExpanded={true} />)
-    expect(getByText('details: 1-a')).toBeTruthy()
-    expect(getByText('details: 2-a')).toBeTruthy()
+    expect(getByText('details: 1-a')).toBeVisible()
+    expect(getByText('details: 2-a')).toBeVisible()
     rerender(<Reactable {...props} defaultExpanded={false} />)
     expect(getRowDetails(container)).toHaveLength(0)
   })
@@ -5648,8 +5648,8 @@ describe('expandable row details', () => {
       defaultExpanded: true
     }
     const { getByText } = render(<Reactable {...props} />)
-    expect(getByText('row-details-1')).toBeTruthy()
-    expect(getByText('row-details-2')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
+    expect(getByText('row-details-2')).toBeVisible()
   })
 
   it('defaultExpanded expands the first details column when there are multiple', () => {
@@ -5663,8 +5663,8 @@ describe('expandable row details', () => {
       defaultExpanded: true
     }
     const { container, getByText, queryByText } = render(<Reactable {...props} />)
-    expect(getByText('details-a-1')).toBeTruthy()
-    expect(getByText('details-a-2')).toBeTruthy()
+    expect(getByText('details-a-1')).toBeVisible()
+    expect(getByText('details-a-2')).toBeVisible()
     expect(queryByText('details-b-1')).toBeFalsy()
     expect(queryByText('details-b-2')).toBeFalsy()
     expect(getRowDetails(container)).toHaveLength(2)
@@ -6363,8 +6363,8 @@ describe('grouping and aggregation', () => {
       defaultExpanded: true
     }
     const { container, getByText } = render(<Reactable {...props} />)
-    expect(getByText('a__cell_a (2)')).toBeTruthy()
-    expect(getByText('b__cell_a (1)')).toBeTruthy()
+    expect(getByText('a__cell_a (2)')).toBeVisible()
+    expect(getByText('b__cell_a (1)')).toBeVisible()
     expect(getCellsText(container, '.col-b')).toEqual([
       'agg__b-0-0',
       'agg__b-1-0',
@@ -6677,21 +6677,21 @@ describe('grouping and aggregation', () => {
     expect(getRows(container)).toHaveLength(4)
     expect(getExpandableCells(container)).toHaveLength(8)
     expect(getNonExpanderCells(container)).toHaveLength(4)
-    expect(getByText('1 (1)')).toBeTruthy()
-    expect(getByText('2 (1)')).toBeTruthy()
+    expect(getByText('1 (1)')).toBeVisible()
+    expect(getByText('2 (1)')).toBeVisible()
 
     fireEvent.click(getNonExpanderCells(container)[3]) // Aggregated cell for column a, group z (1)
     expect(getRows(container)).toHaveLength(5)
     expect(getExpandableCells(container)).toHaveLength(10)
     expect(getNonExpanderCells(container)).toHaveLength(5)
-    expect(getByText('3 (1)')).toBeTruthy()
+    expect(getByText('3 (1)')).toBeVisible()
 
     fireEvent.click(getNonExpanderCells(container)[1]) // Placeholder for column c, group 1 (1)
-    expect(getByText('b--a')).toBeTruthy()
+    expect(getByText('b--a')).toBeVisible()
     fireEvent.click(getNonExpanderCells(container)[2]) // Placeholder for column c, group 2 (1)
-    expect(getByText('b--b')).toBeTruthy()
+    expect(getByText('b--b')).toBeVisible()
     fireEvent.click(getNonExpanderCells(container)[4]) // Placeholder for column c, group 3 (1)
-    expect(getByText('b--c')).toBeTruthy()
+    expect(getByText('b--c')).toBeVisible()
 
     // No other grouped cells (for leaf rows) should be expandable
     expect(getExpandableCells(container)).toHaveLength(10)
@@ -6766,7 +6766,7 @@ describe('grouping and aggregation', () => {
     // Expanded state should not persist by relative row index (like in v6).
     // Details row expansion should not transfer to grouped rows.
     fireEvent.click(expanders[0])
-    expect(queryByText('row-details-1')).toBeTruthy()
+    expect(queryByText('row-details-1')).toBeVisible()
     expect(getRows(container)).toHaveLength(2)
     rerender(<Reactable {...props} pivotBy={['c']} />)
     expect(queryByText('row-details-1')).toBeFalsy()
@@ -6777,7 +6777,7 @@ describe('grouping and aggregation', () => {
     expect(expanders).toHaveLength(2)
     fireEvent.click(expanders[0])
     expect(getRows(container)).toHaveLength(3)
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
   })
 
   it('table updates when defaultExpanded changes', () => {
@@ -6818,9 +6818,9 @@ describe('grouping and aggregation', () => {
     const { container, getByText, rerender } = render(<Reactable {...props} />)
     expect(getExpanders(container)).toHaveLength(5)
     expect(getRows(container)).toHaveLength(5)
-    expect(getByText('row details: 0-a')).toBeTruthy()
-    expect(getByText('row details: 1-a')).toBeTruthy()
-    expect(getByText('row details: 2-a')).toBeTruthy()
+    expect(getByText('row details: 0-a')).toBeVisible()
+    expect(getByText('row details: 1-a')).toBeVisible()
+    expect(getByText('row details: 2-a')).toBeVisible()
 
     // When adding new groupBy columns, previous expanded state should persist.
     // New groupBy columns should also be expanded, but this does not currently work.
@@ -6928,13 +6928,13 @@ describe('cell click actions', () => {
     expect(expanders).toHaveLength(3)
     fireEvent.click(getByText('aaa1'))
     // Should expand first details column
-    expect(getByText('detail-b')).toBeTruthy()
+    expect(getByText('detail-b')).toBeVisible()
     expect(queryByText('detail-c')).toEqual(null)
     // Should work fine with expander buttons
     fireEvent.click(expanders[0])
     expect(queryByText('detail-b')).toEqual(null)
     fireEvent.click(expanders[0])
-    expect(getByText('detail-b')).toBeTruthy()
+    expect(getByText('detail-b')).toBeVisible()
     // Collapse row
     fireEvent.click(getByText('aaa1'))
     expect(queryByText('detail-b')).toEqual(null)
@@ -6952,9 +6952,9 @@ describe('cell click actions', () => {
     }
     const { getByText } = render(<Reactable {...props} />)
     fireEvent.click(getByText('bbb1'))
-    expect(getByText('row-details-1')).toBeTruthy()
+    expect(getByText('row-details-1')).toBeVisible()
     fireEvent.click(getByText('bbb2'))
-    expect(getByText('row-details-2')).toBeTruthy()
+    expect(getByText('row-details-2')).toBeVisible()
   })
 
   it('expands grouped rows on click', () => {
@@ -7002,7 +7002,7 @@ describe('cell click actions', () => {
 
     // Clicking should still expand row details
     fireEvent.click(getByText('b-b'))
-    expect(getByText('details-b')).toBeTruthy()
+    expect(getByText('details-b')).toBeVisible()
   })
 
   it('ignores pad rows on click', () => {
@@ -7127,14 +7127,14 @@ describe('pagination', () => {
       <Reactable {...props} defaultPageSize={1} showPageSizeOptions pageSizeOptions={[10, 20]} />
     )
     pagination = getPagination(container)
-    expect(pagination).toBeTruthy()
+    expect(pagination).toBeVisible()
 
     // Auto shown if page size option causes paging
     rerender(
       <Reactable {...props} defaultPageSize={20} showPageSizeOptions pageSizeOptions={[1, 20]} />
     )
     pagination = getPagination(container)
-    expect(pagination).toBeTruthy()
+    expect(pagination).toBeVisible()
 
     // Force show pagination
     rerender(
@@ -7147,7 +7147,7 @@ describe('pagination', () => {
       />
     )
     pagination = getPagination(container)
-    expect(pagination).toBeTruthy()
+    expect(pagination).toBeVisible()
 
     // Force hide pagination
     rerender(
@@ -7174,17 +7174,17 @@ describe('pagination', () => {
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
 
     const filter = getFilters(container)[0]
     fireEvent.change(filter, { target: { value: 'aaa' } })
     expect(getRows(container)).toHaveLength(2)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
 
     const searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: '222' } })
     expect(getRows(container)).toHaveLength(1)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
   })
 
   it('auto-shows pagination when expanded rows would cause table to span multiple pages', () => {
@@ -7204,12 +7204,12 @@ describe('pagination', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
     expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
 
     fireEvent.click(getExpanders(container)[0])
     expect(getRows(container)).toHaveLength(4)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
     expect(getPageInfo(container).textContent).toEqual('1–4 of 5 rows')
 
     // Known issue: filtering can cause pagination to disappear as initial row
@@ -7345,7 +7345,7 @@ describe('pagination', () => {
 
     fireEvent.click(nextButton)
     expect(pageNumbers.textContent).toEqual('3 of 3')
-    expect(queryByText('_e5')).toBeTruthy()
+    expect(queryByText('_e5')).toBeVisible()
 
     // Last page: next button should be disabled
     fireEvent.click(nextButton)
@@ -7536,7 +7536,7 @@ describe('pagination', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
 
     fireEvent.click(getExpanders(container)[0])
     expect(getRows(container)).toHaveLength(2)
@@ -7562,7 +7562,7 @@ describe('pagination', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getPagination(container)).toBeTruthy()
+    expect(getPagination(container)).toBeVisible()
 
     fireEvent.click(getExpanders(container)[0])
     rerender(<Reactable {...props} />)
@@ -7653,7 +7653,7 @@ describe('themes', () => {
     const rootContainer = getRoot(container)
     expect(rootContainer).toHaveStyleRule('color', 'red')
     // Should work with custom classes
-    expect(container.querySelector('.my-root')).toBeTruthy()
+    expect(container.querySelector('.my-root')).toBeVisible()
 
     const table = getTable(container)
     expect(table).toHaveStyleRule('border', '1px solid black')
@@ -7767,13 +7767,13 @@ describe('themes', () => {
 
     const assertHeader = el => {
       const innerEl = el.querySelector('.rt-th-inner')
-      expect(innerEl).toBeTruthy()
+      expect(innerEl).toBeVisible()
       expect(el).not.toHaveStyleRule('padding', '99px')
       expect(innerEl).toHaveStyleRule('padding', '99px')
     }
     const assertCell = el => {
       const innerEl = el.querySelector('.rt-td-inner')
-      expect(innerEl).toBeTruthy()
+      expect(innerEl).toBeVisible()
       expect(el).not.toHaveStyleRule('padding', '99px')
       expect(innerEl).toHaveStyleRule('padding', '99px')
     }
@@ -7890,8 +7890,8 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(outputId).toEqual('__reactable__shiny-output-container')
 
     act(() => updateState({ expanded: true }))
-    expect(getByText('detail-1')).toBeTruthy()
-    expect(getByText('detail-2')).toBeTruthy()
+    expect(getByText('detail-1')).toBeVisible()
+    expect(getByText('detail-2')).toBeVisible()
 
     act(() => updateState({ expanded: false }))
     expect(queryByText('detail-1')).toEqual(null)
@@ -7912,23 +7912,23 @@ describe('updateReactable updates table state from Shiny', () => {
 
     const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
     expect(outputId).toEqual('__reactable__shiny-output-container')
-    expect(getByText('1–1 of 3 rows')).toBeTruthy()
+    expect(getByText('1–1 of 3 rows')).toBeVisible()
 
     act(() => updateState({ page: 2 }))
-    expect(getByText('3–3 of 3 rows')).toBeTruthy()
+    expect(getByText('3–3 of 3 rows')).toBeVisible()
     expect(window.Shiny.onInputChange).toHaveBeenCalledWith(
       'shiny-output-container__reactable__page',
       3
     )
 
     act(() => updateState({ page: 0 }))
-    expect(getByText('1–1 of 3 rows')).toBeTruthy()
+    expect(getByText('1–1 of 3 rows')).toBeVisible()
 
     // Should round out-of-bounds page indexes to nearest valid page
     act(() => updateState({ page: 999 }))
-    expect(getByText('3–3 of 3 rows')).toBeTruthy()
+    expect(getByText('3–3 of 3 rows')).toBeVisible()
     act(() => updateState({ page: -5 }))
-    expect(getByText('1–1 of 3 rows')).toBeTruthy()
+    expect(getByText('1–1 of 3 rows')).toBeVisible()
   })
 
   it('updates data', () => {
@@ -7946,15 +7946,15 @@ describe('updateReactable updates table state from Shiny', () => {
     const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
     expect(outputId).toEqual('__reactable__shiny-output-container')
 
-    expect(getByText('c1')).toBeTruthy()
+    expect(getByText('c1')).toBeVisible()
     act(() => updateState({ data: { a: ['newc1', 'newc2', 'newc3'] } }))
-    expect(getByText('newc1')).toBeTruthy()
-    expect(getByText('newc2')).toBeTruthy()
-    expect(getByText('newc3')).toBeTruthy()
+    expect(getByText('newc1')).toBeVisible()
+    expect(getByText('newc2')).toBeVisible()
+    expect(getByText('newc3')).toBeVisible()
 
     // After updating data, rerendering with new data should work
     rerender(<Reactable {...props} data={{ a: ['b1', 'b2', 'b'] }} />)
-    expect(getByText('b1')).toBeTruthy()
+    expect(getByText('b1')).toBeVisible()
     expect(queryByText('newc1')).toBeFalsy()
   })
 
@@ -7981,10 +7981,10 @@ describe('updateReactable updates table state from Shiny', () => {
     console.error = jest.fn()
     updateState({ data: { a: ['c1', 'c2', 'c3'] }, selected: [2], expanded: true, page: 2 })
     console.error = originalError
-    expect(getByText('c3')).toBeTruthy()
-    expect(getByLabelText('Deselect row').checked).toBeTruthy()
-    expect(getByText('detail-3')).toBeTruthy()
-    expect(getByText('3–3 of 3 rows')).toBeTruthy()
+    expect(getByText('c3')).toBeVisible()
+    expect(getByLabelText('Deselect row')).toBeChecked()
+    expect(getByText('detail-3')).toBeVisible()
+    expect(getByText('3–3 of 3 rows')).toBeVisible()
   })
 
   it('does not enable updateState for tables that are not Shiny outputs', () => {
@@ -8185,7 +8185,7 @@ describe('Crosstalk', () => {
     // Select one value
     act(() => onSelection({ sender: 'some other widget', value: ['key2'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Clear selection
     act(() => onSelection({ sender: 'some other widget', value: [] }))
@@ -8222,7 +8222,7 @@ describe('Crosstalk', () => {
     mockSelection.value = ['key2']
     const { container, getByText } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     const onSelection = mockSelection.on.mock.calls[0][1]
     act(() => onSelection({ sender: 'some other widget', value: [] }))
@@ -8250,13 +8250,13 @@ describe('Crosstalk', () => {
     // Filter one value
     act(() => onFilter({ sender: 'some other widget', value: ['key2'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Filter multiple values
     act(() => onFilter({ sender: 'some other widget', value: ['key3', 'key1'] }))
     expect(getRows(container)).toHaveLength(2)
-    expect(getByText('ccc')).toBeTruthy()
-    expect(getByText('aaa')).toBeTruthy()
+    expect(getByText('ccc')).toBeVisible()
+    expect(getByText('aaa')).toBeVisible()
 
     // Clear filter
     act(() => onFilter({ sender: 'some other widget', value: null }))
@@ -8285,7 +8285,7 @@ describe('Crosstalk', () => {
     mockFilter.filteredKeys = ['key2']
     const { container, getByText } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     const onFilter = mockFilter.on.mock.calls[0][1]
     act(() => onFilter({ sender: 'some other widget', value: null }))
@@ -8311,13 +8311,13 @@ describe('Crosstalk', () => {
     act(() => onSelection({ sender: 'some other widget', value: ['key2'] }))
     act(() => onFilter({ sender: 'some other widget', value: ['key2', 'key3'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     // Selection with existing filter
     act(() => onFilter({ sender: 'some other widget', value: ['key1', 'key3'] }))
     act(() => onSelection({ sender: 'some other widget', value: ['key3'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('ccc')).toBeTruthy()
+    expect(getByText('ccc')).toBeVisible()
 
     // Clear selection and filter
     act(() => onSelection({ sender: 'some other widget', value: [] }))
@@ -8396,7 +8396,7 @@ describe('Crosstalk', () => {
     act(() => onFilter({ sender: 'some other widget', value: ['key2', 'key3'] }))
     act(() => onSelection({ sender: 'some other widget', value: ['key2'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
 
     const selectRowCheckboxes = getSelectRowCheckboxes(container)
     const selectRow2Checkbox = selectRowCheckboxes[1]
@@ -8405,8 +8405,8 @@ describe('Crosstalk', () => {
     act(() => onSelection({ sender: mockSelection, value: ['key2'] }))
     expect(mockSelection.set).toHaveBeenLastCalledWith(['key2'])
     expect(getRows(container)).toHaveLength(2)
-    expect(getByText('bbb')).toBeTruthy()
-    expect(getByText('ccc')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
+    expect(getByText('ccc')).toBeVisible()
   })
 
   it('clears selected state on selection changes from other widgets', () => {
@@ -8501,7 +8501,7 @@ describe('Crosstalk', () => {
     // Filter one value
     act(() => onFilter({ sender: 'some other widget', value: ['key2'] }))
     expect(getRows(container)).toHaveLength(1)
-    expect(getByText('bbb')).toBeTruthy()
+    expect(getByText('bbb')).toBeVisible()
   })
 
   it('Crosstalk filtering works with grouping and sub-rows', () => {
