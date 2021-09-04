@@ -1,4 +1,4 @@
-import { css as emotionCss } from 'emotion'
+import { css as emotionCss } from '@emotion/css'
 
 export function createTheme(options) {
   if (!options) return null
