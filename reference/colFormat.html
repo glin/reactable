@@ -340,18 +340,22 @@ beyond what the built-in formatters provide.</p></div>
   Area <span class='op'>=</span> <span class='va'>state.area</span>
 <span class='op'>)</span>
 
-<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, groupBy <span class='op'>=</span> <span class='st'>"Region"</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  States <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    aggregate <span class='op'>=</span> <span class='st'>"count"</span>,
-    format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-      aggregated <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" states"</span><span class='op'>)</span>
+<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  groupBy <span class='op'>=</span> <span class='st'>"Region"</span>,
+  columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+    States <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
+      aggregate <span class='op'>=</span> <span class='st'>"count"</span>,
+      format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+        aggregated <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" states"</span><span class='op'>)</span>
+      <span class='op'>)</span>
+    <span class='op'>)</span>,
+    Area <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
+      aggregate <span class='op'>=</span> <span class='st'>"sum"</span>,
+      format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" mi\u00b2"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
     <span class='op'>)</span>
-  <span class='op'>)</span>,
-  Area <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    aggregate <span class='op'>=</span> <span class='st'>"sum"</span>,
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" mi\u00b2"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
   <span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
 
 </div></pre>
   </div>
