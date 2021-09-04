@@ -1,6 +1,6 @@
 import React from 'react'
 import reactR from 'reactR'
-import { render, fireEvent, cleanup, act } from '@testing-library/react'
+import { render, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { matchers } from 'jest-emotion'
 
@@ -8,8 +8,6 @@ import Reactable from '../Reactable.v2'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
-
-afterEach(cleanup)
 
 expect.extend(matchers)
 
