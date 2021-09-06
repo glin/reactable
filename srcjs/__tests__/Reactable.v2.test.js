@@ -627,6 +627,7 @@ describe('cells', () => {
       expect(cellInfo.value).toEqual([1, 2][cellInfo.index])
       expect(cellInfo.level).toEqual(0)
       expect(cellInfo.aggregated).toBeFalsy()
+      expect(cellInfo.filterValue).toEqual(undefined)
       expect(cellInfo.subRows).toEqual([])
       expect(cellInfo.row).toEqual(
         [
@@ -3626,25 +3627,48 @@ describe('filtering', () => {
     ])
   })
 
-  it('filtered state should be available in colInfo and state info', () => {
+  it('filtered state should be available in cellInfo, colInfo, and state info', () => {
     let filterCount = 0
-    const assertProps = (colInfo, state) => {
+    const assertCellProps = cellInfo => {
+      if (filterCount === 0) {
+        expect(cellInfo.filterValue).toEqual(undefined)
+      } else if (filterCount === 1) {
+        if (cellInfo.column.id === 'b') {
+          expect(cellInfo.filterValue).toEqual('bb')
+        } else {
+          expect(cellInfo.filterValue).toEqual(undefined)
+        }
+      } else {
+        if (cellInfo.column.id === 'b') {
+          expect(cellInfo.filterValue).toEqual('bb')
+        } else {
+          expect(cellInfo.filterValue).toEqual('a')
+        }
+      }
+    }
+    const assertColumnProps = colInfo => {
       if (filterCount === 0) {
         expect(colInfo.column.filterValue).toEqual(undefined)
-        expect(state.filters).toEqual([])
       } else if (filterCount === 1) {
         if (colInfo.column.id === 'b') {
           expect(colInfo.column.filterValue).toEqual('bb')
         } else {
           expect(colInfo.column.filterValue).toEqual(undefined)
         }
-        expect(state.filters).toEqual([{ id: 'b', value: 'bb' }])
       } else {
         if (colInfo.column.id === 'b') {
           expect(colInfo.column.filterValue).toEqual('bb')
         } else {
           expect(colInfo.column.filterValue).toEqual('a')
         }
+      }
+    }
+    const assertStateProps = state => {
+      if (filterCount === 0) {
+        expect(state.filters).toEqual([])
+      } else if (filterCount === 1) {
+        expect(state.filters).toEqual([{ id: 'b', value: 'bb' }])
+      } else {
         expect(state.filters).toEqual([
           { id: 'b', value: 'bb' },
           { id: 'a', value: 'a' }
@@ -3658,12 +3682,21 @@ describe('filtering', () => {
         {
           name: 'b',
           accessor: 'b',
-          cell: (cellInfo, state) => assertProps(cellInfo, state),
-          header: (colInfo, state) => assertProps(colInfo, state),
-          footer: (colInfo, state) => assertProps(colInfo, state)
+          cell: (cellInfo, state) => {
+            assertCellProps(cellInfo)
+            assertStateProps(state)
+          },
+          header: (colInfo, state) => {
+            assertColumnProps(colInfo)
+            assertStateProps(state)
+          },
+          footer: (colInfo, state) => {
+            assertColumnProps(colInfo)
+            assertStateProps(state)
+          }
         }
       ],
-      details: (rowInfo, state) => assertProps(state),
+      details: (rowInfo, state) => assertStateProps(state),
       filterable: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -5925,6 +5958,7 @@ describe('grouping and aggregation', () => {
             expect(cellInfo.page).toEqual(0)
             expect(cellInfo.value).toEqual(['a', '', 'missing'][cellInfo.index])
             expect(cellInfo.aggregated).toEqual(true)
+            expect(cellInfo.filterValue).toEqual(undefined)
             expect(cellInfo.level).toEqual(0)
             expect(cellInfo.expanded).toBeFalsy()
             expect(cellInfo.selected).toEqual(false)
@@ -6217,6 +6251,7 @@ describe('grouping and aggregation', () => {
               expect(cellInfo.page).toEqual(0)
               expect(cellInfo.value).toEqual(2)
               expect(cellInfo.aggregated).toEqual(true)
+              expect(cellInfo.filterValue).toEqual(undefined)
               expect(cellInfo.level).toEqual(0)
               expect(cellInfo.expanded).toBeFalsy()
               expect(cellInfo.selected).toEqual(false)

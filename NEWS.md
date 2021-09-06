@@ -32,9 +32,12 @@ where possible, but note that there are several breaking changes.
   [#148](https://github.com/glin/reactable/issues/148)).
 * JavaScript render functions and style functions receive several new properties:
   * `rowInfo.expanded` and `cellInfo.expanded` indicating whether the row is expanded
-  * `cellInfo.selected` property indicating whether the cell's row is selected
+  * `cellInfo.selected` indicating whether the cell's row is selected
   * `state.page`, `state.pageSize`, and `state.pages` for the current page index,
     page size, and number of pages in the table
+  * `cellInfo.filterValue` and `colInfo.filterValue` for the column filter value
+  * `state.filters` for the column filter values
+  * `state.searchValue` for the table search value
 * JavaScript render functions for cells, headers, footers, and row details
   can now access the table state using a new `state` argument
   ([#88](https://github.com/glin/reactable/issues/88)).

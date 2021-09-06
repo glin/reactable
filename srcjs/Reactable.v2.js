@@ -947,6 +947,7 @@ function Table({
               const cellInfo = {
                 ...cell,
                 column,
+                filterValue: column.filterValue,
                 ...rowInfo
               }
               let value
