@@ -11,6 +11,27 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
+library(htmltools)
+
+propsTable <- function(props) {
+  tags$table(
+    class = "props-tbl",
+    tags$thead(
+      tags$tr(
+        lapply(colnames(props), function(name) tags$th(name))
+      )
+    ),
+    tags$tbody(
+      apply(props, 1, function(row) {
+        tags$tr(
+          tags$th(scope = "row", tags$code(row[["Property"]])),
+          tags$td(tags$code(row[["Example"]])),
+          tags$td(row[["Description"]])
+        )
+      })
+    )
+  )
+}
 ```
 
 
@@ -66,6 +87,7 @@ You might prefer to use R functions except when you need more dynamic behavior
 (e.g., style based on sorted state).
 
 #### Example: color scales
+
 We can use R's built-in
 [color utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
 to apply a color scale to a column:
@@ -88,8 +110,10 @@ reactable(
 ```
 
 #### Example: highlight sorted columns
+
 To style sorted columns, we need to use a JavaScript function to determine
 whether a column is currently being sorted:
+
 ```{r highlight_sorted, eval=FALSE}
 reactable(
   iris[1:5, ],
@@ -119,8 +143,10 @@ reactable(
 
 ## Cell Styling
 
-### R functions
+### R functions {#cell-r-functions}
+
 Both `style` and `class` take an R function with up to 3 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   style = function(value, index, name) {
@@ -150,8 +176,10 @@ colDef(
 
 > NOTE: R functions cannot apply styles to aggregated cells.
 
-### JavaScript functions
+### JavaScript functions {#cell-js-functions}
+
 Or a JavaScript function, wrapped in `JS()`, with up to 3 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   style = JS("
@@ -182,63 +210,59 @@ colDef(
 ```
 
 #### `rowInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+rowInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "row", '{ Petal.Length: 1.7, Species: "setosa" }', "row data object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
-  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
+  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data objects (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(rowInfoProps)
 ```
 
 #### `colInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+colInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "id", '"Petal.Length"', "column ID",
   "name", '"Petal Length"', "column display name"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(colInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
-  "pageSize", "10", "page size (new in v0.2.3.9000)",
-  "pages", "5", "number of pages (new in v0.2.3.9000)",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(stateProps)
 ```
 
 
 ## Row Styling
 
-### R functions
+### R functions {#row-r-functions}
+
 Both `rowStyle` and `rowClass` take an R function with a single argument:
+
 ```{r, eval=FALSE}
 reactable(
   rowStyle = function(index) {
@@ -264,8 +288,10 @@ reactable(
 
 > NOTE: R functions cannot apply styles to aggregated rows.
 
-### JavaScript functions
+### JavaScript functions {#row-js-functions}
+
 Or a JavaScript function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 reactable(
   rowStyle = JS("
@@ -294,42 +320,15 @@ reactable(
 ```
 
 #### `rowInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
-  "index", "20", "row index (zero-based)",
-  "viewIndex", "0", "row index within the page (zero-based)",
-  "aggregated", "true", "whether the row is aggregated",
-  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
-  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated rows only)",
-  "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(rowInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
-  "pageSize", "10", "page size (new in v0.2.3.9000)",
-  "pages", "5", "number of pages (new in v0.2.3.9000)",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(stateProps)
 ```
 
 
@@ -354,5 +353,18 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 
 .reactable {
   font-size: 14px;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope="row"] {
+  font-weight: 400;
 }
 ```

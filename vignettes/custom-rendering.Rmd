@@ -11,6 +11,27 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
+library(htmltools)
+
+propsTable <- function(props) {
+  tags$table(
+    class = "props-tbl",
+    tags$thead(
+      tags$tr(
+        lapply(colnames(props), function(name) tags$th(name))
+      )
+    ),
+    tags$tbody(
+      apply(props, 1, function(row) {
+        tags$tr(
+          tags$th(scope = "row", tags$code(row[["Property"]])),
+          tags$td(tags$code(row[["Example"]])),
+          tags$td(row[["Description"]])
+        )
+      })
+    )
+  )
+}
 ```
 
 
@@ -69,43 +90,59 @@ You might prefer to use R render functions except in cases where you need more
 dynamic behavior (e.g., render based on filtered state) or have a very large table.
 
 #### Example: column total with filtering
+
 For example, you can easily add a column total using an R render function:
+
 ```{r}
 data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
 
-reactable(data, searchable = TRUE, columns = list(
-  Price = colDef(footer = function(values) {
-    htmltools::tags$b(sprintf("$%.2f", sum(values)))
-  }),
-  Manufacturer = colDef(footer = htmltools::tags$b("Total"))
-))
+reactable(
+  data,
+  searchable = TRUE,
+  columns = list(
+    Price = colDef(footer = function(values) {
+      htmltools::tags$b(sprintf("$%.2f", sum(values)))
+    }),
+    Manufacturer = colDef(footer = htmltools::tags$b("Total"))
+  )
+)
 ```
 
 However, the column total doesn't update with filtering. For that, you need a
 JavaScript render function with access to the client-side filtered state:
+
 ```{r}
 data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
 
-reactable(data, searchable = TRUE, columns = list(
-  Price = colDef(
-    html = TRUE,
-    footer = JS("function(colInfo) {
-      var values = colInfo.data.map(function(row) {
-        return row[colInfo.column.id]
-      })
-      var total = values.reduce(function(a, b) { return a + b }, 0)
-      return '<b>$' + total.toFixed(2) + '</b>'
-    }")
-  ),
-  Manufacturer = colDef(html = TRUE, footer = "<b>Total</b>")
-))
+reactable(
+  data,
+  searchable = TRUE,
+  columns = list(
+    Price = colDef(
+      html = TRUE,
+      footer = JS("function(colInfo) {
+        const values = colInfo.data.map(function(row) {
+          return row[colInfo.column.id]
+        })
+        let total = 0
+        values.forEach(function(value) {
+          total += value
+        })
+        return '<b>$' + total.toFixed(2) + '</b>'
+      }")
+    ),
+    Manufacturer = colDef(html = TRUE, footer = "<b>Total</b>")
+  )
+)
 ```
 
 
 ## Cells
 
-### R render function
+### R render function {#cells-r-render-function}
+
 To customize cell rendering, provide an R function with up to 3 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   cell = function(value, index, name) {
@@ -121,8 +158,10 @@ colDef(
 )
 ```
 
-### JavaScript render function
+### JavaScript render function {#cells-js-render-function}
+
 Or a JavaScript function, wrapped in `JS()`, with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   cell = JS("
@@ -142,6 +181,7 @@ colDef(
 
 With JavaScript functions, you can also customize rendering of grouped cells and
 aggregated cells:
+
 ```{r, eval=FALSE}
 colDef(
   grouped = JS("function(cellInfo, state) {
@@ -154,50 +194,48 @@ colDef(
 ```
 
 #### `cellInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+cellInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "value", '"setosa"', "cell value",
-  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
-  "column", '{id: "Species"}', "column info object",
+  "row", '{ Petal.Length: 1.7, Species: "setosa" }', "row data object",
+  "column", '{ id: "Species" }', "column info object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
-  "subRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of sub row data objects (aggregated cells only)",
+  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data objects (aggregated cells only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected (new in v0.2.3.9000)"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(cellInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
   "page", "2", "page index (zero-based)",
   "pageSize", "10", "page size",
   "pages", "5", "number of pages",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(stateProps)
 ```
 
 ## Headers
 
-### R render function
+### R render function {#headers-r-render-function}
+
 To customize header rendering, provide an R function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   header = function(value, name) {
@@ -212,8 +250,10 @@ colDef(
 )
 ```
 
-### JavaScript render function
+### JavaScript render function {#headers-js-render-function}
+
 Or a JavaScript function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   header = JS("
@@ -232,42 +272,29 @@ colDef(
 ```
 
 #### `colInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+colInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "sorted array of row data objects in the table"
+  "column", '{ id: "Petal.Length", name: "Petal Length" }', "column info object",
+  "data", '[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]', "sorted array of row data objects in the table"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value), width = 450)
-))
+propsTable(colInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based)",
-  "pageSize", "10", "page size",
-  "pages", "5", "number of pages",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(stateProps)
 ```
 
 ## Footers
 
-### R render function
+### R render function {#footers-r-render-function}
+
 To add footer content, provide an R function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   footer = function(values, name) {
@@ -282,8 +309,10 @@ colDef(
 )
 ```
 
-### JavaScript render function
+### JavaScript render function {#footers-js-render-function}
+
 Or a JavaScript function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 colDef(
   footer = JS("
@@ -302,42 +331,23 @@ colDef(
 ```
 
 #### `colInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "column", '{id: "Petal.Length", name: "Petal Length"}', "column info object",
-  "data", '[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]', "sorted array of row data objects in the table"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value), width = 450)
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(colInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based)",
-  "pageSize", "10", "page size",
-  "pages", "5", "number of pages",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(stateProps)
 ```
 
 ## Expandable Row Details
 
-### R render function
+### R render function {#details-r-render-function}
+
 To add expandable row details, provide an R function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 reactable(
   details = function(index, name) {
@@ -355,8 +365,10 @@ reactable(
 )
 ```
 
-### JavaScript render function
+### JavaScript render function {#details-js-render-function}
+
 Or a JavaScript function with up to 2 optional arguments:
+
 ```{r, eval=FALSE}
 reactable(
   details = JS("
@@ -374,10 +386,11 @@ reactable(
 ```
 
 #### `rowInfo` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
+
+```{r, echo=FALSE, asis=TRUE}
+rowInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "row", '{Petal.Length: 1.7, Species: "setosa"}', "row data object",
+  "row", '{ Petal.Length: 1.7, Species: "setosa" }', "row data object",
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
@@ -385,29 +398,13 @@ props <- tibble::tribble(
   "selected", "true", "whether the row is selected"
 )
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+propsTable(rowInfoProps)
 ```
 
 #### `state` properties
-```{r, echo=FALSE}
-props <- tibble::tribble(
-  ~Property, ~Example, ~Description,
-  "sorted", '[{id: "Petal.Length", desc: true}, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based)",
-  "pageSize", "10", "page size",
-  "pages", "5", "number of pages",
-  "pageRows", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "array of row data objects in the page",
-  "sortedData", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "sorted array of row data objects in the table",
-  "data", '[{Petal.Length: 1.7, Species: "setosa"}, ...]', "original array of row data objects in the table"
-)
 
-reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
-  Property = colDef(cell = function(value) htmltools::code(value), width = 100),
-  Example = colDef(cell = function(value) htmltools::code(value))
-))
+```{r, echo=FALSE, asis=TRUE}
+propsTable(stateProps)
 ```
 
 
@@ -432,5 +429,18 @@ reactable(props, sortable = FALSE, bordered = TRUE, columns = list(
 
 .reactable {
   font-size: 14px;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope="row"] {
+  font-weight: 400;
 }
 ```
