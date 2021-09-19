@@ -108,7 +108,7 @@ test_that("reactable", {
          resizable = FALSE, filterable = FALSE,  width = 45, align = "center",
          details = list("1")),
     list(accessor = ".rownames", name = "", type = "numeric",
-         sortable = FALSE, filterable = FALSE, isRowHeader = TRUE),
+         sortable = FALSE, filterable = FALSE, rowHeader = TRUE),
     list(accessor = "x", name = "x", type = "factor")
   )
   expected <- list(
@@ -258,7 +258,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "numeric",
-    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
+    sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
   # Character row names
@@ -267,7 +267,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
+    sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
   # Custom rownames colDef
@@ -277,7 +277,7 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "N",  type = "numeric",
-    sortable = TRUE, filterable = FALSE, headerClassName = "hdr", isRowHeader = TRUE
+    sortable = TRUE, filterable = FALSE, headerClassName = "hdr", rowHeader = TRUE
   ))
 
   # Row names can be part of column groups
@@ -297,7 +297,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
+    sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
   # Handles matrices
   tbl <- reactable(matrix(c(1,2,3), dimnames = list(c(1, 2, 3), "x")))
@@ -305,7 +305,7 @@ test_that("rownames", {
   expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
     accessor = ".rownames", name = "",  type = "character",
-    sortable = FALSE, filterable = FALSE, isRowHeader = TRUE
+    sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
   # If no row names, should not be shown by default
@@ -328,14 +328,16 @@ test_that("defaultColDef", {
   # Defaults can be overridden
   tbl <- reactable(
     data.frame(x = 1, y = "2"),
-    defaultColDef = colDef(width = 22, class = "default-cls", vAlign = "center"),
-    columns = list(y = colDef(width = 44, vAlign = "top"))
+    defaultColDef = colDef(width = 22, class = "default-cls", rowHeader = TRUE, vAlign = "center"),
+    columns = list(y = colDef(width = 44, rowHeader = FALSE, vAlign = "top"))
   )
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]]$width, 22)
   expect_equal(attribs$columns[[2]]$width, 44)
   expect_equal(attribs$columns[[1]]$class, "default-cls")
   expect_equal(attribs$columns[[2]]$class, "default-cls")
+  expect_equal(attribs$columns[[1]]$rowHeader, TRUE)
+  expect_equal(attribs$columns[[2]]$rowHeader, FALSE)
   expect_equal(attribs$columns[[1]]$vAlign, "center")
   expect_equal(attribs$columns[[2]]$vAlign, "top")
 

@@ -942,7 +942,7 @@ function Table({
                 ...cellProps,
                 className: classNames(cellProps.className, themeClass),
                 innerClassName,
-                role: column.isRowHeader ? 'rowheader' : 'cell'
+                role: column.rowHeader ? 'rowheader' : 'cell'
               }
               const cellInfo = {
                 ...cell,
@@ -1185,6 +1185,7 @@ function Table({
               className: classNames('rt-td-footer', column.footerClassName, themeClass),
               innerClassName,
               style: column.footerStyle,
+              role: column.rowHeader ? 'rowheader' : 'cell',
               // colspan doesn't apply to ARIA tables, but react-table adds it. Remove it.
               colSpan: null
             }

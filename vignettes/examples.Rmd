@@ -1407,19 +1407,50 @@ reactable(
 ```
 
 
-## Row Names
-Row names are shown by default, if present. You can customize the row names column
+## Row Names and Row Headers
+
+### Row names
+
+Row names are shown by default if present. You can customize the row names column
 using `".rownames"` as the column name:
+
 ```{r}
-reactable(USPersonalExpenditure, columns = list(
-  .rownames = colDef(name = "Category", sortable = TRUE)
-))
+reactable(
+  USPersonalExpenditure,
+  columns = list(
+    .rownames = colDef(name = "Category", sortable = TRUE)
+  )
+)
 ```
 
 If row names haven't been set explicitly, you can force them to show by setting
 `rownames` to `TRUE`:
+
 ```{r}
 reactable(iris[1:5, ], rownames = TRUE)
+```
+
+### Row headers
+
+You can mark up cells in a column as row headers by setting `rowHeader` to `TRUE`
+in `colDef()`.
+
+Use this to help users navigate the table using assistive technologies. When cells
+are marked up as row headers, assistive technologies will read them aloud while
+navigating through cells in the table.
+
+Cells in the row names column are automatically marked up as row headers.
+
+```{r}
+data <- MASS::Cars93[1:5, c("Make", "Type", "Price", "MPG.city", "AirBags")]
+
+reactable(
+  data,
+  columns = list(
+    Make = colDef(rowHeader = TRUE, style = list(fontWeight = 600))
+  ),
+  bordered = TRUE
+)
 ```
 
 

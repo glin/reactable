@@ -22,6 +22,9 @@
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
 #'
 #'   To customize the row names column, use `".rownames"` as the column name.
+#'
+#'   Cells in the row names column are automatically marked up as row headers
+#'   for assistive technologies.
 #' @param groupBy Character vector of column names to group by.
 #'
 #'   To aggregate data when rows are grouped, use the `aggregate` argument in [colDef()].
@@ -216,7 +219,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     if (rownamesKey %in% names(columns)) {
       rownamesColumn <- mergeLists(rownamesColumn, columns[[rownamesKey]])
     }
-    rownamesColumn$isRowHeader <- TRUE
+    rownamesColumn$rowHeader <- TRUE
     columns[[rownamesKey]] <- rownamesColumn
   }
 

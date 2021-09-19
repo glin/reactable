@@ -65,7 +65,10 @@ Can also be a \code{\link[crosstalk:SharedData]{crosstalk::SharedData}} object t
 
 \item{rownames}{Show row names? Defaults to \code{TRUE} if the data has row names.
 
-To customize the row names column, use \code{".rownames"} as the column name.}
+To customize the row names column, use \code{".rownames"} as the column name.
+
+Cells in the row names column are automatically marked up as row headers
+for assistive technologies.}
 
 \item{groupBy}{Character vector of column names to group by.
 

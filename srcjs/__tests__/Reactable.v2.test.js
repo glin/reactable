@@ -607,7 +607,7 @@ describe('cells', () => {
         b: ['a', 'b', 'c']
       },
       columns: [
-        { name: 'a', accessor: 'a', isRowHeader: true, className: 'col-a' },
+        { name: 'a', accessor: 'a', rowHeader: true, className: 'col-a' },
         { name: 'b', accessor: 'b', className: 'col-b' }
       ]
     }
@@ -1398,6 +1398,23 @@ describe('footers', () => {
     footers.forEach(footer => expect(footer).toHaveAttribute('role', 'cell'))
     // Should not have colspan attribute (from react-table)
     footers.forEach(footer => expect(footer).not.toHaveAttribute('colspan'))
+  })
+
+  it('renders row headers', () => {
+    const props = {
+      data: {
+        a: [1, 2],
+        b: ['a', 'b']
+      },
+      columns: [
+        { name: 'a', accessor: 'a', footer: 'my-footer', rowHeader: true },
+        { name: 'b', accessor: 'b', footer: 'my-footer' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const [footerA, footerB] = getFooters(container)
+    expect(footerA).toHaveAttribute('role', 'rowheader')
+    expect(footerB).toHaveAttribute('role', 'cell')
   })
 
   it('footer render function', () => {

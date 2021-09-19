@@ -22,6 +22,7 @@ colDef(
   details = NULL,
   html = FALSE,
   na = "",
+  rowHeader = FALSE,
   minWidth = NULL,
   maxWidth = NULL,
   width = NULL,
@@ -90,6 +91,14 @@ and table state object as arguments. Cannot be used on a \code{groupBy} column.}
 
 \item{na}{String to display for missing values (i.e. \link{NA} or \link{NaN}).
 By default, missing values are displayed as blank cells.}
+
+\item{rowHeader}{Mark up cells in this column as row headers?
+
+Set this to \code{TRUE} to help users navigate the table using assistive technologies.
+When cells are marked up as row headers, assistive technologies will read them
+aloud while navigating through cells in the table.
+
+Cells in the row names column are automatically marked up as row headers.}
 
 \item{minWidth}{Minimum width of the column in pixels. Defaults to 100.}
 

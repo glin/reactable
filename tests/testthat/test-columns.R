@@ -128,6 +128,13 @@ test_that("colDef renderers", {
   expect_equal(col$details, list(1, 2, 3))
 })
 
+test_that("colDef rowHeader", {
+  expect_error(colDef(rowHeader = 5), "`rowHeader` must be TRUE or FALSE")
+  expect_equal(colDef()$rowHeader, NULL)
+  expect_equal(colDef(rowHeader = FALSE)$rowHeader, FALSE)
+  expect_equal(colDef(rowHeader = TRUE)$rowHeader, TRUE)
+})
+
 test_that("colDef vAlign and headerVAlign", {
   expect_error(colDef(vAlign = TRUE), '`vAlign` must be one of "top", "center", "bottom"')
   expect_null(colDef()$vAlign)

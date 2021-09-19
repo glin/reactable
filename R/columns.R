@@ -38,6 +38,13 @@
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
+#' @param rowHeader Mark up cells in this column as row headers?
+#'
+#'  Set this to `TRUE` to help users navigate the table using assistive technologies.
+#'  When cells are marked up as row headers, assistive technologies will read them
+#'  aloud while navigating through cells in the table.
+#'
+#'  Cells in the row names column are automatically marked up as row headers.
 #' @param minWidth Minimum width of the column in pixels. Defaults to 100.
 #' @param maxWidth Maximum width of the column in pixels.
 #' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
@@ -109,6 +116,7 @@ colDef <- function(
   details = NULL,
   html = FALSE,
   na = "",
+  rowHeader = FALSE,
   minWidth = NULL,
   maxWidth = NULL,
   width = NULL,
@@ -124,9 +132,12 @@ colDef <- function(
   footerStyle = NULL
 ) {
 
+  args <- names(match.call())
+
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
   }
+
   if (!is.null(aggregate)) {
     if (is.character(aggregate) && !is.JS(aggregate)) {
       aggregators <- c("mean", "sum", "max", "min", "median", "count",
@@ -138,24 +149,31 @@ colDef <- function(
       stop("`aggregate` must be a character string or JS function")
     }
   }
+
   if (!is.null(sortable) && !is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
   }
+
   if (!is.null(resizable) && !is.logical(resizable)) {
     stop("`resizable` must be TRUE or FALSE")
   }
+
   if (!is.null(filterable) && !is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
+
   if (!is.null(show) && !is.logical(show)) {
     stop("`show` must be TRUE or FALSE")
   }
+
   if (!is.null(defaultSortOrder) && !isSortOrder(defaultSortOrder)) {
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
+
   if (!is.logical(sortNALast)) {
     stop("`sortNALast` must be TRUE or FALSE")
   }
+
   if (!is.null(format)) {
     if (!is.colFormat(format) && !isNamedList(format)) {
       stop('`format` must be a column formatting option set or named list')
@@ -172,69 +190,95 @@ colDef <- function(
       }
     }
   }
+
   if (!is.null(cell) && !is.JS(cell) && !is.function(cell)) {
     stop("`cell` renderer must be an R function or JS function")
   }
+
   if (!is.null(grouped) && !is.JS(grouped)) {
     stop("`grouped` renderer must be a JS function")
   }
+
   if (!is.null(aggregated) && !is.JS(aggregated)) {
     stop("`aggregated` renderer must be a JS function")
   }
+
   if (!is.null(details) && !is.function(details) && !is.JS(details) && !is.list(details)) {
     stop("`details` renderer must be an R function or JS function")
   }
+
   if (!is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
+
   if (!is.character(na)) {
     stop("`na` must be a character string")
   }
+
+  if (!is.logical(rowHeader)) {
+    stop("`rowHeader` must be TRUE or FALSE")
+  }
+  if (!"rowHeader" %in% args) {
+    rowHeader <- NULL
+  }
+
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
     stop("`minWidth` must be numeric")
   }
+
   if (!is.null(maxWidth) && !is.numeric(maxWidth)) {
     stop("`maxWidth` must be numeric")
   }
+
   if (!is.null(width) && !is.numeric(width)) {
     stop("`width` must be numeric")
   }
+
   if (!is.null(align)) {
     if (!isTRUE(align %in% c("left", "right", "center"))) {
       stop('`align` must be one of "left", "right", "center"')
     }
   }
+
   if (!is.null(vAlign)) {
     if (!isTRUE(vAlign %in% c("top", "center", "bottom"))) {
       stop('`vAlign` must be one of "top", "center", "bottom"')
     }
   }
+
   if (!is.null(headerVAlign)) {
     if (!isTRUE(headerVAlign %in% c("top", "center", "bottom"))) {
       stop('`headerVAlign` must be one of "top", "center", "bottom"')
     }
   }
+
   if (!is.null(sticky)) {
     if (!isTRUE(sticky %in% c("left", "right"))) {
       stop('`sticky` must be "left" or "right"')
     }
   }
+
   if (!is.null(class) && !is.character(class) && !is.JS(class) && !is.function(class)) {
     stop("`class` must be a character string, JS function, or R function")
   }
+
   if (!is.null(style) && !isNamedList(style) && !is.character(style) &&
       !is.JS(style) && !is.function(style)) {
     stop("`style` must be a named list, character string, JS function, or R function")
   }
+
   if (!is.null(headerClass) && !is.character(headerClass)) {
     stop("`headerClass` must be a character string")
   }
+
   if (!is.null(headerStyle) && !isNamedList(headerStyle) && !is.character(headerStyle)) {
     stop("`headerStyle` must be a named list or character string")
   }
+
   if (!is.null(footerClass) && !is.character(footerClass)) {
     stop("`footerClass` must be a character string")
   }
+
   if (!is.null(footerStyle) && !isNamedList(footerStyle) && !is.character(footerStyle)) {
     stop("`footerStyle` must be a named list or character string")
   }
@@ -258,6 +302,7 @@ colDef <- function(
       details = details,
       html = if (html) TRUE,
       na = if (na != "") na,
+      rowHeader = rowHeader,
       minWidth = minWidth,
       maxWidth = maxWidth,
       width = width,

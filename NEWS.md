@@ -103,8 +103,9 @@ where possible, but note that there are several breaking changes.
   "Toggle details" instead of "Expand details" or "Collapse details".
 * `reactableLang()` gains the `groupExpandLabel` and `groupCollapseLabel`
   arguments to customize the accessible labels for row group expand buttons.
-* Cells in the row names column are now marked up as row headers for assistive
-  technologies.
+* Cells can now be marked up as row headers for assistive technologies, using the
+  new `rowHeader` argument in `colDef()`. Cells in the row names column are
+  automatically marked up as row headers ([#167](https://github.com/glin/reactable/issues/167)).
 * The page info and "no rows found" message are now marked as ARIA live regions
   so that page changes can be announced by assistive technologies when searching,
   filtering, or paging through the table.
