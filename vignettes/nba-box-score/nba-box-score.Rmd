@@ -73,7 +73,7 @@ box_score_tbl <- function(player_stats, team_stats, team) {
       minWidth = 45,
       class = JS("function(rowInfo, colInfo, state) {
         // Highlight sorted columns
-        for (var i = 0; i < state.sorted.length; i++) {
+        for (let i = 0; i < state.sorted.length; i++) {
           if (state.sorted[i].id === colInfo.id) {
             return 'sorted'
           }

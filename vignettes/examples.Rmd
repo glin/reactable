@@ -335,8 +335,8 @@ reactable(
     Avg.Price = colDef(
       # Calculate the aggregate Avg.Price as `sum(Price) / sum(Units)`
       aggregate = JS("function(values, rows) {
-        var totalPrice = 0
-        var totalUnits = 0
+        let totalPrice = 0
+        let totalUnits = 0
         rows.forEach(function(row) {
           totalPrice += row['Price']
           totalUnits += row['Units']
@@ -553,7 +553,7 @@ reactable(data, columns = list(
   Model = colDef(html = TRUE, cell = JS("
     function(cellInfo) {
       // Render as a link
-      var url = 'https://wikipedia.org/wiki/' + cellInfo.row['Manufacturer'] + '_' + cellInfo.value
+      const url = 'https://wikipedia.org/wiki/' + cellInfo.row['Manufacturer'] + '_' + cellInfo.value
       return '<a href=\"' + url + '\" target=\"_blank\">' + cellInfo.value + '</a>'
     }
   ")),
@@ -640,8 +640,8 @@ reactable(
     Type = colDef(
       # Render aggregated value as a comma-separated list of unique values
       aggregated = JS("function(cellInfo) {
-        var values = cellInfo.subRows.map(function(row) { return row['Type'] })
-        var unique = values.reduce(function(obj, v) { obj[v] = true; return obj }, {})
+        const values = cellInfo.subRows.map(function(row) { return row['Type'] })
+        const unique = values.reduce(function(obj, v) { obj[v] = true; return obj }, {})
         return Object.keys(unique).join(', ')
       }")
     ),
@@ -717,7 +717,7 @@ reactable(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
       footer = JS("function(colInfo) {
-        var total = 0
+        let total = 0
         colInfo.data.forEach(function(row) {
           total += row[colInfo.column.id]
         })
@@ -866,13 +866,14 @@ reactable(sleep[1:6, ], columns = list(
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(
     style = JS("function(rowInfo) {
-      var value = rowInfo.row['extra']
+      const value = rowInfo.row['extra']
+      let color
       if (value > 0) {
-        var color = '#008000'
+        color = '#008000'
       } else if (value < 0) {
-        var color = '#e00000'
+        color = '#e00000'
       } else {
-        var color = '#777'
+        color = '#777'
       }
       return { color: color, fontWeight: 'bold' }
     }")

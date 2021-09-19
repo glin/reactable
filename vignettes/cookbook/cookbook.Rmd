@@ -507,7 +507,7 @@ reactable(
     character = colDef(
       # Show species under character names
       cell = JS("function(cellInfo) {
-        var species = cellInfo.row['species'] || 'Unknown'
+        const species = cellInfo.row['species'] || 'Unknown'
         return (
           '<div>' +
           '<div style=\"font-weight: 600\">' + cellInfo.value + '</div>' +
@@ -565,7 +565,7 @@ reactable(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
       footer = JS("function(colInfo) {
-        var total = 0
+        let total = 0
         colInfo.data.forEach(function(row) {
           total += row[colInfo.column.id]
         })
@@ -590,7 +590,7 @@ reactable(
       aggregate = "sum",
       format = colFormat(currency = "USD"),
       footer = JS("function(colInfo) {
-        var total = 0
+        let total = 0
         colInfo.data.forEach(function(row) {
           total += row[colInfo.column.id]
         })
@@ -647,7 +647,7 @@ reactable(
     # Align values using white space (and a monospaced font)
     Length = colDef(
       cell = JS("function(cellInfo) {
-        var units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
+        const units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
         return cellInfo.value + units
       }"),
       class = "number"
@@ -656,7 +656,7 @@ reactable(
     Luggage.room = colDef(
       name = "Luggage Room",
       cell = JS("function(cellInfo) {
-        var units = cellInfo.viewIndex === 0 ? ' ft³' : ''
+        const units = cellInfo.viewIndex === 0 ? ' ft³' : ''
         return cellInfo.value + '<div class=\"units\">' + units + '</div>'
       }"),
       html = TRUE
@@ -820,7 +820,7 @@ reactable(
   defaultColDef = colDef(
     style = JS("function(rowInfo, colInfo, state) {
       // Highlight sorted columns
-      for (var i = 0; i < state.sorted.length; i++) {
+      for (let i = 0; i < state.sorted.length; i++) {
         if (state.sorted[i].id === colInfo.id) {
           return { background: 'rgba(0, 0, 0, 0.03)' }
         }
@@ -856,9 +856,9 @@ reactable(
       if (!rowInfo) return
 
       // Add horizontal separators between groups when sorting by school
-      var firstSorted = state.sorted[0]
+      const firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'School') {
-        var nextRow = state.pageRows[rowInfo.viewIndex + 1]
+        const nextRow = state.pageRows[rowInfo.viewIndex + 1]
         if (nextRow && rowInfo.row['School'] !== nextRow['School']) {
           // Use box-shadow to add a 2px border without taking extra space
           return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
@@ -890,10 +890,10 @@ reactable(
   columns = list(
     School = colDef(
       style = JS("function(rowInfo, colInfo, state) {
-        var firstSorted = state.sorted[0]
+        const firstSorted = state.sorted[0]
         // Merge cells if unsorted or sorting by school
         if (!firstSorted || firstSorted.id === 'School') {
-          var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
           if (prevRow && rowInfo.row['School'] === prevRow['School']) {
             return { visibility: 'hidden' }
           }

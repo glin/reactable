@@ -121,7 +121,7 @@ reactable(
   defaultColDef = colDef(
     class = JS("function(rowInfo, colInfo, state) {
       // Highlight sorted columns
-      for (var i = 0; i < state.sorted.length; i++) {
+      for (let i = 0; i < state.sorted.length; i++) {
         if (state.sorted[i].id === colInfo.id) {
           return 'sorted'
         }
