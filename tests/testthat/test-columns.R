@@ -5,11 +5,11 @@ test_that("colDef", {
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
                 sortable = TRUE, resizable = TRUE, filterable = TRUE,
-                show = FALSE, defaultSortOrder = "desc", sortNALast = TRUE,
+                defaultSortOrder = "desc",
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
-                footer = "footer", details = function(i) i, html = TRUE, na = "NA",
-                minWidth = 100, maxWidth = 250, width = 125,
+                footer = "footer", details = function(i) i,
+                maxWidth = 250, width = 125,
                 align = "right", class = "cell", style = list(color = "a"),
                 headerClass = "hdr", headerStyle = list(height = 10),
                 footerClass = "ftr", footerStyle = "color:blue")
@@ -17,11 +17,11 @@ test_that("colDef", {
   expected <- structure(list(
     name = "col", aggregate = "sum",
     sortable = TRUE, resizable = TRUE, filterable = TRUE,
-    show = FALSE, defaultSortDesc = TRUE, sortNALast = TRUE,
+    defaultSortDesc = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
     cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
-    footer = "footer", details = function(i) i, html = TRUE, na = "NA",
-    minWidth = 100, maxWidth = 250, width = 125,
+    footer = "footer", details = function(i) i,
+    maxWidth = 250, width = 125,
     align = "right", className = "cell", style = list(color = "a"),
     headerClassName = "hdr", headerStyle = list(height = 10),
     footerClassName = "ftr", footerStyle = list(color = "blue")
@@ -35,16 +35,11 @@ test_that("colDef", {
     sortable = list(1, "TRUE"),
     resizable = list(1, "TRUE"),
     filterable = list(0, "FALSE"),
-    show = list(0, "TRUE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
-    sortNALast = list("true", 1),
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     cell = list("function() {}"),
     aggregated = list(function() {}),
     details = list("function() {}", NA),
-    html = list("false", NA),
-    na = list(NA, 123),
-    minWidth = list("1", FALSE),
     maxWidth = list("1", FALSE),
     align = list("a", "RIGHT", 1),
     width = list("1", FALSE),
@@ -71,6 +66,20 @@ test_that("colDef aggregate function", {
     col <- colDef(aggregate = func)
     expect_equal(col$aggregate, func)
   }
+})
+
+test_that("colDef show", {
+  expect_error(colDef(show = ""), "`show` must be TRUE or FALSE")
+  expect_equal(colDef()$show, NULL)
+  expect_equal(colDef(show = FALSE)$show, FALSE)
+  expect_equal(colDef(show = TRUE)$show, TRUE)
+})
+
+test_that("colDef sortNALast", {
+  expect_error(colDef(sortNALast = 5), "`sortNALast` must be TRUE or FALSE")
+  expect_equal(colDef()$sortNALast, NULL)
+  expect_equal(colDef(sortNALast = FALSE)$sortNALast, FALSE)
+  expect_equal(colDef(sortNALast = TRUE)$sortNALast, TRUE)
 })
 
 test_that("colDef format", {
@@ -128,6 +137,19 @@ test_that("colDef renderers", {
   expect_equal(col$details, list(1, 2, 3))
 })
 
+test_that("colDef html", {
+  expect_error(colDef(html = 5), "`html` must be TRUE or FALSE")
+  expect_equal(colDef()$html, NULL)
+  expect_equal(colDef(html = FALSE)$html, FALSE)
+  expect_equal(colDef(html = TRUE)$html, TRUE)
+})
+
+test_that("colDef na", {
+  expect_error(colDef(na = TRUE), "`na` must be a character string")
+  expect_equal(colDef()$na, NULL)
+  expect_equal(colDef(na = "NA")$na, "NA")
+})
+
 test_that("colDef rowHeader", {
   expect_error(colDef(rowHeader = 5), "`rowHeader` must be TRUE or FALSE")
   expect_equal(colDef()$rowHeader, NULL)
@@ -135,13 +157,21 @@ test_that("colDef rowHeader", {
   expect_equal(colDef(rowHeader = TRUE)$rowHeader, TRUE)
 })
 
-test_that("colDef vAlign and headerVAlign", {
+test_that("colDef minWidth", {
+  expect_error(colDef(minWidth = FALSE), "`minWidth` must be numeric")
+  expect_equal(colDef()$minWidth, NULL)
+  expect_equal(colDef(minWidth = 100)$minWidth, 100)
+})
+
+test_that("colDef vAlign", {
   expect_error(colDef(vAlign = TRUE), '`vAlign` must be one of "top", "center", "bottom"')
   expect_null(colDef()$vAlign)
   expect_equal(colDef(vAlign = "top")$vAlign, "top")
   expect_equal(colDef(vAlign = "center")$vAlign, "center")
   expect_equal(colDef(vAlign = "bottom")$vAlign, "bottom")
+})
 
+test_that("colDef headerVAlign", {
   expect_error(colDef(headerVAlign = TRUE), '`headerVAlign` must be one of "top", "center", "bottom"')
   expect_null(colDef()$headerVAlign)
   expect_equal(colDef(headerVAlign = "top")$headerVAlign, "top")
@@ -151,6 +181,7 @@ test_that("colDef vAlign and headerVAlign", {
 
 test_that("colDef sticky", {
   expect_error(colDef(sticky = TRUE), '`sticky` must be "left" or "right"')
+  expect_equal(colDef()$sticky, NULL)
   expect_equal(colDef(sticky = "left")$sticky, "left")
   expect_equal(colDef(sticky = "right")$sticky, "right")
 })
@@ -214,10 +245,16 @@ test_that("colGroup", {
   # Header renderer
   group <- colGroup(header = "header")
   expect_equal(group$header, "header")
-  group <- colDef(header = JS("colInfo => colInfo.column.name"))
+  group <- colGroup(header = JS("colInfo => colInfo.column.name"))
   expect_equal(group$header, JS("colInfo => colInfo.column.name"))
-  group <- colDef(header = function(value) value)
+  group <- colGroup(header = function(value) value)
   expect_equal(group$header, function(value) value)
+
+  # html
+  expect_error(colGroup(html = 5), "`html` must be TRUE or FALSE")
+  expect_equal(colGroup()$html, NULL)
+  expect_equal(colGroup(html = FALSE)$html, FALSE)
+  expect_equal(colGroup(html = TRUE)$html, TRUE)
 
   # headerVAlign
   expect_error(colGroup(headerVAlign = TRUE), '`headerVAlign` must be one of "top", "center", "bottom"')
@@ -233,11 +270,9 @@ test_that("colGroup", {
   group <- colDef(sticky = "right")
   expect_equal(group$sticky, "right")
 
-  # style
-  test_that("colDef style", {
-    group <- colGroup("grp", "col", headerStyle = " border: 1px solid; top: 25px;;df")
-    expect_equal(group$headerStyle, list("border" = "1px solid", top = "25px"))
-  })
+  # headerStyle
+  group <- colGroup("grp", "col", headerStyle = " border: 1px solid; top: 25px;;df")
+  expect_equal(group$headerStyle, list("border" = "1px solid", top = "25px"))
 
   # Invalid args
   expect_error(colGroup(name = 1, columns = "col"))

@@ -317,21 +317,61 @@ test_that("rownames", {
 
 test_that("defaultColDef", {
   # Defaults applied
-  tbl <- reactable(data.frame(x = 1, y = "2"),
-                   defaultColDef = colDef(width = 22),
-                   columns = list(y = colDef(class = "cls")))
+  tbl <- reactable(
+    data.frame(x = 1, y = "2"),
+    defaultColDef = colDef(
+      sortNALast = TRUE,
+      html = TRUE,
+      width = 22,
+      rowHeader = TRUE
+    ),
+    columns = list(y = colDef(
+      class = "cls"
+    ))
+  )
   attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$sortNALast, TRUE)
+  expect_equal(attribs$columns[[2]]$sortNALast, TRUE)
+  expect_equal(attribs$columns[[1]]$html, TRUE)
+  expect_equal(attribs$columns[[2]]$html, TRUE)
   expect_equal(attribs$columns[[1]]$width, 22)
   expect_equal(attribs$columns[[2]]$width, 22)
+  expect_equal(attribs$columns[[1]]$rowHeader, TRUE)
+  expect_equal(attribs$columns[[2]]$rowHeader, TRUE)
   expect_equal(attribs$columns[[2]]$class, "cls")
 
   # Defaults can be overridden
   tbl <- reactable(
     data.frame(x = 1, y = "2"),
-    defaultColDef = colDef(width = 22, class = "default-cls", rowHeader = TRUE, vAlign = "center"),
-    columns = list(y = colDef(width = 44, rowHeader = FALSE, vAlign = "top"))
+    defaultColDef = colDef(
+      show = FALSE,
+      sortNALast = TRUE,
+      html = TRUE,
+      na = "na",
+      width = 22,
+      class = "default-cls",
+      rowHeader = TRUE,
+      vAlign = "center"
+    ),
+    columns = list(y = colDef(
+      show = TRUE,
+      sortNALast = FALSE,
+      html = FALSE,
+      na = "",
+      width = 44,
+      rowHeader = FALSE,
+      vAlign = "top"
+    ))
   )
   attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$show, FALSE)
+  expect_equal(attribs$columns[[2]]$show, TRUE)
+  expect_equal(attribs$columns[[1]]$sortNALast, TRUE)
+  expect_equal(attribs$columns[[2]]$sortNALast, FALSE)
+  expect_equal(attribs$columns[[1]]$html, TRUE)
+  expect_equal(attribs$columns[[2]]$html, FALSE)
+  expect_equal(attribs$columns[[1]]$na, "na")
+  expect_equal(attribs$columns[[2]]$na, "")
   expect_equal(attribs$columns[[1]]$width, 22)
   expect_equal(attribs$columns[[2]]$width, 44)
   expect_equal(attribs$columns[[1]]$class, "default-cls")

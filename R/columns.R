@@ -12,7 +12,7 @@
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
-#' @param show Show the column? Overrides the table option.
+#' @param show Show the column?
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param sortNALast Always sort missing values ([NA] or [NaN]) last?
@@ -104,7 +104,7 @@ colDef <- function(
   sortable = NULL,
   resizable = NULL,
   filterable = NULL,
-  show = NULL,
+  show = TRUE,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
   format = NULL,
@@ -117,7 +117,7 @@ colDef <- function(
   html = FALSE,
   na = "",
   rowHeader = FALSE,
-  minWidth = NULL,
+  minWidth = 100,
   maxWidth = NULL,
   width = NULL,
   align = NULL,
@@ -131,8 +131,6 @@ colDef <- function(
   footerClass = NULL,
   footerStyle = NULL
 ) {
-
-  args <- names(match.call())
 
   if (!is.null(name) && !is.character(name)) {
     stop("`name` must be a character string")
@@ -170,7 +168,7 @@ colDef <- function(
     stop('`defaultSortOrder` must be "asc" or "desc"')
   }
 
-  if (!is.logical(sortNALast)) {
+  if (!is.null(sortNALast) && !is.logical(sortNALast)) {
     stop("`sortNALast` must be TRUE or FALSE")
   }
 
@@ -207,19 +205,16 @@ colDef <- function(
     stop("`details` renderer must be an R function or JS function")
   }
 
-  if (!is.logical(html)) {
+  if (!is.null(html) && !is.logical(html)) {
     stop("`html` must be TRUE or FALSE")
   }
 
-  if (!is.character(na)) {
+  if (!is.null(na) && !is.character(na)) {
     stop("`na` must be a character string")
   }
 
-  if (!is.logical(rowHeader)) {
+  if (!is.null(rowHeader) && !is.logical(rowHeader)) {
     stop("`rowHeader` must be TRUE or FALSE")
-  }
-  if (!"rowHeader" %in% args) {
-    rowHeader <- NULL
   }
 
   if (!is.null(minWidth) && !is.numeric(minWidth)) {
@@ -283,6 +278,10 @@ colDef <- function(
     stop("`footerStyle` must be a named list or character string")
   }
 
+  # If an arg with a non-NULL default value wasn't specified by the user, filter
+  # them out so they can take on the default from a default column definition.
+  userArgs <- names(match.call())[-1]
+
   structure(
     filterNulls(list(
       name = name,
@@ -290,9 +289,9 @@ colDef <- function(
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
-      show = show,
+      show = if ("show" %in% userArgs) show,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
-      sortNALast = if (sortNALast) TRUE,
+      sortNALast = if ("sortNALast" %in% userArgs) sortNALast,
       format = format,
       cell = cell,
       grouped = grouped,
@@ -300,10 +299,10 @@ colDef <- function(
       header = header,
       footer = footer,
       details = details,
-      html = if (html) TRUE,
-      na = if (na != "") na,
-      rowHeader = rowHeader,
-      minWidth = minWidth,
+      html = if ("html" %in% userArgs) html,
+      na = if ("na" %in% userArgs) na,
+      rowHeader = if ("rowHeader" %in% userArgs) rowHeader,
+      minWidth = if ("minWidth" %in% userArgs) minWidth,
       maxWidth = maxWidth,
       width = width,
       align = align,
@@ -398,17 +397,23 @@ colGroup <- function(
     }
   }
 
+  # If an arg with a non-NULL default value wasn't specified by the user, filter
+  # them out so they can take on the default from a default column definition.
+  userArgs <- names(match.call())[-1]
+
+  args <- filterNulls(list(
+    name = name,
+    header = header,
+    html = if ("html" %in% userArgs) html,
+    align = align,
+    headerVAlign = headerVAlign,
+    sticky = sticky,
+    headerClass = headerClass,
+    headerStyle = headerStyle
+  ))
+
   group <- tryCatch({
-    colDef(
-      name = name,
-      header = header,
-      html = html,
-      align = align,
-      headerVAlign = headerVAlign,
-      sticky = sticky,
-      headerClass = headerClass,
-      headerStyle = headerStyle
-    )
+    do.call(colDef, args)
   }, error = function(e) e)
 
   if (inherits(group, "error")) {

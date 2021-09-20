@@ -70,6 +70,8 @@ where possible, but note that there are several breaking changes.
 
 * Setting `show = FALSE` as a default value in `defaultColDef()` now works
   (@csgillespie, [#105](https://github.com/glin/reactable/pull/105)).
+  Setting `sortNALast`, `html`, and `na` to their default values in
+  `defaultColDef()` also now works.
 * Using a single value for `pageSizeOptions` in `reactable()` now works.
 * Column resizing is now limited by the min and max width of the column.
 * Column group headers and filter cells in fixed height tables now display
