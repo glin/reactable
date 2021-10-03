@@ -596,6 +596,9 @@ reactable(data, columns = list(
 ```
 
 ### Grouped cell rendering
+
+> New in v0.2.3.9000
+
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
