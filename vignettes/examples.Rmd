@@ -351,7 +351,7 @@ reactable(
 
 ### Include sub rows in pagination
 
-> New in v0.2.3.9000
+> New in v0.2.3.9000 (unreleased)
 
 By default, sub rows are excluded from pagination and always shown on the same
 page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
@@ -597,7 +597,7 @@ reactable(data, columns = list(
 
 ### Grouped cell rendering
 
-> New in v0.2.3.9000
+> New in v0.2.3.9000 (unreleased)
 
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -1065,7 +1065,7 @@ reactable(
 
 ### Vertical alignment
 
-> New in v0.2.3.9000
+> New in v0.2.3.9000 (unreleased)
 
 You can change the vertical alignment of cell content using the `vAlign` or
 `headerVAlign` arguments in `colDef()` and `colGroup()`. `vAlign` controls the
@@ -1326,7 +1326,7 @@ reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 
 ## Sticky Columns
 
-> New in v0.2.3.9000
+> New in v0.2.3.9000 (unreleased)
 
 You can make columns sticky when scrolling horizontally using the `sticky`
 argument in `colDef()` or `colGroup()`. Set `sticky` to either `"left"`
