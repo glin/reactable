@@ -418,15 +418,14 @@ reactable(
 
 ## Rating stars
 
-This example uses Font Awesome icons
-([via Shiny](https://shiny.rstudio.com/reference/shiny/latest/icon.html))
+This example uses [Font Awesome icons
+(via Shiny)](https://shiny.rstudio.com/reference/shiny/latest/icon.html)
 to render rating stars in a table.
 
-To make the rating star icons accessible, wrap them in a container with the
-[ARIA `img` role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Role_Img)
-and add alternative text using an `aria-label` or `title` attribute. This
-ensures that the multiple icons are identified as a single image by assistive
-technologies.
+To make the rating star icons accessible to users of assistive technology,
+the icons are marked up as an image using the
+[ARIA `img` role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Role_Img),
+and alternative text is added using an `aria-label` or `title` attribute.
 
 ```{r}
 library(htmltools)

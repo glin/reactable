@@ -120,9 +120,9 @@ reactable(
 ```
 
 ### Hide sort icons
-You can hide sort icons by setting `showSortIcon` to `FALSE`. This can be
-used to show a [custom sort indicator](cookbook/cookbook.html#custom-sort-indicators),
-for example.
+
+You can hide sort icons by setting `showSortIcon` to `FALSE`. This is only
+recommended when you want to use a [custom sort indicator](cookbook/cookbook.html#custom-sort-indicators).
 ```{r}
 reactable(iris[1:5, ], showSortIcon = FALSE)
 ```
