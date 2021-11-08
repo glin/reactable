@@ -95,6 +95,9 @@
     <li>
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
+    <li>
+      <a href="../articles/javascript-api.html">JavaScript API</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -130,7 +133,7 @@
 
       
 
-      </header><script src="custom-rendering_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.3/htmlwidgets.js"></script><script src="custom-rendering_files/reactable-binding-0.2.3.9000/reactable.js"></script><div class="row">
+      </header><script src="custom-rendering_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><script src="custom-rendering_files/reactable-binding-0.2.3.9000/reactable.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Custom Rendering</h1>
@@ -204,39 +207,50 @@ JavaScript render functions
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span>, searchable <span class="op">=</span> <span class="cn">TRUE</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
-  Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">}</span><span class="op">)</span>,
-  Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-7460f2151f618d3dcfbf" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-7460f2151f618d3dcfbf">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"35f3fef8c0453df81932682fdfe0ddda"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
+<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
+  <span class="va">data</span>,
+  searchable <span class="op">=</span> <span class="cn">TRUE</span>,
+  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span><span class="op">)</span> <span class="op">{</span>
+      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+    <span class="op">}</span><span class="op">)</span>,
+    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<div id="htmlwidget-190225e9e0d1e2d7e4ad" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-190225e9e0d1e2d7e4ad">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"35f3fef8c0453df81932682fdfe0ddda"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>
 
-<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span>, searchable <span class="op">=</span> <span class="cn">TRUE</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
-  Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-    html <span class="op">=</span> <span class="cn">TRUE</span>,
-    footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"function(colInfo) {
-      var values = colInfo.data.map(function(row) {
-        return row[colInfo.column.id]
-      })
-      var total = values.reduce(function(a, b) { return a + b }, 0)
-      return '&lt;b&gt;$' + total.toFixed(2) + '&lt;/b&gt;'
-    }"</span><span class="op">)</span>
-  <span class="op">)</span>,
-  Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span>
-<span class="op">)</span><span class="op">)</span></code></pre></div>
-<div id="htmlwidget-e67bd0839396ab2529c2" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e67bd0839396ab2529c2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":"function(colInfo) {\n      var values = colInfo.data.map(function(row) {\n        return row[colInfo.column.id]\n      })\n      var total = values.reduce(function(a, b) { return a + b }, 0)\n      return '<b>$' + total.toFixed(2) + '<\/b>'\n    }","html":true}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"065eaa9b9e39c2bd58270a0d11e1f688"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
+  <span class="va">data</span>,
+  searchable <span class="op">=</span> <span class="cn">TRUE</span>,
+  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
+      html <span class="op">=</span> <span class="cn">TRUE</span>,
+      footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"function(colInfo) {
+        const values = colInfo.data.map(function(row) {
+          return row[colInfo.column.id]
+        })
+        let total = 0
+        values.forEach(function(value) {
+          total += value
+        })
+        return '&lt;b&gt;$' + total.toFixed(2) + '&lt;/b&gt;'
+      }"</span><span class="op">)</span>
+    <span class="op">)</span>,
+    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<div id="htmlwidget-6f4f4b7f0ecd981c0913" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-6f4f4b7f0ecd981c0913">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":"function(colInfo) {\n        const values = colInfo.data.map(function(row) {\n          return row[colInfo.column.id]\n        })\n        let total = 0\n        values.forEach(function(value) {\n          total += value\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"e578ce3093eeb77dd0ec5fcb5f4580aa"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div id="cells" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cells" class="anchor"></a>Cells</h2>
-<div id="r-render-function" class="section level3">
+<div id="cells-r-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#r-render-function" class="anchor"></a>R render function</h3>
+<a href="#cells-r-render-function" class="anchor"></a>R render function</h3>
 <p>To customize cell rendering, provide an R function with up to 3 optional arguments:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -252,9 +266,9 @@ JavaScript render functions
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="javascript-render-function" class="section level3">
+<div id="cells-js-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#javascript-render-function" class="anchor"></a>JavaScript render function</h3>
+<a href="#cells-js-render-function" class="anchor"></a>JavaScript render function</h3>
 <p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS()</a></code>, with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -284,23 +298,217 @@ JavaScript render functions
 <div id="cellinfo-properties" class="section level4">
 <h4 class="hasAnchor">
 <a href="#cellinfo-properties" class="anchor"></a><code>cellInfo</code> properties</h4>
-<div id="htmlwidget-53f375a4e0055947311e" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-53f375a4e0055947311e">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["value","row","column","index","viewIndex","aggregated","expanded","subRows","level","selected"],"Example":["\"setosa\"","{Petal.Length: 1.7, Species: \"setosa\"}","{id: \"Species\"}","20","0","true","true","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","0","true"],"Description":["cell value","row data object","column info object","row index (zero-based)","row index within the page (zero-based)","whether the row is aggregated","whether the row is expanded (new in v0.2.3.9000)","array of sub row data objects (aggregated cells only)","row nesting depth (zero-based)","whether the row is selected (new in v0.2.3.9000)"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["value"]},{"name":"code","attribs":{},"children":["row"]},{"name":"code","attribs":{},"children":["column"]},{"name":"code","attribs":{},"children":["index"]},{"name":"code","attribs":{},"children":["viewIndex"]},{"name":"code","attribs":{},"children":["aggregated"]},{"name":"code","attribs":{},"children":["expanded"]},{"name":"code","attribs":{},"children":["subRows"]},{"name":"code","attribs":{},"children":["level"]},{"name":"code","attribs":{},"children":["selected"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["\"setosa\""]},{"name":"code","attribs":{},"children":["{Petal.Length: 1.7, Species: \"setosa\"}"]},{"name":"code","attribs":{},"children":["{id: \"Species\"}"]},{"name":"code","attribs":{},"children":["20"]},{"name":"code","attribs":{},"children":["0"]},{"name":"code","attribs":{},"children":["true"]},{"name":"code","attribs":{},"children":["true"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["0"]},{"name":"code","attribs":{},"children":["true"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"cf670fa5b93e922e19075522f3dce3df"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>value</code>
+</th>
+<td>
+<code>"setosa"</code>
+</td>
+<td>cell value</td>
+</tr>
+<tr>
+<th scope="row">
+<code>row</code>
+</th>
+<td>
+<code>{ Petal.Length: 1.7, Species: "setosa" }</code>
+</td>
+<td>row data object</td>
+</tr>
+<tr>
+<th scope="row">
+<code>column</code>
+</th>
+<td>
+<code>{ id: "Petal.Length" }</code>
+</td>
+<td>column info object</td>
+</tr>
+<tr>
+<th scope="row">
+<code>index</code>
+</th>
+<td>
+<code>20</code>
+</td>
+<td>row index (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>viewIndex</code>
+</th>
+<td>
+<code>0</code>
+</td>
+<td>row index within the page (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>aggregated</code>
+</th>
+<td>
+<code>true</code>
+</td>
+<td>whether the row is aggregated</td>
+</tr>
+<tr>
+<th scope="row">
+<code>expanded</code>
+</th>
+<td>
+<code>true</code>
+</td>
+<td>whether the row is expanded (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>filterValue</code>
+</th>
+<td>
+<code>"petal"</code>
+</td>
+<td>column filter value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>subRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>array of sub row data objects (aggregated cells only)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>level</code>
+</th>
+<td>
+<code>0</code>
+</td>
+<td>row nesting depth (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>selected</code>
+</th>
+<td>
+<code>true</code>
+</td>
+<td>whether the row is selected (new in v0.2.3.9000)</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="state-properties" class="section level4">
 <h4 class="hasAnchor">
 <a href="#state-properties" class="anchor"></a><code>state</code> properties</h4>
-<div id="htmlwidget-a3b1c645065019e8dcfc" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a3b1c645065019e8dcfc">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["sorted","page","pageSize","pages","pageRows","sortedData","data"],"Example":["[{id: \"Petal.Length\", desc: true}, ...]","2","10","5","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"],"Description":["columns being sorted in the table","page index (zero-based)","page size","number of pages","array of row data objects in the page","sorted array of row data objects in the table","original array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["sorted"]},{"name":"code","attribs":{},"children":["page"]},{"name":"code","attribs":{},"children":["pageSize"]},{"name":"code","attribs":{},"children":["pages"]},{"name":"code","attribs":{},"children":["pageRows"]},{"name":"code","attribs":{},"children":["sortedData"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["[{id: \"Petal.Length\", desc: true}, ...]"]},{"name":"code","attribs":{},"children":["2"]},{"name":"code","attribs":{},"children":["10"]},{"name":"code","attribs":{},"children":["5"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"c686eb749e2c0655568939a409af1954"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>sorted</code>
+</th>
+<td>
+<code>[{ id: "Petal.Length", desc: true }, ...]</code>
+</td>
+<td>array of columns being sorted in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>page</code>
+</th>
+<td>
+<code>2</code>
+</td>
+<td>page index (zero-based, new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageSize</code>
+</th>
+<td>
+<code>10</code>
+</td>
+<td>page size (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pages</code>
+</th>
+<td>
+<code>5</code>
+</td>
+<td>number of pages (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>filters</code>
+</th>
+<td>
+<code>[{ id: "Species", value: "petal" }]</code>
+</td>
+<td>array of column filter values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>searchValue</code>
+</th>
+<td>
+<code>"petal"</code>
+</td>
+<td>table search value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>array of row data objects in the page</td>
+</tr>
+<tr>
+<th scope="row">
+<code>sortedData</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>original array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="headers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#headers" class="anchor"></a>Headers</h2>
-<div id="r-render-function-1" class="section level3">
+<div id="headers-r-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#r-render-function-1" class="anchor"></a>R render function</h3>
+<a href="#headers-r-render-function" class="anchor"></a>R render function</h3>
 <p>To customize header rendering, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -315,9 +523,9 @@ JavaScript render functions
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="javascript-render-function-1" class="section level3">
+<div id="headers-js-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#javascript-render-function-1" class="anchor"></a>JavaScript render function</h3>
+<a href="#headers-js-render-function" class="anchor"></a>JavaScript render function</h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -337,23 +545,136 @@ JavaScript render functions
 <div id="colinfo-properties" class="section level4">
 <h4 class="hasAnchor">
 <a href="#colinfo-properties" class="anchor"></a><code>colInfo</code> properties</h4>
-<div id="htmlwidget-ed5575bdbf76ce366d00" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ed5575bdbf76ce366d00">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["column","data"],"Example":["{id: \"Petal.Length\", name: \"Petal Length\"}","[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]"],"Description":["column info object","sorted array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["column"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["{id: \"Petal.Length\", name: \"Petal Length\"}"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]"]}],"width":450},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"0dbc7122007e458aa9719278f1ebc289"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>column</code>
+</th>
+<td>
+<code>{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }</code>
+</td>
+<td>column info object</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="state-properties-1" class="section level4">
 <h4 class="hasAnchor">
 <a href="#state-properties-1" class="anchor"></a><code>state</code> properties</h4>
-<div id="htmlwidget-977c11f4c26ab44a571a" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-977c11f4c26ab44a571a">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["sorted","page","pageSize","pages","pageRows","sortedData","data"],"Example":["[{id: \"Petal.Length\", desc: true}, ...]","2","10","5","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"],"Description":["columns being sorted in the table","page index (zero-based)","page size","number of pages","array of row data objects in the page","sorted array of row data objects in the table","original array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["sorted"]},{"name":"code","attribs":{},"children":["page"]},{"name":"code","attribs":{},"children":["pageSize"]},{"name":"code","attribs":{},"children":["pages"]},{"name":"code","attribs":{},"children":["pageRows"]},{"name":"code","attribs":{},"children":["sortedData"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["[{id: \"Petal.Length\", desc: true}, ...]"]},{"name":"code","attribs":{},"children":["2"]},{"name":"code","attribs":{},"children":["10"]},{"name":"code","attribs":{},"children":["5"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"c686eb749e2c0655568939a409af1954"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>sorted</code>
+</th>
+<td>
+<code>[{ id: "Petal.Length", desc: true }, ...]</code>
+</td>
+<td>array of columns being sorted in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>page</code>
+</th>
+<td>
+<code>2</code>
+</td>
+<td>page index (zero-based, new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageSize</code>
+</th>
+<td>
+<code>10</code>
+</td>
+<td>page size (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pages</code>
+</th>
+<td>
+<code>5</code>
+</td>
+<td>number of pages (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>filters</code>
+</th>
+<td>
+<code>[{ id: "Species", value: "petal" }]</code>
+</td>
+<td>array of column filter values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>searchValue</code>
+</th>
+<td>
+<code>"petal"</code>
+</td>
+<td>table search value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>array of row data objects in the page</td>
+</tr>
+<tr>
+<th scope="row">
+<code>sortedData</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>original array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="footers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#footers" class="anchor"></a>Footers</h2>
-<div id="r-render-function-2" class="section level3">
+<div id="footers-r-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#r-render-function-2" class="anchor"></a>R render function</h3>
+<a href="#footers-r-render-function" class="anchor"></a>R render function</h3>
 <p>To add footer content, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -368,9 +689,9 @@ JavaScript render functions
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="javascript-render-function-2" class="section level3">
+<div id="footers-js-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#javascript-render-function-2" class="anchor"></a>JavaScript render function</h3>
+<a href="#footers-js-render-function" class="anchor"></a>JavaScript render function</h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -390,23 +711,136 @@ JavaScript render functions
 <div id="colinfo-properties-1" class="section level4">
 <h4 class="hasAnchor">
 <a href="#colinfo-properties-1" class="anchor"></a><code>colInfo</code> properties</h4>
-<div id="htmlwidget-80ee9b77d80e5cd6cb8a" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-80ee9b77d80e5cd6cb8a">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["column","data"],"Example":["{id: \"Petal.Length\", name: \"Petal Length\"}","[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]"],"Description":["column info object","sorted array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["column"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["{id: \"Petal.Length\", name: \"Petal Length\"}"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Petal.Width: 0.2, _subRows: []}, ...]"]}],"width":450},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"0dbc7122007e458aa9719278f1ebc289"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>column</code>
+</th>
+<td>
+<code>{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }</code>
+</td>
+<td>column info object</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="state-properties-2" class="section level4">
 <h4 class="hasAnchor">
 <a href="#state-properties-2" class="anchor"></a><code>state</code> properties</h4>
-<div id="htmlwidget-3384257c31cafe103d5f" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-3384257c31cafe103d5f">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["sorted","page","pageSize","pages","pageRows","sortedData","data"],"Example":["[{id: \"Petal.Length\", desc: true}, ...]","2","10","5","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"],"Description":["columns being sorted in the table","page index (zero-based)","page size","number of pages","array of row data objects in the page","sorted array of row data objects in the table","original array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["sorted"]},{"name":"code","attribs":{},"children":["page"]},{"name":"code","attribs":{},"children":["pageSize"]},{"name":"code","attribs":{},"children":["pages"]},{"name":"code","attribs":{},"children":["pageRows"]},{"name":"code","attribs":{},"children":["sortedData"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["[{id: \"Petal.Length\", desc: true}, ...]"]},{"name":"code","attribs":{},"children":["2"]},{"name":"code","attribs":{},"children":["10"]},{"name":"code","attribs":{},"children":["5"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"c686eb749e2c0655568939a409af1954"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>sorted</code>
+</th>
+<td>
+<code>[{ id: "Petal.Length", desc: true }, ...]</code>
+</td>
+<td>array of columns being sorted in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>page</code>
+</th>
+<td>
+<code>2</code>
+</td>
+<td>page index (zero-based, new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageSize</code>
+</th>
+<td>
+<code>10</code>
+</td>
+<td>page size (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pages</code>
+</th>
+<td>
+<code>5</code>
+</td>
+<td>number of pages (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>filters</code>
+</th>
+<td>
+<code>[{ id: "Species", value: "petal" }]</code>
+</td>
+<td>array of column filter values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>searchValue</code>
+</th>
+<td>
+<code>"petal"</code>
+</td>
+<td>table search value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>array of row data objects in the page</td>
+</tr>
+<tr>
+<th scope="row">
+<code>sortedData</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>original array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="expandable-row-details" class="section level2">
 <h2 class="hasAnchor">
 <a href="#expandable-row-details" class="anchor"></a>Expandable Row Details</h2>
-<div id="r-render-function-3" class="section level3">
+<div id="details-r-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#r-render-function-3" class="anchor"></a>R render function</h3>
+<a href="#details-r-render-function" class="anchor"></a>R render function</h3>
 <p>To add expandable row details, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
@@ -424,9 +858,9 @@ JavaScript render functions
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="javascript-render-function-3" class="section level3">
+<div id="details-js-render-function" class="section level3">
 <h3 class="hasAnchor">
-<a href="#javascript-render-function-3" class="anchor"></a>JavaScript render function</h3>
+<a href="#details-js-render-function" class="anchor"></a>JavaScript render function</h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
@@ -445,14 +879,164 @@ JavaScript render functions
 <div id="rowinfo-properties" class="section level4">
 <h4 class="hasAnchor">
 <a href="#rowinfo-properties" class="anchor"></a><code>rowInfo</code> properties</h4>
-<div id="htmlwidget-ec6f4681584544de2522" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ec6f4681584544de2522">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["row","index","viewIndex","expanded","level","selected"],"Example":["{Petal.Length: 1.7, Species: \"setosa\"}","20","0","true","0","true"],"Description":["row data object","row index (zero-based)","row index within the page (zero-based)","whether the row is expanded (new in v0.2.3.9000)","row nesting depth (zero-based)","whether the row is selected"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["row"]},{"name":"code","attribs":{},"children":["index"]},{"name":"code","attribs":{},"children":["viewIndex"]},{"name":"code","attribs":{},"children":["expanded"]},{"name":"code","attribs":{},"children":["level"]},{"name":"code","attribs":{},"children":["selected"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["{Petal.Length: 1.7, Species: \"setosa\"}"]},{"name":"code","attribs":{},"children":["20"]},{"name":"code","attribs":{},"children":["0"]},{"name":"code","attribs":{},"children":["true"]},{"name":"code","attribs":{},"children":["0"]},{"name":"code","attribs":{},"children":["true"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"84bbb48bd588e6eb44cc1f96c7367fb5"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>row</code>
+</th>
+<td>
+<code>{ Petal.Length: 1.7, Species: "setosa" }</code>
+</td>
+<td>row data object</td>
+</tr>
+<tr>
+<th scope="row">
+<code>index</code>
+</th>
+<td>
+<code>20</code>
+</td>
+<td>row index (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>viewIndex</code>
+</th>
+<td>
+<code>0</code>
+</td>
+<td>row index within the page (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>expanded</code>
+</th>
+<td>
+<code>true</code>
+</td>
+<td>whether the row is expanded (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>level</code>
+</th>
+<td>
+<code>0</code>
+</td>
+<td>row nesting depth (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>selected</code>
+</th>
+<td>
+<code>true</code>
+</td>
+<td>whether the row is selected</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="state-properties-3" class="section level4">
 <h4 class="hasAnchor">
 <a href="#state-properties-3" class="anchor"></a><code>state</code> properties</h4>
-<div id="htmlwidget-7bf2576101c45926dc16" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-7bf2576101c45926dc16">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Property":["sorted","page","pageSize","pages","pageRows","sortedData","data"],"Example":["[{id: \"Petal.Length\", desc: true}, ...]","2","10","5","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]","[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"],"Description":["columns being sorted in the table","page index (zero-based)","page size","number of pages","array of row data objects in the page","sorted array of row data objects in the table","original array of row data objects in the table"]},"columns":[{"accessor":"Property","name":"Property","type":"character","cell":[{"name":"code","attribs":{},"children":["sorted"]},{"name":"code","attribs":{},"children":["page"]},{"name":"code","attribs":{},"children":["pageSize"]},{"name":"code","attribs":{},"children":["pages"]},{"name":"code","attribs":{},"children":["pageRows"]},{"name":"code","attribs":{},"children":["sortedData"]},{"name":"code","attribs":{},"children":["data"]}],"width":100},{"accessor":"Example","name":"Example","type":"character","cell":[{"name":"code","attribs":{},"children":["[{id: \"Petal.Length\", desc: true}, ...]"]},{"name":"code","attribs":{},"children":["2"]},{"name":"code","attribs":{},"children":["10"]},{"name":"code","attribs":{},"children":["5"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]},{"name":"code","attribs":{},"children":["[{Petal.Length: 1.7, Species: \"setosa\"}, ...]"]}]},{"accessor":"Description","name":"Description","type":"character"}],"sortable":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"bordered":true,"dataKey":"c686eb749e2c0655568939a409af1954"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><style type="text/css">
+<table class="table props-tbl">
+<thead><tr>
+<th>Property</th>
+<th>Example</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>sorted</code>
+</th>
+<td>
+<code>[{ id: "Petal.Length", desc: true }, ...]</code>
+</td>
+<td>array of columns being sorted in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>page</code>
+</th>
+<td>
+<code>2</code>
+</td>
+<td>page index (zero-based, new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageSize</code>
+</th>
+<td>
+<code>10</code>
+</td>
+<td>page size (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pages</code>
+</th>
+<td>
+<code>5</code>
+</td>
+<td>number of pages (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>filters</code>
+</th>
+<td>
+<code>[{ id: "Species", value: "petal" }]</code>
+</td>
+<td>array of column filter values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>searchValue</code>
+</th>
+<td>
+<code>"petal"</code>
+</td>
+<td>table search value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>array of row data objects in the page</td>
+</tr>
+<tr>
+<th scope="row">
+<code>sortedData</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>sorted array of row data objects in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>data</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>original array of row data objects in the table</td>
+</tr>
+</tbody>
+</table>
+<style type="text/css">
 /* rmarkdown html documents */
 .main-container {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -473,6 +1057,19 @@ JavaScript render functions
 
 .reactable {
   font-size: 14px;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope="row"] {
+  font-weight: 400;
 }
 </style>
 </div>

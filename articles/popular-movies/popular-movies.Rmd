@@ -216,6 +216,8 @@ search_filter <- function(id, label, shared_data, group, width = "100%", class =
           if (!value) {
             handle.clear()
           } else {
+            // Escape special characters in the search value for regex matching
+            value = value.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')
             const regex = new RegExp(value, 'i')
             const filtered = Object.keys(valuesByKey).filter(function(key) {
               const value = valuesByKey[key]

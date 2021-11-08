@@ -137,6 +137,9 @@
     <li>
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
+    <li>
+      <a href="../articles/javascript-api.html">JavaScript API</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -190,7 +193,7 @@
   sortable <span class='op'>=</span> <span class='cn'>NULL</span>,
   resizable <span class='op'>=</span> <span class='cn'>NULL</span>,
   filterable <span class='op'>=</span> <span class='cn'>NULL</span>,
-  show <span class='op'>=</span> <span class='cn'>NULL</span>,
+  show <span class='op'>=</span> <span class='cn'>TRUE</span>,
   defaultSortOrder <span class='op'>=</span> <span class='cn'>NULL</span>,
   sortNALast <span class='op'>=</span> <span class='cn'>FALSE</span>,
   format <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -202,7 +205,8 @@
   details <span class='op'>=</span> <span class='cn'>NULL</span>,
   html <span class='op'>=</span> <span class='cn'>FALSE</span>,
   na <span class='op'>=</span> <span class='st'>""</span>,
-  minWidth <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rowHeader <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  minWidth <span class='op'>=</span> <span class='fl'>100</span>,
   maxWidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   align <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -246,7 +250,7 @@ Built-in aggregate functions are: <code>"mean"</code>, <code>"sum"</code>, <code
     </tr>
     <tr>
       <th>show</th>
-      <td><p>Show the column? Overrides the table option.</p></td>
+      <td><p>Show the column?</p></td>
     </tr>
     <tr>
       <th>defaultSortOrder</th>
@@ -305,6 +309,14 @@ and table state object as arguments. Cannot be used on a <code>groupBy</code> co
       <th>na</th>
       <td><p>String to display for missing values (i.e. <a href='https://rdrr.io/r/base/NA.html'>NA</a> or <a href='https://rdrr.io/r/base/is.finite.html'>NaN</a>).
 By default, missing values are displayed as blank cells.</p></td>
+    </tr>
+    <tr>
+      <th>rowHeader</th>
+      <td><p>Mark up cells in this column as row headers?</p>
+<p>Set this to <code>TRUE</code> to help users navigate the table using assistive technologies.
+When cells are marked up as row headers, assistive technologies will read them
+aloud while navigating through cells in the table.</p>
+<p>Cells in the row names column are automatically marked up as row headers.</p></td>
     </tr>
     <tr>
       <th>minWidth</th>
@@ -386,17 +398,17 @@ character string.</p>
 in <code><a href='reactable.html'>reactable()</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span>
-  <span class='va'>iris</span>,
-  columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-    Sepal.Length <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>name <span class='op'>=</span> <span class='st'>"Sepal Length"</span><span class='op'>)</span>,
-    Sepal.Width <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>filterable <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-    Petal.Length <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>show <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
-    Petal.Width <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>defaultSortOrder <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span>
-  <span class='op'>)</span>
-<span class='op'>)</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='va'>iris</span>,</span>
+<span class='r-in'>  columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>    Sepal.Length <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>name <span class='op'>=</span> <span class='st'>"Sepal Length"</span><span class='op'>)</span>,</span>
+<span class='r-in'>    Sepal.Width <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>filterable <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,</span>
+<span class='r-in'>    Petal.Length <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>show <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,</span>
+<span class='r-in'>    Petal.Width <span class='op'>=</span> <span class='fu'>colDef</span><span class='op'>(</span>defaultSortOrder <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -136,6 +136,9 @@
     <li>
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
+    <li>
+      <a href="../articles/javascript-api.html">JavaScript API</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -202,14 +205,21 @@
 <li>
 <code>rowInfo.expanded</code> and <code>cellInfo.expanded</code> indicating whether the row is expanded</li>
 <li>
-<code>cellInfo.selected</code> property indicating whether the cell’s row is selected</li>
+<code>cellInfo.selected</code> indicating whether the cell’s row is selected</li>
 <li>
 <code>state.page</code>, <code>state.pageSize</code>, and <code>state.pages</code> for the current page index, page size, and number of pages in the table</li>
+<li>
+<code>cellInfo.filterValue</code> and <code>colInfo.filterValue</code> for the column filter value</li>
+<li>
+<code>state.filters</code> for the column filter values</li>
+<li>
+<code>state.searchValue</code> for the table search value</li>
 </ul>
 </li>
 <li>JavaScript render functions for cells, headers, footers, and row details can now access the table state using a new <code>state</code> argument (<a href="https://github.com/glin/reactable/issues/88"><a href='https://github.com/glin/reactable/issues/88'>#88</a></a>).</li>
 <li>Custom cell click actions can now access the table state using a new <code>state</code> argument.</li>
 <li>R render functions for row details now receive an additional argument for the column name (<a href='https://github.com/ksnap28'>@ksnap28</a>, <a href="https://github.com/glin/reactable/issues/155"><a href='https://github.com/glin/reactable/issues/155'>#155</a></a>).</li>
+<li>New JavaScript API to manipulate or access tables from JavaScript. Use this to create custom interactive controls, such as CSV download buttons, custom filter inputs, or toggle buttons for row grouping and row expansion (<a href="https://github.com/glin/reactable/issues/11"><a href='https://github.com/glin/reactable/issues/11'>#11</a></a>, <a href="https://github.com/glin/reactable/issues/28"><a href='https://github.com/glin/reactable/issues/28'>#28</a></a>, <a href="https://github.com/glin/reactable/issues/182"><a href='https://github.com/glin/reactable/issues/182'>#182</a></a>, <a href="https://github.com/glin/reactable/issues/194"><a href='https://github.com/glin/reactable/issues/194'>#194</a></a>). Learn more in the <a href="https://glin.github.io/reactable/articles/javascript-api.html">JavaScript API guide</a> or the <a href="https://glin.github.io/reactable/articles/examples.html#javascript-api">JavaScript API examples</a>.</li>
 </ul>
 </div>
 <div id="breaking-changes" class="section level3">
@@ -228,7 +238,7 @@
 <h3 class="hasAnchor">
 <a href="#minor-improvements-and-bug-fixes" class="anchor"></a>Minor improvements and bug fixes</h3>
 <ul>
-<li>Setting <code>show = FALSE</code> as a default value in <code>defaultColDef()</code> now works (<a href='https://github.com/csgillespie'>@csgillespie</a>, <a href="https://github.com/glin/reactable/pull/105"><a href='https://github.com/glin/reactable/issues/105'>#105</a></a>).</li>
+<li>Setting <code>show = FALSE</code> as a default value in <code>defaultColDef()</code> now works (<a href='https://github.com/csgillespie'>@csgillespie</a>, <a href="https://github.com/glin/reactable/pull/105"><a href='https://github.com/glin/reactable/issues/105'>#105</a></a>). Setting <code>sortNALast</code>, <code>html</code>, and <code>na</code> to their default values in <code>defaultColDef()</code> also now works.</li>
 <li>Using a single value for <code>pageSizeOptions</code> in <code><a href="../reference/reactable.html">reactable()</a></code> now works.</li>
 <li>Column resizing is now limited by the min and max width of the column.</li>
 <li>Column group headers and filter cells in fixed height tables now display properly in Safari, Chrome, and the RStudio Viewer (<a href="https://github.com/glin/reactable/issues/76"><a href='https://github.com/glin/reactable/issues/76'>#76</a></a>).</li>
@@ -250,11 +260,11 @@
 <li>Row expand buttons now set the <code>aria-expanded</code> attribute to indicate expanded or collapsed state. The default label for row expand buttons is now “Toggle details” instead of “Expand details” or “Collapse details”.</li>
 <li>
 <code><a href="../reference/reactableLang.html">reactableLang()</a></code> gains the <code>groupExpandLabel</code> and <code>groupCollapseLabel</code> arguments to customize the accessible labels for row group expand buttons.</li>
-<li>Cells in the row names column are now marked up as row headers for assistive technologies.</li>
+<li>Cells can now be marked up as row headers for assistive technologies, using the new <code>rowHeader</code> argument in <code><a href="../reference/colDef.html">colDef()</a></code>. Cells in the row names column are automatically marked up as row headers (<a href="https://github.com/glin/reactable/issues/167"><a href='https://github.com/glin/reactable/issues/167'>#167</a></a>).</li>
 <li>The page info and “no rows found” message are now marked as ARIA live regions so that page changes can be announced by assistive technologies when searching, filtering, or paging through the table.</li>
 <li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>filterInputStyle</code> now applies correctly when rerendering a table in Shiny (<a href="https://github.com/glin/reactable/issues/186"><a href='https://github.com/glin/reactable/issues/186'>#186</a></a>).</li>
 <li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>cellPadding</code> now applies to column group headers correctly.</li>
-<li>Columns with square brackets (<code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> or <code>]</code>) in their column name now render correctly (<a href="https://github.com/glin/reactable/issues/187"><a href='https://github.com/glin/reactable/issues/187'>#187</a></a>).</li>
+<li>Columns with square brackets (<code>[</code> or <code>]</code>) in their column name now render correctly (<a href="https://github.com/glin/reactable/issues/187"><a href='https://github.com/glin/reactable/issues/187'>#187</a></a>).</li>
 </ul>
 </div>
 </div>
@@ -306,7 +316,7 @@
 <li>Shiny UI elements in expanded row details are now properly removed when collapsed on page changes.</li>
 <li>
 <code><a href="../reference/colFormat.html">colFormat()</a></code> now always formats numbers as a localized string when <code>locales</code> is specified.</li>
-<li>Table rows no longer stretch to fill the height of the container (<a href="https://github.com/glin/reactable/issues/69"><a href='https://github.com/glin/reactable/issues/69'>#69</a></a>). To make rows stretch again, use a theme like <code><a href="../reference/reactableTheme.html">reactableTheme(tableBodyStyle = list(flex = "auto"))</a></code>.</li>
+<li>Table rows no longer stretch to fill the height of the container (<a href="https://github.com/glin/reactable/issues/69"><a href='https://github.com/glin/reactable/issues/69'>#69</a></a>). To make rows stretch again, use a theme like <code>reactableTheme(tableBodyStyle = list(flex = "auto"))</code>.</li>
 <li>Multi-sorting no longer selects text in column headers.</li>
 </ul>
 </div>
@@ -351,9 +361,9 @@
 <li>General accessibility improvements, particularly for screen reader users.</li>
 <li>Table searching now works correctly when row selection is enabled.</li>
 <li>
-<code><a href="../reference/colFormat.html">colFormat(date = TRUE)</a></code> now formats <code>YYYY-MM-DD</code> dates correctly (<a href="https://github.com/glin/reactable/issues/38"><a href='https://github.com/glin/reactable/issues/38'>#38</a></a>).</li>
+<code>colFormat(date = TRUE)</code> now formats <code>YYYY-MM-DD</code> dates correctly (<a href="https://github.com/glin/reactable/issues/38"><a href='https://github.com/glin/reactable/issues/38'>#38</a></a>).</li>
 <li>
-<code><a href="../reference/colFormat.html">colFormat(percent = TRUE)</a></code> now works correctly when viewing tables in IE11.</li>
+<code>colFormat(percent = TRUE)</code> now works correctly when viewing tables in IE11.</li>
 <li>Cell click actions now work for all cells in aggregated rows.</li>
 <li>Aggregated cells in columns with row details no longer throw an error when clicked.</li>
 <li>In <code><a href="../reference/colDef.html">colDef()</a></code>, the <code>class</code> and <code>style</code> R functions now handle list-columns correctly.</li>

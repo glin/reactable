@@ -137,6 +137,9 @@
     <li>
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
+    <li>
+      <a href="../articles/javascript-api.html">JavaScript API</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -270,94 +273,94 @@ in <code><a href='colDef.html'>colDef()</a></code>.</p>
 beyond what the built-in formatters provide.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  price_USD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>123456.56</span>, <span class='fl'>132</span>, <span class='fl'>5650.12</span><span class='op'>)</span>,
-  price_INR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>350</span>, <span class='fl'>23208.552</span>, <span class='fl'>1773156.4</span><span class='op'>)</span>,
-  number_FR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>123456.56</span>, <span class='fl'>132</span>, <span class='fl'>5650.12</span><span class='op'>)</span>,
-  temp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>22</span>, <span class='cn'>NA</span>, <span class='fl'>31</span><span class='op'>)</span>,
-  percent <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.9525556</span>, <span class='fl'>0.5</span>, <span class='fl'>0.112</span><span class='op'>)</span>,
-  date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019-01-02"</span>, <span class='st'>"2019-03-15"</span>, <span class='st'>"2019-09-22"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  price_USD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>prefix <span class='op'>=</span> <span class='st'>"$"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, digits <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,
-  price_INR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"INR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"hi-IN"</span><span class='op'>)</span><span class='op'>)</span>,
-  number_FR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>locales <span class='op'>=</span> <span class='st'>"fr-FR"</span><span class='op'>)</span><span class='op'>)</span>,
-  temp <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" \u00b0C"</span><span class='op'>)</span><span class='op'>)</span>,
-  percent <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>percent <span class='op'>=</span> <span class='cn'>TRUE</span>, digits <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
-  date <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>date <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"en-GB"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># Date formatting</span>
-<span class='va'>datetimes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019-01-02 3:22:15"</span>, <span class='st'>"2019-03-15 09:15:55"</span>, <span class='st'>"2019-09-22 14:20:00"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  datetime <span class='op'>=</span> <span class='va'>datetimes</span>,
-  date <span class='op'>=</span> <span class='va'>datetimes</span>,
-  time <span class='op'>=</span> <span class='va'>datetimes</span>,
-  time_24h <span class='op'>=</span> <span class='va'>datetimes</span>,
-  datetime_pt_BR <span class='op'>=</span> <span class='va'>datetimes</span>
-<span class='op'>)</span>
-
-<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  datetime <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>datetime <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,
-  date <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>date <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,
-  time <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>time <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,
-  time_24h <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>time <span class='op'>=</span> <span class='cn'>TRUE</span>, hour12 <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>,
-  datetime_pt_BR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>datetime <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"pt-BR"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># Currency formatting</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  USD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>12.12</span>, <span class='fl'>2141.213</span>, <span class='fl'>0.42</span>, <span class='fl'>1.55</span>, <span class='fl'>34414</span><span class='op'>)</span>,
-  EUR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10.68</span>, <span class='fl'>1884.27</span>, <span class='fl'>0.37</span>, <span class='fl'>1.36</span>, <span class='fl'>30284.32</span><span class='op'>)</span>,
-  INR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>861.07</span>, <span class='fl'>152122.48</span>, <span class='fl'>29.84</span>, <span class='fl'>110</span>, <span class='fl'>2444942.63</span><span class='op'>)</span>,
-  JPY <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1280</span>, <span class='fl'>226144</span>, <span class='fl'>44.36</span>, <span class='fl'>164</span>, <span class='fl'>3634634.61</span><span class='op'>)</span>,
-  MAD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>115.78</span>, <span class='fl'>20453.94</span>, <span class='fl'>4.01</span>, <span class='fl'>15</span>, <span class='fl'>328739.73</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-  USD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"USD"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"en-US"</span><span class='op'>)</span>
-  <span class='op'>)</span>,
-  EUR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"EUR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"de-DE"</span><span class='op'>)</span>
-  <span class='op'>)</span>,
-  INR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"INR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"hi-IN"</span><span class='op'>)</span>
-  <span class='op'>)</span>,
-  JPY <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"JPY"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"ja-JP"</span><span class='op'>)</span>
-  <span class='op'>)</span>,
-  MAD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"MAD"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"ar-MA"</span><span class='op'>)</span>
-  <span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># Formatting aggregated cells</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  States <span class='op'>=</span> <span class='va'>state.name</span>,
-  Region <span class='op'>=</span> <span class='va'>state.region</span>,
-  Area <span class='op'>=</span> <span class='va'>state.area</span>
-<span class='op'>)</span>
-
-<span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span>
-  <span class='va'>data</span>,
-  groupBy <span class='op'>=</span> <span class='st'>"Region"</span>,
-  columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-    States <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-      aggregate <span class='op'>=</span> <span class='st'>"count"</span>,
-      format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-        aggregated <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" states"</span><span class='op'>)</span>
-      <span class='op'>)</span>
-    <span class='op'>)</span>,
-    Area <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>
-      aggregate <span class='op'>=</span> <span class='st'>"sum"</span>,
-      format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" mi\u00b2"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-    <span class='op'>)</span>
-  <span class='op'>)</span>
-<span class='op'>)</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  price_USD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>123456.56</span>, <span class='fl'>132</span>, <span class='fl'>5650.12</span><span class='op'>)</span>,</span>
+<span class='r-in'>  price_INR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>350</span>, <span class='fl'>23208.552</span>, <span class='fl'>1773156.4</span><span class='op'>)</span>,</span>
+<span class='r-in'>  number_FR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>123456.56</span>, <span class='fl'>132</span>, <span class='fl'>5650.12</span><span class='op'>)</span>,</span>
+<span class='r-in'>  temp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>22</span>, <span class='cn'>NA</span>, <span class='fl'>31</span><span class='op'>)</span>,</span>
+<span class='r-in'>  percent <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.9525556</span>, <span class='fl'>0.5</span>, <span class='fl'>0.112</span><span class='op'>)</span>,</span>
+<span class='r-in'>  date <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019-01-02"</span>, <span class='st'>"2019-03-15"</span>, <span class='st'>"2019-09-22"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>  price_USD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>prefix <span class='op'>=</span> <span class='st'>"$"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, digits <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  price_INR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"INR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"hi-IN"</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  number_FR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>locales <span class='op'>=</span> <span class='st'>"fr-FR"</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  temp <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" \u00b0C"</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  percent <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>percent <span class='op'>=</span> <span class='cn'>TRUE</span>, digits <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  date <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>date <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"en-GB"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Date formatting</span></span>
+<span class='r-in'><span class='va'>datetimes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019-01-02 3:22:15"</span>, <span class='st'>"2019-03-15 09:15:55"</span>, <span class='st'>"2019-09-22 14:20:00"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  datetime <span class='op'>=</span> <span class='va'>datetimes</span>,</span>
+<span class='r-in'>  date <span class='op'>=</span> <span class='va'>datetimes</span>,</span>
+<span class='r-in'>  time <span class='op'>=</span> <span class='va'>datetimes</span>,</span>
+<span class='r-in'>  time_24h <span class='op'>=</span> <span class='va'>datetimes</span>,</span>
+<span class='r-in'>  datetime_pt_BR <span class='op'>=</span> <span class='va'>datetimes</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>  datetime <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>datetime <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  date <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>date <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  time <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>time <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  time_24h <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>time <span class='op'>=</span> <span class='cn'>TRUE</span>, hour12 <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>  datetime_pt_BR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>datetime <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"pt-BR"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Currency formatting</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  USD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>12.12</span>, <span class='fl'>2141.213</span>, <span class='fl'>0.42</span>, <span class='fl'>1.55</span>, <span class='fl'>34414</span><span class='op'>)</span>,</span>
+<span class='r-in'>  EUR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10.68</span>, <span class='fl'>1884.27</span>, <span class='fl'>0.37</span>, <span class='fl'>1.36</span>, <span class='fl'>30284.32</span><span class='op'>)</span>,</span>
+<span class='r-in'>  INR <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>861.07</span>, <span class='fl'>152122.48</span>, <span class='fl'>29.84</span>, <span class='fl'>110</span>, <span class='fl'>2444942.63</span><span class='op'>)</span>,</span>
+<span class='r-in'>  JPY <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1280</span>, <span class='fl'>226144</span>, <span class='fl'>44.36</span>, <span class='fl'>164</span>, <span class='fl'>3634634.61</span><span class='op'>)</span>,</span>
+<span class='r-in'>  MAD <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>115.78</span>, <span class='fl'>20453.94</span>, <span class='fl'>4.01</span>, <span class='fl'>15</span>, <span class='fl'>328739.73</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span><span class='va'>data</span>, columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>  USD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"USD"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"en-US"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  EUR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"EUR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"de-DE"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  INR <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"INR"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"hi-IN"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  JPY <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"JPY"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"ja-JP"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span>,</span>
+<span class='r-in'>  MAD <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>    format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>currency <span class='op'>=</span> <span class='st'>"MAD"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span>, locales <span class='op'>=</span> <span class='st'>"ar-MA"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Formatting aggregated cells</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  States <span class='op'>=</span> <span class='va'>state.name</span>,</span>
+<span class='r-in'>  Region <span class='op'>=</span> <span class='va'>state.region</span>,</span>
+<span class='r-in'>  Area <span class='op'>=</span> <span class='va'>state.area</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='reactable.html'>reactable</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='va'>data</span>,</span>
+<span class='r-in'>  groupBy <span class='op'>=</span> <span class='st'>"Region"</span>,</span>
+<span class='r-in'>  columns <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>    States <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>      aggregate <span class='op'>=</span> <span class='st'>"count"</span>,</span>
+<span class='r-in'>      format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>        aggregated <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" states"</span><span class='op'>)</span></span>
+<span class='r-in'>      <span class='op'>)</span></span>
+<span class='r-in'>    <span class='op'>)</span>,</span>
+<span class='r-in'>    Area <span class='op'>=</span> <span class='fu'><a href='colDef.html'>colDef</a></span><span class='op'>(</span></span>
+<span class='r-in'>      aggregate <span class='op'>=</span> <span class='st'>"sum"</span>,</span>
+<span class='r-in'>      format <span class='op'>=</span> <span class='fu'>colFormat</span><span class='op'>(</span>suffix <span class='op'>=</span> <span class='st'>" mi\u00b2"</span>, separators <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
