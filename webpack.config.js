@@ -12,7 +12,11 @@ module.exports = (env, argv) => {
 
     output: {
       filename: '[name].js',
-      path: path.join(__dirname, 'inst', 'htmlwidgets')
+      path: path.join(__dirname, 'inst', 'htmlwidgets'),
+      library: {
+        name: 'Reactable',
+        type: 'assign-properties'
+      }
     },
 
     module: {

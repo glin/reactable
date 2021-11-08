@@ -4,10 +4,19 @@ import { render, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { matchers } from '@emotion/jest'
 
-import Reactable from '../Reactable.v2'
+import Reactable, { getInstance } from '../Reactable.v2'
+import * as reactable from '../Reactable.v2'
+import { downloadCSV } from '../utils'
+
+jest.mock('../utils', () => ({
+  ...jest.requireActual('../utils'),
+  downloadCSV: jest.fn()
+}))
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
+
+afterEach(() => jest.clearAllMocks())
 
 expect.extend(matchers)
 
@@ -8680,5 +8689,266 @@ describe('Crosstalk', () => {
       new Error('error closing filter handle')
     )
     console.error = originalError
+  })
+})
+
+describe('reactable JavaScript API', () => {
+  it('getInstance errs on non-existent instance', () => {
+    expect(() => getInstance('does-not-exist')).toThrow(
+      `reactable instance 'does-not-exist' not found`
+    )
+    expect(() => reactable.getState('does-not-exist')).toThrow(
+      `reactable instance 'does-not-exist' not found`
+    )
+  })
+
+  it('getInstance works when table has an elementId', () => {
+    const props = {
+      data: { a: [111, 222] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+    const instance = getInstance('my-tbl')
+    expect(instance).toBeTruthy()
+    expect(instance.state).toBeTruthy()
+  })
+
+  it('getInstance works when table is a Shiny output', () => {
+    const props = {
+      data: { a: [111, 222] },
+      columns: [{ name: 'a', accessor: 'a' }]
+    }
+    render(
+      <div data-reactable-output="shiny-output-tbl">
+        <Reactable {...props} />
+      </div>
+    )
+    const instance = getInstance('shiny-output-tbl')
+    expect(instance).toBeTruthy()
+    expect(instance.state).toBeTruthy()
+  })
+
+  it('getInstance allows elementId to override Shiny output ID', () => {
+    const props = {
+      data: { a: [111, 222] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(
+      <div data-reactable-output="shiny-output-tbl">
+        <Reactable {...props} />
+      </div>
+    )
+    const instance = getInstance('my-tbl')
+    expect(instance).toBeTruthy()
+    expect(instance.state).toBeTruthy()
+    expect(() => getInstance('shiny-output-tbl')).toThrow(
+      `reactable instance 'shiny-output-tbl' not found`
+    )
+  })
+
+  it('instance is cleaned up when table unmounts', () => {
+    const props = {
+      data: { a: [111, 222] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-table'
+    }
+    const { unmount } = render(<Reactable {...props} />)
+    expect(getInstance('my-table')).toBeTruthy()
+    unmount()
+    expect(() => getInstance('my-table')).toThrow(`reactable instance 'my-table' not found`)
+  })
+
+  it('Reactable.getState', () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+    const state = reactable.getState('my-tbl')
+    expect(state.page).toEqual(0)
+    expect(state.pageSize).toEqual(10)
+    expect(state.pages).toEqual(1)
+    expect(state.sorted).toEqual([])
+    expect(state.groupBy).toEqual([])
+    expect(state.filters).toEqual([])
+    expect(state.searchValue).toEqual(undefined)
+    expect(state.pageRows).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
+    expect(state.sortedData).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
+    expect(state.data).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
+  })
+
+  it('Reactable.setFilter', () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').filters).toEqual([])
+    act(() => reactable.setFilter('my-tbl', 'a', 'bb'))
+    expect(reactable.getState('my-tbl').filters).toEqual([{ id: 'a', value: 'bb' }])
+    expect(getDataRows(container)).toHaveLength(1)
+    act(() => reactable.setFilter('my-tbl', 'a', undefined))
+    expect(reactable.getState('my-tbl').filters).toEqual([])
+    expect(getDataRows(container)).toHaveLength(2)
+  })
+
+  it('Reactable.setAllFilters', () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').filters).toEqual([])
+    act(() => reactable.setAllFilters('my-tbl', [{ id: 'a', value: 'cc' }]))
+    expect(reactable.getState('my-tbl').filters).toEqual([{ id: 'a', value: 'cc' }])
+    expect(getDataRows(container)).toHaveLength(0)
+    act(() => reactable.setAllFilters('my-tbl', []))
+    expect(reactable.getState('my-tbl').filters).toEqual([])
+    expect(getDataRows(container)).toHaveLength(2)
+  })
+
+  it('Reactable.setSearch', () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').searchValue).toEqual(undefined)
+    act(() => reactable.setSearch('my-tbl', 'aaa'))
+    expect(reactable.getState('my-tbl').searchValue).toEqual('aaa')
+    expect(getDataRows(container)).toHaveLength(1)
+    act(() => reactable.setSearch('my-tbl', undefined))
+    expect(reactable.getState('my-tbl').searchValue).toEqual(undefined)
+    expect(getDataRows(container)).toHaveLength(2)
+  })
+
+  it('Reactable.toggleGroupBy', () => {
+    const props = {
+      data: { a: ['aa', 'aa', 'bb'], b: [1, 2, 3] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').groupBy).toEqual([])
+
+    act(() => reactable.toggleGroupBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').groupBy).toEqual(['a'])
+    expect(getRows(container)).toHaveLength(2)
+    expect(getExpanders(container)).toHaveLength(2)
+
+    act(() => reactable.toggleGroupBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').groupBy).toEqual([])
+    expect(getRows(container)).toHaveLength(3)
+    expect(getExpanders(container)).toHaveLength(0)
+
+    act(() => reactable.toggleGroupBy('my-tbl', 'b'))
+    act(() => reactable.toggleGroupBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').groupBy).toEqual(['b', 'a'])
+  })
+
+  it('Reactable.setGroupBy', () => {
+    const props = {
+      data: { a: ['aa', 'aa', 'bb'], b: [1, 2, 3] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').groupBy).toEqual([])
+
+    act(() => reactable.setGroupBy('my-tbl', ['a']))
+    expect(reactable.getState('my-tbl').groupBy).toEqual(['a'])
+    expect(getRows(container)).toHaveLength(2)
+    expect(getExpanders(container)).toHaveLength(2)
+
+    act(() => reactable.setGroupBy('my-tbl', []))
+    expect(reactable.getState('my-tbl').groupBy).toEqual([])
+    expect(getRows(container)).toHaveLength(3)
+    expect(getExpanders(container)).toHaveLength(0)
+
+    act(() => reactable.setGroupBy('my-tbl', ['b', 'a']))
+    expect(reactable.getState('my-tbl').groupBy).toEqual(['b', 'a'])
+  })
+
+  it('Reactable.toggleAllRowsExpanded', () => {
+    const props = {
+      data: { a: ['aa', 'aa', 'bb'] },
+      columns: [
+        { name: 'a', accessor: 'a', details: ['detail', 'detail', 'detail'] }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { queryAllByText } = render(<Reactable {...props} />)
+    expect(queryAllByText('detail')).toHaveLength(0)
+  
+    act(() => reactable.toggleAllRowsExpanded('my-tbl'))
+    expect(queryAllByText('detail')).toHaveLength(3)
+
+    act(() => reactable.toggleAllRowsExpanded('my-tbl', true))
+    expect(queryAllByText('detail')).toHaveLength(3)
+  
+    act(() => reactable.toggleAllRowsExpanded('my-tbl'))
+    expect(queryAllByText('detail')).toHaveLength(0)
+    
+    act(() => reactable.toggleAllRowsExpanded('my-tbl', true))
+    expect(queryAllByText('detail')).toHaveLength(3)
+
+    act(() => reactable.toggleAllRowsExpanded('my-tbl', false))
+    expect(queryAllByText('detail')).toHaveLength(0)
+  })
+
+  it('Reactable.downloadDataCSV', () => {
+    const props = {
+      data: { a: ['a11', 'a12', 'a23'], b: [2, 3, 3] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        // Should include hidden columns
+        { name: 'b', accessor: 'b', show: false },
+        // Should ignore columns without data
+        { name: '', accessor: '.selection' },
+        { name: '', accessor: '.details' }
+      ],
+      searchable: true,
+      elementId: 'my-tbl'
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+
+    reactable.downloadDataCSV('my-tbl')
+    expect(downloadCSV).toHaveBeenCalledTimes(1)
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\na23,3\n', 'data.csv')
+
+    reactable.downloadDataCSV('my-tbl', 'my_custom_filename.csv')
+    expect(downloadCSV).toHaveBeenCalledTimes(2)
+    expect(downloadCSV).toHaveBeenLastCalledWith(
+      'a,b\na11,2\na12,3\na23,3\n',
+      'my_custom_filename.csv'
+    )
+
+    // Should download filtered data
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'a1' } })
+    // Should ignore sort order and use original order of data
+    const sortableHeaders = getSortableHeaders(container)
+    fireEvent.click(sortableHeaders[0])
+    reactable.downloadDataCSV('my-tbl')
+    expect(downloadCSV).toHaveBeenCalledTimes(3)
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
+
+    // Should use flattened rows and exclude aggregated rows when grouped
+    rerender(<Reactable {...props} pivotBy={['b']} />)
+    reactable.downloadDataCSV('my-tbl')
+    expect(downloadCSV).toHaveBeenCalledTimes(4)
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
   })
 })

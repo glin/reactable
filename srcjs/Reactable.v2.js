@@ -22,12 +22,53 @@ import useRowSelect from './useRowSelect'
 import { columnsToRows, buildColumnDefs, emptyValue } from './columns.v2'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
-import { classNames, convertRowsToV6, getLeafColumns } from './utils'
+import { classNames, convertRowsToV6, getLeafColumns, rowsToCSV, downloadCSV } from './utils'
 
 import './react-table.v2.css'
 import './reactable.v2.css'
 
-function Reactable({
+const tableInstances = {}
+export function getInstance(tableId) {
+  const getInstance = tableInstances[tableId]
+  if (!getInstance) {
+    throw new Error(`reactable instance '${tableId}' not found`)
+  }
+  return getInstance()
+}
+
+export function getState(tableId) {
+  return getInstance(tableId).state
+}
+
+export function setFilter(tableId, columnId, value) {
+  getInstance(tableId).setFilter(columnId, value)
+}
+
+export function setAllFilters(tableId, value) {
+  getInstance(tableId).setAllFilters(value)
+}
+
+export function setSearch(tableId, value) {
+  getInstance(tableId).setGlobalFilter(value)
+}
+
+export function toggleGroupBy(tableId, columnId, isGrouped) {
+  getInstance(tableId).toggleGroupBy(columnId, isGrouped)
+}
+
+export function setGroupBy(tableId, columnIds) {
+  getInstance(tableId).setGroupBy(columnIds)
+}
+
+export function toggleAllRowsExpanded(tableId, isExpanded) {
+  getInstance(tableId).toggleAllRowsExpanded(isExpanded)
+}
+
+export function downloadDataCSV(tableId, filename = 'data.csv') {
+  getInstance(tableId).downloadDataCSV(filename)
+}
+
+export default function Reactable({
   data,
   columns,
   columnGroups,
@@ -393,6 +434,7 @@ function Table({
   crosstalkKey,
   crosstalkGroup,
   crosstalkId,
+  elementId,
   nested
 }) {
   const [newData, setNewData] = React.useState(null)
@@ -1472,6 +1514,37 @@ function Table({
     }
   }, [state.selectedRowIds, rowsById, selection, crosstalkKey])
 
+  // Expose a limited JavaScript API to the table instance
+  instance.state = stateInfo
+  instance.downloadDataCSV = (filename = 'data.csv') => {
+    // Ensure rows are flattened and ignore sort order. Unlike instance.flatRows,
+    // instance.preGroupedRows excludes aggregated rows and uses the original data order.
+    // Also ignore columns without data (e.g., selection or details columns) using
+    // row.original rather than row.values.
+    const csv = rowsToCSV(instance.preGroupedRows.map(row => row.original))
+    downloadCSV(csv, filename)
+  }
+
+  const getTableInstance = useGetLatest(instance)
+
+  React.useEffect(() => {
+    // For static rendered tables, the instance ID is the element ID. For Shiny outputs,
+    // the instance ID is the Shiny output ID, although the element ID may override it.
+    let instanceId = elementId
+    if (!instanceId) {
+      instanceId = rootElement.current.parentElement.getAttribute('data-reactable-output')
+    }
+    if (!instanceId) {
+      return
+    }
+
+    tableInstances[instanceId] = getTableInstance
+
+    return function cleanup() {
+      delete tableInstances[instanceId]
+    }
+  }, [elementId, getTableInstance])
+
   className = classNames(
     className,
     css(theme.style),
@@ -1545,6 +1618,7 @@ Reactable.propTypes = {
   crosstalkKey: PropTypes.array,
   crosstalkGroup: PropTypes.string,
   crosstalkId: PropTypes.string,
+  elementId: PropTypes.string,
   nested: PropTypes.bool,
   dataKey: PropTypes.string
 }
@@ -1555,5 +1629,3 @@ Reactable.defaultProps = {
   showSortIcon: true,
   crosstalkId: '__crosstalk__'
 }
-
-export default Reactable

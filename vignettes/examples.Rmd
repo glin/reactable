@@ -1927,6 +1927,154 @@ htmltools::browsable(
 )
 ```
 
+## JavaScript API
+
+> New in v0.2.3.9000 (unreleased)
+
+You can use the JavaScript API to create custom interactive controls for your table
+without the use of Shiny, or add cross-widget interactions beyond what Crosstalk provides.
+
+See the [JavaScript API guide](javascript-api.html) for details on how to use the
+JavaScript API in R Markdown documents or Shiny apps, and the full API reference.
+
+### CSV download button
+
+```{r}
+library(htmltools)
+library(fontawesome)
+
+data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
+
+htmltools::browsable(
+  tagList(
+    tags$button(
+      tagList(fontawesome::fa("download"), "Download as CSV"),
+      onclick = "Reactable.downloadDataCSV('cars-download-table', 'cars.csv')"
+    ),
+
+    reactable(
+      data,
+      searchable = TRUE,
+      defaultPageSize = 5,
+      elementId = "cars-download-table"
+    )
+  )
+)
+```
+
+### Custom column filter
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
+
+htmltools::browsable(
+  tagList(
+    div(
+      div(tags$label("Filter Type", `for` = "cars-type-filter")),
+      tags$select(
+        id = "cars-type-filter",
+        onchange = "Reactable.setFilter('cars-filter-table', 'Type', this.value)",
+        tags$option("All", value = ""),
+        lapply(unique(data$Type), tags$option)
+      )
+    ),
+    
+    tags$hr("aria-hidden" = "false"),
+
+    reactable(data, defaultPageSize = 5, elementId = "cars-filter-table")
+  )
+)
+```
+
+### Custom search input
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
+
+htmltools::browsable(
+  tagList(
+    div(
+      style = "margin-bottom: 12px",
+      tags$input(
+        type = "text",
+        placeholder = "Search for cars...",
+        style = "padding: 4px 8px; width: 100%",
+        oninput = "Reactable.setSearch('cars-search-table', this.value)"
+      )
+    ),
+
+    reactable(data, defaultPageSize = 5, elementId = "cars-search-table")
+  )
+)
+```
+
+### Column grouping select
+
+```{r}
+library(dplyr)
+library(htmltools)
+
+set.seed(10)
+
+data <- sample_n(tail(MASS::Cars93, 9), 30, replace = TRUE) %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+htmltools::browsable(
+  tagList(
+    div(tags$label("Group by", `for` = "cars-grouping-select")),
+    tags$select(
+      id = "cars-grouping-select",
+      onchange = "Reactable.setGroupBy('cars-grouping-table', this.value ? [this.value] : [])",
+      tags$option("None", value = ""),
+      lapply(c("Manufacturer", "Model", "Type"), tags$option)
+    ),
+
+    tags$hr("aria-hidden" = "false"),
+
+    reactable(
+      data,
+      columns = list(
+        Manufacturer = colDef(aggregate = "unique"),
+        Model = colDef(aggregate = "unique"),
+        Type = colDef(aggregate = "unique"),
+        Sales = colDef(aggregate = "sum", format = colFormat(currency = "USD"))
+      ),
+      defaultPageSize = 5,
+      minRows = 5,
+      elementId = "cars-grouping-table"
+    )
+  )
+)
+```
+
+### Row expansion toggle button
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")]
+
+htmltools::browsable(
+  tagList(
+    tags$button(
+      "Expand/collapse all",
+      onclick = "Reactable.toggleAllRowsExpanded('cars-expansion-table')"
+    ),
+
+    reactable(
+      data,
+      groupBy = "Manufacturer",
+      defaultPageSize = 5,
+      elementId = "cars-expansion-table"
+    )
+  )
+)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */

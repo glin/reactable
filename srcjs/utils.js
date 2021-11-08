@@ -87,3 +87,51 @@ export function convertRowsToV6(rows) {
     }
   })
 }
+
+export function rowsToCSV(rows) {
+  if (rows.length === 0) {
+    return ''
+  }
+  const rowToCSV = row => {
+    return row
+      .map(value => {
+        if (value == null) {
+          value = ''
+        }
+        // Serialize dates as ISO strings, all other non-string and non-numeric values as JSON
+        if (value instanceof Date) {
+          value = value.toISOString()
+        } else if (typeof value !== 'string' && typeof value !== 'number') {
+          value = JSON.stringify(value)
+        }
+        // Escape CSV-unsafe characters
+        if (typeof value === 'string' && value.match(/[",]/)) {
+          value = `"${value.replace(/"/g, '""')}"`
+        }
+        return value
+      })
+      .join(',')
+  }
+  let csv = []
+  const headers = Object.keys(rows[0])
+  csv.push(rowToCSV(headers))
+  for (let row of rows) {
+    csv.push(rowToCSV(Object.values(row)))
+  }
+  return csv.join('\n') + '\n'
+}
+
+export function downloadCSV(content, filename) {
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8' })
+  if (window.navigator.msSaveBlob) {
+    // For IE11
+    window.navigator.msSaveBlob(blob, filename)
+  } else {
+    const link = document.createElement('a')
+    const url = window.URL.createObjectURL(blob)
+    link.href = url
+    link.download = filename
+    link.click()
+    window.URL.revokeObjectURL(url)
+  }
+}

@@ -614,6 +614,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     language = language,
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
+    elementId = elementId,
     dataKey = dataKey,
     key = if (!isV2()) dataKey
   ))

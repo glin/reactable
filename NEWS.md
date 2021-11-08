@@ -45,6 +45,15 @@ where possible, but note that there are several breaking changes.
   argument.
 * R render functions for row details now receive an additional argument for
   the column name (@ksnap28, [#155](https://github.com/glin/reactable/issues/155)).
+* New JavaScript API to manipulate or access tables from JavaScript. Use this to
+  create custom interactive controls, such as CSV download buttons, custom filter inputs,
+  or toggle buttons for row grouping and row expansion
+  ([#11](https://github.com/glin/reactable/issues/11),
+  [#28](https://github.com/glin/reactable/issues/28),
+  [#182](https://github.com/glin/reactable/issues/182),
+  [#194](https://github.com/glin/reactable/issues/194)).
+  Learn more in the [JavaScript API guide](https://glin.github.io/reactable/articles/javascript-api.html)
+  or the [JavaScript API examples](https://glin.github.io/reactable/articles/examples.html#javascript-api).
 
 ### Breaking changes
 

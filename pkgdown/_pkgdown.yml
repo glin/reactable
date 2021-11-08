@@ -14,6 +14,8 @@ navbar:
         href: articles/custom-rendering.html
       - text: Conditional Styling
         href: articles/conditional-styling.html
+      - text: JavaScript API
+        href: articles/javascript-api.html
     examples:
       text: Examples
       href: articles/examples.html

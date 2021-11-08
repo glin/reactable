@@ -6,7 +6,9 @@ import {
   get,
   set,
   getLeafColumns,
-  convertRowsToV6
+  convertRowsToV6,
+  rowsToCSV,
+  downloadCSV
 } from '../utils'
 
 test('classNames', () => {
@@ -173,4 +175,98 @@ test('convertRowsToV6', () => {
     },
     { a: 3, b: 4 }
   ])
+})
+
+test('rowsToCSV', () => {
+  expect(rowsToCSV([])).toEqual('')
+  expect(rowsToCSV([{ a: 'b' }])).toEqual('a\nb\n')
+  expect(
+    rowsToCSV([
+      {
+        str: 'str',
+        num: 12,
+        bool: true
+      }
+    ])
+  ).toEqual('str,num,bool\nstr,12,true\n')
+
+  // Dates should be serialized as ISO strings. In practice, date values are
+  // represented in reactable as strings, not dates, though.
+  expect(
+    rowsToCSV([
+      {
+        date: new Date('1995-12-17T03:24:00Z'),
+        date2: new Date('2022-01-01T00:00:00Z')
+      }
+    ])
+  ).toEqual('date,date2\n1995-12-17T03:24:00.000Z,2022-01-01T00:00:00.000Z\n')
+
+  // Objects and arrays should be serialized as JSON
+  expect(
+    rowsToCSV([
+      {
+        obj: { x: '', y: [1, 2] },
+        arr: ['a', 34]
+      }
+    ])
+  ).toEqual('obj,arr\n"{""x"":"""",""y"":[1,2]}","[""a"",34]"\n')
+
+  // NAs/nulls should be serialized as empty strings, unless they're numeric
+  expect(
+    rowsToCSV([
+      {
+        emptyStr: '',
+        null: null,
+        numberNA: 'NA',
+        numberNaN: 'NaN'
+      }
+    ])
+  ).toEqual('emptyStr,null,numberNA,numberNaN\n,,NA,NaN\n')
+
+  // CSV-unsafe characters
+  expect(rowsToCSV([{ comma: ',', dquote: '"', mix: '"ab,,cd""', '"comma, "': 'header' }])).toEqual(
+    'comma,dquote,mix,"""comma, """\n",","""","""ab,,cd""""",header\n'
+  )
+
+  // Multiple rows
+  expect(
+    rowsToCSV([
+      { a: 'a', b: 12, c: null },
+      { a: 'b', b: -23, c: null },
+      { a: 'C', b: 0, c: '' }
+    ])
+  ).toEqual('a,b,c\na,12,\nb,-23,\nC,0,\n')
+})
+
+describe('downloadCSV', () => {
+  beforeEach(() => {
+    window.URL.createObjectURL = jest.fn(() => 'test.csv')
+    window.URL.revokeObjectURL = jest.fn()
+  })
+
+  afterEach(() => {
+    delete window.URL.createObjectURL
+    delete window.URL.revokeObjectURL
+  })
+
+  test('downloads CSV in IE11', () => {
+    window.navigator.msSaveBlob = jest.fn()
+    downloadCSV('a,b\n1,2\n', 'test.csv')
+    expect(window.navigator.msSaveBlob).toHaveBeenCalledTimes(1)
+    expect(window.navigator.msSaveBlob).toHaveBeenCalledWith(
+      new Blob(['a,b\n1,2\n'], { type: 'text/csv;charset=utf-8' }),
+      'test.csv'
+    )
+    delete window.navigator.msSaveBlob
+  })
+
+  test('downloads CSV in all other browsers', () => {
+    downloadCSV('a,b\n1,2\n', 'test.csv')
+    expect(window.URL.createObjectURL).toHaveBeenCalledTimes(1)
+    expect(window.URL.createObjectURL).toHaveBeenCalledWith(
+      new Blob(['a,b\n1,2\n'], { type: 'text/csv;charset=utf-8' })
+    )
+    expect(window.URL.revokeObjectURL).toHaveBeenCalledTimes(1)
+    expect(window.URL.revokeObjectURL).toHaveBeenCalledWith('test.csv')
+  })
 })

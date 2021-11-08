@@ -82,7 +82,6 @@ test_that("reactable", {
   expect_equal(attribs, expected)
   expect_equal(tbl$width, "auto")
   expect_equal(tbl$height, "auto")
-  expect_null(tbl$elementId)
 
   # Table options
   tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
@@ -96,8 +95,7 @@ test_that("reactable", {
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
-                   fullWidth = FALSE, groupBy = "x", width = "400px", height = "100%",
-                   elementId = "tbl")
+                   fullWidth = FALSE, groupBy = "x", width = "400px", height = "100%")
   attribs <- getAttribs(tbl)
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
@@ -152,7 +150,6 @@ test_that("reactable", {
   expect_equal(tbl$width, "400px")
   expect_equal(tbl$height, "100%")
   expect_equal(tbl$sizingPolicy$knitr$figure, FALSE)
-  expect_equal(tbl$elementId, "tbl")
 
   # Column overrides
   tbl <- reactable(data.frame(x = 1, y = "2"), columns = list(
@@ -1003,6 +1000,18 @@ test_that("language", {
   # Errors
   expect_error(reactable(data, language = list()),
                "`language` must be a reactable language options object")
+})
+
+test_that("elementId", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(tbl$elementId, NULL)
+  expect_equal(getAttribs(tbl)$elementId, NULL)
+
+  tbl <- reactable(data, elementId = "my-tbl")
+  expect_equal(tbl$elementId, "my-tbl")
+  expect_equal(getAttribs(tbl)$elementId, "my-tbl")
 })
 
 test_that("columnSortDefs", {

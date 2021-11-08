@@ -1,0 +1,412 @@
+---
+title: "JavaScript API"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+library(htmltools)
+
+propsTable <- function(props) {
+  tags$table(
+    class = "props-tbl",
+    tags$thead(
+      tags$tr(
+        lapply(colnames(props), function(name) tags$th(name))
+      )
+    ),
+    tags$tbody(
+      apply(props, 1, function(row) {
+        tags$tr(
+          tags$th(scope = "row", tags$code(row[["Property"]])),
+          tags$td(tags$code(row[["Example"]])),
+          tags$td(row[["Description"]])
+        )
+      })
+    )
+  )
+}
+```
+
+> New in v0.2.3.9000 (unreleased)
+
+## Introduction
+
+The JavaScript API lets you manipulate and access tables from JavaScript.
+You can use this to create custom interactive controls for your table without
+the use of Shiny, or add cross-widget interactions beyond what Crosstalk provides.
+
+Common use cases for the JavaScript API include:
+
+- Export buttons to download table data to a CSV file
+- Custom filter inputs located outside of the table
+- Toggle buttons for row grouping or row expansion
+
+#### Example: CSV download button
+
+```{r}
+library(htmltools)
+
+htmltools::browsable(
+  tagList(
+    tags$button("Download as CSV", onclick = "Reactable.downloadDataCSV('cars-table')"),
+
+    reactable(
+      MASS::Cars93[, 1:5],
+      defaultPageSize = 5,
+      elementId = "cars-table"
+    )
+  )
+)
+```
+
+## Using the JavaScript API
+
+To use the JavaScript API, your table must first have a unique ID that distinguishes
+it from other tables:
+
+- For tables in static documents (e.g., R Markdown), add an ID through the
+  `elementId` argument in `reactable()`:
+
+  ```r
+  reactable(MASS::Cars93, elementId = "cars-table")
+  ```
+
+- For tables in Shiny apps, the ID will be the Shiny output ID specified in
+  `reactableOutput()`. For example, the table in this app uses `cars_table` as its ID:
+
+  ```r
+  library(shiny)
+
+  ui <- fluidPage(
+    reactableOutput("cars_table")
+  )
+
+  server <- function(input, output) {
+    output$cars_table <- renderReactable({
+      reactable(MASS::Cars93)
+    })
+  }
+
+  shinyApp(ui, server)
+  ```
+
+Once your table has an ID, you can use any of the `Reactable` JavaScript functions
+with that table ID. For example, to download data from the `cars-table` table to a
+CSV file, the JavaScript code would look like this:
+
+```js
+// Download the "cars-table" data to a CSV file named 'cars.csv'
+Reactable.downloadDataCSV('cars-table', 'cars.csv')
+```
+
+To try this out interactively, you can open your
+[browser's developer tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+and run this function in the
+[JavaScript console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#the_javascript_console).
+
+### Creating custom interactive controls
+
+Most users will likely want to use the JavaScript API through an interactive control,
+such as a button, so they could decide when to download the table data. Using HTML,
+you can create a `<button>` element with an `onclick` action that calls
+the `Reactable` JavaScript function.
+
+This example uses the `htmltools` package to render a CSV download button.
+You can copy this code into an R console to view the output:
+
+```{r, eval=FALSE}
+library(htmltools)
+
+htmltools::browsable(
+  tagList(
+    tags$button("Download as CSV", onclick = "Reactable.downloadDataCSV('cars-table', 'cars.csv')"),
+
+    reactable(MASS::Cars93[, 1:5], elementId = "cars-table")
+  )
+)
+```
+
+> **NOTE**: `htmltools::browsable()` is a convenient way to view the rendered HTML when
+> copying code into the console. It isn't required to render HTML in R Markdown documents
+> or Shiny apps.
+
+To reuse this button in other tables, you can also convert it into a function that
+generates download buttons:
+
+```{r, eval=FALSE}
+library(htmltools)
+
+csvDownloadButton <- function(tableId, label = "Download as CSV", filename = "data.csv") {
+  htmltools::tags$button(
+    label,
+    onclick = sprintf("Reactable.downloadDataCSV('%s', '%s')", tableId, filename)
+  )
+}
+
+htmltools::browsable(
+  tagList(
+    csvDownloadButton("cars-table", "Download as CSV", filename = "cars.csv"),
+
+    reactable(MASS::Cars93[, 1:5], elementId = "cars-table")
+  )
+)
+```
+
+For more examples of custom controls that use the JavaScript API, check out the
+[JavaScript API examples](examples.html#javascript-api).
+
+## JavaScript API Reference
+
+### `Reactable.downloadDataCSV()`
+
+Downloads the table data to a CSV file. The downloaded file is named `data.csv`
+by default, but you can customize this using the optional `filename` argument.
+
+The downloaded data will include any filters that have been applied, and
+exclude any sorting or grouping. Hidden columns will also be included, but
+this may be customizable in the future.
+
+```js
+Reactable.downloadDataCSV(
+  tableId: string,
+  filename = "data.csv"
+)
+```
+
+#### Examples
+
+```js
+// Download table data to a file named data.csv
+Reactable.downloadDataCSV('cars-table')
+
+// Download table data to a file named cars93.csv
+Reactable.downloadDataCSV('cars-table', 'cars93.csv')
+```
+
+### `Reactable.setSearch()`
+
+Sets the search value of a table. To clear the search, set the value to `undefined`.
+
+```js
+Reactable.setSearch(
+  tableId: string,
+  value?: string
+)
+```
+
+#### Examples
+
+```js
+// Set the search value to "midsize"
+Reactable.setSearch('cars-table', 'midsize')
+
+// Clear the search value
+Reactable.setSearch('cars-table', undefined)
+```
+
+### `Reactable.setFilter()`
+
+Sets the filter value of a column. To clear the column filter, set the value
+to `undefined`.
+
+```js
+Reactable.setFilter(
+  tableId: string,
+  columnId: string,
+  value?: string
+)
+```
+
+#### Examples
+
+```js
+// Set the filter value of the "Type" column to "midsize"
+Reactable.setFilter('cars-table', 'Type', 'midsize')
+
+// Clear the filter value of the "Type" column
+Reactable.setFilter('cars-table', 'Type', undefined)
+```
+
+### `Reactable.setAllFilters()`
+
+Sets all column filter values in the table. To clear the column filters,
+set `filters` to an empty array, `[]`.
+
+```js
+Reactable.setAllFilters(
+  tableId: string,
+  filters: Array<{ id: string, value: string }>
+)
+```
+
+#### Examples
+
+```js
+// Set the column filters for the "Type" column
+Reactable.setAllFilters('cars-table', [{ id: 'Type', value: 'midsize' }])
+
+// Set the column filters for the "Type" and "Model" columns
+Reactable.setAllFilters('cars-table', [{ id: 'Type', value: 'midsize' }, { id: 'Model', value: 'legend' }])
+
+// Clear all column filters
+Reactable.setAllFilters([])
+```
+
+### `Reactable.toggleGroupBy()`
+
+Toggles the `groupBy` state for a column between grouped and ungrouped.
+To enable or disable grouping explicitly, set the optional `isGrouped` argument
+to `true` or `false`.
+
+```js
+Reactable.toggleGroupBy(
+  tableId: string,
+  columnId: string,
+  isGrouped?: boolean
+)
+```
+
+#### Examples
+
+```js
+// Toggle groupBy state for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type')
+
+// Enable grouping for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type', true)
+
+// Disable grouping for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type', false)
+```
+
+### `Reactable.setGroupBy()`
+
+Sets the `groupBy` columns for the table. To clear the `groupBy` columns,
+set `columnIds` to an empty array, `[]`.
+
+```js
+Reactable.setGroupBy(
+  tableId: string,
+  columnIds: Array<string>
+)
+```
+
+#### Examples
+
+```js
+// Set the groupBy columns to "Type" and "Manufacturer"
+Reactable.setGroupBy('cars-table', ['Type', 'Manufacturer'])
+
+// Clear the groupBy columns
+Reactable.setGroupBy('cars-table', [])
+```
+
+### `Reactable.toggleAllRowsExpanded()`
+
+Toggles the expanded state of all rows in the table between expanded and collapsed.
+To expand or collapse rows explicitly, set the optional `isExpanded` argument to
+`true` or `false`.
+
+```js
+Reactable.toggleAllRowsExpanded(
+  tableId: string,
+  isExpanded?: boolean
+)
+```
+
+#### Examples
+
+```js
+// Toggle expanded state for all rows
+Reactable.toggleAllRowsExpanded('cars-table')
+
+// Expand all rows
+Reactable.toggleAllRowsExpanded('cars-table', true)
+
+// Collapse all rows
+Reactable.toggleAllRowsExpanded('cars-table', false)
+```
+
+### `Reactable.getState()`
+
+Gets the current state of a table.
+
+```js
+Reactable.getState(tableId: string)
+```
+
+#### Value
+
+An object with the following properties:
+
+```{r, echo=FALSE, asis=TRUE}
+stateProps <- dplyr::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
+  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
+  "searchValue", '"petal"', "table search value",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
+)
+
+propsTable(stateProps)
+```
+
+#### Examples
+
+```js
+Reactable.getState('cars-table')
+// { page: 2, searchValue: 'petal', ... }
+```
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope="row"] {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 600;
+}
+```
