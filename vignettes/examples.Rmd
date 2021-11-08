@@ -1817,28 +1817,6 @@ shinyApp(ui, server)
 
 ## Cross-Widget Interactions
 
-```{r, echo=FALSE}
-# pkgdown puts HTML dependencies in the body, which means added styles
-# like Bootstrap can mess with default/custom pkgdown styles.
-# Since pkgdown and html_document already include Bootstrap, remove
-# Bootstrap dependencies from the crosstalk widgets.
-
-library(crosstalk)
-
-without_bootstrap <- function(func) {
-  func_without_bs <- function(...) {
-    x <- func(...)
-    htmlDependencies(x) <- Filter(function(d) d$name != "bootstrap", htmlDependencies(x))
-    x
-  }
-}
-
-filter_checkbox <- without_bootstrap(crosstalk::filter_checkbox)
-filter_slider <- without_bootstrap(crosstalk::filter_slider)
-filter_select <- without_bootstrap(crosstalk::filter_select)
-bscols <- without_bootstrap(crosstalk::bscols)
-```
-
 You can link selection and filtering with other HTML widgets in an R Markdown
 document or Shiny app using [Crosstalk](https://rstudio.github.io/crosstalk).
 To get started, install the `crosstalk` package and wrap your data frame in a
