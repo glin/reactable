@@ -1436,6 +1436,8 @@ reactable(iris[1:5, ], rownames = TRUE)
 
 ### Row headers
 
+> New in v0.2.3.9000 (unreleased)
+
 You can mark up cells in a column as row headers by setting `rowHeader` to `TRUE`
 in `colDef()`.
 
