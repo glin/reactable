@@ -220,12 +220,12 @@ propsTable(cellInfoProps)
 stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
-  "page", "2", "page index (zero-based)",
-  "pageSize", "10", "page size",
-  "pages", "5", "number of pages",
-  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
-  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
+  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
+  "pageSize", "10", "page size (new in v0.2.3.9000)",
+  "pages", "5", "number of pages (new in v0.2.3.9000)",
+  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values (new in v0.2.3.9000)",
   "searchValue", '"petal"', "table search value (new in v0.2.3.9000)",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
 )
