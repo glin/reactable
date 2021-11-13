@@ -356,6 +356,7 @@ stateProps <- dplyr::tribble(
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
   "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
   "searchValue", '"petal"', "table search value",
+  "selected", '[0, 1, 4]', "array of selected row indices (zero-based)",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
 )

@@ -597,21 +597,22 @@ function Table({
   }, [instance.setRowsSelected, defaultSelected])
 
   const rowsById = instance.preFilteredRowsById || instance.rowsById
+  const selectedRowIndexes = React.useMemo(() => {
+    return Object.keys(state.selectedRowIds).map(id => rowsById[id].index)
+  }, [state.selectedRowIds, rowsById])
 
   // Update Shiny on selected row changes (deprecated in v0.2.3.9000)
   React.useEffect(() => {
     if (!selection) {
       return
     }
-    const selectedIndexes = Object.keys(state.selectedRowIds).map(id => {
-      // Convert to R's 1-based indices
-      return rowsById[id].index + 1
-    })
+    // Convert to R's 1-based indices
+    const selectedIndexes = selectedRowIndexes.map(index => index + 1)
 
     if (selectionId && window.Shiny) {
       window.Shiny.onInputChange(selectionId, selectedIndexes)
     }
-  }, [state.selectedRowIds, rowsById, selection, selectionId])
+  }, [selectedRowIndexes, selection, selectionId])
 
   // Reset searched state when table is no longer searchable
   const searchableRef = React.useRef(searchable)
@@ -651,7 +652,8 @@ function Table({
     data: data,
     page: state.pageIndex,
     pageSize: state.pageSize,
-    pages: instance.pageCount
+    pages: instance.pageCount,
+    selected: selectedRowIndexes
   }
 
   const makeThead = () => {
@@ -1310,10 +1312,8 @@ function Table({
     if (!outputId) {
       return
     }
-    const selectedIndexes = Object.keys(state.selectedRowIds).map(id => {
-      // Convert to R's 1-based indices
-      return rowsById[id].index + 1
-    })
+    // Convert to R's 1-based indices
+    const selectedIndexes = selectedRowIndexes.map(index => index + 1)
     const stateInfo = {
       // Convert to R's 1-based indices
       page: state.pageIndex + 1,
@@ -1325,7 +1325,7 @@ function Table({
       // NOTE: output IDs must always come first to work with Shiny modules
       window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, stateInfo[prop])
     })
-  }, [nested, state.pageIndex, state.pageSize, instance.pageCount, state.selectedRowIds, rowsById])
+  }, [nested, state.pageIndex, state.pageSize, instance.pageCount, selectedRowIndexes])
 
   // Getter for the latest page count
   const getPageCount = useGetLatest(instance.pageCount)

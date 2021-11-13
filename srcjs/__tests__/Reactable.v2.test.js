@@ -285,6 +285,7 @@ describe('rows', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 'cellC', b: 'c' },
         { a: 'cellB', b: 'b' },
@@ -654,6 +655,7 @@ describe('cells', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -798,6 +800,7 @@ describe('cells', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
       expect(state.sortedData).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
       expect(state.data).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
@@ -986,6 +989,7 @@ describe('headers', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -1166,6 +1170,7 @@ describe('column groups', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: 'c' },
         { a: 2, b: 'b', c: 'd' }
@@ -1443,6 +1448,7 @@ describe('footers', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -4960,48 +4966,63 @@ describe('row selection', () => {
     selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(true))
   })
 
-  it('selected state should be available in cellInfo and rowInfo', () => {
+  it('selected state should be available in cellInfo, rowInfo, and state', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
         {
           name: 'a',
           accessor: 'a',
-          cell: cellInfo => `${cellInfo.value} selected? ${cellInfo.selected ? 'yes' : 'no'}`,
-          details: rowInfo => `row ${rowInfo.index} selected? ${rowInfo.selected ? 'yes' : 'no'}`,
+          cell: (cellInfo, state) => {
+            return `${cellInfo.value} selected? ${
+              cellInfo.selected ? 'yes' : 'no'
+            }. selected: ${JSON.stringify(state.selected)}`
+          },
+          details: (rowInfo, state) => {
+            return `row ${rowInfo.index} selected? ${
+              rowInfo.selected ? 'yes' : 'no'
+            }. selected: ${JSON.stringify(state.selected)}`
+          },
           className: 'col-a'
         },
         { name: 'b', accessor: 'b' }
       ],
       selection: 'multiple',
-      rowClassName: rowInfo => {
-        if (rowInfo.selected) {
+      rowClassName: (rowInfo, state) => {
+        if (rowInfo.selected && state.selected.includes(rowInfo.index)) {
           return 'i-am-selected'
         }
       },
-      rowStyle: rowInfo => {
-        if (rowInfo.selected) {
+      rowStyle: (rowInfo, state) => {
+        if (rowInfo.selected && state.selected.includes(rowInfo.index)) {
           return { backgroundColor: 'red' }
         }
       },
       defaultExpanded: true
     }
     const { container, getAllByLabelText, getByText } = render(<Reactable {...props} />)
+
+    expect(getCellsText(container, '.col-a')).toEqual([
+      '\u200b1 selected? no. selected: []',
+      '\u200b2 selected? no. selected: []',
+      '\u200b3 selected? no. selected: []'
+    ])
+
     const selectRow1Checkbox = getAllByLabelText('Select row')[0]
     fireEvent.click(selectRow1Checkbox)
 
-    const rows = getRows(container)
     expect(getCellsText(container, '.col-a')).toEqual([
-      '\u200b1 selected? yes',
-      '\u200b2 selected? no',
-      '\u200b3 selected? no'
+      '\u200b1 selected? yes. selected: [0]',
+      '\u200b2 selected? no. selected: [0]',
+      '\u200b3 selected? no. selected: [0]'
     ])
+    const rows = getRows(container)
     expect(rows[0]).toHaveClass('i-am-selected')
     expect(rows[1]).not.toHaveClass('i-am-selected')
     expect(rows[0]).toHaveStyle('background-color: red')
     expect(rows[1]).not.toHaveStyle('background-color: red')
-    expect(getByText('row 0 selected? yes')).toBeVisible()
-    expect(getByText('row 1 selected? no')).toBeVisible()
+    expect(getByText('row 0 selected? yes. selected: [0]')).toBeVisible()
+    expect(getByText('row 1 selected? no. selected: [0]')).toBeVisible()
   })
 
   it('selection column can be customized', () => {
@@ -5230,6 +5251,7 @@ describe('expandable row details', () => {
       expect(state.groupBy).toEqual([])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a' },
         { a: 2, b: 'b' }
@@ -6003,6 +6025,7 @@ describe('grouping and aggregation', () => {
             expect(state.groupBy).toEqual(['a'])
             expect(state.filters).toEqual([])
             expect(state.searchValue).toEqual(undefined)
+            expect(state.selected).toEqual([])
             expect(state.pageRows).toEqual(rows)
             expect(state.sortedData).toEqual(rows)
             expect(state.data).toEqual([
@@ -6290,6 +6313,7 @@ describe('grouping and aggregation', () => {
               expect(state.groupBy).toEqual(['c', 'a'])
               expect(state.filters).toEqual([])
               expect(state.searchValue).toEqual(undefined)
+              expect(state.selected).toEqual([])
               expect(state.pageRows).toEqual(rows)
               expect(state.sortedData).toEqual(rows)
               expect(state.data).toEqual([
@@ -6326,6 +6350,7 @@ describe('grouping and aggregation', () => {
               expect(state.groupBy).toEqual(['c', 'a'])
               expect(state.filters).toEqual([])
               expect(state.searchValue).toEqual(undefined)
+              expect(state.selected).toEqual([])
               expect(state.pageRows).toEqual([rows[0], rows[0]._subRows[0], rows[0]._subRows[1]])
               expect(state.sortedData).toEqual([rows[0], rows[0]._subRows[0], rows[0]._subRows[1]])
               expect(state.data).toEqual([
@@ -6472,6 +6497,7 @@ describe('grouping and aggregation', () => {
       expect(state.groupBy).toEqual(['c', 'a'])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         {
           c: 'x',
@@ -6580,6 +6606,7 @@ describe('grouping and aggregation', () => {
       expect(state.groupBy).toEqual(['c', 'a'])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.selected).toEqual([])
       expect(state.pageRows).toEqual([
         {
           c: 'x',
@@ -7107,6 +7134,7 @@ describe('cell click actions', () => {
           expect(state.groupBy).toEqual([])
           expect(state.filters).toEqual([])
           expect(state.searchValue).toEqual(undefined)
+          expect(state.selected).toEqual([])
           expect(state.pageRows).toEqual([
             { a: 'aaa1', b: 'bbb1', c: 'ccc1' },
             { a: 'aaa2', b: 'bbb2', c: 'ccc2' }
@@ -8775,6 +8803,7 @@ describe('reactable JavaScript API', () => {
     expect(state.groupBy).toEqual([])
     expect(state.filters).toEqual([])
     expect(state.searchValue).toEqual(undefined)
+    expect(state.selected).toEqual([])
     expect(state.pageRows).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
     expect(state.sortedData).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
     expect(state.data).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
@@ -8884,23 +8913,21 @@ describe('reactable JavaScript API', () => {
   it('Reactable.toggleAllRowsExpanded', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb'] },
-      columns: [
-        { name: 'a', accessor: 'a', details: ['detail', 'detail', 'detail'] }
-      ],
+      columns: [{ name: 'a', accessor: 'a', details: ['detail', 'detail', 'detail'] }],
       elementId: 'my-tbl'
     }
     const { queryAllByText } = render(<Reactable {...props} />)
     expect(queryAllByText('detail')).toHaveLength(0)
-  
+
     act(() => reactable.toggleAllRowsExpanded('my-tbl'))
     expect(queryAllByText('detail')).toHaveLength(3)
 
     act(() => reactable.toggleAllRowsExpanded('my-tbl', true))
     expect(queryAllByText('detail')).toHaveLength(3)
-  
+
     act(() => reactable.toggleAllRowsExpanded('my-tbl'))
     expect(queryAllByText('detail')).toHaveLength(0)
-    
+
     act(() => reactable.toggleAllRowsExpanded('my-tbl', true))
     expect(queryAllByText('detail')).toHaveLength(3)
 

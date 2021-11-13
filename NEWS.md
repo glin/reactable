@@ -38,6 +38,7 @@ where possible, but note that there are several breaking changes.
   * `cellInfo.filterValue` and `colInfo.filterValue` for the column filter value
   * `state.filters` for the column filter values
   * `state.searchValue` for the table search value
+  * `state.selected` for the selected row indices
 * JavaScript render functions for cells, headers, footers, and row details
   can now access the table state using a new `state` argument
   ([#88](https://github.com/glin/reactable/issues/88)).
