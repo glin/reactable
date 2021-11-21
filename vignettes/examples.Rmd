@@ -56,41 +56,59 @@ reactable(
 )
 ```
 
-
 ## Sorting
-Tables are sortable by default. You can sort a column by clicking on its
-header, or sort multiple columns by holding down the shift key while sorting.
 
-You can also clear the sort of a column by holding the shift key while sorting.
+Tables are sortable by default. You can sort a column by clicking on its
+header, or sort multiple columns by holding the shift key while sorting.
+
+Sorting toggles between ascending and descending order by default. To clear
+the sort, hold the shift key while sorting, and the sorting will additionally
+toggle between ascending, descending, and unsorted order.
+
+> Ascending order means the lowest, first, or earliest values will appear first.
+> Descending order means the largest, last, or latest values will appear first.
+
+### Default sorted columns
+
+You can set the default sorted columns by providing a vector of column names
+to `defaultSorted`:
+
+```{r}
+reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
+```
+
+You can also provide a named list to customize the default sort orders.
+Use `"asc"` for ascending order, or `"desc"` for descending order:
+
+```{r}
+reactable(iris[48:52, ], defaultSorted = list(Species = "asc", Petal.Length = "desc"))
+```
 
 ### Default sort order
-Tables are sorted in ascending order first by default. To customize the sort order,
-set `defaultSortOrder` in a table or column to either `"asc"` (ascending) or
-`"desc"` (descending):
+
+Columns are sorted in ascending order first by default. To change the default sort
+order for all columns in the table, set `defaultSortOrder` in `reactable()` to
+`"asc"` for ascending order, or `"desc"` for descending order.
+
+To change the sort order of an individual column, set `defaultSortOrder` in
+its `colDef()` to `"asc"` or `"desc"`. The default sort order of the column takes
+precedence over the table.
+
 ```{r}
 reactable(
   iris[48:52, ],
   defaultSortOrder = "desc",
   columns = list(
     Species = colDef(defaultSortOrder = "asc")
-  )
+  ),
+  defaultSorted = c("Species", "Petal.Length")
 )
 ```
 
-### Default sorted columns
-You can set the default sorted columns by providing a vector of column names
-to `defaultSorted`:
-```{r}
-reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
-```
-
-You can also provide a named list to customize the sort orders:
-```{r}
-reactable(iris[48:52, ], defaultSorted = list(Species = "asc", Petal.Length = "desc"))
-```
-
 ### Sort missing values last
+
 You can ignore missing values when sorting by setting `sortNALast` on a column:
+
 ```{r}
 reactable(
   data.frame(
@@ -104,9 +122,11 @@ reactable(
 ```
 
 ### No sorting
+
 You can disable sorting by setting `sortable` to `FALSE` on the table or column.
 When only some columns are sortable, it can help to indicate sortable
 columns using `showSortable`:
+
 ```{r}
 reactable(
   iris[1:5, ],
