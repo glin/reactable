@@ -4608,6 +4608,62 @@ describe('row selection', () => {
     expect(selectRow2Checkbox.checked).toEqual(true)
   })
 
+  it('single selection works with filtered rows', () => {
+    const props = {
+      data: { a: ['a-row0', 'b-row1'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'single',
+      searchable: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    let selectRowRadios = getSelectRowRadios(container)
+    expect(selectRowRadios).toHaveLength(2)
+
+    fireEvent.click(selectRowRadios[0])
+    expect(selectRowRadios[0].checked).toEqual(true)
+    expect(selectRowRadios[1].checked).toEqual(false)
+
+    // Selected rows that have been filtered out should be deselected when
+    // another row is selected.
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'b-row1' } })
+    selectRowRadios = getSelectRowRadios(container)
+    expect(selectRowRadios).toHaveLength(1)
+    fireEvent.click(selectRowRadios[0])
+
+    fireEvent.change(searchInput, { target: { value: '' } })
+    selectRowRadios = getSelectRowRadios(container)
+    expect(selectRowRadios).toHaveLength(2)
+    expect(selectRowRadios[0].checked).toEqual(false)
+    expect(selectRowRadios[1].checked).toEqual(true)
+  })
+
+  it('multiple selection works with filtered rows', () => {
+    const props = {
+      data: { a: ['a-row0-group0', 'b-row1-group0', 'c-row2-group1'] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      searchable: true
+    }
+    const { container } = render(<Reactable {...props} />)
+
+    // The select all checkbox should only select rows that are currently in
+    // the table, and not filtered out.
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'group0' } })
+    const selectAllCheckbox = getSelectRowCheckboxes(container)[0]
+    fireEvent.click(selectAllCheckbox)
+    expect(selectAllCheckbox.checked).toEqual(true)
+
+    fireEvent.change(searchInput, { target: { value: '' } })
+    expect(selectAllCheckbox.checked).toEqual(false)
+
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    expect(selectRowCheckboxes[1].checked).toEqual(true)
+    expect(selectRowCheckboxes[2].checked).toEqual(true)
+    expect(selectRowCheckboxes[3].checked).toEqual(false)
+  })
+
   it('table updates when defaultSelected changes', () => {
     const props = {
       data: { a: [1, 2, 3] },

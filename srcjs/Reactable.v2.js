@@ -1073,7 +1073,7 @@ function Table({
               if (selection === 'multiple' || (selection === 'single' && !cell.isAggregated)) {
                 toggleRowSelected = () => {
                   if (selection === 'single') {
-                    instance.toggleAllRowsSelected(false)
+                    instance.setRowsSelected([])
                   }
                   row.toggleRowSelected(!row.isSelected)
                 }

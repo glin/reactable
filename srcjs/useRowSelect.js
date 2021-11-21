@@ -1,6 +1,8 @@
 // useRowSelect hook modified to:
 // - Set row.isSelected for sub rows when paginateExpandedRows = false
-// - Include an instance.setRowsSelected() function to set selected rows
+// - Include an instance.setRowsSelected() function to set selected rows.
+//   This is also useful to clear all selection, since toggleAllRowsSelected()
+//   only affects visible rows, excluding any selected rows that may be filtered out.
 
 import React from 'react'
 import {
