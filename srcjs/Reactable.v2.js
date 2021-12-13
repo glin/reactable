@@ -598,7 +598,13 @@ function Table({
 
   const rowsById = instance.preFilteredRowsById || instance.rowsById
   const selectedRowIndexes = React.useMemo(() => {
-    return Object.keys(state.selectedRowIds).map(id => rowsById[id].index)
+    return Object.keys(state.selectedRowIds).reduce((indexes, id) => {
+      const row = rowsById[id]
+      if (row) {
+        indexes.push(row.index)
+      }
+      return indexes
+    }, [])
   }, [state.selectedRowIds, rowsById])
 
   // Update Shiny on selected row changes (deprecated in v0.2.3.9000)

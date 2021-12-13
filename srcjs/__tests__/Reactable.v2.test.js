@@ -4608,6 +4608,18 @@ describe('row selection', () => {
     expect(selectRow2Checkbox.checked).toEqual(true)
   })
 
+  it('defaultSelected handles invalid rows', () => {
+    const props = {
+      data: { a: [1, 2, 3] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple',
+      defaultSelected: [3]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(false))
+  })
+
   it('single selection works with filtered rows', () => {
     const props = {
       data: { a: ['a-row0', 'b-row1'] },
@@ -8018,6 +8030,29 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(selectAllCheckbox.checked).toEqual(false)
     expect(selectRow1Checkbox.checked).toEqual(false)
     expect(selectRow2Checkbox.checked).toEqual(false)
+  })
+
+  it('handles invalid selected rows', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      selection: 'multiple'
+    }
+    const { container } = render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__shiny-output-container')
+
+    act(() => updateState({ selected: [4] }))
+    expect(
+      window.Shiny.onInputChange
+    ).toHaveBeenCalledWith('shiny-output-container__reactable__selected', [])
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(false))
   })
 
   it('updates expanded rows', () => {
