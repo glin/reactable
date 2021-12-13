@@ -1,11 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
-^\.babelrc$
 ^\.eslintignore$
 ^\.eslintrc\.json$
 ^\.github$
 ^\.prettierrc\.json$
+^babel\.config\.json$
 ^coverage$
 ^docs$
 ^jest.config\.js$
