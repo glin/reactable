@@ -1,6 +1,31 @@
 library(htmltools)
 
-getAttribs <- function(widget) widget$x$tag$attribs
+getChildrenAttribs <- function(widget) widget$x$tag$children %>% purrr::map(~ .x$attribs)
+
+getAttribs <- function(widget){
+  children_attribs <- getChildrenAttribs(widget)
+  table_attribs <- children_attribs %>% purrr::compact("data")
+  table_attribs[[1]]
+}
+
+getElement <- function(widget, elementType){
+  children_attribs <- getChildrenAttribs(widget)
+  element_ids <- children_attribs %>% purrr::compact("id") %>% unlist()
+
+  if(length(element_ids) == 0) return(warning("Table does not have extra elements."))
+
+  if(!elementType %in% c("title", "subtitle", "caption", "logo")) return(warning("Not a valid elementType."))
+
+  type <- paste0("reactable-", elementType)
+
+  if(!type %in% element_ids) stop("Table does not have a ", elementType, " element.")
+
+  element_index <- match(type, element_ids)
+
+  if(elementType %in% c("caption", "logo")) element_index <- element_index + 1
+
+  widget$x$tag$children[[element_index]][[3]][[1]]
+}
 
 test_that("reactable handles invalid args", {
   expect_error(reactable(1))
@@ -164,6 +189,32 @@ test_that("reactable", {
   tbl <- reactable(data.frame(x = 1), style = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$style, list("border-bottom" = "1px solid", top = "50px"))
+})
+
+test_that("extra elements created", {
+  title <- "some title"
+  subtitle <- "some subtitle"
+  caption <- "some caption"
+  logo <- "logo"
+
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
+                   title = title,
+                   subtitle = subtitle,
+                   caption = caption,
+                   logo = logo)
+
+  expect_equal(getElement(tbl, elementType = "title"), title)
+  expect_equal(getElement(tbl, elementType = "subtitle"), subtitle)
+  expect_equal(getElement(tbl, elementType = "caption"), caption)
+  expect_equal(getElement(tbl, elementType = "logo"), logo)
+
+  tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE),
+                   subtitle = subtitle,
+                   caption = caption,
+                   logo = logo)
+
+  expect_error(getElement(tbl, elementType = "title"), "Table does not have a title element.")
+
 })
 
 test_that("data can be a matrix", {
