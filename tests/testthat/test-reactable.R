@@ -1,8 +1,16 @@
 library(htmltools)
 
-getAttribs <- function(widget) widget$x$tag$attribs
+getAttribs <- function(widget) {
+  widget$x$tag$attribs
+}
+
+getAttrib <- function(widget, name) {
+  widget$x$tag$attribs[[name]]
+}
 
 test_that("reactable handles invalid args", {
+  # NOTE: New arguments should be tested in their own separate test
+
   expect_error(reactable(1))
   df <- data.frame(x = 1)
   expect_error(reactable(df, columns = "x"))
@@ -27,12 +35,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list("x")))
   expect_error(reactable(df, defaultSorted = list(x = "ascending")))
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
-  expect_error(reactable(df, pagination = "yes"))
-  expect_error(reactable(df, defaultPageSize = "100"))
-  expect_error(reactable(df, showPageSizeOptions = "true"))
-  expect_error(reactable(df, pageSizeOptions = c("a", "100")))
-  expect_error(reactable(df, paginationType = "x"))
-  expect_error(reactable(df, showPagination = "true"))
   expect_error(reactable(df, showPageInfo = "true"))
   expect_error(reactable(df, minRows = "2"))
   expect_error(reactable(df, details = "details"))
@@ -61,6 +63,8 @@ test_that("reactable handles invalid args", {
 })
 
 test_that("reactable", {
+  # NOTE: New arguments should be tested in their own separate test
+
   # Default args
   tbl <- reactable(data.frame(x = 1, y = "b", stringsAsFactors = TRUE))
   attribs <- getAttribs(tbl)
@@ -88,8 +92,7 @@ test_that("reactable", {
                    columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
-                   defaultPageSize = 1, showPageSizeOptions = TRUE, pageSizeOptions = c(1, 2),
-                   paginationType = "simple", showPagination = FALSE, showPageInfo = FALSE,
+                   showPageInfo = FALSE,
                    minRows = 5, details = function(i) i, defaultExpanded = TRUE,
                    selection = "single", selectionId = "sel", highlight = TRUE,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
@@ -120,11 +123,8 @@ test_that("reactable", {
     searchable = TRUE,
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
-    defaultPageSize = 1,
-    showPageSizeOptions = TRUE,
-    pageSizeOptions = list(1, 2),
-    paginationType = "simple",
-    showPagination = FALSE,
+    defaultPageSize = 10,
+    paginationType = "numbers",
     showPageInfo = FALSE,
     minRows = 5,
     defaultExpanded = TRUE,
@@ -489,51 +489,95 @@ test_that("defaultSorted", {
 })
 
 test_that("pagination", {
-  # Enable pagination
-  tbl <- reactable(data.frame(x = rep(0, 10)), defaultPageSize = 1, pagination = TRUE)
-  attribs <- getAttribs(tbl)
-  expect_null(attribs$showPagination)
-  expect_equal(attribs$defaultPageSize, 1)
+  data <- data.frame(x = 1)
 
-  # Disable pagination
-  tbl <- reactable(data.frame(x = rep(0, 4)), pagination = FALSE)
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$defaultPageSize, 4)
-  expect_null(attribs$showPagination)
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "pagination"), NULL)
 
-  # Should override defaultPageSize when disabled
-  tbl <- reactable(data.frame(x = rep(0, 10)), pagination = FALSE,
-                   showPagination = TRUE, defaultPageSize = 25)
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$defaultPageSize, 10)
+  tbl <- reactable(data, pagination = TRUE)
+  expect_equal(getAttrib(tbl, "pagination"), NULL)
 
-  # Should still be able to show pagination when disabled
-  tbl <- reactable(data.frame(x = rep(0, 4)), pagination = FALSE, showPagination = TRUE)
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$defaultPageSize, 4)
-  expect_true(attribs$showPagination)
+  tbl <- reactable(data, pagination = FALSE)
+  expect_equal(getAttrib(tbl, "pagination"), FALSE)
 
-  # Pagination types
-  for (type in c("numbers", "jump", "simple")) {
-    tbl <- reactable(data.frame(x = 1), paginationType = type)
-    attribs <- getAttribs(tbl)
-    expect_equal(attribs$paginationType, type)
-  }
+  expect_error(reactable(data, pagination = "false"), "`pagination` must be TRUE or FALSE")
+})
 
-  # pageSizeOptions should be serialized as an array
-  tbl <- reactable(data.frame(x = 1), showPageSizeOptions = TRUE, pageSizeOptions = c(1, 3))
-  expect_equal(getAttribs(tbl)$pageSizeOptions, list(1, 3))
-  tbl <- reactable(data.frame(x = 1), showPageSizeOptions = TRUE, pageSizeOptions = 5)
-  expect_equal(getAttribs(tbl)$pageSizeOptions, list(5))
+test_that("showPageSizeOptions and pageSizeOptions", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data.frame(x = 1))
+  expect_equal(getAttrib(tbl, "showPageSizeOptions"), NULL)
+  expect_equal(getAttrib(tbl, "pageSizeOptions"), NULL)
+
   # pageSizeOptions should be unset when page size options are hidden
   tbl <- reactable(data.frame(x = 1), pageSizeOptions = 5)
-  expect_null(getAttribs(tbl)$pageSizeOptions)
+  expect_equal(getAttrib(tbl, "pageSizeOptions"), NULL)
 
-  # paginateSubRows
-  expect_equal(getAttribs(reactable(data.frame(x = 1)))$paginateSubRows, NULL)
-  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = TRUE))$paginateSubRows, TRUE)
-  expect_equal(getAttribs(reactable(data.frame(x = 1), paginateSubRows = FALSE))$paginateSubRows, NULL)
-  expect_error(reactable(data.frame(x = 1), paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
+  # pageSizeOptions should be serialized as an array
+  tbl <- reactable(data, showPageSizeOptions = TRUE, pageSizeOptions = c(1, 3))
+  expect_equal(getAttrib(tbl, "pageSizeOptions"), list(1, 3))
+  tbl <- reactable(data, showPageSizeOptions = TRUE, pageSizeOptions = 5)
+  expect_equal(getAttrib(tbl, "pageSizeOptions"), list(5))
+
+  expect_error(reactable(data, showPageSizeOptions = "true"), "`showPageSizeOptions` must be TRUE or FALSE")
+  expect_error(reactable(data, pageSizeOptions = "1"), "`pageSizeOptions` must be numeric")
+})
+
+test_that("paginationType", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "paginationType"), "numbers")
+
+  for (type in c("numbers", "jump", "simple")) {
+    tbl <- reactable(data, paginationType = type)
+    expect_equal(getAttrib(tbl, "paginationType"), type)
+  }
+
+  expect_error(reactable(data, paginationType = "none"), '`paginationType` must be one of "numbers", "jump", "simple"')
+})
+
+test_that("defaultPageSize", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "defaultPageSize"), 10)
+
+  tbl <- reactable(data, defaultPageSize = 1)
+  expect_equal(getAttrib(tbl, "defaultPageSize"), 1)
+
+  expect_error(reactable(data, defaultPageSize = "10"), "`defaultPageSize` must be numeric")
+})
+
+test_that("showPagination", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "showPagination"), NULL)
+
+  tbl <- reactable(data, pagination = FALSE, showPagination = TRUE)
+  expect_equal(getAttrib(tbl, "showPagination"), TRUE)
+
+  tbl <- reactable(data, showPagination = FALSE)
+  expect_equal(getAttrib(tbl, "showPagination"), FALSE)
+
+  expect_error(reactable(data, showPagination = "false"), "`showPagination` must be TRUE or FALSE")
+})
+
+test_that("paginateSubRows", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "paginateSubRows"), NULL)
+
+  tbl <- reactable(data, paginateSubRows = TRUE)
+  expect_equal(getAttrib(tbl, "paginateSubRows"), TRUE)
+
+  tbl <- reactable(data, paginateSubRows = FALSE)
+  expect_equal(getAttrib(tbl, "paginateSubRows"), NULL)
+
+  expect_error(reactable(data, paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
 })
 
 test_that("column renderers", {

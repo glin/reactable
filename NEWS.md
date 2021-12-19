@@ -126,6 +126,8 @@ where possible, but note that there are several breaking changes.
 * In `reactableTheme()`, `cellPadding` now applies to column group headers correctly.
 * Columns with square brackets (`[` or `]`) in their column name now render correctly
   ([#187](https://github.com/glin/reactable/issues/187)).
+* Disabling pagination using `reactable(pagination = FALSE)` now works correctly
+  on table data updates ([#214](https://github.com/glin/reactable/issues/214)).
 
 # reactable 0.2.3
 

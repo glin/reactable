@@ -5,7 +5,6 @@ import {
   useGetLatest,
   useGlobalFilter,
   useMountedLayoutEffect,
-  usePagination,
   useSortBy,
   useTable
 } from 'react-table'
@@ -19,6 +18,7 @@ import useStickyColumns from './useStickyColumns'
 import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
+import usePagination from './usePagination'
 import { columnsToRows, buildColumnDefs, emptyValue } from './columns.v2'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
@@ -402,6 +402,7 @@ function Table({
   pivotBy,
   searchable,
   defaultSorted,
+  pagination,
   paginationType,
   showPagination,
   showPageSizeOptions,
@@ -540,6 +541,7 @@ function Table({
           : {}
       },
       globalFilter,
+      pagination,
       paginateExpandedRows: paginateSubRows ? true : false,
       // Disable manual row expansion
       manualExpandedKey: null,
@@ -1254,7 +1256,9 @@ function Table({
   const makePagination = () => {
     if (showPagination === false) {
       return null
-    } else if (showPagination == null) {
+    } else if (!pagination && showPagination == null) {
+      return null
+    } else if (pagination && showPagination == null) {
       // Auto-hide pagination if the entire table fits on one page.
       // Check flatRows in case the table fits on one page initially, but spans
       // multiple pages when rows are expanded. Known issue: there's no way to
@@ -1278,6 +1282,7 @@ function Table({
         page={state.pageIndex}
         pages={instance.pageCount}
         pageSize={state.pageSize}
+        pageRowCount={instance.pageRowCount}
         canNext={instance.canNextPage}
         canPrevious={instance.canPreviousPage}
         onPageChange={instance.gotoPage}
@@ -1590,6 +1595,7 @@ Reactable.propTypes = {
   searchable: PropTypes.bool,
   defaultSortDesc: PropTypes.bool,
   defaultSorted: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string, desc: PropTypes.bool })),
+  pagination: PropTypes.bool,
   defaultPageSize: PropTypes.number,
   pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
   paginationType: PropTypes.oneOf(['numbers', 'jump', 'simple']),
@@ -1631,6 +1637,7 @@ Reactable.propTypes = {
 
 Reactable.defaultProps = {
   sortable: true,
+  pagination: true,
   defaultPageSize: 10,
   showSortIcon: true,
   crosstalkId: '__crosstalk__'

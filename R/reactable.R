@@ -333,8 +333,6 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
   if (!is.logical(pagination)) {
     stop("`pagination` must be TRUE or FALSE")
-  } else if (!pagination) {
-    defaultPageSize <- nrow(data)
   }
   if (!is.numeric(defaultPageSize)) {
     stop("`defaultPageSize` must be numeric")
@@ -581,6 +579,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     searchable = if (searchable) TRUE,
     defaultSortDesc = if (isDescOrder(defaultSortOrder)) TRUE,
     defaultSorted = columnSortDefs(defaultSorted),
+    pagination = if (!pagination) FALSE,
     defaultPageSize = defaultPageSize,
     showPageSizeOptions = if (showPageSizeOptions) TRUE,
     pageSizeOptions = if (showPageSizeOptions) pageSizeOptions,

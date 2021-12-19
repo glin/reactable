@@ -84,9 +84,11 @@ export default class Pagination extends React.Component {
     }
   }
 
-  renderPageInfo({ page, pageSize, rowCount, language }) {
+  renderPageInfo({ page, pageSize, pageRowCount, rowCount, language }) {
     const rowStart = Math.min(page * pageSize + 1, rowCount)
-    const rowEnd = Math.min(page * pageSize + pageSize, rowCount)
+    // When pagination is disabled, pageSize is unused and the number of rows
+    // on the page can exceed the page size.
+    const rowEnd = Math.max(Math.min(page * pageSize + pageSize, rowCount), pageRowCount)
     const pageInfo = renderTemplate(language.pageInfo, { rowStart, rowEnd, rows: rowCount })
     return <div className="rt-page-info" aria-live="polite">{pageInfo}</div>
   }
@@ -265,6 +267,7 @@ Pagination.propTypes = {
   page: PropTypes.number.isRequired,
   pages: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
+  pageRowCount: PropTypes.number.isRequired,
   canPrevious: PropTypes.bool.isRequired,
   canNext: PropTypes.bool.isRequired,
   onPageChange: PropTypes.func.isRequired,

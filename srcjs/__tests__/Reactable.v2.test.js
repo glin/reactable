@@ -7727,6 +7727,123 @@ describe('pagination', () => {
     expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
   })
 
+  it('disabling pagination works', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          cell: (cellInfo, state) => {
+            return `page: ${state.page}, pageSize: ${state.pageSize}, pages: ${state.pages}`
+          }
+        },
+        { name: 'b', accessor: 'b' }
+      ],
+      pagination: false,
+      defaultPageSize: 2
+    }
+
+    const { container } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(3)
+    expect(getPagination(container)).toEqual(null)
+    // Pagination properties should still be present in the API
+    expect(getCellsText(container)[0]).toEqual('page: 0, pageSize: 2, pages: 1')
+  })
+
+  it('disabling pagination works with visible pagination bar (showPagination)', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          cell: (cellInfo, state) => {
+            return `page: ${state.page}, pageSize: ${state.pageSize}, pages: ${state.pages}`
+          }
+        },
+        { name: 'b', accessor: 'b' }
+      ],
+      pagination: false,
+      defaultPageSize: 2,
+      showPagination: true,
+      showPageSizeOptions: true,
+      pageSizeOptions: [2, 1]
+    }
+
+    const { container } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(3)
+    expect(getPagination(container)).toBeVisible()
+    expect(getPageInfo(container).textContent).toEqual('1–3 of 3 rows')
+    expect(getCellsText(container)[0]).toEqual('page: 0, pageSize: 2, pages: 1')
+
+    // Page size should be changeable, but still be ignored
+    const pageSizeSelect = getPageSizeSelect(container)
+    fireEvent.change(pageSizeSelect, { target: { value: 1 } })
+    expect(pageSizeSelect.value).toEqual('1')
+    expect(getRows(container)).toHaveLength(3)
+    expect(getPageInfo(container).textContent).toEqual('1–3 of 3 rows')
+    expect(getCellsText(container)[0]).toEqual('page: 0, pageSize: 1, pages: 1')
+  })
+
+  it('disabling pagination works when data changes', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4] },
+      columns: [{ name: 'a', accessor: 'a' }],
+      pagination: false,
+      defaultPageSize: 2
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(4)
+    rerender(<Reactable {...props} data={{ a: [1, 2, 3, 4, 5, 6, 7] }} />)
+    expect(getRows(container)).toHaveLength(7)
+  })
+
+  it('disabling pagination works with sub rows (paginateSubRows disabled)', () => {
+    const props = {
+      data: {
+        group: ['a', 'a', 'a', 'a'],
+        a: [111, 111, 222, 33]
+      },
+      columns: [
+        { name: 'group', accessor: 'group' },
+        { name: 'col-a', accessor: 'a' }
+      ],
+      pagination: false,
+      defaultPageSize: 4,
+      pivotBy: ['group'],
+      paginateSubRows: false,
+      showPagination: true,
+      defaultExpanded: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(5)
+    expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
+  })
+
+  it('disabling pagination works with sub rows (paginateSubRows enabled)', () => {
+    const props = {
+      data: {
+        group: ['a', 'a', 'a', 'a'],
+        a: [111, 111, 222, 33]
+      },
+      columns: [
+        { name: 'group', accessor: 'group' },
+        { name: 'col-a', accessor: 'a' }
+      ],
+      pagination: false,
+      defaultPageSize: 4,
+      pivotBy: ['group'],
+      paginateSubRows: true,
+      showPagination: true,
+      defaultExpanded: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getRows(container)).toHaveLength(5)
+    // Should ignore default page size when pagination is disabled
+    expect(getPageInfo(container).textContent).toEqual('1–5 of 5 rows')
+  })
+
   it('current page state resets when data changes (also on sorting, filtering, searching)', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb', 'cc', 'cc', 'cc', 'cc'] },
@@ -8048,9 +8165,10 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(outputId).toEqual('__reactable__shiny-output-container')
 
     act(() => updateState({ selected: [4] }))
-    expect(
-      window.Shiny.onInputChange
-    ).toHaveBeenCalledWith('shiny-output-container__reactable__selected', [])
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith(
+      'shiny-output-container__reactable__selected',
+      []
+    )
     const selectRowCheckboxes = getSelectRowCheckboxes(container)
     selectRowCheckboxes.forEach(checkbox => expect(checkbox.checked).toEqual(false))
   })
