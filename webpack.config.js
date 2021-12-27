@@ -19,11 +19,26 @@ module.exports = (env, argv) => {
       }
     },
 
+    resolve: {
+      alias: {
+        // Import react-table directly from the ESM source for tree shaking, since
+        // react-table doesn't support tree shaking out of the box. Only worth it
+        // because we've made so many custom/modified hooks, and this significantly
+        // reduces bundle size.
+        'react-table$': 'react-table/src/index.js'
+      }
+    },
+
     module: {
       rules: [
         {
           test: /\.js$/,
           exclude: /node_modules/,
+          use: 'babel-loader'
+        },
+        {
+          test: /\.js$/,
+          include: path.resolve(__dirname, 'node_modules/react-table'),
           use: 'babel-loader'
         },
         {
