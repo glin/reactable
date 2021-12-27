@@ -1,13 +1,16 @@
 // useFlexLayout modified to:
 // - Fix flex widths when resizing is disabled (don't use column.totalFlexWidth)
 // - Support resizing to actual min and max column widths (not flex widths)
-// - Set min width on thead/tbody/tfoot instead of table for responsive, horizontal scrolling
+// - Set min width on thead/tbody/tfoot instead of table for responsive, horizontal scrolling.
+//   Tables should use the new instance.getTheadProps and instance.getTfootProps for this.
 // - Include resized widths in table min width to prevent glitches with sticky headers/footers
 // - Exclude redundant styles
 
 import { useGetLatest, makePropGetter } from 'react-table'
 
 export default function useFlexLayout(hooks) {
+  hooks.getTheadProps = [getRowGroupStyles]
+  hooks.getTfootProps = [getRowGroupStyles]
   hooks.getTableBodyProps.push(getRowGroupStyles)
   hooks.getRowProps.push(getRowStyles)
   hooks.getHeaderGroupProps.push(getRowStyles)
@@ -95,7 +98,7 @@ const getFooterProps = (props, { column }) => {
 }
 
 function useInstance(instance) {
-  const { headers, state } = instance
+  const { headers, state, getHooks } = instance
 
   const resizedWidths = state.columnResizing.columnWidths
 
@@ -123,8 +126,8 @@ function useInstance(instance) {
   calculateFlexWidths(headers)
 
   const getInstance = useGetLatest(instance)
-  const getTheadProps = makePropGetter([getRowGroupStyles], { instance: getInstance() })
-  const getTfootProps = makePropGetter([getRowGroupStyles], { instance: getInstance() })
+  const getTheadProps = makePropGetter(getHooks().getTheadProps, { instance: getInstance() })
+  const getTfootProps = makePropGetter(getHooks().getTfootProps, { instance: getInstance() })
 
   Object.assign(instance, {
     getTheadProps,
