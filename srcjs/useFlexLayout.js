@@ -123,8 +123,8 @@ function useInstance(instance) {
   calculateFlexWidths(headers)
 
   const getInstance = useGetLatest(instance)
-  const getTheadProps = makePropGetter(getRowGroupStyles, { instance: getInstance() })
-  const getTfootProps = makePropGetter(getRowGroupStyles, { instance: getInstance() })
+  const getTheadProps = makePropGetter([getRowGroupStyles], { instance: getInstance() })
+  const getTfootProps = makePropGetter([getRowGroupStyles], { instance: getInstance() })
 
   Object.assign(instance, {
     getTheadProps,
