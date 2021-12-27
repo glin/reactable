@@ -86,10 +86,10 @@ function useInstance(instance) {
     autoResetPage = true,
     manualExpandedKey = 'expanded',
     plugins,
-    pagination = true,
     pageCount: userPageCount,
     paginateExpandedRows = true,
     expandSubRows = true,
+    disablePagination,
     state: { pageIndex, expanded, globalFilter, filters, groupBy, sortBy },
     dispatch,
     data,
@@ -110,10 +110,10 @@ function useInstance(instance) {
     }
   }, [dispatch, manualPagination ? null : data, globalFilter, filters, groupBy, sortBy])
 
-  // Disabling pagination effectively means always having a page count of 1.
-  // This should be done in the hook because the row count isn't known until
-  // other row-manipulating hooks have run (e.g., useGroupBy).
-  const pageSize = pagination ? instance.state.pageSize : rows.length
+  // Disabling pagination effectively means setting the page size to the table size.
+  // This is best done by the hook, rather than the user, because the row count
+  // isn't known until other row-manipulating hooks have run (e.g., useGroupBy).
+  const pageSize = disablePagination ? rows.length : instance.state.pageSize
 
   const pageCount = manualPagination ? userPageCount : Math.ceil(rows.length / pageSize)
 

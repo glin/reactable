@@ -541,8 +541,8 @@ function Table({
           : {}
       },
       globalFilter,
-      pagination,
       paginateExpandedRows: paginateSubRows ? true : false,
+      disablePagination: !pagination,
       // Disable manual row expansion
       manualExpandedKey: null,
       // Maintain grouped state when the data changes
