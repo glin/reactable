@@ -7274,24 +7274,21 @@ describe('pagination', () => {
       ]
     }
 
-    // Auto hidden if table always fits on one page
+    // Auto-hidden if table always fits on one page
     const { container, rerender } = render(<Reactable {...props} defaultPageSize={2} />)
-    let pagination = getPagination(container)
-    expect(pagination).toEqual(null)
+    expect(getPagination(container)).toEqual(null)
 
-    // Auto shown if default page size causes paging
+    // Auto-shown if default page size causes paging
     rerender(
       <Reactable {...props} defaultPageSize={1} showPageSizeOptions pageSizeOptions={[10, 20]} />
     )
-    pagination = getPagination(container)
-    expect(pagination).toBeVisible()
+    expect(getPagination(container)).toBeVisible()
 
-    // Auto shown if page size option causes paging
+    // Auto-shown if page size option causes paging
     rerender(
       <Reactable {...props} defaultPageSize={20} showPageSizeOptions pageSizeOptions={[1, 20]} />
     )
-    pagination = getPagination(container)
-    expect(pagination).toBeVisible()
+    expect(getPagination(container)).toBeVisible()
 
     // Force show pagination
     rerender(
@@ -7303,8 +7300,7 @@ describe('pagination', () => {
         pageSizeOptions={[2]}
       />
     )
-    pagination = getPagination(container)
-    expect(pagination).toBeVisible()
+    expect(getPagination(container)).toBeVisible()
 
     // Force hide pagination
     rerender(
@@ -7316,8 +7312,7 @@ describe('pagination', () => {
         pageSizeOptions={[10, 20]}
       />
     )
-    pagination = getPagination(container)
-    expect(pagination).toEqual(null)
+    expect(getPagination(container)).toEqual(null)
   })
 
   it('auto-shown pagination persists after filtering', () => {
@@ -7369,11 +7364,25 @@ describe('pagination', () => {
     expect(getPagination(container)).toBeVisible()
     expect(getPageInfo(container).textContent).toEqual('1–4 of 5 rows')
 
-    // Known issue: filtering can cause pagination to disappear as initial row
-    // count falls back to original data length.
+    // Pagination should persist after filtering
     const searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: '222' } })
     expect(getRows(container)).toHaveLength(2)
+    expect(getPagination(container)).toBeVisible()
+    expect(getPageInfo(container).textContent).toEqual('1–2 of 2 rows')
+  })
+
+  it('auto-shown pagination works when data changes', () => {
+    const props = {
+      data: { a: [1, 2, 3, 4, 5] },
+      columns: [{ name: 'col-a', accessor: 'a' }],
+      defaultPageSize: 4
+    }
+    const { container, rerender } = render(<Reactable {...props} />)
+    expect(getPagination(container)).toBeVisible()
+    expect(getPageInfo(container).textContent).toEqual('1–4 of 5 rows')
+
+    rerender(<Reactable {...props} data={{ a: [1, 2, 3, 4] }} />)
     expect(getPagination(container)).toEqual(null)
   })
 
@@ -7699,9 +7708,10 @@ describe('pagination', () => {
     expect(getRows(container)).toHaveLength(2)
     expect(getPageInfo(container).textContent).toEqual('1–2 of 5 rows')
 
+    // Auto-shown pagination should update when paginateSubRows changes
     rerender(<Reactable {...props} paginateSubRows={false} />)
     expect(getRows(container)).toHaveLength(5)
-    expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
+    expect(getPagination(container)).toEqual(null)
   })
 
   it('does not paginate sub rows by default', () => {
@@ -7719,12 +7729,12 @@ describe('pagination', () => {
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
-    expect(getPagination(container)).toBeVisible()
+    expect(getPagination(container)).toEqual(null)
 
     fireEvent.click(getExpanders(container)[0])
     rerender(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(5)
-    expect(getPageInfo(container).textContent).toEqual('1–1 of 1 rows')
+    expect(getPagination(container)).toEqual(null)
   })
 
   it('disabling pagination works', () => {

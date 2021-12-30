@@ -1253,23 +1253,37 @@ function Table({
     )
   }
 
+  // Track the max number of rows for auto-shown pagination. Unfortunately, the max
+  // number of rows can't be determined up front in a grouped and filtered table
+  // because grouping happens after filtering (and swapping these hooks would
+  // disable dynamic aggregation). Instead, we track the max number of rows
+  // per dataset, so at least the pagination doesn't disappear upon filtering.
+  const maxRowCount = React.useRef(0)
+
+  React.useEffect(() => {
+    maxRowCount.current = 0
+  }, [data])
+
+  React.useEffect(() => {
+    const rowCount = paginateSubRows ? instance.flatRows.length : instance.rows.length
+    if (rowCount > maxRowCount.current) {
+      maxRowCount.current = rowCount
+    }
+  }, [paginateSubRows, instance.flatRows, instance.rows])
+
   const makePagination = () => {
     if (showPagination === false) {
       return null
     } else if (!pagination && showPagination == null) {
+      // Unpaginated tables can still have a visible pagination bar (e.g., for page info)
       return null
     } else if (pagination && showPagination == null) {
-      // Auto-hide pagination if the entire table fits on one page.
-      // Check flatRows in case the table fits on one page initially, but spans
-      // multiple pages when rows are expanded. Known issue: there's no way to
-      // get the initial flatRows count after the table has been grouped and
-      // filtered, so pagination could disappear when filtering in this case.
-      const initialRowCount = Math.max(data.length, instance.flatRows.length)
-
+      // Auto-hide pagination if the entire table fits on one page
       const minPageSize = showPageSizeOptions
-        ? Math.min(defaultPageSize, ...(pageSizeOptions || []))
-        : defaultPageSize
-      if (initialRowCount <= minPageSize) {
+        ? Math.min(state.pageSize, ...(pageSizeOptions || []))
+        : state.pageSize
+
+      if (maxRowCount.current <= minPageSize) {
         return null
       }
     }
