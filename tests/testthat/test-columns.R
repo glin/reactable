@@ -39,7 +39,6 @@ test_that("colDef", {
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     cell = list("function() {}"),
     aggregated = list(function() {}),
-    details = list("function() {}", NA),
     maxWidth = list("1", FALSE),
     align = list("a", "RIGHT", 1),
     width = list("1", FALSE),
@@ -131,10 +130,11 @@ test_that("colDef renderers", {
   # Details renderer
   col <- colDef(details = JS("rowInfo => rowInfo.row.value"))
   expect_equal(col$details, JS("rowInfo => rowInfo.row.value"))
-  col <- colDef(details = function(i) i)
-  expect_equal(col$details, function(i) i)
+  col <- colDef(details = function(i, name) i)
+  expect_equal(col$details, function(i, name) i)
   col <- colDef(details = list(1, 2, 3))
   expect_equal(col$details, list(1, 2, 3))
+  expect_error(colDef(details = "function() {}"), "`details` renderer must be an R function or JS function")
 })
 
 test_that("colDef html", {

@@ -6,9 +6,7 @@
 \alias{_PACKAGE}
 \title{reactable: Interactive Data Tables Based on 'React Table'}
 \description{
-Interactive data tables for R, based on the 'React Table'
-    JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
-    documents and 'Shiny' applications, or viewed from an R console.
+Interactive data tables for R, based on the 'React Table' JavaScript library. Provides an HTML widget that can be used in 'R Markdown' documents and 'Shiny' applications, or viewed from an R console.
 }
 \details{
 See the \href{https://glin.github.io/reactable/}{online documentation} for

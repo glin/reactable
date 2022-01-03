@@ -115,9 +115,9 @@ than one page.}
 \item{paginateSubRows}{When rows are grouped, paginate sub rows? Defaults to \code{FALSE}.}
 
 \item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument or a \code{\link[=JS]{JS()}} function that takes
-a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to customize the
-details expander column.}
+that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function
+that takes a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to
+customize the details expander column.}
 
 \item{defaultExpanded}{Expand all rows by default?}
 

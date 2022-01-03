@@ -37,7 +37,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
   expect_error(reactable(df, showPageInfo = "true"))
   expect_error(reactable(df, minRows = "2"))
-  expect_error(reactable(df, details = "details"))
   expect_error(reactable(df, defaultExpanded = NULL))
   expect_error(reactable(df, defaultExpanded = 1:3))
   expect_error(reactable(df, selection = "none"))
@@ -92,8 +91,7 @@ test_that("reactable", {
                    columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
-                   showPageInfo = FALSE,
-                   minRows = 5, details = function(i) i, defaultExpanded = TRUE,
+                   showPageInfo = FALSE, minRows = 5, defaultExpanded = TRUE,
                    selection = "single", selectionId = "sel", highlight = TRUE,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
@@ -105,9 +103,6 @@ test_that("reactable", {
   columns <- list(
     list(accessor = ".selection", name = "", type = "NULL", resizable = FALSE,
          width = 45, selectable = TRUE),
-    list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-         resizable = FALSE, filterable = FALSE,  width = 45, align = "center",
-         details = list("1")),
     list(accessor = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE, rowHeader = TRUE),
     list(accessor = "x", name = "x", type = "factor")
@@ -694,10 +689,21 @@ test_that("row details", {
   # R renderer
   tbl <- reactable(data, details = function(i) if (i == 1) data[i, "y"])
   attribs <- getAttribs(tbl)
-  expected <- list(accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-                   resizable = FALSE, filterable = FALSE, width = 45, align = "center",
-                   details = list("a", NULL))
-  expect_equal(attribs$columns[[1]], expected)
+  expect_equal(
+    attribs$columns[[1]],
+    list(
+      accessor = ".details", name = "", type = "NULL", sortable = FALSE,
+      resizable = FALSE, filterable = FALSE, width = 45, align = "center",
+      details = list("a", NULL)
+    )
+  )
+
+  tbl <- reactable(
+    data,
+    defaultColDef = colDef(details = function(i, name) paste(i, name))
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(attribs$columns[[1]]$details, list("1 x", "2 x"))
 
   # JS renderer
   tbl <- reactable(data, details = JS("rowInfo => rowInfo.y"))
@@ -741,6 +747,8 @@ test_that("row details", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columnGroups[[1]]$columns, list(".details", "x"))
+
+  expect_error(reactable(data, details = "details"), "`details` renderer must be an R function or JS function")
 })
 
 test_that("html dependencies from rendered content are passed through", {

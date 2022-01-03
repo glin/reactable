@@ -52,9 +52,9 @@
 #' @param minRows Minimum number of rows to show per page. Defaults to 1.
 #' @param paginateSubRows When rows are grouped, paginate sub rows? Defaults to `FALSE`.
 #' @param details Additional content to display when expanding a row. An R function
-#'   that takes a row index argument or a [JS()] function that takes
-#'   a row info object as an argument. Can also be a [colDef()] to customize the
-#'   details expander column.
+#'   that takes the row index and column name as arguments, or a [JS()] function
+#'   that takes a row info object as an argument. Can also be a [colDef()] to
+#'   customize the details expander column.
 #' @param defaultExpanded Expand all rows by default?
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.

@@ -84,8 +84,9 @@ R function that takes two arguments, the column values and column name, or a
 \code{\link[=JS]{JS()}} function that takes a column info object and table state object as arguments.}
 
 \item{details}{Additional content to display when expanding a row. An R function
-that takes a row index argument, or a \code{\link[=JS]{JS()}} function that takes a row info object
-and table state object as arguments. Cannot be used on a \code{groupBy} column.}
+that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function
+that takes a row info object and table state object as arguments.
+Cannot be used on a \code{groupBy} column.}
 
 \item{html}{Render content as HTML? Raw HTML strings are escaped by default.}
 

@@ -33,8 +33,9 @@
 #'   R function that takes two arguments, the column values and column name, or a
 #'   [JS()] function that takes a column info object and table state object as arguments.
 #' @param details Additional content to display when expanding a row. An R function
-#'   that takes a row index argument, or a [JS()] function that takes a row info object
-#'   and table state object as arguments. Cannot be used on a `groupBy` column.
+#'   that takes the row index and column name as arguments, or a [JS()] function
+#'   that takes a row info object and table state object as arguments.
+#'   Cannot be used on a `groupBy` column.
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
