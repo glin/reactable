@@ -75,6 +75,8 @@ where possible, but note that there are several breaking changes.
 * The `rowInfo.page` and `cellInfo.page` properties have been removed from
   JavaScript render functions and style functions. To get the current page
   index of the table, use `state.page` instead.
+* JavaScript render functions and style functions now receive date and time values
+  in UTC time zone (ISO 8601 format), rather than local time.
 
 ### Minor improvements and bug fixes
 
