@@ -450,7 +450,7 @@ function Table({
 
   // Must be memoized to prevent re-filtering on every render
   const globalFilter = React.useMemo(() => {
-    return function globalFilter(rows, ids, value) {
+    return function globalFilter(rows, columnIds, value) {
       if (!value) {
         return rows
       }
@@ -461,7 +461,7 @@ function Table({
       }, {})
 
       rows = rows.filter(row => {
-        for (const id of ids) {
+        for (const id of columnIds) {
           const value = row.values[id]
           // Ignore columns without data (e.g., selection or details columns)
           if (value === undefined) {

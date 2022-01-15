@@ -83,10 +83,12 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     } else {
       col.createMatcher = createSubstringMatcher
     }
-    col.filter = (rows, id, value) => {
+    col.filter = (rows, columnIds, value) => {
       if (!value) {
         return rows
       }
+      // For individual column filters, columnIds will always contain one column ID
+      const id = columnIds[0]
       const match = col.createMatcher(value)
       return rows.filter(row => {
         const value = row.values[id]
