@@ -120,32 +120,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v2
       with:
-        node-version: 14.x
-
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
-    - name: Cache yarn cache
-      uses: actions/cache@v2
-      id: yarn-cache
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
+        node-version: '16'
+        cache: 'npm'
 
     - name: Install dependencies
-      run: |
-        yarn install --frozen-lockfile
+      run: npm install
 
     - name: Test
-      run: yarn test:cover
+      run: npm run test:cover
 
     - name: Lint
-      run: yarn lint
+      run: npm run lint
 
     - name: Test coverage
       run: |

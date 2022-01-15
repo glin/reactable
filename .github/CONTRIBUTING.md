@@ -3,35 +3,42 @@
 ## Development
 
 ### Prerequisites
+
 - [R](https://www.r-project.org/) >= 3.1
-- [Node.js](https://nodejs.org) LTS or later
-- [Yarn](https://yarnpkg.com/)
+- [Node.js](https://nodejs.org) LTS
 
 ### Installation
+
 Install dependencies for R:
+
 ```r
 # install.packages("devtools")
 devtools::install_dev_deps()
 ```
 
-Install dependencies for JS:
+Install dependencies for JavaScript:
+
 ```bash
-yarn install
+npm install
 ```
 
 ### Building
+
 Build the JS/CSS bundle (outputs to `inst/htmlwidgets`):
+
 ```bash
-yarn build
+npm run build
 ```
 
-Then reload (`devtools::load_all()`) or reinstall the package.
+Then load (`devtools::load_all()`) or reinstall the package.
 
-These generated files should be added in their own, separate commit, preferably
+These generated files should be added in their own separate commit, preferably
 only once per branch.
 
 ### Testing
+
 Run R tests:
+
 ```r
 devtools::test()
 
@@ -41,16 +48,19 @@ covr::report()
 ```
 
 Run JS tests:
+
 ```bash
-yarn test
+npm test
 
 # With test coverage
-yarn test:cover
+npm run test:cover
 ```
 
 ### Linting and Formatting
+
 Lint and format the JS/CSS:
+
 ```bash
-yarn lint
-yarn format
+npm run lint
+npm run format
 ```
