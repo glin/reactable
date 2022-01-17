@@ -55,6 +55,10 @@ where possible, but note that there are several breaking changes.
   [#194](https://github.com/glin/reactable/issues/194)).
   Learn more in the [JavaScript API guide](https://glin.github.io/reactable/articles/javascript-api.html)
   or the [JavaScript API examples](https://glin.github.io/reactable/articles/examples.html#javascript-api).
+* `colDef()` gains a `searchable` argument to enable or disable global table
+  searching. Columns can be excluded from searching using `colDef(searchable = FALSE)`,
+  and hidden columns can be included in searching using `colDef(searchable = TRUE)`
+  ([#217](https://github.com/glin/reactable/issues/217)).
 
 ### Breaking changes
 

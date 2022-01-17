@@ -4,7 +4,7 @@ test_that("colDef", {
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
-                sortable = TRUE, resizable = TRUE, filterable = TRUE,
+                sortable = TRUE, resizable = TRUE,
                 defaultSortOrder = "desc",
                 format = list(cell = colFormat(), aggregated = colFormat()),
                 cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
@@ -16,7 +16,7 @@ test_that("colDef", {
 
   expected <- structure(list(
     name = "col", aggregate = "sum",
-    sortable = TRUE, resizable = TRUE, filterable = TRUE,
+    sortable = TRUE, resizable = TRUE,
     defaultSortDesc = TRUE,
     format = list(cell = colFormat(), aggregated = colFormat()),
     cell = JS("cellInfo => cellInfo.value"), aggregated = JS("cellInfo => cellInfo.value"),
@@ -34,7 +34,6 @@ test_that("colDef", {
     aggregate = list(2, TRUE, function() {}, "fn", "SUM"),
     sortable = list(1, "TRUE"),
     resizable = list(1, "TRUE"),
-    filterable = list(0, "FALSE"),
     defaultSortOrder = list(1, TRUE, "ascending"),
     format = list(23, list(CELL = colFormat()), list(aggregated = list())),
     cell = list("function() {}"),
@@ -65,6 +64,20 @@ test_that("colDef aggregate function", {
     col <- colDef(aggregate = func)
     expect_equal(col$aggregate, func)
   }
+})
+
+test_that("colDef filterable", {
+  expect_error(colDef(filterable = ""), "`filterable` must be TRUE or FALSE")
+  expect_equal(colDef()$filterable, NULL)
+  expect_equal(colDef(filterable = FALSE)$filterable, FALSE)
+  expect_equal(colDef(filterable = TRUE)$filterable, TRUE)
+})
+
+test_that("colDef searchable", {
+  expect_error(colDef(searchable = ""), "`searchable` must be TRUE or FALSE")
+  expect_equal(colDef()$searchable, NULL)
+  expect_equal(colDef(searchable = FALSE)$searchable, FALSE)
+  expect_equal(colDef(searchable = TRUE)$searchable, TRUE)
 })
 
 test_that("colDef show", {

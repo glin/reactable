@@ -12,7 +12,15 @@
 #' @param sortable Enable sorting? Overrides the table option.
 #' @param resizable Enable column resizing? Overrides the table option.
 #' @param filterable Enable column filtering? Overrides the table option.
+#' @param searchable Enable or disable global table searching for this column.
+#'   By default, global searching applies to all visible columns. Set this to
+#'   `FALSE` to exclude a visible column from searching, or `TRUE` to include a
+#'   hidden column in searching.
 #' @param show Show the column?
+#'
+#'   If `FALSE`, this column will be excluded from global table searching by
+#'   default. To include this hidden column in searching, set `searchable`
+#'   to `TRUE` in [colDef()].
 #' @param defaultSortOrder Default sort order. Either `"asc"` for ascending
 #'   order or `"desc"` for descending order. Overrides the table option.
 #' @param sortNALast Always sort missing values ([NA] or [NaN]) last?
@@ -105,6 +113,7 @@ colDef <- function(
   sortable = NULL,
   resizable = NULL,
   filterable = NULL,
+  searchable = NULL,
   show = TRUE,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
@@ -159,6 +168,10 @@ colDef <- function(
 
   if (!is.null(filterable) && !is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
+  }
+
+  if (!is.null(searchable) && !is.logical(searchable)) {
+    stop("`searchable` must be TRUE or FALSE")
   }
 
   if (!is.null(show) && !is.logical(show)) {
@@ -290,6 +303,7 @@ colDef <- function(
       sortable = sortable,
       resizable = resizable,
       filterable = filterable,
+      searchable = searchable,
       show = if ("show" %in% userArgs) show,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       sortNALast = if ("sortNALast" %in% userArgs) sortNALast,

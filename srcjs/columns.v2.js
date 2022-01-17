@@ -70,8 +70,11 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.filterable = getFirstDefined(col.filterable, filterable)
     col.disableFilters = !col.filterable
 
-    // Disable searching for hidden columns
-    if (col.show === false) {
+    if (col.searchable === false) {
+      col.disableGlobalFilter = true
+    }
+    // Disable searching for hidden columns by default, but still allow it if requested
+    if (col.show === false && col.searchable !== true) {
       col.disableGlobalFilter = true
     }
 

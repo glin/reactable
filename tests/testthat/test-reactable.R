@@ -693,8 +693,8 @@ test_that("row details", {
     attribs$columns[[1]],
     list(
       accessor = ".details", name = "", type = "NULL", sortable = FALSE,
-      resizable = FALSE, filterable = FALSE, width = 45, align = "center",
-      details = list("a", NULL)
+      resizable = FALSE, filterable = FALSE, searchable = FALSE, width = 45,
+      align = "center", details = list("a", NULL)
     )
   )
 

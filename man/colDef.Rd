@@ -10,6 +10,7 @@ colDef(
   sortable = NULL,
   resizable = NULL,
   filterable = NULL,
+  searchable = NULL,
   show = TRUE,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
@@ -54,7 +55,16 @@ To enable row grouping, use the \code{groupBy} argument in \code{\link[=reactabl
 
 \item{filterable}{Enable column filtering? Overrides the table option.}
 
-\item{show}{Show the column?}
+\item{searchable}{Enable or disable global table searching for this column.
+By default, global searching applies to all visible columns. Set this to
+\code{FALSE} to exclude a visible column from searching, or \code{TRUE} to include a
+hidden column in searching.}
+
+\item{show}{Show the column?
+
+If \code{FALSE}, this column will be excluded from global table searching by
+default. To include this hidden column in searching, set \code{searchable}
+to \code{TRUE} in \code{\link[=colDef]{colDef()}}.}
 
 \item{defaultSortOrder}{Default sort order. Either \code{"asc"} for ascending
 order or \code{"desc"} for descending order. Overrides the table option.}

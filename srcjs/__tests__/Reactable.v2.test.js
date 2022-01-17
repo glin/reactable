@@ -4018,7 +4018,23 @@ describe('searching', () => {
     expect(getByText('bbb')).toBeVisible()
   })
 
-  it('ignores hidden columns', () => {
+  it('ignores columns with searching disabled', () => {
+    // Should ignore selection and details columns
+    const props = {
+      data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b', searchable: false }
+      ],
+      searchable: true
+    }
+    const { container } = render(<Reactable {...props} />)
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'b' } })
+    expect(getDataRows(container)).toHaveLength(0)
+  })
+
+  it('ignores hidden columns by default', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
       columns: [
@@ -4030,8 +4046,24 @@ describe('searching', () => {
     const { container } = render(<Reactable {...props} />)
     const searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: 'b' } })
-    let rows = getDataRows(container)
-    expect(rows).toHaveLength(0)
+    expect(getDataRows(container)).toHaveLength(0)
+  })
+
+  it('searches hidden columns with searching enabled', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3'], b: ['b11', 'b12', 'b2'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b', show: false, searchable: true }
+      ],
+      searchable: true
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'b1' } })
+    expect(getDataRows(container)).toHaveLength(2)
+    expect(getByText('a1')).toBeVisible()
+    expect(getByText('a2')).toBeVisible()
   })
 
   it('ignores columns without data', () => {
