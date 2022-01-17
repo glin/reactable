@@ -338,7 +338,8 @@ function FilterComponent({ value, setValue, className, ...props }) {
       type="text"
       className={classNames('rt-filter', className)}
       value={value || ''}
-      onChange={e => setValue(e.target.value)}
+      // Filter value must be undefined (not empty string) to clear the filter
+      onChange={e => setValue(e.target.value || undefined)}
       {...props}
     />
   )
@@ -355,7 +356,8 @@ function SearchComponent({ value, setValue, className, ...props }) {
     <input
       type="text"
       value={value || ''}
-      onChange={e => setValue(e.target.value)}
+      // Search value must be undefined (not empty string) to clear the search
+      onChange={e => setValue(e.target.value || undefined)}
       className={classNames('rt-search', className)}
       {...props}
     />
@@ -636,12 +638,10 @@ function Table({
     if (!searchable) {
       return null
     }
-    // Filter value must be undefined (not empty string) to clear the filter
-    const setValue = value => instance.setGlobalFilter(value || undefined)
     return (
       <SearchComponent
         value={state.globalFilter}
-        setValue={setValue}
+        setValue={instance.setGlobalFilter}
         className={css(theme.searchInputStyle)}
         placeholder={language.searchPlaceholder}
         aria-label={language.searchLabel}
@@ -831,8 +831,7 @@ function Table({
           if (column.filterable) {
             const filterProps = {
               value: column.filterValue,
-              // Filter value must be undefined (not empty string) to clear the filter
-              setValue: value => column.setFilter(value || undefined),
+              setValue: column.setFilter,
               className: css(theme.filterInputStyle),
               placeholder: language.filterPlaceholder,
               'aria-label': renderTemplate(language.filterLabel, { name: column.name })

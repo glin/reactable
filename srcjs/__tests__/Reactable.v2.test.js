@@ -3660,53 +3660,9 @@ describe('filtering', () => {
   })
 
   it('filtered state should be available in cellInfo, colInfo, and state info', () => {
-    let filterCount = 0
-    const assertCellProps = cellInfo => {
-      if (filterCount === 0) {
-        expect(cellInfo.filterValue).toEqual(undefined)
-      } else if (filterCount === 1) {
-        if (cellInfo.column.id === 'b') {
-          expect(cellInfo.filterValue).toEqual('bb')
-        } else {
-          expect(cellInfo.filterValue).toEqual(undefined)
-        }
-      } else {
-        if (cellInfo.column.id === 'b') {
-          expect(cellInfo.filterValue).toEqual('bb')
-        } else {
-          expect(cellInfo.filterValue).toEqual('a')
-        }
-      }
-    }
-    const assertColumnProps = colInfo => {
-      if (filterCount === 0) {
-        expect(colInfo.column.filterValue).toEqual(undefined)
-      } else if (filterCount === 1) {
-        if (colInfo.column.id === 'b') {
-          expect(colInfo.column.filterValue).toEqual('bb')
-        } else {
-          expect(colInfo.column.filterValue).toEqual(undefined)
-        }
-      } else {
-        if (colInfo.column.id === 'b') {
-          expect(colInfo.column.filterValue).toEqual('bb')
-        } else {
-          expect(colInfo.column.filterValue).toEqual('a')
-        }
-      }
-    }
-    const assertStateProps = state => {
-      if (filterCount === 0) {
-        expect(state.filters).toEqual([])
-      } else if (filterCount === 1) {
-        expect(state.filters).toEqual([{ id: 'b', value: 'bb' }])
-      } else {
-        expect(state.filters).toEqual([
-          { id: 'b', value: 'bb' },
-          { id: 'a', value: 'a' }
-        ])
-      }
-    }
+    let lastCellInfo = {}
+    let lastState = {}
+    let lastColInfo = {}
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'] },
       columns: [
@@ -3715,28 +3671,56 @@ describe('filtering', () => {
           name: 'b',
           accessor: 'b',
           cell: (cellInfo, state) => {
-            assertCellProps(cellInfo)
-            assertStateProps(state)
+            lastCellInfo.cell = cellInfo
+            lastState.cell = state
           },
           header: (colInfo, state) => {
-            assertColumnProps(colInfo)
-            assertStateProps(state)
+            lastColInfo.header = colInfo
+            lastState.header = state
           },
           footer: (colInfo, state) => {
-            assertColumnProps(colInfo)
-            assertStateProps(state)
+            lastColInfo.footer = colInfo
+            lastState.footer = state
           }
         }
       ],
-      details: (rowInfo, state) => assertStateProps(state),
+      details: (rowInfo, state) => (lastState.details = state),
       filterable: true
     }
     const { container } = render(<Reactable {...props} />)
     const [filterA, filterB] = getFilters(container)
-    filterCount++
+    Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual(undefined))
+    Object.values(lastColInfo).forEach(colInfo =>
+      expect(colInfo.column.filterValue).toEqual(undefined)
+    )
+    Object.values(lastState).forEach(state => expect(state.filters).toEqual([]))
+
     fireEvent.change(filterB, { target: { value: 'bb' } })
-    filterCount++
+    Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual('bb'))
+    Object.values(lastColInfo).forEach(colInfo => expect(colInfo.column.filterValue).toEqual('bb'))
+    Object.values(lastState).forEach(state =>
+      expect(state.filters).toEqual([{ id: 'b', value: 'bb' }])
+    )
+
     fireEvent.change(filterA, { target: { value: 'a' } })
+    Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual('bb'))
+    Object.values(lastColInfo).forEach(colInfo => expect(colInfo.column.filterValue).toEqual('bb'))
+    Object.values(lastState).forEach(state =>
+      expect(state.filters).toEqual([
+        { id: 'b', value: 'bb' },
+        { id: 'a', value: 'a' }
+      ])
+    )
+
+    // When filter is cleared, filter value should be unset, not an empty string
+    fireEvent.change(filterB, { target: { value: '' } })
+    Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual(undefined))
+    Object.values(lastColInfo).forEach(colInfo =>
+      expect(colInfo.column.filterValue).toEqual(undefined)
+    )
+    Object.values(lastState).forEach(state =>
+      expect(state.filters).toEqual([{ id: 'a', value: 'a' }])
+    )
   })
 
   it('filtered state persists when data changes', () => {
@@ -4131,16 +4115,7 @@ describe('searching', () => {
   })
 
   it('searched state should be available in state info', () => {
-    let searchCount = 0
-    const assertProps = state => {
-      if (searchCount === 0) {
-        expect(state.searchValue).toEqual(undefined)
-      } else if (searchCount === 1) {
-        expect(state.searchValue).toEqual('aa')
-      } else {
-        expect(state.searchValue).toEqual(undefined)
-      }
-    }
+    let lastState = {}
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'] },
       columns: [
@@ -4148,20 +4123,22 @@ describe('searching', () => {
         {
           name: 'b',
           accessor: 'b',
-          cell: (cellInfo, state) => assertProps(state),
-          header: (colInfo, state) => assertProps(state),
-          footer: (colInfo, state) => assertProps(state)
+          cell: (cellInfo, state) => (lastState.cell = state),
+          header: (colInfo, state) => (lastState.header = state),
+          footer: (colInfo, state) => (lastState.footer = state)
         }
       ],
-      details: (rowInfo, state) => assertProps(state),
+      details: (rowInfo, state) => (lastState.details = state),
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
     const searchInput = getSearchInput(container)
-    searchCount++
+    Object.values(lastState).forEach(state => expect(state.searchValue).toEqual(undefined))
     fireEvent.change(searchInput, { target: { value: 'aa' } })
-    searchCount++
+    Object.values(lastState).forEach(state => expect(state.searchValue).toEqual('aa'))
+    // When search is cleared, search value should be unset, not an empty string
     fireEvent.change(searchInput, { target: { value: '' } })
+    Object.values(lastState).forEach(state => expect(state.searchValue).toEqual(undefined))
   })
 
   it('searched state persists when data changes', () => {
@@ -8136,9 +8113,10 @@ describe('updateReactable updates table state from Shiny', () => {
 
     act(() => updateState({ selected: [1, 0] }))
     expect(window.Shiny.onInputChange).toHaveBeenCalledWith('selected', [1, 2])
-    expect(
-      window.Shiny.onInputChange
-    ).toHaveBeenCalledWith('shiny-output-container__reactable__selected', [1, 2])
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith(
+      'shiny-output-container__reactable__selected',
+      [1, 2]
+    )
     let selectAllCheckbox = getByLabelText('Deselect all rows')
     let selectRowCheckboxes = getAllByLabelText('Deselect row')
     let selectRow1Checkbox = selectRowCheckboxes[0]
@@ -9036,9 +9014,17 @@ describe('reactable JavaScript API', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(reactable.getState('my-tbl').filters).toEqual([])
+
     act(() => reactable.setFilter('my-tbl', 'a', 'bb'))
     expect(reactable.getState('my-tbl').filters).toEqual([{ id: 'a', value: 'bb' }])
     expect(getDataRows(container)).toHaveLength(1)
+
+    // Empty value should not clear filter
+    act(() => reactable.setFilter('my-tbl', 'a', ''))
+    expect(reactable.getState('my-tbl').filters).toEqual([{ id: 'a', value: '' }])
+    expect(getDataRows(container)).toHaveLength(2)
+
+    // Clear filter
     act(() => reactable.setFilter('my-tbl', 'a', undefined))
     expect(reactable.getState('my-tbl').filters).toEqual([])
     expect(getDataRows(container)).toHaveLength(2)
@@ -9052,9 +9038,11 @@ describe('reactable JavaScript API', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(reactable.getState('my-tbl').filters).toEqual([])
+
     act(() => reactable.setAllFilters('my-tbl', [{ id: 'a', value: 'cc' }]))
     expect(reactable.getState('my-tbl').filters).toEqual([{ id: 'a', value: 'cc' }])
     expect(getDataRows(container)).toHaveLength(0)
+
     act(() => reactable.setAllFilters('my-tbl', []))
     expect(reactable.getState('my-tbl').filters).toEqual([])
     expect(getDataRows(container)).toHaveLength(2)
@@ -9068,9 +9056,17 @@ describe('reactable JavaScript API', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(reactable.getState('my-tbl').searchValue).toEqual(undefined)
+
     act(() => reactable.setSearch('my-tbl', 'aaa'))
     expect(reactable.getState('my-tbl').searchValue).toEqual('aaa')
     expect(getDataRows(container)).toHaveLength(1)
+
+    // Empty value should not clear search
+    act(() => reactable.setSearch('my-tbl', ''))
+    expect(reactable.getState('my-tbl').searchValue).toEqual('')
+    expect(getDataRows(container)).toHaveLength(2)
+
+    // Clear search
     act(() => reactable.setSearch('my-tbl', undefined))
     expect(reactable.getState('my-tbl').searchValue).toEqual(undefined)
     expect(getDataRows(container)).toHaveLength(2)
