@@ -86,15 +86,12 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     } else {
       col.createMatcher = createSubstringMatcher
     }
-    col.filter = (rows, columnIds, value) => {
+    col.filter = (rows, columnIds, filterValue) => {
       // For individual column filters, columnIds will always contain one column ID
       const id = columnIds[0]
-      const match = col.createMatcher(value)
+      const match = col.createMatcher(filterValue)
       return rows.filter(row => {
         const value = row.values[id]
-        if (value === undefined) {
-          return true
-        }
         return match(value)
       })
     }
@@ -530,14 +527,28 @@ export function formatValue(value, options) {
   return value
 }
 
-function createStartsWithMatcher(str) {
+export function createStartsWithMatcher(str) {
   const regex = new RegExp('^' + escapeRegExp(str), 'i')
-  return value => regex.test(value)
+  return value => {
+    // Ignore columns without data (don't match on "undefined"). This shouldn't
+    // happen unless a data-less column (e.g., selection) is manually filtered via API.
+    if (value === undefined) {
+      return false
+    }
+    return regex.test(value)
+  }
 }
 
-function createSubstringMatcher(str) {
+export function createSubstringMatcher(str) {
   const regex = new RegExp(escapeRegExp(str), 'i')
-  return value => regex.test(value)
+  return value => {
+    // Ignore columns without data (don't match on "undefined"). This shouldn't
+    // happen unless a data-less column (e.g., selection) is manually filtered via API.
+    if (value === undefined) {
+      return false
+    }
+    return regex.test(value)
+  }
 }
 
 function getAlignClass(align) {

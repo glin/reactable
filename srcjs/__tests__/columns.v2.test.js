@@ -8,7 +8,9 @@ import {
   addColumnGroups,
   createCompareFunction,
   buildColumnDefs,
-  formatValue
+  formatValue,
+  createStartsWithMatcher,
+  createSubstringMatcher
 } from '../columns.v2'
 import * as aggregators from '../aggregators.v2'
 
@@ -976,4 +978,51 @@ describe('formatValue', () => {
     // Fallback locale
     expect(formatValue(125253.125, { locales: ['xx-XX', 'en-US'] })).toEqual('125253.125')
   })
+})
+
+test('createsStartsWithMatcher', () => {
+  let match = createStartsWithMatcher('string')
+  expect(match(undefined)).toEqual(false)
+  expect(match('')).toEqual(false)
+  expect(match('storing')).toEqual(false)
+  expect(match('ring')).toEqual(false)
+  expect(match('not string')).toEqual(false)
+
+  expect(match('string')).toEqual(true)
+  expect(match('sTrInG')).toEqual(true)
+  expect(match('stringuh')).toEqual(true)
+
+  // Should match strings with diacritics
+  match = createStartsWithMatcher('á')
+  expect(match('a')).toEqual(false)
+  expect(match('ááád')).toEqual(true)
+  expect(match('ÁÁ')).toEqual(true)
+
+  // Should escape regex strings
+  match = createStartsWithMatcher('[.*+?^${}()|\\]')
+  expect(match('[.*+?^${}()|\\]')).toEqual(true)
+})
+
+test('createSubstringMatcher', () => {
+  let match = createSubstringMatcher('string')
+  expect(match(undefined)).toEqual(false)
+  expect(match('')).toEqual(false)
+  expect(match('storing')).toEqual(false)
+  expect(match('ring')).toEqual(false)
+
+  expect(match('string')).toEqual(true)
+  expect(match('sTrInG')).toEqual(true)
+  expect(match('stringuh')).toEqual(true)
+  expect(match('Astringuh')).toEqual(true)
+  expect(match('not string')).toEqual(true)
+
+  // Should match strings with diacritics
+  match = createSubstringMatcher('á')
+  expect(match('a')).toEqual(false)
+  expect(match('ááád')).toEqual(true)
+  expect(match('ÁÁ')).toEqual(true)
+
+  // Should escape regex strings
+  match = createStartsWithMatcher('[.*+?^${}()|\\]')
+  expect(match('[.*+?^${}()|\\]')).toEqual(true)
 })

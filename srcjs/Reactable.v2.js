@@ -452,19 +452,15 @@ function Table({
 
   // Must be memoized to prevent re-filtering on every render
   const globalFilter = React.useMemo(() => {
-    return function globalFilter(rows, columnIds, value) {
+    return function globalFilter(rows, columnIds, searchValue) {
       const matchers = dataColumns.reduce((obj, col) => {
-        obj[col.id] = col.createMatcher(value)
+        obj[col.id] = col.createMatcher(searchValue)
         return obj
       }, {})
 
       rows = rows.filter(row => {
         for (const id of columnIds) {
           const value = row.values[id]
-          // Ignore columns without data (e.g., selection or details columns)
-          if (value === undefined) {
-            continue
-          }
           if (matchers[id](value)) {
             return true
           }

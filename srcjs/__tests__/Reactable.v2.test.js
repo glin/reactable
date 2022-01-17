@@ -4067,23 +4067,23 @@ describe('searching', () => {
   })
 
   it('ignores columns without data', () => {
-    // Should ignore selection and details columns
     const props = {
       data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
       columns: [
         { name: 'a', accessor: 'a' },
         { name: 'b', accessor: 'b' },
-        { name: '', accessor: '.selection' },
-        { name: '', accessor: '.details' }
+        // Fake column for testing. Selection and row details columns now have
+        // searching disabled by default, so this shouldn't exist unless searching
+        // was manually enabled for the details column.
+        { name: '', accessor: '.fake_column' }
       ],
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
     const searchInput = getSearchInput(container)
-    // If a column without data is searched, it will string match on "undefined"
+    // If a column without data is searched, it should not string match on "undefined"
     fireEvent.change(searchInput, { target: { value: 'undefined' } })
-    let rows = getDataRows(container)
-    expect(rows).toHaveLength(0)
+    expect(getDataRows(container)).toHaveLength(0)
   })
 
   it('searching works when table has no rows', () => {
@@ -5134,6 +5134,7 @@ describe('row selection', () => {
           accessor: '.selection',
           selectable: true,
           filterable: true,
+          searchable: true,
           sortable: true
         }
       ],
