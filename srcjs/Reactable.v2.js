@@ -453,10 +453,6 @@ function Table({
   // Must be memoized to prevent re-filtering on every render
   const globalFilter = React.useMemo(() => {
     return function globalFilter(rows, columnIds, value) {
-      if (!value) {
-        return rows
-      }
-
       const matchers = dataColumns.reduce((obj, col) => {
         obj[col.id] = col.createMatcher(value)
         return obj
