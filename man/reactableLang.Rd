@@ -26,12 +26,12 @@ reactableLang(
   detailsExpandLabel = "Toggle details",
   detailsCollapseLabel = "Toggle details",
   selectAllRowsLabel = "Select all rows",
-  deselectAllRowsLabel = "Deselect all rows",
   selectAllSubRowsLabel = "Select all rows in group",
-  deselectAllSubRowsLabel = "Deselect all rows in group",
   selectRowLabel = "Select row",
-  deselectRowLabel = "Deselect row",
-  defaultGroupHeader = NULL
+  defaultGroupHeader = NULL,
+  deselectAllRowsLabel = NULL,
+  deselectAllSubRowsLabel = NULL,
+  deselectRowLabel = NULL
 )
 }
 \arguments{
@@ -95,17 +95,17 @@ the \code{"jump"} pagination type.}
 
 \item{selectAllRowsLabel}{Accessible label for the select all rows checkbox.}
 
-\item{deselectAllRowsLabel}{Accessible label for the deselect all rows checkbox.}
-
 \item{selectAllSubRowsLabel}{Accessible label for the select all sub rows checkbox.}
-
-\item{deselectAllSubRowsLabel}{Accessible label for the deselect all sub rows checkbox.}
 
 \item{selectRowLabel}{Accessible label for the select row checkbox}
 
-\item{deselectRowLabel}{Accessible label for the deselect row checkbox.}
-
 \item{defaultGroupHeader}{Deprecated and no longer used.}
+
+\item{deselectAllRowsLabel}{Deprecated and no longer used.}
+
+\item{deselectAllSubRowsLabel}{Deprecated and no longer used.}
+
+\item{deselectRowLabel}{Deprecated and no longer used.}
 }
 \value{
 A language options object that can be used to customize the language

@@ -66,9 +66,6 @@ where possible, but note that there are several breaking changes.
 * When both `columnGroups` and `groupBy` arguments are provided, `groupBy`
   columns are no longer added to a column group automatically
   ([#87](https://github.com/glin/reactable/issues/87)).
-* The `defaultGroupHeader` argument in `reactableLang()` is now deprecated and
-  no longer used. Use the `columnGroups` argument in `reactable()` to customize
-  the column group header for `groupBy` columns.
 * The `state.expanded` property has been removed from JavaScript render
   functions and style functions. To check whether a row is expanded, use
   `rowInfo.expanded` instead.
@@ -77,6 +74,12 @@ where possible, but note that there are several breaking changes.
   index of the table, use `state.page` instead.
 * JavaScript render functions and style functions now receive date and time values
   in UTC time zone (ISO 8601 format), rather than local time.
+* The `defaultGroupHeader` argument in `reactableLang()` is now deprecated and
+  no longer used. Use the `columnGroups` argument in `reactable()` to customize
+  the column group header for `groupBy` columns.
+* The `deselectAllRowsLabel`, `deselectAllSubRowsLabel`, and `deselectRowLabel`
+  arguments in `reactableLang()` are now deprecated and no longer used
+  ([#167](https://github.com/glin/reactable/issues/167)).
 
 ### Minor improvements and bug fixes
 
@@ -112,11 +115,15 @@ where possible, but note that there are several breaking changes.
 * `reactable()` now works for data frames with `difftime` objects and objects
   with custom classes ([#164](https://github.com/glin/reactable/issues/164)).
 * `colFormat()` no longer ignores time zones when formatting dates and times.
-* Row expand buttons now set the `aria-expanded` attribute to indicate expanded
-  or collapsed state. The default label for row expand buttons is now
-  "Toggle details" instead of "Expand details" or "Collapse details".
+* Row expand buttons no longer change their accessible labels based on expanded
+  state. They now use the `aria-expanded` attribute to indicate expanded
+  or collapsed state, and use "Toggle details" as their default label
+  ([#167](https://github.com/glin/reactable/issues/167)).
 * `reactableLang()` gains the `groupExpandLabel` and `groupCollapseLabel`
-  arguments to customize the accessible labels for row group expand buttons.
+  arguments to customize the accessible labels for row group expand buttons
+  ([#167](https://github.com/glin/reactable/issues/167)).
+* Row selection checkboxes and radio buttons no longer change their accessible
+  labels based on selection state ([#167](https://github.com/glin/reactable/issues/167)).
 * Cells can now be marked up as row headers for assistive technologies, using the
   new `rowHeader` argument in `colDef()`. Cells in the row names column are
   automatically marked up as row headers ([#167](https://github.com/glin/reactable/issues/167)).

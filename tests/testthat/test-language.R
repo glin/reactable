@@ -40,11 +40,8 @@ test_that("reactableLang", {
 
     # Selection
     selectAllRowsLabel = "_Select all rows",
-    deselectAllRowsLabel = "_Deselect all rows",
     selectAllSubRowsLabel = "_Select all rows in group",
-    deselectAllSubRowsLabel = "_Deselect all rows in group",
-    selectRowLabel = "_Select row {row}",
-    deselectRowLabel = "_Deselect row {row}"
+    selectRowLabel = "_Select row {row}"
   )
   expect_equal(do.call(reactableLang, lang), structure(lang, class = "reactableLang"))
 

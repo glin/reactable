@@ -50,13 +50,13 @@
 #' @param detailsCollapseLabel Accessible label for the row details collapse button.
 #'
 #' @param selectAllRowsLabel Accessible label for the select all rows checkbox.
-#' @param deselectAllRowsLabel Accessible label for the deselect all rows checkbox.
 #' @param selectAllSubRowsLabel Accessible label for the select all sub rows checkbox.
-#' @param deselectAllSubRowsLabel Accessible label for the deselect all sub rows checkbox.
 #' @param selectRowLabel Accessible label for the select row checkbox
-#' @param deselectRowLabel Accessible label for the deselect row checkbox.
 #'
 #' @param defaultGroupHeader Deprecated and no longer used.
+#' @param deselectAllRowsLabel Deprecated and no longer used.
+#' @param deselectAllSubRowsLabel Deprecated and no longer used.
+#' @param deselectRowLabel Deprecated and no longer used.
 #'
 #' @return A language options object that can be used to customize the language
 #'   strings in `reactable()`.
@@ -83,12 +83,12 @@
 #'   detailsExpandLabel = "Toggle details",
 #'   detailsCollapseLabel = "Toggle details",
 #'   selectAllRowsLabel = "Select all rows",
-#'   deselectAllRowsLabel = "Deselect all rows",
 #'   selectAllSubRowsLabel = "Select all rows in group",
-#'   deselectAllSubRowsLabel = "Deselect all rows in group",
 #'   selectRowLabel = "Select row",
-#'   deselectRowLabel = "Deselect row",
-#'   defaultGroupHeader = NULL
+#'   defaultGroupHeader = NULL,
+#'   deselectAllRowsLabel = NULL,
+#'   deselectAllSubRowsLabel = NULL,
+#'   deselectRowLabel = NULL
 #' )
 #'
 #' @examples
@@ -156,14 +156,14 @@ reactableLang <- function(
 
   # Selection
   selectAllRowsLabel = "Select all rows",
-  deselectAllRowsLabel = "Deselect all rows",
   selectAllSubRowsLabel = "Select all rows in group",
-  deselectAllSubRowsLabel = "Deselect all rows in group",
   selectRowLabel = "Select row",
-  deselectRowLabel = "Deselect row",
 
   # Deprecated and no longer used
-  defaultGroupHeader = NULL
+  defaultGroupHeader = NULL,
+  deselectAllRowsLabel = NULL,
+  deselectAllSubRowsLabel = NULL,
+  deselectRowLabel = NULL
 ) {
 
   if (!is.null(defaultGroupHeader)) {

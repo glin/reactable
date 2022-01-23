@@ -36,10 +36,12 @@ export const defaultLanguage = {
 
   // Selection
   selectAllRowsLabel: 'Select all rows',
-  deselectAllRowsLabel: 'Deselect all rows',
   selectAllSubRowsLabel: 'Select all rows in group',
-  deselectAllSubRowsLabel: 'Deselect all rows in group',
   selectRowLabel: 'Select row',
+
+  // Deprecated in v0.2.3.9000
+  deselectAllRowsLabel: 'Deselect all rows',
+  deselectAllSubRowsLabel: 'Deselect all rows in group',
   deselectRowLabel: 'Deselect row'
 }
 

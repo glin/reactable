@@ -4314,8 +4314,8 @@ describe('row selection', () => {
     expect(selectRow2Checkbox.checked).toEqual(true)
     expect(selectAllCheckbox.checked).toEqual(true)
 
-    expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Deselect all rows')
-    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Deselect row')
+    expect(selectAllCheckbox).toHaveAttribute('aria-label', 'Select all rows')
+    expect(selectRow1Checkbox).toHaveAttribute('aria-label', 'Select row')
     // Selected row indexes should be sorted numerically, not by selection order
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
     rows.forEach(row => expect(row).toHaveClass('rt-tr-selected'))
@@ -4339,18 +4339,12 @@ describe('row selection', () => {
         {...props}
         language={{
           selectAllRowsLabel: '_Select all rows',
-          deselectAllRowsLabel: '_Deselect all rows',
-          selectRowLabel: '_Select row',
-          deselectRowLabel: '_Deselect row'
+          selectRowLabel: '_Select row'
         }}
       />
     )
     expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Select all rows')
     expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Select row')
-    fireEvent.click(selectAllCheckbox)
-    expect(selectAllCheckbox).toHaveAttribute('aria-label', '_Deselect all rows')
-    expect(selectRow2Checkbox).toHaveAttribute('aria-label', '_Deselect row')
-    fireEvent.click(selectAllCheckbox)
 
     // Theme
     rerender(
@@ -4404,9 +4398,9 @@ describe('row selection', () => {
     expect(selectRowCheckboxes[3].checked).toEqual(false)
     expect(selectAllSubRowsCheckboxes[0]).toHaveAttribute(
       'aria-label',
-      'Deselect all rows in group'
+      'Select all rows in group'
     )
-    expect(selectRowCheckboxes[0]).toHaveAttribute('aria-label', 'Deselect row')
+    expect(selectRowCheckboxes[0]).toHaveAttribute('aria-label', 'Select row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
     rows.forEach((row, i) => {
       if (i < 3) {
@@ -4439,17 +4433,11 @@ describe('row selection', () => {
       <Reactable
         {...props}
         language={{
-          selectAllSubRowsLabel: '_Select all rows in group',
-          deselectAllSubRowsLabel: '_Deselect all rows in group'
+          selectAllSubRowsLabel: '_Select all rows in group'
         }}
       />
     )
     expect(selectAllSubRowsCheckboxes[0]).toHaveAttribute('aria-label', '_Select all rows in group')
-    fireEvent.click(selectAllSubRowsCheckboxes[0])
-    expect(selectAllSubRowsCheckboxes[0]).toHaveAttribute(
-      'aria-label',
-      '_Deselect all rows in group'
-    )
   })
 
   it('multiple selection of sub rows works when not paginating sub rows', () => {
@@ -4512,7 +4500,7 @@ describe('row selection', () => {
     fireEvent.click(selectRow1Radio)
     expect(selectRow1Radio.checked).toEqual(true)
     expect(selectRow2Radio.checked).toEqual(false)
-    expect(selectRow1Radio).toHaveAttribute('aria-label', 'Deselect row')
+    expect(selectRow1Radio).toHaveAttribute('aria-label', 'Select row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1])
 
     fireEvent.click(selectRow2Radio)
@@ -4532,14 +4520,11 @@ describe('row selection', () => {
         {...props}
         selection="single"
         language={{
-          selectRowLabel: '_Select row',
-          deselectRowLabel: '_Deselect row'
+          selectRowLabel: '_Select row'
         }}
       />
     )
     expect(selectRow2Radio).toHaveAttribute('aria-label', '_Select row')
-    fireEvent.click(selectRow2Radio)
-    expect(selectRow2Radio).toHaveAttribute('aria-label', '_Deselect row')
   })
 
   it('defaultSelected', () => {
@@ -8117,8 +8102,8 @@ describe('updateReactable updates table state from Shiny', () => {
       'shiny-output-container__reactable__selected',
       [1, 2]
     )
-    let selectAllCheckbox = getByLabelText('Deselect all rows')
-    let selectRowCheckboxes = getAllByLabelText('Deselect row')
+    let selectAllCheckbox = getByLabelText('Select all rows')
+    let selectRowCheckboxes = getAllByLabelText('Select row')
     let selectRow1Checkbox = selectRowCheckboxes[0]
     let selectRow2Checkbox = selectRowCheckboxes[1]
     expect(selectAllCheckbox.checked).toEqual(true)
@@ -8268,7 +8253,7 @@ describe('updateReactable updates table state from Shiny', () => {
     updateState({ data: { a: ['c1', 'c2', 'c3'] }, selected: [2], expanded: true, page: 2 })
     console.error = originalError
     expect(getByText('c3')).toBeVisible()
-    expect(getByLabelText('Deselect row')).toBeChecked()
+    expect(getByLabelText('Select row')).toBeChecked()
     expect(getByText('detail-3')).toBeVisible()
     expect(getByText('3–3 of 3 rows')).toBeVisible()
   })

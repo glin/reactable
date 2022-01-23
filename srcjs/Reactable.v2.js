@@ -779,11 +779,7 @@ function Table({
                   type="checkbox"
                   checked={instance.isAllRowsSelected}
                   onChange={toggleAllRowsSelected}
-                  aria-label={
-                    instance.isAllRowsSelected
-                      ? language.deselectAllRowsLabel
-                      : language.selectAllRowsLabel
-                  }
+                  aria-label={language.selectAllRowsLabel}
                 />
               )
             }
@@ -1093,11 +1089,9 @@ function Table({
                 }
                 let ariaLabel
                 if (cell.isAggregated) {
-                  ariaLabel = row.isSelected
-                    ? language.deselectAllSubRowsLabel
-                    : language.selectAllSubRowsLabel
+                  ariaLabel = language.selectAllSubRowsLabel
                 } else {
-                  ariaLabel = row.isSelected ? language.deselectRowLabel : language.selectRowLabel
+                  ariaLabel = language.selectRowLabel
                 }
                 value = (
                   <SelectInputComponent
