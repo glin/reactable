@@ -2841,7 +2841,7 @@ describe('no data', () => {
     const { container, queryAllByText, rerender } = render(<Reactable {...props} />)
     const noData = queryAllByText('No rows found')
     expect(noData).toHaveLength(1)
-    expect(noData[0]).toHaveAttribute('aria-live', 'polite')
+    expect(noData[0]).toHaveAttribute('aria-live', 'assertive')
     const tbody = getTbody(container)
     expect(getNoData(tbody)).toBeVisible()
     expect(tbody).toHaveClass('rt-tbody-no-data')
@@ -2879,7 +2879,7 @@ describe('no data', () => {
     const tbody = getTbody(container)
     const noData = getNoData(tbody)
     expect(noData).toHaveTextContent('')
-    expect(noData).toHaveAttribute('aria-live', 'polite')
+    expect(noData).toHaveAttribute('aria-live', 'assertive')
   })
 })
 

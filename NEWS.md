@@ -132,8 +132,8 @@ where possible, but note that there are several breaking changes.
   new `rowHeader` argument in `colDef()`. Cells in the row names column are
   automatically marked up as row headers ([#167](https://github.com/glin/reactable/issues/167)).
 * The page info and "no rows found" message are now marked as ARIA live regions
-  so that page changes can be announced by assistive technologies when searching,
-  filtering, or paging through the table.
+  so page changes can be announced by assistive technologies when searching,
+  filtering, or paging through the table ([#167](https://github.com/glin/reactable/issues/167)).
 * In `reactableTheme()`, `filterInputStyle` now applies correctly when rerendering
   a table in Shiny ([#186](https://github.com/glin/reactable/issues/186)).
 * In `reactableTheme()`, `cellPadding` now applies to column group headers correctly.

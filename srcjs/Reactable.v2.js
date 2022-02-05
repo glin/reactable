@@ -371,7 +371,7 @@ SearchComponent.propTypes = {
 }
 
 function NoDataComponent({ className, ...rest }) {
-  return <div className={classNames('rt-no-data', className)} aria-live="polite" {...rest} />
+  return <div className={classNames('rt-no-data', className)} aria-live="assertive" {...rest} />
 }
 
 function SelectInputComponent({ type, checked, onChange, 'aria-label': ariaLabel }) {
