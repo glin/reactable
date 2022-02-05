@@ -101,6 +101,11 @@ input[type='radio'].rt-select-input {
   border-style: solid;
 }
 
+.ReactTable:not(.rt-keyboard-active) .rt-table:focus {
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
+}
+
 /* Header borders */
 .rt-th {
   border-bottom: 2px solid hsl(0, 0%, 90%);
@@ -259,8 +264,8 @@ input[type='radio'].rt-select-input {
   font-family: inherit;
   font-size: inherit;
   font-weight: normal;
-  outline-width: 0;
-  outline-style: solid;
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
 }
 
 .rt-filter:focus {
@@ -281,8 +286,8 @@ input[type='radio'].rt-select-input {
 }
 
 .rt-th {
-  outline-width: 0;
-  outline-style: solid;
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
 }
 
 .rt-th[aria-sort] {
@@ -340,8 +345,8 @@ input[type='radio'].rt-select-input {
   position: relative;
   padding: 0 8px;
   color: transparent;
-  outline-width: 0;
-  outline-style: solid;
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
 }
 
 .rt-expander::after {
@@ -431,8 +436,8 @@ input[type='radio'].rt-select-input {
   background-color: transparent;
   border: none;
   border-radius: 3px;
-  outline-width: 0;
-  outline-style: solid;
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
   cursor: pointer;
 }
 
@@ -514,8 +519,8 @@ input[type='radio'].rt-select-input {
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
-  outline-width: 0;
-  outline-style: solid;
+  outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
+  outline-style: solid; /* Needed for Safari when using outline-width: 0 */
   font-family: inherit;
   font-size: inherit;
 }

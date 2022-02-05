@@ -115,12 +115,12 @@ export default function Reactable({
 }
 
 const RootComponent = React.forwardRef(function RootComponent({ className, ...rest }, ref) {
-  return <div className={classNames('ReactTable', className)} ref={ref} {...rest} />
+  return <div ref={ref} className={classNames('ReactTable', className)} {...rest} />
 })
 
-function TableComponent({ className, ...rest }) {
-  return <div className={classNames('rt-table', className)} role="table" {...rest} />
-}
+const TableComponent = React.forwardRef(function TableComponent({ className, ...rest }, ref) {
+  return <div ref={ref} className={classNames('rt-table', className)} role="table" {...rest} />
+})
 
 function TheadComponent({ className, ...rest }) {
   return <div className={classNames('rt-thead', className)} role="rowgroup" {...rest} />
@@ -1311,6 +1311,30 @@ function Table({
     }
   }
 
+  // Provide keyboard access to scrollable tables. Make the table focusable,
+  // but only when it has a scrollbar.
+  const tableElement = React.useRef(null)
+  const [tableHasScrollbar, setTableHasScrollbar] = React.useState(false)
+  React.useLayoutEffect(() => {
+    const checkTableHasScrollbar = () => {
+      const { scrollHeight, clientHeight, scrollWidth, clientWidth } = tableElement.current
+      const hasScrollbar = scrollHeight > clientHeight || scrollWidth > clientWidth
+      setTableHasScrollbar(hasScrollbar)
+    }
+    if (window.ResizeObserver) {
+      const resizeObserver = new ResizeObserver(() => {
+        checkTableHasScrollbar()
+      })
+      resizeObserver.observe(tableElement.current)
+      return function cleanup() {
+        resizeObserver.disconnect()
+      }
+    } else {
+      // Degrade gracefully on older browsers (e.g., Safari < 13)
+      checkTableHasScrollbar()
+    }
+  }, [])
+
   // Send reactable state to Shiny for getReactableState
   React.useEffect(() => {
     // Ignore nested tables that aren't Shiny outputs
@@ -1573,7 +1597,11 @@ function Table({
   return (
     <RootComponent ref={rootElement} {...keyboardActiveProps} className={className} style={style}>
       {makeSearch()}
-      <TableComponent className={tableClassName}>
+      <TableComponent
+        ref={tableElement}
+        tabIndex={tableHasScrollbar ? 0 : -1}
+        className={tableClassName}
+      >
         {makeThead()}
         {makeTbody()}
         {makeTfoot()}

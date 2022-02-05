@@ -2910,6 +2910,94 @@ describe('keyboard focus styles', () => {
   })
 })
 
+describe('scrollable tables are keyboard accessible', () => {
+  afterEach(() => {
+    delete window.ResizeObserver
+  })
+
+  it('table is not focusable when unscrollable', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const table = getTable(container)
+    expect(table).toBeVisible()
+    expect(table).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('table is focusable when horizontally scrollable', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ]
+    }
+
+    let disconnectCount = 0
+    window.ResizeObserver = class ResizeObserver {
+      constructor(cb) {
+        this.cb = cb
+      }
+      observe(el) {
+        // Element height/widths are all 0 in jsdom
+        Object.defineProperty(el, 'scrollWidth', { value: 2, configurable: true })
+        Object.defineProperty(el, 'clientWidth', { value: 1, configurable: true })
+        this.cb()
+      }
+      disconnect() {
+        disconnectCount += 1
+      }
+    }
+
+    const { container, unmount } = render(<Reactable {...props} />)
+    const table = getTable(container)
+    expect(table).toBeVisible()
+    expect(table).toHaveAttribute('tabindex', '0')
+
+    unmount(<Reactable {...props} />)
+    expect(disconnectCount).toEqual(1)
+  })
+
+  it('table is focusable when vertically scrollable', () => {
+    const props = {
+      data: { a: [1, 2], b: ['aa', 'bb'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ]
+    }
+
+    let disconnectCount = 0
+    window.ResizeObserver = class ResizeObserver {
+      constructor(cb) {
+        this.cb = cb
+      }
+      observe(el) {
+        // Element height/widths are all 0 in jsdom
+        Object.defineProperty(el, 'scrollHeight', { value: 2, configurable: true })
+        Object.defineProperty(el, 'scrollHeight', { value: 1, configurable: true })
+        this.cb()
+      }
+      disconnect() {
+        disconnectCount += 1
+      }
+    }
+
+    const { container, unmount } = render(<Reactable {...props} />)
+    const table = getTable(container)
+    expect(table).toBeVisible()
+    expect(table).toHaveAttribute('tabindex', '0')
+
+    unmount(<Reactable {...props} />)
+    expect(disconnectCount).toEqual(1)
+  })
+})
+
 describe('sorting', () => {
   it('enables sorting', () => {
     const props = {
@@ -4428,10 +4516,7 @@ describe('row selection', () => {
     expect(selectRowCheckboxes[1].checked).toEqual(true)
     expect(selectRowCheckboxes[2].checked).toEqual(false)
     expect(selectRowCheckboxes[3].checked).toEqual(false)
-    expect(selectAllSubRowsCheckboxes[0]).toHaveAttribute(
-      'aria-label',
-      'Select all rows in group'
-    )
+    expect(selectAllSubRowsCheckboxes[0]).toHaveAttribute('aria-label', 'Select all rows in group')
     expect(selectRowCheckboxes[0]).toHaveAttribute('aria-label', 'Select row')
     expect(window.Shiny.onInputChange).toHaveBeenLastCalledWith('selected', [1, 2])
     rows.forEach((row, i) => {
