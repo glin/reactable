@@ -1,24 +1,24 @@
 pandoc: 2.7.3
-pkgdown: 1.6.1
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   100k-rows: 100k-rows.html
   building-twitter-followers: building-twitter-followers.html
   conditional-styling: conditional-styling.html
-  cookbook/cookbook: cookbook.html
-  cran-packages/cran-packages: cran-packages.html
+  cookbook: cookbook/cookbook.html
+  cran-packages: cran-packages/cran-packages.html
   custom-rendering: custom-rendering.html
   custom-sort-icons: custom-sort-icons.html
   examples: examples.html
   internationalization: internationalization.html
   javascript-api: javascript-api.html
-  nba-box-score/nba-box-score: nba-box-score.html
-  popular-movies/popular-movies: popular-movies.html
+  nba-box-score: nba-box-score/nba-box-score.html
+  popular-movies: popular-movies/popular-movies.html
   shiny-demo: shiny-demo.html
-  spotify-charts/spotify-charts: spotify-charts.html
+  spotify-charts: spotify-charts/spotify-charts.html
   sticky-columns-selection: sticky-columns-selection.html
   sticky-columns: sticky-columns.html
-  twitter-followers/twitter-followers: twitter-followers.html
-  womens-world-cup/womens-world-cup: womens-world-cup.html
-last_built: 2021-11-08T03:26Z
+  twitter-followers: twitter-followers/twitter-followers.html
+  womens-world-cup: womens-world-cup/womens-world-cup.html
+last_built: 2022-02-06T03:49Z
 

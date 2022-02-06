@@ -20,6 +20,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -32,8 +34,8 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">reactable</a>
-        <a href="https://glin.github.io/reactable/news/index.html">
-          <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
+        <a href="https://glin.github.io/reactable/news/index.html" class="external-link">
+          <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3.9000</span>
         </a>
       </span>
     </div>
@@ -118,7 +120,7 @@
   <a href="../news/index.html">News</a>
 </li>
 <li>
-  <a href="https://github.com/glin/reactable/">
+  <a href="https://github.com/glin/reactable/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -139,7 +141,7 @@
       <h1 data-toc-skip>Conditional Styling</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/glin/reactable/blob/master/vignettes/conditional-styling.Rmd"><code>vignettes/conditional-styling.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/glin/reactable/blob/HEAD/vignettes/conditional-styling.Rmd" class="external-link"><code>vignettes/conditional-styling.Rmd</code></a></small>
       <div class="hidden name"><code>conditional-styling.Rmd</code></div>
 
     </div>
@@ -164,7 +166,7 @@ JavaScript functions
   <span class="va">iris</span>,
   rowStyle <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span>
     <span class="kw">if</span> <span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="va">index</span>, <span class="st">"Sepal.Width"</span><span class="op">]</span> <span class="op">&gt;</span> <span class="fl">3.5</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fontWeight <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fontWeight <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>
     <span class="op">}</span>
   <span class="op">}</span>
 <span class="op">)</span></code></pre></div>
@@ -173,7 +175,7 @@ JavaScript functions
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
   <span class="va">iris</span>,
-  rowStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo) {
+  rowStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo) {
     if (rowInfo.row['Sepal.Width'] &gt; 3.5) {
       return { fontWeight: 'bold' }
     }
@@ -198,39 +200,39 @@ JavaScript functions
 </tbody>
 </table>
 <p>Whichever one to use depends on the situation and personal preference. You might prefer to use R functions except when you need more dynamic behavior (e.g., style based on sorted state).</p>
-<div id="example-color-scales" class="section level4">
-<h4 class="hasAnchor">
-<a href="#example-color-scales" class="anchor"></a>Example: color scales</h4>
-<p>We can use R’s built-in <a href="https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r">color utilities</a> to apply a color scale to a column:</p>
+<div class="section level4">
+<h4 id="example-color-scales">Example: color scales<a class="anchor" aria-label="anchor" href="#example-color-scales"></a>
+</h4>
+<p>We can use R’s built-in <a href="https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r" class="external-link">color utilities</a> to apply a color scale to a column:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>
-<span class="va">orange_pal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#ffe4cc"</span>, <span class="st">"#ffb54d"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span>
+<span class="va">orange_pal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">colorRamp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ffe4cc"</span>, <span class="st">"#ffb54d"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
   <span class="va">data</span>,
-  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     Petal.Length <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
       style <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span>
-        <span class="va">normalized</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">value</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span>
+        <span class="va">normalized</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">value</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span>
         <span class="va">color</span> <span class="op">&lt;-</span> <span class="fu">orange_pal</span><span class="op">(</span><span class="va">normalized</span><span class="op">)</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">color</span><span class="op">)</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>background <span class="op">=</span> <span class="va">color</span><span class="op">)</span>
       <span class="op">}</span>
     <span class="op">)</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="htmlwidget-8a1e1fa07d29e1dd288a" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8a1e1fa07d29e1dd288a">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric"},{"accessor":"Species","name":"Species","type":"factor"}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"73340520a181ac3029b2a85b706844e7"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2d15206e036bb114e8b0" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-2d15206e036bb114e8b0">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric"},{"accessor":"Species","name":"Species","type":"factor"}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"73340520a181ac3029b2a85b706844e7"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
-<div id="example-highlight-sorted-columns" class="section level4">
-<h4 class="hasAnchor">
-<a href="#example-highlight-sorted-columns" class="anchor"></a>Example: highlight sorted columns</h4>
+<div class="section level4">
+<h4 id="example-highlight-sorted-columns">Example: highlight sorted columns<a class="anchor" aria-label="anchor" href="#example-highlight-sorted-columns"></a>
+</h4>
 <p>To style sorted columns, we need to use a JavaScript function to determine whether a column is currently being sorted:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
   <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,
   defaultSorted <span class="op">=</span> <span class="st">"Petal.Length"</span>,
   defaultColDef <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo, colInfo, state) {
+    class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo, colInfo, state) {
       // Highlight sorted columns
       for (let i = 0; i &lt; state.sorted.length; i++) {
         if (state.sorted[i].id === colInfo.id) {
@@ -248,15 +250,15 @@ JavaScript functions
   background: rgba(0, 0, 0, 0.03);
 }
 </style>
-<div id="htmlwidget-8e5da2b722db03b79f23" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8e5da2b722db03b79f23">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Species","name":"Species","type":"factor","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"df9fed87c78a24336b8995e2beca0a52"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
+<div id="htmlwidget-58ba38e28abd0367d543" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-58ba38e28abd0367d543">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Species","name":"Species","type":"factor","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"df9fed87c78a24336b8995e2beca0a52"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
 </div>
-<div id="cell-styling" class="section level2">
-<h2 class="hasAnchor">
-<a href="#cell-styling" class="anchor"></a>Cell Styling</h2>
-<div id="cell-r-functions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#cell-r-functions" class="anchor"></a>R functions</h3>
+<div class="section level2">
+<h2 id="cell-styling">Cell Styling<a class="anchor" aria-label="anchor" href="#cell-styling"></a>
+</h2>
+<div class="section level3">
+<h3 id="cell-r-functions">R functions<a class="anchor" aria-label="anchor" href="#cell-r-functions"></a>
+</h3>
 <p>Both <code>style</code> and <code>class</code> take an R function with up to 3 optional arguments:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
@@ -268,7 +270,7 @@ JavaScript functions
     <span class="co">#</span>
     <span class="co"># output:</span>
     <span class="co">#   - a named list with camelCased property names</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>, marginLeft <span class="op">=</span> <span class="st">"30px"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>, marginLeft <span class="op">=</span> <span class="st">"30px"</span><span class="op">)</span>
     <span class="co">#   - or an inline style string</span>
     <span class="st">"color: red; margin-left: 30px;"</span>
   <span class="op">}</span>,
@@ -287,13 +289,13 @@ JavaScript functions
 <p>NOTE: R functions cannot apply styles to aggregated cells.</p>
 </blockquote>
 </div>
-<div id="cell-js-functions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#cell-js-functions" class="anchor"></a>JavaScript functions</h3>
-<p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS()</a></code>, with up to 3 optional arguments:</p>
+<div class="section level3">
+<h3 id="cell-js-functions">JavaScript functions<a class="anchor" aria-label="anchor" href="#cell-js-functions"></a>
+</h3>
+<p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code>, with up to 3 optional arguments:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"
+  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
     function(rowInfo, colInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
@@ -305,7 +307,7 @@ JavaScript functions
       return { backgroundColor: 'gray' }
     }
   "</span><span class="op">)</span>,
-  class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"
+  class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
     function(rowInfo, colInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
@@ -318,9 +320,10 @@ JavaScript functions
     }
   "</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="rowinfo-properties" class="section level4">
-<h4 class="hasAnchor">
-<a href="#rowinfo-properties" class="anchor"></a><code>rowInfo</code> properties</h4>
+<div class="section level4">
+<h4 id="rowinfo-properties">
+<code>rowInfo</code> properties<a class="anchor" aria-label="anchor" href="#rowinfo-properties"></a>
+</h4>
 <table class="table props-tbl">
 <thead><tr>
 <th>Property</th>
@@ -403,9 +406,10 @@ JavaScript functions
 </tbody>
 </table>
 </div>
-<div id="colinfo-properties" class="section level4">
-<h4 class="hasAnchor">
-<a href="#colinfo-properties" class="anchor"></a><code>colInfo</code> properties</h4>
+<div class="section level4">
+<h4 id="colinfo-properties">
+<code>colInfo</code> properties<a class="anchor" aria-label="anchor" href="#colinfo-properties"></a>
+</h4>
 <table class="table props-tbl">
 <thead><tr>
 <th>Property</th>
@@ -443,9 +447,10 @@ JavaScript functions
 </tbody>
 </table>
 </div>
-<div id="state-properties" class="section level4">
-<h4 class="hasAnchor">
-<a href="#state-properties" class="anchor"></a><code>state</code> properties</h4>
+<div class="section level4">
+<h4 id="state-properties">
+<code>state</code> properties<a class="anchor" aria-label="anchor" href="#state-properties"></a>
+</h4>
 <table class="table props-tbl">
 <thead><tr>
 <th>Property</th>
@@ -509,6 +514,15 @@ JavaScript functions
 </tr>
 <tr>
 <th scope="row">
+<code>selected</code>
+</th>
+<td>
+<code>[0, 1, 4]</code>
+</td>
+<td>array of selected row indices (zero-based, new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
 <code>pageRows</code>
 </th>
 <td>
@@ -539,12 +553,12 @@ JavaScript functions
 </div>
 </div>
 </div>
-<div id="row-styling" class="section level2">
-<h2 class="hasAnchor">
-<a href="#row-styling" class="anchor"></a>Row Styling</h2>
-<div id="row-r-functions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#row-r-functions" class="anchor"></a>R functions</h3>
+<div class="section level2">
+<h2 id="row-styling">Row Styling<a class="anchor" aria-label="anchor" href="#row-styling"></a>
+</h2>
+<div class="section level3">
+<h3 id="row-r-functions">R functions<a class="anchor" aria-label="anchor" href="#row-r-functions"></a>
+</h3>
 <p>Both <code>rowStyle</code> and <code>rowClass</code> take an R function with a single argument:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
@@ -554,7 +568,7 @@ JavaScript functions
     <span class="co">#</span>
     <span class="co"># output:</span>
     <span class="co">#   - a named list with camelCased property names</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>, marginLeft <span class="op">=</span> <span class="st">"30px"</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>, marginLeft <span class="op">=</span> <span class="st">"30px"</span><span class="op">)</span>
     <span class="co">#   - or an inline style string</span>
     <span class="st">"color: red; margin-left: 30px;"</span>
   <span class="op">}</span>,
@@ -571,13 +585,13 @@ JavaScript functions
 <p>NOTE: R functions cannot apply styles to aggregated rows.</p>
 </blockquote>
 </div>
-<div id="row-js-functions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#row-js-functions" class="anchor"></a>JavaScript functions</h3>
+<div class="section level3">
+<h3 id="row-js-functions">JavaScript functions<a class="anchor" aria-label="anchor" href="#row-js-functions"></a>
+</h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
-  rowStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"
+  rowStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
     function(rowInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
@@ -588,7 +602,7 @@ JavaScript functions
       return { backgroundColor: 'gray' }
     }
   "</span><span class="op">)</span>,
-  rowClass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html">JS</a></span><span class="op">(</span><span class="st">"
+  rowClass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
     function(rowInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
@@ -600,9 +614,10 @@ JavaScript functions
     }
   "</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="rowinfo-properties-1" class="section level4">
-<h4 class="hasAnchor">
-<a href="#rowinfo-properties-1" class="anchor"></a><code>rowInfo</code> properties</h4>
+<div class="section level4">
+<h4 id="rowinfo-properties-1">
+<code>rowInfo</code> properties<a class="anchor" aria-label="anchor" href="#rowinfo-properties-1"></a>
+</h4>
 <table class="table props-tbl">
 <thead><tr>
 <th>Property</th>
@@ -685,9 +700,10 @@ JavaScript functions
 </tbody>
 </table>
 </div>
-<div id="state-properties-1" class="section level4">
-<h4 class="hasAnchor">
-<a href="#state-properties-1" class="anchor"></a><code>state</code> properties</h4>
+<div class="section level4">
+<h4 id="state-properties-1">
+<code>state</code> properties<a class="anchor" aria-label="anchor" href="#state-properties-1"></a>
+</h4>
 <table class="table props-tbl">
 <thead><tr>
 <th>Property</th>
@@ -748,6 +764,15 @@ JavaScript functions
 <code>"petal"</code>
 </td>
 <td>table search value (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>selected</code>
+</th>
+<td>
+<code>[0, 1, 4]</code>
+</td>
+<td>array of selected row indices (zero-based, new in v0.2.3.9000)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -830,11 +855,13 @@ JavaScript functions
 
 
       <footer><div class="copyright">
-  <p>Developed by Greg Lin.</p>
+  <p></p>
+<p>Developed by Greg Lin.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -842,6 +869,8 @@ JavaScript functions
 
   
 
+
+  
 
   </body>
 </html>
