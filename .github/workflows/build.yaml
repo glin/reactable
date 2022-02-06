@@ -104,7 +104,7 @@ jobs:
           Rscript pkgdown/build-docs.R
 
       - name: Deploy pkgdown site
-        if: matrix.config.release && github.ref == 'refs/heads/master'
+        if: matrix.config.release && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

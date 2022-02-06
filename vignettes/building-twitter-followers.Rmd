@@ -421,7 +421,7 @@ Demo Cookbook to learn more about:
 - [Inserting links in a table](cookbook/cookbook.html#insert-links)
 
 The final table and code is shown below. You can also find the source code
-for the demo at [`vignettes/twitter-followers/twitter-followers.Rmd`](https://github.com/glin/reactable/blob/master/vignettes/twitter-followers/twitter-followers.Rmd).
+for the demo at [`vignettes/twitter-followers/twitter-followers.Rmd`](https://github.com/glin/reactable/blob/main/vignettes/twitter-followers/twitter-followers.Rmd).
 
 ---
 

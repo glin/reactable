@@ -155,7 +155,7 @@ Raw data: [`wwc_forecasts.csv`](wwc_forecasts.csv)
 
 <h2>Source Code</h2>
 
-Full source: [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.com/glin/reactable/blob/master/vignettes/womens-world-cup/womens-world-cup.Rmd)
+Full source: [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.com/glin/reactable/blob/main/vignettes/womens-world-cup/womens-world-cup.Rmd)
 
 ```{r ref.label="table", eval=FALSE}
 ```
