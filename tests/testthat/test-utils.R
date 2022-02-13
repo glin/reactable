@@ -214,20 +214,32 @@ test_that("asReactTag preserves HTML dependencies", {
 })
 
 test_that("asReactAttributes", {
-  attribs <- list(class = "cls", checked = TRUE, value = "x", "for" = "id")
-  expected <- list(className = "cls", defaultChecked = TRUE, defaultValue = "x", htmlFor = "id")
-  expect_equal(asReactAttributes(attribs), expected)
+  attribs <- list(class = "cls", "for" = "id", tabindex = 1)
+  expected <- list(className = "cls", htmlFor = "id", tabIndex = 1)
+  expect_equal(asReactAttributes(attribs, "th"), expected)
+
+  attribs <- list(value = "x")
+  expect_equal(asReactAttributes(attribs, "input"), list(defaultValue = "x"))
+  expect_equal(asReactAttributes(attribs, "select"), list(defaultValue = "x"))
+  expect_equal(asReactAttributes(attribs, "textarea"), list(defaultValue = "x"))
+  expect_equal(asReactAttributes(attribs, "option"), list(value = "x"))
+  expect_equal(asReactAttributes(attribs, "button"), list(value = "x"))
+
+  attribs <- list(checked = NA)
+  expect_equal(asReactAttributes(attribs, "input"), list(defaultChecked = TRUE))
+  expect_equal(asReactAttributes(attribs, "div"), list(checked = NA))
 
   attribs <- list(style = "border: none; color: red; text-align: left")
   expected <- list(style = list(border = "none", color = "red", "text-align" = "left"))
-  expect_equal(asReactAttributes(attribs), expected)
+  expect_equal(asReactAttributes(attribs, "div"), expected)
 
   attribs <- list(style = list(border = "none"))
   expected <- list(style = list(border = "none"))
-  expect_equal(asReactAttributes(attribs), expected)
+  expect_equal(asReactAttributes(attribs, "div"), expected)
 
   # Non-converted attributes
-  expect_equal(asReactAttributes(list("data-attr" = "t")), list("data-attr" = "t"))
+  expect_equal(asReactAttributes(list("data-attr" = "t"), "div"), list("data-attr" = "t"))
+  expect_equal(asReactAttributes(list("aria-label" = "lab"), "div"), list("aria-label" = "lab"))
 })
 
 test_that("asReactStyle", {

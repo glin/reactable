@@ -125,7 +125,7 @@ asReactTag <- function(x) {
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
   x$children <- lapply(x$children, asReactTag)
-  x$attribs <- asReactAttributes(x$attribs)
+  x$attribs <- asReactAttributes(x$attribs, x$name)
   x
 }
 
@@ -166,13 +166,15 @@ unnestTagList <- function(x) {
   htmltools::attachDependencies(tags, htmlDeps)
 }
 
-asReactAttributes <- function(attribs) {
+# Transform HTML attributes to React DOM attributes.
+# Not all attributes are supported at the moment - notable exceptions are
+# event handler attributes and `selected` attributes for <option> elements.
+asReactAttributes <- function(attribs, tagName) {
   reactAttribs <- list(
     autofocus = "autoFocus",
     autocomplete = "autoComplete",
     autoplay = "autoPlay",
     charset = "charSet",
-    checked = "defaultChecked",
     class = "className",
     colspan = "colSpan",
     crossorigin = "crossOrigin",
@@ -198,8 +200,7 @@ asReactAttributes <- function(attribs) {
     srcdoc = "srcDoc",
     srclang = "srcLang",
     tabindex = "tabIndex",
-    usemap = "useMap",
-    value = "defaultValue"
+    usemap = "useMap"
   )
 
   for (name in names(attribs)) {
@@ -209,9 +210,26 @@ asReactAttributes <- function(attribs) {
     }
   }
 
-  style <- attribs$style
+  if (tagName %in% c("input", "select", "textarea")) {
+    value <- attribs[["value"]]
+    if (!is.null(value)) {
+      attribs[["defaultValue"]] <- value
+      attribs[["value"]] <- NULL
+    }
+  }
+
+  if (tagName == "input") {
+    checked <- attribs[["checked"]]
+    if (!is.null(checked)) {
+      checked <- if (is.na(checked)) TRUE else checked
+      attribs[["defaultChecked"]] <- checked
+      attribs[["checked"]] <- NULL
+    }
+  }
+
+  style <- attribs[["style"]]
   if (!is.null(style) && is.character(style)) {
-    attribs$style <- asReactStyle(style)
+    attribs[["style"]] <- asReactStyle(style)
   }
 
   attribs
