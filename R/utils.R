@@ -168,9 +168,9 @@ unnestTagList <- function(x) {
 
 # Transform HTML attributes to React DOM attributes.
 # Not all attributes are supported at the moment - notable exceptions are
-# event handler attributes and `selected` attributes for <option> elements.
+# some event handler attributes and `selected` attributes for <option> elements.
 asReactAttributes <- function(attribs, tagName) {
-  reactAttribs <- list(
+  htmlAttribs <- list(
     autofocus = "autoFocus",
     autocomplete = "autoComplete",
     autoplay = "autoPlay",
@@ -203,13 +203,62 @@ asReactAttributes <- function(attribs, tagName) {
     usemap = "useMap"
   )
 
+  eventAttribs <- list(
+    onblur = "onBlur",
+    onchange = "onChange",
+    onclick = "onClick",
+    ondblclick = "onDoubleClick",
+    onfocus = "onFocus",
+    ongotpointercapture = "onGotPointerCapture",
+    onlostpointercapture = "onLostPointerCapture",
+    oninput = "onInput",
+    onkeydown = "onKeyDown",
+    onkeypress = "onKeyPress",
+    onkeyup = "onKeyUp",
+    onload = "onLoad",
+    onmousedown = "onMouseDown",
+    onmouseenter = "onMouseEnter",
+    onmouseleave = "onMouseLeave",
+    onmousemove = "onMouseMove",
+    onmouseout = "onMouseOut",
+    onmouseover = "onMouseOver",
+    onmouseup = "onMouseUp",
+    onpointercancel = "onPointerCancel",
+    onpointerdown = "onPointerDown",
+    onpointerenter = "onPointerEnter",
+    onpointerleave = "onPointerLeave",
+    onpointermove = "onPointerMove",
+    onpointerout = "onPointerOut",
+    onpointerover = "onPointerOver",
+    onpointerup = "onPointerUp",
+    onresize = "onResize",
+    onselect = "onSelect",
+    ontouchcancel = "onTouchCancel",
+    ontouchend = "onTouchEnd",
+    ontouchmove = "onTouchMove",
+    ontouchstart = "onTouchStart"
+  )
+
   for (name in names(attribs)) {
-    if (!is.null(reactAttribs[[name]])) {
-      attribs[[reactAttribs[[name]]]] <- attribs[[name]]
+    # Map HTML attributes to React attributes. Not required as React still accepts
+    # the standard attribute names.
+    if (!is.null(htmlAttribs[[name]])) {
+      attribs[[htmlAttribs[[name]]]] <- attribs[[name]]
+      attribs[[name]] <- NULL
+    }
+
+    # Transform inline event attributes, ensuring `this` and `event` are in scope.
+    if (!is.null(eventAttribs[[name]])) {
+      attribs[[eventAttribs[[name]]]] <- JS(sprintf(
+        "function(_e){(function(event){%s}).apply(event.target,[_e])}",
+        attribs[[name]]
+      ))
       attribs[[name]] <- NULL
     }
   }
 
+  # Transform form element attributes to their uncontrolled equivalents, since
+  # controlled attributes don't make sense outside of React.
   if (tagName %in% c("input", "select", "textarea")) {
     value <- attribs[["value"]]
     if (!is.null(value)) {

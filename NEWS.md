@@ -143,6 +143,8 @@ where possible, but note that there are several breaking changes.
   ([#187](https://github.com/glin/reactable/issues/187)).
 * Disabling pagination using `reactable(pagination = FALSE)` now works correctly
   on table data updates ([#214](https://github.com/glin/reactable/issues/214)).
+* More HTML attributes are supported when rendering HTML tags, such as `onclick`
+  ([#150](https://github.com/glin/reactable/issues/150)).
 
 # reactable 0.2.3
 

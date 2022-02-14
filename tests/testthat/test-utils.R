@@ -229,6 +229,15 @@ test_that("asReactAttributes", {
   expect_equal(asReactAttributes(attribs, "input"), list(defaultChecked = TRUE))
   expect_equal(asReactAttributes(attribs, "div"), list(checked = NA))
 
+  attribs <- list(onchange = "onChange(this, event)", onclick = "console.log(this, event);")
+  expect_equal(
+    asReactAttributes(attribs, "select"),
+    list(
+      onChange = JS("function(_e){(function(event){onChange(this, event)}).apply(event.target,[_e])}"),
+      onClick = JS("function(_e){(function(event){console.log(this, event);}).apply(event.target,[_e])}")
+    )
+  )
+
   attribs <- list(style = "border: none; color: red; text-align: left")
   expected <- list(style = list(border = "none", color = "red", "text-align" = "left"))
   expect_equal(asReactAttributes(attribs, "div"), expected)
