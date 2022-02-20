@@ -229,11 +229,16 @@ reactable(iris[1:5, ], showPagination = TRUE)
 ```
 
 ### No pagination
+
 Tables are paginated by default, but you can disable pagination by setting `pagination` to `FALSE`:
+
 ```{r}
 reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 ```
 
+> **NOTE:** Disabling pagination is not recommended for large tables with many
+> interactive elements (such as links, expand buttons, or selection checkboxes),
+> as that can make it difficult for keyboard users to navigate the page.
 
 ## Grouping and Aggregation
 You can group rows in a table by specifying one or more columns in `groupBy`:
