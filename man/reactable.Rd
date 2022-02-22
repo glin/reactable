@@ -52,7 +52,8 @@ reactable(
   height = "auto",
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
-  elementId = NULL
+  elementId = NULL,
+  server = FALSE
 )
 }
 \arguments{
@@ -199,6 +200,8 @@ Can also be a function that returns a \code{\link[=reactableTheme]{reactableThem
 \code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}
 
 \item{elementId}{Element ID for the widget.}
+
+\item{server}{Enable server-side data processing within Shiny apps?}
 }
 \value{
 A \code{reactable} HTML widget that can be used in R Markdown documents

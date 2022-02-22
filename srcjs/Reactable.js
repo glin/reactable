@@ -461,12 +461,17 @@ function Table({
   crosstalkGroup,
   crosstalkId,
   elementId,
-  nested
+  nested,
+  dataURL
 }) {
   const [newData, setNewData] = React.useState(null)
   const data = React.useMemo(() => {
     return newData ? newData : originalData
   }, [newData, originalData])
+
+  const useServerData = dataURL != null
+  const [serverPageCount, setServerPageCount] = React.useState(null)
+  const [serverRowCount, setServerRowCount] = React.useState(null)
 
   const dataColumns = React.useMemo(
     () => columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), []),
@@ -582,7 +587,12 @@ function Table({
       // Maintain resized state when the data changes
       autoResetResize: false,
       // Reset current page when the data changes (e.g., sorting, filtering, searching)
-      autoResetPage: true
+      autoResetPage: true,
+      manualPagination: useServerData,
+      manualSortBy: useServerData,
+      manualGlobalFilter: useServerData,
+      manualFilters: useServerData,
+      pageCount: useServerData ? serverPageCount : -1
     },
     useResizeColumns,
     useFlexLayout,
@@ -597,6 +607,49 @@ function Table({
     useRowSelectColumn,
     useCrosstalkColumn
   )
+
+  // Server-side data
+  React.useEffect(() => {
+    if (!useServerData) {
+      return
+    }
+    const url = new window.URL(dataURL, window.location)
+    const params = {
+      filters: state.filters,
+      globalFilter: state.globalFilter,
+      sortBy: state.sortBy,
+      pageIndex: state.pageIndex,
+      pageSize: state.pageSize
+    }
+    window
+      .fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      })
+      .then(res => res.json())
+      .then(body => {
+        const data = columnsToRows(body.data)
+        const pageCount = body.pageCount
+        const rowCount = body.rowCount
+        setNewData(data)
+        setServerPageCount(pageCount)
+        setServerRowCount(rowCount)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }, [
+    useServerData,
+    dataURL,
+    state.pageIndex,
+    state.pageSize,
+    state.sortBy,
+    state.globalFilter,
+    state.filters
+  ])
 
   // Update table when default values change (preserves behavior from v6)
   useMountedLayoutEffect(() => {
@@ -1315,7 +1368,8 @@ function Table({
         ? Math.min(state.pageSize, ...(pageSizeOptions || []))
         : state.pageSize
 
-      if (maxRowCount.current <= minPageSize) {
+      const rowCount = serverRowCount != null ? serverRowCount : maxRowCount.current
+      if (rowCount <= minPageSize) {
         return null
       }
     }
@@ -1333,7 +1387,7 @@ function Table({
         canPrevious={instance.canPreviousPage}
         onPageChange={instance.gotoPage}
         onPageSizeChange={instance.setPageSize}
-        rowCount={instance.rows.length}
+        rowCount={serverRowCount != null ? serverRowCount : instance.rows.length}
         theme={theme}
         language={language}
       />

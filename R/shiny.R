@@ -262,3 +262,54 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 
   state
 }
+
+reactableFilterFunc <- function(data, req) {
+  body <- rawToChar(req$rook.input$read())
+  params <- jsonlite::fromJSON(body, simplifyVector = FALSE)
+  filteredData <- filterReactableData(data$data, data$columns, params)
+  content <- jsonlite::toJSON(filteredData, dataframe = "columns", rownames = FALSE,
+                              digits = NA, POSIXt = "ISO8601", Date = "ISO8601", UTC = TRUE,
+                              force = TRUE, auto_unbox = TRUE)
+  shiny::httpResponse(status = 200L, content_type = "application/json", content = content)
+}
+
+filterReactableData <- function(data, columns, params) {
+  filters <- params$filters
+  globalFilter <- params$globalFilter
+  sortBy <- params$sortBy
+  pageSize <- params$pageSize
+  pageIndex <- params$pageIndex
+
+  # Column filters - simple text match for now
+  if (length(filters) > 0) {
+    for (filter in filters) {
+      data <- data[grepl(tolower(filter$value), tolower(data[[filter$id]]), fixed = TRUE), ]
+    }
+  }
+
+  # Global filtering/searching - simple text match for now
+  if (!is.null(globalFilter)) {
+    matched <- FALSE
+    for (col in colnames(data)) {
+      matched <- grepl(tolower(globalFilter), tolower(data[[col]]), fixed = TRUE) | matched
+    }
+    data <- data[matched, ]
+  }
+
+  # Sorting - only one column for now
+  if (length(sortBy) > 0) {
+    sortInfo <- sortBy[[1]]
+    sorted <- order(data[[sortInfo$id]], decreasing = isTRUE(sortInfo$desc))
+    data <- data[sorted, ]
+  }
+
+  # Pagination
+  rowStart <- min(pageIndex * pageSize + 1, nrow(data))
+  rowEnd <- min(pageIndex * pageSize + pageSize, nrow(data))
+  page <- data[rowStart:rowEnd, ]
+
+  pageCount <- ceiling(nrow(data) / pageSize)
+  rowCount <- nrow(data)
+
+  list(data = page, pageCount = pageCount, rowCount = rowCount)
+}
