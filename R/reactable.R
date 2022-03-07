@@ -245,6 +245,11 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
   }
 
   columnKeys <- colnames(data)
+
+  # Exclude special column for sub rows
+  subRowsKey <- ".subRows"
+  columnKeys <- columnKeys[columnKeys != subRowsKey]
+
   if (!is.null(details)) {
     detailsKey <- ".details"
     columnKeys <- c(detailsKey, columnKeys)
@@ -259,6 +264,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     # Prepend column
     columns <- c(stats::setNames(list(detailsColumn), detailsKey), columns)
   }
+
   if (!is.null(selection)) {
     selectionKey <- ".selection"
     columnKeys <- c(selectionKey, columnKeys)
@@ -269,6 +275,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     }
     columns[[selectionKey]] <- selectionColumn
   }
+
   if (!is.null(defaultColDef)) {
     if (!is.colDef(defaultColDef)) {
       stop("`defaultColDef` must be a column definition")
@@ -278,6 +285,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     })
     columns <- stats::setNames(columns, columnKeys)
   }
+
   if (!is.null(defaultColGroup)) {
     if (!is.colGroup(defaultColGroup)) {
       stop("`defaultColGroup` must be a column group definition")
@@ -286,6 +294,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       mergeLists(defaultColGroup, group)
     })
   }
+
   if (!is.null(columns)) {
     if (!isNamedList(columns) || !all(sapply(columns, is.colDef))) {
       stop("`columns` must be a named list of column definitions")
@@ -294,6 +303,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       stop("`columns` names must exist in `data`")
     }
   }
+
   if (!is.null(columnGroups)) {
     if (!all(sapply(columnGroups, is.colGroup))) {
       stop("`columnGroups` must be a list of column group definitions")

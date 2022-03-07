@@ -224,12 +224,13 @@ test_that("list-columns are serialized correctly", {
       c("a", "b"),
       list(x = TRUE),
       # Length-1 data frame columns should still be arrays
-      data.frame(x = "y")
+      data.frame(x = "y"),
+      NA
     ))
   )
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":["xy",["xy"],[1,2,3],["a","b"],{"x":true},{"x":["y"]}]}')
+  expect_equal(as.character(attribs$data), '{"x":["xy",["xy"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null]}')
 })
 
 test_that("supports Crosstalk", {
@@ -591,6 +592,20 @@ test_that("paginateSubRows", {
   expect_equal(getAttrib(tbl, "paginateSubRows"), NULL)
 
   expect_error(reactable(data, paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
+})
+
+test_that("sub rows", {
+  data <- data.frame(
+    x = c(1, 2),
+    .subRows = I(list(
+      data.frame(x = c(3, 4)),
+      NA
+    ))
+  )
+  tbl <- reactable(data)
+  columns <- getAttrib(tbl, "columns")
+  expect_equal(length(columns), 1)
+  expect_equal(columns[[1]]$accessor, "x")
 })
 
 test_that("column renderers", {

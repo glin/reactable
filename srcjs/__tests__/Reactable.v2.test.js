@@ -7148,6 +7148,36 @@ describe('grouping and aggregation', () => {
   })
 })
 
+describe('sub rows', () => {
+  it('subRows is a valid column ID', () => {
+    const props = {
+      data: { a: [1, 2], b: [3, 4], subRows: ['a', 'b'] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' },
+        { name: 'colSubRows', accessor: 'subRows' }
+      ]
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers).toHaveLength(3)
+    expect(getByText('colSubRows')).toBeVisible()
+  })
+
+  it('handles data with sub rows', () => {
+    const props = {
+      data: { a: [1, 2], b: [3, 4], '.subRows': [{ a: [5, 6], b: [7, 8] }, null] },
+      columns: [
+        { name: 'colA', accessor: 'a' },
+        { name: 'colB', accessor: 'b' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const headers = getHeaders(container)
+    expect(headers).toHaveLength(2)
+  })
+})
+
 describe('cell click actions', () => {
   it('expands row details on click', () => {
     const props = {

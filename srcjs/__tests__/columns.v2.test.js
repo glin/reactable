@@ -17,14 +17,35 @@ import * as aggregators from '../aggregators.v2'
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
 
-test('columnsToRows', () => {
-  const columns = { a: [1, 2, 3], b: ['x', 'y', 'z'] }
-  const rows = columnsToRows(columns)
-  expect(rows).toEqual([
-    { a: 1, b: 'x' },
-    { a: 2, b: 'y' },
-    { a: 3, b: 'z' }
-  ])
+describe('columnsToRows', () => {
+  test('converts column-wise data to row-wise format', () => {
+    const columns = { a: [1, 2, 3], b: ['x', 'y', 'z'], c: [{}, { a: 1 }, null] }
+    const rows = columnsToRows(columns)
+    expect(rows).toEqual([
+      { a: 1, b: 'x', c: {} },
+      { a: 2, b: 'y', c: { a: 1 } },
+      { a: 3, b: 'z', c: null }
+    ])
+  })
+
+  test('handles empty objects', () => {
+    expect(columnsToRows({})).toEqual([])
+  })
+
+  test('converts data with sub rows', () => {
+    const columns = {
+      a: [1, 2, 3, 4, 5],
+      '.subRows': [{ a: [1], b: ['a'] }, { a: ['a', 'b'] }, null, {}, []]
+    }
+    const rows = columnsToRows(columns)
+    expect(rows).toEqual([
+      { a: 1, '.subRows': [{ a: 1, b: 'a' }] },
+      { a: 2, '.subRows': [{ a: 'a' }, { a: 'b' }] },
+      { a: 3 },
+      { a: 4, '.subRows': [] },
+      { a: 5, '.subRows': [] }
+    ])
+  })
 })
 
 test('RawHTML', () => {

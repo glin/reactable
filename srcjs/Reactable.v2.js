@@ -19,7 +19,7 @@ import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
-import { columnsToRows, buildColumnDefs, emptyValue } from './columns.v2'
+import { columnsToRows, buildColumnDefs, emptyValue, getSubRows } from './columns.v2'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
 import { classNames, convertRowsToV6, getLeafColumns, rowsToCSV, downloadCSV } from './utils'
@@ -537,6 +537,7 @@ function Table({
       globalFilter,
       paginateExpandedRows: paginateSubRows ? true : false,
       disablePagination: !pagination,
+      getSubRows,
       // Disable manual row expansion
       manualExpandedKey: null,
       // Maintain grouped state when the data changes
