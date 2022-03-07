@@ -1,8 +1,11 @@
 // useRowSelect hook modified to:
 // - Set row.isSelected for sub rows when paginateExpandedRows = false
+//   (https://github.com/TanStack/react-table/issues/2908)
 // - Include an instance.setRowsSelected() function to set selected rows.
 //   This is also useful to clear all selection, since toggleAllRowsSelected()
 //   only affects visible rows, excluding any selected rows that may be filtered out.
+// - Handle sub rows correctly when custom getSubRows is used
+//  (https://github.com/TanStack/react-table/pull/2886)
 
 import React from 'react'
 import {
@@ -138,7 +141,7 @@ function reducer(state, action, previousState, instance) {
 
   if (action.type === actions.toggleRowSelected) {
     const { id, value: setSelected } = action
-    const { rowsById, selectSubRows = true, getSubRows } = instance
+    const { rowsById, selectSubRows = true } = instance
     const isSelected = state.selectedRowIds[id]
     const shouldExist = typeof setSelected !== 'undefined' ? setSelected : !isSelected
 
@@ -159,8 +162,8 @@ function reducer(state, action, previousState, instance) {
         }
       }
 
-      if (selectSubRows && getSubRows(row)) {
-        return getSubRows(row).forEach(row => handleRowById(row.id))
+      if (selectSubRows && row.subRows) {
+        return row.subRows.forEach(row => handleRowById(row.id))
       }
     }
 
@@ -174,7 +177,7 @@ function reducer(state, action, previousState, instance) {
 
   if (action.type === actions.toggleAllPageRowsSelected) {
     const { value: setSelected } = action
-    const { page, rowsById, selectSubRows = true, isAllPageRowsSelected, getSubRows } = instance
+    const { page, rowsById, selectSubRows = true, isAllPageRowsSelected } = instance
 
     const selectAll = typeof setSelected !== 'undefined' ? setSelected : !isAllPageRowsSelected
 
@@ -191,8 +194,8 @@ function reducer(state, action, previousState, instance) {
         }
       }
 
-      if (selectSubRows && getSubRows(row)) {
-        return getSubRows(row).forEach(row => handleRowById(row.id))
+      if (selectSubRows && row.subRows) {
+        return row.subRows.forEach(row => handleRowById(row.id))
       }
     }
 
@@ -206,7 +209,7 @@ function reducer(state, action, previousState, instance) {
 
   if (action.type === actions.setRowsSelected) {
     const { ids: setSelected } = action
-    const { rowsById, selectSubRows = true, getSubRows } = instance
+    const { rowsById, selectSubRows = true } = instance
 
     const newSelectedRowIds = {}
 
@@ -223,8 +226,8 @@ function reducer(state, action, previousState, instance) {
         newSelectedRowIds[id] = true
       }
 
-      if (selectSubRows && getSubRows(row)) {
-        return getSubRows(row).forEach(row => handleRowById(row.id))
+      if (selectSubRows && row.subRows) {
+        return row.subRows.forEach(row => handleRowById(row.id))
       }
     }
 
@@ -250,8 +253,7 @@ function useInstance(instance) {
     state: { selectedRowIds },
     selectSubRows = true,
     dispatch,
-    page,
-    getSubRows
+    page
   } = instance
 
   ensurePluginOrder(
@@ -264,10 +266,10 @@ function useInstance(instance) {
     const selectedFlatRows = []
 
     // Ensure row.isSelected is set for sub rows when paginateExpandedRows = false
-    // https://github.com/tannerlinsley/react-table/issues/2908
+    // https://github.com/TanStack/react-table/issues/2908
     const handleRow = row => {
       const isSelected = selectSubRows
-        ? getRowIsSelected(row, selectedRowIds, getSubRows)
+        ? getRowIsSelected(row, selectedRowIds)
         : !!selectedRowIds[row.id]
       row.isSelected = !!isSelected
       row.isSomeSelected = isSelected === null
@@ -284,7 +286,7 @@ function useInstance(instance) {
     rows.forEach(row => handleRow(row))
 
     return selectedFlatRows
-  }, [rows, selectSubRows, selectedRowIds, getSubRows])
+  }, [rows, selectSubRows, selectedRowIds])
 
   let isAllRowsSelected = Boolean(
     Object.keys(nonGroupedRowsById).length && Object.keys(selectedRowIds).length
@@ -365,12 +367,12 @@ function prepareRow(row, { instance }) {
   })
 }
 
-function getRowIsSelected(row, selectedRowIds, getSubRows) {
+function getRowIsSelected(row, selectedRowIds) {
   if (selectedRowIds[row.id]) {
     return true
   }
 
-  const subRows = getSubRows(row)
+  const subRows = row.subRows
 
   if (subRows && subRows.length) {
     let allChildrenSelected = true
@@ -382,7 +384,7 @@ function getRowIsSelected(row, selectedRowIds, getSubRows) {
         return
       }
 
-      if (getRowIsSelected(subRow, selectedRowIds, getSubRows)) {
+      if (getRowIsSelected(subRow, selectedRowIds)) {
         someSelected = true
       } else {
         allChildrenSelected = false
