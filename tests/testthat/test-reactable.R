@@ -214,6 +214,24 @@ test_that("data with custom classes not supported by jsonlite are serialized", {
   }
 })
 
+test_that("list-columns are serialized correctly", {
+  data <- data.frame(
+    x = I(list(
+      # Length-1 vectors should be unboxed, except when wrapped in I()
+      "xy",
+      I("xy"),
+      list(1, 2, 3),
+      c("a", "b"),
+      list(x = TRUE),
+      # Length-1 data frame columns should still be arrays
+      data.frame(x = "y")
+    ))
+  )
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"x":["xy",["xy"],[1,2,3],["a","b"],{"x":true},{"x":["y"]}]}')
+})
+
 test_that("supports Crosstalk", {
   data <- crosstalk::SharedData$new(
     data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE),
@@ -238,7 +256,7 @@ test_that("supports Crosstalk", {
   data <- crosstalk::SharedData$new(data.frame(x = I(list(list(1,2,3), list(x = 1)))), key = ~x)
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":[[[1],[2],[3]],{"x":[1]}]}')
+  expect_equal(as.character(attribs$data), '{"x":[[1,2,3],{"x":1}]}')
   expect_equal(attribs$crosstalkKey, I(list(list(1,2,3), list(x = 1))))
   expect_equal(attribs$crosstalkGroup, data$groupName())
 })

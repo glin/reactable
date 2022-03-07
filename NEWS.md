@@ -145,6 +145,9 @@ where possible, but note that there are several breaking changes.
   on table data updates ([#214](https://github.com/glin/reactable/issues/214)).
 * More HTML attributes are supported when rendering HTML tags, such as `onclick`
   ([#150](https://github.com/glin/reactable/issues/150)).
+* When accessing data in JavaScript render functions and style functions,
+  single elements (length 1 vectors) in list-columns are no longer represented
+  as arrays.
 
 # reactable 0.2.3
 
