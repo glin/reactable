@@ -20,7 +20,7 @@ afterEach(() => jest.clearAllMocks())
 
 expect.extend(matchers)
 
-const getRoot = container => container.querySelector('.ReactTable')
+const getRoot = container => container.querySelector('.Reactable.ReactTable')
 const getTable = container => container.querySelector('.rt-table')
 const getThead = container => container.querySelector('.rt-thead')
 const getTbody = container => container.querySelector('.rt-tbody')

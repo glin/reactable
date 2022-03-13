@@ -115,7 +115,8 @@ export default function Reactable({
 }
 
 const RootComponent = React.forwardRef(function RootComponent({ className, ...rest }, ref) {
-  return <div ref={ref} className={classNames('ReactTable', className)} {...rest} />
+  // Keep ReactTable class for legacy compatibility (deprecated in v0.2.3.9000)
+  return <div ref={ref} className={classNames('Reactable', 'ReactTable', className)} {...rest} />
 })
 
 const TableComponent = React.forwardRef(function TableComponent({ className, ...rest }, ref) {

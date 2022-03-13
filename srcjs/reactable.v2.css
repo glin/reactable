@@ -1,4 +1,4 @@
-.ReactTable {
+.Reactable {
   height: 100%;
   background-color: #fff;
 }
@@ -101,7 +101,7 @@ input[type='radio'].rt-select-input {
   border-style: solid;
 }
 
-.ReactTable:not(.rt-keyboard-active) .rt-table:focus {
+.Reactable:not(.rt-keyboard-active) .rt-table:focus {
   outline-width: 0; /* Hide focus outlines, but allow them to be restored easily */
   outline-style: solid; /* Needed for Safari when using outline-width: 0 */
 }
@@ -203,31 +203,31 @@ input[type='radio'].rt-select-input {
  * elements to overlap.
  * Fixed in Chrome 72+: https://github.com/philipwalton/flexbugs#flexbug-1
  */
-.ReactTable .rt-thead,
-.ReactTable .rt-tfoot,
-.ReactTable .rt-tbody {
+.Reactable .rt-thead,
+.Reactable .rt-tfoot,
+.Reactable .rt-tbody {
   flex-shrink: 0;
 }
 
 /* Sticky headers/footers */
 @supports (position: sticky) {
-  .ReactTable .rt-table {
+  .Reactable .rt-table {
     background: inherit;
   }
 
-  .ReactTable .rt-tbody {
+  .Reactable .rt-tbody {
     /* Override default */
     overflow: visible;
   }
 
-  .ReactTable .rt-thead {
+  .Reactable .rt-thead {
     position: sticky;
     top: 0;
     background: inherit;
     z-index: 2;
   }
 
-  .ReactTable .rt-tfoot {
+  .Reactable .rt-tfoot {
     position: sticky;
     bottom: 0;
     background: inherit;
@@ -237,7 +237,7 @@ input[type='radio'].rt-select-input {
 
 @media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
   /* Keep body aligned with headers/footers in IE 11 */
-  .ReactTable .rt-tbody {
+  .Reactable .rt-tbody {
     overflow: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
   }

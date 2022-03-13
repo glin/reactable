@@ -1,14 +1,14 @@
-.ReactTable {
+.Reactable {
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-.ReactTable * {
+.Reactable * {
   box-sizing: border-box;
 }
 
-.ReactTable .rt-table {
+.Reactable .rt-table {
   flex: auto 1;
   display: flex;
   flex-direction: column;
@@ -18,27 +18,27 @@
   overflow: auto;
 }
 
-.ReactTable .rt-thead {
+.Reactable .rt-thead {
   display: flex;
   flex-direction: column;
 }
 
-.ReactTable .rt-thead .rt-th,
-.ReactTable .rt-thead .rt-td {
+.Reactable .rt-thead .rt-th,
+.Reactable .rt-thead .rt-td {
   line-height: normal;
   position: relative;
 }
 
 /* Allow resizers to overflow (except the last one) */
-.ReactTable .rt-th.rt-th-resizable {
+.Reactable .rt-th.rt-th-resizable {
   overflow: visible;
 }
 
-.ReactTable .rt-th.rt-th-resizable:last-child {
+.Reactable .rt-th.rt-th-resizable:last-child {
   overflow: hidden;
 }
 
-.ReactTable .rt-tbody {
+.Reactable .rt-tbody {
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -48,25 +48,25 @@
   cursor: pointer;
 }
 
-.ReactTable .rt-tr-group {
+.Reactable .rt-tr-group {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-.ReactTable .rt-tr {
+.Reactable .rt-tr {
   flex: 1 0 auto;
   display: flex;
 }
 
-.ReactTable .rt-th,
-.ReactTable .rt-td {
+.Reactable .rt-th,
+.Reactable .rt-td {
   flex: 1 0 0;
   overflow: hidden;
 }
 
-.ReactTable .rt-resizer {
+.Reactable .rt-resizer {
   display: inline-block;
   position: absolute;
   width: 36px;
@@ -77,13 +77,13 @@
   z-index: 10;
 }
 
-.ReactTable .rt-tfoot {
+.Reactable .rt-tfoot {
   display: flex;
   flex-direction: column;
 }
 
-.ReactTable .rt-resizing .rt-th,
-.ReactTable .rt-resizing .rt-td {
+.Reactable .rt-resizing .rt-th,
+.Reactable .rt-resizing .rt-td {
   transition: none !important;
   cursor: col-resize;
   user-select: none;
