@@ -22,13 +22,12 @@ reactableLang(
   pageJumpLabel = "Go to page",
   pageSizeOptionsLabel = "Rows per page",
   groupExpandLabel = "Toggle group",
-  groupCollapseLabel = "Toggle group",
   detailsExpandLabel = "Toggle details",
-  detailsCollapseLabel = "Toggle details",
   selectAllRowsLabel = "Select all rows",
   selectAllSubRowsLabel = "Select all rows in group",
   selectRowLabel = "Select row",
   defaultGroupHeader = NULL,
+  detailsCollapseLabel = NULL,
   deselectAllRowsLabel = NULL,
   deselectAllSubRowsLabel = NULL,
   deselectRowLabel = NULL
@@ -87,19 +86,17 @@ the \code{"jump"} pagination type.}
 
 \item{groupExpandLabel}{Accessible label for the row group expand button.}
 
-\item{groupCollapseLabel}{Accessible label for the row group collapse button.}
-
 \item{detailsExpandLabel}{Accessible label for the row details expand button.}
-
-\item{detailsCollapseLabel}{Accessible label for the row details collapse button.}
 
 \item{selectAllRowsLabel}{Accessible label for the select all rows checkbox.}
 
 \item{selectAllSubRowsLabel}{Accessible label for the select all sub rows checkbox.}
 
-\item{selectRowLabel}{Accessible label for the select row checkbox}
+\item{selectRowLabel}{Accessible label for the select row checkbox.}
 
 \item{defaultGroupHeader}{Deprecated and no longer used.}
+
+\item{detailsCollapseLabel}{Deprecated and no longer used.}
 
 \item{deselectAllRowsLabel}{Deprecated and no longer used.}
 

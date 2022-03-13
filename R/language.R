@@ -44,16 +44,15 @@
 #' @param pageSizeOptionsLabel Accessible label for the page size options input.
 #'
 #' @param groupExpandLabel Accessible label for the row group expand button.
-#' @param groupCollapseLabel Accessible label for the row group collapse button.
 #'
 #' @param detailsExpandLabel Accessible label for the row details expand button.
-#' @param detailsCollapseLabel Accessible label for the row details collapse button.
 #'
 #' @param selectAllRowsLabel Accessible label for the select all rows checkbox.
 #' @param selectAllSubRowsLabel Accessible label for the select all sub rows checkbox.
-#' @param selectRowLabel Accessible label for the select row checkbox
+#' @param selectRowLabel Accessible label for the select row checkbox.
 #'
 #' @param defaultGroupHeader Deprecated and no longer used.
+#' @param detailsCollapseLabel Deprecated and no longer used.
 #' @param deselectAllRowsLabel Deprecated and no longer used.
 #' @param deselectAllSubRowsLabel Deprecated and no longer used.
 #' @param deselectRowLabel Deprecated and no longer used.
@@ -79,13 +78,12 @@
 #'   pageJumpLabel = "Go to page",
 #'   pageSizeOptionsLabel = "Rows per page",
 #'   groupExpandLabel = "Toggle group",
-#'   groupCollapseLabel = "Toggle group",
 #'   detailsExpandLabel = "Toggle details",
-#'   detailsCollapseLabel = "Toggle details",
 #'   selectAllRowsLabel = "Select all rows",
 #'   selectAllSubRowsLabel = "Select all rows in group",
 #'   selectRowLabel = "Select row",
 #'   defaultGroupHeader = NULL,
+#'   detailsCollapseLabel = NULL,
 #'   deselectAllRowsLabel = NULL,
 #'   deselectAllSubRowsLabel = NULL,
 #'   deselectRowLabel = NULL
@@ -148,19 +146,18 @@ reactableLang <- function(
 
   # Row grouping
   groupExpandLabel = "Toggle group",
-  groupCollapseLabel = "Toggle group",
 
   # Row details
   detailsExpandLabel = "Toggle details",
-  detailsCollapseLabel = "Toggle details",
 
   # Selection
   selectAllRowsLabel = "Select all rows",
   selectAllSubRowsLabel = "Select all rows in group",
   selectRowLabel = "Select row",
 
-  # Deprecated and no longer used
+  # Deprecated and no longer used (in v0.2.3.9000)
   defaultGroupHeader = NULL,
+  detailsCollapseLabel = NULL,
   deselectAllRowsLabel = NULL,
   deselectAllSubRowsLabel = NULL,
   deselectRowLabel = NULL
@@ -172,6 +169,26 @@ reactableLang <- function(
       "Use the `columnGroups` argument in `reactable()` to customize the column ",
       "group header for `groupBy` columns."
     )
+  }
+  if (!is.null(detailsCollapseLabel)) {
+    warning("`detailsCollapseLabel` is deprecated and no longer used. ",
+            "Use the `detailsExpandLabel` argument to customize the accessible label ",
+            "for the row details expand button.")
+  }
+  if (!is.null(deselectAllRowsLabel)) {
+    warning("`deselectAllRowsLabel` is deprecated and no longer used. ",
+            "Use the `selectAllRowsLabel` argument to customize the accessible label ",
+            "for the select all rows checkbox.")
+  }
+  if (!is.null(deselectAllSubRowsLabel)) {
+    warning("`deselectAllSubRowsLabel` is deprecated and no longer used. ",
+            "Use the `selectAllSubRowsLabel` argument to customize the accessible label ",
+            "for the select all sub rows checkbox.")
+  }
+  if (!is.null(deselectRowLabel)) {
+    warning("`deselectRowLabel` is deprecated and no longer used. ",
+            "Use the `selectRowLabel` argument to customize the accessible label ",
+            "for the select row checkbox.")
   }
 
   defaultArgs <- formals()

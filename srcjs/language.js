@@ -26,13 +26,10 @@ export const defaultLanguage = {
   pageSizeOptionsLabel: 'Rows per page',
 
   // Column groups
-  defaultGroupHeader: 'Grouped',
   groupExpandLabel: 'Toggle group',
-  groupCollapseLabel: 'Toggle group',
 
   // Row details
   detailsExpandLabel: 'Toggle details',
-  detailsCollapseLabel: 'Toggle details',
 
   // Selection
   selectAllRowsLabel: 'Select all rows',
@@ -40,6 +37,8 @@ export const defaultLanguage = {
   selectRowLabel: 'Select row',
 
   // Deprecated in v0.2.3.9000
+  defaultGroupHeader: 'Grouped',
+  detailsCollapseLabel: 'Toggle details',
   deselectAllRowsLabel: 'Deselect all rows',
   deselectAllSubRowsLabel: 'Deselect all rows in group',
   deselectRowLabel: 'Deselect row'

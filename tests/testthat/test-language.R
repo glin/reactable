@@ -31,12 +31,10 @@ test_that("reactableLang", {
     pageSizeOptionsLabel = "_Rows per page",
 
     # Row grouping
-    groupExpandLabel = "_Expand group",
-    groupCollapseLabel = "_Collapse group",
+    groupExpandLabel = "_Toggle group",
 
     # Row details
-    detailsExpandLabel = "_Expand details",
-    detailsCollapseLabel = "_Collapse details",
+    detailsExpandLabel = "_Toggle details",
 
     # Selection
     selectAllRowsLabel = "_Select all rows",
@@ -55,7 +53,14 @@ test_that("reactableLang", {
   expect_error(reactableLang(selectRowLabel = list()), "`selectRowLabel` must be a character string")
 
   # Deprecations
-  expect_warning(reactableLang(defaultGroupHeader = "deprecated"), "`defaultGroupHeader` is deprecated and no longer used")
+  deprecatedArgs <- c("defaultGroupHeader", "detailsCollapseLabel", "deselectAllRowsLabel",
+                      "deselectAllSubRowsLabel", "deselectRowLabel")
+  for (arg in deprecatedArgs) {
+    expect_warning(
+      do.call(reactableLang, setNames(list("label"), arg)),
+      sprintf("`%s` is deprecated and no longer used", arg)
+    )
+  }
 })
 
 test_that("is.reactableLang", {

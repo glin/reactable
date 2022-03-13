@@ -1039,9 +1039,7 @@ function Table({
                 const expanderProps = {
                   isExpanded: isExpanded,
                   className: css(theme.expanderStyle),
-                  'aria-label': isExpanded
-                    ? language.detailsCollapseLabel
-                    : language.detailsExpandLabel
+                  'aria-label': language.detailsExpandLabel
                 }
                 expander = <ExpanderComponent {...expanderProps} />
               } else if (cell.isGrouped) {
@@ -1054,7 +1052,7 @@ function Table({
                 const expanderProps = {
                   isExpanded: isExpanded,
                   className: css(theme.expanderStyle),
-                  'aria-label': isExpanded ? language.groupCollapseLabel : language.groupExpandLabel
+                  'aria-label': language.groupExpandLabel
                 }
                 expander = <ExpanderComponent {...expanderProps} />
               } else if (cell.column.isGrouped && row.canExpand) {

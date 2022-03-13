@@ -5951,15 +5951,14 @@ describe('expandable row details', () => {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [{ name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` }],
       language: {
-        detailsExpandLabel: '_Expand details',
-        detailsCollapseLabel: '_Collapse details'
+        detailsExpandLabel: '_Toggle details'
       }
     }
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
-    expect(expanders[0]).toHaveAttribute('aria-label', '_Expand details')
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Toggle details')
     fireEvent.click(expanders[0])
-    expect(expanders[0]).toHaveAttribute('aria-label', '_Collapse details')
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Toggle details')
   })
 })
 
@@ -7135,16 +7134,15 @@ describe('grouping and aggregation', () => {
         { name: 'b', accessor: 'b' }
       ],
       language: {
-        groupExpandLabel: '_Expand group',
-        groupCollapseLabel: '_Collapse group'
+        groupExpandLabel: '_Toggle group'
       },
       pivotBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
-    expect(expanders[0]).toHaveAttribute('aria-label', '_Expand group')
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Toggle group')
     fireEvent.click(expanders[0])
-    expect(expanders[0]).toHaveAttribute('aria-label', '_Collapse group')
+    expect(expanders[0]).toHaveAttribute('aria-label', '_Toggle group')
   })
 })
 

@@ -81,9 +81,9 @@ where possible, but note that there are several breaking changes.
 * The `defaultGroupHeader` argument in `reactableLang()` is now deprecated and
   no longer used. Use the `columnGroups` argument in `reactable()` to customize
   the column group header for `groupBy` columns.
-* The `deselectAllRowsLabel`, `deselectAllSubRowsLabel`, and `deselectRowLabel`
-  arguments in `reactableLang()` are now deprecated and no longer used
-  ([#167](https://github.com/glin/reactable/issues/167)).
+* The `detailsCollapseLabel`, `deselectAllRowsLabel`, `deselectAllSubRowsLabel`,
+  and `deselectRowLabel` arguments in `reactableLang()` are now deprecated and
+  no longer used ([#167](https://github.com/glin/reactable/issues/167)).
 
 ### Minor improvements and bug fixes
 
@@ -123,8 +123,8 @@ where possible, but note that there are several breaking changes.
   state. They now use the `aria-expanded` attribute to indicate expanded
   or collapsed state, and use "Toggle details" as their default label
   ([#167](https://github.com/glin/reactable/issues/167)).
-* `reactableLang()` gains the `groupExpandLabel` and `groupCollapseLabel`
-  arguments to customize the accessible labels for row group expand buttons
+* `reactableLang()` gains the `groupExpandLabel` argument to customize the
+  accessible label for row group expand buttons
   ([#167](https://github.com/glin/reactable/issues/167)).
 * Row selection checkboxes and radio buttons no longer change their accessible
   labels based on selection state ([#167](https://github.com/glin/reactable/issues/167)).
