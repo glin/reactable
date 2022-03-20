@@ -16,6 +16,10 @@
 #'   By default, global searching applies to all visible columns. Set this to
 #'   `FALSE` to exclude a visible column from searching, or `TRUE` to include a
 #'   hidden column in searching.
+#' @param filterMethod Custom filter method to use for column filtering.
+#'   A [JS()] function that takes an array of row objects, the column ID,
+#'   and the filter value as arguments, and returns the filtered array of
+#'   row objects.
 #' @param show Show the column?
 #'
 #'   If `FALSE`, this column will be excluded from global table searching by
@@ -38,12 +42,17 @@
 #'   and column name as arguments, or a [JS()] function that takes a column info
 #'   object and table state object as arguments.
 #' @param footer Footer content or render function. Render functions can be an
-#'   R function that takes two arguments, the column values and column name, or a
-#'   [JS()] function that takes a column info object and table state object as arguments.
+#'   R function that takes the column values and column name as arguments, or a
+#'   [JS()] function that takes a column info object and table state object as
+#'   arguments.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes the row index and column name as arguments, or a [JS()] function
 #'   that takes a row info object and table state object as arguments.
 #'   Cannot be used on a `groupBy` column.
+#' @param filterInput Custom filter input or render function. Render functions can
+#'   be an R function that takes the column values and column name as arguments,
+#'   or a [JS()] function that takes a column object and table state object as
+#'   arguments.
 #' @param html Render content as HTML? Raw HTML strings are escaped by default.
 #' @param na String to display for missing values (i.e. [NA] or [NaN]).
 #'   By default, missing values are displayed as blank cells.
@@ -114,6 +123,7 @@ colDef <- function(
   resizable = NULL,
   filterable = NULL,
   searchable = NULL,
+  filterMethod = NULL,
   show = TRUE,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
@@ -124,6 +134,7 @@ colDef <- function(
   header = NULL,
   footer = NULL,
   details = NULL,
+  filterInput = NULL,
   html = FALSE,
   na = "",
   rowHeader = FALSE,
@@ -172,6 +183,10 @@ colDef <- function(
 
   if (!is.null(searchable) && !is.logical(searchable)) {
     stop("`searchable` must be TRUE or FALSE")
+  }
+
+  if (!is.null(filterMethod) && !is.JS(filterMethod)) {
+    stop('`filterMethod` must be a JS function')
   }
 
   if (!is.null(show) && !is.logical(show)) {
@@ -304,6 +319,7 @@ colDef <- function(
       resizable = resizable,
       filterable = filterable,
       searchable = searchable,
+      filterMethod = filterMethod,
       show = if ("show" %in% userArgs) show,
       defaultSortDesc = if (!is.null(defaultSortOrder)) isDescOrder(defaultSortOrder),
       sortNALast = if ("sortNALast" %in% userArgs) sortNALast,
@@ -314,6 +330,7 @@ colDef <- function(
       header = header,
       footer = footer,
       details = details,
+      filterInput = filterInput,
       html = if ("html" %in% userArgs) html,
       na = if ("na" %in% userArgs) na,
       rowHeader = if ("rowHeader" %in% userArgs) rowHeader,

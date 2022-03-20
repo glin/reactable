@@ -271,6 +271,7 @@ describe('rows', () => {
       if (rowInfo) {
         expect(rowInfo.index >= 0).toEqual(true)
         expect(rowInfo.viewIndex >= 0).toEqual(true)
+        expect(rowInfo.values.a).toEqual(['cellA', 'cellB', 'cellC'][rowInfo.index])
         expect(rowInfo.row.a).toEqual(['cellA', 'cellB', 'cellC'][rowInfo.index])
         expect(rowInfo.level).toEqual(0)
         expect(rowInfo.aggregated).toBeFalsy()
@@ -790,6 +791,7 @@ describe('cells', () => {
       expect(rowInfo.expanded).toBeFalsy()
       expect(rowInfo.selected).toEqual(false)
       expect(rowInfo.subRows).toEqual([])
+      expect(rowInfo.values.a).toEqual(['cellA', 'cellB'][rowInfo.index])
       expect(rowInfo.row.a).toEqual(['cellA', 'cellB'][rowInfo.index])
       expect(colInfo.id).toEqual('a')
       expect(colInfo.name).toEqual('colA')
@@ -3909,10 +3911,72 @@ describe('filtering', () => {
     expect(getFilters(container)).toHaveLength(1)
   })
 
+  it('custom filter method', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2', 'aaa3'], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'a',
+          accessor: 'a',
+          filterMethod: function exactMatch(rows, columnId, filterValue) {
+            expect(rows).toHaveLength(3)
+            expect(columnId).toEqual('a')
+            return rows.filter(row => {
+              return row.values[columnId] === filterValue
+            })
+          }
+        },
+        {
+          name: 'b',
+          accessor: 'b',
+          filterMethod: function rowIndexMatch(rows, columnId, filterValue) {
+            const indices = filterValue.split(',').map(Number)
+            return rows.filter(row => {
+              return indices.includes(row.index)
+            })
+          }
+        }
+      ],
+      filterable: true
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    const [filterA, filterB] = getFilters(container)
+
+    fireEvent.change(filterA, { target: { value: 'aaa' } })
+    expect(getDataRows(container)).toHaveLength(0)
+    fireEvent.change(filterA, { target: { value: 'aaa2' } })
+    expect(getDataRows(container)).toHaveLength(1)
+    expect(getByText('aaa2')).toBeVisible()
+    fireEvent.change(filterA, { target: { value: '' } })
+    expect(getDataRows(container)).toHaveLength(3)
+
+    fireEvent.change(filterB, { target: { value: 'a' } })
+    expect(getDataRows(container)).toHaveLength(0)
+    fireEvent.change(filterB, { target: { value: '2,1' } })
+    expect(getDataRows(container)).toHaveLength(2)
+    expect(getByText('aaa3')).toBeVisible()
+    expect(getByText('aaa2')).toBeVisible()
+    fireEvent.change(filterB, { target: { value: '' } })
+    expect(getDataRows(container)).toHaveLength(3)
+  })
+
   it('custom filter inputs', () => {
-    const CustomFilter = ({ value, setValue }) => {
+    const CustomSelectFilter = (column, state) => {
+      expect(column.id).toEqual('a')
+      expect(column.name).toEqual('filter-component')
+      expect(state.page).toEqual(0)
+      expect(state.pageSize).toEqual(10)
+      expect(state.data).toEqual([
+        { a: 'aaac', b: 1, c: 4 },
+        { a: 'bbb', b: 2, c: 5 },
+        { a: 'CCC', b: 3, c: 6 }
+      ])
       return (
-        <select className="custom-filter" value={value} onChange={e => setValue(e.target.value)}>
+        <select
+          className="filter-component"
+          value={column.filterValue}
+          onChange={e => column.setFilter(e.target.value || undefined)}
+        >
           <option value="">All</option>
           <option value="Bb">Bb</option>
           <option value="c">c</option>
@@ -3922,15 +3986,36 @@ describe('filtering', () => {
     }
     const { container, getByText } = render(
       <Reactable
-        data={{ a: ['aaac', 'bbb', 'CCC'] }}
-        columns={[{ name: 'a', accessor: 'a', Filter: CustomFilter }]}
+        data={{ a: ['aaac', 'bbb', 'CCC'], b: [1, 2, 3], c: [4, 5, 6] }}
+        columns={[
+          { name: 'filter-component', accessor: 'a', filterInput: CustomSelectFilter },
+          {
+            name: 'filter-html',
+            accessor: 'b',
+            filterInput: '<input type="text" class="filter-html">',
+            html: true
+          },
+          {
+            name: 'filter-element',
+            accessor: 'c',
+            filterInput: <input className="filter-element"></input>
+          }
+        ]}
         filterable
       />
     )
     const defaultFilters = getFilters(container)
     expect(defaultFilters).toHaveLength(0)
 
-    const filter = container.querySelector('.custom-filter')
+    const filterHTMLCell = getFilterCells(container)[1]
+    expect(filterHTMLCell.innerHTML).toEqual(
+      '<div class="rt-td-inner"><div class="rt-text-content"><input type="text" class="filter-html"></div></div>'
+    )
+
+    const filterElement = container.querySelector('.filter-element')
+    expect(filterElement).toBeVisible()
+
+    const filter = container.querySelector('.filter-component')
     expect(filter).toBeVisible()
 
     // Case-insensitive
@@ -4358,6 +4443,39 @@ describe('searching', () => {
     )
     expect(searchInput.placeholder).toEqual('_search...')
     expect(searchInput).toHaveAttribute('aria-label', '_Search')
+  })
+
+  it('custom search method', () => {
+    const props = {
+      data: { a: ['aaa1', 'aaa2', 'aaa3'], b: ['a', 'b', 'c'] },
+      columns: [
+        { name: 'a', accessor: 'a' },
+        { name: 'b', accessor: 'b' }
+      ],
+      searchable: true,
+      searchMethod: function exactTextAndRowIndexMatch(rows, columnIds, filterValue) {
+        expect(rows).toHaveLength(3)
+        expect(columnIds).toEqual(['a', 'b'])
+        const [text, index] = filterValue.split(',')
+        return rows.filter(row => {
+          return columnIds.some(id => {
+            return row.values[id] === text && row.index === Number(index)
+          })
+        })
+      }
+    }
+    const { container, getByText } = render(<Reactable {...props} />)
+    const searchInput = getSearchInput(container)
+
+    fireEvent.change(searchInput, { target: { value: 'a' } })
+    expect(getDataRows(container)).toHaveLength(0)
+    fireEvent.change(searchInput, { target: { value: 'aaa2' } })
+    expect(getDataRows(container)).toHaveLength(0)
+    fireEvent.change(searchInput, { target: { value: 'aaa2,1' } })
+    expect(getDataRows(container)).toHaveLength(1)
+    expect(getByText('aaa2')).toBeVisible()
+    fireEvent.change(searchInput, { target: { value: '' } })
+    expect(getDataRows(container)).toHaveLength(3)
   })
 })
 
@@ -5386,6 +5504,12 @@ describe('expandable row details', () => {
       expect(rowInfo.expanded).toEqual(true)
       expect(rowInfo.selected).toEqual(false)
       expect(rowInfo.subRows).toEqual([])
+      expect(rowInfo.values).toEqual(
+        [
+          { a: 1, b: 'a' },
+          { a: 2, b: 'b' }
+        ][rowInfo.index]
+      )
       expect(rowInfo.row).toEqual(
         [
           { a: 1, b: 'a' },
@@ -5422,7 +5546,7 @@ describe('expandable row details', () => {
           accessor: 'b',
           details: (rowInfo, state) => {
             assertProps(rowInfo, state)
-            return `row details: ${rowInfo.row.a}`
+            return `row details: ${rowInfo.values.a}`
           }
         }
       ]
@@ -5445,7 +5569,7 @@ describe('expandable row details', () => {
           name: 'b',
           accessor: 'b',
           html: true,
-          details: rowInfo => `<span>row details: ${rowInfo.row.a}</span>`
+          details: rowInfo => `<span>row details: ${rowInfo.values.a}</span>`
         }
       ]
     }
@@ -5592,7 +5716,7 @@ describe('expandable row details', () => {
         {
           name: 'b',
           accessor: 'b',
-          details: rowInfo => `row details: ${rowInfo.row.a}`
+          details: rowInfo => `row details: ${rowInfo.values.a}`
         }
       ],
       minRows: 6
@@ -5673,7 +5797,7 @@ describe('expandable row details', () => {
         {
           name: 'a',
           accessor: 'a',
-          details: rowInfo => `row details: ${rowInfo.index}-${rowInfo.row.a}-a`
+          details: rowInfo => `row details: ${rowInfo.index}-${rowInfo.values.a}-a`
         },
         { name: 'b', accessor: 'b' }
       ]
@@ -5821,7 +5945,7 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` },
+        { name: 'col-a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` },
         { name: 'col-b', accessor: 'b' }
       ]
     }
@@ -5949,7 +6073,9 @@ describe('expandable row details', () => {
   it('expanders language', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [{ name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.row.a}` }],
+      columns: [
+        { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` }
+      ],
       language: {
         detailsExpandLabel: '_Toggle details'
       }
@@ -6623,6 +6749,7 @@ describe('grouping and aggregation', () => {
       expect(rowInfo.level).toEqual(0)
       expect(rowInfo.expanded).toBeFalsy()
       expect(rowInfo.selected).toEqual(false)
+      expect(rowInfo.values).toEqual({ c: 'x', a: null, b: 2, d: null })
       expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
       expect(rowInfo.subRows).toEqual([
         {
@@ -6732,6 +6859,7 @@ describe('grouping and aggregation', () => {
       expect(rowInfo.level).toEqual(0)
       expect(rowInfo.expanded).toBeFalsy()
       expect(rowInfo.selected).toEqual(false)
+      expect(rowInfo.values).toEqual({ c: 'x', a: null, b: 2, d: null })
       expect(rowInfo.row).toEqual({ c: 'x', a: null, b: 2, d: null })
       expect(rowInfo.subRows).toEqual([
         {
@@ -7301,6 +7429,7 @@ describe('cell click actions', () => {
           expect(rowInfo.level).toEqual(0)
           expect(rowInfo.expanded).toBeFalsy()
           expect(rowInfo.selected).toEqual(false)
+          expect(rowInfo.values).toEqual({ a: 'aaa2', b: 'bbb2', c: 'ccc2' })
           expect(rowInfo.row).toEqual({ a: 'aaa2', b: 'bbb2', c: 'ccc2' })
           expect(rowInfo.subRows).toEqual([])
           expect(state.page).toEqual(0)

@@ -80,6 +80,15 @@ test_that("colDef searchable", {
   expect_equal(colDef(searchable = TRUE)$searchable, TRUE)
 })
 
+test_that("colDef filterMethod", {
+  expect_error(colDef(filterMethod = "rows => rows"), "`filterMethod` must be a JS function")
+  expect_equal(colDef()$filterMethod, NULL)
+  expect_equal(
+    colDef(filterMethod = JS("(rows, columnId, filterValue) => rows"))$filterMethod,
+    JS("(rows, columnId, filterValue) => rows")
+  )
+})
+
 test_that("colDef show", {
   expect_error(colDef(show = ""), "`show` must be TRUE or FALSE")
   expect_equal(colDef()$show, NULL)

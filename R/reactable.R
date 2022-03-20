@@ -32,6 +32,10 @@
 #' @param resizable Enable column resizing?
 #' @param filterable Enable column filtering?
 #' @param searchable Enable global table searching?
+#' @param searchMethod Custom search method to use for global table searching.
+#'   A [JS()] function that takes an array of row objects, an array of
+#'   column IDs, and the search value as arguments, and returns the filtered
+#'   array of row objects.
 #' @param defaultColDef Default column definition used by every column. See [colDef()].
 #' @param defaultColGroup Default column group definition used by every column group.
 #'   See [colGroup()].
@@ -161,8 +165,8 @@
 reactable <- function(data, columns = NULL, columnGroups = NULL,
                       rownames = NULL, groupBy = NULL,
                       sortable = TRUE, resizable = FALSE, filterable = FALSE,
-                      searchable = FALSE, defaultColDef = NULL, defaultColGroup = NULL,
-                      defaultSortOrder = "asc", defaultSorted = NULL,
+                      searchable = FALSE, searchMethod = NULL, defaultColDef = NULL,
+                      defaultColGroup = NULL, defaultSortOrder = "asc", defaultSorted = NULL,
                       pagination = TRUE, defaultPageSize = 10,
                       showPageSizeOptions = FALSE, pageSizeOptions = c(10, 25, 50, 100),
                       paginationType = "numbers", showPagination = NULL, showPageInfo = TRUE,
@@ -231,17 +235,25 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       stop("`details` cannot be used on a grouping column")
     }
   }
+
   if (!is.logical(sortable)) {
     stop("`sortable` must be TRUE or FALSE")
   }
+
   if (!is.logical(resizable)) {
     stop("`resizable` must be TRUE or FALSE")
   }
+
   if (!is.logical(filterable)) {
     stop("`filterable` must be TRUE or FALSE")
   }
+
   if (!is.logical(searchable)) {
     stop("`searchable` must be TRUE or FALSE")
+  }
+
+  if (!is.null(searchMethod) && !is.JS(searchMethod)) {
+    stop('`searchMethod` must be a JS function')
   }
 
   columnKeys <- colnames(data)
@@ -528,6 +540,18 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
       addDependencies(column$details)
     }
 
+    filterInput <- column[["filterInput"]]
+    if (!is.null(filterInput)) {
+      if (is.function(filterInput)) {
+        values <- data[[key]]
+        filterInput <- callFunc(filterInput, values, key)
+      }
+      if (!is.JS(filterInput)) {
+        column$filterInput <- asReactTag(filterInput)
+        addDependencies(column$filterInput)
+      }
+    }
+
     className <- column[["className"]]
     if (is.function(className)) {
       classes <- lapply(seq_len(nrow(data)), function(index) {
@@ -589,6 +613,7 @@ reactable <- function(data, columns = NULL, columnGroups = NULL,
     resizable = if (resizable) TRUE,
     filterable = if (filterable) TRUE,
     searchable = if (searchable) TRUE,
+    searchMethod = searchMethod,
     defaultSortDesc = if (isDescOrder(defaultSortOrder)) TRUE,
     defaultSorted = columnSortDefs(defaultSorted),
     pagination = if (!pagination) FALSE,

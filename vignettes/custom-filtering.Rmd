@@ -1,0 +1,784 @@
+---
+title: "Custom Filtering"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+library(htmltools)
+
+propsTable <- function(props) {
+  tags$table(
+    class = "props-tbl",
+    tags$thead(
+      tags$tr(
+        lapply(colnames(props), function(name) tags$th(name))
+      )
+    ),
+    tags$tbody(
+      apply(props, 1, function(row) {
+        tags$tr(
+          tags$th(scope = "row", tags$code(row[["Property"]])),
+          tags$td(tags$code(row[["Example"]])),
+          tags$td(row[["Description"]])
+        )
+      })
+    )
+  )
+}
+```
+
+> New in v0.2.3.9000 (unreleased)
+
+Custom filter methods and custom filter inputs let you change how filtering is done
+in reactable. By default, all filter inputs are text inputs that filter data using
+a case-insensitive text match, or for numeric columns, a prefix match.
+
+Column filter methods, table search methods, and column filter inputs can all be
+customized separately for flexibility. In some cases, you may want to keep the
+default filter input but change the filter method, or in other cases, vice versa.
+
+- [Column Filter Methods](#column-filter-methods)
+- [Table Search Methods](#table-search-methods)
+- [Column Filter Inputs](#column-filter-inputs)
+- [Examples](#examples)
+
+## Column Filter Methods
+
+Column filter methods can be customized using the `filterMethod` argument in `colDef()`:
+
+```{r, eval=FALSE}
+colDef(
+  filterMethod = JS("
+    function(rows, columnId, filterValue) {
+      /* ... */
+      return filteredRows
+    }
+  ")
+)
+```
+
+`filterMethod` should be a JavaScript function, wrapped in `JS()`, that takes
+3 arguments — the rows, column ID, and filter value — and returns the filtered
+array of rows.
+
+```js
+filterMethod(
+  rows: Array<Row>,
+  columnId: string,
+  filterValue: any
+): Array<Row>
+```
+
+#### Arguments {#filter-method-js-arguments}
+
+- **`rows`**, an array of row objects. `rows` consists of data rows only, and does
+  not include aggregated rows when the table is grouped. Each `Row` has the following
+  properties:
+
+    ```{r, echo=FALSE, asis=TRUE}
+    rowProps <- dplyr::tribble(
+      ~Property, ~Example, ~Description,
+      "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values",
+      "index", "20", "row index (zero-based)"
+    )
+    
+    propsTable(rowProps)
+    ```
+
+- **`columnId`**, the column ID. Use this to access the cell value, like
+  `row.values[columnId]`.
+- **`filterValue`**, the column filter value. This will be a string when using the
+  default filter inputs.
+
+#### Details {#filter-method-js-details}
+
+`filterMethod` is not called when the filter value is cleared, so you don't need to
+specifically handle the case where `filterValue` is unset (`undefined`).
+
+`filterMethod` only applies to individual column filters, and does not affect global
+table searching.
+
+
+## Table Search Methods
+
+The global table search method can be customized using the `searchMethod` argument
+in `reactable()`:
+
+```{r, eval=FALSE}
+reactable(
+  searchMethod = JS("
+    function(rows, columnIds, filterValue) {
+      /* ... */
+      return filteredRows
+    }
+  ")
+)
+```
+
+`searchMethod` should be a JavaScript function, wrapped in `JS()`, that takes
+3 arguments — the rows, column IDs, and search value — and returns the filtered
+array of rows.
+
+```js
+searchMethod(
+  rows: Array<Row>,
+  columnIds: Array<string>,
+  searchValue: any
+): Array<Row>
+```
+
+#### Arguments {#search-method-js-arguments}
+
+- **`rows`**, an array of row objects. `rows` consists of data rows only, and does
+  not include aggregated rows when the table is grouped. Each `Row` has the following
+  properties:
+
+    ```{r, echo=FALSE, asis=TRUE}
+    rowProps <- dplyr::tribble(
+      ~Property, ~Example, ~Description,
+      "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values",
+      "index", "20", "row index (zero-based)"
+    )
+    
+    propsTable(rowProps)
+    ```
+
+- **`columnIds`**, an array of column IDs. Use this to access the cell values
+  for the columns being searched, like `row.values[columnId]`.
+- **`searchValue`**, the search value. This will be a string when using the
+  default search input.
+
+#### Details {#search-method-js-details}
+
+`searchMethod` is not called when the search value is cleared, so you don't need to
+specifically handle the case where `searchValue` is unset (`undefined`).
+
+
+## Column Filter Inputs
+
+Column filter inputs are customized using the `filterInput` argument in `colDef()`.
+`filterInput` can either be an element or a function that returns an element to be
+rendered in place of the default column filter.
+
+Unlike custom rendering of other table elements, custom filter inputs must communicate
+back to the table on filtering changes, which can be tricky.
+
+In many simpler cases, you can write your custom filter input in R and use
+[`Reactable.setFilter()`](javascript-api.html#reactable-setfilter) from the
+reactable JavaScript API to notify the table of filter changes. Note that the table
+must have a unique `elementId` to use `Reactable.setFilter()` — see
+[Using the JavaScript API](./javascript-api#using-the-javascript-api) for more details.
+
+For more advanced customization, you can write your filter input entirely in
+JavaScript, using the React JavaScript library to create an element that gets and sets
+the filter value. In reactable, JavaScript render functions can return React elements,
+and reactable comes with React as a dependency via the reactR package.
+Use `reactR::html_dependency_react()` to explicitly include this dependency or find the
+version of React in use.
+
+For more information on React or using React from R, see the
+[React documentation](https://reactjs.org/) and
+[reactR package documentation](https://react-r.github.io/reactR/index.html).
+
+> **TIP:** Many column filter inputs do not have a visible text label, including
+> the default text inputs. If your custom filter does not have a visible text label,
+> be sure to give it an accessible name using the
+> [`aria-label` attribute or similar technique](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label).
+
+### R render function {#filter-r-render-function}
+
+R render functions take up to 2 optional arguments — the column values and
+column name — and return the element to render.
+
+```{r, eval=FALSE}
+colDef(
+  filterInput = function(values, name) {
+    # input:
+    #   - values, the column values (optional)
+    #   - name, the column name  (optional)
+    #
+    # output:
+    #   - element to render (e.g. an HTML tag or HTML string)
+    htmltools::tags$input(
+      type = "text",
+      onchange = sprintf("Reactable.setFilter('tbl', '%s', this.value)", name),
+      "aria-label" = sprintf("Filter %s", name),
+      style = "width: 100%;"
+    )
+  }
+)
+```
+
+### JavaScript render function {#filter-js-render-function}
+
+JavaScript render functions, wrapped in `JS()`, take up to 2 optional arguments — a column object
+and a table state object — and return the element to render.
+
+```{r, eval=FALSE}
+colDef(
+  filterInput = JS("
+    function(column, state) {
+      // input:
+      //  - column, an object containing column properties
+      //  - state, an object containing the table state
+      //
+      // output:
+      //  - element to render (e.g. an HTML string or React element)
+      return React.createElement('input', {
+        type: 'text',
+        value: column.filterValue,
+        onChange: function(e) {
+          return column.setFilter(e.target.value || undefined)
+        },
+        'aria-label': 'Filter ' + column.name
+      })
+    }
+  ")
+)
+```
+
+#### `column` properties
+
+```{r, echo=FALSE, asis=TRUE}
+columnProps <- dplyr::tribble(
+  ~Property, ~Example, ~Description,
+  "id", '"Petal.Length"', "column ID",
+  "name", '"Petal Length"', "column display name",
+  "filterValue", '"petal"', "column filter value",
+  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter)")
+)
+```
+
+```{r, echo=FALSE, asis=TRUE}
+propsTable(columnProps)
+```
+
+#### `state` properties
+
+```{r, echo=FALSE, asis=TRUE}
+stateProps <- dplyr::tribble(
+  ~Property, ~Example, ~Description,
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
+  "searchValue", '"petal"', "table search value",
+  "selected", '[0, 1, 4]', "array of selected row indices (zero-based)",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
+)
+
+propsTable(stateProps)
+```
+
+## Examples
+
+### Basic custom filter method
+
+This example shows basic usage of a custom filter method, changing filtering
+on the `Manufacturer` column to be case-sensitive rather than case-insensitive.
+(Try filtering for "bmw" and then "BMW").
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Manufacturer = colDef(
+      filterable = TRUE,
+      # Filter by case-sensitive text match
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        return rows.filter(function(row) {
+          return row.values[columnId].indexOf(filterValue) !== -1
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
+
+### Basic custom search method
+
+This example shows basic usage of a custom search method, changing global searching
+to be a case-sensitive text match on all columns. (Try searching for "bmw" and then "BMW").
+
+Note that some columns may be numeric or another non-string type, so you can use
+[`String()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/String)
+to convert values to strings before calling string methods like
+[`indexOf()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf).
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  searchable = TRUE,
+  # Search by case-sensitive text match
+  searchMethod = JS("function(rows, columnIds, searchValue) {
+    return rows.filter(function(row) {
+      return columnIds.some(function(columnId) {
+        return String(row.values[columnId]).indexOf(searchValue) !== -1
+      })
+    })
+  }"),
+  defaultPageSize = 5
+)
+```
+
+### Numeric value filtering
+
+This example shows how you can filter a numeric column based on a minimum value.
+(Try filtering the `Price` column for `30`).
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Price = colDef(
+      filterable = TRUE,
+      # Filter by minimum price
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        return rows.filter(function(row) {
+          return row.values[columnId] >= filterValue
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
+
+### Regular expression pattern filtering
+
+This example shows how you can filter a column based on a regular expression
+pattern. Note that the regular expression is not escaped here — see
+[regular expression escaping](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping)
+for an example of how to escape special characters in regular expressions.
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Manufacturer = colDef(
+      filterable = TRUE,
+      # Filter by case-insensitive text match
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        const pattern = new RegExp(filterValue, 'i')
+
+        return rows.filter(function(row) {
+          return pattern.test(row.values[columnId])
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
+
+### Fuzzy text searching
+
+This example uses the [match-sorter](https://github.com/kentcdodds/match-sorter)
+JavaScript library to add fuzzy searching to a table. (Try searching "adi" to match
+both "Cadillac" and "Audi").
+
+This also shows how you can create reusable search or filter methods that can be shared
+across multiple tables or columns.
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+# match-sorter library dependency. Include this anywhere in your document or app.
+matchSorterDep <- htmlDependency(
+  "match-sorter", 
+  "1.8.0",
+  c(href = "https://unpkg.com/match-sorter@1.8.0/dist/umd/"),
+  script = "match-sorter.min.js"
+)
+
+# Fuzzy search method based on match-sorter
+# See https://github.com/kentcdodds/match-sorter for advanced customization
+matchSorterSearchMethod <-  JS("function(rows, columnIds, searchValue) {
+  const keys = columnIds.map(function(id) {
+    return function(row) {
+      return row.values[id]
+    }
+  })
+  return matchSorter(rows, searchValue, { keys: keys })
+}")
+
+browsable(tagList(
+  matchSorterDep,
+
+  reactable(
+    data,
+    searchable = TRUE,
+    searchMethod = matchSorterSearchMethod,
+    defaultPageSize = 5
+  )
+))
+```
+
+### Select input filter
+
+This example shows how you can render a custom
+[`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+input filter in R.
+
+The `<select>` input filters the `Manufacturer` column from a set of unique values,
+and includes an additional "All" option to clear the filter.
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  filterable = TRUE,
+  columns = list(
+    Manufacturer = colDef(
+      filterInput = function(values, name) {
+        tags$select(
+          # Set to undefined to clear the filter
+          onchange = sprintf("Reactable.setFilter('cars-select', '%s', event.target.value || undefined)", name),
+          # "All" has an empty value to clear the filter, and is the default option
+          tags$option(value = "", "All"),
+          lapply(unique(values), tags$option),
+          "aria-label" = sprintf("Filter %s", name),
+          style = "width: 100%; height: 28px;"
+        )
+      }
+    )
+  ),
+  defaultPageSize = 5,
+  elementId = "cars-select"
+)
+```
+
+### Data list filter
+
+The [`<datalist>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist)
+is like a native text input, but with an autocomplete feature that lets you choose from a
+set of unique options. (Try searching for "ac" in the `Manufacturer` column.)
+
+This example also shows how you can create reusable filter inputs,
+or set default custom filters based on column type.
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+# Creates a data list column filter for a table with the given ID
+dataListFilter <- function(tableId, style = "width: 100%; height: 28px;") {
+  function(values, name) {
+    dataListId <- sprintf("%s-%s-list", tableId, name)
+    tagList(
+      tags$input(
+        type = "text",
+        list = dataListId,
+        oninput = sprintf("Reactable.setFilter('%s', '%s', event.target.value || undefined)", tableId, name),
+        "aria-label" = sprintf("Filter %s", name),
+        style = style
+      ),
+      tags$datalist(
+        id = dataListId,
+        lapply(unique(values), function(value) tags$option(value = value))
+      )
+    )
+  }
+}
+
+reactable(
+  data,
+  filterable = TRUE,
+  columns = list(
+    # Use data list filter for a specific column
+    Manufacturer = colDef(
+      filterInput = dataListFilter("cars-list")
+    )
+  ),
+  # Or use data list filter as the default for all factor columns
+  defaultColDef = colDef(
+    filterInput = function(values, name) {
+      if (is.factor(values)) {
+        dataListFilter("cars-list")(values, name)
+      }
+    }
+  ),
+  defaultPageSize = 5,
+  elementId = "cars-list"
+)
+```
+
+### Range filter
+
+This is a basic example of a native
+[`<input type="range">` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
+for numeric filtering. The `Price` column is filtered by minimum value.
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Price = colDef(
+      filterable = TRUE,
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        return rows.filter(function(row) {
+          return row.values[columnId] >= filterValue
+        })
+      }"),
+      filterInput = function(values, name) {
+        oninput <- sprintf("Reactable.setFilter('cars-range', '%s', this.value)", name)
+        tags$input(
+          type = "range",
+          min = floor(min(values)),
+          max = ceiling(max(values)),
+          value = floor(min(values)),
+          oninput = oninput,
+          onchange = oninput, # For IE11 support
+          "aria-label" = sprintf("Filter by minimum %s", name)
+        )
+      }
+    )
+  ),
+  defaultPageSize = 5,
+  elementId = "cars-range"
+)
+```
+
+### External range filter
+
+This example shows how you can create custom filter inputs outside the table,
+using a more complex version of the range filter from above.
+
+```{r}
+library(htmltools)
+
+# Custom range input filter with label and value
+rangeFilter <- function(tableId, columnId, label, min, max, value = NULL, step = NULL, width = "200px") {
+  value <- if (!is.null(value)) value else min
+  inputId <- sprintf("filter_%s_%s", tableId, columnId)
+  valueId <- sprintf("filter_%s_%s__value", tableId, columnId)
+  oninput <- paste(
+    sprintf("document.getElementById('%s').textContent = this.value;", valueId),
+    sprintf("Reactable.setFilter('%s', '%s', this.value)", tableId, columnId)
+  )
+  
+  div(
+    tags$label(`for` = inputId, label),
+    div(
+      style = sprintf("display: flex; align-items: center; width: %s", validateCssUnit(width)),
+      tags$input(
+        id = inputId,
+        type = "range",
+        min = min,
+        max = max,
+        step = step,
+        value = value,
+        oninput = oninput,
+        onchange = oninput, # For IE11 support
+        style = "width: 100%;"
+      ),
+      span(id = valueId, style = "margin-left: 8px;", value)
+    )
+  )
+}
+
+# Filter method that filters numeric columns by minimum value
+filterMinValue <- JS("function(rows, columnId, filterValue) {
+  return rows.filter(function(row) {
+    return row.values[columnId] >= filterValue
+  })
+}")
+```
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+browsable(tagList(
+  rangeFilter(
+    "cars-ext-range",
+    "Price",
+    "Filter by Minimum Price",
+    floor(min(data$Price)),
+    ceiling(max(data$Price))
+  ),
+  
+  reactable(
+    data,
+    columns = list(
+      Price = colDef(filterMethod = filterMinValue)
+    ),
+    defaultPageSize = 5,
+    elementId = "cars-ext-range"
+  )
+))
+```
+
+### Basic custom filter input (React)
+
+This example shows how you could write your custom filter input entirely in
+JavaScript, using React. It renders a basic text input filter for the
+`Manufacturer` column.
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Manufacturer = colDef(
+      filterable = TRUE,
+      filterInput = JS("function(column) {
+        return React.createElement('input', {
+          type: 'text',
+          value: column.filterValue,
+          onChange: function(event) {
+            // Set to undefined to clear the filter
+            return column.setFilter(event.target.value || undefined)
+          },
+          'aria-label': 'Filter ' + column.name,
+          style: { width: '100%' }
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
+
+### Range filter (React)
+
+Here's a more complex example of a React-based filter input, with filter values
+that depend on the column data. The min and max values of the column are found
+dynamically from `state.data`.
+
+The JavaScript code is embedded as a separate
+[`js` language chunk](https://bookdown.org/yihui/rmarkdown/language-engines.html#javascript-and-css)
+to make it easier to work with. but it could also be included through an external
+JavaScript file, or inlined in R using `htmltools::tags$script()`.
+
+```{js}
+// Custom range filter with value label
+function rangeFilter(column, state) {
+  // Get min and max values from raw table data
+  let min = Infinity
+  let max = 0
+  state.data.forEach(function(row) {
+    const value = row[column.id]
+    if (value < min) {
+      min = Math.floor(value)
+    } else if (value > max) {
+      max = Math.ceil(value)
+    }
+  })
+
+  const filterValue = column.filterValue || min
+  const input = React.createElement('input', {
+    type: 'range',
+    value: filterValue,
+    min: min,
+    max: max,
+    onChange: function(event) {
+      // Set to undefined to clear the filter
+      column.setFilter(event.target.value || undefined)
+    },
+    style: { width: '100%', marginRight: '8px' },
+    'aria-label': 'Filter ' + column.name
+  })
+
+  return React.createElement(
+    'div',
+    { style: { display: 'flex', alignItems: 'center', height: '100%' } },
+    [input, filterValue]
+  )
+}
+
+// Filter method that filters numeric columns by minimum value
+function filterMinValue(rows, columnId, filterValue) {
+  return rows.filter(function(row) {
+    return row.values[columnId] >= filterValue
+  })
+}
+```
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  filterable = TRUE,
+  columns = list(
+    Price = colDef(
+      filterMethod = JS("filterMinValue"),
+      filterInput = JS("rangeFilter")
+    )
+  ),
+  defaultPageSize = 5,
+  minRows = 5
+)
+```
+
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.main-container blockquote {
+  font-size: inherit;
+}
+
+/* pkgdown articles */
+.contents {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.contents blockquote {
+  font-size: inherit;
+}
+
+.reactable {
+  font-size: 14px;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope="row"] {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 600;
+}
+```

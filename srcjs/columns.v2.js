@@ -100,6 +100,9 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.filter = (rows, columnIds, filterValue) => {
       // For individual column filters, columnIds will always contain one column ID
       const id = columnIds[0]
+      if (typeof col.filterMethod === 'function') {
+        return col.filterMethod(rows, id, filterValue)
+      }
       const match = col.createMatcher(filterValue)
       return rows.filter(row => {
         const value = row.values[id]

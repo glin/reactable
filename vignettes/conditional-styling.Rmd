@@ -214,12 +214,13 @@ colDef(
 ```{r, echo=FALSE, asis=TRUE}
 rowInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "row", '{ Petal.Length: 1.7, Species: "setosa" }', "row data object",
+  "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values (new in v0.2.3.9000)",
+  "row", '{ Petal.Length: 1.7, Species: "setosa" }', tagList("same as ", tags$code("values"), " (deprecated in v0.2.3.9000)"),
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
-  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data objects (aggregated rows only)",
+  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data values (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected"
 )
@@ -252,9 +253,9 @@ stateProps <- dplyr::tribble(
   "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values (new in v0.2.3.9000)",
   "searchValue", '"petal"', "table search value (new in v0.2.3.9000)",
   "selected", '[0, 1, 4]', "array of selected row indices (zero-based, new in v0.2.3.9000)",
-  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
-  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
 )
 
 propsTable(stateProps)

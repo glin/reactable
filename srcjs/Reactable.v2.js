@@ -19,7 +19,7 @@ import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
-import { columnsToRows, buildColumnDefs, emptyValue, getSubRows } from './columns.v2'
+import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns.v2'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
 import { classNames, convertRowsToV6, getLeafColumns, rowsToCSV, downloadCSV } from './utils'
@@ -336,42 +336,60 @@ ExpanderComponent.propTypes = {
   'aria-label': PropTypes.string
 }
 
-function FilterComponent({ value, setValue, className, ...props }) {
+function FilterComponent({
+  filterValue,
+  setFilter,
+  className,
+  placeholder,
+  'aria-label': ariaLabel
+}) {
   return (
     <input
       type="text"
       className={classNames('rt-filter', className)}
-      value={value || ''}
+      value={filterValue || ''}
       // Filter value must be undefined (not empty string) to clear the filter
-      onChange={e => setValue(e.target.value || undefined)}
-      {...props}
+      onChange={e => setFilter(e.target.value || undefined)}
+      placeholder={placeholder}
+      aria-label={ariaLabel}
     />
   )
 }
 
 FilterComponent.propTypes = {
-  value: PropTypes.string,
-  setValue: PropTypes.func.isRequired,
-  className: PropTypes.string
+  filterValue: PropTypes.string,
+  setFilter: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  placeholder: PropTypes.string,
+  'aria-label': PropTypes.string
 }
 
-function SearchComponent({ value, setValue, className, ...props }) {
+function SearchComponent({
+  searchValue,
+  setSearch,
+  className,
+  placeholder,
+  'aria-label': ariaLabel
+}) {
   return (
     <input
       type="text"
-      value={value || ''}
+      value={searchValue || ''}
       // Search value must be undefined (not empty string) to clear the search
-      onChange={e => setValue(e.target.value || undefined)}
+      onChange={e => setSearch(e.target.value || undefined)}
       className={classNames('rt-search', className)}
-      {...props}
+      placeholder={placeholder}
+      aria-label={ariaLabel}
     />
   )
 }
 
 SearchComponent.propTypes = {
-  value: PropTypes.string,
-  setValue: PropTypes.func.isRequired,
-  className: PropTypes.string
+  searchValue: PropTypes.string,
+  setSearch: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  placeholder: PropTypes.string,
+  'aria-label': PropTypes.string
 }
 
 function NoDataComponent({ className, ...rest }) {
@@ -407,6 +425,7 @@ function Table({
   columns,
   pivotBy,
   searchable,
+  searchMethod,
   defaultSorted,
   pagination,
   paginationType,
@@ -456,6 +475,9 @@ function Table({
 
   // Must be memoized to prevent re-filtering on every render
   const globalFilter = React.useMemo(() => {
+    if (searchMethod) {
+      return searchMethod
+    }
     return function globalFilter(rows, columnIds, searchValue) {
       const matchers = dataColumns.reduce((obj, col) => {
         obj[col.id] = col.createMatcher(searchValue)
@@ -472,7 +494,7 @@ function Table({
       })
       return rows
     }
-  }, [dataColumns])
+  }, [dataColumns, searchMethod])
 
   const useRowSelectColumn = function useRowSelectColumn(hooks) {
     if (selection) {
@@ -637,8 +659,8 @@ function Table({
     }
     return (
       <SearchComponent
-        value={state.globalFilter}
-        setValue={instance.setGlobalFilter}
+        searchValue={state.globalFilter}
+        setSearch={instance.setGlobalFilter}
         className={css(theme.searchInputStyle)}
         placeholder={language.searchPlaceholder}
         aria-label={language.searchLabel}
@@ -820,17 +842,31 @@ function Table({
           let filter
           // Use column.filterable over column.canFilter because useGlobalFilter
           // currently sets canFilter to true on columns with disableFilters = true.
-          // https://github.com/tannerlinsley/react-table/issues/2787
+          // https://github.com/TanStack/react-table/issues/2787
           if (column.filterable) {
-            const filterProps = {
-              value: column.filterValue,
-              setValue: column.setFilter,
-              className: css(theme.filterInputStyle),
-              placeholder: language.filterPlaceholder,
-              'aria-label': renderTemplate(language.filterLabel, { name: column.name })
+            if (column.filterInput != null) {
+              let filterInput
+              if (typeof column.filterInput === 'function') {
+                filterInput = column.filterInput(column, stateInfo)
+              } else {
+                filterInput = hydrate({ Fragment, WidgetContainer }, column.filterInput)
+              }
+              if (React.isValidElement(filterInput)) {
+                filter = filterInput
+              } else if (column.html) {
+                filter = <RawHTML html={filterInput} />
+              }
+            } else {
+              filter = (
+                <FilterComponent
+                  filterValue={column.filterValue}
+                  setFilter={column.setFilter}
+                  className={css(theme.filterInputStyle)}
+                  placeholder={language.filterPlaceholder}
+                  aria-label={renderTemplate(language.filterLabel, { name: column.name })}
+                />
+              )
             }
-            const ResolvedFilterComponent = column.Filter || FilterComponent
-            filter = <ResolvedFilterComponent {...filterProps} />
           }
 
           const { className: themeClass, innerClassName } = getCellTheme(theme.filterCellStyle)
@@ -921,7 +957,7 @@ function Table({
         ...row,
         // For v6 compatibility
         viewIndex,
-        row: row.values,
+        row: row.values, // Deprecated in v0.2.3.9000
         subRows: convertRowsToV6(row.subRows),
         aggregated: row.isGrouped,
         expanded: row.isExpanded,
@@ -1623,6 +1659,7 @@ Reactable.propTypes = {
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,
   searchable: PropTypes.bool,
+  searchMethod: PropTypes.func,
   defaultSortDesc: PropTypes.bool,
   defaultSorted: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string, desc: PropTypes.bool })),
   pagination: PropTypes.bool,

@@ -55,6 +55,14 @@ where possible, but note that there are several breaking changes.
   [#194](https://github.com/glin/reactable/issues/194)).
   Learn more in the [JavaScript API guide](https://glin.github.io/reactable/articles/javascript-api.html)
   or the [JavaScript API examples](https://glin.github.io/reactable/articles/examples.html#javascript-api).
+* `reactable()` gains a `searchMethod` argument to use a custom JavaScript function
+  for global table searching ([#222](https://github.com/glin/reactable/issues/222)).
+* `colDef()` gains a `filterMethod` argument to use a custom JavaScript function
+  for column filtering ([#9](https://github.com/glin/reactable/issues/9),
+  [#90](https://github.com/glin/reactable/issues/90),
+  [#145](https://github.com/glin/reactable/issues/145)).
+* `colDef()` gains a `filterInput` argument to render a custom filter input for
+   column filtering ([#9](https://github.com/glin/reactable/issues/9)).
 * `colDef()` gains a `searchable` argument to enable or disable global table
   searching. Columns can be excluded from searching using `colDef(searchable = FALSE)`,
   and hidden columns can be included in searching using `colDef(searchable = TRUE)`
@@ -70,6 +78,9 @@ where possible, but note that there are several breaking changes.
 * When both `columnGroups` and `groupBy` arguments are provided, `groupBy`
   columns are no longer added to a column group automatically
   ([#87](https://github.com/glin/reactable/issues/87)).
+* The `rowInfo.row` property has been renamed to `rowInfo.values` in JavaScript
+  render functions and style functions. `rowInfo.row` remains supported, but is
+  deprecated and may be removed in the future.
 * The `state.expanded` property has been removed from JavaScript render
   functions and style functions. To check whether a row is expanded, use
   `rowInfo.expanded` instead.

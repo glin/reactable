@@ -11,6 +11,7 @@ colDef(
   resizable = NULL,
   filterable = NULL,
   searchable = NULL,
+  filterMethod = NULL,
   show = TRUE,
   defaultSortOrder = NULL,
   sortNALast = FALSE,
@@ -21,6 +22,7 @@ colDef(
   header = NULL,
   footer = NULL,
   details = NULL,
+  filterInput = NULL,
   html = FALSE,
   na = "",
   rowHeader = FALSE,
@@ -60,6 +62,11 @@ By default, global searching applies to all visible columns. Set this to
 \code{FALSE} to exclude a visible column from searching, or \code{TRUE} to include a
 hidden column in searching.}
 
+\item{filterMethod}{Custom filter method to use for column filtering.
+A \code{\link[=JS]{JS()}} function that takes an array of row objects, the column ID,
+and the filter value as arguments, and returns the filtered array of
+row objects.}
+
 \item{show}{Show the column?
 
 If \code{FALSE}, this column will be excluded from global table searching by
@@ -90,13 +97,19 @@ and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a
 object and table state object as arguments.}
 
 \item{footer}{Footer content or render function. Render functions can be an
-R function that takes two arguments, the column values and column name, or a
-\code{\link[=JS]{JS()}} function that takes a column info object and table state object as arguments.}
+R function that takes the column values and column name as arguments, or a
+\code{\link[=JS]{JS()}} function that takes a column info object and table state object as
+arguments.}
 
 \item{details}{Additional content to display when expanding a row. An R function
 that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function
 that takes a row info object and table state object as arguments.
 Cannot be used on a \code{groupBy} column.}
+
+\item{filterInput}{Custom filter input or render function. Render functions can
+be an R function that takes the column values and column name as arguments,
+or a \code{\link[=JS]{JS()}} function that takes a column object and table state object as
+arguments.}
 
 \item{html}{Render content as HTML? Raw HTML strings are escaped by default.}
 

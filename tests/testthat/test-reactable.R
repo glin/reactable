@@ -26,8 +26,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
-  expect_error(reactable(df, filterable = "true"))
-  expect_error(reactable(df, searchable = "true"))
   expect_error(reactable(df, defaultColDef = list()))
   expect_error(reactable(df, defaultColGroup = list()))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
@@ -89,7 +87,7 @@ test_that("reactable", {
   # Table options
   tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
                    columnGroups = list(colGroup("group", "x")),
-                   sortable = FALSE, resizable = TRUE, filterable = TRUE, searchable = TRUE,
+                   sortable = FALSE, resizable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    showPageInfo = FALSE, minRows = 5, defaultExpanded = TRUE,
                    selection = "single", selectionId = "sel", highlight = TRUE,
@@ -114,8 +112,6 @@ test_that("reactable", {
     pivotBy = list("x"),
     sortable = FALSE,
     resizable = TRUE,
-    filterable = TRUE,
-    searchable = TRUE,
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultPageSize = 10,
@@ -325,6 +321,48 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[1,2,3]}')
   expect_equal(length(attribs$columns), 1)
+})
+
+test_that("filterable", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "filterable"), NULL)
+
+  tbl <- reactable(data, filterable = TRUE)
+  expect_equal(getAttrib(tbl, "filterable"), TRUE)
+
+  tbl <- reactable(data, filterable = FALSE)
+  expect_equal(getAttrib(tbl, "filterable"), NULL)
+
+  expect_error(reactable(data, filterable = "true"), "`filterable` must be TRUE or FALSE")
+})
+
+test_that("searchable", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "searchable"), NULL)
+
+  tbl <- reactable(data, searchable = TRUE)
+  expect_equal(getAttrib(tbl, "searchable"), TRUE)
+
+  tbl <- reactable(data, searchable = FALSE)
+  expect_equal(getAttrib(tbl, "searchable"), NULL)
+
+  expect_error(reactable(data, searchable = "true"), "`searchable` must be TRUE or FALSE")
+})
+
+test_that("searchMethod", {
+  data <- data.frame(x = 1)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "searchMethod"), NULL)
+
+  tbl <- reactable(data, searchMethod = JS("(rows, columnIds, filterValue) => rows"))
+  expect_equal(getAttrib(tbl, "searchMethod"), JS("(rows, columnIds, filterValue) => rows"))
+
+  expect_error(reactable(data, searchMethod = "rows => rows"), "`searchMethod` must be a JS function")
 })
 
 test_that("defaultColDef", {
@@ -783,6 +821,23 @@ test_that("row details", {
   expect_equal(attribs$columnGroups[[1]]$columns, list(".details", "x"))
 
   expect_error(reactable(data, details = "details"), "`details` renderer must be an R function or JS function")
+})
+
+test_that("custom filter inputs", {
+  data <- data.frame(x = c(1, 2), y = c("a", "b"), z = c("c", "d"), stringsAsFactors = FALSE)
+
+  tbl <- reactable(data, columns = list(
+    x = colDef(filterInput = JS("(filterValue, setFilter, column) => filterInput")),
+    y = colDef(filterInput = function(values, name) {
+      htmltools::tags$input(type = "text", class = paste(c(values, name), collapse = "_"))
+    }),
+    z = colDef(filterInput = '<input type="text">', html = TRUE)
+  ))
+
+  columns <- getAttrib(tbl, "columns")
+  expect_equal(columns[[1]]$filterInput, JS("(filterValue, setFilter, column) => filterInput"))
+  expect_equal(columns[[2]]$filterInput, htmltools::tags$input(type = "text", className = "a_b_y"))
+  expect_equal(columns[[3]]$filterInput, '<input type="text">')
 })
 
 test_that("html dependencies from rendered content are passed through", {

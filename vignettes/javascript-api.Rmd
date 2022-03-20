@@ -197,7 +197,7 @@ Sets the search value of a table. To clear the search, set the value to `undefin
 ```js
 Reactable.setSearch(
   tableId: string,
-  value?: string
+  value: any
 )
 ```
 
@@ -220,7 +220,7 @@ to `undefined`.
 Reactable.setFilter(
   tableId: string,
   columnId: string,
-  value?: string
+  value: any
 )
 ```
 
@@ -242,7 +242,7 @@ set `filters` to an empty array, `[]`.
 ```js
 Reactable.setAllFilters(
   tableId: string,
-  filters: Array<{ id: string, value: string }>
+  filters: Array<{ id: string, value: any }>
 )
 ```
 
@@ -353,12 +353,12 @@ stateProps <- dplyr::tribble(
   "page", "2", "page index (zero-based)",
   "pageSize", "10", "page size",
   "pages", "5", "number of pages",
-  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data objects in the page",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
   "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
   "searchValue", '"petal"', "table search value",
   "selected", '[0, 1, 4]', "array of selected row indices (zero-based)",
-  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data objects in the table",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data objects in the table"
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
 )
 
 propsTable(stateProps)

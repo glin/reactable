@@ -14,6 +14,7 @@ reactable(
   resizable = FALSE,
   filterable = FALSE,
   searchable = FALSE,
+  searchMethod = NULL,
   defaultColDef = NULL,
   defaultColGroup = NULL,
   defaultSortOrder = "asc",
@@ -81,6 +82,11 @@ To aggregate data when rows are grouped, use the \code{aggregate} argument in \c
 \item{filterable}{Enable column filtering?}
 
 \item{searchable}{Enable global table searching?}
+
+\item{searchMethod}{Custom search method to use for global table searching.
+A \code{\link[=JS]{JS()}} function that takes an array of row objects, an array of
+column IDs, and the search value as arguments, and returns the filtered
+array of row objects.}
 
 \item{defaultColDef}{Default column definition used by every column. See \code{\link[=colDef]{colDef()}}.}
 
