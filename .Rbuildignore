@@ -11,8 +11,8 @@
 ^jest.config\.js$
 ^node_modules$
 ^package\.json$
+^package-lock\.json$
 ^pkgdown$
 ^srcjs$
 ^vignettes$
 ^webpack\.config\.js$
-^yarn\.lock$
