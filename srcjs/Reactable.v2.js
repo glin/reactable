@@ -29,6 +29,9 @@ import './reactable.v2.css'
 
 const tableInstances = {}
 export function getInstance(tableId) {
+  if (!tableId) {
+    throw new Error('A reactable table ID must be provided')
+  }
   const getInstance = tableInstances[tableId]
   if (!getInstance) {
     throw new Error(`reactable instance '${tableId}' not found`)

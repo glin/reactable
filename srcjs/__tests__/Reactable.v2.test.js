@@ -9049,13 +9049,15 @@ describe('Crosstalk', () => {
 })
 
 describe('reactable JavaScript API', () => {
-  it('getInstance errs on non-existent instance', () => {
+  it('getInstance errs on invalid or non-existent instance', () => {
     expect(() => getInstance('does-not-exist')).toThrow(
       `reactable instance 'does-not-exist' not found`
     )
     expect(() => reactable.getState('does-not-exist')).toThrow(
       `reactable instance 'does-not-exist' not found`
     )
+    expect(() => getInstance('')).toThrow('A reactable table ID must be provided')
+    expect(() => getInstance()).toThrow('A reactable table ID must be provided')
   })
 
   it('getInstance works when table has an elementId', () => {
