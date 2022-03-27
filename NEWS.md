@@ -76,8 +76,11 @@ where possible, but note that there are several breaking changes.
 * The `rowInfo.page` and `cellInfo.page` properties have been removed from
   JavaScript render functions and style functions. To get the current page
   index of the table, use `state.page` instead.
-* JavaScript render functions and style functions now receive date and time values
-  in UTC time zone (ISO 8601 format), rather than local time.
+* When accessing row data in JavaScript render functions and style functions:
+  * Date and time values are now represented in UTC time (ISO 8601 format),
+    rather than local time.
+  * Single values (length-1 vectors) in list-columns are no longer represented as
+    arrays (i.e., data is now serialized using `jsonlite::toJSON(auto_unbox = TRUE)`).
 * The `defaultGroupHeader` argument in `reactableLang()` is now deprecated and
   no longer used. Use the `columnGroups` argument in `reactable()` to customize
   the column group header for `groupBy` columns.
@@ -145,9 +148,6 @@ where possible, but note that there are several breaking changes.
   on table data updates ([#214](https://github.com/glin/reactable/issues/214)).
 * More HTML attributes are supported when rendering HTML tags, such as `onclick`
   ([#150](https://github.com/glin/reactable/issues/150)).
-* When accessing data in JavaScript render functions and style functions,
-  single elements (length 1 vectors) in list-columns are no longer represented
-  as arrays.
 
 # reactable 0.2.3
 

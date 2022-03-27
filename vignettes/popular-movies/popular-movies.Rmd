@@ -20,6 +20,7 @@ library(htmltools)
 # Some of these columns contain nested lists (e.g., multiple genres per movie).
 movies <- fromJSON("tmdb_movies.json") %>%
   mutate(
+    genres = lapply(genres, as.list),
     popularity_rank = rank(-popularity, ties.method = "first"),
     year = substr(release_date, 1, 4),
     score = vote_average * 10

@@ -218,8 +218,9 @@ test_that("list-columns are serialized correctly", {
   data <- data.frame(
     x = I(list(
       # Length-1 vectors should be unboxed, except when wrapped in I()
-      "xy",
-      I("xy"),
+      "x",
+      I("x"),
+      list("x"),
       list(1, 2, 3),
       c("a", "b"),
       list(x = TRUE),
@@ -230,7 +231,7 @@ test_that("list-columns are serialized correctly", {
   )
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":["xy",["xy"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null]}')
+  expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null]}')
 })
 
 test_that("supports Crosstalk", {
