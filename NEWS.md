@@ -87,6 +87,10 @@ where possible, but note that there are several breaking changes.
 * The `detailsCollapseLabel`, `deselectAllRowsLabel`, `deselectAllSubRowsLabel`,
   and `deselectRowLabel` arguments in `reactableLang()` are now deprecated and
   no longer used ([#167](https://github.com/glin/reactable/issues/167)).
+* Support for Internet Explorer 11 (IE 11) is deprecated, and this will be the last
+  release to support IE 11. Future releases may still work on IE 11, but will no
+  longer be tested. Examples in the documentation may drop support for IE 11 before
+  the next release.
 
 ### Minor improvements and bug fixes
 
