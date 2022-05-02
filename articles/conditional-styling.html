@@ -98,6 +98,9 @@
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
     <li>
+      <a href="../articles/custom-filtering.html">Custom Filtering</a>
+    </li>
+    <li>
       <a href="../articles/javascript-api.html">JavaScript API</a>
     </li>
   </ul>
@@ -220,8 +223,8 @@ JavaScript functions
     <span class="op">)</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="htmlwidget-93ccba552007febd3aec" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-93ccba552007febd3aec">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric"},{"accessor":"Species","name":"Species","type":"factor"}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"73340520a181ac3029b2a85b706844e7"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b47a39620c94cd289b53" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b47a39620c94cd289b53">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric"},{"accessor":"Species","name":"Species","type":"factor"}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"73340520a181ac3029b2a85b706844e7"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level4">
 <h4 id="example-highlight-sorted-columns">Example: highlight sorted columns<a class="anchor" aria-label="anchor" href="#example-highlight-sorted-columns"></a>
@@ -250,8 +253,8 @@ JavaScript functions
   background: rgba(0, 0, 0, 0.03);
 }
 </style>
-<div id="htmlwidget-5295d8ea1acab5dfd7d0" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-5295d8ea1acab5dfd7d0">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Species","name":"Species","type":"factor","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"df9fed87c78a24336b8995e2beca0a52"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
+<div id="htmlwidget-20db14027e149d2b2f8c" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-20db14027e149d2b2f8c">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"accessor":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"accessor":"Species","name":"Species","type":"factor","className":"function(rowInfo, colInfo, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === colInfo.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"df9fed87c78a24336b8995e2beca0a52"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cell-styling">Cell Styling<a class="anchor" aria-label="anchor" href="#cell-styling"></a>
@@ -333,12 +336,25 @@ JavaScript functions
 <tbody>
 <tr>
 <th scope="row">
+<code>values</code>
+</th>
+<td>
+<code>{ Petal.Length: 1.7, Species: "setosa" }</code>
+</td>
+<td>row data values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
 <code>row</code>
 </th>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data object</td>
+<td>
+same as 
+<code>values</code>
+ (deprecated in v0.2.3.9000)
+</td>
 </tr>
 <tr>
 <th scope="row">
@@ -383,7 +399,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of sub row data objects (aggregated rows only)</td>
+<td>array of sub row data values (aggregated rows only)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -528,7 +544,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -537,7 +553,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -546,7 +562,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -627,12 +643,25 @@ JavaScript functions
 <tbody>
 <tr>
 <th scope="row">
+<code>values</code>
+</th>
+<td>
+<code>{ Petal.Length: 1.7, Species: "setosa" }</code>
+</td>
+<td>row data values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
 <code>row</code>
 </th>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data object</td>
+<td>
+same as 
+<code>values</code>
+ (deprecated in v0.2.3.9000)
+</td>
 </tr>
 <tr>
 <th scope="row">
@@ -677,7 +706,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of sub row data objects (aggregated rows only)</td>
+<td>array of sub row data values (aggregated rows only)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -781,7 +810,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -790,7 +819,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -799,7 +828,7 @@ JavaScript functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -861,7 +890,7 @@ JavaScript functions
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

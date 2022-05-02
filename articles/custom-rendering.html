@@ -98,6 +98,9 @@
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
     <li>
+      <a href="../articles/custom-filtering.html">Custom Filtering</a>
+    </li>
+    <li>
       <a href="../articles/javascript-api.html">JavaScript API</a>
     </li>
   </ul>
@@ -219,8 +222,8 @@ JavaScript render functions
     Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="htmlwidget-3016ac36cacffa192baf" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-3016ac36cacffa192baf">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"35f3fef8c0453df81932682fdfe0ddda"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
+<div id="htmlwidget-b88b8723d6ff0b494e81" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b88b8723d6ff0b494e81">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"35f3fef8c0453df81932682fdfe0ddda"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>
 
@@ -244,8 +247,8 @@ JavaScript render functions
     Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<div id="htmlwidget-711d8d35c986614d0f8f" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-711d8d35c986614d0f8f">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":"function(colInfo) {\n        const values = colInfo.data.map(function(row) {\n          return row[colInfo.column.id]\n        })\n        let total = 0\n        values.forEach(function(value) {\n          total += value\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"e578ce3093eeb77dd0ec5fcb5f4580aa"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<div id="htmlwidget-2e96dfff6ef0ab3d0dc3" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-2e96dfff6ef0ab3d0dc3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"accessor":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"accessor":"Model","name":"Model","type":"factor"},{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Price","name":"Price","type":"numeric","footer":"function(colInfo) {\n        const values = colInfo.data.map(function(row) {\n          return row[colInfo.column.id]\n        })\n        let total = 0\n        values.forEach(function(value) {\n          total += value\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"dataKey":"e578ce3093eeb77dd0ec5fcb5f4580aa"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -324,7 +327,7 @@ JavaScript render functions
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data object</td>
+<td>row data values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -387,7 +390,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of sub row data objects (aggregated cells only)</td>
+<td>array of sub row data values (aggregated cells only)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -491,7 +494,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -500,7 +503,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -509,7 +512,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -582,7 +585,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -668,7 +671,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -677,7 +680,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -686,7 +689,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -759,7 +762,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -845,7 +848,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -854,7 +857,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -863,7 +866,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -924,12 +927,25 @@ JavaScript render functions
 <tbody>
 <tr>
 <th scope="row">
+<code>values</code>
+</th>
+<td>
+<code>{ Petal.Length: 1.7, Species: "setosa" }</code>
+</td>
+<td>row data values (new in v0.2.3.9000)</td>
+</tr>
+<tr>
+<th scope="row">
 <code>row</code>
 </th>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data object</td>
+<td>
+same as 
+<code>values</code>
+ (deprecated in v0.2.3.9000)
+</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1060,7 +1076,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1069,7 +1085,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1078,7 +1094,7 @@ JavaScript render functions
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -1140,7 +1156,7 @@ JavaScript render functions
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

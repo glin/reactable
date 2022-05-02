@@ -1,5 +1,5 @@
 pandoc: 2.7.3
-pkgdown: 2.0.2
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   100k-rows: 100k-rows.html
@@ -7,6 +7,8 @@ articles:
   conditional-styling: conditional-styling.html
   cookbook: cookbook/cookbook.html
   cran-packages: cran-packages/cran-packages.html
+  custom-filtering-extra: custom-filtering-extra.html
+  custom-filtering: custom-filtering.html
   custom-rendering: custom-rendering.html
   custom-sort-icons: custom-sort-icons.html
   examples: examples.html
@@ -20,5 +22,5 @@ articles:
   sticky-columns: sticky-columns.html
   twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2022-03-28T03:14Z
+last_built: 2022-05-02T02:16Z
 

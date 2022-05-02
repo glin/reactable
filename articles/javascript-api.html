@@ -98,6 +98,9 @@
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
     <li>
+      <a href="../articles/custom-filtering.html">Custom Filtering</a>
+    </li>
+    <li>
       <a href="../articles/javascript-api.html">JavaScript API</a>
     </li>
   </ul>
@@ -284,7 +287,7 @@
 <p>Sets the search value of a table. To clear the search, set the value to <code>undefined</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1"></a><span class="va">Reactable</span>.<span class="at">setSearch</span>(</span>
 <span id="cb9-2"><a href="#cb9-2"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a>  value<span class="op">?</span>: string</span>
+<span id="cb9-3"><a href="#cb9-3"></a>  value<span class="op">:</span> any</span>
 <span id="cb9-4"><a href="#cb9-4"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a>
@@ -304,7 +307,7 @@
 <div class="sourceCode" id="cb11"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1"></a><span class="va">Reactable</span>.<span class="at">setFilter</span>(</span>
 <span id="cb11-2"><a href="#cb11-2"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a>  columnId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a>  value<span class="op">?</span>: string</span>
+<span id="cb11-4"><a href="#cb11-4"></a>  value<span class="op">:</span> any</span>
 <span id="cb11-5"><a href="#cb11-5"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a>
@@ -323,7 +326,7 @@
 <p>Sets all column filter values in the table. To clear the column filters, set <code>filters</code> to an empty array, <code>[]</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1"></a><span class="va">Reactable</span>.<span class="at">setAllFilters</span>(</span>
 <span id="cb13-2"><a href="#cb13-2"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a>  filters<span class="op">:</span> Array<span class="op">&lt;{</span> <span class="dt">id</span><span class="op">:</span> string<span class="op">,</span> <span class="dt">value</span><span class="op">:</span> string <span class="op">}&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>  filters<span class="op">:</span> Array<span class="op">&lt;{</span> <span class="dt">id</span><span class="op">:</span> string<span class="op">,</span> <span class="dt">value</span><span class="op">:</span> any <span class="op">}&gt;</span></span>
 <span id="cb13-4"><a href="#cb13-4"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a>
@@ -462,7 +465,7 @@
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>array of row data objects in the page</td>
+<td>array of row data values in the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -498,7 +501,7 @@
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data objects in the table</td>
+<td>sorted array of row data values in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -507,7 +510,7 @@
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data objects in the table</td>
+<td>original array of row data values in the table</td>
 </tr>
 </tbody>
 </table>
@@ -579,7 +582,7 @@ h3 {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

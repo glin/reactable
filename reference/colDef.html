@@ -77,6 +77,9 @@
       <a href="../articles/conditional-styling.html">Conditional Styling</a>
     </li>
     <li>
+      <a href="../articles/custom-filtering.html">Custom Filtering</a>
+    </li>
+    <li>
       <a href="../articles/javascript-api.html">JavaScript API</a>
     </li>
   </ul></li>
@@ -125,6 +128,7 @@
   resizable <span class="op">=</span> <span class="cn">NULL</span>,
   filterable <span class="op">=</span> <span class="cn">NULL</span>,
   searchable <span class="op">=</span> <span class="cn">NULL</span>,
+  filterMethod <span class="op">=</span> <span class="cn">NULL</span>,
   show <span class="op">=</span> <span class="cn">TRUE</span>,
   defaultSortOrder <span class="op">=</span> <span class="cn">NULL</span>,
   sortNALast <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -135,6 +139,7 @@
   header <span class="op">=</span> <span class="cn">NULL</span>,
   footer <span class="op">=</span> <span class="cn">NULL</span>,
   details <span class="op">=</span> <span class="cn">NULL</span>,
+  filterInput <span class="op">=</span> <span class="cn">NULL</span>,
   html <span class="op">=</span> <span class="cn">FALSE</span>,
   na <span class="op">=</span> <span class="st">""</span>,
   rowHeader <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -175,6 +180,11 @@ Built-in aggregate functions are: <code>"mean"</code>, <code>"sum"</code>, <code
 By default, global searching applies to all visible columns. Set this to
 <code>FALSE</code> to exclude a visible column from searching, or <code>TRUE</code> to include a
 hidden column in searching.</p></dd>
+<dt>filterMethod</dt>
+<dd><p>Custom filter method to use for column filtering.
+A <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> function that takes an array of row objects, the column ID,
+and the filter value as arguments, and returns the filtered array of
+row objects.</p></dd>
 <dt>show</dt>
 <dd><p>Show the column?</p>
 <p>If <code>FALSE</code>, this column will be excluded from global table searching by
@@ -205,13 +215,19 @@ and column name as arguments, or a <code><a href="https://rdrr.io/pkg/htmlwidget
 object and table state object as arguments.</p></dd>
 <dt>footer</dt>
 <dd><p>Footer content or render function. Render functions can be an
-R function that takes two arguments, the column values and column name, or a
-<code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> function that takes a column info object and table state object as arguments.</p></dd>
+R function that takes the column values and column name as arguments, or a
+<code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> function that takes a column info object and table state object as
+arguments.</p></dd>
 <dt>details</dt>
 <dd><p>Additional content to display when expanding a row. An R function
 that takes the row index and column name as arguments, or a <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> function
 that takes a row info object and table state object as arguments.
 Cannot be used on a <code>groupBy</code> column.</p></dd>
+<dt>filterInput</dt>
+<dd><p>Custom filter input or render function. Render functions can
+be an R function that takes the column values and column name as arguments,
+or a <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> function that takes a column object and table state object as
+arguments.</p></dd>
 <dt>html</dt>
 <dd><p>Render content as HTML? Raw HTML strings are escaped by default.</p></dd>
 <dt>na</dt>
@@ -303,7 +319,7 @@ in <code><a href="reactable.html">reactable()</a></code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
