@@ -66,3 +66,20 @@ pre {
 .contents li + li {
   margin-top: 4px;
 }
+
+/* Anchor link fixes for reflow issues, keyboard navigation */
+a.anchor {
+  display: inline-block;
+  opacity: 0;
+}
+
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor,
+a.anchor:hover,
+a.anchor:focus {
+  opacity: 1;
+}
