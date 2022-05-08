@@ -654,8 +654,8 @@ data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 # Add missing values to the data
 set.seed(123)
-data[] <- lapply(data, function(x){
-  x[sample(1:length(x), nrow(data) / 3)] <- NA
+data[] <- lapply(data, function(x) {
+  x[sample(1:length(x), length(x) / 3)] <- NA
   x
 })
 
