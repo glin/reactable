@@ -637,6 +637,64 @@ browsable(tagList(
 ))
 ```
 
+### External checkbox filter
+
+This example shows how you can filter a column with logical values using an
+external checkbox input.
+
+The data contains a lot of missing values, and we want a checkbox that allows you
+to show just the rows with missing values. So we add a hidden column that indicates
+with `TRUE` or `FALSE` whether any values in the row are missing, and filter for
+`true` values when the checkbox is checked.
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+# Add missing values to the data
+set.seed(123)
+data[] <- lapply(data, function(x){
+  x[sample(1:length(x), nrow(data) / 3)] <- NA
+  x
+})
+
+# Indicates with TRUE or FALSE whether any values in the row are missing
+data$has_missing <- !complete.cases(data)
+
+browsable(tagList(
+  tags$label(
+    tags$input(
+      type = "checkbox",
+      onclick = "Reactable.setFilter('cars-missing', 'has_missing', event.target.checked)"
+    ),
+    "Show missing values only"
+  ),
+  
+  reactable(
+    data,
+    columns = list(
+      # Hidden column for filtering missing values
+      has_missing = colDef(
+        show = FALSE,
+        filterMethod = JS("function(rows, columnId, filterValue) {
+          if (filterValue === true) {
+            return rows.filter(function(row) {
+              const hasMissing = row.values[columnId]
+              return hasMissing
+            })
+          }
+          return rows
+        }")
+      )
+    ),
+    defaultColDef = colDef(na = "-"),
+    defaultPageSize = 5,
+    elementId = "cars-missing"
+  )
+))
+```
+
 ### Basic custom filter input (React)
 
 This example shows how you could write your custom filter input entirely in

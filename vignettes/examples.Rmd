@@ -149,33 +149,72 @@ reactable(iris[1:5, ], showSortIcon = FALSE)
 
 
 ## Filtering
-You can make columns filterable using `filterable`:
+
+You can make columns filterable by setting `filterable = TRUE` in `reactable()`:
+
 ```{r}
 data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, filterable = TRUE, minRows = 10)
 ```
 
-To make specific columns filterable (or not), set `filterable` in the column definition:
+To make specific columns filterable (or not), set `filterable` to `TRUE` or `FALSE` in `colDef()`:
+
 ```{r}
 reactable(
   data,
   filterable = TRUE,
   columns = list(
     Price = colDef(filterable = FALSE)
-  )
+  ),
+  defaultPageSize = 5
 )
 ```
 
+### Custom filtering
+
+Column filtering can be customized using the `filterMethod` and `filterInput` arguments
+in `colDef()`. See the [Custom Filtering](custom-filtering.html) guide for more details
+and examples.
+
+This example shows basic usage of a custom filter method, changing filtering
+on the `Manufacturer` column to be case-sensitive rather than case-insensitive.
+(Try filtering for "bmw" and then "BMW").
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Manufacturer = colDef(
+      filterable = TRUE,
+      # Filter by case-sensitive text match
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        return rows.filter(function(row) {
+          return row.values[columnId].indexOf(filterValue) !== -1
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
 
 ## Searching
-You can make the entire table searchable using `searchable`:
+
+You can make the entire table searchable by setting `searchable = TRUE` in `reactable()`:
+
 ```{r}
 data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, searchable = TRUE, minRows = 10)
 ```
 
+### Custom searching
+
+The table search method can be customized using the `searchMethod` argument in `reactable()`.
+See the [Custom Filtering](custom-filtering.html) guide for details and examples.
 
 ## Pagination
 You can change the default page size by configuring `defaultPageSize`:
