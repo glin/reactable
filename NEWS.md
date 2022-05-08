@@ -55,14 +55,16 @@ where possible, but note that there are several breaking changes.
   [#194](https://github.com/glin/reactable/issues/194)).
   Learn more in the [JavaScript API guide](https://glin.github.io/reactable/articles/javascript-api.html)
   or the [JavaScript API examples](https://glin.github.io/reactable/articles/examples.html#javascript-api).
-* `reactable()` gains a `searchMethod` argument to use a custom JavaScript function
-  for global table searching ([#222](https://github.com/glin/reactable/issues/222)).
-* `colDef()` gains a `filterMethod` argument to use a custom JavaScript function
-  for column filtering ([#9](https://github.com/glin/reactable/issues/9),
-  [#90](https://github.com/glin/reactable/issues/90),
-  [#145](https://github.com/glin/reactable/issues/145)).
-* `colDef()` gains a `filterInput` argument to render a custom filter input for
-   column filtering ([#9](https://github.com/glin/reactable/issues/9)).
+* Column filtering and table searching can now be customized. Learn more in the
+  [Custom Filtering guide](https://glin.github.io/reactable/articles/custom-filtering.html).
+  * `reactable()` gains a `searchMethod` argument to use a custom JavaScript function
+    for global table searching ([#222](https://github.com/glin/reactable/issues/222)).
+  * `colDef()` gains a `filterMethod` argument to use a custom JavaScript function
+    for column filtering ([#9](https://github.com/glin/reactable/issues/9),
+    [#90](https://github.com/glin/reactable/issues/90),
+    [#145](https://github.com/glin/reactable/issues/145)).
+  * `colDef()` gains a `filterInput` argument to render a custom filter input for
+    column filtering ([#9](https://github.com/glin/reactable/issues/9)).
 * `colDef()` gains a `searchable` argument to enable or disable global table
   searching. Columns can be excluded from searching using `colDef(searchable = FALSE)`,
   and hidden columns can be included in searching using `colDef(searchable = TRUE)`
