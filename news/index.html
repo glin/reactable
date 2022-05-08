@@ -149,12 +149,13 @@
 <li>Custom cell click actions can now access the table state using a new <code>state</code> argument.</li>
 <li>R render functions for row details now receive an additional argument for the column name (<a href="https://github.com/ksnap28" class="external-link">@ksnap28</a>, <a href="https://github.com/glin/reactable/issues/155" class="external-link">#155</a>).</li>
 <li>New JavaScript API to manipulate or access tables from JavaScript. Use this to create custom interactive controls, such as CSV download buttons, custom filter inputs, or toggle buttons for row grouping and row expansion (<a href="https://github.com/glin/reactable/issues/11" class="external-link">#11</a>, <a href="https://github.com/glin/reactable/issues/28" class="external-link">#28</a>, <a href="https://github.com/glin/reactable/issues/182" class="external-link">#182</a>, <a href="https://github.com/glin/reactable/issues/194" class="external-link">#194</a>). Learn more in the <a href="https://glin.github.io/reactable/articles/javascript-api.html" class="external-link">JavaScript API guide</a> or the <a href="https://glin.github.io/reactable/articles/examples.html#javascript-api" class="external-link">JavaScript API examples</a>.</li>
-<li>
+<li>Column filtering and table searching can now be customized. Learn more in the <a href="https://glin.github.io/reactable/articles/custom-filtering.html" class="external-link">Custom Filtering guide</a>.<ul><li>
 <code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>searchMethod</code> argument to use a custom JavaScript function for global table searching (<a href="https://github.com/glin/reactable/issues/222" class="external-link">#222</a>).</li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterMethod</code> argument to use a custom JavaScript function for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>, <a href="https://github.com/glin/reactable/issues/90" class="external-link">#90</a>, <a href="https://github.com/glin/reactable/issues/145" class="external-link">#145</a>).</li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterInput</code> argument to render a custom filter input for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>).</li>
+</ul></li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>searchable</code> argument to enable or disable global table searching. Columns can be excluded from searching using <code>colDef(searchable = FALSE)</code>, and hidden columns can be included in searching using <code>colDef(searchable = TRUE)</code> (<a href="https://github.com/glin/reactable/issues/217" class="external-link">#217</a>).</li>
 </ul></div>
