@@ -120,9 +120,9 @@ reactable(
   columns = list(
     Price = colDef(
       html = TRUE,
-      footer = JS("function(colInfo) {
-        const values = colInfo.data.map(function(row) {
-          return row[colInfo.column.id]
+      footer = JS("function(column, state) {
+        const values = state.data.map(function(row) {
+          return row[column.id]
         })
         let total = 0
         values.forEach(function(value) {
@@ -261,30 +261,34 @@ Or a JavaScript function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   header = JS("
-    function(colInfo, state) {
+    function(column, state) {
       // input:
-      //  - colInfo, an object containing column info
+      //  - column, an object containing column properties
       //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>' + colInfo.column.name + '</div>'
+      return '<div>' + column.name + '</div>'
     }
   "),
   html = TRUE  # to render as HTML
 )
 ```
 
-#### `colInfo` properties
+#### `column` properties
 
 ```{r, echo=FALSE, asis=TRUE}
-colInfoProps <- dplyr::tribble(
+columnProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "column", '{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }', "column info object",
-  "data", '[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]', "sorted array of row data values in the table"
+  "id", '"Petal.Length"', "column ID (new in v0.2.3.9000)",
+  "name", '"Petal Length"', "column display name (new in v0.2.3.9000)",
+  "filterValue", '"petal"', "column filter value (new in v0.2.3.9000)",
+  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter) (new in v0.2.3.9000)"),
+  "column", '{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }', "column info object (deprecated in v0.2.3.9000)",
+  "data", '[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]', "sorted array of row data values in the table (deprecated in v0.2.3.9000)"
 )
 
-propsTable(colInfoProps)
+propsTable(columnProps)
 ```
 
 #### `state` properties
@@ -320,24 +324,24 @@ Or a JavaScript function with up to 2 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   footer = JS("
-    function(colInfo, state) {
+    function(column, state) {
       // input:
-      //  - colInfo, an object containing column info
+      //  - column, an object containing column properties
       //  - state, an object containing the table state (optional, new in v0.2.3.9000)
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>Rows: ' + colInfo.data.length + '</div>'
+      return '<div>Rows: ' + state.data.length + '</div>'
     }
   "),
   html = TRUE  # to render as HTML
 )
 ```
 
-#### `colInfo` properties
+#### `column` properties
 
 ```{r, echo=FALSE, asis=TRUE}
-propsTable(colInfoProps)
+propsTable(columnProps)
 ```
 
 #### `state` properties

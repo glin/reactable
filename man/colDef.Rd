@@ -93,12 +93,12 @@ cell info object and table state object as arguments.}
 a cell info object and table state object as arguments.}
 
 \item{header}{Custom header renderer. An R function that takes the header value
-and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a column info
+and column name as arguments, or a \code{\link[=JS]{JS()}} function that takes a column
 object and table state object as arguments.}
 
 \item{footer}{Footer content or render function. Render functions can be an
 R function that takes the column values and column name as arguments, or a
-\code{\link[=JS]{JS()}} function that takes a column info object and table state object as
+\code{\link[=JS]{JS()}} function that takes a column object and table state object as
 arguments.}
 
 \item{details}{Additional content to display when expanding a row. An R function
@@ -148,14 +148,14 @@ automatically be made sticky, including the column group header.}
 
 \item{class}{Additional CSS classes to apply to cells. Can also be an R function
 that takes the cell value, row index, and column name as arguments, or a \code{\link[=JS]{JS()}}
-function that takes a row info object, column info object, and table state
-object as arguments.
+function that takes a row info object, column object, and table state object
+as arguments.
 
 Note that R functions cannot apply classes to aggregated cells.}
 
 \item{style}{Inline styles to apply to cells. A named list or character string.
 Can also be an R function that takes the cell value and row index as arguments,
-or a \code{\link[=JS]{JS()}} function that takes a row info object, column info object, and
+or a \code{\link[=JS]{JS()}} function that takes a row info object, column object, and
 table state object as arguments.
 
 Note that R functions cannot apply styles to aggregated cells.

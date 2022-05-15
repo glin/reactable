@@ -73,7 +73,7 @@
 #' @param defaultSelected A numeric vector of default selected row indices.
 #' @param onClick Action to take when clicking a cell. Either `"expand"` to expand
 #'   the row, `"select"` to select the row, or a [JS()] function that takes a
-#'   row info object, column info object, and table state object as arguments.
+#'   row info object, column object, and table state object as arguments.
 #' @param highlight Highlight table rows on hover?
 #' @param outlined Add borders around the table?
 #' @param bordered Add borders around the table and every cell?

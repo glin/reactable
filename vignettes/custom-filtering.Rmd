@@ -254,9 +254,7 @@ columnProps <- dplyr::tribble(
   "filterValue", '"petal"', "column filter value",
   "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter)")
 )
-```
 
-```{r, echo=FALSE, asis=TRUE}
 propsTable(columnProps)
 ```
 

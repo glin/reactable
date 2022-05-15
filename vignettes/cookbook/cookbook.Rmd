@@ -817,10 +817,10 @@ reactable(
   iris[1:5, ],
   defaultSorted = "Sepal.Width",
   defaultColDef = colDef(
-    style = JS("function(rowInfo, colInfo, state) {
+    style = JS("function(rowInfo, column, state) {
       // Highlight sorted columns
       for (let i = 0; i < state.sorted.length; i++) {
-        if (state.sorted[i].id === colInfo.id) {
+        if (state.sorted[i].id === column.id) {
           return { background: 'rgba(0, 0, 0, 0.03)' }
         }
       }
@@ -888,7 +888,7 @@ reactable(
   data,
   columns = list(
     School = colDef(
-      style = JS("function(rowInfo, colInfo, state) {
+      style = JS("function(rowInfo, column, state) {
         const firstSorted = state.sorted[0]
         // Merge cells if unsorted or sorting by school
         if (!firstSorted || firstSorted.id === 'School') {

@@ -1572,9 +1572,9 @@ reactable(
       cell = function() htmltools::tags$button("Show details")
     )
   ),
-  onClick = JS("function(rowInfo, colInfo) {
+  onClick = JS("function(rowInfo, column) {
     // Only handle click events on the 'details' column
-    if (colInfo.id !== 'details') {
+    if (column.id !== 'details') {
       return
     }
 

@@ -143,7 +143,7 @@ Use \code{\link[=getReactableState]{getReactableState()}} to get the selected ro
 
 \item{onClick}{Action to take when clicking a cell. Either \code{"expand"} to expand
 the row, \code{"select"} to select the row, or a \code{\link[=JS]{JS()}} function that takes a
-row info object, column info object, and table state object as arguments.}
+row info object, column object, and table state object as arguments.}
 
 \item{highlight}{Highlight table rows on hover?}
 

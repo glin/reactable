@@ -714,10 +714,14 @@ function Table({
       return (
         <TrComponent key={headerGroupKey} {...headerGroupProps}>
           {headerGroup.headers.map(column => {
-            const colInfo = { column, data: rowData }
+            column = {
+              ...column,
+              column, // Deprecated in v0.2.3.9000
+              data: rowData // Deprecated in v0.2.3.9000
+            }
             let header =
               typeof column.Header === 'function'
-                ? column.Header(colInfo, stateInfo)
+                ? column.Header(column, stateInfo)
                 : column.render('Header')
 
             let headerProps = {
@@ -1250,10 +1254,14 @@ function Table({
       <TfootComponent {...tfootProps}>
         <TrComponent>
           {instance.visibleColumns.map(column => {
-            const colInfo = { column, data: rowData }
+            column = {
+              ...column,
+              column, // Deprecated in v0.2.3.9000
+              data: rowData // Deprecated in v0.2.3.9000
+            }
             const footer =
               typeof column.Footer === 'function'
-                ? column.Footer(colInfo, stateInfo)
+                ? column.Footer(column, stateInfo)
                 : column.render('Footer')
 
             const { className: themeClass, innerClassName } = getCellTheme(theme.footerStyle)

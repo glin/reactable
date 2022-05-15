@@ -246,12 +246,12 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       return content
     }
 
-    col.Header = function Header(colInfo, stateInfo) {
+    col.Header = function Header(column, state) {
       let header = col.name
 
       if (col.header != null) {
         if (typeof col.header === 'function') {
-          header = col.header(colInfo, stateInfo)
+          header = col.header(column, state)
         } else {
           header = hydrate({ Fragment, WidgetContainer }, col.header)
         }
@@ -294,10 +294,10 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     }
 
     if (col.footer != null) {
-      col.Footer = function Footer(colInfo, stateInfo) {
+      col.Footer = function Footer(column, state) {
         let footer
         if (typeof col.footer === 'function') {
-          footer = col.footer(colInfo, stateInfo)
+          footer = col.footer(column, state)
         } else {
           footer = hydrate({ Fragment, WidgetContainer }, col.footer)
         }
@@ -359,11 +359,11 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       // The column group ID is arbitrary and just has to be unique
       col.id = `group_${i}`
       if (col.name != null || col.header != null) {
-        col.Header = function Header(colInfo, state) {
+        col.Header = function Header(column, state) {
           let header = col.name
           if (col.header) {
             if (typeof col.header === 'function') {
-              header = col.header(colInfo, state)
+              header = col.header(column, state)
             } else {
               header = hydrate({ Fragment, WidgetContainer }, col.header)
             }

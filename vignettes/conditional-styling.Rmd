@@ -119,10 +119,10 @@ reactable(
   iris[1:5, ],
   defaultSorted = "Petal.Length",
   defaultColDef = colDef(
-    class = JS("function(rowInfo, colInfo, state) {
+    class = JS("function(rowInfo, column, state) {
       // Highlight sorted columns
       for (let i = 0; i < state.sorted.length; i++) {
-        if (state.sorted[i].id === colInfo.id) {
+        if (state.sorted[i].id === column.id) {
           return 'sorted'
         }
       }
@@ -183,10 +183,10 @@ Or a JavaScript function, wrapped in `JS()`, with up to 3 optional arguments:
 ```{r, eval=FALSE}
 colDef(
   style = JS("
-    function(rowInfo, colInfo, state) {
+    function(rowInfo, column, state) {
       // input:
       //  - rowInfo, an object containing row info
-      //  - colInfo, an object containing column info (optional)
+      //  - column, an object containing column properties (optional)
       //  - state, an object containing the table state (optional)
       //
       // output:
@@ -195,10 +195,10 @@ colDef(
     }
   "),
   class = JS("
-    function(rowInfo, colInfo, state) {
+    function(rowInfo, column, state) {
       // input:
       //  - rowInfo, an object containing row info
-      //  - colInfo, an object containing column info (optional)
+      //  - column, an object containing column properties (optional)
       //  - state, an object containing the table state (optional)
       //
       // output:
@@ -228,17 +228,18 @@ rowInfoProps <- dplyr::tribble(
 propsTable(rowInfoProps)
 ```
 
-#### `colInfo` properties
+#### `column` properties
 
 ```{r, echo=FALSE, asis=TRUE}
-colInfoProps <- dplyr::tribble(
+columnProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "id", '"Petal.Length"', "column ID",
   "name", '"Petal Length"', "column display name",
-  "filterValue", '"petal"', "column filter value (new in v0.2.3.9000)"
+  "filterValue", '"petal"', "column filter value  (new in v0.2.3.9000)",
+  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter) (new in v0.2.3.9000)")
 )
 
-propsTable(colInfoProps)
+propsTable(columnProps)
 ```
 
 #### `state` properties

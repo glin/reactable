@@ -22,7 +22,8 @@ colGroup(
 \item{columns}{Character vector of column names in the group.}
 
 \item{header}{Custom header renderer. An R function that takes the header value
-as an argument, or a \code{\link[=JS]{JS()}} function that takes a column info object as an argument.}
+as an argument, or a \code{\link[=JS]{JS()}} function that takes a column object and
+table state object as arguments.}
 
 \item{html}{Render header content as HTML? Raw HTML strings are escaped by default.}
 

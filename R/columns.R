@@ -39,11 +39,11 @@
 #' @param aggregated Custom aggregated cell renderer. A [JS()] function that takes
 #'   a cell info object and table state object as arguments.
 #' @param header Custom header renderer. An R function that takes the header value
-#'   and column name as arguments, or a [JS()] function that takes a column info
+#'   and column name as arguments, or a [JS()] function that takes a column
 #'   object and table state object as arguments.
 #' @param footer Footer content or render function. Render functions can be an
 #'   R function that takes the column values and column name as arguments, or a
-#'   [JS()] function that takes a column info object and table state object as
+#'   [JS()] function that takes a column object and table state object as
 #'   arguments.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes the row index and column name as arguments, or a [JS()] function
@@ -80,13 +80,13 @@
 #'   automatically be made sticky, including the column group header.
 #' @param class Additional CSS classes to apply to cells. Can also be an R function
 #'   that takes the cell value, row index, and column name as arguments, or a [JS()]
-#'   function that takes a row info object, column info object, and table state
-#'   object as arguments.
+#'   function that takes a row info object, column object, and table state object
+#'   as arguments.
 #'
 #'   Note that R functions cannot apply classes to aggregated cells.
 #' @param style Inline styles to apply to cells. A named list or character string.
 #'   Can also be an R function that takes the cell value and row index as arguments,
-#'   or a [JS()] function that takes a row info object, column info object, and
+#'   or a [JS()] function that takes a row info object, column object, and
 #'   table state object as arguments.
 #'
 #'   Note that R functions cannot apply styles to aggregated cells.
@@ -371,7 +371,8 @@ isDescOrder <- function(x) {
 #' @param name Column group header name.
 #' @param columns Character vector of column names in the group.
 #' @param header Custom header renderer. An R function that takes the header value
-#'   as an argument, or a [JS()] function that takes a column info object as an argument.
+#'   as an argument, or a [JS()] function that takes a column object and
+#'   table state object as arguments.
 #' @param html Render header content as HTML? Raw HTML strings are escaped by default.
 #' @param align Horizontal alignment of content in the column group header. One of
 #'   `"left"`, `"right"`, `"center"` (the default).

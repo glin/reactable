@@ -30,12 +30,13 @@ where possible, but note that there are several breaking changes.
   in `groupBy` columns ([#33](https://github.com/glin/reactable/issues/33),
   [#94](https://github.com/glin/reactable/issues/94),
   [#148](https://github.com/glin/reactable/issues/148)).
-* JavaScript render functions and style functions receive several new properties:
+* JavaScript render functions and style functions receive new properties:
   * `rowInfo.expanded` and `cellInfo.expanded` indicating whether the row is expanded
   * `cellInfo.selected` indicating whether the cell's row is selected
   * `state.page`, `state.pageSize`, and `state.pages` for the current page index,
     page size, and number of pages in the table
-  * `cellInfo.filterValue` and `colInfo.filterValue` for the column filter value
+  * `cellInfo.filterValue` and `column.filterValue` for the column filter value, and
+    `column.setFilter` to set the filter value
   * `state.filters` for the column filter values
   * `state.searchValue` for the table search value
   * `state.selected` for the selected row indices
@@ -83,6 +84,11 @@ where possible, but note that there are several breaking changes.
 * The `rowInfo.row` property has been renamed to `rowInfo.values` in JavaScript
   render functions and style functions. `rowInfo.row` remains supported, but is
   deprecated and may be removed in the future.
+* The `colInfo` object has been renamed to `column` in JavaScript render functions
+  for headers and cells, and now contains all properties from `colInfo.column`.
+  The `colInfo.column` and `colInfo.data` properties are deprecated, but remain
+  supported. Use `column` instead of `colInfo.column`, and `state.data` or
+  `state.sortedData` instead of `colInfo.data`.
 * The `state.expanded` property has been removed from JavaScript render
   functions and style functions. To check whether a row is expanded, use
   `rowInfo.expanded` instead.

@@ -783,7 +783,7 @@ describe('cells', () => {
   })
 
   it('applies cell classes and styles from JS functions', () => {
-    const assertProps = (rowInfo, colInfo, state) => {
+    const assertProps = (rowInfo, column, state) => {
       expect(rowInfo.index >= 0).toEqual(true)
       expect(rowInfo.viewIndex >= 0).toEqual(true)
       expect(rowInfo.level).toEqual(0)
@@ -793,8 +793,9 @@ describe('cells', () => {
       expect(rowInfo.subRows).toEqual([])
       expect(rowInfo.values.a).toEqual(['cellA', 'cellB'][rowInfo.index])
       expect(rowInfo.row.a).toEqual(['cellA', 'cellB'][rowInfo.index])
-      expect(colInfo.id).toEqual('a')
-      expect(colInfo.name).toEqual('colA')
+      expect(column.id).toEqual('a')
+      expect(column.name).toEqual('colA')
+      expect(column.filterValue).toEqual(undefined)
       expect(state.page).toEqual(0)
       expect(state.pageSize).toEqual(7)
       expect(state.pages).toEqual(1)
@@ -813,15 +814,15 @@ describe('cells', () => {
         {
           name: 'colA',
           accessor: 'a',
-          className: (rowInfo, colInfo, state) => {
-            assertProps(rowInfo, colInfo, state)
-            if (rowInfo.index === 0 && colInfo.id === 'a' && state.page === 0) {
+          className: (rowInfo, column, state) => {
+            assertProps(rowInfo, column, state)
+            if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
               return 'my-cell'
             }
           },
-          style: (rowInfo, colInfo, state) => {
-            assertProps(rowInfo, colInfo, state)
-            if (rowInfo.index === 0 && colInfo.id === 'a' && state.page === 0) {
+          style: (rowInfo, column, state) => {
+            assertProps(rowInfo, column, state)
+            if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
               return { backgroundColor: 'red' }
             }
           }
@@ -975,12 +976,14 @@ describe('headers', () => {
   })
 
   it('header render function', () => {
-    const assertProps = (colInfo, state) => {
-      const { column, data } = colInfo
+    const assertProps = (column, state) => {
+      const { column: deprecatedColumn, data: deprecatedData } = column
       expect(column.id).toEqual('a')
       expect(column.name).toEqual('colA')
       expect(column.filterValue).toEqual(undefined)
-      expect(data).toEqual([
+      expect(column.setFilter).toEqual(expect.any(Function))
+      expect(deprecatedColumn.id).toEqual('a')
+      expect(deprecatedData).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
       ])
@@ -1011,12 +1014,11 @@ describe('headers', () => {
         {
           name: 'colA',
           accessor: 'a',
-          header: (colInfo, state) => {
-            assertProps(colInfo, state)
-            const { column, data } = colInfo
+          header: (column, state) => {
+            assertProps(column, state)
             return (
               `<span>${column.name}</span> ` +
-              `<span>(${data.length} ${data[0].a} ${data[1].a})</span>`
+              `<span>(${state.data.length} ${state.data[0].a} ${state.data[1].a})</span>`
             )
           },
           html: true
@@ -1152,15 +1154,16 @@ describe('column groups', () => {
   })
 
   it('header render function', () => {
-    const assertProps = (colInfo, state) => {
-      const { column, data } = colInfo
+    const assertProps = (column, state) => {
+      const { column: deprecatedColumn, data: deprecatedData } = column
       expect(column.id).toEqual('group_0_0')
       expect(column.name).toEqual('group-1')
       expect(column.filterValue).toEqual(undefined)
       expect(column.columns).toHaveLength(2)
       expect(column.columns[0].id).toEqual('a')
       expect(column.columns[1].id).toEqual('b')
-      expect(data).toEqual([
+      expect(deprecatedColumn.id).toEqual('group_0_0')
+      expect(deprecatedData).toEqual([
         { a: 1, b: 'a', c: 'c' },
         { a: 2, b: 'b', c: 'd' }
       ])
@@ -1197,9 +1200,9 @@ describe('column groups', () => {
         {
           columns: ['a', 'b'],
           name: 'group-1',
-          header: (colInfo, state) => {
-            assertProps(colInfo, state)
-            return `${colInfo.column.name} (${colInfo.column.columns.length} ${colInfo.data.length})`
+          header: (column, state) => {
+            assertProps(column, state)
+            return `${column.name} (${column.columns.length} ${state.data.length})`
           }
         },
         {
@@ -1434,12 +1437,14 @@ describe('footers', () => {
   })
 
   it('footer render function', () => {
-    const assertProps = (colInfo, state) => {
-      const { column, data } = colInfo
+    const assertProps = (column, state) => {
+      const { column: deprecatedColumn, data: deprecatedData } = column
       expect(column.id).toEqual('a')
       expect(column.name).toEqual('colA')
       expect(column.filterValue).toEqual(undefined)
-      expect(data).toEqual([
+      expect(column.setFilter).toEqual(expect.any(Function))
+      expect(deprecatedColumn.id).toEqual('a')
+      expect(deprecatedData).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
       ])
@@ -1470,12 +1475,11 @@ describe('footers', () => {
         {
           name: 'colA',
           accessor: 'a',
-          footer: (colInfo, state) => {
-            assertProps(colInfo, state)
-            const { column, data } = colInfo
+          footer: (column, state) => {
+            assertProps(column, state)
             return (
               `<span>${column.name}</span> ` +
-              `<span>(${data.length} ${data[0].a} ${data[1].a})</span>`
+              `<span>(${state.data.length} ${state.data[0].a} ${state.data[1].a})</span>`
             )
           },
           html: true
@@ -3749,10 +3753,10 @@ describe('filtering', () => {
     ])
   })
 
-  it('filtered state should be available in cellInfo, colInfo, and state info', () => {
+  it('filtered state should be available in cellInfo, column, and state', () => {
     let lastCellInfo = {}
     let lastState = {}
-    let lastColInfo = {}
+    let lastColumn = {}
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'] },
       columns: [
@@ -3764,12 +3768,12 @@ describe('filtering', () => {
             lastCellInfo.cell = cellInfo
             lastState.cell = state
           },
-          header: (colInfo, state) => {
-            lastColInfo.header = colInfo
+          header: (column, state) => {
+            lastColumn.header = column
             lastState.header = state
           },
-          footer: (colInfo, state) => {
-            lastColInfo.footer = colInfo
+          footer: (column, state) => {
+            lastColumn.footer = column
             lastState.footer = state
           }
         }
@@ -3780,21 +3784,19 @@ describe('filtering', () => {
     const { container } = render(<Reactable {...props} />)
     const [filterA, filterB] = getFilters(container)
     Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual(undefined))
-    Object.values(lastColInfo).forEach(colInfo =>
-      expect(colInfo.column.filterValue).toEqual(undefined)
-    )
+    Object.values(lastColumn).forEach(column => expect(column.filterValue).toEqual(undefined))
     Object.values(lastState).forEach(state => expect(state.filters).toEqual([]))
 
     fireEvent.change(filterB, { target: { value: 'bb' } })
     Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual('bb'))
-    Object.values(lastColInfo).forEach(colInfo => expect(colInfo.column.filterValue).toEqual('bb'))
+    Object.values(lastColumn).forEach(column => expect(column.filterValue).toEqual('bb'))
     Object.values(lastState).forEach(state =>
       expect(state.filters).toEqual([{ id: 'b', value: 'bb' }])
     )
 
     fireEvent.change(filterA, { target: { value: 'a' } })
     Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual('bb'))
-    Object.values(lastColInfo).forEach(colInfo => expect(colInfo.column.filterValue).toEqual('bb'))
+    Object.values(lastColumn).forEach(column => expect(column.filterValue).toEqual('bb'))
     Object.values(lastState).forEach(state =>
       expect(state.filters).toEqual([
         { id: 'b', value: 'bb' },
@@ -3805,9 +3807,7 @@ describe('filtering', () => {
     // When filter is cleared, filter value should be unset, not an empty string
     fireEvent.change(filterB, { target: { value: '' } })
     Object.values(lastCellInfo).forEach(cellInfo => expect(cellInfo.filterValue).toEqual(undefined))
-    Object.values(lastColInfo).forEach(colInfo =>
-      expect(colInfo.column.filterValue).toEqual(undefined)
-    )
+    Object.values(lastColumn).forEach(column => expect(column.filterValue).toEqual(undefined))
     Object.values(lastState).forEach(state =>
       expect(state.filters).toEqual([{ id: 'a', value: 'a' }])
     )
@@ -4329,8 +4329,8 @@ describe('searching', () => {
           name: 'b',
           accessor: 'b',
           cell: (cellInfo, state) => (lastState.cell = state),
-          header: (colInfo, state) => (lastState.header = state),
-          footer: (colInfo, state) => (lastState.footer = state)
+          header: (column, state) => (lastState.header = state),
+          footer: (column, state) => (lastState.footer = state)
         }
       ],
       details: (rowInfo, state) => (lastState.details = state),
@@ -6736,13 +6736,14 @@ describe('grouping and aggregation', () => {
 
   it('applies classes and styles to aggregated cells', () => {
     let isExpanded = false
-    const assertProps = (rowInfo, colInfo, state) => {
+    const assertProps = (rowInfo, column, state) => {
       // Check props for initial state only (one row)
       if (isExpanded) {
         return
       }
-      expect(colInfo.id).toEqual('b')
-      expect(colInfo.name).toEqual('col-b')
+      expect(column.id).toEqual('b')
+      expect(column.name).toEqual('col-b')
+      expect(column.filterValue).toEqual(undefined)
       expect(rowInfo.index).toEqual(0)
       expect(rowInfo.viewIndex).toEqual(0)
       expect(rowInfo.aggregated).toEqual(true)
@@ -6811,12 +6812,12 @@ describe('grouping and aggregation', () => {
           accessor: 'b',
           type: 'numeric',
           aggregate: 'mean',
-          className: (rowInfo, colInfo, state) => {
-            assertProps(rowInfo, colInfo, state)
+          className: (rowInfo, column, state) => {
+            assertProps(rowInfo, column, state)
             return rowInfo.aggregated ? 'grouped-b' : 'ungrouped-b'
           },
-          style: (rowInfo, colInfo, state) => {
-            assertProps(rowInfo, colInfo, state)
+          style: (rowInfo, column, state) => {
+            assertProps(rowInfo, column, state)
             return { color: '#bbb' }
           }
         },
@@ -6919,12 +6920,12 @@ describe('grouping and aggregation', () => {
         { name: 'col-d', accessor: 'd' }
       ],
       pivotBy: ['c', 'a'],
-      rowClassName: (rowInfo, colInfo, state) => {
-        assertProps(rowInfo, colInfo, state)
+      rowClassName: (rowInfo, state) => {
+        assertProps(rowInfo, state)
         return rowInfo.aggregated ? 'grouped' : 'ungrouped'
       },
-      rowStyle: (rowInfo, colInfo, state) => {
-        assertProps(rowInfo, colInfo, state)
+      rowStyle: (rowInfo, state) => {
+        assertProps(rowInfo, state)
         return { color: '#bbb' }
       }
     }
@@ -6946,8 +6947,8 @@ describe('grouping and aggregation', () => {
   })
 
   it('header render functions and footer render functions can access sub rows', () => {
-    const assertProps = (colInfo, state) => {
-      const { column, data } = colInfo
+    const assertProps = (column, state) => {
+      const { column: deprecatedColumn, data: deprecatedData } = column
       expect(column.id).toEqual('a')
       expect(column.name).toEqual('col-a')
       expect(column.filterValue).toEqual(undefined)
@@ -6970,7 +6971,8 @@ describe('grouping and aggregation', () => {
           ]
         }
       ]
-      expect(data).toEqual(expectedRows)
+      expect(deprecatedColumn.id).toEqual('a')
+      expect(deprecatedData).toEqual(expectedRows)
       expect(state.page).toEqual(0)
       expect(state.pageSize).toEqual(10)
       expect(state.pages).toEqual(1)
@@ -6992,13 +6994,13 @@ describe('grouping and aggregation', () => {
         {
           name: 'col-a',
           accessor: 'a',
-          header: (colInfo, state) => {
-            assertProps(colInfo, state)
-            return `header_${colInfo.data.length}_${colInfo.data[0]._subRows.length}`
+          header: (column, state) => {
+            assertProps(column, state)
+            return `header_${state.sortedData.length}_${state.sortedData[0]._subRows.length}`
           },
-          footer: (colInfo, state) => {
-            assertProps(colInfo, state)
-            return `footer_${colInfo.data.length}_${colInfo.data[0]._subRows.length}`
+          footer: (column, state) => {
+            assertProps(column, state)
+            return `footer_${state.sortedData.length}_${state.sortedData[0]._subRows.length}`
           },
           headerClassName: 'header-a',
           footerClassName: 'footer-a'
@@ -7419,10 +7421,12 @@ describe('cell click actions', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      onClick: (rowInfo, colInfo, state) => {
+      onClick: (rowInfo, column, state) => {
         if (clickCount < 2) {
-          expect(colInfo.id).toEqual('b')
-          expect(colInfo.name).toEqual('col-b')
+          expect(column.id).toEqual('b')
+          expect(column.name).toEqual('col-b')
+          expect(column.filterValue).toEqual(undefined)
+          expect(column.setFilter).toEqual(expect.any(Function))
           expect(rowInfo.index).toEqual(1)
           expect(rowInfo.viewIndex).toEqual(1)
           expect(rowInfo.aggregated).toBeFalsy()
@@ -7453,7 +7457,7 @@ describe('cell click actions', () => {
             { a: 'aaa2', b: 'bbb2', c: 'ccc2' }
           ])
         } else {
-          expect(colInfo.id).toEqual('c')
+          expect(column.id).toEqual('c')
           expect(rowInfo.index).toEqual(0)
           expect(rowInfo.viewIndex).toEqual(0)
         }
