@@ -71,10 +71,10 @@ box_score_tbl <- function(player_stats, team_stats, team) {
     defaultColDef = colDef(
       sortNALast = TRUE,
       minWidth = 45,
-      class = JS("function(rowInfo, colInfo, state) {
+      class = JS("function(rowInfo, column, state) {
         // Highlight sorted columns
         for (let i = 0; i < state.sorted.length; i++) {
-          if (state.sorted[i].id === colInfo.id) {
+          if (state.sorted[i].id === column.id) {
             return 'sorted'
           }
         }

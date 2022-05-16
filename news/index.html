@@ -130,14 +130,14 @@
 <li>Aggregated rows can now be selected when multiple selection is enabled.</li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>grouped</code> argument to customize rendering for grouped cells in <code>groupBy</code> columns (<a href="https://github.com/glin/reactable/issues/33" class="external-link">#33</a>, <a href="https://github.com/glin/reactable/issues/94" class="external-link">#94</a>, <a href="https://github.com/glin/reactable/issues/148" class="external-link">#148</a>).</li>
-<li>JavaScript render functions and style functions receive several new properties:<ul><li>
+<li>JavaScript render functions and style functions receive new properties:<ul><li>
 <code>rowInfo.expanded</code> and <code>cellInfo.expanded</code> indicating whether the row is expanded</li>
 <li>
 <code>cellInfo.selected</code> indicating whether the cell’s row is selected</li>
 <li>
 <code>state.page</code>, <code>state.pageSize</code>, and <code>state.pages</code> for the current page index, page size, and number of pages in the table</li>
 <li>
-<code>cellInfo.filterValue</code> and <code>colInfo.filterValue</code> for the column filter value</li>
+<code>cellInfo.filterValue</code> and <code>column.filterValue</code> for the column filter value, and <code>column.setFilter</code> to set the filter value</li>
 <li>
 <code>state.filters</code> for the column filter values</li>
 <li>
@@ -165,6 +165,7 @@
 <li>Increased the default width of the row selection column to match the row details column (45px).</li>
 <li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87" class="external-link">#87</a>).</li>
 <li>The <code>rowInfo.row</code> property has been renamed to <code>rowInfo.values</code> in JavaScript render functions and style functions. <code>rowInfo.row</code> remains supported, but is deprecated and may be removed in the future.</li>
+<li>The <code>colInfo</code> object has been renamed to <code>column</code> in JavaScript render functions for headers and cells, and now contains all properties from <code>colInfo.column</code>. The <code>colInfo.column</code> and <code>colInfo.data</code> properties are deprecated, but remain supported. Use <code>column</code> instead of <code>colInfo.column</code>, and <code>state.data</code> or <code>state.sortedData</code> instead of <code>colInfo.data</code>.</li>
 <li>The <code>state.expanded</code> property has been removed from JavaScript render functions and style functions. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</li>
 <li>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been removed from JavaScript render functions and style functions. To get the current page index of the table, use <code>state.page</code> instead.</li>
 <li>When accessing row data in JavaScript render functions and style functions:<ul><li>Date and time values are now represented in UTC time (ISO 8601 format), rather than local time.</li>
