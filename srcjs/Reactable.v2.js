@@ -118,7 +118,7 @@ export default function Reactable({
 }
 
 const RootComponent = React.forwardRef(function RootComponent({ className, ...rest }, ref) {
-  // Keep ReactTable class for legacy compatibility (deprecated in v0.2.3.9000)
+  // Keep ReactTable class for legacy compatibility (deprecated in v0.3.0)
   return <div ref={ref} className={classNames('Reactable', 'ReactTable', className)} {...rest} />
 })
 
@@ -630,7 +630,7 @@ function Table({
     }, [])
   }, [state.selectedRowIds, rowsById])
 
-  // Update Shiny on selected row changes (deprecated in v0.2.3.9000)
+  // Update Shiny on selected row changes (deprecated in v0.3.0)
   React.useEffect(() => {
     if (!selection) {
       return
@@ -716,8 +716,8 @@ function Table({
           {headerGroup.headers.map(column => {
             column = {
               ...column,
-              column, // Deprecated in v0.2.3.9000
-              data: rowData // Deprecated in v0.2.3.9000
+              column, // Deprecated in v0.3.0
+              data: rowData // Deprecated in v0.3.0
             }
             let header =
               typeof column.Header === 'function'
@@ -961,13 +961,13 @@ function Table({
         ...row,
         // For v6 compatibility
         viewIndex,
-        row: row.values, // Deprecated in v0.2.3.9000
+        row: row.values, // Deprecated in v0.3.0
         subRows: convertRowsToV6(row.subRows),
         aggregated: row.isGrouped,
         expanded: row.isExpanded,
         level: row.depth,
         selected: row.isSelected,
-        page: state.pageIndex // Deprecated in v0.2.3.9000
+        page: state.pageIndex // Deprecated in v0.3.0
       }
 
       const rowProps = {
@@ -1256,8 +1256,8 @@ function Table({
           {instance.visibleColumns.map(column => {
             column = {
               ...column,
-              column, // Deprecated in v0.2.3.9000
-              data: rowData // Deprecated in v0.2.3.9000
+              column, // Deprecated in v0.3.0
+              data: rowData // Deprecated in v0.3.0
             }
             const footer =
               typeof column.Footer === 'function'
@@ -1681,7 +1681,7 @@ Reactable.propTypes = {
   paginateSubRows: PropTypes.bool,
   defaultExpanded: PropTypes.bool,
   selection: PropTypes.oneOf(['multiple', 'single']),
-  selectionId: PropTypes.string, // Deprecated in v0.2.3.9000
+  selectionId: PropTypes.string, // Deprecated in v0.3.0
   defaultSelected: PropTypes.arrayOf(PropTypes.number),
   onClick: PropTypes.oneOfType([PropTypes.oneOf(['expand', 'select']), PropTypes.func]),
   outlined: PropTypes.bool,

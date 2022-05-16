@@ -1,4 +1,4 @@
-# reactable 0.2.3.9000 (Unreleased)
+# reactable 0.3.0
 
 This release upgrades to a new major version of React Table
 ([#35](https://github.com/glin/reactable/issues/35)), which introduces many

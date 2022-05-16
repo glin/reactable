@@ -36,7 +36,7 @@ export const defaultLanguage = {
   selectAllSubRowsLabel: 'Select all rows in group',
   selectRowLabel: 'Select row',
 
-  // Deprecated in v0.2.3.9000
+  // Deprecated in v0.3.0
   defaultGroupHeader: 'Grouped',
   detailsCollapseLabel: 'Toggle details',
   deselectAllRowsLabel: 'Deselect all rows',

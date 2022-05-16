@@ -168,7 +168,7 @@ colDef(
     function(cellInfo, state) {
       // input:
       //  - cellInfo, an object containing cell info
-      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
+      //  - state, an object containing the table state (optional, new in v0.3.0)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -204,11 +204,11 @@ cellInfoProps <- dplyr::tribble(
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
-  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
-  "filterValue", '"petal"', "column filter value (new in v0.2.3.9000)",
+  "expanded", "true", "whether the row is expanded (new in v0.3.0)",
+  "filterValue", '"petal"', "column filter value (new in v0.3.0)",
   "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data values (aggregated cells only)",
   "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected (new in v0.2.3.9000)"
+  "selected", "true", "whether the row is selected (new in v0.3.0)"
 )
 
 propsTable(cellInfoProps)
@@ -220,12 +220,12 @@ propsTable(cellInfoProps)
 stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
-  "page", "2", "page index (zero-based, new in v0.2.3.9000)",
-  "pageSize", "10", "page size (new in v0.2.3.9000)",
-  "pages", "5", "number of pages (new in v0.2.3.9000)",
-  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values (new in v0.2.3.9000)",
-  "searchValue", '"petal"', "table search value (new in v0.2.3.9000)",
-  "selected", '[0, 1, 4]', "array of selected row indices (zero-based, new in v0.2.3.9000)",
+  "page", "2", "page index (zero-based, new in v0.3.0)",
+  "pageSize", "10", "page size (new in v0.3.0)",
+  "pages", "5", "number of pages (new in v0.3.0)",
+  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values (new in v0.3.0)",
+  "searchValue", '"petal"', "table search value (new in v0.3.0)",
+  "selected", '[0, 1, 4]', "array of selected row indices (zero-based, new in v0.3.0)",
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
@@ -264,7 +264,7 @@ colDef(
     function(column, state) {
       // input:
       //  - column, an object containing column properties
-      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
+      //  - state, an object containing the table state (optional, new in v0.3.0)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -280,12 +280,12 @@ colDef(
 ```{r, echo=FALSE, asis=TRUE}
 columnProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "id", '"Petal.Length"', "column ID (new in v0.2.3.9000)",
-  "name", '"Petal Length"', "column display name (new in v0.2.3.9000)",
-  "filterValue", '"petal"', "column filter value (new in v0.2.3.9000)",
-  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter) (new in v0.2.3.9000)"),
-  "column", '{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }', "column info object (deprecated in v0.2.3.9000)",
-  "data", '[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]', "sorted array of row data values in the table (deprecated in v0.2.3.9000)"
+  "id", '"Petal.Length"', "column ID (new in v0.3.0)",
+  "name", '"Petal Length"', "column display name (new in v0.3.0)",
+  "filterValue", '"petal"', "column filter value (new in v0.3.0)",
+  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter) (new in v0.3.0)"),
+  "column", '{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }', "column info object (deprecated in v0.3.0)",
+  "data", '[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]', "sorted array of row data values in the table (deprecated in v0.3.0)"
 )
 
 propsTable(columnProps)
@@ -327,7 +327,7 @@ colDef(
     function(column, state) {
       // input:
       //  - column, an object containing column properties
-      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
+      //  - state, an object containing the table state (optional, new in v0.3.0)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -383,7 +383,7 @@ reactable(
     function(rowInfo, state) {
       // input:
       //  - rowInfo, an object containing row info
-      //  - state, an object containing the table state (optional, new in v0.2.3.9000)
+      //  - state, an object containing the table state (optional, new in v0.3.0)
       //
       // output:
       //  - content to render (e.g. an HTML string)
@@ -398,11 +398,11 @@ reactable(
 ```{r, echo=FALSE, asis=TRUE}
 rowInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values (new in v0.2.3.9000)",
-  "row", '{ Petal.Length: 1.7, Species: "setosa" }', tagList("same as ", tags$code("values"), " (deprecated in v0.2.3.9000)"),
+  "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values (new in v0.3.0)",
+  "row", '{ Petal.Length: 1.7, Species: "setosa" }', tagList("same as ", tags$code("values"), " (deprecated in v0.3.0)"),
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
-  "expanded", "true", "whether the row is expanded (new in v0.2.3.9000)",
+  "expanded", "true", "whether the row is expanded (new in v0.3.0)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected"
 )

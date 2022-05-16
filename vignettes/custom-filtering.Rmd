@@ -34,7 +34,7 @@ propsTable <- function(props) {
 }
 ```
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 Custom filter methods and custom filter inputs let you change how filtering is done
 in reactable. By default, all filter inputs are text inputs that filter data using

@@ -155,7 +155,7 @@ reactableLang <- function(
   selectAllSubRowsLabel = "Select all rows in group",
   selectRowLabel = "Select row",
 
-  # Deprecated and no longer used (in v0.2.3.9000)
+  # Deprecated and no longer used (in v0.3.0)
   defaultGroupHeader = NULL,
   detailsCollapseLabel = NULL,
   deselectAllRowsLabel = NULL,

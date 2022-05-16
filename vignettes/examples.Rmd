@@ -415,7 +415,7 @@ reactable(
 
 ### Include sub rows in pagination
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 By default, sub rows are excluded from pagination and always shown on the same
 page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
@@ -661,7 +661,7 @@ reactable(data, columns = list(
 
 ### Grouped cell rendering
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -1129,7 +1129,7 @@ reactable(
 
 ### Vertical alignment
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 You can change the vertical alignment of cell content using the `vAlign` or
 `headerVAlign` arguments in `colDef()` and `colGroup()`. `vAlign` controls the
@@ -1390,7 +1390,7 @@ reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 
 ## Sticky Columns
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 You can make columns sticky when scrolling horizontally using the `sticky`
 argument in `colDef()` or `colGroup()`. Set `sticky` to either `"left"`
@@ -1419,7 +1419,7 @@ reactable(
 
 > **NOTE:** Sticky columns are not supported in IE11.
 
-Before v0.2.3.9000, columns could be made sticky by applying custom styles.
+Before v0.3.0, columns could be made sticky by applying custom styles.
 This method was harder to use and did not work well with column resizing,
 row highlighting, or row striping. See [Sticky Columns](sticky-columns.html)
 for examples of the previous method.
@@ -1500,7 +1500,7 @@ reactable(iris[1:5, ], rownames = TRUE)
 
 ### Row headers
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 You can mark up cells in a column as row headers by setting `rowHeader` to `TRUE`
 in `colDef()`.
@@ -1973,7 +1973,7 @@ htmltools::browsable(
 
 ## JavaScript API
 
-> New in v0.2.3.9000 (unreleased)
+> New in v0.3.0
 
 You can use the JavaScript API to create custom interactive controls for your table
 without the use of Shiny, or add cross-widget interactions beyond what Crosstalk provides.
