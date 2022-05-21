@@ -135,9 +135,5 @@ jobs:
     - name: Lint
       run: npm run lint
 
-    - name: Test coverage
-      run: |
-        curl -fsSL https://codecov.io/bash -o codecov
-        VERSION=$(grep -o 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
-        sha256sum -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/$VERSION/SHA256SUM")
-        bash codecov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
