@@ -1646,7 +1646,7 @@ function Table({
       {makeSearch()}
       <TableComponent
         ref={tableElement}
-        tabIndex={tableHasScrollbar ? 0 : -1}
+        tabIndex={tableHasScrollbar ? 0 : null}
         className={tableClassName}
       >
         {makeThead()}

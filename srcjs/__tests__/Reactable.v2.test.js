@@ -2932,7 +2932,7 @@ describe('scrollable tables are keyboard accessible', () => {
     const { container } = render(<Reactable {...props} />)
     const table = getTable(container)
     expect(table).toBeVisible()
-    expect(table).toHaveAttribute('tabindex', '-1')
+    expect(table).not.toHaveAttribute('tabindex')
   })
 
   it('table is focusable when horizontally scrollable', () => {
