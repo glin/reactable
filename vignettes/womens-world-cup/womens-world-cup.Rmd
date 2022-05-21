@@ -237,7 +237,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 
 .flag {
   margin-right: 8px;
-  height: 21px;
+  height: 21px !important; /* Override pkgdown style (Bootstrap 3 only) */
   border: 1px solid #f0f0f0;
 }
 
