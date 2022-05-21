@@ -424,7 +424,7 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 
 .movie-poster {
   width: 45px;
-  height: 68px;
+  height: 68px !important; /* Override pkgdown style (Bootstrap 3 only) */
   max-width: none; /* Reset rmarkdown/pkgdown style */
   box-shadow: 0 0 0 1px hsl(0, 0%, 95%);
 }
