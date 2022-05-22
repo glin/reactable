@@ -6,7 +6,7 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 Interactive data tables for R, based on the
-[React Table](https://github.com/tannerlinsley/react-table) library and made with
+[React Table](https://github.com/TanStack/react-table) library and made with
 [reactR](https://github.com/react-R/reactR).
 
 ## Features
