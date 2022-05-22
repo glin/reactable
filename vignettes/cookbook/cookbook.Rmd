@@ -712,7 +712,7 @@ The [`title` attribute is inaccessible](https://developer.paciellogroup.com/blog
 to most keyboard, mobile, and screen reader users, however, so creating tooltips
 like this is generally discouraged.
 
-An alternate method would be to use the [tippy package](http://tippy.john-coene.com/),
+An alternate method would be to use the [tippy package](https://tippy.john-coene.com/),
 which provides a JavaScript-based tooltip that supports keyboard, touch, and screen
 reader use.
 
