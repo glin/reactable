@@ -118,18 +118,26 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.3.9000" id="reactable-0239000-unreleased">reactable 0.2.3.9000 (Unreleased)<a class="anchor" aria-label="anchor" href="#reactable-0239000-unreleased"></a></h2>
 <p>This release upgrades to a new major version of React Table (<a href="https://github.com/glin/reactable/issues/35" class="external-link">#35</a>), which introduces many new features, improvements, and bug fixes. Backward compatibility was kept where possible, but note that there are several breaking changes.</p>
-<div class="section level4">
-<h4 id="new-features-0-2-3-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-3-9000"></a></h4>
-<ul><li>Column group headers can now be resized.</li>
-<li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107" class="external-link">#107</a>).</li>
+<div class="section level3">
+<h3 id="new-features-0-2-3-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-3-9000"></a></h3>
+<ul><li>Cell content can now be vertically aligned using the new <code>vAlign</code> and <code>headerVAlign</code> arguments in <code><a href="../reference/colDef.html">colDef()</a></code>, and the new <code>headerVAlign</code> argument in <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/142" class="external-link">#142</a>, <a href="https://github.com/glin/reactable/issues/177" class="external-link">#177</a>).</li>
 <li>Sticky columns are now supported using a new <code>sticky</code> argument in <code><a href="../reference/colDef.html">colDef()</a></code> and <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/19" class="external-link">#19</a>, <a href="https://github.com/glin/reactable/issues/72" class="external-link">#72</a>, <a href="https://github.com/glin/reactable/issues/141" class="external-link">#141</a>).</li>
-<li>Cell content can now be vertically aligned using the new <code>vAlign</code> and <code>headerVAlign</code> arguments in <code><a href="../reference/colDef.html">colDef()</a></code>, and the new <code>headerVAlign</code> argument in <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/142" class="external-link">#142</a>, <a href="https://github.com/glin/reactable/issues/177" class="external-link">#177</a>).</li>
+<li>New JavaScript API to manipulate or access tables from JavaScript. Use this to create custom interactive controls, such as CSV download buttons, custom filter inputs, or toggle buttons for row grouping and row expansion (<a href="https://github.com/glin/reactable/issues/11" class="external-link">#11</a>, <a href="https://github.com/glin/reactable/issues/28" class="external-link">#28</a>, <a href="https://github.com/glin/reactable/issues/182" class="external-link">#182</a>, <a href="https://github.com/glin/reactable/issues/194" class="external-link">#194</a>). Learn more in the <a href="https://glin.github.io/reactable/articles/javascript-api.html" class="external-link">JavaScript API guide</a> or the <a href="https://glin.github.io/reactable/articles/examples.html#javascript-api" class="external-link">JavaScript API examples</a>.</li>
+<li>Column filtering and table searching can now be customized. Learn more in the <a href="https://glin.github.io/reactable/articles/custom-filtering.html" class="external-link">Custom Filtering guide</a>.<ul><li>
+<code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>searchMethod</code> argument to use a custom JavaScript function for global table searching (<a href="https://github.com/glin/reactable/issues/222" class="external-link">#222</a>).</li>
 <li>
-<code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>paginateSubRows</code> argument to include grouped sub rows in pagination. This is recommended for larger tables with row groups that may not all fit on the page when expanded.</li>
+<code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterMethod</code> argument to use a custom JavaScript function for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>, <a href="https://github.com/glin/reactable/issues/90" class="external-link">#90</a>, <a href="https://github.com/glin/reactable/issues/145" class="external-link">#145</a>).</li>
+<li>
+<code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterInput</code> argument to render a custom filter input for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>).</li>
+</ul></li>
+<li>
+<code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>paginateSubRows</code> argument to include grouped sub rows in pagination. This is recommended for grouped tables with a large number of rows where expanded rows may not all fit on one page.</li>
 <li>Expanded rows now stay expanded on sorting, filtering, and pagination changes. Previously, expanded rows were always collapsed on sorting and pagination changes, and incorrectly persisted on filtering changes (<a href="https://github.com/glin/reactable/issues/39" class="external-link">#39</a>).</li>
 <li>Aggregated rows can now be selected when multiple selection is enabled.</li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>grouped</code> argument to customize rendering for grouped cells in <code>groupBy</code> columns (<a href="https://github.com/glin/reactable/issues/33" class="external-link">#33</a>, <a href="https://github.com/glin/reactable/issues/94" class="external-link">#94</a>, <a href="https://github.com/glin/reactable/issues/148" class="external-link">#148</a>).</li>
+<li>Column group headers can now be resized.</li>
+<li>Column group headers and filters are now sticky. Previously, only column headers were sticky (<a href="https://github.com/glin/reactable/issues/107" class="external-link">#107</a>).</li>
 <li>JavaScript render functions and style functions receive new properties:<ul><li>
 <code>rowInfo.expanded</code> and <code>cellInfo.expanded</code> indicating whether the row is expanded</li>
 <li>
@@ -145,38 +153,94 @@
 <li>
 <code>state.selected</code> for the selected row indices</li>
 </ul></li>
-<li>JavaScript render functions for cells, headers, footers, and row details can now access the table state using a new <code>state</code> argument (<a href="https://github.com/glin/reactable/issues/88" class="external-link">#88</a>).</li>
-<li>Custom cell click actions can now access the table state using a new <code>state</code> argument.</li>
+<li>JavaScript render functions for cells, headers, footers, and row details receive a new <code>state</code> argument to access the table state (<a href="https://github.com/glin/reactable/issues/88" class="external-link">#88</a>). Custom cell click actions also now receive a <code>state</code> argument.</li>
 <li>R render functions for row details now receive an additional argument for the column name (<a href="https://github.com/ksnap28" class="external-link">@ksnap28</a>, <a href="https://github.com/glin/reactable/issues/155" class="external-link">#155</a>).</li>
-<li>New JavaScript API to manipulate or access tables from JavaScript. Use this to create custom interactive controls, such as CSV download buttons, custom filter inputs, or toggle buttons for row grouping and row expansion (<a href="https://github.com/glin/reactable/issues/11" class="external-link">#11</a>, <a href="https://github.com/glin/reactable/issues/28" class="external-link">#28</a>, <a href="https://github.com/glin/reactable/issues/182" class="external-link">#182</a>, <a href="https://github.com/glin/reactable/issues/194" class="external-link">#194</a>). Learn more in the <a href="https://glin.github.io/reactable/articles/javascript-api.html" class="external-link">JavaScript API guide</a> or the <a href="https://glin.github.io/reactable/articles/examples.html#javascript-api" class="external-link">JavaScript API examples</a>.</li>
-<li>Column filtering and table searching can now be customized. Learn more in the <a href="https://glin.github.io/reactable/articles/custom-filtering.html" class="external-link">Custom Filtering guide</a>.<ul><li>
-<code><a href="../reference/reactable.html">reactable()</a></code> gains a <code>searchMethod</code> argument to use a custom JavaScript function for global table searching (<a href="https://github.com/glin/reactable/issues/222" class="external-link">#222</a>).</li>
-<li>
-<code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterMethod</code> argument to use a custom JavaScript function for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>, <a href="https://github.com/glin/reactable/issues/90" class="external-link">#90</a>, <a href="https://github.com/glin/reactable/issues/145" class="external-link">#145</a>).</li>
-<li>
-<code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>filterInput</code> argument to render a custom filter input for column filtering (<a href="https://github.com/glin/reactable/issues/9" class="external-link">#9</a>).</li>
-</ul></li>
 <li>
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>searchable</code> argument to enable or disable global table searching. Columns can be excluded from searching using <code>colDef(searchable = FALSE)</code>, and hidden columns can be included in searching using <code>colDef(searchable = TRUE)</code> (<a href="https://github.com/glin/reactable/issues/217" class="external-link">#217</a>).</li>
 </ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-2-3-9000">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-3-9000"></a></h3>
 <div class="section level4">
-<h4 id="breaking-changes-0-2-3-9000">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-3-9000"></a></h4>
-<ul><li>The row selection column is now always placed as the first column in the table, even before the <code>groupBy</code> and row details columns (<a href="https://github.com/glin/reactable/issues/71" class="external-link">#71</a>).</li>
-<li>Increased the default width of the row selection column to match the row details column (45px).</li>
-<li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87" class="external-link">#87</a>).</li>
-<li>The <code>rowInfo.row</code> property has been renamed to <code>rowInfo.values</code> in JavaScript render functions and style functions. <code>rowInfo.row</code> remains supported, but is deprecated and may be removed in the future.</li>
-<li>The <code>colInfo</code> object has been renamed to <code>column</code> in JavaScript render functions for headers and cells, and now contains all properties from <code>colInfo.column</code>. The <code>colInfo.column</code> and <code>colInfo.data</code> properties are deprecated, but remain supported. Use <code>column</code> instead of <code>colInfo.column</code>, and <code>state.data</code> or <code>state.sortedData</code> instead of <code>colInfo.data</code>.</li>
-<li>The <code>state.expanded</code> property has been removed from JavaScript render functions and style functions. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</li>
-<li>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been removed from JavaScript render functions and style functions. To get the current page index of the table, use <code>state.page</code> instead.</li>
-<li>When accessing row data in JavaScript render functions and style functions:<ul><li>Date and time values are now represented in UTC time (ISO 8601 format), rather than local time.</li>
-<li>Single values (length-1 vectors) in list-columns are no longer represented as arrays (i.e., data is now serialized using <code>jsonlite::toJSON(auto_unbox = TRUE)</code>).</li>
+<h4 id="javascript-render-and-style-functions-0-2-3-9000">JavaScript render and style functions<a class="anchor" aria-label="anchor" href="#javascript-render-and-style-functions-0-2-3-9000"></a></h4>
+<ul><li>
+<p>The <code>rowInfo.row</code> property is now <strong>deprecated</strong>, and has been renamed to <code>rowInfo.values</code>. <code>rowInfo.row</code> remains supported, but replace usages with <code>rowInfo.values</code> when possible.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">// Old</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">function</span>(rowInfo) <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="va">rowInfo</span>.<span class="at">row</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="op">}</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">// New</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">function</span>(rowInfo) <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>  <span class="va">rowInfo</span>.<span class="at">values</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li>
+<p>The <code>colInfo.column</code> and <code>colInfo.data</code> properties in header and cell render functions are now <strong>deprecated</strong>. The <code>colInfo</code> object now contains all of the same properties as <code>colInfo.column</code>, and is now referred to as <code>column</code> in the documentation. When possible, replace usages of <code>colInfo</code> with <code>column</code>, <code>colInfo.column</code> with <code>column</code>, and <code>colInfo.data</code> with <code>state.data</code> or <code>state.sortedData</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">// Old</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">function</span>(colInfo) <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="va">colInfo</span>.<span class="va">column</span>.<span class="at">id</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="va">colInfo</span>.<span class="at">data</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">// New</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">function</span>(column<span class="op">,</span> state) <span class="op">{</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>  <span class="va">column</span>.<span class="at">id</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>  <span class="va">state</span>.<span class="at">data</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li>
+<p>The <code>state.expanded</code> property has been <strong>removed</strong>. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">// Old</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="cf">if</span> (<span class="va">state</span>.<span class="at">expanded</span>[<span class="va">rowInfo</span>.<span class="at">index</span>]) <span class="op">{</span> <span class="co">// row is expanded ... }</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="op">}</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">// New</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>  <span class="cf">if</span> (<span class="va">rowInfo</span>.<span class="at">expanded</span>) <span class="op">{</span> <span class="co">// row is expanded ... }</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li>
+<p>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been <strong>removed</strong>. To get the current page index of the table, use <code>state.page</code> instead.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">// Old</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="va">rowInfo</span>.<span class="at">page</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="op">}</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">// New</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>  <span class="va">state</span>.<span class="at">page</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li>
+<p>When accessing row data in JavaScript render functions and style functions:</p>
+<ul><li>
+<p>Date and time values are now represented in UTC time (ISO 8601 format), rather than local time without a timezone.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">function</span>(cellInfo) <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="co">// Old</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="va">cellInfo</span>.<span class="at">value</span> <span class="co">// 2022-05-22T19:30:00</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a></span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="co">// New</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="va">cellInfo</span>.<span class="at">value</span> <span class="co">// 2022-05-22T19:30:00Z</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a></span>
+<span id="cb5-8"><a href="#cb5-8"></a>  <span class="co">// With a UTC time, it's much easier to format dates in the user's local time</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="at">Date</span>(<span class="va">cellInfo</span>.<span class="at">value</span>).<span class="at">toLocaleString</span>()</span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li><p>Single values (length-1 vectors) in list-columns are no longer represented as arrays (i.e., data is now serialized using <code>jsonlite::toJSON(auto_unbox = TRUE)</code>). For example, <code>list(x = 1)</code> in R is now represented as <code>{x: 1}</code> in JavaScript instead of <code>{x: [1]}</code>.</p></li>
 </ul></li>
-<li>The <code>defaultGroupHeader</code> argument in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> is now deprecated and no longer used. Use the <code>columnGroups</code> argument in <code><a href="../reference/reactable.html">reactable()</a></code> to customize the column group header for <code>groupBy</code> columns.</li>
-<li>The <code>detailsCollapseLabel</code>, <code>deselectAllRowsLabel</code>, <code>deselectAllSubRowsLabel</code>, and <code>deselectRowLabel</code> arguments in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> are now deprecated and no longer used (<a href="https://github.com/glin/reactable/issues/167" class="external-link">#167</a>).</li>
-<li>Support for Internet Explorer 11 (IE 11) is deprecated, and this will be the last release to support IE 11. Future releases may still work on IE 11, but will no longer be tested. Examples in the documentation may drop support for IE 11 before the next release.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="minor-improvements-and-bug-fixes-0-2-3-9000">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-2-3-9000"></a></h4>
+<h4 id="other-changes-0-2-3-9000">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-0-2-3-9000"></a></h4>
+<ul><li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided in <code><a href="../reference/reactable.html">reactable()</a></code>, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87" class="external-link">#87</a>).</li>
+<li>The <code>defaultGroupHeader</code> argument in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> is now deprecated and no longer used. Use the <code>columnGroups</code> argument in <code><a href="../reference/reactable.html">reactable()</a></code> to customize the column group header for <code>groupBy</code> columns.</li>
+<li>The <code>detailsCollapseLabel</code>, <code>deselectAllRowsLabel</code>, <code>deselectAllSubRowsLabel</code>, and <code>deselectRowLabel</code> arguments in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> are now deprecated and no longer used (<a href="https://github.com/glin/reactable/issues/167" class="external-link">#167</a>).</li>
+<li>The row selection column is now always placed as the first column in the table, even before the <code>groupBy</code> and row details columns (<a href="https://github.com/glin/reactable/issues/71" class="external-link">#71</a>).</li>
+<li>Increased the default width of the row selection column to match the row details column (45px).</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="minor-improvements-and-bug-fixes-0-2-3-9000">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-2-3-9000"></a></h3>
 <ul><li>Setting <code>show = FALSE</code> as a default value in <code>defaultColDef()</code> now works (<a href="https://github.com/csgillespie" class="external-link">@csgillespie</a>, <a href="https://github.com/glin/reactable/pull/105" class="external-link">#105</a>). Setting <code>sortNALast</code>, <code>html</code>, and <code>na</code> to their default values in <code>defaultColDef()</code> also now works.</li>
 <li>Using a single value for <code>pageSizeOptions</code> in <code><a href="../reference/reactable.html">reactable()</a></code> now works.</li>
 <li>Column resizing is now limited by the min and max width of the column.</li>
@@ -195,7 +259,7 @@
 <li>
 <code><a href="../reference/reactable.html">reactable()</a></code> now works for data frames with <code>difftime</code> objects and objects with custom classes (<a href="https://github.com/glin/reactable/issues/164" class="external-link">#164</a>).</li>
 <li>
-<code><a href="../reference/colFormat.html">colFormat()</a></code> no longer ignores time zones when formatting dates and times.</li>
+<code><a href="../reference/colFormat.html">colFormat()</a></code> now formats dates and times in the user’s time zone, rather than ignoring time zones.</li>
 <li>Row expand buttons no longer change their accessible labels based on expanded state. They now use the <code>aria-expanded</code> attribute to indicate expanded or collapsed state, and use “Toggle details” as their default label (<a href="https://github.com/glin/reactable/issues/167" class="external-link">#167</a>).</li>
 <li>
 <code><a href="../reference/reactableLang.html">reactableLang()</a></code> gains the <code>groupExpandLabel</code> argument to customize the accessible label for row group expand buttons (<a href="https://github.com/glin/reactable/issues/167" class="external-link">#167</a>).</li>
@@ -208,28 +272,29 @@
 <li>Columns with square brackets (<code>[</code> or <code>]</code>) in their column name now render correctly (<a href="https://github.com/glin/reactable/issues/187" class="external-link">#187</a>).</li>
 <li>Disabling pagination using <code>reactable(pagination = FALSE)</code> now works correctly on table data updates (<a href="https://github.com/glin/reactable/issues/214" class="external-link">#214</a>).</li>
 <li>More HTML attributes are supported when rendering HTML tags, such as <code>onclick</code> (<a href="https://github.com/glin/reactable/issues/150" class="external-link">#150</a>).</li>
+<li>Improved initial load time of tables with a large number of rows (up to 50% faster in some cases).</li>
 </ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.3" id="reactable-023">reactable 0.2.3<small>2020-10-04</small><a class="anchor" aria-label="anchor" href="#reactable-023"></a></h2>
-<div class="section level4">
-<h4 id="bug-fixes-0-2-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-3"></a></h4>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-3">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-3"></a></h3>
 <ul><li>Fixed a character encoding issue in the documentation.</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.2" id="reactable-022">reactable 0.2.2<small>2020-09-13</small><a class="anchor" aria-label="anchor" href="#reactable-022"></a></h2>
-<div class="section level4">
-<h4 id="bug-fixes-0-2-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2"></a></h4>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2"></a></h3>
 <ul><li>Headers in fixed height tables now display properly in Safari, Chrome, and the RStudio Viewer (<a href="https://github.com/glin/reactable/issues/76" class="external-link">#76</a>).</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.1" id="reactable-021">reactable 0.2.1<small>2020-09-01</small><a class="anchor" aria-label="anchor" href="#reactable-021"></a></h2>
-<div class="section level4">
-<h4 id="new-features-0-2-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h4>
+<div class="section level3">
+<h3 id="new-features-0-2-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h3>
 <ul><li>
 <code><a href="../reference/updateReactable.html">updateReactable()</a></code> gains a <code>data</code> argument to update the data of a reactable instance in Shiny (<a href="https://github.com/glin/reactable/issues/49" class="external-link">#49</a>).</li></ul></div>
-<div class="section level4">
-<h4 id="bug-fixes-0-2-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-1"></a></h4>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-1"></a></h3>
 <ul><li>Row selection columns now display correctly in tables with column groups (<a href="https://github.com/glin/reactable/issues/52" class="external-link">#52</a>).</li>
 <li>
 <code>defaultSelected</code> now works correctly with Crosstalk linked selection.</li>
@@ -244,8 +309,8 @@
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.2.0" id="reactable-020">reactable 0.2.0<small>2020-05-28</small><a class="anchor" aria-label="anchor" href="#reactable-020"></a></h2>
-<div class="section level4">
-<h4 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h4>
+<div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
 <ul><li>
 <code><a href="../reference/reactable.html">reactable()</a></code> now supports linked selection and filtering with Crosstalk-compatible HTML widgets (<a href="https://github.com/glin/reactable/issues/46" class="external-link">#46</a>).</li>
 <li>
@@ -263,11 +328,11 @@
 <li>The row selection column can now be customized using <code>".selection"</code> as the column name (<a href="https://github.com/glin/reactable/issues/19" class="external-link">#19</a>).</li>
 <li>In <code><a href="../reference/reactable.html">reactable()</a></code>, the <code>rowClass</code>, <code>rowStyle</code>, and <code>details</code> JavaScript functions now receive a <code>rowInfo.selected</code> property indicating whether the row is selected (<a href="https://github.com/glin/reactable/issues/20" class="external-link">#20</a>).</li>
 </ul></div>
-<div class="section level4">
-<h4 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h4>
+<div class="section level3">
+<h3 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
 <ul><li>The <code>selectionId</code> argument in <code><a href="../reference/reactable.html">reactable()</a></code> will be deprecated in a future release. Use <code><a href="../reference/getReactableState.html">getReactableState()</a></code> to get the selected rows of a table in Shiny instead.</li></ul></div>
-<div class="section level4">
-<h4 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h4>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
 <ul><li>General accessibility improvements, particularly for screen reader users.</li>
 <li>Table searching now works correctly when row selection is enabled.</li>
 <li>
