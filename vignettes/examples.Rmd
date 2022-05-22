@@ -419,8 +419,8 @@ reactable(
 
 By default, sub rows are excluded from pagination and always shown on the same
 page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
-to `TRUE`. This is recommended for larger tables with row groups that may not all
-fit on one page.
+to `TRUE`. This is recommended for grouped tables with a large number of rows
+where expanded rows may not all fit on one page.
 
 ```{r}
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
