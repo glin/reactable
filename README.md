@@ -2,11 +2,11 @@
 
 [![CRAN Status](https://www.r-pkg.org/badges/version/reactable)](https://cran.r-project.org/package=reactable)
 [![Build Status](https://github.com/glin/reactable/workflows/build/badge.svg)](https://github.com/glin/reactable/actions)
-[![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://codecov.io/gh/glin/reactable)
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://app.codecov.io/gh/glin/reactable)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 Interactive data tables for R, based on the
-[React Table](https://github.com/TanStack/react-table) library and made with
+[React Table](https://github.com/tanstack/table/tree/v7) library and made with
 [reactR](https://github.com/react-R/reactR).
 
 ## Features
