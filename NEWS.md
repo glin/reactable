@@ -1,9 +1,17 @@
 # reactable 0.3.0
 
 This release upgrades to a new major version of React Table
-([#35](https://github.com/glin/reactable/issues/35)), which introduces many
-new features, improvements, and bug fixes. Backward compatibility was kept
-where possible, but note that there are several breaking changes.
+([#35](https://github.com/glin/reactable/issues/35)), which brings many
+new features, improvements, and bug fixes. reactable has been largely rewritten
+to take advantage of React Table's new approach as a flexible table utility
+rather than a table component.
+
+This means it'll be easier to add new custom features, customize styling and markup,
+and maintain reactable in the future. Most of the features and fixes in this release
+would not have been possible or easy to do without this upgrade.
+
+Backward compatibility was kept where possible, but note that there are several
+breaking changes, particularly around the JavaScript API.
 
 ## New features
 
@@ -73,6 +81,10 @@ where possible, but note that there are several breaking changes.
 ## Breaking changes
 
 ### JavaScript render and style functions
+
+Several properties and arguments have been renamed or moved for consistency with
+the rest of the API. These properties were not removed unless they were very
+rarely used, so most code should continue to work upon upgrading.
 
 * The `rowInfo.row` property is now **deprecated**, and has been renamed to
   `rowInfo.values`. `rowInfo.row` remains supported, but replace usages with
