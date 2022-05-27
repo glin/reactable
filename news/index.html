@@ -18,7 +18,7 @@
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">reactable</a>
         <a href="https://glin.github.io/reactable/news/index.html" class="external-link">
-          <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3.9000</span>
+          <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
         </a>
       </span>
     </div>
@@ -116,10 +116,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.2.3.9000" id="reactable-0239000-unreleased">reactable 0.2.3.9000 (Unreleased)<a class="anchor" aria-label="anchor" href="#reactable-0239000-unreleased"></a></h2>
-<p>This release upgrades to a new major version of React Table (<a href="https://github.com/glin/reactable/issues/35" class="external-link">#35</a>), which introduces many new features, improvements, and bug fixes. Backward compatibility was kept where possible, but note that there are several breaking changes.</p>
+<h2 class="page-header" data-toc-text="0.3.0" id="reactable-030">reactable 0.3.0<small>2022-05-26</small><a class="anchor" aria-label="anchor" href="#reactable-030"></a></h2>
+<p>This release upgrades to a new major version of React Table (<a href="https://github.com/glin/reactable/issues/35" class="external-link">#35</a>), which brings many new features, improvements, and bug fixes. reactable has been largely rewritten to take advantage of React Table’s new approach as a flexible table utility rather than a table component.</p>
+<p>This means it’ll be easier to add new custom features, customize styling and markup, and maintain reactable in the future. Most of the features and fixes in this release would not have been possible or easy to do without this upgrade.</p>
+<p>Backward compatibility was kept where possible, but note that there are several breaking changes, particularly around the JavaScript API.</p>
 <div class="section level3">
-<h3 id="new-features-0-2-3-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-3-9000"></a></h3>
+<h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
 <ul><li>Cell content can now be vertically aligned using the new <code>vAlign</code> and <code>headerVAlign</code> arguments in <code><a href="../reference/colDef.html">colDef()</a></code>, and the new <code>headerVAlign</code> argument in <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/142" class="external-link">#142</a>, <a href="https://github.com/glin/reactable/issues/177" class="external-link">#177</a>).</li>
 <li>Sticky columns are now supported using a new <code>sticky</code> argument in <code><a href="../reference/colDef.html">colDef()</a></code> and <code><a href="../reference/colGroup.html">colGroup()</a></code> (<a href="https://github.com/glin/reactable/issues/19" class="external-link">#19</a>, <a href="https://github.com/glin/reactable/issues/72" class="external-link">#72</a>, <a href="https://github.com/glin/reactable/issues/141" class="external-link">#141</a>).</li>
 <li>New JavaScript API to manipulate or access tables from JavaScript. Use this to create custom interactive controls, such as CSV download buttons, custom filter inputs, or toggle buttons for row grouping and row expansion (<a href="https://github.com/glin/reactable/issues/11" class="external-link">#11</a>, <a href="https://github.com/glin/reactable/issues/28" class="external-link">#28</a>, <a href="https://github.com/glin/reactable/issues/182" class="external-link">#182</a>, <a href="https://github.com/glin/reactable/issues/194" class="external-link">#194</a>). Learn more in the <a href="https://glin.github.io/reactable/articles/javascript-api.html" class="external-link">JavaScript API guide</a> or the <a href="https://glin.github.io/reactable/articles/examples.html#javascript-api" class="external-link">JavaScript API examples</a>.</li>
@@ -159,9 +161,10 @@
 <code><a href="../reference/colDef.html">colDef()</a></code> gains a <code>searchable</code> argument to enable or disable global table searching. Columns can be excluded from searching using <code>colDef(searchable = FALSE)</code>, and hidden columns can be included in searching using <code>colDef(searchable = TRUE)</code> (<a href="https://github.com/glin/reactable/issues/217" class="external-link">#217</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-0-2-3-9000">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-3-9000"></a></h3>
+<h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
 <div class="section level4">
-<h4 id="javascript-render-and-style-functions-0-2-3-9000">JavaScript render and style functions<a class="anchor" aria-label="anchor" href="#javascript-render-and-style-functions-0-2-3-9000"></a></h4>
+<h4 id="javascript-render-and-style-functions-0-3-0">JavaScript render and style functions<a class="anchor" aria-label="anchor" href="#javascript-render-and-style-functions-0-3-0"></a></h4>
+<p>Several properties and arguments have been renamed or moved for consistency with the rest of the API. These properties were not removed unless they were very rarely used, so most code should continue to work upon upgrading.</p>
 <ul><li>
 <p>The <code>rowInfo.row</code> property is now <strong>deprecated</strong>, and has been renamed to <code>rowInfo.values</code>. <code>rowInfo.row</code> remains supported, but replace usages with <code>rowInfo.values</code> when possible.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">// Old</span></span>
@@ -231,7 +234,7 @@
 </ul></li>
 </ul></div>
 <div class="section level4">
-<h4 id="other-changes-0-2-3-9000">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-0-2-3-9000"></a></h4>
+<h4 id="other-changes-0-3-0">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-0-3-0"></a></h4>
 <ul><li>When both <code>columnGroups</code> and <code>groupBy</code> arguments are provided in <code><a href="../reference/reactable.html">reactable()</a></code>, <code>groupBy</code> columns are no longer added to a column group automatically (<a href="https://github.com/glin/reactable/issues/87" class="external-link">#87</a>).</li>
 <li>The <code>defaultGroupHeader</code> argument in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> is now deprecated and no longer used. Use the <code>columnGroups</code> argument in <code><a href="../reference/reactable.html">reactable()</a></code> to customize the column group header for <code>groupBy</code> columns.</li>
 <li>The <code>detailsCollapseLabel</code>, <code>deselectAllRowsLabel</code>, <code>deselectAllSubRowsLabel</code>, and <code>deselectRowLabel</code> arguments in <code><a href="../reference/reactableLang.html">reactableLang()</a></code> are now deprecated and no longer used (<a href="https://github.com/glin/reactable/issues/167" class="external-link">#167</a>).</li>
@@ -240,7 +243,7 @@
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="minor-improvements-and-bug-fixes-0-2-3-9000">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-2-3-9000"></a></h3>
+<h3 id="minor-improvements-and-bug-fixes-0-3-0">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-3-0"></a></h3>
 <ul><li>Setting <code>show = FALSE</code> as a default value in <code>defaultColDef()</code> now works (<a href="https://github.com/csgillespie" class="external-link">@csgillespie</a>, <a href="https://github.com/glin/reactable/pull/105" class="external-link">#105</a>). Setting <code>sortNALast</code>, <code>html</code>, and <code>na</code> to their default values in <code>defaultColDef()</code> also now works.</li>
 <li>Using a single value for <code>pageSizeOptions</code> in <code><a href="../reference/reactable.html">reactable()</a></code> now works.</li>
 <li>Column resizing is now limited by the min and max width of the column.</li>
