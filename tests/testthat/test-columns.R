@@ -150,8 +150,8 @@ test_that("colDef renderers", {
   expect_equal(col$footer, function(values, name) name)
 
   # Details renderer
-  col <- colDef(details = JS("rowInfo => rowInfo.row.value"))
-  expect_equal(col$details, JS("rowInfo => rowInfo.row.value"))
+  col <- colDef(details = JS("rowInfo => rowInfo.values['value']"))
+  expect_equal(col$details, JS("rowInfo => rowInfo.values['value']"))
   col <- colDef(details = function(i, name) i)
   expect_equal(col$details, function(i, name) i)
   col <- colDef(details = list(1, 2, 3))

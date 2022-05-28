@@ -458,6 +458,8 @@ reactable(ratings, columns = list(
 
 ## Show data from other columns
 
+> This example requires reactable v0.3.0 or above.
+
 To access data from another column, get the current row data using the
 row index argument in an R render function, or `cellInfo.row` in a
 JavaScript render function. This example shows both ways.
@@ -489,11 +491,9 @@ reactable(
     ),
     species = colDef(show = FALSE)
   ),
-  defaultPageSize = 6,
-  theme = reactableTheme(
-    # Vertically center cells
-    cellStyle = list(display = "flex", flexDirection = "column", justifyContent = "center")
-  )
+  # Vertically center cells
+  defaultColDef = colDef(vAlign = "center"),
+  defaultPageSize = 6
 )
 ```
 
@@ -518,16 +518,11 @@ reactable(
     ),
     species = colDef(show = FALSE)
   ),
-  defaultPageSize = 6,
-  theme = reactableTheme(
-    # Vertically center cells
-    cellStyle = list(display = "flex", flexDirection = "column", justifyContent = "center")
-  )
+  # Vertically center cells
+  defaultColDef = colDef(vAlign = "center"),
+  defaultPageSize = 6
 )
 ```
-
-> If the column name contains a period, use bracket notation to access the
-> `cellInfo.row` object: `cellInfo.row['species']`
 
 ## Total rows
 
@@ -551,6 +546,8 @@ reactable(
 
 ### Dynamic totals
 
+> This example requires reactable v0.3.0 or above.
+
 To update the total when filtering the table, calculate the total in a
 JavaScript render function:
 
@@ -563,10 +560,10 @@ reactable(
   columns = list(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
-      footer = JS("function(colInfo) {
+      footer = JS("function(column, state) {
         let total = 0
-        colInfo.data.forEach(function(row) {
-          total += row[colInfo.column.id]
+        state.data.forEach(function(row) {
+          total += row[column.id]
         })
         return '$' + total.toFixed(2)
       }")
@@ -588,10 +585,10 @@ reactable(
     Sales = colDef(
       aggregate = "sum",
       format = colFormat(currency = "USD"),
-      footer = JS("function(colInfo) {
+      footer = JS("function(column, state) {
         let total = 0
-        colInfo.data.forEach(function(row) {
-          total += row[colInfo.column.id]
+        state.data.forEach(function(row) {
+          total += row[column.id]
         })
         return '$' + total.toFixed(2)
       }")
@@ -831,6 +828,8 @@ reactable(
 
 ## Borders between groups of data
 
+> This example requires reactable v0.3.0 or above.
+
 To add borders between groups, use an R or JavaScript function to style rows
 based on the previous or next row's data. If the table can be sorted, use a
 JavaScript function to style rows only when the groups are sorted.
@@ -858,7 +857,7 @@ reactable(
       const firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'School') {
         const nextRow = state.pageRows[rowInfo.viewIndex + 1]
-        if (nextRow && rowInfo.row['School'] !== nextRow['School']) {
+        if (nextRow && rowInfo.values['School'] !== nextRow['School']) {
           // Use box-shadow to add a 2px border without taking extra space
           return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
         }
@@ -869,6 +868,8 @@ reactable(
 ```
 
 ## Merge cells
+
+> This example requires reactable v0.3.0 or above.
 
 You can give the appearance of merged cells by hiding cells based on the
 previous row's data. Just like with the example above, you'll need a JavaScript
@@ -893,7 +894,7 @@ reactable(
         // Merge cells if unsorted or sorting by school
         if (!firstSorted || firstSorted.id === 'School') {
           const prevRow = state.pageRows[rowInfo.viewIndex - 1]
-          if (prevRow && rowInfo.row['School'] === prevRow['School']) {
+          if (prevRow && rowInfo.values['School'] === prevRow['School']) {
             return { visibility: 'hidden' }
           }
         }

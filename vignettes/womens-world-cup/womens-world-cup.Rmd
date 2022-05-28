@@ -67,13 +67,13 @@ tbl <- reactable(
   pagination = FALSE,
   defaultSorted = "win_league",
   defaultSortOrder = "desc",
-  defaultColGroup = colGroup(headerClass = "group-header"),
+  defaultColGroup = colGroup(headerVAlign = "bottom"),
   columnGroups = list(
     colGroup(name = "Team Rating", columns = rating_cols),
     colGroup(name = "Chance of Finishing Group Stage In ...", columns = group_cols),
     colGroup(name = "Knockout Stage Chances", columns = knockout_cols)
   ),
-  defaultColDef = colDef(class = "cell", headerClass = "header"),
+  defaultColDef = colDef(headerVAlign = "bottom", class = "cell", headerClass = "header"),
   columns = list(
     team = colDef(
       defaultSortOrder = "asc",
@@ -126,7 +126,7 @@ tbl <- reactable(
       const firstSorted = state.sorted[0]
       if (firstSorted && firstSorted.id === 'group') {
         const nextRow = state.pageRows[rowInfo.viewIndex + 1]
-        if (nextRow && rowInfo.row.group !== nextRow.group) {
+        if (nextRow && rowInfo.values['group'] !== nextRow.group) {
           return 'group-last'
         }
       }
@@ -182,14 +182,6 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 
 .standings-table {
   margin-bottom: 20px;
-}
-
-/* Align header text to the bottom */
-.header,
-.group-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
 }
 
 .header {

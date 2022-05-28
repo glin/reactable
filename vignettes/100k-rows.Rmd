@@ -41,7 +41,7 @@ reactable(
     html = TRUE,
     details = JS("function(rowInfo) {
       return 'Details for row: ' + rowInfo.index +
-        '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
+        '<pre>' + JSON.stringify(rowInfo.values, null, 2) + '</pre>'
     }")
   )
 )

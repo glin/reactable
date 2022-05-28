@@ -724,6 +724,9 @@ reactable(
 ```
 
 ### Header rendering
+
+> This example requires reactable v0.3.0 or above.
+
 ```{r}
 library(htmltools)
 
@@ -735,8 +738,8 @@ reactable(
   }),
   columns = list(
     Petal.Width = colDef(name = "Petal Width", html = TRUE, align = "left", header = JS("
-      function(colInfo) {
-        return colInfo.column.name + '<div style=\"color: #999\">cm</div>'
+      function(column) {
+        return column.name + '<div style=\"color: #999\">cm</div>'
       }
     ")),
     Species = colDef(header = function(value) {
@@ -774,6 +777,9 @@ reactable(
 ```
 
 #### JavaScript render function
+
+> This example requires reactable v0.3.0 or above.
+
 ```{r}
 reactable(
   data,
@@ -783,10 +789,10 @@ reactable(
   columns = list(
     Manufacturer = colDef(footer = "Total"),
     Sales = colDef(
-      footer = JS("function(colInfo) {
+      footer = JS("function(column, state) {
         let total = 0
-        colInfo.data.forEach(function(row) {
-          total += row[colInfo.column.id]
+        state.data.forEach(function(row) {
+          total += row[column.id]
         })
         return '$' + total.toFixed(2)
       }")
@@ -813,6 +819,9 @@ reactable(
 
 
 ## Expandable Row Details
+
+> This example requires reactable v0.3.0 or above.
+
 You can make rows expandable with additional content through `details`, which
 takes an R or JavaScript render function. See [Custom Rendering](custom-rendering.html)
 for details on how to use render functions.
@@ -833,7 +842,7 @@ reactable(iris[1:5, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
     return 'Details for row: ' + rowInfo.index +
-      '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
+      '<pre>' + JSON.stringify(rowInfo.values, null, 2) + '</pre>'
   }"),
   html = TRUE,
   width = 60
@@ -865,7 +874,11 @@ reactable(iris[1:5, ], details = function(index) {
 ```
 
 ### Multiple row details
+
+> This example requires reactable v0.3.0 or above.
+
 You can add `details` to individual columns, and even show multiple details for a row:
+
 ```{r}
 reactable(iris[1:5, ],
   details = function(index) {
@@ -879,7 +892,7 @@ reactable(iris[1:5, ],
     }),
     Sepal.Length = colDef(format = colFormat(digits = 1), details = JS("
       function(rowInfo) {
-        return 'Sepal.Length: ' + rowInfo.row['Sepal.Length']
+        return 'Sepal.Length: ' + rowInfo.values['Sepal.Length']
       }
     "))
   )
@@ -889,6 +902,7 @@ reactable(iris[1:5, ],
 ### Default expanded rows
 
 You can expand all rows by default by setting `defaultExpanded` to `TRUE`:
+
 ```{r}
 reactable(
   iris[1:12, ],
@@ -900,6 +914,7 @@ reactable(
 
 
 ## Conditional Styling
+
 You can conditionally style a table using functions that return inline styles
 or CSS classes. Just like with custom rendering, style functions can either be
 in R or JavaScript.
@@ -929,11 +944,14 @@ reactable(sleep[1:6, ], columns = list(
 ```
 
 #### JavaScript style function
+
+> This example requires reactable v0.3.0 or above.
+
 ```{r}
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(
     style = JS("function(rowInfo) {
-      const value = rowInfo.row['extra']
+      const value = rowInfo.values['extra']
       let color
       if (value > 0) {
         color = '#008000'
@@ -951,6 +969,7 @@ reactable(sleep[1:6, ], columns = list(
 ### Row styling
 
 #### R style function
+
 ```{r row_styling, eval=FALSE}
 reactable(sleep[1:6, ], 
   rowStyle = function(index) {
@@ -976,15 +995,18 @@ reactable(sleep[1:6, ],
 ```
 
 #### JavaScript style function
+
+> This example requires reactable v0.3.0 or above.
+
 ```{r}
 reactable(sleep[1:6, ],
   rowStyle = JS("function(rowInfo) {
-    if (rowInfo.row['extra'] < -1) {
+    if (rowInfo.values['extra'] < -1) {
       return { background: 'rgba(0, 0, 0, 0.05)' }
     }
   }"),
   rowClass = JS("function(rowInfo) {
-    if (rowInfo.row['extra'] < -1) {
+    if (rowInfo.values['extra'] < -1) {
       return 'bold'
     }
   }")
@@ -1551,6 +1573,8 @@ reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 
 ### Custom action
 
+> This example requires reactable v0.3.0 or above.
+
 This example uses a custom click action to create custom "show details" action
 buttons in each row of the table:
 
@@ -1579,7 +1603,7 @@ reactable(
     }
 
     // Display an alert dialog with details for the row
-    window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.row, null, 2))
+    window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.values, null, 2))
 
     // Send the click event to Shiny, which will be available in input$show_details
     // Note that the row index starts at 0 in JavaScript, so we add 1

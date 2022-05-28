@@ -61,7 +61,7 @@ reactable(
 reactable(
   iris,
   rowStyle = JS("function(rowInfo) {
-    if (rowInfo.row['Sepal.Width'] > 3.5) {
+    if (rowInfo.values['Sepal.Width'] > 3.5) {
       return { fontWeight: 'bold' }
     }
   }")
