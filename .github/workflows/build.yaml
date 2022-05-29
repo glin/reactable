@@ -104,7 +104,22 @@ jobs:
           R CMD INSTALL .
           Rscript pkgdown/build-docs.R
 
-      - name: Deploy pkgdown site
+      - name: Deploy pkgdown site to Netlify (preview)
+        if: matrix.config.release && github.ref != 'refs/heads/main'
+        uses: nwtgck/actions-netlify@v1.2
+        with:
+          publish-dir: './docs'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          alias: ${{ startsWith(github.ref, 'refs/heads/v') && github.ref_name || github.sha }}
+          deploy-message: 'Deploy from GitHub Actions: ${{ github.ref }} (${{ github.sha }})'
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
+
+      - name: Deploy pkgdown site to GitHub Pages
         if: matrix.config.release && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
