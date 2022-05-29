@@ -48,7 +48,7 @@ shared_movies <- SharedData$new(movies, group = shared_data$groupName())
 
 tbl <- reactable(
   shared_data,
-  defaultColDef = colDef(headerClass = "header"),
+  defaultColDef = colDef(vAlign = "center", headerClass = "header"),
   columns = list(
     popularity_rank = colDef(
       name = "Rank",
@@ -146,9 +146,7 @@ tbl <- reactable(
   theme = reactableTheme(
     highlightColor = "#f3fafb",
     borderColor = "hsl(0, 0%, 93%)",
-    headerStyle = list(borderColor = "hsl(0, 0%, 90%)"),
-    # Vertically center cells
-    cellStyle = list(display = "flex", flexDirection = "column", justifyContent = "center")
+    headerStyle = list(borderColor = "hsl(0, 0%, 90%)")
   ),
   class = "movies-tbl"
 )
