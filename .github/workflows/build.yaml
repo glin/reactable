@@ -104,13 +104,26 @@ jobs:
           R CMD INSTALL .
           Rscript pkgdown/build-docs.R
 
+      - name: Set Netlify alias
+        if: matrix.config.release && github.ref != 'refs/heads/main'
+        run: |
+          version="v$(cat DESCRIPTION | grep Version: | cut -d' ' -f2)"
+          # Netlify aliases can't have periods, so replace them with dashes
+          version_alias=${version//./-}
+          if [ "$GITHUB_REF" = "refs/heads/$version" ]; then
+            echo "NETLIFY_ALIAS=$version_alias" >> $GITHUB_ENV
+          else
+            github_sha_short=$(echo $GITHUB_SHA | cut -c 1-7)
+            echo "NETLIFY_ALIAS=${version_alias}-${github_sha_short}" >> $GITHUB_ENV
+          fi
+
       - name: Deploy pkgdown site to Netlify (preview)
         if: matrix.config.release && github.ref != 'refs/heads/main'
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: './docs'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          alias: ${{ startsWith(github.ref, 'refs/heads/v') && github.ref_name || github.sha }}
+          alias: ${{ env.NETLIFY_ALIAS }}
           deploy-message: 'Deploy from GitHub Actions: ${{ github.ref }} (${{ github.sha }})'
           enable-pull-request-comment: false
           enable-commit-comment: false
