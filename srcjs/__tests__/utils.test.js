@@ -3,8 +3,6 @@ import {
   getFirstDefined,
   getStrIncludesLocale,
   strIncludes,
-  get,
-  set,
   getLeafColumns,
   convertRowsToV6,
   rowsToCSV,
@@ -52,40 +50,6 @@ test('getStrIncludesLocale', () => {
   expect(strIncludesLocale('bottle', ' botl')).toEqual(false)
   expect(strIncludesLocale('bottle', 'bottle.')).toEqual(false)
   expect(strIncludesLocale('', 'asd')).toEqual(false)
-})
-
-test('get', () => {
-  expect(get({}, [])).toEqual({})
-  expect(get({}, [0])).toEqual(undefined)
-  expect(get({}, [0, 1, 2])).toEqual(undefined)
-  expect(get({ 1: 3 }, [1])).toEqual(3)
-  expect(get({ 1: 3 }, [2])).toEqual(undefined)
-  expect(get({ 1: 3 }, [1, 5, 7])).toEqual(undefined)
-  expect(get({ 1: { 2: { 3: 4 } } }, [1, 2, 3])).toEqual(4)
-  expect(get({ 1: { 2: { 3: 4 } } }, [1, 2])).toEqual({ 3: 4 })
-  expect(get({ 1: { 2: 3 }, 0: { 5: 7 } }, [0, 5])).toEqual(7)
-})
-
-test('set', () => {
-  expect(set({}, [])).toEqual({})
-  expect(set({}, [], 5)).toEqual({})
-  expect(set({}, [1], 5)).toEqual({ 1: 5 })
-  expect(set({}, [1, 2, 3], 5)).toEqual({ 1: { 2: { 3: 5 } } })
-  expect(set({ 1: 2 }, [1], 5)).toEqual({ 1: 5 })
-  expect(set({ 1: 2 }, [1, 3, 7], 9)).toEqual({ 1: { 3: { 7: 9 } } })
-  expect(set({ 1: 2 }, [0, 0, 0], 9)).toEqual({ 1: 2, 0: { 0: { 0: 9 } } })
-  // Should overwrite different types of values
-  expect(set({ 0: 'column-id' }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
-  expect(set({ 0: null }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
-  expect(set({ 0: true }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
-  expect(set({ 0: false }, [0, 0, 0], 9)).toEqual({ 0: { 0: { 0: 9 } } })
-  // Deletes
-  expect(set({ 1: 2 }, [1], undefined)).toEqual({})
-  expect(set({ 1: { 2: { 3: 4 } }, 5: 6 }, [1, 2, 3], undefined)).toEqual({ 1: { 2: {} }, 5: 6 })
-  // obj should not be modified
-  const obj = { 1: 2 }
-  set(obj, [1], 5)
-  expect(obj[1]).toEqual(2)
 })
 
 test('getLeafColumns', () => {

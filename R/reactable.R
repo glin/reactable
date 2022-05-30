@@ -627,13 +627,6 @@ reactable <- function(
   # the data changes (for tables in Shiny).
   dataKey <- digest::digest(list(data, cols))
 
-  if (isV2()) {
-    widgetName <- "reactable"
-  } else {
-    widgetName <- "reactable_v1"
-    class <- paste("reactable", class)
-  }
-
   component <- reactR::component("Reactable", list(
     data = data,
     columns = cols,
@@ -681,12 +674,11 @@ reactable <- function(
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
     elementId = elementId,
-    dataKey = dataKey,
-    key = if (!isV2()) dataKey
+    dataKey = dataKey
   ))
 
   htmlwidgets::createWidget(
-    name = widgetName,
+    name = "reactable",
     reactR::reactMarkup(component),
     width = width,
     height = height,
@@ -757,8 +749,7 @@ columnSortDefs <- function(defaultSorted) {
 #'
 #' @export
 reactableOutput <- function(outputId, width = "auto", height = "auto", inline = FALSE) {
-  widgetName <- if (isV2()) "reactable" else "reactable_v1"
-  output <- htmlwidgets::shinyWidgetOutput(outputId, widgetName, width, height,
+  output <- htmlwidgets::shinyWidgetOutput(outputId, "reactable", width, height,
                                            inline = inline, package = "reactable")
   # Add attribute to Shiny output containers to differentiate them from static widgets
   addOutputId <- function(x) {
@@ -805,15 +796,3 @@ widget_html.reactable <- function(id, style, class, ...) {
 
 # Deprecated convention for htmlwidgets <= 1.5.2 support
 reactable_html <- widget_html.reactable
-
-isV2 <- function() {
-  getOption("reactable.v2", TRUE)
-}
-
-reactable_v1 <- function(..., class = NULL) {
-  old <- options(reactable.v2 = FALSE)
-  on.exit(options(old))
-  reactable(...)
-}
-
-reactable_v1_html <- widget_html.reactable

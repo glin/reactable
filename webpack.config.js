@@ -6,8 +6,7 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      reactable: path.join(__dirname, 'srcjs', 'index.v2.js'),
-      reactable_v1: path.join(__dirname, 'srcjs', 'index.js')
+      reactable: path.join(__dirname, 'srcjs', 'index.v2.js')
     },
 
     output: {
