@@ -12,7 +12,7 @@ import {
   frequency,
   getAggregateFunction,
   normalizeNumber
-} from '../aggregators.v2'
+} from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)

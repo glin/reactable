@@ -11,7 +11,7 @@ import {
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
 
-import Pagination from './Pagination.v2'
+import Pagination from './Pagination'
 import WidgetContainer from './WidgetContainer'
 import useFlexLayout from './useFlexLayout'
 import useStickyColumns from './useStickyColumns'
@@ -19,13 +19,13 @@ import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
-import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns.v2'
+import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
 import { classNames, convertRowsToV6, getLeafColumns, rowsToCSV, downloadCSV } from './utils'
 
-import './react-table.v2.css'
-import './reactable.v2.css'
+import './react-table.css'
+import './reactable.css'
 
 const tableInstances = {}
 export function getInstance(tableId) {

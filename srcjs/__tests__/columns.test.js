@@ -11,8 +11,8 @@ import {
   formatValue,
   createStartsWithMatcher,
   createSubstringMatcher
-} from '../columns.v2'
-import * as aggregators from '../aggregators.v2'
+} from '../columns'
+import * as aggregators from '../aggregators'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag

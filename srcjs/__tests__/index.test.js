@@ -1,7 +1,7 @@
 import { reactWidget } from 'reactR'
 
-import Reactable, { getState } from '../Reactable.v2'
-import * as reactable from '../index.v2'
+import Reactable, { getState } from '../Reactable'
+import * as reactable from '../index'
 
 jest.mock('reactR', () => ({
   reactWidget: jest.fn()

@@ -1,4 +1,4 @@
-import { getVisiblePages } from '../Pagination.v2'
+import { getVisiblePages } from '../Pagination'
 
 describe('getVisiblePages', () => {
   test('6 pages or less', () => {

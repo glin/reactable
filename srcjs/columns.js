@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
-import { getAggregateFunction, isNA, normalizeNumber } from './aggregators.v2'
+import { getAggregateFunction, isNA, normalizeNumber } from './aggregators'
 import { classNames, escapeRegExp, getFirstDefined, getLeafColumns } from './utils'
 
 // Use zero-width spaces to preserve the height of empty cells
