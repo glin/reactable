@@ -423,7 +423,7 @@ SelectInputComponent.propTypes = {
 function Table({
   data: originalData,
   columns,
-  pivotBy,
+  groupBy,
   searchable,
   searchMethod,
   defaultSorted,
@@ -553,7 +553,7 @@ function Table({
       data,
       initialState: {
         hiddenColumns: dataColumns.filter(col => col.show === false).map(col => col.id),
-        groupBy: pivotBy || [],
+        groupBy: groupBy || [],
         sortBy: defaultSorted || [],
         pageSize: defaultPageSize,
         selectedRowIds: defaultSelected
@@ -606,8 +606,8 @@ function Table({
 
   useMountedLayoutEffect(() => {
     const setGroupBy = instance.setGroupBy
-    setGroupBy(pivotBy || [])
-  }, [instance.setGroupBy, pivotBy])
+    setGroupBy(groupBy || [])
+  }, [instance.setGroupBy, groupBy])
 
   useMountedLayoutEffect(() => {
     const setPageSize = instance.setPageSize
@@ -1662,7 +1662,7 @@ Reactable.propTypes = {
   data: PropTypes.objectOf(PropTypes.array).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   columnGroups: PropTypes.arrayOf(PropTypes.object),
-  pivotBy: PropTypes.arrayOf(PropTypes.string),
+  groupBy: PropTypes.arrayOf(PropTypes.string),
   sortable: PropTypes.bool,
   resizable: PropTypes.bool,
   filterable: PropTypes.bool,

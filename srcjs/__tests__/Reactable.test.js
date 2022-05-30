@@ -1297,7 +1297,7 @@ describe('column groups', () => {
           name: 'group-ab'
         }
       ],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container } = render(<Reactable {...props} />)
     const headers = getGroupHeaders(container)
@@ -1891,7 +1891,7 @@ describe('column widths and flex layout', () => {
         { name: 'd', accessor: 'd' }
       ],
       columnGroups: [{ name: 'group', columns: ['a', 'b'] }],
-      pivotBy: ['d']
+      groupBy: ['d']
     }
     const { container } = render(<Reactable {...props} />)
     const groupHeaders = getGroupHeaders(container)
@@ -3282,7 +3282,7 @@ describe('sorting', () => {
         },
         { name: 'col-b', accessor: 'b', aggregate: values => values.length, className: 'col-b' }
       ],
-      pivotBy: ['group']
+      groupBy: ['group']
     }
     const { container, getByText } = render(<Reactable {...props} />)
     // Should sort grouped cells
@@ -3719,7 +3719,7 @@ describe('filtering', () => {
         { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
       ],
       filterable: true,
-      pivotBy: ['group']
+      groupBy: ['group']
     }
     const { container } = render(<Reactable {...props} />)
     const filters = getFilters(container)
@@ -4288,7 +4288,7 @@ describe('searching', () => {
         { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
       ],
       searchable: true,
-      pivotBy: ['group']
+      groupBy: ['group']
     }
     const { container } = render(<Reactable {...props} />)
     const searchInput = getSearchInput(container)
@@ -4613,7 +4613,7 @@ describe('row selection', () => {
       ],
       selection: 'multiple',
       selectionId: 'selected',
-      pivotBy: ['a'],
+      groupBy: ['a'],
       defaultExpanded: true
     }
     const { container, getAllByLabelText, getByLabelText, rerender } = render(
@@ -4686,7 +4686,7 @@ describe('row selection', () => {
         { name: 'b', accessor: 'b' }
       ],
       selection: 'multiple',
-      pivotBy: ['a'],
+      groupBy: ['a'],
       defaultExpanded: true
     }
     const { getAllByLabelText } = render(<Reactable {...props} />)
@@ -5051,7 +5051,7 @@ describe('row selection', () => {
         { name: 'b', accessor: 'b' }
       ],
       selection: 'multiple',
-      pivotBy: ['a'],
+      groupBy: ['a'],
       defaultExpanded: true
     }
     const { container, getAllByLabelText } = render(<Reactable {...props} />)
@@ -5146,7 +5146,7 @@ describe('row selection', () => {
         { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
         { name: 'b', accessor: 'b' }
       ],
-      pivotBy: ['b'],
+      groupBy: ['b'],
       selection: 'multiple',
       onClick: 'select'
     }
@@ -5174,7 +5174,7 @@ describe('row selection', () => {
         { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
         { name: 'b', accessor: 'b' }
       ],
-      pivotBy: ['b'],
+      groupBy: ['b'],
       selection: 'single',
       onClick: 'select',
       defaultExpanded: true
@@ -5905,7 +5905,7 @@ describe('expandable row details', () => {
         { name: 'col-b', accessor: 'b', details: () => 'js-row-details' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container, getByText, queryByText } = render(<Reactable {...props} />)
     let expanders = getExpanders(container)
@@ -6097,7 +6097,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['a']
+      groupBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
@@ -6156,7 +6156,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c', 'a']
+      groupBy: ['c', 'a']
     }
     const { container, getByText } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(2)
@@ -6223,7 +6223,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['a']
+      groupBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(2)
@@ -6250,7 +6250,7 @@ describe('grouping and aggregation', () => {
         },
         { name: 'col-b', accessor: 'b' }
       ],
-      pivotBy: ['a']
+      groupBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(2)
@@ -6312,7 +6312,7 @@ describe('grouping and aggregation', () => {
         },
         { name: 'col-b', accessor: 'b' }
       ],
-      pivotBy: ['a']
+      groupBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     expect(getCellsText(container, '.col-a')).toEqual(['\u200ba', '\u200b\u200b', '\u200bmissing'])
@@ -6349,7 +6349,7 @@ describe('grouping and aggregation', () => {
         },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container } = render(<Reactable {...props} />)
     expect(aggregateCount).toEqual(2)
@@ -6417,7 +6417,7 @@ describe('grouping and aggregation', () => {
           }
         }
       ],
-      pivotBy: ['c', 'a']
+      groupBy: ['c', 'a']
     }
     const { container } = render(<Reactable {...props} />)
     expect(aggregateCount).toEqual(3)
@@ -6449,7 +6449,7 @@ describe('grouping and aggregation', () => {
         },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c'],
+      groupBy: ['c'],
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -6505,7 +6505,7 @@ describe('grouping and aggregation', () => {
           format: { aggregated: { prefix: '!!', date: true } }
         }
       ],
-      pivotBy: ['groupA', 'groupB']
+      groupBy: ['groupA', 'groupB']
     }
     const { container } = render(<Reactable {...props} />)
     expect(getCellsText(container)).toEqual([
@@ -6656,7 +6656,7 @@ describe('grouping and aggregation', () => {
           html: true
         }
       ],
-      pivotBy: ['c', 'a'],
+      groupBy: ['c', 'a'],
       paginateSubRows: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -6694,7 +6694,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-c', accessor: 'c' },
         { name: 'col-d', accessor: 'd' }
       ],
-      pivotBy: ['c', 'a'],
+      groupBy: ['c', 'a'],
       defaultExpanded: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -6718,7 +6718,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-c', accessor: 'c' },
         { name: 'col-d', accessor: 'd' }
       ],
-      pivotBy: ['c', 'a'],
+      groupBy: ['c', 'a'],
       defaultExpanded: true
     }
     const { container, getByText } = render(<Reactable {...props} />)
@@ -6824,7 +6824,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-c', accessor: 'c' },
         { name: 'col-d', accessor: 'd' }
       ],
-      pivotBy: ['c', 'a']
+      groupBy: ['c', 'a']
     }
     const { container, getByText } = render(<Reactable {...props} />)
     // Expand group x (2)
@@ -6919,7 +6919,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-c', accessor: 'c' },
         { name: 'col-d', accessor: 'd' }
       ],
-      pivotBy: ['c', 'a'],
+      groupBy: ['c', 'a'],
       rowClassName: (rowInfo, state) => {
         assertProps(rowInfo, state)
         return rowInfo.aggregated ? 'grouped' : 'ungrouped'
@@ -7008,7 +7008,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c', 'a']
+      groupBy: ['c', 'a']
     }
     const { container } = render(<Reactable {...props} />)
     expect(container.querySelector('.header-a').textContent).toEqual('header_1_2')
@@ -7027,7 +7027,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c', 'a']
+      groupBy: ['c', 'a']
     }
     const { container, getByText } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(2)
@@ -7081,7 +7081,7 @@ describe('grouping and aggregation', () => {
     expect(getExpanders(container)).toHaveLength(0)
     expect(getRows(container)).toHaveLength(2)
 
-    rerender(<Reactable {...props} pivotBy={['b']} />)
+    rerender(<Reactable {...props} groupBy={['b']} />)
     expect(getExpanders(container)).toHaveLength(2)
   })
 
@@ -7093,7 +7093,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-b', accessor: 'b' },
         { name: 'col-c', accessor: 'c' }
       ],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container, rerender } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
@@ -7104,12 +7104,12 @@ describe('grouping and aggregation', () => {
     expect(getRows(container)).toHaveLength(3)
 
     // Adding groupBy columns
-    rerender(<Reactable {...props} pivotBy={['c', 'b']} />)
+    rerender(<Reactable {...props} groupBy={['c', 'b']} />)
     expect(getExpanders(container)).toHaveLength(3)
     expect(getRows(container)).toHaveLength(3)
 
     // Removing groupBy columns
-    rerender(<Reactable {...props} pivotBy={['c']} />)
+    rerender(<Reactable {...props} groupBy={['c']} />)
     expect(getExpanders(container)).toHaveLength(2)
     expect(getRows(container)).toHaveLength(3)
   })
@@ -7133,7 +7133,7 @@ describe('grouping and aggregation', () => {
     fireEvent.click(expanders[0])
     expect(queryByText('row-details-1')).toBeVisible()
     expect(getRows(container)).toHaveLength(2)
-    rerender(<Reactable {...props} pivotBy={['c']} />)
+    rerender(<Reactable {...props} groupBy={['c']} />)
     expect(queryByText('row-details-1')).toBeFalsy()
     expect(getRows(container)).toHaveLength(2)
 
@@ -7153,7 +7153,7 @@ describe('grouping and aggregation', () => {
         { name: 'b', accessor: 'b' },
         { name: 'c', accessor: 'c' }
       ],
-      pivotBy: ['c'],
+      groupBy: ['c'],
       defaultExpanded: true
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -7177,7 +7177,7 @@ describe('grouping and aggregation', () => {
         { name: 'b', accessor: 'b' },
         { name: 'c', accessor: 'c' }
       ],
-      pivotBy: ['c'],
+      groupBy: ['c'],
       defaultExpanded: true
     }
     const { container, getByText, rerender } = render(<Reactable {...props} />)
@@ -7189,12 +7189,12 @@ describe('grouping and aggregation', () => {
 
     // When adding new groupBy columns, previous expanded state should persist.
     // New groupBy columns should also be expanded, but this does not currently work.
-    rerender(<Reactable {...props} pivotBy={['c', 'b']} />)
+    rerender(<Reactable {...props} groupBy={['c', 'b']} />)
     expect(getRows(container)).toHaveLength(5)
     expect(getRowDetails(container)).toHaveLength(0)
-    rerender(<Reactable {...props} pivotBy={['c', 'b']} defaultExpanded={false} />)
+    rerender(<Reactable {...props} groupBy={['c', 'b']} defaultExpanded={false} />)
     expect(getRows(container)).toHaveLength(2)
-    rerender(<Reactable {...props} pivotBy={['c', 'b']} defaultExpanded={true} />)
+    rerender(<Reactable {...props} groupBy={['c', 'b']} defaultExpanded={true} />)
     expect(getRows(container)).toHaveLength(8)
   })
 
@@ -7205,7 +7205,7 @@ describe('grouping and aggregation', () => {
         { name: 'col-a', accessor: 'a' },
         { name: 'col-b', accessor: 'b' }
       ],
-      pivotBy: ['b']
+      groupBy: ['b']
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getExpanders(container)).toHaveLength(2)
@@ -7222,7 +7222,7 @@ describe('grouping and aggregation', () => {
         { name: 'c', accessor: 'c' }
       ],
       columnGroups: [{ columns: ['a', 'c'], name: 'group' }],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container } = render(<Reactable {...props} />)
     const columnHeaders = getColumnHeaders(container)
@@ -7242,7 +7242,7 @@ describe('grouping and aggregation', () => {
         { name: 'c', accessor: 'c' }
       ],
       columnGroups: [{ columns: ['c', 'b'], name: 'group' }],
-      pivotBy: ['c']
+      groupBy: ['c']
     }
     const { container } = render(<Reactable {...props} />)
     const columnHeaders = getColumnHeaders(container)
@@ -7266,7 +7266,7 @@ describe('grouping and aggregation', () => {
       language: {
         groupExpandLabel: '_Toggle group'
       },
-      pivotBy: ['a']
+      groupBy: ['a']
     }
     const { container } = render(<Reactable {...props} />)
     const expanders = getExpanders(container)
@@ -7369,7 +7369,7 @@ describe('cell click actions', () => {
           aggregated: cellInfo => `d-agg-${cellInfo.level}-${cellInfo.index}`
         }
       ],
-      pivotBy: ['c', 'a'],
+      groupBy: ['c', 'a'],
       onClick: 'expand'
     }
     const { container, getByText } = render(<Reactable {...props} />)
@@ -7591,7 +7591,7 @@ describe('pagination', () => {
         { name: 'col-a', accessor: 'a' }
       ],
       defaultPageSize: 4,
-      pivotBy: ['group'],
+      groupBy: ['group'],
       paginateSubRows: true,
       searchable: true
     }
@@ -7938,7 +7938,7 @@ describe('pagination', () => {
         { name: 'col-a', accessor: 'a' }
       ],
       defaultPageSize: 2,
-      pivotBy: ['group'],
+      groupBy: ['group'],
       paginateSubRows: true
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -7966,7 +7966,7 @@ describe('pagination', () => {
         { name: 'col-a', accessor: 'a' }
       ],
       defaultPageSize: 2,
-      pivotBy: ['group']
+      groupBy: ['group']
     }
     const { container, rerender } = render(<Reactable {...props} />)
     expect(getRows(container)).toHaveLength(1)
@@ -8062,7 +8062,7 @@ describe('pagination', () => {
       ],
       pagination: false,
       defaultPageSize: 4,
-      pivotBy: ['group'],
+      groupBy: ['group'],
       paginateSubRows: false,
       showPagination: true,
       defaultExpanded: true
@@ -8084,7 +8084,7 @@ describe('pagination', () => {
       ],
       pagination: false,
       defaultPageSize: 4,
-      pivotBy: ['group'],
+      groupBy: ['group'],
       paginateSubRows: true,
       showPagination: true,
       defaultExpanded: true
@@ -9066,7 +9066,7 @@ describe('Crosstalk', () => {
         { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
         { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
       ],
-      pivotBy: ['group'],
+      groupBy: ['group'],
       crosstalkKey: ['key1', 'key2', 'key3', 'key4'],
       crosstalkGroup: 'group'
     }
@@ -9454,7 +9454,7 @@ describe('reactable JavaScript API', () => {
     expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
 
     // Should use flattened rows and exclude aggregated rows when grouped
-    rerender(<Reactable {...props} pivotBy={['b']} />)
+    rerender(<Reactable {...props} groupBy={['b']} />)
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(4)
     expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')

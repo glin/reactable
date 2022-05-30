@@ -22,8 +22,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, columnGroups = list(colGroup(name = "", columns = "y"))))
   expect_error(reactable(df, columnGroups = list(colGroup(name = ""))))
   expect_error(reactable(df, rownames = "true"))
-  expect_error(reactable(df, groupBy = c("y", "z")))
-  expect_error(reactable(df, groupBy = "x", columns = list(x = colDef(details = function(i) i))))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
   expect_error(reactable(df, defaultColDef = list()))
@@ -94,7 +92,7 @@ test_that("reactable", {
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
-                   fullWidth = FALSE, groupBy = "x", width = "400px", height = "100%")
+                   fullWidth = FALSE, width = "400px", height = "100%")
   attribs <- getAttribs(tbl)
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
@@ -109,7 +107,6 @@ test_that("reactable", {
     data = data,
     columns = columns,
     columnGroups = list(colGroup("group", "x")),
-    pivotBy = list("x"),
     sortable = FALSE,
     resizable = TRUE,
     defaultSortDesc = TRUE,
@@ -321,6 +318,23 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[1,2,3]}')
   expect_equal(length(attribs$columns), 1)
+})
+
+test_that("groupBy", {
+  data <- data.frame(x = 1, y = "a", z = TRUE)
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "groupBy"), NULL)
+
+  tbl <- reactable(data, groupBy = "x")
+  expect_equal(getAttrib(tbl, "groupBy"), list("x"))
+
+  tbl <- reactable(data, groupBy = c("z", "x"))
+  expect_equal(getAttrib(tbl, "groupBy"), list("z", "x"))
+
+  expect_error(reactable(data, groupBy = c("z", "notexists")), "`groupBy` columns must exist in `data`")
+  expect_error(reactable(data, groupBy = "x", columns = list(x = colDef(details = function(i) i))),
+               "`details` cannot be used on a grouping column")
 })
 
 test_that("filterable", {

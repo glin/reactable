@@ -631,7 +631,7 @@ reactable <- function(
     data = data,
     columns = cols,
     columnGroups = columnGroups,
-    pivotBy = as.list(groupBy),
+    groupBy = as.list(groupBy),
     sortable = if (!sortable) FALSE,
     resizable = if (resizable) TRUE,
     filterable = if (filterable) TRUE,
