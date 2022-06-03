@@ -2,6 +2,12 @@
 #' @export
 htmlwidgets::JS
 
+toJSON <- function(x) {
+  jsonlite::toJSON(x, dataframe = "columns", rownames = FALSE, digits = NA,
+                   POSIXt = "ISO8601", Date = "ISO8601", UTC = TRUE, force = TRUE,
+                   auto_unbox = TRUE)
+}
+
 mergeLists <- function(a, b) {
   if (is.null(a)) {
     a <- list()
