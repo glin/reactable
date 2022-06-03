@@ -5,8 +5,9 @@ Version: 0.3.0.9000
 Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library"),
-    person(family = "Emotion team and other contributors", role = c("ctb", "cph"),
-           comment = "Emotion library")
+    person("Emotion team and other contributors", role = c("ctb", "cph"),
+           comment = "Emotion library"),
+    person("RStudio, PBC", role = c("fnd", "cph"))
     )
 Description: Interactive data tables for R, based on the 'React Table'
     JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
