@@ -1,5 +1,5 @@
 ---
-title: "Sticky Columns"
+title: "Sticky Columns (Old Method)"
 output:
   html_document:
     toc: true
@@ -12,6 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
 ```
+
+> Sticky columns are now supported using a `sticky` argument in `colDef()`
+> and `colGroup()`, so use that if possible.
+> See [Sticky Columns](./examples.html#sticky-columns) for examples.
 
 ### Basic sticky columns
 

@@ -1443,7 +1443,7 @@ reactable(
 
 Before v0.3.0, columns could be made sticky by applying custom styles.
 This method was harder to use and did not work well with column resizing,
-row highlighting, or row striping. See [Sticky Columns](sticky-columns.html)
+row highlighting, or row striping. See [Sticky Columns (Old Method)](sticky-columns.html)
 for examples of the previous method.
 
 ### Multiple sticky columns
