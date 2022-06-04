@@ -174,68 +174,68 @@
 <p>Several properties and arguments have been renamed or moved for consistency with the rest of the API. These properties were not removed unless they were very rarely used, so most code should continue to work upon upgrading.</p>
 <ul><li>
 <p>The <code>rowInfo.row</code> property is now <strong>deprecated</strong>, and has been renamed to <code>rowInfo.values</code>. <code>rowInfo.row</code> remains supported, but replace usages with <code>rowInfo.values</code> when possible.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">// Old</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">function</span>(rowInfo) <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>  <span class="va">rowInfo</span>.<span class="at">row</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">// New</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">function</span>(rowInfo) <span class="op">{</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>  <span class="va">rowInfo</span>.<span class="at">values</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">row</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">values</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>The <code>colInfo.column</code> and <code>colInfo.data</code> properties in header and cell render functions are now <strong>deprecated</strong>. The <code>colInfo</code> object now contains all of the same properties as <code>colInfo.column</code>, and is now referred to as <code>column</code> in the documentation. When possible, replace usages of <code>colInfo</code> with <code>column</code>, <code>colInfo.column</code> with <code>column</code>, and <code>colInfo.data</code> with <code>state.data</code> or <code>state.sortedData</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">// Old</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">function</span>(colInfo) <span class="op">{</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>  <span class="va">colInfo</span>.<span class="va">column</span>.<span class="at">id</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="va">colInfo</span>.<span class="at">data</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="op">}</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="co">// New</span></span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">function</span>(column<span class="op">,</span> state) <span class="op">{</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a>  <span class="va">column</span>.<span class="at">id</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a>  <span class="va">state</span>.<span class="at">data</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(colInfo) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">column</span><span class="op">.</span><span class="at">id</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(column<span class="op">,</span> state) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  column<span class="op">.</span><span class="at">id</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  state<span class="op">.</span><span class="at">data</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>The <code>state.expanded</code> property has been <strong>removed</strong>. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">// Old</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>  <span class="cf">if</span> (<span class="va">state</span>.<span class="at">expanded</span>[<span class="va">rowInfo</span>.<span class="at">index</span>]) <span class="op">{</span> <span class="co">// row is expanded ... }</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="op">}</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">// New</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>  <span class="cf">if</span> (<span class="va">rowInfo</span>.<span class="at">expanded</span>) <span class="op">{</span> <span class="co">// row is expanded ... }</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (state<span class="op">.</span><span class="at">expanded</span>[rowInfo<span class="op">.</span><span class="at">index</span>]) { <span class="co">// row is expanded ... }</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (rowInfo<span class="op">.</span><span class="at">expanded</span>) { <span class="co">// row is expanded ... }</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been <strong>removed</strong>. To get the current page index of the table, use <code>state.page</code> instead.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">// Old</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="va">rowInfo</span>.<span class="at">page</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="op">}</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a></span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">// New</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) <span class="op">{</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a>  <span class="va">state</span>.<span class="at">page</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">page</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  state<span class="op">.</span><span class="at">page</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>When accessing row data in JavaScript render functions and style functions:</p>
 <ul><li>
 <p>Date and time values are now represented in UTC time (ISO 8601 format), rather than local time without a timezone.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">function</span>(cellInfo) <span class="op">{</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>  <span class="co">// Old</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="va">cellInfo</span>.<span class="at">value</span> <span class="co">// 2022-05-22T19:30:00</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a>  <span class="co">// New</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="va">cellInfo</span>.<span class="at">value</span> <span class="co">// 2022-05-22T19:30:00Z</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a></span>
-<span id="cb5-8"><a href="#cb5-8"></a>  <span class="co">// With a UTC time, it's much easier to format dates in the user's local time</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="at">Date</span>(<span class="va">cellInfo</span>.<span class="at">value</span>).<span class="at">toLocaleString</span>()</span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Old</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// New</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00Z</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// With a UTC time, it's much easier to format dates in the user's local time</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Date</span>(cellInfo<span class="op">.</span><span class="at">value</span>)<span class="op">.</span><span class="fu">toLocaleString</span>()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li><p>Single values (length-1 vectors) in list-columns are no longer represented as arrays (i.e., data is now serialized using <code>jsonlite::toJSON(auto_unbox = TRUE)</code>). For example, <code>list(x = 1)</code> in R is now represented as <code>{x: 1}</code> in JavaScript instead of <code>{x: [1]}</code>.</p></li>
 </ul></li>
