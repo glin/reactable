@@ -9,6 +9,8 @@
 
 # reactable 0.3.0
 
+[Documentation - reactable 0.3.0](https://v0-3-0--reactable-docs.netlify.app/)
+
 This release upgrades to a new major version of React Table
 ([#35](https://github.com/glin/reactable/issues/35)), which brings many
 new features, improvements, and bug fixes. reactable has been largely rewritten
