@@ -134,12 +134,10 @@ jobs:
 
       - name: Deploy pkgdown site to GitHub Pages
         if: matrix.config.release && github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@3.7.1
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs
-          CLEAN: true
+          branch: gh-pages
+          folder: docs
 
   build-node:
     runs-on: ubuntu-latest
