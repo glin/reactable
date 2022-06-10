@@ -130,7 +130,7 @@ show_more(
   id = "followers-show-more",
   div(class = "twitter-followers",
       div(class = "followers-header",
-          div(class = "followers-title", "Candidates whose followers are loyal only to them"),
+          h2(class = "followers-title", "Candidates whose followers are loyal only to them"),
           "Share of each 2020 candidate's followers who don't follow any other candidates"
       ),
       tbl
@@ -435,7 +435,7 @@ for the demo at [`vignettes/twitter-followers/twitter-followers.Rmd`](https://gi
 # Add the title and subtitle
 div(class = "twitter-followers",
     div(class = "followers-header",
-        div(class = "followers-title", "Candidates whose followers are loyal only to them"),
+        h3(class = "followers-title", "Candidates whose followers are loyal only to them"),
         "Share of each 2020 candidate's followers who don't follow any other candidates"
     ),
     tbl
