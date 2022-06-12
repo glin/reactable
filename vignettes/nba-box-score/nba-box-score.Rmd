@@ -251,6 +251,7 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
 }
 
 .box-score-header:hover,
+.box-score-header:focus,
 .box-score-header[aria-sort="ascending"],
 .box-score-header[aria-sort="descending"] {
   background-color: hsl(205, 100%, 36%);

@@ -978,30 +978,50 @@ htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:4
 
 ## Custom sort indicators
 
-To use a custom sort indicator, hide the sort icon with `showSortIcon = FALSE` and
-add your own indicator.
+To use a custom sort indicator, you can hide the default sort icon using
+`reactable(showSortIcon = FALSE)` and add your own sort indicator.
 
-For example, changing the sort indicator to a bar using CSS:
+This also hides the sort icon when a header is focused, so be sure to add a
+visual focus indicator to ensure your table is accessible to keyboard users
+(to test this, click the first table header then press the Tab key to navigate
+to other headers).
+
+Here's an example that changes the sort indicator to a bar on the top or bottom
+of the header (indicating an ascending or descending sort), and adds a light background
+to headers when hovered or focused.
+
+This example adds sort indicators using only CSS, and takes advantage of the
+[`aria-sort`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-sort)
+attribute on table headers to style based on whether the column is sorted in ascending
+or descending order.
 
 ```{r bar_sort, eval=FALSE}
 reactable(
-  iris[1:5, ],
+  MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Min.Price", "Price")],
   showSortIcon = FALSE,
   bordered = TRUE,
-  defaultSorted = "Petal.Length",
+  defaultSorted = "Type",
   defaultColDef = colDef(headerClass = "bar-sort-header")
 )
 ```
 
 ```{css}
+.bar-sort-header:hover,
+.bar-sort-header:focus {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* Add a top bar on ascending sort */
 .bar-sort-header[aria-sort="ascending"] {
-  box-shadow: inset 0 3px 0 0 rgba(0, 0, 0, 0.6) !important;
+  box-shadow: inset 0 3px 0 0 rgba(0, 0, 0, 0.6);
 }
 
+/* Add a bottom bar on descending sort */
 .bar-sort-header[aria-sort="descending"] {
-  box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.6) !important;
+  box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.6);
 }
 
+/* Add an animation when toggling between ascending and descending sort */
 .bar-sort-header {
   transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
