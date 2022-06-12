@@ -217,42 +217,57 @@ The table search method can be customized using the `searchMethod` argument in `
 See the [Custom Filtering](custom-filtering.html) guide for details and examples.
 
 ## Pagination
+
 You can change the default page size by configuring `defaultPageSize`:
+
 ```{r}
 reactable(iris[1:6, ], defaultPageSize = 4)
 ```
 
 You can also set the minimum rows per page using `minRows`. This may be
 useful when rows don't completely fill the page, or if the table has filtering:
+
 ```{r}
 reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4, searchable = TRUE)
 ```
 
 ### Page size options
+
 You can show a dropdown of page sizes for users to choose from using `showPageSizeOptions`.
 The page size options can be customized through `pageSizeOptions`:
+
 ```{r}
-reactable(iris[1:12, ], showPageSizeOptions = TRUE, pageSizeOptions = c(4, 8, 12), defaultPageSize = 4)
+reactable(
+  iris[1:12, ],
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(4, 8, 12),
+  defaultPageSize = 4
+)
 ```
 
 ### Alternative pagination types
+
 You can use an alternative pagination type by setting `paginationType` to:
 
 - `"jump"` to show a page jump
 - `"simple"` to show previous/next buttons only
 
 #### Page jump
+
 ```{r}
 reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
 ```
 
 #### Simple
+
 ```{r}
 reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
 ```
 
 ### Hide page info
+
 You can hide page info by setting `showPageInfo` to `FALSE`:
+
 ```{r}
 reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
 
@@ -260,9 +275,11 @@ reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaul
 ```
 
 ### Always show pagination
+
 By default, pagination is hidden if the table only has one page. To keep the
 pagination shown, set `showPagination` to `TRUE`. This is especially useful if
 you want to keep the page info showing the number of rows in the table.
+
 ```{r}
 reactable(iris[1:5, ], showPagination = TRUE)
 ```
@@ -614,13 +631,13 @@ reactable(data, columns = list(
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, columns = list(
-  Model = colDef(html = TRUE, cell = JS("
+  Model = colDef(html = TRUE, cell = JS('
     function(cellInfo) {
       // Render as a link
-      const url = 'https://wikipedia.org/wiki/' + cellInfo.row['Manufacturer'] + '_' + cellInfo.value
-      return '<a href=\"' + url + '\" target=\"_blank\">' + cellInfo.value + '</a>'
+      const url = `https://wikipedia.org/wiki/${cellInfo.row["Manufacturer"]}_${cellInfo.value}`
+      return `<a href="${url}" target="_blank">${cellInfo.value}</a>`
     }
-  ")),
+  ')),
   AirBags = colDef(cell = JS("
     function(cellInfo) {
       // Render as an X mark or check mark
@@ -737,11 +754,14 @@ reactable(
     div(title = value, value, units)
   }),
   columns = list(
-    Petal.Width = colDef(name = "Petal Width", html = TRUE, align = "left", header = JS("
-      function(column) {
-        return column.name + '<div style=\"color: #999\">cm</div>'
-      }
-    ")),
+    Petal.Width = colDef(
+      name = "Petal Width",
+      html = TRUE,
+      align = "left",
+      header = JS('function(column) {
+        return column.name + `<div style="color: #999">cm</div>`
+      }')
+    ),
     Species = colDef(header = function(value) {
       tags$a(href = "https://wikipedia.org/wiki/List_of_Iris_species", title = "Iris species", value)
     })
@@ -837,12 +857,13 @@ reactable(iris[1:5, ], details = function(index) {
 
 The details column can be customized by providing a `colDef()` instead. This can
 be used to add a column name, render HTML content, or change the column width:
+
 ```{r}
 reactable(iris[1:5, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
-    return 'Details for row: ' + rowInfo.index +
-      '<pre>' + JSON.stringify(rowInfo.values, null, 2) + '</pre>'
+    return `Details for row: ${rowInfo.index}` +
+      `<pre>${JSON.stringify(rowInfo.values, null, 2)}</pre>`
   }"),
   html = TRUE,
   width = 60
@@ -856,7 +877,7 @@ data <- unique(CO2[, c("Plant", "Type")])
 
 reactable(data, details = function(index) {
   plant_data <- CO2[CO2$Plant == data$Plant[index], ]
-  htmltools::div(style = "padding: 16px",
+  htmltools::div(style = "padding: 1rem",
     reactable(plant_data, outlined = TRUE)
   )
 })
@@ -2066,11 +2087,11 @@ data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
 htmltools::browsable(
   tagList(
     div(
-      style = "margin-bottom: 12px",
+      style = "margin-bottom: 0.75rem",
       tags$input(
         type = "text",
         placeholder = "Search for cars...",
-        style = "padding: 4px 8px; width: 100%",
+        style = "padding: 0.25rem 0.5rem; width: 100%",
         oninput = "Reactable.setSearch('cars-search-table', this.value)"
       )
     ),
@@ -2152,18 +2173,5 @@ htmltools::browsable(
 
 .main-container blockquote {
   font-size: inherit;
-}
-
-/* pkgdown articles */
-.contents {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-}
-
-.contents blockquote {
-  font-size: inherit;
-}
-
-.reactable {
-  font-size: 14px;
 }
 ```

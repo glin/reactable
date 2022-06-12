@@ -1,3 +1,7 @@
+html {
+  font-size: 1rem;
+}
+
 html,
 body {
   height: 100%;
@@ -5,6 +9,7 @@ body {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
 }
 
 .container-fluid {
@@ -17,14 +22,14 @@ body {
 }
 
 .sidebar {
-  padding: 2rem 0;
+  padding: 1.25rem 0;
   height: 100vh;
   min-width: 200px;
   overflow-y: scroll;
 }
 
 .content {
-  padding: 2rem 1rem;
+  padding: 1.25rem 0.625rem;
   width: 100%;
   max-width: 960px;
   overflow: auto;
@@ -32,21 +37,21 @@ body {
 
 @media (max-width: 760px) {
   .content {
-    padding: 2rem 0;
+    padding: 1.25rem 0;
   }
 }
 
 .title {
-  margin: 0 1rem 1rem 0;
-  font-size: 2.5rem;
+  margin: 0 0.625rem 0.625rem 0;
+  font-size: 1.5rem;
 }
 
 #table {
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
 
 .tag {
-  padding: 0.15rem 2rem;
+  padding: 0.1rem 1.25rem;
   border-radius: 30px;
   font-weight: 600;
   background-color: #eee;

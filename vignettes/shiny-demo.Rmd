@@ -13,6 +13,7 @@ tags$div(class = "iframe-container", tags$iframe(src = "https://glin.shinyapps.i
 .iframe-container {
   display: flex;
   flex-direction: column;
+  margin-top: 1.5rem;
   height: 100%;
   overflow: hidden;
 }
@@ -40,25 +41,16 @@ body {
 
 /* pkgdown articles */
 .template-article {
-  padding-left: 0;
-  padding-right: 0;
   width: 100%;
-}
-
-body {
-  /* Workaround for jQuery + IE11 bug */
-  padding-top: 60px;
+  height: 100%;
 }
 
 .row {
   height: 100%;
-  margin: 0;
 }
 
-.contents {
-  padding: 0;
-  width: 100%;
-  height: 100%;
+.row > main {
+  max-width: 100%;
 }
 
 .page-header {

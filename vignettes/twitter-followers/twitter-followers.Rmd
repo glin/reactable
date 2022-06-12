@@ -37,7 +37,7 @@ tbl <- reactable(
         value <- format(value, width = 9, justify = "right")
         bar <- div(
           class = "bar-chart",
-          style = list(marginRight = "6px"),
+          style = list(marginRight = "0.375rem"),
           div(class = "bar", style = list(width = width, backgroundColor = "#3fc1c9"))
         )
         div(class = "bar-cell", span(class = "number", value), bar)
@@ -46,25 +46,25 @@ tbl <- reactable(
     exclusive_followers_pct = colDef(
       name = "Exclusive Followers",
       defaultSortOrder = "desc",
-      cell = JS("function(cellInfo) {
+      cell = JS('function(cellInfo) {
         // Format as percentage
-        const pct = (cellInfo.value * 100).toFixed(1) + '%'
+        const pct = (cellInfo.value * 100).toFixed(1) + "%"
         // Pad single-digit numbers
         let value = pct.padStart(5)
         // Show % on first row only
         if (cellInfo.viewIndex > 0) {
-          value = value.replace('%', ' ')
+          value = value.replace("%", " ")
         }
         // Render bar chart
-        return (
-          '<div class=\"bar-cell\">' +
-            '<span class=\"number\">' + value + '</span>' +
-            '<div class=\"bar-chart\" style=\"background-color: #e1e1e1\">' +
-              '<div class=\"bar\" style=\"width: ' + pct + '; background-color: #fc5185\"></div>' +
-            '</div>' +
-          '</div>'
-        )
-      }"),
+        return `
+          <div class="bar-cell">
+            <span class="number">${value}</span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: ${pct}; background-color: #fc5185"></div>
+            </div>
+          </div>
+        `
+      }'),
       html = TRUE
     )
   ),
@@ -107,27 +107,34 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 }
 
 .followers-header {
-  margin: 18px 0;
-  font-size: 16px;
+  margin: 1.125rem 0;
+  font-size: 1rem;
 }
 
 .followers-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .followers-tbl {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
 }
 
 .followers-tbl a {
   color: inherit;
+  text-decoration: none;
+}
+
+.followers-tbl a:hover,
+.followers-tbl a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
 }
 
 .header {
   border-bottom: 2px solid #555;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 400;
   text-transform: uppercase;
 }
@@ -143,14 +150,14 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 
 .number {
   font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   white-space: pre;
 }
 
 .bar-chart {
   flex-grow: 1;
-  margin-left: 6px;
-  height: 14px;
+  margin-left: 0.375rem;
+  height: 0.875rem;
 }
 
 .bar {

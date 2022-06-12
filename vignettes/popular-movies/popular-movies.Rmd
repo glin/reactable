@@ -61,48 +61,14 @@ tbl <- reactable(
       # Since there are so many rows, we use a JS render function to keep the
       # page size down. This would be much easier to code in R, but that would
       # significantly increase the file size.
-      cell = JS("function(cellInfo) {
-        const url = 'https://www.themoviedb.org/movie/' + cellInfo.row['id']
-        const imageSrc = 'https://www.themoviedb.org/t/p/w45' + cellInfo.row['poster_path']
-        const altText = cellInfo.value + ' movie poster'
-        const poster = '<a href=\"' + url + '\">' +
-          '<img src=\"' + imageSrc + '\" class=\"movie-poster\" alt=\"' + altText + '\"></a>'
-
-        const title = '<a href=\"' + url + '\">' + cellInfo.value + '</a>'
-
-        let rating = cellInfo.row['certification']
-        if (rating) {
-          rating = '<span class=\"movie-rating\">' + rating + '</span>'
-        } else {
-          rating = ''
-        }
-
-        const genres = ' ' + cellInfo.row['genres'].join(', ')
-
-        let runtime = cellInfo.row['runtime']
-        if (typeof runtime === 'number') {
-          const hours = Math.floor(runtime / 60)
-          const mins = runtime % 60
-          runtime = [hours > 0 ? hours + 'h' : '', mins > 0 ? mins + 'm' : ''].join(' ')
-          runtime = '<span aria-hidden=\"true\"> • </span>' +
-            '<div class=\"movie-runtime\">' + runtime + '</div>'
-        } else {
-          runtime = ''
-        }
-
-        const details = '<div class=\"movie-info-details\">' + rating + genres + runtime + '</div>'
-        const text = '<div class=\"movie-info-text\">' + title + details + '</div>'
-        return '<div class=\"movie-info\">' + poster + text + '</div>'
-      }"),
+      cell = JS("renderMovie"),
       html = TRUE,
       minWidth = 250
     ),
     release_date = colDef(
       name = "Year",
       defaultSortOrder = "desc",
-      cell = JS("function(cellInfo) {
-        return cellInfo.value.slice(0, 4)
-      }"),
+      cell = JS("cellInfo => cellInfo.value.slice(0, 4)"),
       minWidth = 70,
       maxWidth = 90
     ),
@@ -111,21 +77,7 @@ tbl <- reactable(
       defaultSortOrder = "desc",
       # Show the user score in a donut chart like TMDb does. Since donut charts
       # are hard to compare, apply a color scale as well.
-      cell = JS("function(cellInfo) {
-        const sliceColor = cellInfo.row['score_color']
-        const sliceLength = 2 * Math.PI * 24
-        const sliceOffset = sliceLength * (1 - cellInfo.value / 100)
-        const donutChart = (
-          '<svg width=60 height=60 style=\"transform: rotate(-90deg)\" focusable=false>' +
-            '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=rgba(0,0,0,0.1)></circle>' +
-            '<circle cx=30 cy=30 r=24 fill=none stroke-width=4 stroke=' + sliceColor +
-            ' stroke-dasharray=' + sliceLength + ' stroke-dashoffset=' + sliceOffset + '></circle>' +
-          '</svg>'
-        )
-        const label = '<div style=\"position: absolute; top: 50%; left: 50%; ' +
-          'transform: translate(-50%, -50%)\">' + cellInfo.value + '%' + '</div>'
-        return '<div style=\"display: inline-flex; position: relative\">' + donutChart + label + '</div>'
-      }"),
+      cell = JS("renderUserScore"),
       html = TRUE,
       align = "center",
       width = 140,
@@ -150,6 +102,76 @@ tbl <- reactable(
   ),
   class = "movies-tbl"
 )
+```
+
+```{js table_js, echo=FALSE}
+// Custom JavaScript cell renderer for the Movie column
+function renderMovie(cellInfo) {
+  const url = 'https://www.themoviedb.org/movie/' + cellInfo.row['id']
+  const imageSrc = 'https://www.themoviedb.org/t/p/w45' + cellInfo.row['poster_path']
+  const altText = cellInfo.value + ' movie poster'
+  const poster = `<a href="${url}"><img src="${imageSrc}" class="movie-poster" alt="${altText}"></a>`
+
+  const title = `<a href="${url}">${cellInfo.value}</a>`
+
+  let rating = cellInfo.row['certification']
+  if (rating) {
+    rating = `<span class="movie-rating">${rating}</span>`
+  } else {
+    rating = ''
+  }
+
+  const genres = ' ' + cellInfo.row['genres'].join(', ')
+
+  let runtime = cellInfo.row['runtime']
+  if (typeof runtime === 'number') {
+    const hours = Math.floor(runtime / 60)
+    const mins = runtime % 60
+    runtime = [hours > 0 ? hours + 'h' : '', mins > 0 ? mins + 'm' : ''].join(' ')
+    runtime = `<span aria-hidden="true"> • </span>` +
+      `<div class="movie-runtime">${runtime}</div>`
+  } else {
+    runtime = ''
+  }
+
+  const details = `<div class="movie-info-details">${rating}${genres}${runtime}</div>`
+  const text = `<div class="movie-info-text">${title}${details}</div>`
+  return `<div class="movie-info">${poster}${text}</div>`
+}
+
+// Custom JavaScript cell renderer for the User Score column
+function renderUserScore(cellInfo) {
+  return donutChart(cellInfo.value, cellInfo.row['score_color'])
+}
+
+// Generates HTML for a donut chart given a percentage value (out of 100) and color
+function donutChart(value, color) {
+  // All units are in rem for relative scaling
+  const radius = 1.5
+  const diameter = 3.75
+  const center = diameter / 2
+  const width = 0.25
+  const sliceLength = 2 * Math.PI * radius
+  const sliceOffset = sliceLength * (1 - value / 100)
+  const donutChart = `
+    <svg width="${diameter}rem" height="${diameter}rem" style="transform: rotate(-90deg)" focusable="false">
+      <circle cx="${center}rem" cy="${center}rem" r="${radius}rem" fill="none" stroke-width="${width}rem" stroke="rgba(0,0,0,0.1)"></circle>
+      <circle cx="${center}rem" cy="${center}rem" r="${radius}rem" fill="none" stroke-width="${width}rem" stroke="${color}"
+       stroke-dasharray="${sliceLength}rem" stroke-dashoffset="${sliceOffset}rem"></circle>
+    </svg>
+  `
+  const label = `
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">
+      ${value}%
+    </div>
+  `
+  return `
+    <div style="display: inline-flex; position: relative">
+      ${donutChart}
+      ${label}
+    </div>
+  `
+}
 ```
 
 ```{r filters, echo=FALSE}
@@ -336,6 +358,9 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 ```{r ref.label="table", eval=FALSE}
 ```
 
+```{js ref.label="table_js", eval=FALSE}
+```
+
 ```{r ref.label="filters", eval=FALSE}
 ```
 
@@ -370,7 +395,6 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 
 .movies {
   font-family: 'Hanken Grotesk', Helvetica, Arial, sans-serif;
-  font-size: 16px;
 }
 
 .movies h2 {
@@ -379,16 +403,24 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 
 .movies a {
   color: #007899;
+  text-decoration: none;
+}
+
+.movies a:hover,
+.movies a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
 }
 
 .movies-tbl {
-  margin-top: 16px;
+  margin-top: 1rem;
+  font-size: 1rem;
 }
 
 .header {
   color: hsl(0, 0%, 45%);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 0.8125rem;
   letter-spacing: 0.4px;
   text-transform: uppercase;
 }
@@ -405,15 +437,15 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 }
 
 .movie-info-text {
-  margin-left: 12px;
+  margin-left: 0.75rem;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .movie-info-details {
-  margin-top: 2px;
-  font-size: 14px;
+  margin-top: 0.125rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: hsl(0, 0%, 40%);
   overflow: hidden;
@@ -422,8 +454,7 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 
 .movie-poster {
   width: 45px;
-  height: 68px !important; /* Override pkgdown style (Bootstrap 3 only) */
-  max-width: none; /* Reset rmarkdown/pkgdown style */
+  height: 68px;
   box-shadow: 0 0 0 1px hsl(0, 0%, 95%);
 }
 
@@ -432,8 +463,8 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 }
 
 .movie-rating {
-  margin-right: 4px;
-  padding: 0 4px;
+  margin-right: 0.25rem;
+  padding: 0 0.25rem;
   border: 1px solid hsl(0, 0%, 75%);
   border-radius: 2px;
 }
@@ -445,12 +476,12 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 .filters {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 16px;
+  margin-top: 1rem;
   margin-left: -32px;
 }
 
 .filter-input {
-  margin-top: 8px;
+  margin-top: 0.5rem;
   margin-left: 32px;
   flex: 1;
   min-width: 250px;
@@ -459,37 +490,28 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 .filter-input label {
   color: hsl(0, 0%, 45%);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 0.8125rem;
   letter-spacing: 0.4px;
   text-transform: uppercase;
 }
 
 .filter-input select,
 .filter-input input[type="search"] {
-  padding: 0 6px;
-  height: 32px;
+  padding: 0 0.375rem;
+  height: 2rem;
 }
 
 .filter-input input[type="search"] {
-  /* Reset Bootstrap 3 styles */
+  /* Revert Bootstrap 5's Reboot styles, which change native search input styling */
   -webkit-appearance: searchfield;
-}
-
-.filter-input input[type="search"]::-webkit-search-cancel-button {
-  /* Reset Bootstrap 3 styles */
-  -webkit-appearance: searchfield-cancel-button;
-}
-
-.filter-input input[type="range"] {
-  /* Reset for IE11 */
-  padding: 0;
+  outline-offset: revert;
+  border-color: revert;
 }
 ```
 
 ```{css echo=FALSE}
 /* pkgdown articles */
-.contents {
-  width: 100%;
+.row > main {
   max-width: 940px;
 }
 ```

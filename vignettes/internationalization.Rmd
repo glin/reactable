@@ -33,13 +33,4 @@ reactable(
 .main-container {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
-
-/* pkgdown articles */
-.contents {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-}
-
-.reactable {
-  font-size: 14px;
-}
 ```

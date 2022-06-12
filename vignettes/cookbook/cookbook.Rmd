@@ -150,10 +150,10 @@ reactable(
 ```{css}
 .tag {
   display: inline-block;
-  padding: 2px 12px;
+  padding: 0.125rem 0.75rem;
   border-radius: 15px;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .status-paid {
@@ -178,10 +178,10 @@ reactable(
 ```{r}
 library(htmltools)
 
-status_badge <- function(color = "#aaa", width = "9px", height = width) {
+status_badge <- function(color = "#aaa", width = "0.55rem", height = width) {
   span(style = list(
     display = "inline-block",
-    marginRight = "8px",
+    marginRight = "0.5rem",
     width = width,
     height = height,
     backgroundColor = color,
@@ -215,9 +215,9 @@ inspired by [Making Charts with CSS](https://css-tricks.com/making-charts-with-c
 library(htmltools)
 
 # Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", height = "16px", fill = "#00bfc4", background = NULL) {
+bar_chart <- function(label, width = "100%", height = "1rem", fill = "#00bfc4", background = NULL) {
   bar <- div(style = list(background = fill, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, marginLeft = "8px", background = background), bar)
+  chart <- div(style = list(flexGrow = 1, marginLeft = "0.5rem", background = background), bar)
   div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
 
@@ -244,18 +244,22 @@ reactable(
 library(htmltools)
 
 # Render a bar chart with positive and negative values
-bar_chart_pos_neg <- function(label, value, max_value = 1, height = "16px",
+bar_chart_pos_neg <- function(label, value, max_value = 1, height = "1rem",
                               pos_fill = "#005ab5", neg_fill = "#dc3220") {
   neg_chart <- div(style = list(flex = "1 1 0"))
   pos_chart <- div(style = list(flex = "1 1 0"))
   width <- paste0(abs(value / max_value) * 100, "%")
 
   if (value < 0) {
-    bar <- div(style = list(marginLeft = "8px", background = neg_fill, width = width, height = height))
-    chart <- div(style = list(display = "flex", alignItems = "center", justifyContent = "flex-end"), label, bar)
+    bar <- div(style = list(marginLeft = "0.5rem", background = neg_fill, width = width, height = height))
+    chart <- div(
+      style = list(display = "flex", alignItems = "center", justifyContent = "flex-end"),
+      label,
+      bar
+    )
     neg_chart <- tagAppendChild(neg_chart, chart)
   } else {
-    bar <- div(style = list(marginRight = "8px", background = pos_fill, width = width, height = height))
+    bar <- div(style = list(marginRight = "0.5rem", background = pos_fill, width = width, height = height))
     chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
     pos_chart <- tagAppendChild(pos_chart, chart)
   }
@@ -296,7 +300,8 @@ inspired by an [example from the DT package](https://rstudio.github.io/DT/010-st
 
 ```{r}
 # Render a bar chart in the background of the cell
-bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%", align = c("left", "right"), color = NULL) {
+bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%",
+                      align = c("left", "right"), color = NULL) {
   align <- match.arg(align)
   if (align == "left") {
     position <- paste0(width * 100, "%")
@@ -484,8 +489,8 @@ reactable(
         species <- data$species[index]
         species <- if (!is.na(species)) species else "Unknown"
         div(
-          div(style = list(fontWeight = 600), value),
-          div(style = list(fontSize = 12), species)
+          div(style = "font-weight: 600", value),
+          div(style = "font-size: 0.75rem", species)
         )
       }
     ),
@@ -505,15 +510,15 @@ reactable(
   columns = list(
     character = colDef(
       # Show species under character names
-      cell = JS("function(cellInfo) {
-        const species = cellInfo.row['species'] || 'Unknown'
-        return (
-          '<div>' +
-          '<div style=\"font-weight: 600\">' + cellInfo.value + '</div>' +
-          '<div style=\"font-size: 12px\">' + species + '</div>' +
-          '</div>'
-        )
-      }"),
+      cell = JS('function(cellInfo) {
+        const species = cellInfo.row["species"] || "Unknown"
+        return `
+          <div>
+            <div style="font-weight: 600">${cellInfo.value}</div>
+            <div style="font-size: 0.75rem">${species}</div>
+          </div>
+        `
+      }'),
       html = TRUE
     ),
     species = colDef(show = FALSE)
@@ -651,10 +656,10 @@ reactable(
     # Align values using a fixed-width container for units
     Luggage.room = colDef(
       name = "Luggage Room",
-      cell = JS("function(cellInfo) {
-        const units = cellInfo.viewIndex === 0 ? ' ft³' : ''
-        return cellInfo.value + '<div class=\"units\">' + units + '</div>'
-      }"),
+      cell = JS('function(cellInfo) {
+        const units = cellInfo.viewIndex === 0 ? " ft³" : ""
+        return cellInfo.value + `<div class="units">${units}</div>`
+      }'),
       html = TRUE
     )
   )
@@ -669,7 +674,7 @@ reactable(
 
 .car-specs .units {
   display: inline-block;
-  width: 18px;
+  width: 1.125rem;
 }
 ```
 
@@ -957,7 +962,7 @@ To customize the table font, you can set a font on the page, or on the table its
 ```{r}
 reactable(
   iris[1:5, ],
-  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "14px"),
+  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "0.875rem"),
   defaultSorted = "Species"
 )
 ```
@@ -1038,18 +1043,5 @@ reactable(
 
 .main-container blockquote {
   font-size: inherit;
-}
-
-/* pkgdown articles */
-.contents {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-}
-
-.contents blockquote {
-  font-size: inherit;
-}
-
-.reactable {
-  font-size: 14px;
 }
 ```

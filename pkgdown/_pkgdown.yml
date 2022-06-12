@@ -1,3 +1,6 @@
+template:
+  bootstrap: 5
+
 home:
   title: Interactive data tables for R
 

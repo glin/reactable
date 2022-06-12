@@ -1,11 +1,22 @@
 # reactable 0.3.0.9000 (Unreleased)
 
+## Minor improvements and bug fixes
+
+* Updated the documentation site for Internet Explorer 11 (IE 11) deprecation,
+  Bootstrap 5 theming, and better accessibility. Examples now use modern JavaScript
+  features that aren't supported in IE 11, like template literals and arrow functions.
+  Examples now also use scalable font sizes and length units where appropriate
+  (i.e., `rem`/`em` instead of `px`). The documentation site uses the default
+  root font size of `16px`, so examples may look different on pages that change the
+  root font size. For example, Bootstrap 3 sets a default root font size of `10px`,
+  so you may need to adjust the `rem` values before adapting examples to your site.
+  (Bootstrap 4 and above no longer change the default root font size).
+
 ## Breaking changes
 
 * Support for Internet Explorer 11 (IE 11) is deprecated, and this will be the last
   release to support IE 11. Future releases may still work on IE 11, but will no
-  longer be tested. Examples in the documentation may drop support for IE 11 before
-  the next release.
+  longer be tested. The documentation website no longer supports IE 11.
 
 # reactable 0.3.0
 
