@@ -68,7 +68,7 @@ colDef(
 3 arguments — the rows, column ID, and filter value — and returns the filtered
 array of rows.
 
-```js
+```ts
 filterMethod(
   rows: Array<Row>,
   columnId: string,
@@ -126,7 +126,7 @@ reactable(
 3 arguments — the rows, column IDs, and search value — and returns the filtered
 array of rows.
 
-```js
+```ts
 searchMethod(
   rows: Array<Row>,
   columnIds: Array<string>,
