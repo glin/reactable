@@ -363,9 +363,9 @@ reactable(
   data,
   columns = list(
     Animal = colDef(cell = function(value) {
-      image <- img(src = sprintf("images/%s.png", value), height = "24px", alt = value)
+      image <- img(src = sprintf("images/%s.png", value), style = "height: 24px;", alt = value)
       tagList(
-        div(style = list(display = "inline-block", width = "45px"), image),
+        div(style = "display: inline-block; width: 45px;", image),
         value
       )
     }),
@@ -406,9 +406,9 @@ reactable(
   columns = list(
     Animal = colDef(cell = function(value) {
       img_src <- knitr::image_uri(sprintf("images/%s.png", value))
-      image <- img(src = img_src, height = "24px", alt = value)
+      image <- img(src = img_src, style = "height: 24px;", alt = value)
       tagList(
-        div(style = list(display = "inline-block", width = "45px"), image),
+        div(style = "display: inline-block; width: 45px", image),
         value
       )
     })
