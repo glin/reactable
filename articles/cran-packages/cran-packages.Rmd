@@ -51,11 +51,10 @@ row_details <- function(index) {
         pagination = FALSE,
         defaultColDef = colDef(headerClass = "header"),
         columns = list(
-          Date = colDef(name = "Published", align = "right", width = 120, cell = function(value) {
+          Date = colDef(name = "Published", align = "right", cell = function(value) {
             strftime(value, format = "%b %d, %Y")
           })
         ),
-        fullWidth = FALSE,
         class = "archived-table",
         theme = reactableTheme(cellPadding = "8px 12px")
       )
@@ -116,15 +115,15 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&dis
 ```{css}
 .cran-packages {
   font-family: Nunito, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 15px;
 }
 
 .title {
-  font-size: 22px;
+  font-size: 1.5rem;
 }
 
 .packages-table {
-  margin-top: 16px;
+  margin-top: 1rem;
+  font-size: 0.9375rem;
   border: 1px solid hsl(213, 33%, 93%);
   border-radius: 4px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
@@ -142,12 +141,12 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&dis
 }
 
 .units {
-  margin-left: 2px;
+  margin-left: 0.15em;
   color: rgba(0, 0, 0, 0.6);
 }
 
 .package-title {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .package-detail {
@@ -157,33 +156,34 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&dis
 }
 
 .detail-label {
-  margin: 20px 0 4px;  
-  font-size: 14px;
+  margin: 1.25rem 0 0.25rem;
+  font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.6);
 }
 
 .detail-header {
-  margin-bottom: 16px;
-  font-size: 20px;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .detail-title {
-  margin-left: 18px;
-  font-size: 14px;
+  margin-left: 1rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
 }
 
 .detail-description {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .archived-table {
+  max-width: 15rem;
   border: 1px solid hsl(213, 33%, 93%);
   border-radius: 4px;
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.05);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 ```
 
@@ -199,8 +199,7 @@ h1.title {
 }
 
 /* pkgdown articles */
-.contents {
-  width: 100%;
+.row > main {
   max-width: 1024px;
 }
 ```

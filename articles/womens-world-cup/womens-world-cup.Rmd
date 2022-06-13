@@ -73,18 +73,25 @@ tbl <- reactable(
     colGroup(name = "Chance of Finishing Group Stage In ...", columns = group_cols),
     colGroup(name = "Knockout Stage Chances", columns = knockout_cols)
   ),
-  defaultColDef = colDef(headerVAlign = "bottom", class = "cell", headerClass = "header"),
+  defaultColDef = colDef(
+    vAlign = "center",
+    headerVAlign = "bottom",
+    class = "cell",
+    headerClass = "header"
+  ),
   columns = list(
     team = colDef(
       defaultSortOrder = "asc",
       minWidth = 200,
-      headerStyle = list(fontWeight = 700), 
+      headerStyle = list(fontWeight = 700),
       cell = function(value, index) {
         div(
           class = "team",
-          img(class = "flag", alt = paste(value, "flag"), src = sprintf("images/%s.png", value)),
-          div(class = "team-name", value),
-          div(class = "record", sprintf("%s pts.", forecasts[index, "points"]))
+          img(class = "team-flag", alt = paste(value, "flag"), src = sprintf("images/%s.png", value)),
+          div(
+            span(class = "team-name", value),
+            span(class = "team-record", sprintf("%s pts.", forecasts[index, "points"]))
+          )
         )
       }
     ),
@@ -167,26 +174,27 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 ```{css}
 .standings {
   font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .title {
-  margin: 18px 0;
-  font-size: 16px;
+  margin-top: 2rem;
+  margin-bottom: 1.125rem;
+  font-size: 1rem;
 }
 
 .title h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .standings-table {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .header {
   border-bottom-color: #555;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 400;
   text-transform: uppercase;
 }
@@ -213,45 +221,48 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 
 .team {
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
-.record {
-  margin-left: 5px;
-  color: #999;
-  font-size: 13px;
-}
-
-.team-name {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.flag {
-  margin-right: 8px;
-  height: 21px !important; /* Override pkgdown style (Bootstrap 3 only) */
+.team-flag {
+  height: 1.3rem;
   border: 1px solid #f0f0f0;
 }
 
+.team-name {
+  margin-left: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.team-record {
+  margin-left: 0.35rem;
+  color: hsl(0, 0%, 45%);
+  font-size: 0.8125rem;
+}
+
 .group {
-  font-size: 19px;
+  font-size: 1.1875rem;
 }
 
 .number {
   font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 16px;
-  line-height: 30px;
+  font-size: 1rem;
   white-space: pre;
 }
 
 .spi-rating {
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 1.875rem;
+  height: 1.875rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   color: #000;
-  font-size: 13px;
-  letter-spacing: -2px;
+  font-size: 0.8125rem;
+  letter-spacing: -1px;
 }
 ```
 
@@ -267,8 +278,8 @@ h1.title {
 }
 
 /* pkgdown articles */
-.contents {
-  width: 1054px;
+.row > main {
+  max-width: 1054px;
 }
 
 .page-header {

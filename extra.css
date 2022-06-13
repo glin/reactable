@@ -1,23 +1,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  overflow-y: scroll;
-}
-
-h1 {
-  font-size: 32px;
-}
-
-h2 {
-  font-size: 24px;
-}
-
-h3 {
-  font-size: 20px;
-}
-
-h4 {
-  font-size: 18px;
+  overflow-y: scroll; /* Prevent scrollbar layout shifting */
+  font-size: 1rem; /* Override pkgdown on xxl breakpoint */
 }
 
 b,
@@ -25,46 +9,24 @@ strong {
   font-weight: 600;
 }
 
-li {
-  line-height: 1.5;
+a {
+  color: #0969da;
+  text-underline-offset: 0.2em;
 }
 
-pre {
-  padding: 12px;
-  border: 1px solid #f2f2f2;
+a:hover,
+a:focus {
+  text-decoration-thickness: max(2px, 0.125rem);
 }
 
-.navbar {
-  background-color: hsl(0, 0%, 98%);
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+pre a {
+  text-decoration: none;
 }
 
-.dropdown-menu {
-  font-size: 15px;
-}
-
-#sidebar h2 {
-  font-size: 20px;
-}
-
-#toc li {
-  line-height: 1.625;
-}
-
-.ref-arguments {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.contents h1,
-.contents h2,
-.contents h3,
-.contents h4 {
-  margin-top: -52px;
-}
-
-.contents li + li {
-  margin-top: 4px;
+pre a:hover,
+pre a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(2px, 0.125rem);
 }
 
 /* Anchor link fixes for reflow issues, keyboard navigation */
@@ -82,4 +44,148 @@ h6:hover a.anchor,
 a.anchor:hover,
 a.anchor:focus {
   opacity: 1;
+}
+
+pre {
+  padding: 0.75rem 1rem;
+  /* Override pkgdown for better contrast */
+  background-color: var(--bs-gray-100);
+}
+
+main li + li {
+  margin-top: 0.25em;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1.125rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 1.5rem;
+}
+
+blockquote {
+  padding-left: 0.3125rem solid #e9ecef;
+}
+
+/* Revert Bootstrap 5's Reboot styles that change native button styling */
+button {
+  border-radius: revert;
+}
+
+label {
+  font-weight: 700;
+}
+
+.navbar {
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-light .navbar-brand:hover,
+.navbar-light .navbar-brand:focus {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.navbar-badge {
+  font-size: 0.85em;
+}
+
+/* Adjust navbar text contrast */
+.navbar-light .navbar-nav .nav-link {
+  color: var(--bs-gray-700);
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+  color: var(--bs-gray-900);
+}
+
+.dropdown-toggle::after {
+  /* Adjust Bootstrap 5's dropdown arrow alignment */
+  vertical-align: 0.15em;
+}
+
+.dropdown-item:active {
+  color: #1e2125;
+  background-color: #e9ecef;
+}
+
+/* Reduce max page width at xx-large breakpoint */
+@media (min-width: 1400px) {
+  .container-md,
+  .container {
+    max-width: calc(1160px + 1.5rem);
+  }
+}
+
+/* Fix toc disappearing, increase main content width */
+@media (min-width: 768px) {
+  .row > main {
+    max-width: 75%;
+  }
+}
+
+/* Fix toc disappearing */
+.col-md-3 {
+  margin-left: 0;
+}
+
+.page-header {
+  /* Remove extraneous whitespace */
+  min-height: 0 !important;
+}
+
+/* Fix skip link visibility */
+.skip-link {
+  position: absolute;
+  margin: 4px;
+  padding: 0.75rem;
+  background-color: hsla(0, 0%, 100%, 0.9);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  z-index: 1040;
+}
+
+#toc > .nav .nav li {
+  font-size: 0.9rem;
+}
+
+#toc > .nav .nav a {
+  margin: 0;
+  border-left: 2px solid var(--bs-gray-200);
+  border-radius: 0;
+}
+
+.reactable {
+  font-size: 0.875rem;
+}
+
+.props-tbl {
+  display: table; /* Override pkgdown styles */
+  font-size: 14px;
+}
+
+.props-tbl th {
+  font-weight: 600;
+}
+
+.props-tbl th[scope='row'] {
+  font-weight: 400;
 }

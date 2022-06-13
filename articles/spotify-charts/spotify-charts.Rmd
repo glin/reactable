@@ -54,7 +54,7 @@ tracks_table <- function(data) {
         cell = function(value, index) {
           title <- tags$a(href = data[index, "url"], value)
           if (data[index, "explicit"]) {
-            explicit_tag <- div(style = list(float = "right"), span(class = "tag", "EXPLICIT"))
+            explicit_tag <- div(style = list(float = "right"), span(class = "tag", "Explicit"))
             title <- tagList(title, explicit_tag)
           }
           title
@@ -113,7 +113,7 @@ trend_indicator <- function(value = c("unchanged", "up", "down", "new")) {
   } else if (value == "down") {
     args <- c(args, list(shiny::icon("caret-down"), style = "color: #cd1a2b"))
   } else {
-    args <- c(args, list(shiny::icon("circle"), style = "color: #2e77d0; font-size: 10px"))
+    args <- c(args, list(shiny::icon("circle"), style = "color: #2e77d0; font-size: 0.6rem"))
   }
   do.call(span, args)
 }
@@ -122,7 +122,7 @@ spotify_theme <- function() {
   search_icon <- function(fill = "none") {
     # Icon from https://boxicons.com
     svg <- sprintf('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%s" d="M10 18c1.85 0 3.54-.64 4.9-1.69l4.4 4.4 1.4-1.42-4.39-4.4A8 8 0 102 10a8 8 0 008 8.01zm0-14a6 6 0 11-.01 12.01A6 6 0 0110 4z"/></svg>', fill)
-    sprintf("url('data:image/svg+xml;base64,%s')", jsonlite::base64_enc(svg))
+    sprintf("url('data:image/svg+xml;charset=utf-8,%s')", URLencode(svg))
   }
 
   text_color <- "hsl(0, 0%, 95%)"
@@ -139,12 +139,13 @@ spotify_theme <- function() {
     cellPadding = "10px 8px",
     style = list(
       fontFamily = "Work Sans, Helvetica Neue, Helvetica, Arial, sans-serif",
-      fontSize = "14px",
+      fontSize = "0.875rem",
       "a" = list(
         color = text_color,
+        textDecoration = "none",
         "&:hover, &:focus" = list(
-          textDecoration = "none",
-          borderBottom = "1px solid currentColor"
+          textDecoration = "underline",
+          textDecorationThickness = "1px"
         )
       ),
       ".number" = list(
@@ -152,17 +153,18 @@ spotify_theme <- function() {
         fontFamily = "Source Code Pro, Consolas, Monaco, monospace"
       ),
       ".tag" = list(
-        padding = "2px 4px",
+        padding = "0.125rem 0.25rem",
         color = "hsl(0, 0%, 40%)",
-        fontSize = "12px",
+        fontSize = "0.75rem",
         border = "1px solid hsl(0, 0%, 24%)",
-        borderRadius = "2px"
+        borderRadius = "2px",
+        textTransform = "uppercase"
       )
     ),
     headerStyle = list(
       color = text_color_light,
       fontWeight = 400,
-      fontSize = "12px",
+      fontSize = "0.75rem",
       letterSpacing = "1px",
       textTransform = "uppercase",
       "&:hover, &:focus" = list(color = text_color)
@@ -172,15 +174,15 @@ spotify_theme <- function() {
     ),
     # Full-width search bar with search icon
     searchInputStyle = list(
-      paddingLeft = "30px",
-      paddingTop = "8px",
-      paddingBottom = "8px",
+      paddingLeft = "1.9rem",
+      paddingTop = "0.5rem",
+      paddingBottom = "0.5rem",
       width = "100%",
       border = "none",
       backgroundColor = bg_color,
       backgroundImage = search_icon(text_color_light),
-      backgroundSize = "16px",
-      backgroundPosition = "left 8px center",
+      backgroundSize = "1rem",
+      backgroundPosition = "left 0.5rem center",
       backgroundRepeat = "no-repeat",
       "&:focus" = list(backgroundColor = "rgba(255, 255, 255, 0.1)", border = "none"),
       "&:hover, &:focus" = list(backgroundImage = search_icon(text_color)),
@@ -219,16 +221,16 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700|
 
 ```{css}
 .spotify-charts {
-  padding: 12px 12px 0;
+  padding: 0.75rem 0.75rem 0;
   font-family: "Work Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: hsl(0, 0%, 95%);
   background-color: hsl(0, 0%, 10%);
 }
 
 .title {
-  margin: 12px 6px 24px;
+  margin: 0.75rem 0.375rem 1.5rem;
   padding: 0;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 ```
@@ -255,8 +257,7 @@ h1.title {
 }
 
 /* pkgdown articles */
-.contents {
-  width: 100%;
+.row > main {
   max-width: 960px;
 }
 ```

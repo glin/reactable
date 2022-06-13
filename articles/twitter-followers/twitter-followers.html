@@ -4,14 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="reactable">
 <title>Twitter Followers • reactable</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../../bootstrap-toc.css">
-<script src="../../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
+<script src="../../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../../pkgdown.css" rel="stylesheet">
-<script src="../../pkgdown.js"></script><link href="../../extra.css" rel="stylesheet">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../../pkgdown.js"></script><link href="../../extra.css" rel="stylesheet">
 <meta property="og:title" content="Twitter Followers">
 <meta property="og:description" content="reactable">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -19,134 +19,93 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <!-- Work around skip link being hidden when focused -->
+    <a href="#main" class="visually-hidden-focusable skip-link">Skip to contents</a>
     
+ <!-- Generated by pkgdown: do not edit by hand -->
+<nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><!-- Use container-md over container for full width main content at small breakpoint --><div class="container-md">
+    
+    <a class="navbar-brand me-2" href="../../index.html">reactable</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../../index.html">reactable</a>
-        <a href="https://glin.github.io/reactable/news/index.html" class="external-link">
-          <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.9000</span>
-        </a>
-      </span>
-    </div>
+    <!-- Add version badge -->
+    <a href="../../news/index.html">
+      <span class="badge bg-secondary navbar-badge">0.3.0.9000</span>
+    </a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../../reference/index.html">Reference</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../../articles/examples.html">Examples</a>
+<li class="nav-item">
+  <a class="nav-link" href="../../articles/examples.html">Examples</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Demos
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../../articles/twitter-followers/twitter-followers.html">Twitter Followers</a>
-    </li>
-    <li>
-      <a href="../../articles/womens-world-cup/womens-world-cup.html">Women's World Cup Predictions</a>
-    </li>
-    <li>
-      <a href="../../articles/nba-box-score/nba-box-score.html">NBA Box Score</a>
-    </li>
-    <li>
-      <a href="../../articles/cran-packages/cran-packages.html">CRAN Packages</a>
-    </li>
-    <li>
-      <a href="../../articles/spotify-charts/spotify-charts.html">Spotify Charts</a>
-    </li>
-    <li>
-      <a href="../../articles/popular-movies/popular-movies.html">Popular Movies</a>
-    </li>
-    <li>
-      <a href="../../articles/cookbook/cookbook.html">Demo Cookbook</a>
-    </li>
-    <li>
-      <a href="../../articles/100k-rows.html">100k Rows</a>
-    </li>
-    <li>
-      <a href="../../articles/shiny-demo.html">Shiny Demo</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../../articles/custom-rendering.html">Custom Rendering</a>
-    </li>
-    <li>
-      <a href="../../articles/conditional-styling.html">Conditional Styling</a>
-    </li>
-    <li>
-      <a href="../../articles/custom-filtering.html">Custom Filtering</a>
-    </li>
-    <li>
-      <a href="../../articles/javascript-api.html">JavaScript API</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Tutorials
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../../articles/building-twitter-followers.html">Building the Twitter Followers Demo</a>
-    </li>
-  </ul>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="../../news/index.html">News</a>
-</li>
-<li>
-  <a href="https://github.com/glin/reactable/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-demos">Demos</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-demos">
+    <a class="dropdown-item" href="../../articles/twitter-followers/twitter-followers.html">Twitter Followers</a>
+    <a class="dropdown-item" href="../../articles/womens-world-cup/womens-world-cup.html">Women's World Cup Predictions</a>
+    <a class="dropdown-item" href="../../articles/nba-box-score/nba-box-score.html">NBA Box Score</a>
+    <a class="dropdown-item" href="../../articles/cran-packages/cran-packages.html">CRAN Packages</a>
+    <a class="dropdown-item" href="../../articles/spotify-charts/spotify-charts.html">Spotify Charts</a>
+    <a class="dropdown-item" href="../../articles/popular-movies/popular-movies.html">Popular Movies</a>
+    <a class="dropdown-item" href="../../articles/cookbook/cookbook.html">Demo Cookbook</a>
+    <a class="dropdown-item" href="../../articles/100k-rows.html">100k Rows</a>
+    <a class="dropdown-item" href="../../articles/shiny-demo.html">Shiny Demo</a>
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../../articles/custom-rendering.html">Custom Rendering</a>
+    <a class="dropdown-item" href="../../articles/conditional-styling.html">Conditional Styling</a>
+    <a class="dropdown-item" href="../../articles/custom-filtering.html">Custom Filtering</a>
+    <a class="dropdown-item" href="../../articles/javascript-api.html">JavaScript API</a>
+  </div>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-tutorials">Tutorials</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-tutorials">
+    <a class="dropdown-item" href="../../articles/building-twitter-followers.html">Building the Twitter Followers Demo</a>
+  </div>
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
 
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="nav-link" href="../../news/index.html">News</a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/glin/reactable/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+</div>
+
+    
+  </div>
+</nav><!-- Use container-md over container for full width main content at small breakpoint --><div class="container-md template-article">
       
 
-      </header><script src="twitter-followers_files/core-js-2.5.3/shim.min.js"></script><script src="twitter-followers_files/react-17.0.0/react.min.js"></script><script src="twitter-followers_files/react-17.0.0/react-dom.min.js"></script><script src="twitter-followers_files/reactwidget-1.0.0/react-tools.js"></script><script src="twitter-followers_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><script src="twitter-followers_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Twitter Followers</h1>
+
+<script src="twitter-followers_files/core-js-2.5.3/shim.min.js"></script><script src="twitter-followers_files/react-17.0.0/react.min.js"></script><script src="twitter-followers_files/react-17.0.0/react-dom.min.js"></script><script src="twitter-followers_files/reactwidget-1.0.0/react-tools.js"></script><script src="twitter-followers_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><script src="twitter-followers_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
+  <main id="main"><div class="page-header">
+      <img src="" class="logo" alt=""><h1>Twitter Followers</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/glin/reactable/blob/HEAD/vignettes/twitter-followers/twitter-followers.Rmd" class="external-link"><code>vignettes/twitter-followers/twitter-followers.Rmd</code></a></small>
-      <div class="hidden name"><code>twitter-followers.Rmd</code></div>
-
+      <div class="d-none name"><code>twitter-followers.Rmd</code></div>
     </div>
 
     
@@ -156,8 +115,8 @@
 <h2 class="followers-title">Candidates whose followers are loyal only to them</h2>
 Share of each 2020 candidate's followers who don't follow any other candidates
 </div>
-<div id="htmlwidget-e12048a7e84548222fa4" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e12048a7e84548222fa4">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"account":["marwilliamson","BernieSanders","Hickenlooper","CoryBooker","JoeBiden","AndrewYang","TulsiGabbard","BetoORourke","amyklobuchar","PeteButtigieg","SenGillibrand","KamalaHarris","JulianCastro","sethmoulton","JayInslee","ewarren","TimRyan","JohnDelaney","MichaelBennet","ericswalwell"],"followers":[2610335,9254423,144816,4246252,3558333,267897,349443,1424745,692985,1033834,1410303,2640072,212582,138450,51504,2486101,20080,20266,21053,84415],"exclusive_followers_pct":[0.748,0.632,0.563,0.525,0.438,0.434,0.347,0.265,0.24,0.237,0.233,0.223,0.214,0.201,0.19,0.164,0.156,0.129,0.117,0.092]},"columns":[{"accessor":"account","name":"account","type":"character","align":"left","headerClassName":"header","cell":[{"name":"a","attribs":{"href":"https://twitter.com/marwilliamson","target":"_blank"},"children":["@marwilliamson"]},{"name":"a","attribs":{"href":"https://twitter.com/BernieSanders","target":"_blank"},"children":["@BernieSanders"]},{"name":"a","attribs":{"href":"https://twitter.com/Hickenlooper","target":"_blank"},"children":["@Hickenlooper"]},{"name":"a","attribs":{"href":"https://twitter.com/CoryBooker","target":"_blank"},"children":["@CoryBooker"]},{"name":"a","attribs":{"href":"https://twitter.com/JoeBiden","target":"_blank"},"children":["@JoeBiden"]},{"name":"a","attribs":{"href":"https://twitter.com/AndrewYang","target":"_blank"},"children":["@AndrewYang"]},{"name":"a","attribs":{"href":"https://twitter.com/TulsiGabbard","target":"_blank"},"children":["@TulsiGabbard"]},{"name":"a","attribs":{"href":"https://twitter.com/BetoORourke","target":"_blank"},"children":["@BetoORourke"]},{"name":"a","attribs":{"href":"https://twitter.com/amyklobuchar","target":"_blank"},"children":["@amyklobuchar"]},{"name":"a","attribs":{"href":"https://twitter.com/PeteButtigieg","target":"_blank"},"children":["@PeteButtigieg"]},{"name":"a","attribs":{"href":"https://twitter.com/SenGillibrand","target":"_blank"},"children":["@SenGillibrand"]},{"name":"a","attribs":{"href":"https://twitter.com/KamalaHarris","target":"_blank"},"children":["@KamalaHarris"]},{"name":"a","attribs":{"href":"https://twitter.com/JulianCastro","target":"_blank"},"children":["@JulianCastro"]},{"name":"a","attribs":{"href":"https://twitter.com/sethmoulton","target":"_blank"},"children":["@sethmoulton"]},{"name":"a","attribs":{"href":"https://twitter.com/JayInslee","target":"_blank"},"children":["@JayInslee"]},{"name":"a","attribs":{"href":"https://twitter.com/ewarren","target":"_blank"},"children":["@ewarren"]},{"name":"a","attribs":{"href":"https://twitter.com/TimRyan","target":"_blank"},"children":["@TimRyan"]},{"name":"a","attribs":{"href":"https://twitter.com/JohnDelaney","target":"_blank"},"children":["@JohnDelaney"]},{"name":"a","attribs":{"href":"https://twitter.com/MichaelBennet","target":"_blank"},"children":["@MichaelBennet"]},{"name":"a","attribs":{"href":"https://twitter.com/ericswalwell","target":"_blank"},"children":["@ericswalwell"]}],"width":150},{"accessor":"followers","name":"followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":[{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,610,335"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.2063506282347%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["9,254,423"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"100%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  144,816"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.56483013581722%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["4,246,252"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"45.8834872795419%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["3,558,333"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"38.4500794917198%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  267,897"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.89479960014795%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  349,443"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"3.77595664256972%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,424,745"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.3952872048317%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  692,985"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"7.48814918012717%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,033,834"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"11.1712421184984%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,410,303"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.2392320947508%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,640,072"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.527678062695%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  212,582"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.29708540446012%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  138,450"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.49604140636321%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   51,504"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.556533886553489%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,486,101"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"26.8639222564173%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,080"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.216977330731478%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,266"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.218987180508174%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   21,053"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.22749122230527%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   84,415"]},{"name":"div","attribs":{"style":{"marginRight":"6px"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.912158434945107%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]}]},{"accessor":"exclusive_followers_pct","name":"Exclusive Followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":"function(cellInfo) {\n        // Format as percentage\n        const pct = (cellInfo.value * 100).toFixed(1) + '%'\n        // Pad single-digit numbers\n        let value = pct.padStart(5)\n        // Show % on first row only\n        if (cellInfo.viewIndex > 0) {\n          value = value.replace('%', ' ')\n        }\n        // Render bar chart\n        return (\n          '<div class=\"bar-cell\">' +\n            '<span class=\"number\">' + value + '<\/span>' +\n            '<div class=\"bar-chart\" style=\"background-color: #e1e1e1\">' +\n              '<div class=\"bar\" style=\"width: ' + pct + '; background-color: #fc5185\"><\/div>' +\n            '<\/div>' +\n          '<\/div>'\n        )\n      }","html":true}],"defaultSorted":[{"id":"exclusive_followers_pct","desc":true}],"pagination":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"compact":true,"className":"followers-tbl","dataKey":"b919ca15ae14212b92ff75376168508e"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.2.cell"],"jsHooks":[]}</script>
+<div id="htmlwidget-e2c6d2bce299f8001a11" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e2c6d2bce299f8001a11">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"account":["marwilliamson","BernieSanders","Hickenlooper","CoryBooker","JoeBiden","AndrewYang","TulsiGabbard","BetoORourke","amyklobuchar","PeteButtigieg","SenGillibrand","KamalaHarris","JulianCastro","sethmoulton","JayInslee","ewarren","TimRyan","JohnDelaney","MichaelBennet","ericswalwell"],"followers":[2610335,9254423,144816,4246252,3558333,267897,349443,1424745,692985,1033834,1410303,2640072,212582,138450,51504,2486101,20080,20266,21053,84415],"exclusive_followers_pct":[0.748,0.632,0.563,0.525,0.438,0.434,0.347,0.265,0.24,0.237,0.233,0.223,0.214,0.201,0.19,0.164,0.156,0.129,0.117,0.092]},"columns":[{"accessor":"account","name":"account","type":"character","align":"left","headerClassName":"header","cell":[{"name":"a","attribs":{"href":"https://twitter.com/marwilliamson","target":"_blank"},"children":["@marwilliamson"]},{"name":"a","attribs":{"href":"https://twitter.com/BernieSanders","target":"_blank"},"children":["@BernieSanders"]},{"name":"a","attribs":{"href":"https://twitter.com/Hickenlooper","target":"_blank"},"children":["@Hickenlooper"]},{"name":"a","attribs":{"href":"https://twitter.com/CoryBooker","target":"_blank"},"children":["@CoryBooker"]},{"name":"a","attribs":{"href":"https://twitter.com/JoeBiden","target":"_blank"},"children":["@JoeBiden"]},{"name":"a","attribs":{"href":"https://twitter.com/AndrewYang","target":"_blank"},"children":["@AndrewYang"]},{"name":"a","attribs":{"href":"https://twitter.com/TulsiGabbard","target":"_blank"},"children":["@TulsiGabbard"]},{"name":"a","attribs":{"href":"https://twitter.com/BetoORourke","target":"_blank"},"children":["@BetoORourke"]},{"name":"a","attribs":{"href":"https://twitter.com/amyklobuchar","target":"_blank"},"children":["@amyklobuchar"]},{"name":"a","attribs":{"href":"https://twitter.com/PeteButtigieg","target":"_blank"},"children":["@PeteButtigieg"]},{"name":"a","attribs":{"href":"https://twitter.com/SenGillibrand","target":"_blank"},"children":["@SenGillibrand"]},{"name":"a","attribs":{"href":"https://twitter.com/KamalaHarris","target":"_blank"},"children":["@KamalaHarris"]},{"name":"a","attribs":{"href":"https://twitter.com/JulianCastro","target":"_blank"},"children":["@JulianCastro"]},{"name":"a","attribs":{"href":"https://twitter.com/sethmoulton","target":"_blank"},"children":["@sethmoulton"]},{"name":"a","attribs":{"href":"https://twitter.com/JayInslee","target":"_blank"},"children":["@JayInslee"]},{"name":"a","attribs":{"href":"https://twitter.com/ewarren","target":"_blank"},"children":["@ewarren"]},{"name":"a","attribs":{"href":"https://twitter.com/TimRyan","target":"_blank"},"children":["@TimRyan"]},{"name":"a","attribs":{"href":"https://twitter.com/JohnDelaney","target":"_blank"},"children":["@JohnDelaney"]},{"name":"a","attribs":{"href":"https://twitter.com/MichaelBennet","target":"_blank"},"children":["@MichaelBennet"]},{"name":"a","attribs":{"href":"https://twitter.com/ericswalwell","target":"_blank"},"children":["@ericswalwell"]}],"width":150},{"accessor":"followers","name":"followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":[{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,610,335"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.2063506282347%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["9,254,423"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"100%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  144,816"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.56483013581722%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["4,246,252"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"45.8834872795419%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["3,558,333"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"38.4500794917198%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  267,897"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.89479960014795%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  349,443"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"3.77595664256972%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,424,745"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.3952872048317%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  692,985"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"7.48814918012717%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,033,834"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"11.1712421184984%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,410,303"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.2392320947508%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,640,072"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.527678062695%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  212,582"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.29708540446012%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  138,450"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.49604140636321%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   51,504"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.556533886553489%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,486,101"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"26.8639222564173%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,080"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.216977330731478%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,266"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.218987180508174%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   21,053"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.22749122230527%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   84,415"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.912158434945107%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]}]},{"accessor":"exclusive_followers_pct","name":"Exclusive Followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":"function(cellInfo) {\n        // Format as percentage\n        const pct = (cellInfo.value * 100).toFixed(1) + \"%\"\n        // Pad single-digit numbers\n        let value = pct.padStart(5)\n        // Show % on first row only\n        if (cellInfo.viewIndex > 0) {\n          value = value.replace(\"%\", \" \")\n        }\n        // Render bar chart\n        return `\n          <div class=\"bar-cell\">\n            <span class=\"number\">${value}<\/span>\n            <div class=\"bar-chart\" style=\"background-color: #e1e1e1\">\n              <div class=\"bar\" style=\"width: ${pct}; background-color: #fc5185\"><\/div>\n            <\/div>\n          <\/div>\n        `\n      }","html":true}],"defaultSorted":[{"id":"exclusive_followers_pct","desc":true}],"pagination":false,"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":1,"compact":true,"className":"followers-tbl","dataKey":"2f5121c6ad87ec8eb8341f825806910d"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.2.cell"],"jsHooks":[]}</script>
 </div>
 <hr>
 <p>Source: <a href="https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/" class="external-link">FiveThirtyEight</a></p>
@@ -193,7 +152,7 @@ Source Code
         <span class="va">value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">value</span>, width <span class="op">=</span> <span class="fl">9</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
         <span class="va">bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>
           class <span class="op">=</span> <span class="st">"bar-chart"</span>,
-          style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>marginRight <span class="op">=</span> <span class="st">"6px"</span><span class="op">)</span>,
+          style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>marginRight <span class="op">=</span> <span class="st">"0.375rem"</span><span class="op">)</span>,
           <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"bar"</span>, style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>width <span class="op">=</span> <span class="va">width</span>, backgroundColor <span class="op">=</span> <span class="st">"#3fc1c9"</span><span class="op">)</span><span class="op">)</span>
         <span class="op">)</span>
         <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"bar-cell"</span>, <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">span</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"number"</span>, <span class="va">value</span><span class="op">)</span>, <span class="va">bar</span><span class="op">)</span>
@@ -202,25 +161,25 @@ Source Code
     exclusive_followers_pct <span class="op">=</span> <span class="fu"><a href="../../reference/colDef.html">colDef</a></span><span class="op">(</span>
       name <span class="op">=</span> <span class="st">"Exclusive Followers"</span>,
       defaultSortOrder <span class="op">=</span> <span class="st">"desc"</span>,
-      cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo) {
+      cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">'function(cellInfo) {
         // Format as percentage
-        const pct = (cellInfo.value * 100).toFixed(1) + '%'
+        const pct = (cellInfo.value * 100).toFixed(1) + "%"
         // Pad single-digit numbers
         let value = pct.padStart(5)
         // Show % on first row only
         if (cellInfo.viewIndex &gt; 0) {
-          value = value.replace('%', ' ')
+          value = value.replace("%", " ")
         }
         // Render bar chart
-        return (
-          '&lt;div class=\"bar-cell\"&gt;' +
-            '&lt;span class=\"number\"&gt;' + value + '&lt;/span&gt;' +
-            '&lt;div class=\"bar-chart\" style=\"background-color: #e1e1e1\"&gt;' +
-              '&lt;div class=\"bar\" style=\"width: ' + pct + '; background-color: #fc5185\"&gt;&lt;/div&gt;' +
-            '&lt;/div&gt;' +
-          '&lt;/div&gt;'
-        )
-      }"</span><span class="op">)</span>,
+        return `
+          &lt;div class="bar-cell"&gt;
+            &lt;span class="number"&gt;${value}&lt;/span&gt;
+            &lt;div class="bar-chart" style="background-color: #e1e1e1"&gt;
+              &lt;div class="bar" style="width: ${pct}; background-color: #fc5185"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        `
+      }'</span><span class="op">)</span>,
       html <span class="op">=</span> <span class="cn">TRUE</span>
     <span class="op">)</span>
   <span class="op">)</span>,
@@ -246,55 +205,62 @@ Source Code
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-header</span> {</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">18</span><span class="dt">px</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">16</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">1.125</span><span class="dt">rem</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-title</span> {</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">20</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">1.25</span><span class="dt">rem</span><span class="op">;</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">600</span><span class="op">;</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-tbl</span> {</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">14</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span>: <span class="dv">18</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.875</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span>: <span class="dv">1.125</span><span class="dt">rem</span><span class="op">;</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-tbl</span> a {</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="bu">inherit</span><span class="op">;</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">.header</span> {</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-bottom</span>: <span class="dv">2</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#555</span><span class="op">;</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">13</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">400</span><span class="op">;</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-transform</span>: <span class="dv">uppercase</span><span class="op">;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-decoration</span>: <span class="dv">none</span><span class="op">;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-tbl</span> a<span class="in">:hover</span><span class="op">,</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="fu">.followers-tbl</span> a<span class="in">:focus</span> {</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-decoration</span>: <span class="dv">underline</span><span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  text-decoration-thickness: max<span class="fu">(</span><span class="dv">1</span><span class="dt">px</span><span class="op">,</span> <span class="dv">0.0625</span><span class="dt">rem</span><span class="fu">)</span><span class="op">;</span></span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">.header:hover</span> {</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#eee</span><span class="op">;</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar-cell</span> {</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">display</span>: flex<span class="op">;</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="kw">align-items</span>: <span class="dv">center</span><span class="op">;</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu">.number</span> {</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">"Fira Mono"</span><span class="op">,</span> Consolas<span class="op">,</span> Monaco<span class="op">,</span> <span class="dv">monospace</span><span class="op">;</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">13.5</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="kw">white-space</span>: <span class="dv">pre</span><span class="op">;</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar-chart</span> {</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">flex-grow</span>: <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin-left</span>: <span class="dv">6</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">14</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar</span> {</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">.header</span> {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-bottom</span>: <span class="dv">2</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#555</span><span class="op">;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.8125</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">400</span><span class="op">;</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-transform</span>: <span class="dv">uppercase</span><span class="op">;</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">.header:hover</span> {</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#eee</span><span class="op">;</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar-cell</span> {</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="kw">display</span>: flex<span class="op">;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="kw">align-items</span>: <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="fu">.number</span> {</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">"Fira Mono"</span><span class="op">,</span> Consolas<span class="op">,</span> Monaco<span class="op">,</span> <span class="dv">monospace</span><span class="op">;</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.84375</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="kw">white-space</span>: <span class="dv">pre</span><span class="op">;</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar-chart</span> {</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="kw">flex-grow</span>: <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin-left</span>: <span class="dv">0.375</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">0.875</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar</span> {</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <style type="text/css">
 .twitter-followers {
   margin: 0 auto;
@@ -303,27 +269,34 @@ Source Code
 }
 
 .followers-header {
-  margin: 18px 0;
-  font-size: 16px;
+  margin: 1.125rem 0;
+  font-size: 1rem;
 }
 
 .followers-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .followers-tbl {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 0.875rem;
+  line-height: 1.125rem;
 }
 
 .followers-tbl a {
   color: inherit;
+  text-decoration: none;
+}
+
+.followers-tbl a:hover,
+.followers-tbl a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
 }
 
 .header {
   border-bottom: 2px solid #555;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 400;
   text-transform: uppercase;
 }
@@ -339,14 +312,14 @@ Source Code
 
 .number {
   font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 13.5px;
+  font-size: 0.84375rem;
   white-space: pre;
 }
 
 .bar-chart {
   flex-grow: 1;
-  margin-left: 6px;
-  height: 14px;
+  margin-left: 0.375rem;
+  height: 0.875rem;
 }
 
 .bar {
@@ -358,34 +331,24 @@ Source Code
 h1.title {
   display: none;
 }
-</style>
-</div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+</style></main>
 </div>
 
 
 
-      <footer><div class="copyright">
+      <footer><div class="pkgdown-footer-left">
   <p></p>
 <p>Developed by Greg Lin.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
-
-      </footer>
+</footer>
 </div>
 
-  
-
-
-  
+     
 
   </body>
 </html>
