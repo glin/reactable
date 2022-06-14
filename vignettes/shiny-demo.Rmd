@@ -13,7 +13,7 @@ tags$div(class = "iframe-container", tags$iframe(src = "https://glin.shinyapps.i
 .iframe-container {
   display: flex;
   flex-direction: column;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   height: 100%;
   overflow: hidden;
 }

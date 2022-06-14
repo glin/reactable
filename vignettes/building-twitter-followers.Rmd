@@ -78,7 +78,6 @@ show_more <- function(id, ..., height = "20rem") {
     div(id = id, class = "show-hidden", ..., div(class = "show-overlay")),
     div(
       style = "text-align: center",
-      "aria-hidden" = "true",
       tags$button(class = "show-btn", onclick = sprintf("toggleShow('%s', this)", id), "Show more")
     ),
     tags$script("function toggleShow(id, btn) {
@@ -105,7 +104,7 @@ show_more <- function(id, ..., height = "20rem") {
         bottom: 0;
         height: 5rem;
         width: 100%%;
-        background-image: linear-gradient(to bottom, transparent, #fff);
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff);
         pointer-events: none;
       }
 
