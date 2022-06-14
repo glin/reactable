@@ -146,6 +146,12 @@ label {
   margin-left: 0;
 }
 
+/* Fix toc disappearing in Safari from old clearfix hack in Bootstrap */
+.row::before,
+.row::after {
+  display: none !important;
+}
+
 .page-header {
   /* Remove extraneous whitespace */
   min-height: 0 !important;
