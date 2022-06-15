@@ -59,7 +59,7 @@ jobs:
         run: Rscript pkgdown/build-docs.R
 
       - name: Set Netlify alias
-        if: matrix.config.release && github.ref != 'refs/heads/main'
+        if: matrix.config.release
         run: |
           version="v$(cat DESCRIPTION | grep Version: | cut -d' ' -f2)"
           # Netlify aliases can't have periods, so replace them with dashes
@@ -71,8 +71,8 @@ jobs:
             echo "NETLIFY_ALIAS=${version_alias}-${github_sha_short}" >> $GITHUB_ENV
           fi
 
-      - name: Deploy pkgdown site to Netlify (preview)
-        if: matrix.config.release && github.ref != 'refs/heads/main'
+      - name: Deploy pkgdown site to Netlify
+        if: matrix.config.release
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: './docs'
