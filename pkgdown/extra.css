@@ -29,6 +29,12 @@ pre a:focus {
   text-decoration-thickness: max(2px, 0.125rem);
 }
 
+/* Keep link styling for inline code */
+:not(pre) > code a:any-link {
+  color: #0969da;
+  text-decoration-color: currentcolor;
+}
+
 /* Anchor link fixes for reflow issues, keyboard navigation */
 a.anchor {
   display: inline-block;
