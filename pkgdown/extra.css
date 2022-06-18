@@ -184,6 +184,17 @@ a[href='#main'] {
   border-radius: 0;
 }
 
+/* Allow keyboard navigation for copy buttons */
+.btn-copy-ex {
+  visibility: visible;
+  opacity: 0;
+}
+
+.hasCopyButton:hover button.btn-copy-ex,
+.btn-copy-ex:focus {
+  opacity: 1;
+}
+
 .reactable {
   font-size: 0.875rem;
 }
