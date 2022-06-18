@@ -98,6 +98,11 @@ label {
   font-weight: 700;
 }
 
+/* pkgdown sets display: block on table, which may drop table semantics in older browsers */
+main table {
+  display: table;
+}
+
 .navbar {
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.15);
 }
@@ -212,7 +217,6 @@ a[href='#main'] {
 }
 
 .props-tbl {
-  display: table; /* pkgdown sets display: block on tables */
   font-size: 0.875rem;
 }
 
