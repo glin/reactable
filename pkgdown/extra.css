@@ -212,8 +212,8 @@ a[href='#main'] {
 }
 
 .props-tbl {
-  display: table; /* Override pkgdown styles */
-  font-size: 14px;
+  display: table; /* pkgdown sets display: block on tables */
+  font-size: 0.875rem;
 }
 
 .props-tbl th {
