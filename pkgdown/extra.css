@@ -195,6 +195,18 @@ a[href='#main'] {
   opacity: 1;
 }
 
+/* Restore margins for code blocks on small screens */
+@media (max-width: 575.98px) {
+  div > div > pre {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .btn-copy-ex {
+    right: 5px;
+  }
+}
+
 .reactable {
   font-size: 0.875rem;
 }
