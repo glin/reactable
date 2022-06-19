@@ -14,21 +14,25 @@ library(reactable)
 library(htmltools)
 
 propsTable <- function(props) {
-  tags$table(
-    class = "props-tbl",
-    tags$thead(
-      tags$tr(
-        lapply(colnames(props), function(name) tags$th(name))
-      )
-    ),
-    tags$tbody(
-      apply(props, 1, function(row) {
+  tags$div(
+    style = "overflow: auto;",
+    tabindex = "0",
+    tags$table(
+      class = "props-tbl",
+      tags$thead(
         tags$tr(
-          tags$th(scope = "row", tags$code(row[["Property"]])),
-          tags$td(tags$code(row[["Example"]])),
-          tags$td(row[["Description"]])
+          lapply(colnames(props), function(name) tags$th(name))
         )
-      })
+      ),
+      tags$tbody(
+        apply(props, 1, function(row) {
+          tags$tr(
+            tags$th(scope = "row", tags$code(row[["Property"]])),
+            tags$td(tags$code(row[["Example"]])),
+            tags$td(row[["Description"]])
+          )
+        })
+      )
     )
   )
 }
@@ -42,7 +46,7 @@ columns, or showing a column total that updates on filtering.
 In reactable, you can customize data rendering using either an R or JavaScript
 function that returns custom content:
 
-<table>
+<table style="table-layout: fixed;">
 <thead><tr><th>R render functions</th><th>JavaScript render functions</th></tr></thead>
 <tbody>
 <tr><td>

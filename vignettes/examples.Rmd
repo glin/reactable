@@ -1146,9 +1146,11 @@ reactable(
 ```
 
 ### No full width
+
 Tables are full width by default, but you can shrink the table to fit its
 contents by setting `fullWidth` to `FALSE`:
-```{r}
+
+```{r no_full_width_1, eval=FALSE}
 reactable(
   MASS::Cars93[1:5, 1:5],
   fullWidth = FALSE,
@@ -1157,8 +1159,14 @@ reactable(
 )
 ```
 
+<div style="overflow: auto;">
+```{r ref.label="no_full_width_1", echo=FALSE}
+```
+</div>
+
 You can also set a maximum or fixed width on the table:
-```{r}
+
+```{r no_full_width_2, eval=FALSE}
 reactable(
   MASS::Cars93[1:5, 1:5],
   bordered = TRUE,
@@ -1169,6 +1177,11 @@ reactable(
   width = 650
 )
 ```
+
+<div style="overflow: auto;">
+```{r ref.label="no_full_width_2", echo=FALSE}
+```
+</div>
 
 ### Vertical alignment
 
@@ -1197,7 +1210,7 @@ reactable(
         species <- if (!is.na(species)) species else "Unknown"
         div(
           div(style = list(fontWeight = 600), value),
-          div(style = list(fontSize = 12), species)
+          div(style = list(fontSize = "0.75rem"), species)
         )
       }
     ),
@@ -1205,8 +1218,7 @@ reactable(
   ),
   # Vertically center cells and bottom-align headers
   defaultColDef = colDef(vAlign = "center", headerVAlign = "bottom"),
-  bordered = TRUE,
-  width = 600
+  bordered = TRUE
 )
 ```
 
