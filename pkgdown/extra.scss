@@ -1,0 +1,4 @@
+// Make highlighted text legible for lighter text (e.g., dark background examples)
+::selection {
+  color: $body-color;
+}
