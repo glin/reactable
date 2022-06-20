@@ -1088,8 +1088,10 @@ reactable(iris[1:5, ], compact = TRUE)
 ```
 
 ### No text wrapping
+
 Long text is wrapped by default, but you can force text to fit on a single line
 by setting `wrap` to `FALSE`:
+
 ```{r}
 data <- aggregate(. ~ Species, iris, toString)
 
@@ -1103,15 +1105,22 @@ reactable(
 ```
 
 ### Fixed height + sticky header/footer
+
 You can make tables scrollable by setting a fixed height or width.
-Headers and footers are sticky by default, so they stay in place when scrolling:
+Headers and footers are sticky by default, so they stay in place when scrolling.
+
+Scrollable tables are automatically made focusable when navigating using a keyboard to
+ensure that they're always accessible for keyboard users.
+
 ```{r}
 reactable(
   iris[1:20, ],
   height = 270,
   striped = TRUE,
   defaultColDef = colDef(
-    footer = function(values, name) htmltools::div(name, style = list(fontWeight = 600))
+    footer = function(values, name) {
+      htmltools::div(name, style = list(fontWeight = 600))
+    }
   )
 )
 ```
