@@ -98,6 +98,11 @@ label {
   font-weight: 700;
 }
 
+// Remove extra margin from pkgdown
+details {
+  margin-bottom: 0;
+}
+
 // pkgdown sets display: block on table, which may drop table semantics in older browsers
 main table {
   display: table;

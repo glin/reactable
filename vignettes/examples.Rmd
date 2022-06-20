@@ -1977,16 +1977,47 @@ library(crosstalk)
 cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
 data <- SharedData$new(cars)
 
-bscols(
-  widths = c(3, 9),
-  list(
+shiny::fluidRow(
+  shiny::column(
+    4,
     filter_checkbox("type", "Type", data, ~Type),
     filter_slider("price", "Price", data, ~Price, width = "100%"),
     filter_select("mfr", "Manufacturer", data, ~Manufacturer)
   ),
-  reactable(data, minRows = 10)
+  shiny::column(
+    8,
+    reactable(data, minRows = 10)
+  )
 )
 ```
+
+> **NOTE:** This example uses `shiny::fluidRow()` and `shiny::column()` to create
+> a Bootstrap grid layout, which works with all Bootstrap versions. `crosstalk::bscols()`
+> can also create a grid, but is only compatible with Bootstrap 3. If you're not using
+> Bootstrap, here's an alternative way to create a responsive grid using CSS grid.
+>
+> <details>
+> <summary>Example: grid layout using CSS grid</summary>
+> ```{r, eval=FALSE}
+> library(crosstalk)
+>
+> cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
+> data <- SharedData$new(cars)
+>
+> div(
+>   style = "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;",
+>   div(
+>     filter_checkbox("type", "Type", data, ~Type),
+>     filter_slider("price", "Price", data, ~Price, width = "100%"),
+>     filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+>   ),
+>   div(
+>     style = "grid-column: span 2;",
+>     reactable(data, minRows = 10)
+>   )
+> )
+> ```
+> </details>
 
 ### Linked selection
 
