@@ -1,13 +1,5 @@
 library(htmltools)
 
-getAttribs <- function(widget) {
-  widget$x$tag$attribs
-}
-
-getAttrib <- function(widget, name) {
-  widget$x$tag$attribs[[name]]
-}
-
 test_that("reactable handles invalid args", {
   # NOTE: New arguments should be tested in their own separate test
 
