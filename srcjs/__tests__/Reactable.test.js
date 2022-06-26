@@ -79,8 +79,8 @@ describe('tables', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -94,7 +94,7 @@ describe('tables', () => {
   it('applies table styles', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       className: 'my-tbl',
       style: { background: 'my-tbl' }
     }
@@ -136,7 +136,7 @@ describe('tables', () => {
   it('applies width and height', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       width: 100,
       height: '100%',
       style: { background: 'blue' }
@@ -149,7 +149,7 @@ describe('tables', () => {
   it('style overrides width and height', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       width: 100,
       height: '100%',
       style: { width: 500, height: '30px' }
@@ -162,21 +162,21 @@ describe('tables', () => {
   it('table updates when data or columns change', () => {
     const props = {
       data: { a: ['a-1', 'a-2'] },
-      columns: [{ name: 'col-a', accessor: 'a', className: 'cell-a' }]
+      columns: [{ name: 'col-a', id: 'a', className: 'cell-a' }]
     }
     const { container, getByText, rerender } = render(<Reactable {...props} />)
     expect(getByText('a-1')).toBeVisible()
     rerender(<Reactable {...props} data={{ a: ['b-1', 'b-2'] }} />)
     expect(getByText('b-1')).toBeVisible()
     getCells(container).forEach(cell => expect(cell).toHaveClass('cell-a'))
-    rerender(<Reactable {...props} columns={[{ name: 'col-a', accessor: 'a' }]} />)
+    rerender(<Reactable {...props} columns={[{ name: 'col-a', id: 'a' }]} />)
     getCells(container).forEach(cell => expect(cell).not.toHaveClass('cell-a'))
   })
 
   it('table resets state when dataKey changes', () => {
     const props = {
       data: { a: ['a-1', 'a-2'] },
-      columns: [{ name: 'col-a', accessor: 'a' }],
+      columns: [{ name: 'col-a', id: 'a' }],
       dataKey: 'my-data-1',
       searchable: true
     }
@@ -207,8 +207,8 @@ describe('tbody', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -222,8 +222,8 @@ describe('row groups', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -238,8 +238,8 @@ describe('rows', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -252,8 +252,8 @@ describe('rows', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       rowClassName: 'my-row',
       rowStyle: { backgroundColor: 'red' }
@@ -306,8 +306,8 @@ describe('rows', () => {
     const props = {
       data: { a: ['cellA', 'cellB', 'cellC'], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       minRows: 5,
       rowClassName: (rowInfo, state) => {
@@ -351,8 +351,8 @@ describe('rows', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       minRows: 5,
       rowClassName: ['row1', 'row2', null],
@@ -380,7 +380,7 @@ describe('rows', () => {
   it('applies row stripe styles', () => {
     const props = {
       data: { a: [1, 2, 3, 4] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       striped: true,
       minRows: 8
     }
@@ -397,7 +397,7 @@ describe('rows', () => {
   it('applies row highlight styles', () => {
     const props = {
       data: { a: [1, 2, 3, 4] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       striped: true,
       highlight: true,
       minRows: 8
@@ -413,8 +413,8 @@ describe('rows', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       striped: true,
       highlight: true,
@@ -436,8 +436,8 @@ describe('rows', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a', footer: 'footer-a' },
-        { name: 'b', accessor: 'b', footer: 'footer-b' }
+        { name: 'a', id: 'a', footer: 'footer-a' },
+        { name: 'b', id: 'b', footer: 'footer-b' }
       ],
       columnGroups: [{ name: 'group-a', columns: ['a', 'b'] }],
       striped: true,
@@ -465,8 +465,8 @@ describe('pad rows', () => {
       <Reactable
         data={{ a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] }}
         columns={[
-          { name: 'colA', accessor: 'a' },
-          { name: 'colB', accessor: 'b' }
+          { name: 'colA', id: 'a' },
+          { name: 'colB', id: 'b' }
         ]}
         minRows={10}
       />
@@ -493,8 +493,8 @@ describe('pad rows', () => {
       <Reactable
         data={{ a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] }}
         columns={[
-          { name: 'colA', accessor: 'a' },
-          { name: 'colB', accessor: 'b' }
+          { name: 'colA', id: 'a' },
+          { name: 'colB', id: 'b' }
         ]}
         minRows={6}
       />
@@ -507,7 +507,7 @@ describe('pad rows', () => {
 
   it('renders a minimum of 1 row by default', () => {
     const { container } = render(
-      <Reactable data={{ a: [] }} columns={[{ name: 'a', accessor: 'a' }]} />
+      <Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} />
     )
     const dataRows = getDataRows(container)
     expect(dataRows).toHaveLength(0)
@@ -517,7 +517,7 @@ describe('pad rows', () => {
 
   it('always renders at least 1 row', () => {
     const { container } = render(
-      <Reactable data={{ a: [] }} columns={[{ name: 'a', accessor: 'a' }]} minRows={-5} />
+      <Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} minRows={-5} />
     )
     const dataRows = getDataRows(container)
     expect(dataRows).toHaveLength(0)
@@ -530,9 +530,9 @@ describe('pad rows', () => {
       <Reactable
         data={{ a: [1, 3], b: ['aa', 'CC'], c: [5, 6] }}
         columns={[
-          { name: 'colA', accessor: 'a' },
-          { name: 'colB', accessor: 'b', show: false },
-          { name: 'colC', accessor: 'c' }
+          { name: 'colA', id: 'a' },
+          { name: 'colB', id: 'b', show: false },
+          { name: 'colC', id: 'c' }
         ]}
         minRows={4}
       />
@@ -551,8 +551,8 @@ describe('pad rows', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       rowClassName: 'my-row',
       rowStyle: { backgroundColor: 'red' },
@@ -579,11 +579,11 @@ describe('cells', () => {
         e: [[1, 2, 3], ['a'], []]
       },
       columns: [
-        { name: 'num', accessor: 'a', type: 'numeric' },
-        { name: 'str', accessor: 'b', type: 'character' },
-        { name: 'bool', accessor: 'c', type: 'logical' },
-        { name: 'date', accessor: 'd', type: 'date' },
-        { name: 'list', accessor: 'e', type: 'list' }
+        { name: 'num', id: 'a', type: 'numeric' },
+        { name: 'str', id: 'b', type: 'character' },
+        { name: 'bool', id: 'c', type: 'logical' },
+        { name: 'date', id: 'd', type: 'date' },
+        { name: 'list', id: 'e', type: 'list' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -618,8 +618,8 @@ describe('cells', () => {
         b: ['a', 'b', 'c']
       },
       columns: [
-        { name: 'a', accessor: 'a', rowHeader: true, className: 'col-a' },
-        { name: 'b', accessor: 'b', className: 'col-b' }
+        { name: 'a', id: 'a', rowHeader: true, className: 'col-a' },
+        { name: 'b', id: 'b', className: 'col-b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -675,7 +675,7 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           cell: (cellInfo, state) => {
             assertProps(cellInfo, state)
             return (
@@ -687,8 +687,8 @@ describe('cells', () => {
           html: true,
           className: 'col-a'
         },
-        { name: 'colB', accessor: 'b', cell: () => '', className: 'col-b' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colB', id: 'b', cell: () => '', className: 'col-b' },
+        { name: 'colC', id: 'c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -706,13 +706,13 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           cell: [`<span>cellA</span>`, ''],
           html: true,
           className: 'col-a'
         },
-        { name: 'colB', accessor: 'b', cell: [<div key={0}>cellB</div>, null], className: 'col-b' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colB', id: 'b', cell: [<div key={0}>cellB</div>, null], className: 'col-b' },
+        { name: 'colC', id: 'c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -734,9 +734,9 @@ describe('cells', () => {
         'x[0].b': ['b']
       },
       columns: [
-        { name: 'a.b', accessor: 'a.b' },
-        { name: 'x[]', accessor: 'x[]' },
-        { name: 'x[0].b', accessor: 'x[0].b' }
+        { name: 'a.b', id: 'a.b' },
+        { name: 'x[]', id: 'x[]' },
+        { name: 'x[0].b', id: 'x[0].b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -749,12 +749,12 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           format: { cell: { prefix: 'cell__', suffix: '__@' }, aggregated: { prefix: 'agg' } },
           cell: cellInfo => `${cellInfo.value}-a`,
           className: 'col-a'
         },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -767,11 +767,11 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           className: 'my-cell',
           style: { backgroundColor: 'red' }
         },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -813,7 +813,7 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           className: (rowInfo, column, state) => {
             assertProps(rowInfo, column, state)
             if (rowInfo.index === 0 && column.id === 'a' && state.page === 0) {
@@ -845,7 +845,7 @@ describe('cells', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           className: ['my-cell', null],
           style: [{ backgroundColor: 'red' }, null]
         }
@@ -863,11 +863,11 @@ describe('cells', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5], e: [8] },
       columns: [
-        { name: 'default', accessor: 'a', className: 'default' },
-        { name: 'default-num', accessor: 'b', type: 'numeric', className: 'default-num' },
-        { name: 'left', accessor: 'c', align: 'left', className: 'left' },
-        { name: 'right', accessor: 'd', align: 'right', className: 'right' },
-        { name: 'center', accessor: 'e', align: 'center', className: 'center' }
+        { name: 'default', id: 'a', className: 'default' },
+        { name: 'default-num', id: 'b', type: 'numeric', className: 'default-num' },
+        { name: 'left', id: 'c', align: 'left', className: 'left' },
+        { name: 'right', id: 'd', align: 'right', className: 'right' },
+        { name: 'center', id: 'e', align: 'center', className: 'center' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -882,10 +882,10 @@ describe('cells', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5] },
       columns: [
-        { name: 'default', accessor: 'a', className: 'default' },
-        { name: 'top', accessor: 'b', vAlign: 'top', className: 'top' },
-        { name: 'center', accessor: 'c', vAlign: 'center', className: 'center' },
-        { name: 'bottom', accessor: 'd', vAlign: 'bottom', className: 'bottom' }
+        { name: 'default', id: 'a', className: 'default' },
+        { name: 'top', id: 'b', vAlign: 'top', className: 'top' },
+        { name: 'center', id: 'c', vAlign: 'center', className: 'center' },
+        { name: 'bottom', id: 'd', vAlign: 'bottom', className: 'bottom' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -901,10 +901,10 @@ describe('cells', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'colA', accessor: 'a', className: 'col-a' },
+        { name: 'colA', id: 'a', className: 'col-a' },
         {
           name: 'colB',
-          accessor: 'b',
+          id: 'b',
           cell: cellInfo => `${cellInfo.index}-${cellInfo.value}`,
           className: 'col-b'
         }
@@ -932,7 +932,7 @@ describe('headers', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           headerClassName: 'my-header',
           headerStyle: { color: 'red' }
         },
@@ -940,18 +940,18 @@ describe('headers', () => {
         {
           name: 'colB',
           header: 'my-header',
-          accessor: 'b'
+          id: 'b'
         },
         // Custom header should override name
         {
           name: 'colC',
           header: '',
-          accessor: 'c'
+          id: 'c'
         },
         // Empty column header
         {
           name: '',
-          accessor: 'd'
+          id: 'd'
         }
       ]
     }
@@ -1013,7 +1013,7 @@ describe('headers', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           header: (column, state) => {
             assertProps(column, state)
             return (
@@ -1023,8 +1023,8 @@ describe('headers', () => {
           },
           html: true
         },
-        { name: 'colB', accessor: 'b', header: () => '' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colB', id: 'b', header: () => '' },
+        { name: 'colC', id: 'c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1038,11 +1038,11 @@ describe('headers', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5], e: [8] },
       columns: [
-        { name: 'default', accessor: 'a', headerClassName: 'default' },
-        { name: 'default-num', accessor: 'b', type: 'numeric', headerClassName: 'default-num' },
-        { name: 'left', accessor: 'c', align: 'left', headerClassName: 'left' },
-        { name: 'right', accessor: 'd', align: 'right', headerClassName: 'right' },
-        { name: 'center', accessor: 'e', align: 'center', headerClassName: 'center' }
+        { name: 'default', id: 'a', headerClassName: 'default' },
+        { name: 'default-num', id: 'b', type: 'numeric', headerClassName: 'default-num' },
+        { name: 'left', id: 'c', align: 'left', headerClassName: 'left' },
+        { name: 'right', id: 'd', align: 'right', headerClassName: 'right' },
+        { name: 'center', id: 'e', align: 'center', headerClassName: 'center' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1057,10 +1057,10 @@ describe('headers', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5] },
       columns: [
-        { name: 'default', accessor: 'a', headerClassName: 'default' },
-        { name: 'top', accessor: 'b', headerVAlign: 'top', headerClassName: 'top' },
-        { name: 'center', accessor: 'c', headerVAlign: 'center', headerClassName: 'center' },
-        { name: 'bottom', accessor: 'd', headerVAlign: 'bottom', headerClassName: 'bottom' }
+        { name: 'default', id: 'a', headerClassName: 'default' },
+        { name: 'top', id: 'b', headerVAlign: 'top', headerClassName: 'top' },
+        { name: 'center', id: 'c', headerVAlign: 'center', headerClassName: 'center' },
+        { name: 'bottom', id: 'd', headerVAlign: 'bottom', headerClassName: 'bottom' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1078,9 +1078,9 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colC', id: 'c' }
       ],
       columnGroups: [
         {
@@ -1119,10 +1119,10 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'], d: ['c', 'd'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colC', accessor: 'c' },
-        { name: 'colD', accessor: 'd' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colC', id: 'c' },
+        { name: 'colD', id: 'd' }
       ],
       columnGroups: [{ columns: ['c'], name: 'group-2' }]
     }
@@ -1192,9 +1192,9 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       columnGroups: [
         {
@@ -1224,9 +1224,9 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       columnGroups: [
         {
@@ -1255,10 +1255,10 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'], d: ['c', 'd'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', show: false },
-        { name: 'colC', accessor: 'c', show: false },
-        { name: 'colD', accessor: 'd' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', show: false },
+        { name: 'colC', id: 'c', show: false },
+        { name: 'colD', id: 'd' }
       ],
       columnGroups: [
         {
@@ -1287,9 +1287,9 @@ describe('column groups', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colC', id: 'c' }
       ],
       columnGroups: [
         {
@@ -1311,10 +1311,10 @@ describe('column groups', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5] },
       columns: [
-        { name: 'default', accessor: 'a' },
-        { name: 'left', accessor: 'b' },
-        { name: 'right', accessor: 'c' },
-        { name: 'center', accessor: 'd' }
+        { name: 'default', id: 'a' },
+        { name: 'left', id: 'b' },
+        { name: 'right', id: 'c' },
+        { name: 'center', id: 'd' }
       ],
       columnGroups: [
         { name: 'default', columns: ['a'], headerClassName: 'default' },
@@ -1334,25 +1334,25 @@ describe('column groups', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5] },
       columns: [
-        { name: 'default', accessor: 'a' },
-        { name: 'left', accessor: 'b' },
-        { name: 'right', accessor: 'c' },
-        { name: 'center', accessor: 'd' }
+        { name: 'default', id: 'a' },
+        { name: 'left', id: 'b' },
+        { name: 'right', id: 'c' },
+        { name: 'center', id: 'd' }
       ],
       columnGroups: [
-        { name: 'default', columns: ['a'], accessor: 'a', headerClassName: 'default' },
-        { name: 'top', columns: ['b'], accessor: 'b', headerVAlign: 'top', headerClassName: 'top' },
+        { name: 'default', columns: ['a'], id: 'a', headerClassName: 'default' },
+        { name: 'top', columns: ['b'], id: 'b', headerVAlign: 'top', headerClassName: 'top' },
         {
           name: 'center',
           columns: ['c'],
-          accessor: 'c',
+          id: 'c',
           headerVAlign: 'center',
           headerClassName: 'center'
         },
         {
           name: 'bottom',
           columns: ['d'],
-          accessor: 'd',
+          id: 'd',
           headerVAlign: 'bottom',
           headerClassName: 'bottom'
         }
@@ -1373,8 +1373,8 @@ describe('footers', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1388,17 +1388,17 @@ describe('footers', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           footer: 'my-footer',
           footerClassName: 'my-footer',
           footerStyle: { color: 'red' }
         },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           footer: ''
         },
-        { name: 'c', accessor: 'c' }
+        { name: 'c', id: 'c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1426,8 +1426,8 @@ describe('footers', () => {
         b: ['a', 'b']
       },
       columns: [
-        { name: 'a', accessor: 'a', footer: 'my-footer', rowHeader: true },
-        { name: 'b', accessor: 'b', footer: 'my-footer' }
+        { name: 'a', id: 'a', footer: 'my-footer', rowHeader: true },
+        { name: 'b', id: 'b', footer: 'my-footer' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1474,7 +1474,7 @@ describe('footers', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           footer: (column, state) => {
             assertProps(column, state)
             return (
@@ -1484,8 +1484,8 @@ describe('footers', () => {
           },
           html: true
         },
-        { name: 'colB', accessor: 'b', footer: () => '' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colB', id: 'b', footer: () => '' },
+        { name: 'colC', id: 'c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1500,11 +1500,11 @@ describe('footers', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5], e: [8] },
       columns: [
-        { name: 'default', accessor: 'a', footer: '', footerClassName: 'default' },
-        { name: 'default-num', accessor: 'b', type: 'numeric', footerClassName: 'default-num' },
-        { name: 'left', accessor: 'c', align: 'left', footerClassName: 'left' },
-        { name: 'right', accessor: 'd', align: 'right', footerClassName: 'right' },
-        { name: 'center', accessor: 'e', align: 'center', footerClassName: 'center' }
+        { name: 'default', id: 'a', footer: '', footerClassName: 'default' },
+        { name: 'default-num', id: 'b', type: 'numeric', footerClassName: 'default-num' },
+        { name: 'left', id: 'c', align: 'left', footerClassName: 'left' },
+        { name: 'right', id: 'd', align: 'right', footerClassName: 'right' },
+        { name: 'center', id: 'e', align: 'center', footerClassName: 'center' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1519,10 +1519,10 @@ describe('footers', () => {
     const props = {
       data: { a: ['a'], b: [1], c: [3], d: [5] },
       columns: [
-        { name: 'default', accessor: 'a', footer: '', footerClassName: 'default' },
-        { name: 'top', accessor: 'b', vAlign: 'top', footerClassName: 'top' },
-        { name: 'center', accessor: 'c', vAlign: 'center', footerClassName: 'center' },
-        { name: 'bottom', accessor: 'd', vAlign: 'bottom', footerClassName: 'bottom' }
+        { name: 'default', id: 'a', footer: '', footerClassName: 'default' },
+        { name: 'top', id: 'b', vAlign: 'top', footerClassName: 'top' },
+        { name: 'center', id: 'c', vAlign: 'center', footerClassName: 'center' },
+        { name: 'bottom', id: 'd', vAlign: 'bottom', footerClassName: 'bottom' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1538,9 +1538,9 @@ describe('footers', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a', footer: 'my-footer' },
-        { name: 'b', accessor: 'b', footer: '' },
-        { name: 'c', accessor: 'c' }
+        { name: 'a', id: 'a', footer: 'my-footer' },
+        { name: 'b', id: 'b', footer: '' },
+        { name: 'c', id: 'c' }
       ],
       columnGroups: [
         {
@@ -1561,9 +1561,9 @@ describe('footers', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a', footer: 'footer-a' },
-        { name: 'b', accessor: 'b', footer: '', show: false },
-        { name: 'c', accessor: 'c', footer: 'footer-c' }
+        { name: 'a', id: 'a', footer: 'footer-a' },
+        { name: 'b', id: 'b', footer: '', show: false },
+        { name: 'c', id: 'c', footer: 'footer-c' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1580,7 +1580,7 @@ describe('footers', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           footer: 'my-footer',
           className: 'cell',
           style: { color: 'red' }
@@ -1599,9 +1599,9 @@ describe('footers', () => {
       <Reactable
         data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
         columns={[
-          { name: 'colA', accessor: 'a' },
-          { name: 'colB', accessor: 'b' },
-          { name: 'colC', accessor: 'c' }
+          { name: 'colA', id: 'a' },
+          { name: 'colB', id: 'b' },
+          { name: 'colC', id: 'c' }
         ]}
       />
     )
@@ -1617,16 +1617,16 @@ describe('hidden columns', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a'
+          id: 'a'
         },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           show: false
         },
         {
           name: 'col-c',
-          accessor: 'c'
+          id: 'c'
         }
       ]
     }
@@ -1644,12 +1644,12 @@ describe('hidden columns', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           show: false
         },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           show: false
         }
       ]
@@ -1666,8 +1666,8 @@ describe('hidden columns', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', show: false },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a', show: false },
+        { name: 'col-b', id: 'b' }
       ]
     }
     const { container, queryByText, rerender } = render(<Reactable {...props} />)
@@ -1676,8 +1676,8 @@ describe('hidden columns', () => {
     expect(queryByText('col-b')).toBeVisible()
 
     const columns = [
-      { name: 'col-a', accessor: 'a', show: false },
-      { name: 'col-b', accessor: 'b', show: false }
+      { name: 'col-a', id: 'a', show: false },
+      { name: 'col-b', id: 'b', show: false }
     ]
     rerender(<Reactable {...props} columns={columns} />)
     expect(getHeaders(container)).toHaveLength(0)
@@ -1696,8 +1696,8 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a', footer: 'footer' },
+        { name: 'colB', id: 'b' }
       ],
       // Test pad rows
       minRows: 3
@@ -1726,8 +1726,8 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer', minWidth: 50 },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a', footer: 'footer', minWidth: 50 },
+        { name: 'colB', id: 'b' }
       ],
       // Test pad rows
       minRows: 3
@@ -1762,8 +1762,8 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer', maxWidth: 50 },
-        { name: 'colB', accessor: 'b', maxWidth: 220 }
+        { name: 'colA', id: 'a', footer: 'footer', maxWidth: 50 },
+        { name: 'colB', id: 'b', maxWidth: 220 }
       ],
       // Test pad rows
       minRows: 3
@@ -1799,8 +1799,8 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer', width: 70, minWidth: 50 },
-        { name: 'colB', accessor: 'b', width: 120, maxWidth: 50 }
+        { name: 'colA', id: 'a', footer: 'footer', width: 70, minWidth: 50 },
+        { name: 'colB', id: 'b', width: 120, maxWidth: 50 }
       ],
       // Test pad rows
       minRows: 3
@@ -1829,16 +1829,16 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1], b: [1], c: [1], d: [1], e: [1], f: [1], g: [1], h: [1], i: [1], j: [1] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c', minWidth: 40 },
-        { name: 'd', accessor: 'd', width: 50 },
-        { name: 'e', accessor: 'e' },
-        { name: 'f', accessor: 'f', width: 120 },
-        { name: 'g', accessor: 'g', minWidth: 50, maxWidth: 140 },
-        { name: 'h', accessor: 'h' },
-        { name: 'i', accessor: 'i', maxWidth: 60 },
-        { name: 'j', accessor: 'j' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c', minWidth: 40 },
+        { name: 'd', id: 'd', width: 50 },
+        { name: 'e', id: 'e' },
+        { name: 'f', id: 'f', width: 120 },
+        { name: 'g', id: 'g', minWidth: 50, maxWidth: 140 },
+        { name: 'h', id: 'h' },
+        { name: 'i', id: 'i', maxWidth: 60 },
+        { name: 'j', id: 'j' }
       ],
       columnGroups: [
         { name: 'default-1-col', columns: ['a'], headerClassName: 'default-1-col' },
@@ -1885,10 +1885,10 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1], b: [1], c: [1], d: [1] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c' },
-        { name: 'd', accessor: 'd' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c' },
+        { name: 'd', id: 'd' }
       ],
       columnGroups: [{ name: 'group', columns: ['a', 'b'] }],
       groupBy: ['d']
@@ -1916,9 +1916,9 @@ describe('column widths and flex layout', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer', minWidth: 50 },
-        { name: 'colB', accessor: 'b', width: 120, maxWidth: 50 },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a', footer: 'footer', minWidth: 50 },
+        { name: 'colB', id: 'b', width: 120, maxWidth: 50 },
+        { name: 'colC', id: 'c' }
       ],
       columnGroups: [{ columns: ['a', 'b'], name: 'group-ab' }],
       filterable: true
@@ -1951,8 +1951,8 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -1964,8 +1964,8 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ],
       resizable: true
     }
@@ -1983,8 +1983,8 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ],
       resizable: false
     }
@@ -1994,8 +1994,8 @@ describe('column resizing', () => {
 
     // Resizing disabled globally with column enable override
     let columns = [
-      { name: 'colA', accessor: 'a', headerClassName: 'col-a', resizable: true },
-      { name: 'colB', accessor: 'b', headerClassName: 'col-b' }
+      { name: 'colA', id: 'a', headerClassName: 'col-a', resizable: true },
+      { name: 'colB', id: 'b', headerClassName: 'col-b' }
     ]
     rerender(<Reactable {...props} columns={columns} />)
     expect(getResizableHeaders(container)).toHaveLength(1)
@@ -2004,8 +2004,8 @@ describe('column resizing', () => {
 
     // Resizing enabled globally with column disable override
     columns = [
-      { name: 'colA', accessor: 'a', headerClassName: 'col-a', resizable: false },
-      { name: 'colB', accessor: 'b', headerClassName: 'col-b' }
+      { name: 'colA', id: 'a', headerClassName: 'col-a', resizable: false },
+      { name: 'colB', id: 'b', headerClassName: 'col-b' }
     ]
     rerender(<Reactable {...props} columns={columns} resizable={true} />)
     expect(getResizableHeaders(container)).toHaveLength(1)
@@ -2014,8 +2014,8 @@ describe('column resizing', () => {
 
     // Resizing should be disabled on fixed width columns
     columns = [
-      { name: 'colA', accessor: 'a', headerClassName: 'col-a', width: 30 },
-      { name: 'colB', accessor: 'b', headerClassName: 'col-b', width: 50, resizable: true }
+      { name: 'colA', id: 'a', headerClassName: 'col-a', width: 30 },
+      { name: 'colB', id: 'b', headerClassName: 'col-b', width: 50, resizable: true }
     ]
     rerender(<Reactable {...props} columns={columns} resizable={true} />)
     expect(getResizableHeaders(container)).toHaveLength(0)
@@ -2026,13 +2026,13 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3], b: ['aa', 'bb'], c: ['c', 'd'], d: ['d', 'e'], e: ['e', 'f'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colC', accessor: 'c' },
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colC', id: 'c' },
         // Column groups with at least one resizable column should be resizable
-        { name: 'colD', accessor: 'd', resizable: false },
+        { name: 'colD', id: 'd', resizable: false },
         // Ungrouped column headers should be resizable too
-        { name: 'colE', accessor: 'e' }
+        { name: 'colE', id: 'e' }
       ],
       columnGroups: [
         { columns: ['a', 'b'], name: 'group-ab' },
@@ -2049,10 +2049,10 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3], b: ['aa', 'bb'], c: ['c', 'd'], d: ['d', 'e'] },
       columns: [
-        { name: 'colA', accessor: 'a', resizable: false },
-        { name: 'colB', accessor: 'b', resizable: false },
-        { name: 'colC', accessor: 'c', resizable: false },
-        { name: 'colD', accessor: 'd', headerClassName: 'col-resizable' }
+        { name: 'colA', id: 'a', resizable: false },
+        { name: 'colB', id: 'b', resizable: false },
+        { name: 'colC', id: 'c', resizable: false },
+        { name: 'colD', id: 'd', headerClassName: 'col-resizable' }
       ],
       columnGroups: [
         { columns: ['a', 'b'], name: 'group-all-cols-no-resize' },
@@ -2072,9 +2072,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a', className: 'col-a', footer: 'footer' },
-        { name: 'colB', accessor: 'b', minWidth: 30, maxWidth: 130 },
-        { name: 'colC', accessor: 'c', width: 70 }
+        { name: 'colA', id: 'a', className: 'col-a', footer: 'footer' },
+        { name: 'colB', id: 'b', minWidth: 30, maxWidth: 130 },
+        { name: 'colC', id: 'c', width: 70 }
       ],
       columnGroups: [{ name: 'group-bc', columns: ['b', 'c'] }],
       resizable: true,
@@ -2142,9 +2142,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a', className: 'col-a', footer: 'footer' },
-        { name: 'colB', accessor: 'b', minWidth: 30, maxWidth: 130 },
-        { name: 'colC', accessor: 'c', width: 70 }
+        { name: 'colA', id: 'a', className: 'col-a', footer: 'footer' },
+        { name: 'colB', id: 'b', minWidth: 30, maxWidth: 130 },
+        { name: 'colC', id: 'c', width: 70 }
       ],
       columnGroups: [{ name: 'group-bc', columns: ['b', 'c'] }],
       resizable: true,
@@ -2212,9 +2212,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', minWidth: 30, maxWidth: 130 },
-        { name: 'colC', accessor: 'c', width: 70 }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', minWidth: 30, maxWidth: 130 },
+        { name: 'colC', id: 'c', width: 70 }
       ],
       columnGroups: [{ name: 'group-bc', columns: ['b', 'c'] }],
       resizable: true
@@ -2281,9 +2281,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', minWidth: 30, maxWidth: 130 },
-        { name: 'colC', accessor: 'c', width: 70 }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', minWidth: 30, maxWidth: 130 },
+        { name: 'colC', id: 'c', width: 70 }
       ],
       columnGroups: [{ name: 'group-bc', columns: ['b', 'c'] }],
       resizable: true
@@ -2349,7 +2349,7 @@ describe('column resizing', () => {
   it('columns cannot be resized with multiple touches', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
-      columns: [{ name: 'colA', accessor: 'a' }],
+      columns: [{ name: 'colA', id: 'a' }],
       columnGroups: [{ name: 'group-a', columns: ['a'] }],
       resizable: true
     }
@@ -2375,9 +2375,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 3, 2], b: ['aa', 'bb', 'cc'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', minWidth: 30, maxWidth: 130 },
-        { name: 'colC', accessor: 'c', width: 70 }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', minWidth: 30, maxWidth: 130 },
+        { name: 'colC', id: 'c', width: 70 }
       ],
       columnGroups: [{ name: 'group-bc', columns: ['b', 'c'] }],
       resizable: true
@@ -2412,9 +2412,9 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer', minWidth: 50 },
-        { name: 'colB', accessor: 'b', width: 120, maxWidth: 50 },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a', footer: 'footer', minWidth: 50 },
+        { name: 'colB', id: 'b', width: 120, maxWidth: 50 },
+        { name: 'colC', id: 'c' }
       ],
       columnGroups: [{ columns: ['a', 'b'], name: 'group-ab' }],
       filterable: true,
@@ -2445,8 +2445,8 @@ describe('column resizing', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       columnGroups: [{ name: 'group-ab', columns: ['a', 'b'] }],
       resizable: true
@@ -2494,7 +2494,7 @@ describe('sticky columns', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-a',
@@ -2503,7 +2503,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-b',
@@ -2512,7 +2512,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'c',
-          accessor: 'c',
+          id: 'c',
           footer: 'ftr',
           className: 'col-c',
           headerClassName: 'col-c',
@@ -2520,7 +2520,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'd',
-          accessor: 'd',
+          id: 'd',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-d',
@@ -2567,7 +2567,7 @@ describe('sticky columns', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           footer: 'ftr',
           sticky: 'right',
           className: 'col-a',
@@ -2576,7 +2576,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           footer: 'ftr',
           sticky: 'right',
           className: 'col-b',
@@ -2585,7 +2585,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'c',
-          accessor: 'c',
+          id: 'c',
           footer: 'ftr',
           className: 'col-c',
           headerClassName: 'col-c',
@@ -2593,7 +2593,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'd',
-          accessor: 'd',
+          id: 'd',
           footer: 'ftr',
           sticky: 'right',
           className: 'col-d',
@@ -2640,7 +2640,7 @@ describe('sticky columns', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-a',
@@ -2649,7 +2649,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-b',
@@ -2658,7 +2658,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'c',
-          accessor: 'c',
+          id: 'c',
           footer: 'ftr',
           className: 'col-c',
           headerClassName: 'col-c',
@@ -2666,7 +2666,7 @@ describe('sticky columns', () => {
         },
         {
           name: 'd',
-          accessor: 'd',
+          id: 'd',
           footer: 'ftr',
           sticky: 'left',
           className: 'col-d',
@@ -2733,34 +2733,34 @@ describe('sticky columns', () => {
       columns: [
         {
           name: 'a - sticky col with ungrouped header',
-          accessor: 'a',
+          id: 'a',
           sticky: 'left',
           className: 'col-a',
           headerClassName: 'col-a'
         },
         {
           name: 'b - group with different sticky props',
-          accessor: 'b',
+          id: 'b',
           sticky: 'left',
           className: 'col-b',
           headerClassName: 'col-b'
         },
         {
           name: 'c - group with different sticky props',
-          accessor: 'c',
+          id: 'c',
           sticky: 'right',
           className: 'col-c',
           headerClassName: 'col-c'
         },
         {
           name: 'd - non-sticky col with sticky group header',
-          accessor: 'd',
+          id: 'd',
           className: 'col-d',
           headerClassName: 'col-d'
         },
         {
           name: 'e - sticky col with sticky group header',
-          accessor: 'e',
+          id: 'e',
           sticky: 'left',
           className: 'col-e',
           headerClassName: 'col-e'
@@ -2804,8 +2804,8 @@ describe('sticky columns', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       columnGroups: [{ name: 'group-ab', columns: ['a', 'b'] }],
       highlight: true,
@@ -2822,8 +2822,8 @@ describe('sticky columns', () => {
     })
 
     const columns = [
-      { name: 'a', accessor: 'a', sticky: 'left' },
-      { name: 'b', accessor: 'b' }
+      { name: 'a', id: 'a', sticky: 'left' },
+      { name: 'b', id: 'b' }
     ]
     rerender(<Reactable {...props} columns={columns} />)
     rows = getRows(container)
@@ -2842,7 +2842,7 @@ describe('no data', () => {
   it('renders no data message in table body', () => {
     const props = {
       data: { a: [] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     const { container, queryAllByText, rerender } = render(<Reactable {...props} />)
     const noData = queryAllByText('No rows found')
@@ -2865,7 +2865,7 @@ describe('no data', () => {
   it('does not show message with data present', () => {
     const props = {
       data: { a: [1] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     const { container, queryByText } = render(<Reactable {...props} />)
     const noData = queryByText('No rows found')
@@ -2879,7 +2879,7 @@ describe('no data', () => {
     // Element must exist on page for ARIA live region to be announced
     const props = {
       data: { a: [1] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     const { container } = render(<Reactable {...props} />)
     const tbody = getTbody(container)
@@ -2893,7 +2893,7 @@ describe('keyboard focus styles', () => {
   it('applies keyboard focus styles when using the keyboard', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'colA', accessor: 'a' }]
+      columns: [{ name: 'colA', id: 'a' }]
     }
     const { container } = render(<Reactable {...props} />)
     const rootContainer = getRoot(container)
@@ -2925,8 +2925,8 @@ describe('scrollable tables are keyboard accessible', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -2939,8 +2939,8 @@ describe('scrollable tables are keyboard accessible', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
 
@@ -2973,8 +2973,8 @@ describe('scrollable tables are keyboard accessible', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
 
@@ -3009,8 +3009,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -3040,8 +3040,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ],
       sortable: false
     }
@@ -3056,8 +3056,8 @@ describe('sorting', () => {
 
     // Sorting disabled globally with column enable override
     let columns = [
-      { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a', sortable: true },
-      { name: 'colB', accessor: 'b', className: 'col-b' }
+      { name: 'colA', id: 'a', type: 'numeric', className: 'col-a', sortable: true },
+      { name: 'colB', id: 'b', className: 'col-b' }
     ]
     rerender(<Reactable {...props} columns={columns} />)
     sortHeaders = container.querySelectorAll('[aria-sort]')
@@ -3066,8 +3066,8 @@ describe('sorting', () => {
 
     // Sorting enabled globally with column disable override
     columns = [
-      { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a', sortable: false },
-      { name: 'colB', accessor: 'b', className: 'col-b' }
+      { name: 'colA', id: 'a', type: 'numeric', className: 'col-a', sortable: false },
+      { name: 'colB', id: 'b', className: 'col-b' }
     ]
     rerender(<Reactable {...props} columns={columns} sortable={true} />)
     sortHeaders = container.querySelectorAll('[aria-sort]')
@@ -3080,8 +3080,8 @@ describe('sorting', () => {
       <Reactable
         data={{ a: [1, 3, 1, 1], b: ['aa', 'CC', 'dd', 'BB'] }}
         columns={[
-          { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-          { name: 'colB', accessor: 'b', className: 'col-b' }
+          { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+          { name: 'colB', id: 'b', className: 'col-b' }
         ]}
       />
     )
@@ -3114,8 +3114,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 1, 1], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -3135,8 +3135,8 @@ describe('sorting', () => {
 
     // Ascending order with column override for descending order
     let columns = [
-      { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a', defaultSortDesc: true },
-      { name: 'colB', accessor: 'b', className: 'col-b' }
+      { name: 'colA', id: 'a', type: 'numeric', className: 'col-a', defaultSortDesc: true },
+      { name: 'colB', id: 'b', className: 'col-b' }
     ]
     rerender(<Reactable {...props} columns={columns} />)
     fireEvent.click(headers[0])
@@ -3144,8 +3144,8 @@ describe('sorting', () => {
 
     // Descending order with column override for ascending order
     columns = [
-      { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-      { name: 'colB', accessor: 'b', className: 'col-b', defaultSortDesc: false }
+      { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+      { name: 'colB', id: 'b', className: 'col-b', defaultSortDesc: false }
     ]
     rerender(<Reactable {...props} columns={columns} defaultSortDesc />)
     fireEvent.click(headers[1])
@@ -3156,8 +3156,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 1, 1], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ]
     }
     // Default sorted in ascending order
@@ -3193,8 +3193,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 5, 1], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ],
       defaultSorted: [{ id: 'a', desc: false }]
     }
@@ -3211,8 +3211,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 3, 2, 5], b: ['aa', 'CC', 'dd', 'BB'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric', className: 'col-a' },
-        { name: 'colB', accessor: 'b', className: 'col-b' }
+        { name: 'colA', id: 'a', type: 'numeric', className: 'col-a' },
+        { name: 'colB', id: 'b', className: 'col-b' }
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -3237,9 +3237,9 @@ describe('sorting', () => {
       <Reactable
         data={{ a: [1, 2], b: ['aa', 'bb'], c: [true, false] }}
         columns={[
-          { name: 'colA', accessor: 'a' },
-          { name: 'colB', accessor: 'b' },
-          { name: 'colC', accessor: 'c', sortable: false }
+          { name: 'colA', id: 'a' },
+          { name: 'colB', id: 'b' },
+          { name: 'colC', id: 'c', sortable: false }
         ]}
         sortable
       />
@@ -3272,15 +3272,15 @@ describe('sorting', () => {
         b: ['aaa', 'bbb', 'ccc', 'ddd']
       },
       columns: [
-        { name: 'col-group', accessor: 'group', className: 'col-group' },
+        { name: 'col-group', id: 'group', className: 'col-group' },
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           type: 'numeric',
           aggregate: values => (values.length === 3 ? 10 : 1),
           className: 'col-a'
         },
-        { name: 'col-b', accessor: 'b', aggregate: values => values.length, className: 'col-b' }
+        { name: 'col-b', id: 'b', aggregate: values => values.length, className: 'col-b' }
       ],
       groupBy: ['group']
     }
@@ -3322,8 +3322,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ],
       language: { sortLabel: '_Sort {name}' }
     }
@@ -3337,9 +3337,9 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'], c: [true, false] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', defaultSortDesc: true },
-        { name: 'colC', accessor: 'c', sortable: false }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', defaultSortDesc: true },
+        { name: 'colC', id: 'c', sortable: false }
       ],
       sortable: true
     }
@@ -3362,9 +3362,9 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'], c: [true, false] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b', defaultSortDesc: true },
-        { name: 'colC', accessor: 'c', sortable: false }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b', defaultSortDesc: true },
+        { name: 'colC', id: 'c', sortable: false }
       ],
       sortable: true
     }
@@ -3379,9 +3379,9 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'], c: [true, false] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colC', id: 'c' }
       ],
       resizable: true
     }
@@ -3403,8 +3403,8 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a', type: 'numeric' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -3423,9 +3423,9 @@ describe('sorting', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'], c: [true, false] },
       columns: [
-        { name: 'colA', accessor: 'a', type: 'numeric' },
-        { name: 'colB', accessor: 'b', sortable: false },
-        { name: 'colC', accessor: 'c' }
+        { name: 'colA', id: 'a', type: 'numeric' },
+        { name: 'colB', id: 'b', sortable: false },
+        { name: 'colC', id: 'c' }
       ],
       showSortable: true
     }
@@ -3442,12 +3442,12 @@ describe('sorting', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           type: 'numeric',
           sortNALast: true,
           className: 'col-a'
         },
-        { name: 'colB', accessor: 'b', sortNALast: true, className: 'col-b' }
+        { name: 'colB', id: 'b', sortNALast: true, className: 'col-b' }
       ],
       minRows: 4
     }
@@ -3474,8 +3474,8 @@ describe('filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
-        { name: 'colB', accessor: 'b', className: 'cell', style: { color: 'blue' } }
+        { name: 'colA', id: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
+        { name: 'colB', id: 'b', className: 'cell', style: { color: 'blue' } }
       ],
       filterable: true
     }
@@ -3505,8 +3505,8 @@ describe('filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -3523,9 +3523,9 @@ describe('filtering', () => {
     let props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },
       columns: [
-        { name: 'colA', accessor: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
-        { name: 'colB', accessor: 'b', className: 'cell', style: { color: 'blue' } },
-        { name: 'colC', accessor: 'c', filterable: false }
+        { name: 'colA', id: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
+        { name: 'colB', id: 'b', className: 'cell', style: { color: 'blue' } },
+        { name: 'colC', id: 'c', filterable: false }
       ],
       filterable: true
     }
@@ -3540,9 +3540,9 @@ describe('filtering', () => {
     props = {
       ...props,
       columns: [
-        { name: 'colA', accessor: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
-        { name: 'colB', accessor: 'b', className: 'cell', style: { color: 'blue' } },
-        { name: 'colC', accessor: 'c', filterable: true }
+        { name: 'colA', id: 'a', headerClassName: 'header', headerStyle: { color: 'red' } },
+        { name: 'colB', id: 'b', className: 'cell', style: { color: 'blue' } },
+        { name: 'colC', id: 'c', filterable: true }
       ],
       filterable: false
     }
@@ -3558,8 +3558,8 @@ describe('filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a', show: false },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a', show: false },
+        { name: 'colB', id: 'b' }
       ],
       filterable: true
     }
@@ -3575,7 +3575,7 @@ describe('filtering', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: [111, 115, 32.11] }}
-        columns={[{ name: 'a', accessor: 'a', type: 'numeric' }]}
+        columns={[{ name: 'a', id: 'a', type: 'numeric' }]}
         filterable
       />
     )
@@ -3606,8 +3606,8 @@ describe('filtering', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
-          { name: 'a', accessor: 'a', type: 'factor' },
-          { name: 'b', accessor: 'b', type: 'character' }
+          { name: 'a', id: 'a', type: 'factor' },
+          { name: 'b', id: 'b', type: 'character' }
         ]}
         filterable
       />
@@ -3649,7 +3649,7 @@ describe('filtering', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
-        columns={[{ name: 'a', accessor: 'a' }]}
+        columns={[{ name: 'a', id: 'a' }]}
         filterable
       />
     )
@@ -3684,8 +3684,8 @@ describe('filtering', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
-          { name: 'a', accessor: 'a' },
-          { name: 'b', accessor: 'b' }
+          { name: 'a', id: 'a' },
+          { name: 'b', id: 'b' }
         ]}
         columnGroups={[
           {
@@ -3714,9 +3714,9 @@ describe('filtering', () => {
         b: ['aaa', 'bbb', 'aaa', 'bbb']
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
-        { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
+        { name: 'col-b', id: 'b', aggregate: () => 'ccc' }
       ],
       filterable: true,
       groupBy: ['group']
@@ -3760,10 +3760,10 @@ describe('filtering', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           cell: (cellInfo, state) => {
             lastCellInfo.cell = cellInfo
             lastState.cell = state
@@ -3817,8 +3817,8 @@ describe('filtering', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       filterable: true
     }
@@ -3840,8 +3840,8 @@ describe('filtering', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       searchable: true
     }
@@ -3875,8 +3875,8 @@ describe('filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'column-a', accessor: 'a' },
-        { name: 'column-b', accessor: 'b' }
+        { name: 'column-a', id: 'a' },
+        { name: 'column-b', id: 'b' }
       ],
       filterable: true,
       language: {
@@ -3899,8 +3899,8 @@ describe('filtering', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'column-a', accessor: 'a' },
-        { name: 'column-b', accessor: 'b', filterable: true }
+        { name: 'column-a', id: 'a' },
+        { name: 'column-b', id: 'b', filterable: true }
       ],
       searchable: true
     }
@@ -3917,7 +3917,7 @@ describe('filtering', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           filterMethod: function exactMatch(rows, columnId, filterValue) {
             expect(rows).toHaveLength(3)
             expect(columnId).toEqual('a')
@@ -3928,7 +3928,7 @@ describe('filtering', () => {
         },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           filterMethod: function rowIndexMatch(rows, columnId, filterValue) {
             const indices = filterValue.split(',').map(Number)
             return rows.filter(row => {
@@ -3988,16 +3988,16 @@ describe('filtering', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: [1, 2, 3], c: [4, 5, 6] }}
         columns={[
-          { name: 'filter-component', accessor: 'a', filterInput: CustomSelectFilter },
+          { name: 'filter-component', id: 'a', filterInput: CustomSelectFilter },
           {
             name: 'filter-html',
-            accessor: 'b',
+            id: 'b',
             filterInput: '<input type="text" class="filter-html">',
             html: true
           },
           {
             name: 'filter-element',
-            accessor: 'c',
+            id: 'c',
             filterInput: <input className="filter-element"></input>
           }
         ]}
@@ -4049,8 +4049,8 @@ describe('searching', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -4065,7 +4065,7 @@ describe('searching', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: [111, 115, 32.11] }}
-        columns={[{ name: 'a', accessor: 'a', type: 'numeric' }]}
+        columns={[{ name: 'a', id: 'a', type: 'numeric' }]}
         searchable
       />
     )
@@ -4094,8 +4094,8 @@ describe('searching', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
-          { name: 'a', accessor: 'a', type: 'factor' },
-          { name: 'b', accessor: 'b', type: 'character' }
+          { name: 'a', id: 'a', type: 'factor' },
+          { name: 'b', id: 'b', type: 'character' }
         ]}
         searchable
       />
@@ -4137,7 +4137,7 @@ describe('searching', () => {
     const { container, getByText } = render(
       <Reactable
         data={{ a: ['ááád', '123', 'acCC', '2018-03-05'] }}
-        columns={[{ name: 'a', accessor: 'a' }]}
+        columns={[{ name: 'a', id: 'a' }]}
         searchable
       />
     )
@@ -4172,8 +4172,8 @@ describe('searching', () => {
       <Reactable
         data={{ a: ['aaac', 'bbb', 'CCC'], b: ['ááád', 'bAb', 'CC'] }}
         columns={[
-          { name: 'a', accessor: 'a' },
-          { name: 'b', accessor: 'b' }
+          { name: 'a', id: 'a' },
+          { name: 'b', id: 'b' }
         ]}
         columnGroups={[
           {
@@ -4196,8 +4196,8 @@ describe('searching', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', searchable: false }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', searchable: false }
       ],
       searchable: true
     }
@@ -4211,8 +4211,8 @@ describe('searching', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', show: false }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', show: false }
       ],
       searchable: true
     }
@@ -4226,8 +4226,8 @@ describe('searching', () => {
     const props = {
       data: { a: ['a1', 'a2', 'a3'], b: ['b11', 'b12', 'b2'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', show: false, searchable: true }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', show: false, searchable: true }
       ],
       searchable: true
     }
@@ -4243,12 +4243,12 @@ describe('searching', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['b', 'b', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' },
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' },
         // Fake column for testing. Selection and row details columns now have
         // searching disabled by default, so this shouldn't exist unless searching
         // was manually enabled for the details column.
-        { name: '', accessor: '.fake_column' }
+        { name: '', id: '.fake_column' }
       ],
       searchable: true
     }
@@ -4263,8 +4263,8 @@ describe('searching', () => {
     const props = {
       data: { a: [], b: [] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       searchable: true
     }
@@ -4283,9 +4283,9 @@ describe('searching', () => {
         b: ['aaa', 'bbb', 'aaa', 'bbb']
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
-        { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
+        { name: 'col-b', id: 'b', aggregate: () => 'ccc' }
       ],
       searchable: true,
       groupBy: ['group']
@@ -4324,10 +4324,10 @@ describe('searching', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           cell: (cellInfo, state) => (lastState.cell = state),
           header: (column, state) => (lastState.header = state),
           footer: (column, state) => (lastState.footer = state)
@@ -4350,8 +4350,8 @@ describe('searching', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       searchable: true
     }
@@ -4371,7 +4371,7 @@ describe('searching', () => {
   it('searching updates when columns change', () => {
     const props = {
       data: { a: [111, 115, 32.11] },
-      columns: [{ name: 'a', accessor: 'a', type: 'numeric' }],
+      columns: [{ name: 'a', id: 'a', type: 'numeric' }],
       searchable: true
     }
     const { container, getByText, rerender } = render(<Reactable {...props} />)
@@ -4382,7 +4382,7 @@ describe('searching', () => {
     expect(getByText('111')).toBeVisible()
     expect(getByText('115')).toBeVisible()
 
-    rerender(<Reactable {...props} columns={[{ name: 'a', accessor: 'a', type: 'character' }]} />)
+    rerender(<Reactable {...props} columns={[{ name: 'a', id: 'a', type: 'character' }]} />)
     expect(getDataRows(container)).toHaveLength(3)
     expect(getByText('111')).toBeVisible()
     expect(getByText('115')).toBeVisible()
@@ -4393,8 +4393,8 @@ describe('searching', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       filterable: true
     }
@@ -4427,7 +4427,7 @@ describe('searching', () => {
   it('search language', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       searchable: true
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -4449,8 +4449,8 @@ describe('searching', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2', 'aaa3'], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       searchable: true,
       searchMethod: function exactTextAndRowIndexMatch(rows, columnIds, filterValue) {
@@ -4496,7 +4496,7 @@ describe('row selection', () => {
   it('selection is disabled by default', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     const { container } = render(<Reactable {...props} />)
     const headers = getHeaders(container)
@@ -4509,8 +4509,8 @@ describe('row selection', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple'
     }
@@ -4525,7 +4525,7 @@ describe('row selection', () => {
   it('multiple selection', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected'
     }
@@ -4608,8 +4608,8 @@ describe('row selection', () => {
     const props = {
       data: { a: ['x', 'x', 'y', 'y'], b: [1, 1, 2, 41] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       selectionId: 'selected',
@@ -4682,8 +4682,8 @@ describe('row selection', () => {
     const props = {
       data: { a: ['x', 'x', 'y', 'y'], b: [1, 1, 2, 41] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       groupBy: ['a'],
@@ -4706,7 +4706,7 @@ describe('row selection', () => {
   it('multiple selection select all checkbox should not render when table has no rows', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'col-a', accessor: 'a' }],
+      columns: [{ name: 'col-a', id: 'a' }],
       selection: 'multiple',
       searchable: true
     }
@@ -4721,7 +4721,7 @@ describe('row selection', () => {
   it('single selection', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'single',
       selectionId: 'selected'
     }
@@ -4765,7 +4765,7 @@ describe('row selection', () => {
   it('defaultSelected', () => {
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected',
       defaultSelected: [1, 0]
@@ -4787,7 +4787,7 @@ describe('row selection', () => {
   it('defaultSelected works on filtered rows', () => {
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       searchable: true
     }
@@ -4808,7 +4808,7 @@ describe('row selection', () => {
   it('defaultSelected handles invalid rows', () => {
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       defaultSelected: [3]
     }
@@ -4820,7 +4820,7 @@ describe('row selection', () => {
   it('single selection works with filtered rows', () => {
     const props = {
       data: { a: ['a-row0', 'b-row1'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'single',
       searchable: true
     }
@@ -4850,7 +4850,7 @@ describe('row selection', () => {
   it('multiple selection works with filtered rows', () => {
     const props = {
       data: { a: ['a-row0-group0', 'b-row1-group0', 'c-row2-group1'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       searchable: true
     }
@@ -4876,7 +4876,7 @@ describe('row selection', () => {
   it('table updates when defaultSelected changes', () => {
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected',
       defaultSelected: [1, 0]
@@ -4922,7 +4922,7 @@ describe('row selection', () => {
     // or updateReactable.
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected'
     }
@@ -4954,7 +4954,7 @@ describe('row selection', () => {
   it('selected rows only update on row selection', () => {
     const props = {
       data: { a: ['aaa', 'bbb'] },
-      columns: [{ name: 'col-a', accessor: 'a' }],
+      columns: [{ name: 'col-a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected',
       searchable: true
@@ -4991,7 +4991,7 @@ describe('row selection', () => {
     delete window.Shiny
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected'
     }
@@ -5011,7 +5011,7 @@ describe('row selection', () => {
   it('multiple selection cells are clickable', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple'
     }
     const { container } = render(<Reactable {...props} />)
@@ -5047,8 +5047,8 @@ describe('row selection', () => {
     const props = {
       data: { a: ['x', 'x', 'y', 'y'], b: [1, 1, 2, 41] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       groupBy: ['a'],
@@ -5079,7 +5079,7 @@ describe('row selection', () => {
   it('single selection cells are clickable', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'single'
     }
     const { container } = render(<Reactable {...props} />)
@@ -5109,7 +5109,7 @@ describe('row selection', () => {
   it('selects on row click', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       onClick: 'select',
       selection: 'single'
     }
@@ -5143,8 +5143,8 @@ describe('row selection', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb1'] },
       columns: [
-        { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a', aggregate: () => 'a-aggregated' },
+        { name: 'b', id: 'b' }
       ],
       groupBy: ['b'],
       selection: 'multiple',
@@ -5171,8 +5171,8 @@ describe('row selection', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb1'] },
       columns: [
-        { name: 'a', accessor: 'a', aggregate: () => 'a-aggregated' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a', aggregate: () => 'a-aggregated' },
+        { name: 'b', id: 'b' }
       ],
       groupBy: ['b'],
       selection: 'single',
@@ -5194,7 +5194,7 @@ describe('row selection', () => {
   it('ignores pad rows on row click', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'single',
       onClick: 'select',
       minRows: 5
@@ -5213,7 +5213,7 @@ describe('row selection', () => {
   it('selection cells can still be clicked with other click actions', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       onClick: () => {
         throw new Error('should not be called')
       },
@@ -5237,7 +5237,7 @@ describe('row selection', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           cell: (cellInfo, state) => {
             return `${cellInfo.value} selected? ${
               cellInfo.selected ? 'yes' : 'no'
@@ -5250,7 +5250,7 @@ describe('row selection', () => {
           },
           className: 'col-a'
         },
-        { name: 'b', accessor: 'b' }
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       rowClassName: (rowInfo, state) => {
@@ -5294,10 +5294,10 @@ describe('row selection', () => {
     const props = {
       data: { a: [1, 2] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: '',
-          accessor: '.selection',
+          id: '.selection',
           selectable: true,
           className: 'cell-cls',
           headerClassName: 'header-cls',
@@ -5331,10 +5331,10 @@ describe('row selection', () => {
     const props = {
       data: { a: [1, 2], '.selection': ['aaa', 'bbb'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
+        { name: 'col-a', id: 'a' },
         {
           name: '',
-          accessor: '.selection',
+          id: '.selection',
           selectable: true,
           filterable: true,
           searchable: true,
@@ -5358,12 +5358,12 @@ describe('row selection', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' },
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' },
         {
           name: '',
-          accessor: '.selection',
+          id: '.selection',
           selectable: true
         }
       ],
@@ -5394,12 +5394,12 @@ describe('row selection', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], c: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' },
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' },
         {
           name: '',
-          accessor: '.selection',
+          id: '.selection',
           selectable: true
         }
       ],
@@ -5437,9 +5437,9 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: '', accessor: '.details', details: rowInfo => `row details: ${rowInfo.index}` },
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: '', id: '.details', details: rowInfo => `row details: ${rowInfo.index}` },
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -5540,10 +5540,10 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           details: (rowInfo, state) => {
             assertProps(rowInfo, state)
             return `row details: ${rowInfo.values.a}`
@@ -5564,10 +5564,10 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           html: true,
           details: rowInfo => `<span>row details: ${rowInfo.values.a}</span>`
         }
@@ -5587,10 +5587,10 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           html: true,
           details: ['<span>row details: 1</span>', '<span>row details: 2</span>']
         }
@@ -5610,8 +5610,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', details: ['row details: 1', null] }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', details: ['row details: 1', null] }
       ]
     }
     const { container, getByText, queryByText } = render(<Reactable {...props} />)
@@ -5627,8 +5627,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', details: ['', ''] }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', details: ['', ''] }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -5642,8 +5642,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a', details: ['detail-a1', 'detail-a2'] },
-        { name: 'b', accessor: 'b', details: ['detail-b1', 'detail-b2'] }
+        { name: 'a', id: 'a', details: ['detail-a1', 'detail-a2'] },
+        { name: 'b', id: 'b', details: ['detail-b1', 'detail-b2'] }
       ]
     }
     const { container, getByText, queryByText } = render(<Reactable {...props} />)
@@ -5676,19 +5676,19 @@ describe('expandable row details', () => {
       columns: [
         {
           name: '',
-          accessor: '.details',
+          id: '.details',
           className: 'expander-no-content',
           style: { color: 'blue' },
           details: ['detail-1', null]
         },
         {
           name: '',
-          accessor: '.details2',
+          id: '.details2',
           className: 'expander-with-content',
           cell: () => 'content',
           details: ['detail-2', null]
         },
-        { name: 'c', accessor: 'c' }
+        { name: 'c', id: 'c' }
       ]
     }
     const { container, getByText } = render(<Reactable {...props} />)
@@ -5712,10 +5712,10 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         {
           name: 'b',
-          accessor: 'b',
+          id: 'b',
           details: rowInfo => `row details: ${rowInfo.values.a}`
         }
       ],
@@ -5738,11 +5738,11 @@ describe('expandable row details', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           filterable: true,
           details: ['row-details-1', 'row-details-2']
         },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-b', id: 'b' }
       ],
       defaultPageSize: 1
     }
@@ -5796,10 +5796,10 @@ describe('expandable row details', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           details: rowInfo => `row details: ${rowInfo.index}-${rowInfo.values.a}-a`
         },
-        { name: 'b', accessor: 'b' }
+        { name: 'b', id: 'b' }
       ]
     }
     const { container, getByText, rerender } = render(<Reactable {...props} />)
@@ -5819,8 +5819,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
       columns: [
-        { name: 'a', accessor: 'a', details: ['details-a-1', null, 'details-a-3'] },
-        { name: 'b', accessor: 'b', details: ['details-b-1', null, 'details-b-3'] }
+        { name: 'a', id: 'a', details: ['details-a-1', null, 'details-a-3'] },
+        { name: 'b', id: 'b', details: ['details-b-1', null, 'details-b-3'] }
       ],
       defaultPageSize: 2
     }
@@ -5868,8 +5868,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', id: 'b' }
       ],
       columnGroups: [{ columns: ['a', 'b'] }]
     }
@@ -5887,9 +5887,9 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], expanded: [true, true] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', details: () => 'details' },
-        { name: 'expanded', accessor: 'expanded' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', details: () => 'details' },
+        { name: 'expanded', id: 'expanded' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -5901,9 +5901,9 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['r-row-details', 'r-row-details'] },
-        { name: 'col-b', accessor: 'b', details: () => 'js-row-details' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a', details: ['r-row-details', 'r-row-details'] },
+        { name: 'col-b', id: 'b', details: () => 'js-row-details' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c']
     }
@@ -5945,8 +5945,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` },
+        { name: 'col-b', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -5962,9 +5962,9 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['cell-b-0', 'cell-b-1', 'cell-b-2'], c: [3, 4, 5] },
       columns: [
-        { name: 'a', accessor: 'a', details: [null, 'details: 1-a', 'details: 2-a'] },
-        { name: 'b', accessor: 'b', details: rowInfo => `details: ${rowInfo.index}-b` },
-        { name: 'c', accessor: 'c', details: rowInfo => `details: ${rowInfo.index}-c` }
+        { name: 'a', id: 'a', details: [null, 'details: 1-a', 'details: 2-a'] },
+        { name: 'b', id: 'b', details: rowInfo => `details: ${rowInfo.index}-b` },
+        { name: 'c', id: 'c', details: rowInfo => `details: ${rowInfo.index}-c` }
       ],
       defaultExpanded: true
     }
@@ -5994,8 +5994,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', id: 'b' }
       ],
       columnGroups: [{ columns: ['a', 'b'] }],
       defaultExpanded: true
@@ -6009,8 +6009,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['details-a-1', 'details-a-2'] },
-        { name: 'col-b', accessor: 'b', details: ['details-b-1', 'details-b-2'] }
+        { name: 'col-a', id: 'a', details: ['details-a-1', 'details-a-2'] },
+        { name: 'col-b', id: 'b', details: ['details-b-1', 'details-b-2'] }
       ],
       columnGroups: [{ columns: ['a', 'b'] }],
       defaultExpanded: true
@@ -6027,8 +6027,8 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' }
       ],
       defaultExpanded: true
     }
@@ -6042,13 +6042,13 @@ describe('expandable row details', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           details: [
             null,
             <Reactable
               key="nested"
               data={{ a: [1, 2, 3] }}
-              columns={[{ name: 'a', accessor: 'a' }]}
+              columns={[{ name: 'a', id: 'a' }]}
               rowClassName="nested-row"
               className="nested"
             />
@@ -6074,7 +6074,7 @@ describe('expandable row details', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` }
+        { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` }
       ],
       language: {
         detailsExpandLabel: '_Toggle details'
@@ -6093,9 +6093,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 1], b: ['a', 'b', 'c'], c: ['x', 'y', 'z'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['a']
     }
@@ -6152,9 +6152,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c', 'a']
     }
@@ -6210,7 +6210,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           className: 'col-grouped',
           cell: (cellInfo, state) => {
             return (
@@ -6220,8 +6220,8 @@ describe('grouping and aggregation', () => {
             )
           }
         },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['a']
     }
@@ -6244,11 +6244,11 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           className: 'col-grouped',
           cell: ['not-shown', 'not-shown', 'not-shown']
         },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-b', id: 'b' }
       ],
       groupBy: ['a']
     }
@@ -6263,7 +6263,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           na: 'missing',
           cell: () => 'overridden',
           grouped: (cellInfo, state) => {
@@ -6310,7 +6310,7 @@ describe('grouping and aggregation', () => {
           },
           className: 'col-a'
         },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-b', id: 'b' }
       ],
       groupBy: ['a']
     }
@@ -6323,10 +6323,10 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 1], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum' },
+        { name: 'col-a', id: 'a', type: 'numeric', aggregate: 'sum' },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           aggregate: (values, rows, aggregatedRows) => {
             if (aggregateCount === 0) {
               expect(values).toEqual(['a', 'b'])
@@ -6347,7 +6347,7 @@ describe('grouping and aggregation', () => {
             return values.join(', ')
           }
         },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c']
     }
@@ -6363,7 +6363,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           // Aggregate functions should work for columns in groupBy, as long as
           // they aren't the first groupBy column.
           aggregate: values => {
@@ -6372,7 +6372,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           aggregate: (values, rows, aggregatedRows) => {
             if (aggregateCount === 0) {
               // Sub-group a (2)
@@ -6409,7 +6409,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-c',
-          accessor: 'c',
+          id: 'c',
           // Aggregate function should not be called for non-aggregated groupBy columns
           // (the first groupBy column).
           aggregate: () => {
@@ -6439,15 +6439,15 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
+        { name: 'col-a', id: 'a' },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           aggregate: (values, rows, aggregatedRows) => {
             return `${values} ${rows.map(row => row.b)} ${aggregatedRows.map(row => row.b)}`
           }
         },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c'],
       searchable: true
@@ -6470,29 +6470,29 @@ describe('grouping and aggregation', () => {
         f: [1, 2]
       },
       columns: [
-        { name: 'col-groupA', accessor: 'groupA' },
+        { name: 'col-groupA', id: 'groupA' },
         {
           // Aggregated cell renderers should work for aggregated cells in groupBy
           // columns, as long as they aren't the first groupBy column.
           name: 'col-groupB',
-          accessor: 'groupB',
+          id: 'groupB',
           type: 'numeric',
           aggregate: 'sum'
         },
-        { name: 'col-a', accessor: 'a', aggregate: 'unique' },
-        { name: 'col-b', accessor: 'b', aggregated: () => 123 },
-        { name: 'col-c', accessor: 'c', aggregated: () => true },
+        { name: 'col-a', id: 'a', aggregate: 'unique' },
+        { name: 'col-b', id: 'b', aggregated: () => 123 },
+        { name: 'col-c', id: 'c', aggregated: () => true },
         {
           // HTML rendering
           name: 'col-d',
-          accessor: 'd',
+          id: 'd',
           aggregated: () => '<div>col-d</div>',
           html: true
         },
         {
           // React elements and HTML rendering should not clash
           name: 'col-e',
-          accessor: 'e',
+          id: 'e',
           aggregated: function Aggregated() {
             return <div>col-e</div>
           },
@@ -6501,7 +6501,7 @@ describe('grouping and aggregation', () => {
         {
           // Formatters should not apply to empty aggregate values
           name: 'col-f',
-          accessor: 'f',
+          id: 'f',
           format: { aggregated: { prefix: '!!', date: true } }
         }
       ],
@@ -6528,7 +6528,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           // Aggregated cell renderers should work for aggregated cells in groupBy
           // columns, as long as they aren't the first groupBy column.
           aggregated: cellInfo => {
@@ -6538,7 +6538,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           type: 'numeric',
           aggregate: 'mean',
           aggregated: (cellInfo, state) => {
@@ -6639,7 +6639,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-c',
-          accessor: 'c',
+          id: 'c',
           // Aggregated cell renderer should not be called for non-aggregated groupBy columns
           // (the first groupBy column).
           aggregated: () => {
@@ -6648,7 +6648,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-d',
-          accessor: 'd',
+          id: 'd',
           aggregated: cellInfo => {
             expect(cellInfo.value).toEqual(null)
             return 'agg-d'
@@ -6683,16 +6683,16 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
+        { name: 'col-a', id: 'a' },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           cell: cellInfo => cellInfo.depth,
           aggregated: cellInfo => cellInfo.depth,
           className: 'col-b'
         },
-        { name: 'col-c', accessor: 'c' },
-        { name: 'col-d', accessor: 'd' }
+        { name: 'col-c', id: 'c' },
+        { name: 'col-d', id: 'd' }
       ],
       groupBy: ['c', 'a'],
       defaultExpanded: true
@@ -6705,18 +6705,18 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
       columns: [
-        { name: 'col-a', accessor: 'a', format: { cell: { suffix: '__cell_a' } } },
+        { name: 'col-a', id: 'a', format: { cell: { suffix: '__cell_a' } } },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           format: { cell: { suffix: '__cell' }, aggregated: { prefix: 'agg__' } },
           aggregate: () => '',
           // Formatting should be applied before aggregated cell renderers
           aggregated: cellInfo => `${cellInfo.value}b-${cellInfo.level}-${cellInfo.index}`,
           className: 'col-b'
         },
-        { name: 'col-c', accessor: 'c' },
-        { name: 'col-d', accessor: 'd' }
+        { name: 'col-c', id: 'c' },
+        { name: 'col-d', id: 'd' }
       ],
       groupBy: ['c', 'a'],
       defaultExpanded: true
@@ -6801,7 +6801,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           className: rowInfo => {
             return rowInfo.aggregated ? 'grouped-a' : 'ungrouped-a'
           },
@@ -6809,7 +6809,7 @@ describe('grouping and aggregation', () => {
         },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           type: 'numeric',
           aggregate: 'mean',
           className: (rowInfo, column, state) => {
@@ -6821,8 +6821,8 @@ describe('grouping and aggregation', () => {
             return { color: '#bbb' }
           }
         },
-        { name: 'col-c', accessor: 'c' },
-        { name: 'col-d', accessor: 'd' }
+        { name: 'col-c', id: 'c' },
+        { name: 'col-d', id: 'd' }
       ],
       groupBy: ['c', 'a']
     }
@@ -6914,10 +6914,10 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: ['a', 'a', 'b'], b: [1, 2, 3], c: ['x', 'x', 'x'], d: [1, 2, 3] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b', type: 'numeric', aggregate: 'mean' },
-        { name: 'col-c', accessor: 'c' },
-        { name: 'col-d', accessor: 'd' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b', type: 'numeric', aggregate: 'mean' },
+        { name: 'col-c', id: 'c' },
+        { name: 'col-d', id: 'd' }
       ],
       groupBy: ['c', 'a'],
       rowClassName: (rowInfo, state) => {
@@ -6993,7 +6993,7 @@ describe('grouping and aggregation', () => {
       columns: [
         {
           name: 'col-a',
-          accessor: 'a',
+          id: 'a',
           header: (column, state) => {
             assertProps(column, state)
             return `header_${state.sortedData.length}_${state.sortedData[0]._subRows.length}`
@@ -7005,8 +7005,8 @@ describe('grouping and aggregation', () => {
           headerClassName: 'header-a',
           footerClassName: 'footer-a'
         },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c', 'a']
     }
@@ -7023,9 +7023,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['b--a', 'b--b', 'b--c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c', 'a']
     }
@@ -7073,8 +7073,8 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' }
       ]
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -7089,9 +7089,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       groupBy: ['c']
     }
@@ -7118,9 +7118,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['x', 'y'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ]
     }
     const { container, getByText, queryByText, rerender } = render(<Reactable {...props} />)
@@ -7149,9 +7149,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.index}-a` },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c' }
+        { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.index}-a` },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c' }
       ],
       groupBy: ['c'],
       defaultExpanded: true
@@ -7173,9 +7173,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'a', accessor: 'a', details: rowInfo => `row details: ${rowInfo.index}-a` },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c' }
+        { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.index}-a` },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c' }
       ],
       groupBy: ['c'],
       defaultExpanded: true
@@ -7202,8 +7202,8 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' }
       ],
       groupBy: ['b']
     }
@@ -7217,9 +7217,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c' }
       ],
       columnGroups: [{ columns: ['a', 'c'], name: 'group' }],
       groupBy: ['c']
@@ -7237,9 +7237,9 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['a', 'b', 'c'], c: ['x', 'x', 'z'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' },
-        { name: 'c', accessor: 'c' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' },
+        { name: 'c', id: 'c' }
       ],
       columnGroups: [{ columns: ['c', 'b'], name: 'group' }],
       groupBy: ['c']
@@ -7260,8 +7260,8 @@ describe('grouping and aggregation', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       language: {
         groupExpandLabel: '_Toggle group'
@@ -7281,9 +7281,9 @@ describe('sub rows', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], subRows: ['a', 'b'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' },
-        { name: 'colSubRows', accessor: 'subRows' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' },
+        { name: 'colSubRows', id: 'subRows' }
       ]
     }
     const { container, getByText } = render(<Reactable {...props} />)
@@ -7296,8 +7296,8 @@ describe('sub rows', () => {
     const props = {
       data: { a: [1, 2], b: [3, 4], '.subRows': [{ a: [5, 6], b: [7, 8] }, null] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ]
     }
     const { container } = render(<Reactable {...props} />)
@@ -7311,9 +7311,9 @@ describe('cell click actions', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb2'], c: ['ccc1', 'ccc2'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', details: ['detail-b', null] },
-        { name: 'c', accessor: 'c', details: ['detail-c', 'detail-c'] }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', details: ['detail-b', null] },
+        { name: 'c', id: 'c', details: ['detail-c', 'detail-c'] }
       ],
       onClick: 'expand'
     }
@@ -7338,8 +7338,8 @@ describe('cell click actions', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb2'] },
       columns: [
-        { name: 'col-a', accessor: 'a', details: ['row-details-1', 'row-details-2'] },
-        { name: 'col-b', accessor: 'b' }
+        { name: 'col-a', id: 'a', details: ['row-details-1', 'row-details-2'] },
+        { name: 'col-b', id: 'b' }
       ],
       columnGroups: [{ columns: ['a', 'b'] }],
       onClick: 'expand'
@@ -7355,17 +7355,17 @@ describe('cell click actions', () => {
     const props = {
       data: { a: [1, 1, 2], b: ['b-a', 'b-b', 'b-c'], c: ['x', 'x', 'x'], d: [1, 2, 3] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
+        { name: 'col-a', id: 'a' },
         {
           name: 'col-b',
-          accessor: 'b',
+          id: 'b',
           aggregated: cellInfo => `b-agg-${cellInfo.level}-${cellInfo.index}`,
           details: () => 'details-b'
         },
-        { name: 'col-c', accessor: 'c' },
+        { name: 'col-c', id: 'c' },
         {
           name: 'col-d',
-          accessor: 'd',
+          id: 'd',
           aggregated: cellInfo => `d-agg-${cellInfo.level}-${cellInfo.index}`
         }
       ],
@@ -7402,7 +7402,7 @@ describe('cell click actions', () => {
   it('ignores pad rows on click', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'] },
-      columns: [{ name: 'a', accessor: 'a', details: ['detail-a', 'detail-a', 'detail-a'] }],
+      columns: [{ name: 'a', id: 'a', details: ['detail-a', 'detail-a', 'detail-a'] }],
       onClick: 'expand',
       minRows: 5
     }
@@ -7417,9 +7417,9 @@ describe('cell click actions', () => {
     const props = {
       data: { a: ['aaa1', 'aaa2'], b: ['bbb1', 'bbb2'], c: ['ccc1', 'ccc2'] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c' }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
       ],
       onClick: (rowInfo, column, state) => {
         if (clickCount < 2) {
@@ -7485,7 +7485,7 @@ describe('pagination', () => {
   it('defaultPageSize', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5, 6, 7] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       defaultPageSize: 2
     }
     const { container } = render(<Reactable {...props} />)
@@ -7495,7 +7495,7 @@ describe('pagination', () => {
   it('table updates when defaultPageSize changes', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5, 6, 7] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       defaultPageSize: 2
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -7510,8 +7510,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ]
     }
 
@@ -7560,8 +7560,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'aaa', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b', filterable: true }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', filterable: true }
       ],
       defaultPageSize: 2,
       searchable: true
@@ -7587,8 +7587,8 @@ describe('pagination', () => {
         a: [111, 111, 222, 33]
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a' }
       ],
       defaultPageSize: 4,
       groupBy: ['group'],
@@ -7616,7 +7616,7 @@ describe('pagination', () => {
   it('auto-shown pagination works when data changes', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5] },
-      columns: [{ name: 'col-a', accessor: 'a' }],
+      columns: [{ name: 'col-a', id: 'a' }],
       defaultPageSize: 4
     }
     const { container, rerender } = render(<Reactable {...props} />)
@@ -7631,8 +7631,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['a', 'b', 'c', 'd', 'e'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       defaultPageSize: 2
     }
@@ -7675,8 +7675,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       defaultPageSize: 2,
       showPageSizeOptions: true,
@@ -7725,8 +7725,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       defaultPageSize: 2,
       paginationType: 'simple'
@@ -7795,8 +7795,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       defaultPageSize: 1,
       paginationType: 'numbers'
@@ -7868,8 +7868,8 @@ describe('pagination', () => {
     const props = {
       data: { a: [1, 2, 3, 4, 5], b: ['_a1', '_b2', '_c3', '_d4', '_e5'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       defaultPageSize: 2,
       paginationType: 'jump'
@@ -7934,8 +7934,8 @@ describe('pagination', () => {
         a: [111, 111, 222, 33]
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a' }
       ],
       defaultPageSize: 2,
       groupBy: ['group'],
@@ -7962,8 +7962,8 @@ describe('pagination', () => {
         a: [111, 111, 222, 33]
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a' }
       ],
       defaultPageSize: 2,
       groupBy: ['group']
@@ -7984,12 +7984,12 @@ describe('pagination', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           cell: (cellInfo, state) => {
             return `page: ${state.page}, pageSize: ${state.pageSize}, pages: ${state.pages}`
           }
         },
-        { name: 'b', accessor: 'b' }
+        { name: 'b', id: 'b' }
       ],
       pagination: false,
       defaultPageSize: 2
@@ -8008,12 +8008,12 @@ describe('pagination', () => {
       columns: [
         {
           name: 'a',
-          accessor: 'a',
+          id: 'a',
           cell: (cellInfo, state) => {
             return `page: ${state.page}, pageSize: ${state.pageSize}, pages: ${state.pages}`
           }
         },
-        { name: 'b', accessor: 'b' }
+        { name: 'b', id: 'b' }
       ],
       pagination: false,
       defaultPageSize: 2,
@@ -8040,7 +8040,7 @@ describe('pagination', () => {
   it('disabling pagination works when data changes', () => {
     const props = {
       data: { a: [1, 2, 3, 4] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       pagination: false,
       defaultPageSize: 2
     }
@@ -8057,8 +8057,8 @@ describe('pagination', () => {
         a: [111, 111, 222, 33]
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a' }
       ],
       pagination: false,
       defaultPageSize: 4,
@@ -8079,8 +8079,8 @@ describe('pagination', () => {
         a: [111, 111, 222, 33]
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a' }
       ],
       pagination: false,
       defaultPageSize: 4,
@@ -8098,7 +8098,7 @@ describe('pagination', () => {
   it('current page state resets when data changes (also on sorting, filtering, searching)', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb', 'cc', 'cc', 'cc', 'cc'] },
-      columns: [{ name: 'col-a', accessor: 'a' }],
+      columns: [{ name: 'col-a', id: 'a' }],
       defaultPageSize: 2,
       filterable: true,
       searchable: true
@@ -8145,14 +8145,14 @@ describe('themes', () => {
       columns: [
         {
           name: 'colA',
-          accessor: 'a',
+          id: 'a',
           footer: 'footer-a',
           className: 'cell-a',
           headerClassName: 'header-a',
           footerClassName: 'footer-a',
           details: () => 'details'
         },
-        { name: 'colB', accessor: 'b', footer: 'footer-b' }
+        { name: 'colB', id: 'b', footer: 'footer-b' }
       ],
       columnGroups: [{ columns: ['a'], name: 'group-a' }],
       minRows: 4,
@@ -8244,8 +8244,8 @@ describe('themes', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a' },
-        { name: 'colB', accessor: 'b' }
+        { name: 'colA', id: 'a' },
+        { name: 'colB', id: 'b' }
       ],
       defaultPageSize: 1,
       showPageSizeOptions: true,
@@ -8278,8 +8278,8 @@ describe('themes', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
       columns: [
-        { name: 'colA', accessor: 'a', footer: 'footer-a' },
-        { name: 'colB', accessor: 'b', footer: 'footer-b' }
+        { name: 'colA', id: 'a', footer: 'footer-a' },
+        { name: 'colB', id: 'b', footer: 'footer-b' }
       ],
       columnGroups: [{ columns: ['a'], name: 'group-a' }],
       minRows: 4,
@@ -8324,7 +8324,7 @@ describe('themes', () => {
   it('theme styles are scoped to their tables', () => {
     const props = {
       data: { a: [] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     const { container } = render(
       <div>
@@ -8362,7 +8362,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('updates selected rows', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       selectionId: 'selected'
     }
@@ -8404,7 +8404,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('handles invalid selected rows', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple'
     }
     const { container } = render(
@@ -8428,7 +8428,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('updates expanded rows', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2'] }]
+      columns: [{ name: 'a', id: 'a', details: ['detail-1', 'detail-2'] }]
     }
     const { getByText, queryByText } = render(
       <div data-reactable-output="shiny-output-container">
@@ -8451,7 +8451,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('updates current page', () => {
     const props = {
       data: { a: [1, 2, 3] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       defaultPageSize: 1
     }
     const { getByText } = render(
@@ -8484,7 +8484,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('updates data', () => {
     const props = {
       data: { a: ['c1', 'c2', 'c3', 'c4'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       defaultPageSize: 3
     }
     const { getByText, queryByText, rerender } = render(
@@ -8511,7 +8511,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('updates data, selected, expanded, and current page state', () => {
     const props = {
       data: { a: ['a1', 'a2', 'a3'] },
-      columns: [{ name: 'a', accessor: 'a', details: ['detail-1', 'detail-2', 'detail-3'] }],
+      columns: [{ name: 'a', id: 'a', details: ['detail-1', 'detail-2', 'detail-3'] }],
       defaultPageSize: 1,
       selection: 'multiple'
     }
@@ -8540,7 +8540,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('does not enable updateState for tables that are not Shiny outputs', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     // Static rendered tables in Shiny have no parent element with a data-reactable-output ID
     render(
@@ -8554,7 +8554,7 @@ describe('updateReactable updates table state from Shiny', () => {
   it('does not enable updateState for nested tables, which are not Shiny bound', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       nested: true
     }
     render(
@@ -8569,7 +8569,7 @@ describe('updateReactable updates table state from Shiny', () => {
     window.Shiny = undefined
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     render(
       <div data-reactable-output="not-a-shiny-output-container">
@@ -8597,7 +8597,7 @@ describe('getReactableState gets table state from Shiny', () => {
   it('calls Shiny.onInputChange when table state changes', () => {
     const props = {
       data: { a: [1, 2, 3, 4] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       selection: 'multiple',
       defaultPageSize: 2,
       showPageSizeOptions: true,
@@ -8646,7 +8646,7 @@ describe('getReactableState gets table state from Shiny', () => {
   it('does not send state when table is not a Shiny output', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     // Static rendered tables in Shiny have no parent element with a data-reactable-output ID
     render(
@@ -8660,7 +8660,7 @@ describe('getReactableState gets table state from Shiny', () => {
   it('does not send state for nested tables, which are not Shiny bound', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       nested: true
     }
     render(
@@ -8677,7 +8677,7 @@ describe('getReactableState gets table state from Shiny', () => {
     window.Shiny.onInputChange = undefined
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     render(
       <div data-reactable-output="not-a-shiny-output-container">
@@ -8717,8 +8717,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: ['key1', 'key2', 'key3'],
       crosstalkGroup: 'group'
@@ -8762,8 +8762,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: ['key1', 'key2', 'key3'],
       crosstalkGroup: 'group'
@@ -8783,8 +8783,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: ['key1', 'key2', 'key3'],
       crosstalkGroup: 'group'
@@ -8825,8 +8825,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: ['key1', 'key2', 'key3'],
       crosstalkGroup: 'group'
@@ -8846,8 +8846,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: ['key1', 'key2', 'key3'],
       crosstalkGroup: 'group'
@@ -8880,8 +8880,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -8911,8 +8911,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       defaultSelected: [2, 0],
@@ -8932,8 +8932,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -8963,8 +8963,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       searchable: true,
@@ -9003,8 +9003,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [], b: [] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       crosstalkKey: null,
       crosstalkGroup: 'group'
@@ -9019,7 +9019,7 @@ describe('Crosstalk', () => {
   it('does not create filter/selection handles when Crosstalk is not used', () => {
     const props = {
       data: { a: [1, 2] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     render(<Reactable {...props} />)
     expect(window.crosstalk.FilterHandle).not.toHaveBeenCalled()
@@ -9033,8 +9033,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       columnGroups: [{ name: 'group-a', columns: ['a', 'b'] }],
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -9062,9 +9062,9 @@ describe('Crosstalk', () => {
         b: ['aaa', 'bbb', 'aaa', 'bbb']
       },
       columns: [
-        { name: 'group', accessor: 'group' },
-        { name: 'col-a', accessor: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
-        { name: 'col-b', accessor: 'b', aggregate: () => 'ccc' }
+        { name: 'group', id: 'group' },
+        { name: 'col-a', id: 'a', type: 'numeric', aggregate: 'sum', className: 'col-a' },
+        { name: 'col-b', id: 'b', aggregate: () => 'ccc' }
       ],
       groupBy: ['group'],
       crosstalkKey: ['key1', 'key2', 'key3', 'key4'],
@@ -9091,9 +9091,9 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'], c: [5, 6, 7] },
       columns: [
-        { name: 'col-a', accessor: 'a' },
-        { name: 'col-b', accessor: 'b' },
-        { name: 'col-c', accessor: 'c', show: false }
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c', show: false }
       ],
       columnGroups: [{ name: 'group-a', columns: ['a', 'b'] }],
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -9116,8 +9116,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -9147,8 +9147,8 @@ describe('Crosstalk', () => {
     const props = {
       data: { a: [111, 222, 333], b: ['aaa', 'bbb', 'ccc'] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       selection: 'multiple',
       crosstalkKey: ['key1', 'key2', 'key3'],
@@ -9196,7 +9196,7 @@ describe('reactable JavaScript API', () => {
   it('getInstance works when table has an elementId', () => {
     const props = {
       data: { a: [111, 222] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     render(<Reactable {...props} />)
@@ -9208,7 +9208,7 @@ describe('reactable JavaScript API', () => {
   it('getInstance works when table is a Shiny output', () => {
     const props = {
       data: { a: [111, 222] },
-      columns: [{ name: 'a', accessor: 'a' }]
+      columns: [{ name: 'a', id: 'a' }]
     }
     render(
       <div data-reactable-output="shiny-output-tbl">
@@ -9223,7 +9223,7 @@ describe('reactable JavaScript API', () => {
   it('getInstance allows elementId to override Shiny output ID', () => {
     const props = {
       data: { a: [111, 222] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     render(
@@ -9242,7 +9242,7 @@ describe('reactable JavaScript API', () => {
   it('instance is cleaned up when table unmounts', () => {
     const props = {
       data: { a: [111, 222] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-table'
     }
     const { unmount } = render(<Reactable {...props} />)
@@ -9254,7 +9254,7 @@ describe('reactable JavaScript API', () => {
   it('Reactable.getState', () => {
     const props = {
       data: { a: ['aaa1', 'bbb2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     render(<Reactable {...props} />)
@@ -9275,7 +9275,7 @@ describe('reactable JavaScript API', () => {
   it('Reactable.setFilter', () => {
     const props = {
       data: { a: ['aaa1', 'bbb2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     const { container } = render(<Reactable {...props} />)
@@ -9299,7 +9299,7 @@ describe('reactable JavaScript API', () => {
   it('Reactable.setAllFilters', () => {
     const props = {
       data: { a: ['aaa1', 'bbb2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     const { container } = render(<Reactable {...props} />)
@@ -9317,7 +9317,7 @@ describe('reactable JavaScript API', () => {
   it('Reactable.setSearch', () => {
     const props = {
       data: { a: ['aaa1', 'bbb2'] },
-      columns: [{ name: 'a', accessor: 'a' }],
+      columns: [{ name: 'a', id: 'a' }],
       elementId: 'my-tbl'
     }
     const { container } = render(<Reactable {...props} />)
@@ -9342,8 +9342,8 @@ describe('reactable JavaScript API', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb'], b: [1, 2, 3] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       elementId: 'my-tbl'
     }
@@ -9369,8 +9369,8 @@ describe('reactable JavaScript API', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb'], b: [1, 2, 3] },
       columns: [
-        { name: 'a', accessor: 'a' },
-        { name: 'b', accessor: 'b' }
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
       ],
       elementId: 'my-tbl'
     }
@@ -9394,7 +9394,7 @@ describe('reactable JavaScript API', () => {
   it('Reactable.toggleAllRowsExpanded', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb'] },
-      columns: [{ name: 'a', accessor: 'a', details: ['detail', 'detail', 'detail'] }],
+      columns: [{ name: 'a', id: 'a', details: ['detail', 'detail', 'detail'] }],
       elementId: 'my-tbl'
     }
     const { queryAllByText } = render(<Reactable {...props} />)
@@ -9420,12 +9420,12 @@ describe('reactable JavaScript API', () => {
     const props = {
       data: { a: ['a11', 'a12', 'a23'], b: [2, 3, 3] },
       columns: [
-        { name: 'a', accessor: 'a' },
+        { name: 'a', id: 'a' },
         // Should include hidden columns
-        { name: 'b', accessor: 'b', show: false },
+        { name: 'b', id: 'b', show: false },
         // Should ignore columns without data
-        { name: '', accessor: '.selection' },
-        { name: '', accessor: '.details' }
+        { name: '', id: '.selection' },
+        { name: '', id: '.details' }
       ],
       searchable: true,
       elementId: 'my-tbl'

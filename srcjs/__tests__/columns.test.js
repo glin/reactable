@@ -59,41 +59,39 @@ test('RawHTML', () => {
 })
 
 describe('buildColumnDefs', () => {
-  test('id', () => {
-    const cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }])
-    cols.forEach(col => expect(col.id).toEqual(col.accessor))
+  test('accessor', () => {
+    const cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }])
+    expect(cols[0].accessor({ x: 1, y: 2 })).toEqual(1)
+    expect(cols[1].accessor({ x: 'x', y: 'y' })).toEqual('y')
+    expect(cols[0].accessor({})).toEqual(undefined)
   })
 
-  test('accessors with path characters (dots or square brackets) work', () => {
-    const cols = buildColumnDefs([
-      { accessor: 'petal.width' },
-      { accessor: 'x[' },
-      { accessor: 'y]' }
-    ])
+  test('accessors with path characters (periods or square brackets) work', () => {
+    const cols = buildColumnDefs([{ id: 'petal.width' }, { id: 'x[' }, { id: 'y]' }])
     expect(cols[0].accessor({ 'petal.width': 5 })).toEqual(5)
     expect(cols[1].accessor({ 'x[': 6 })).toEqual(6)
     expect(cols[2].accessor({ 'y]': 7 })).toEqual(7)
   })
 
   test('aggregators', () => {
-    let cols = buildColumnDefs([{ accessor: 'x', aggregate: 'mean', type: 'numeric' }])
+    let cols = buildColumnDefs([{ id: 'x', aggregate: 'mean', type: 'numeric' }])
     expect(cols[0].aggregate).toEqual(aggregators.mean)
 
-    cols = buildColumnDefs([{ accessor: 'x', aggregate: 'count' }])
+    cols = buildColumnDefs([{ id: 'x', aggregate: 'count' }])
     expect(cols[0].aggregate).toEqual(aggregators.count)
 
     const customFn = values => values.length
-    cols = buildColumnDefs([{ accessor: 'x', aggregate: customFn }])
+    cols = buildColumnDefs([{ id: 'x', aggregate: customFn }])
     expect(cols[0].aggregate).toEqual(customFn)
 
-    cols = buildColumnDefs([{ accessor: 'x', aggregate: 'invalid-aggregator' }])
+    cols = buildColumnDefs([{ id: 'x', aggregate: 'invalid-aggregator' }])
     expect(cols[0].aggregate).toEqual(undefined)
     expect(cols[0].Aggregated({ value: undefined })).toEqual('')
   })
 
   test('formatters', () => {
     // Cell
-    let cols = buildColumnDefs([{ accessor: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
+    let cols = buildColumnDefs([{ id: 'x', format: { cell: { prefix: '$', digits: 1 } } }])
     expect(cols[0].Cell({ value: 123.12 })).toEqual('$123.1')
     expect(cols[0].Grouped({ value: 123.12, subRows: [] })).toEqual(
       <React.Fragment>
@@ -104,7 +102,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Aggregated({ value: 123.12 })).toEqual('123.12')
 
     // Aggregated
-    cols = buildColumnDefs([{ accessor: 'x', format: { aggregated: { suffix: '!' } } }])
+    cols = buildColumnDefs([{ id: 'x', format: { aggregated: { suffix: '!' } } }])
     expect(cols[0].Cell({ value: 'xyz' })).toEqual('xyz')
     expect(cols[0].Grouped({ value: 'xyz', subRows: [{}] })).toEqual(
       <React.Fragment>
@@ -119,31 +117,29 @@ describe('buildColumnDefs', () => {
 
   test('renderers', () => {
     // Cell
-    let cols = buildColumnDefs([{ accessor: 'x', cell: cellInfo => cellInfo.value }])
+    let cols = buildColumnDefs([{ id: 'x', cell: cellInfo => cellInfo.value }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x')
 
-    cols = buildColumnDefs([
-      { accessor: 'x', cell: ['X', 2, React.createElement('div', null, 'Z')] }
-    ])
+    cols = buildColumnDefs([{ id: 'x', cell: ['X', 2, React.createElement('div', null, 'Z')] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual('X')
     expect(cols[0].Cell({ value: 'y', index: 1 })).toEqual('2')
     expect(cols[0].Cell({ value: 'z', index: 2 })).toEqual(React.createElement('div', null, 'Z'))
 
-    cols = buildColumnDefs([{ accessor: 'x', html: true, cell: ['<div>cell</div>'] }])
+    cols = buildColumnDefs([{ id: 'x', html: true, cell: ['<div>cell</div>'] }])
     expect(cols[0].Cell({ value: 'x', index: 0 })).toEqual(
       <RawHTML style={{ display: 'inline' }} html="<div>cell</div>" />
     )
 
     // Grouped
     cols = buildColumnDefs([
-      { accessor: 'x', cell: () => 'overridden', grouped: cellInfo => cellInfo.value }
+      { id: 'x', cell: () => 'overridden', grouped: cellInfo => cellInfo.value }
     ])
     expect(cols[0].Grouped({ value: 'x' })).toEqual('x')
 
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         cell: () => 'overridden',
         grouped: function Grouped(cellInfo) {
           return <div>{cellInfo.value}</div>
@@ -154,7 +150,7 @@ describe('buildColumnDefs', () => {
 
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         cell: () => 'overridden',
         html: true,
         grouped: cellInfo => `<div>${cellInfo.value}</div>`
@@ -165,14 +161,14 @@ describe('buildColumnDefs', () => {
     )
 
     // Aggregated
-    cols = buildColumnDefs([{ accessor: 'x', aggregated: cellInfo => cellInfo.value + '!!' }])
+    cols = buildColumnDefs([{ id: 'x', aggregated: cellInfo => cellInfo.value + '!!' }])
     expect(cols[0].Cell({ value: 'x' })).toEqual('x')
     expect(cols[0].Aggregated({ value: 'x' })).toEqual('x!!')
     expect(cols[0].Aggregated({ value: null })).toEqual('null!!')
 
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         aggregated: function Aggregated(cellInfo) {
           return React.createElement('div', null, cellInfo.value)
         }
@@ -180,13 +176,13 @@ describe('buildColumnDefs', () => {
     ])
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(React.createElement('div', null, 'x'))
 
-    cols = buildColumnDefs([{ accessor: 'x' }])
+    cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].Aggregated({ value: true })).toEqual('true')
 
     // React elements and HTML rendering don't clash
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         cell: [React.createElement('div', null, 'Z')],
         grouped: function Grouped(cellInfo) {
           return <span>{cellInfo.value}</span>
@@ -202,36 +198,36 @@ describe('buildColumnDefs', () => {
     expect(cols[0].Aggregated({ value: 'x', index: 0 })).toEqual(<div>{'x'}</div>)
 
     // Header
-    cols = buildColumnDefs([{ accessor: 'x', name: 'x' }])
+    cols = buildColumnDefs([{ id: 'x', name: 'x' }])
     expect(cols[0].Header()).toEqual('x')
-    cols = buildColumnDefs([{ accessor: 'x', name: 'x', header: '' }])
+    cols = buildColumnDefs([{ id: 'x', name: 'x', header: '' }])
     expect(cols[0].Header()).toEqual('')
-    cols = buildColumnDefs([{ accessor: 'x', header: () => 'header' }])
+    cols = buildColumnDefs([{ id: 'x', header: () => 'header' }])
     expect(cols[0].Header()).toEqual('header')
-    cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div> }])
+    cols = buildColumnDefs([{ id: 'x', header: <div>header</div> }])
     expect(cols[0].Header()).toEqual(<div>header</div>)
-    cols = buildColumnDefs([{ accessor: 'x', html: true, header: '<div>header</div>' }])
+    cols = buildColumnDefs([{ id: 'x', html: true, header: '<div>header</div>' }])
     expect(cols[0].Header()).toEqual(<RawHTML html="<div>header</div>" />)
 
     // React elements and HTML rendering don't clash
-    cols = buildColumnDefs([{ accessor: 'x', header: <div>header</div>, html: true }])
+    cols = buildColumnDefs([{ id: 'x', header: <div>header</div>, html: true }])
     expect(cols[0].Header()).toEqual(<div>header</div>)
 
     // Footer
-    cols = buildColumnDefs([{ accessor: 'x' }])
+    cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].Footer).toEqual('\u200b')
-    cols = buildColumnDefs([{ accessor: 'x', footer: '' }])
+    cols = buildColumnDefs([{ id: 'x', footer: '' }])
     expect(cols[0].Footer()).toEqual('')
-    cols = buildColumnDefs([{ accessor: 'x', footer: () => 'footer' }])
+    cols = buildColumnDefs([{ id: 'x', footer: () => 'footer' }])
     expect(cols[0].Footer()).toEqual('footer')
-    cols = buildColumnDefs([{ accessor: 'x', footer: React.createElement('div', null, 'footer') }])
+    cols = buildColumnDefs([{ id: 'x', footer: React.createElement('div', null, 'footer') }])
     expect(cols[0].Footer()).toEqual(React.createElement('div', null, 'footer'))
-    cols = buildColumnDefs([{ accessor: 'x', html: true, footer: '<div>footer</div>' }])
+    cols = buildColumnDefs([{ id: 'x', html: true, footer: '<div>footer</div>' }])
     expect(cols[0].Footer()).toEqual(<RawHTML html="<div>footer</div>" />)
 
     // React elements and HTML rendering don't clash
     cols = buildColumnDefs([
-      { accessor: 'x', footer: React.createElement('div', null, 'footer'), html: true }
+      { id: 'x', footer: React.createElement('div', null, 'footer'), html: true }
     ])
     expect(cols[0].Footer()).toEqual(React.createElement('div', null, 'footer'))
   })
@@ -240,7 +236,7 @@ describe('buildColumnDefs', () => {
     // Cell
     let cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         format: { cell: { prefix: '@' } },
         cell: cellInfo => `__${cellInfo.value}__`,
         grouped: cellInfo => `/${cellInfo.value}/`
@@ -253,7 +249,7 @@ describe('buildColumnDefs', () => {
     // Aggregated
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         format: { aggregated: { prefix: '@' } },
         aggregated: cellInfo => `__${cellInfo.value}__`
       }
@@ -269,14 +265,14 @@ describe('buildColumnDefs', () => {
   })
 
   test('html', () => {
-    let cols = buildColumnDefs([{ accessor: 'x', html: true }])
+    let cols = buildColumnDefs([{ id: 'x', html: true }])
     expect(cols[0].Cell({ value: 'x' })).toEqual(<RawHTML style={{ display: 'inline' }} html="x" />)
     expect(cols[0].Aggregated({ value: 'x' })).toEqual(<RawHTML html="x" />)
 
     // render html
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         cell: cellInfo => cellInfo.value + '!',
         aggregated: cellInfo => cellInfo.value + '!!',
         html: true
@@ -290,7 +286,7 @@ describe('buildColumnDefs', () => {
     // format html
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         format: { cell: { prefix: '@' }, aggregated: { prefix: '$' } },
         cell: cellInfo => `__${cellInfo.value}__`,
         grouped: cellInfo => `__${cellInfo.value}__`,
@@ -310,7 +306,7 @@ describe('buildColumnDefs', () => {
   test('grouped cells render the same as regular cells by default', () => {
     let cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         format: { cell: { prefix: '@' } },
         cell: cellInfo => `__${cellInfo.value}__`
       }
@@ -326,23 +322,21 @@ describe('buildColumnDefs', () => {
 
   test('NA and NaN rendering', () => {
     // Default rendering of numeric NAs
-    let cols = buildColumnDefs([
-      { accessor: 'x', type: 'numeric', grouped: cellInfo => cellInfo.value }
-    ])
+    let cols = buildColumnDefs([{ id: 'x', type: 'numeric', grouped: cellInfo => cellInfo.value }])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('\u200b')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('\u200b')
     expect(cols[0].Grouped({ value: 'NA' })).toEqual('\u200b')
     expect(cols[0].Grouped({ value: 'NaN' })).toEqual('\u200b')
 
     // Default rendering of non-numeric NAs (serialized as nulls)
-    cols = buildColumnDefs([{ accessor: 'x', grouped: cellInfo => cellInfo.value }])
+    cols = buildColumnDefs([{ id: 'x', grouped: cellInfo => cellInfo.value }])
     expect(cols[0].Cell({ value: null })).toEqual('\u200b')
     expect(cols[0].Grouped({ value: null })).toEqual('\u200b')
 
     // Custom NA strings
     cols = buildColumnDefs([
-      { accessor: 'x', type: 'numeric', na: '---', grouped: cellInfo => cellInfo.value },
-      { accessor: 'y', na: 'missing', grouped: cellInfo => cellInfo.value }
+      { id: 'x', type: 'numeric', na: '---', grouped: cellInfo => cellInfo.value },
+      { id: 'y', na: 'missing', grouped: cellInfo => cellInfo.value }
     ])
     expect(cols[0].Cell({ value: 'NA' })).toEqual('---')
     expect(cols[0].Cell({ value: 'NaN' })).toEqual('---')
@@ -354,14 +348,14 @@ describe('buildColumnDefs', () => {
     // Works with renderers, ignored by formatters
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         type: 'numeric',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
         cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`,
         grouped: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       },
       {
-        accessor: 'y',
+        id: 'y',
         format: { cell: { prefix: '@', suffix: '$', percent: true, time: true } },
         cell: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`,
         grouped: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
@@ -377,16 +371,16 @@ describe('buildColumnDefs', () => {
 
   test('sortType', () => {
     // Non-numeric sort
-    let cols = buildColumnDefs([{ accessor: 'x' }])
+    let cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].sortType({ values: { x: 'a' } }, { values: { x: 'B' } }, 'x')).toEqual(-1)
 
     // Numeric sort
-    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    cols = buildColumnDefs([{ id: 'x', type: 'numeric' }])
     expect(cols[0].sortType({ values: { x: 111 } }, { values: { x: 2 } }, 'x')).toEqual(1)
     expect(cols[0].sortType({ values: { x: 111 } }, { values: { x: 'Inf' } }, 'x')).toEqual(-1)
 
     // Sort missing values last
-    cols = buildColumnDefs([{ accessor: 'x', sortNALast: true }])
+    cols = buildColumnDefs([{ id: 'x', sortNALast: true }])
     expect(cols[0].sortType({ values: { x: null } }, { values: { x: 'x' } }, 'x', true)).toEqual(-1)
     expect(cols[0].sortType({ values: { x: null } }, { values: { x: 'x' } }, 'x', false)).toEqual(1)
   })
@@ -394,7 +388,7 @@ describe('buildColumnDefs', () => {
   test('className', () => {
     let cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         className: 'cell',
         headerClassName: 'hdr',
         footerClassName: 'ftr'
@@ -407,7 +401,7 @@ describe('buildColumnDefs', () => {
     // JS callback
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         className: (rowInfo, column, state) => {
           if (rowInfo.index === 1) {
             return `index-${rowInfo.index} col-${column.id} page-${state.page}`
@@ -425,7 +419,7 @@ describe('buildColumnDefs', () => {
     // R callback
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         className: ['a-cls', 'b-cls', null],
         align: 'right'
       }
@@ -438,7 +432,7 @@ describe('buildColumnDefs', () => {
   test('style', () => {
     let cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         style: 'cell-style',
         headerStyle: 'hdr-style',
         footerStyle: 'ftr-style'
@@ -451,7 +445,7 @@ describe('buildColumnDefs', () => {
     // JS callback
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         style: (rowInfo, column, state) => {
           if (rowInfo.index === 1 && column.id === 'x' && state.page === 1) {
             return { color: 'red' }
@@ -465,7 +459,7 @@ describe('buildColumnDefs', () => {
     // R callback
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         style: [{ color: 'red' }, { width: '100px' }, null]
       }
     ])
@@ -475,7 +469,7 @@ describe('buildColumnDefs', () => {
   })
 
   test('numeric cols', () => {
-    let cols = buildColumnDefs([{ accessor: 'x', type: 'numeric' }])
+    let cols = buildColumnDefs([{ id: 'x', type: 'numeric' }])
     expect(cols[0].Cell({ value: 123 })).toEqual('123')
     expect(cols[0].Cell({ value: 0 })).toEqual('0')
     expect(cols[0].Cell({ value: 'Inf' })).toEqual('Inf')
@@ -487,7 +481,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-right')
 
     // Align override
-    cols = buildColumnDefs([{ accessor: 'x', type: 'numeric', align: 'left' }])
+    cols = buildColumnDefs([{ id: 'x', type: 'numeric', align: 'left' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps({ index: 0 }, {}, null).className).toEqual('rt-align-left')
@@ -497,7 +491,7 @@ describe('buildColumnDefs', () => {
 
   test('column alignment', () => {
     // Default: left
-    let cols = buildColumnDefs([{ accessor: 'x' }])
+    let cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps({ index: 0 }, {}, null).className).toEqual('rt-align-left')
@@ -505,7 +499,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-left')
 
     // Left
-    cols = buildColumnDefs([{ accessor: 'x', align: 'left' }])
+    cols = buildColumnDefs([{ id: 'x', align: 'left' }])
     expect(cols[0].align).toEqual('left')
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps({ index: 0 }, {}, null).className).toEqual('rt-align-left')
@@ -513,7 +507,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-left')
 
     // Right
-    cols = buildColumnDefs([{ accessor: 'x', align: 'right' }])
+    cols = buildColumnDefs([{ id: 'x', align: 'right' }])
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps({ index: 0 }, {}, null).className).toEqual('rt-align-right')
@@ -523,7 +517,7 @@ describe('buildColumnDefs', () => {
     // Center
     cols = buildColumnDefs([
       {
-        accessor: 'x',
+        id: 'x',
         align: 'center',
         className: 'col',
         headerClassName: 'hdr',
@@ -538,7 +532,7 @@ describe('buildColumnDefs', () => {
 
   test('column vertical alignment', () => {
     // Default: top
-    let cols = buildColumnDefs([{ accessor: 'x' }])
+    let cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].vAlign).toEqual('top')
     expect(cols[0].headerVAlign).toEqual('top')
     expect(cols[0].getProps().className).toEqual('rt-align-left')
@@ -546,7 +540,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-left')
 
     // Top
-    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'top', headerVAlign: 'top' }])
+    cols = buildColumnDefs([{ id: 'x', vAlign: 'top', headerVAlign: 'top' }])
     expect(cols[0].vAlign).toEqual('top')
     expect(cols[0].headerVAlign).toEqual('top')
     expect(cols[0].getProps().className).toEqual('rt-align-left')
@@ -554,14 +548,14 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-left')
 
     // Center
-    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'center' }])
+    cols = buildColumnDefs([{ id: 'x', vAlign: 'center' }])
     expect(cols[0].vAlign).toEqual('center')
     expect(cols[0].headerVAlign).toEqual('top')
     expect(cols[0].getProps().className).toEqual('rt-align-left rt-valign-center')
     expect(cols[0].headerClassName).toEqual('rt-align-left')
     expect(cols[0].footerClassName).toEqual('rt-align-left rt-valign-center')
 
-    cols = buildColumnDefs([{ accessor: 'x', headerVAlign: 'center' }])
+    cols = buildColumnDefs([{ id: 'x', headerVAlign: 'center' }])
     expect(cols[0].vAlign).toEqual('top')
     expect(cols[0].headerVAlign).toEqual('center')
     expect(cols[0].getProps().className).toEqual('rt-align-left')
@@ -569,7 +563,7 @@ describe('buildColumnDefs', () => {
     expect(cols[0].footerClassName).toEqual('rt-align-left')
 
     // Bottom
-    cols = buildColumnDefs([{ accessor: 'x', vAlign: 'bottom', headerVAlign: 'bottom' }])
+    cols = buildColumnDefs([{ id: 'x', vAlign: 'bottom', headerVAlign: 'bottom' }])
     expect(cols[0].vAlign).toEqual('bottom')
     expect(cols[0].headerVAlign).toEqual('bottom')
     expect(cols[0].getProps().className).toEqual('rt-align-left rt-valign-bottom')
@@ -579,32 +573,32 @@ describe('buildColumnDefs', () => {
 
   test('column widths', () => {
     // Default widths
-    let cols = buildColumnDefs([{ accessor: 'x' }])
+    let cols = buildColumnDefs([{ id: 'x' }])
     expect(cols[0].minWidth).toEqual(100)
     expect(cols[0].maxWidth).toEqual(Number.MAX_SAFE_INTEGER)
     expect(cols[0].width).toEqual(100)
 
     // Custom min and max widths
-    cols = buildColumnDefs([{ accessor: 'x', minWidth: 111, maxWidth: 222 }])
+    cols = buildColumnDefs([{ id: 'x', minWidth: 111, maxWidth: 222 }])
     expect(cols[0].minWidth).toEqual(111)
     expect(cols[0].maxWidth).toEqual(222)
     expect(cols[0].width).toEqual(111)
 
     // Max width should take priority over min width
-    cols = buildColumnDefs([{ accessor: 'x', minWidth: 111, maxWidth: 110 }])
+    cols = buildColumnDefs([{ id: 'x', minWidth: 111, maxWidth: 110 }])
     expect(cols[0].minWidth).toEqual(110)
     expect(cols[0].maxWidth).toEqual(110)
     expect(cols[0].width).toEqual(110)
 
     // Fixed width should take priority over min and max widths
-    cols = buildColumnDefs([{ accessor: 'x', width: 99, minWidth: 111, maxWidth: 110 }])
+    cols = buildColumnDefs([{ id: 'x', width: 99, minWidth: 111, maxWidth: 110 }])
     expect(cols[0].minWidth).toEqual(99)
     expect(cols[0].maxWidth).toEqual(99)
     expect(cols[0].width).toEqual(99)
     expect(cols[0].disableResizing).toEqual(true)
 
     // Fixed width columns should not be resizable
-    cols = buildColumnDefs([{ accessor: 'x', minWidth: 111, maxWidth: 111 }])
+    cols = buildColumnDefs([{ id: 'x', minWidth: 111, maxWidth: 111 }])
     expect(cols[0].minWidth).toEqual(111)
     expect(cols[0].maxWidth).toEqual(111)
     expect(cols[0].width).toEqual(111)
@@ -613,16 +607,16 @@ describe('buildColumnDefs', () => {
 
   test('header sort icons', () => {
     // No sort
-    let cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }])
+    let cols = buildColumnDefs([{ name: 'xy', id: 'x' }])
     expect(cols[0].Header()).toEqual('xy')
-    cols = buildColumnDefs([{ name: 'xy', accessor: 'x' }], null, {
+    cols = buildColumnDefs([{ name: 'xy', id: 'x' }], null, {
       sortable: false,
       showSortIcon: true
     })
     expect(cols[0].Header()).toEqual('xy')
 
     // Table sort - left aligned
-    cols = buildColumnDefs([{ name: 'x', accessor: 'x' }], null, {
+    cols = buildColumnDefs([{ name: 'x', id: 'x' }], null, {
       sortable: true,
       showSortIcon: true
     })
@@ -634,7 +628,7 @@ describe('buildColumnDefs', () => {
     )
 
     // Table sort - right aligned
-    cols = buildColumnDefs([{ name: 'x', accessor: 'x', align: 'right' }], null, {
+    cols = buildColumnDefs([{ name: 'x', id: 'x', align: 'right' }], null, {
       sortable: true,
       showSortIcon: true
     })
@@ -647,7 +641,7 @@ describe('buildColumnDefs', () => {
 
     // Raw HTML
     cols = buildColumnDefs(
-      [{ name: 'x', accessor: 'x', html: true, header: '<div>header</div>' }],
+      [{ name: 'x', id: 'x', html: true, header: '<div>header</div>' }],
       null,
       {
         sortable: true,
@@ -662,7 +656,7 @@ describe('buildColumnDefs', () => {
     )
 
     // Column sort override
-    cols = buildColumnDefs([{ name: 'xy', accessor: 'x', align: 'center', sortable: true }], null, {
+    cols = buildColumnDefs([{ name: 'xy', id: 'x', align: 'center', sortable: true }], null, {
       sortable: false,
       showSortIcon: true
     })
@@ -676,8 +670,8 @@ describe('buildColumnDefs', () => {
     // Hide sort icon
     cols = buildColumnDefs(
       [
-        { name: 'x', accessor: 'x', align: 'right' },
-        { name: 'y', accessor: 'y' }
+        { name: 'x', id: 'x', align: 'right' },
+        { name: 'y', id: 'y' }
       ],
       null,
       {
@@ -691,8 +685,8 @@ describe('buildColumnDefs', () => {
     // showSortable
     cols = buildColumnDefs(
       [
-        { name: 'x', accessor: 'x', align: 'right' },
-        { name: 'y', accessor: 'y' }
+        { name: 'x', id: 'x', align: 'right' },
+        { name: 'y', id: 'y' }
       ],
       null,
       {
@@ -717,7 +711,7 @@ describe('buildColumnDefs', () => {
 
   test('column groups', () => {
     let groups = [{ name: 'xy', columns: ['x', 'y'] }]
-    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols.length).toEqual(1)
     expect(cols[0].Header()).toEqual('xy')
     expect(cols[0].columns.map(col => col.id)).toEqual(['x', 'y'])
@@ -725,17 +719,17 @@ describe('buildColumnDefs', () => {
 
   test('column group header renderers', () => {
     let groups = [{ name: 'xy', columns: ['x', 'y'], header: () => 'group header' }]
-    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].Header()).toEqual('group header')
 
     groups = [
       { name: 'xy', columns: ['x', 'y'], header: React.createElement('div', null, 'header') }
     ]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
 
     groups = [{ name: 'xy', columns: ['x', 'y'], header: '<div>header</div>', html: true }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].Header()).toEqual(<RawHTML html="<div>header</div>" />)
 
     // React elements and HTML rendering don't clash
@@ -747,75 +741,75 @@ describe('buildColumnDefs', () => {
         html: true
       }
     ]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].Header()).toEqual(React.createElement('div', null, 'header'))
   })
 
   test('column group resizing', () => {
     // Default: resizing disabled
     let groups = [{ name: 'xy', columns: ['x', 'y'] }]
-    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].disableResizing).toEqual(true)
 
     // Resizing enabled
-    cols = buildColumnDefs([{ accessor: 'x', resizable: true }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x', resizable: true }, { id: 'y' }], groups)
     expect(cols[0].disableResizing).toBeFalsy()
   })
 
   test('column group alignment', () => {
     // Default: center
     let groups = [{ name: 'xy', columns: ['x', 'y'] }]
-    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-align-center')
 
     // Left
     groups = [{ name: 'xy', columns: ['x', 'y'], align: 'left' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-align-left')
 
     // Right
     groups = [{ name: 'xy', columns: ['x', 'y'], align: 'right', headerClassName: 'hdr' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-align-right hdr')
 
     // Center
     groups = [{ name: 'xy', columns: ['x', 'y'], align: 'center' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerClassName).toEqual('rt-align-center')
   })
 
   test('column group vertical alignment', () => {
     // Default: top
     let groups = [{ name: 'xy', columns: ['x', 'y'] }]
-    let cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    let cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerVAlign).toEqual('top')
     expect(cols[0].headerClassName).toEqual('rt-align-center')
 
     // Top
     groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'top' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerVAlign).toEqual('top')
     expect(cols[0].headerClassName).toEqual('rt-align-center')
 
     // Center
     groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'center' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerVAlign).toEqual('center')
     expect(cols[0].headerClassName).toEqual('rt-align-center rt-valign-center')
 
     // Bottom
     groups = [{ name: 'xy', columns: ['x', 'y'], headerVAlign: 'bottom' }]
-    cols = buildColumnDefs([{ accessor: 'x' }, { accessor: 'y' }], groups)
+    cols = buildColumnDefs([{ id: 'x' }, { id: 'y' }], groups)
     expect(cols[0].headerVAlign).toEqual('bottom')
     expect(cols[0].headerClassName).toEqual('rt-align-center rt-valign-bottom')
   })
 
   test("columns and groups aren't mutated", () => {
     const groups = [{ name: 'xy', columns: ['x', 'y'] }]
-    const columns = [{ accessor: 'x' }, { accessor: 'y' }]
+    const columns = [{ id: 'x' }, { id: 'y' }]
     let cols = buildColumnDefs(columns, groups)
     expect(cols[0].Header()).toEqual('xy')
-    expect(columns).toEqual([{ accessor: 'x' }, { accessor: 'y' }])
+    expect(columns).toEqual([{ id: 'x' }, { id: 'y' }])
     expect(groups).toEqual([{ name: 'xy', columns: ['x', 'y'] }])
   })
 })

@@ -3,21 +3,9 @@ library(htmltools)
 test_that("reactable handles invalid args", {
   # NOTE: New arguments should be tested in their own separate test
 
-  expect_error(reactable(1))
   df <- data.frame(x = 1)
-  expect_error(reactable(df, columns = "x"))
-  expect_error(reactable(df, columns = list(list())))
-  expect_error(reactable(df, columns = list(colDef())))
-  expect_error(reactable(df, columns = list(zzzz = colDef())))
-  expect_error(reactable(df, columnGroups = "x"))
-  expect_error(reactable(df, columnGroups = list(colDef())))
-  expect_error(reactable(df, columnGroups = list(colGroup(name = "", columns = "y"))))
-  expect_error(reactable(df, columnGroups = list(colGroup(name = ""))))
-  expect_error(reactable(df, rownames = "true"))
   expect_error(reactable(df, sortable = "true"))
   expect_error(reactable(df, resizable = "true"))
-  expect_error(reactable(df, defaultColDef = list()))
-  expect_error(reactable(df, defaultColGroup = list()))
   expect_error(reactable(df, defaultSortOrder = "ascending"))
   expect_error(reactable(df, defaultSorted = "y"))
   expect_error(reactable(df, defaultSorted = list("x")))
@@ -52,14 +40,16 @@ test_that("reactable handles invalid args", {
 test_that("reactable", {
   # NOTE: New arguments should be tested in their own separate test
 
+  expect_error(reactable(1), "`data` must be a data frame or matrix")
+
   # Default args
   tbl <- reactable(data.frame(x = 1, y = "b", stringsAsFactors = TRUE))
   attribs <- getAttribs(tbl)
   data <- data.frame(x = 1, y = "b")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(accessor = "x", name = "x", type = "numeric"),
-    list(accessor = "y", name = "y", type = "factor")
+    list(id = "x", name = "x", type = "numeric"),
+    list(id = "y", name = "y", type = "factor")
   )
   expected <- list(
     data = data,
@@ -76,7 +66,6 @@ test_that("reactable", {
 
   # Table options
   tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
-                   columnGroups = list(colGroup("group", "x")),
                    sortable = FALSE, resizable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
                    showPageInfo = FALSE, minRows = 5, defaultExpanded = TRUE,
@@ -89,16 +78,15 @@ test_that("reactable", {
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(accessor = ".selection", name = "", type = "NULL", resizable = FALSE,
+    list(id = ".selection", name = "", type = "NULL", resizable = FALSE,
          width = 45, selectable = TRUE),
-    list(accessor = ".rownames", name = "", type = "numeric",
+    list(id = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE, rowHeader = TRUE),
-    list(accessor = "x", name = "x", type = "factor")
+    list(id = "x", name = "x", type = "factor")
   )
   expected <- list(
     data = data,
     columns = columns,
-    columnGroups = list(colGroup("group", "x")),
     sortable = FALSE,
     resizable = TRUE,
     defaultSortDesc = TRUE,
@@ -131,15 +119,6 @@ test_that("reactable", {
   expect_equal(tbl$height, "100%")
   expect_equal(tbl$sizingPolicy$knitr$figure, FALSE)
 
-  # Column overrides
-  tbl <- reactable(data.frame(x = 1, y = "2"), columns = list(
-    x = colDef(sortable = FALSE),
-    y = colDef(name = "Y")
-  ))
-  attribs <- getAttribs(tbl)
-  expect_equal(attribs$columns[[1]]$sortable, FALSE)
-  expect_equal(attribs$columns[[2]]$name, "Y")
-
   # Style
   tbl <- reactable(data.frame(x = 1), style = " border-bottom: 1px solid; top: 50px")
   attribs <- getAttribs(tbl)
@@ -170,14 +149,14 @@ test_that("data should have at least one column", {
   expect_length(attribs$columns, 2)
 })
 
-test_that("numbers are serialized with max precision", {
+test_that("data with numbers are serialized with max precision", {
   data <- data.frame(x = 0.123456789012345)  # 16 digits
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[0.123456789012345]}')
 })
 
-test_that("dates/datetimes are serialized in ISO 8601", {
+test_that("data with dates/datetimes are serialized in ISO 8601", {
   data <- data.frame(x = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"), y = as.Date("2010-12-30"))
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
@@ -199,7 +178,7 @@ test_that("data with custom classes not supported by jsonlite are serialized", {
   }
 })
 
-test_that("list-columns are serialized correctly", {
+test_that("data with list-columns are serialized correctly", {
   data <- data.frame(
     x = I(list(
       # Length-1 vectors should be unboxed, except when wrapped in I()
@@ -219,7 +198,7 @@ test_that("list-columns are serialized correctly", {
   expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null]}')
 })
 
-test_that("supports Crosstalk", {
+test_that("data supports Crosstalk", {
   data <- crosstalk::SharedData$new(
     data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE),
     key = ~y,
@@ -248,13 +227,56 @@ test_that("supports Crosstalk", {
   expect_equal(attribs$crosstalkGroup, data$groupName())
 })
 
+test_that("columns", {
+  df <- data.frame(x = 1)
+  expect_error(reactable(df, columns = "x"), "`columns` must be a named list of column definitions")
+  expect_error(reactable(df, columns = list(list())), "`columns` must be a named list of column definitions")
+  expect_error(reactable(df, columns = list(colDef())), "`columns` must be a named list of column definitions")
+  expect_error(reactable(df, columns = list(zzzz = colDef())), "`columns` names must exist in `data`")
+
+  df <- data.frame(chr = "a", num = 1, fct = factor("b"), lgl = TRUE, lst = I(list("a")))
+  tbl <- reactable(df)
+  columns <- getAttrib(tbl, "columns")
+  expect_equal(columns, list(
+    list(id = "chr", name = "chr", type = "character"),
+    list(id = "num", name = "num", type = "numeric"),
+    list(id = "fct", name = "fct", type = "factor"),
+    list(id = "lgl", name = "lgl", type = "logical"),
+    list(id = "lst", name = "lst", type = "AsIs")
+  ))
+})
+
+test_that("columnGroups", {
+  df <- data.frame(x = 1)
+  expect_error(reactable(df, columnGroups = "x"), "`columnGroups` must be a list of column group definitions")
+  expect_error(reactable(df, columnGroups = list(colDef())),
+               "`columnGroups` must be a list of column group definitions")
+  expect_error(reactable(df, columnGroups = list(colGroup(name = "", columns = "y"))),
+               "`columnGroups` columns must exist in `data`")
+  expect_error(reactable(df, columnGroups = list(colGroup(name = ""))),
+               "`columnGroups` groups must contain at least one column")
+
+  df <- data.frame(x = 1, y = 2, z = "z")
+  tbl <- reactable(df, columnGroups = list(
+    colGroup(columns = c("x", "z")),
+    colGroup(name = "y", columns = "y")
+  ))
+  expect_equal(getAttrib(tbl, "columnGroups"), list(
+    colGroup(columns = c("x", "z")),
+    colGroup(name = "y", columns = "y")
+  ))
+})
+
 test_that("rownames", {
+  expect_error(reactable(data.frame(x = 1), rownames = "true"),
+               "`rownames` must be TRUE or FALSE")
+
   # Integer row names
   tbl <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", name = "",  type = "numeric",
+    id = ".rownames", name = "",  type = "numeric",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
@@ -263,7 +285,7 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", name = "",  type = "character",
+    id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
@@ -273,7 +295,7 @@ test_that("rownames", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", name = "N",  type = "numeric",
+    id = ".rownames", name = "N",  type = "numeric",
     sortable = TRUE, filterable = FALSE, headerClassName = "hdr", rowHeader = TRUE
   ))
 
@@ -293,7 +315,7 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", name = "",  type = "character",
+    id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
   # Handles matrices
@@ -301,7 +323,7 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1,2,3]}')
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".rownames", name = "",  type = "character",
+    id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
   ))
 
@@ -372,6 +394,9 @@ test_that("searchMethod", {
 })
 
 test_that("defaultColDef", {
+  expect_error(reactable(data.frame(x = 1), defaultColDef = list()),
+               "`defaultColDef` must be a column definition")
+
   # Defaults applied
   tbl <- reactable(
     data.frame(x = 1, y = "2"),
@@ -452,6 +477,9 @@ test_that("defaultColDef", {
 })
 
 test_that("defaultColGroup", {
+  expect_error(reactable(data.frame(x = 1), defaultColGroup = list()),
+               "`defaultColGroup` must be a column group definition")
+
   # Defaults applied
   tbl <- reactable(
     data.frame(x = 1, y = "2"),
@@ -650,7 +678,7 @@ test_that("sub rows", {
   tbl <- reactable(data)
   columns <- getAttrib(tbl, "columns")
   expect_equal(length(columns), 1)
-  expect_equal(columns[[1]]$accessor, "x")
+  expect_equal(columns[[1]]$id, "x")
 })
 
 test_that("column renderers", {
@@ -770,7 +798,7 @@ test_that("row details", {
   expect_equal(
     attribs$columns[[1]],
     list(
-      accessor = ".details", name = "", type = "NULL", sortable = FALSE,
+      id = ".details", name = "", type = "NULL", sortable = FALSE,
       resizable = FALSE, filterable = FALSE, searchable = FALSE, width = 45,
       align = "center", details = list("a", NULL)
     )
@@ -913,7 +941,7 @@ test_that("row selection", {
   expect_equal(attribs$selection, "single")
   expect_equal(attribs$selectionId, "selected")
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".selection", name = "", type = "NULL", resizable = FALSE,
+    id = ".selection", name = "", type = "NULL", resizable = FALSE,
     width = 45, selectable = TRUE
   ))
 
@@ -933,7 +961,7 @@ test_that("row selection", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
-    accessor = ".selection", name = "", type = "NULL", resizable = TRUE,
+    id = ".selection", name = "", type = "NULL", resizable = TRUE,
     width = 100, selectable = TRUE, className = "my-cls"
   ))
 

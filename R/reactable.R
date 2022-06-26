@@ -519,7 +519,7 @@ reactable <- function(
 
   cols <- lapply(columnKeys, function(key) {
     column <- list(
-      accessor = key,
+      id = key,
       name = key,
       type = colType(data[[key]])
     )

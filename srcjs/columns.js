@@ -56,11 +56,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
 
   columns = columns.map(column => {
     let col = { ...column }
-    col.id = col.accessor
-    // Interpret column names with dots and square brackets as IDs, not paths
-    if (col.accessor.includes('.') || col.accessor.includes('[') || col.accessor.includes(']')) {
-      col.accessor = data => data[col.id]
-    }
+    // Always access column data by ID, not a path with periods or brackets
+    col.accessor = row => row[col.id]
 
     if (typeof col.aggregate === 'string') {
       col.aggregate = getAggregateFunction(col.aggregate, col.type)
