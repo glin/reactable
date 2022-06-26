@@ -1714,6 +1714,10 @@ Reactable.defaultProps = {
   sortable: true,
   pagination: true,
   defaultPageSize: 10,
+  paginationType: 'numbers',
+  pageSizeOptions: [10, 25, 50, 100],
+  showPageInfo: true,
+  minRows: 1,
   showSortIcon: true,
   crosstalkId: '__crosstalk__'
 }

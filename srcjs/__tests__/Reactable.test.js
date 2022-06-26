@@ -505,7 +505,7 @@ describe('pad rows', () => {
     padRows.forEach(row => expect(row.parentElement).toHaveAttribute('aria-hidden', 'true'))
   })
 
-  it('renders a minimum of 1 row by default', () => {
+  it('renders a minimum of 1 row by default (minRows = 1)', () => {
     const { container } = render(
       <Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} />
     )
@@ -515,7 +515,7 @@ describe('pad rows', () => {
     expect(padRows).toHaveLength(1)
   })
 
-  it('always renders at least 1 row', () => {
+  it('always renders at least 1 row (even if minRows is negative)', () => {
     const { container } = render(
       <Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} minRows={-5} />
     )

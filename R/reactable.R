@@ -625,6 +625,11 @@ reactable <- function(
   # the data changes (for tables in Shiny).
   dataKey <- digest::digest(list(data, cols))
 
+  # Serialize user-set args only to keep the widget HTML slim
+  defaultArgs <- formals()
+  args <- as.list(match.call())
+  setArgs <- setNames(names(defaultArgs) %in% names(args), names(defaultArgs))
+
   component <- reactR::component("Reactable", list(
     data = data,
     columns = cols,
@@ -638,13 +643,13 @@ reactable <- function(
     defaultSortDesc = if (isDescOrder(defaultSortOrder)) TRUE,
     defaultSorted = columnSortDefs(defaultSorted),
     pagination = if (!pagination) FALSE,
-    defaultPageSize = defaultPageSize,
-    showPageSizeOptions = if (showPageSizeOptions) TRUE,
-    pageSizeOptions = if (showPageSizeOptions) pageSizeOptions,
-    paginationType = paginationType,
+    defaultPageSize = if (setArgs["defaultPageSize"]) defaultPageSize,
+    showPageSizeOptions = if (setArgs["showPageSizeOptions"]) showPageSizeOptions,
+    pageSizeOptions = if (setArgs["pageSizeOptions"]) pageSizeOptions,
+    paginationType = if (setArgs["paginationType"]) paginationType,
     showPagination = if (!is.null(showPagination)) showPagination,
-    showPageInfo = showPageInfo,
-    minRows = minRows,
+    showPageInfo = if (setArgs["showPageInfo"]) showPageInfo,
+    minRows = if (setArgs["minRows"]) minRows,
     paginateSubRows = if (paginateSubRows) TRUE,
     defaultExpanded = if (defaultExpanded) defaultExpanded,
     selection = selection,
