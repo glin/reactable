@@ -13,8 +13,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, defaultSorted = list(y = "asc")))
   expect_error(reactable(df, defaultExpanded = NULL))
   expect_error(reactable(df, defaultExpanded = 1:3))
-  expect_error(reactable(df, selection = "none"))
-  expect_error(reactable(df, selectionId = 123))
   expect_error(reactable(df, defaultSelected = "12"))
   expect_error(reactable(df, onClick = "function() {}"))
   expect_error(reactable(df, highlight = "true"))
@@ -62,8 +60,7 @@ test_that("reactable", {
   tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
                    sortable = FALSE, resizable = TRUE,
                    defaultSortOrder = "desc", defaultSorted = list(x = "asc"),
-                   defaultExpanded = TRUE,
-                   selection = "single", selectionId = "sel", highlight = TRUE,
+                   defaultExpanded = TRUE, highlight = TRUE,
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
@@ -72,8 +69,6 @@ test_that("reactable", {
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
   columns <- list(
-    list(id = ".selection", name = "", type = "NULL", resizable = FALSE,
-         width = 45, selectable = TRUE),
     list(id = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE, rowHeader = TRUE),
     list(id = "x", name = "x", type = "factor")
@@ -86,8 +81,6 @@ test_that("reactable", {
     defaultSortDesc = TRUE,
     defaultSorted = list(list(id = "x", desc = FALSE)),
     defaultExpanded = TRUE,
-    selection = "single",
-    selectionId = "sel",
     highlight = TRUE,
     outlined = TRUE,
     bordered = TRUE,
@@ -977,10 +970,9 @@ test_that("html dependencies from rendered content are passed through", {
 
 test_that("row selection", {
   data <- data.frame(x = c(1, 2, 3))
-  tbl <- reactable(data, selection = "single", selectionId = "selected")
+  tbl <- reactable(data, selection = "single")
   attribs <- getAttribs(tbl)
   expect_equal(attribs$selection, "single")
-  expect_equal(attribs$selectionId, "selected")
   expect_equal(attribs$columns[[1]], list(
     id = ".selection", name = "", type = "NULL", resizable = FALSE,
     width = 45, selectable = TRUE
@@ -1013,9 +1005,18 @@ test_that("row selection", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columnGroups[[1]]$columns, list(".selection", "x"))
 
+  expect_error(reactable(data, selection = "none"), '`selection` must be "multiple" or "single"')
+
   # Out of bounds errors
   expect_error(reactable(data, selection = "single", defaultSelected = c(0, 1)))
   expect_error(reactable(data, selection = "multiple", defaultSelected = c(2, 4)))
+})
+
+test_that("selectionId", {
+  expect_warning(
+    reactable(data.frame(x = 1), selectionId = "selected"),
+    "`selectionId` is deprecated."
+  )
 })
 
 test_that("onClick", {

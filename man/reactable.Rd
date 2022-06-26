@@ -31,7 +31,6 @@ reactable(
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
-  selectionId = NULL,
   defaultSelected = NULL,
   onClick = NULL,
   highlight = FALSE,
@@ -52,7 +51,8 @@ reactable(
   height = "auto",
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
-  elementId = NULL
+  elementId = NULL,
+  selectionId = NULL
 )
 }
 \arguments{
@@ -134,11 +134,6 @@ To get the selected rows in Shiny, use \code{\link[=getReactableState]{getReacta
 
 To customize the selection column, use \code{".selection"} as the column name.}
 
-\item{selectionId}{Shiny input ID for the selected rows. The selected rows are
-given as a numeric vector of row indices, or \code{NULL} if no rows are selected.
-\strong{NOTE:} \code{selectionId} will be deprecated in a future release.
-Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows in Shiny instead.}
-
 \item{defaultSelected}{A numeric vector of default selected row indices.}
 
 \item{onClick}{Action to take when clicking a cell. Either \code{"expand"} to expand
@@ -199,6 +194,9 @@ Can also be a function that returns a \code{\link[=reactableTheme]{reactableThem
 \code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}
 
 \item{elementId}{Element ID for the widget.}
+
+\item{selectionId}{Deprecated. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
+in Shiny.}
 }
 \value{
 A \code{reactable} HTML widget that can be used in R Markdown documents

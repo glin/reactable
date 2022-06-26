@@ -66,10 +66,6 @@
 #'   To get the selected rows in Shiny, use [getReactableState()].
 #'
 #'   To customize the selection column, use `".selection"` as the column name.
-#' @param selectionId Shiny input ID for the selected rows. The selected rows are
-#'   given as a numeric vector of row indices, or `NULL` if no rows are selected.
-#'   **NOTE:** `selectionId` will be deprecated in a future release.
-#'   Use [getReactableState()] to get the selected rows in Shiny instead.
 #' @param defaultSelected A numeric vector of default selected row indices.
 #' @param onClick Action to take when clicking a cell. Either `"expand"` to expand
 #'   the row, `"select"` to select the row, or a [JS()] function that takes a
@@ -110,6 +106,8 @@
 #' @param language Language options for the table, specified by
 #'   [reactableLang()]. Defaults to the global `reactable.language` option.
 #' @param elementId Element ID for the widget.
+#' @param selectionId Deprecated. Use [getReactableState()] to get the selected rows
+#'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
 #'   and Shiny applications, or viewed from an R console.
 #'
@@ -189,7 +187,6 @@ reactable <- function(
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
-  selectionId = NULL,
   defaultSelected = NULL,
   onClick = NULL,
   highlight = FALSE,
@@ -210,7 +207,8 @@ reactable <- function(
   height = "auto",
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
-  elementId = NULL
+  elementId = NULL,
+  selectionId = NULL
 ) {
   crosstalkKey <- NULL
   crosstalkGroup <- NULL
@@ -420,8 +418,11 @@ reactable <- function(
   if (!is.null(selection) && !selection %in% c("multiple", "single")) {
     stop('`selection` must be "multiple" or "single"')
   }
-  if (!is.null(selectionId) && !is.character(selectionId)) {
-    stop("`selectionId` must be a character")
+  if (!is.null(selectionId)) {
+    warning("`selectionId` is deprecated. Use `getReactableState()` to get the selected rows in Shiny.")
+    if (!is.character(selectionId)) {
+      stop("`selectionId` must be a character")
+    }
   }
   if (!is.null(defaultSelected)) {
     if (!is.numeric(defaultSelected)) {

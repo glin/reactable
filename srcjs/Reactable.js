@@ -630,7 +630,7 @@ function Table({
     }, [])
   }, [state.selectedRowIds, rowsById])
 
-  // Update Shiny on selected row changes (deprecated in v0.3.0)
+  // Update Shiny on selected row changes (deprecated in v0.2.0)
   React.useEffect(() => {
     if (!selection) {
       return
