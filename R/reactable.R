@@ -628,7 +628,7 @@ reactable <- function(
   # Serialize user-set args only to keep the widget HTML slim
   defaultArgs <- formals()
   args <- as.list(match.call())
-  setArgs <- setNames(names(defaultArgs) %in% names(args), names(defaultArgs))
+  setArgs <- stats::setNames(names(defaultArgs) %in% names(args), names(defaultArgs))
 
   component <- reactR::component("Reactable", list(
     data = data,

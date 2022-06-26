@@ -224,7 +224,14 @@ test_that("columns", {
   expect_error(reactable(df, columns = list(colDef())), "`columns` must be a named list of column definitions")
   expect_error(reactable(df, columns = list(zzzz = colDef())), "`columns` names must exist in `data`")
 
-  df <- data.frame(chr = "a", num = 1, fct = factor("b"), lgl = TRUE, lst = I(list("a")))
+  df <- data.frame(
+    chr = "a",
+    num = 1,
+    fct = factor("b"),
+    lgl = TRUE,
+    lst = I(list("a")),
+    stringsAsFactors = FALSE
+  )
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
   expect_equal(columns, list(
