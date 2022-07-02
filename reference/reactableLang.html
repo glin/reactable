@@ -98,34 +98,34 @@ be read by assistive technology, such as screen readers.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">reactableLang</span><span class="op">(</span>
-  sortLabel <span class="op">=</span> <span class="st">"Sort {name}"</span>,
-  filterPlaceholder <span class="op">=</span> <span class="st">""</span>,
-  filterLabel <span class="op">=</span> <span class="st">"Filter {name}"</span>,
-  searchPlaceholder <span class="op">=</span> <span class="st">"Search"</span>,
-  searchLabel <span class="op">=</span> <span class="st">"Search"</span>,
-  noData <span class="op">=</span> <span class="st">"No rows found"</span>,
-  pageNext <span class="op">=</span> <span class="st">"Next"</span>,
-  pagePrevious <span class="op">=</span> <span class="st">"Previous"</span>,
-  pageNumbers <span class="op">=</span> <span class="st">"{page} of {pages}"</span>,
-  pageInfo <span class="op">=</span> <span class="st">"{rowStart}\u2013{rowEnd} of {rows} rows"</span>,
-  pageSizeOptions <span class="op">=</span> <span class="st">"Show {rows}"</span>,
-  pageNextLabel <span class="op">=</span> <span class="st">"Next page"</span>,
-  pagePreviousLabel <span class="op">=</span> <span class="st">"Previous page"</span>,
-  pageNumberLabel <span class="op">=</span> <span class="st">"Page {page}"</span>,
-  pageJumpLabel <span class="op">=</span> <span class="st">"Go to page"</span>,
-  pageSizeOptionsLabel <span class="op">=</span> <span class="st">"Rows per page"</span>,
-  groupExpandLabel <span class="op">=</span> <span class="st">"Toggle group"</span>,
-  detailsExpandLabel <span class="op">=</span> <span class="st">"Toggle details"</span>,
-  selectAllRowsLabel <span class="op">=</span> <span class="st">"Select all rows"</span>,
-  selectAllSubRowsLabel <span class="op">=</span> <span class="st">"Select all rows in group"</span>,
-  selectRowLabel <span class="op">=</span> <span class="st">"Select row"</span>,
-  defaultGroupHeader <span class="op">=</span> <span class="cn">NULL</span>,
-  detailsCollapseLabel <span class="op">=</span> <span class="cn">NULL</span>,
-  deselectAllRowsLabel <span class="op">=</span> <span class="cn">NULL</span>,
-  deselectAllSubRowsLabel <span class="op">=</span> <span class="cn">NULL</span>,
-  deselectRowLabel <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">reactableLang</span><span class="op">(</span></span>
+<span>  sortLabel <span class="op">=</span> <span class="st">"Sort {name}"</span>,</span>
+<span>  filterPlaceholder <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  filterLabel <span class="op">=</span> <span class="st">"Filter {name}"</span>,</span>
+<span>  searchPlaceholder <span class="op">=</span> <span class="st">"Search"</span>,</span>
+<span>  searchLabel <span class="op">=</span> <span class="st">"Search"</span>,</span>
+<span>  noData <span class="op">=</span> <span class="st">"No rows found"</span>,</span>
+<span>  pageNext <span class="op">=</span> <span class="st">"Next"</span>,</span>
+<span>  pagePrevious <span class="op">=</span> <span class="st">"Previous"</span>,</span>
+<span>  pageNumbers <span class="op">=</span> <span class="st">"{page} of {pages}"</span>,</span>
+<span>  pageInfo <span class="op">=</span> <span class="st">"{rowStart}\u2013{rowEnd} of {rows} rows"</span>,</span>
+<span>  pageSizeOptions <span class="op">=</span> <span class="st">"Show {rows}"</span>,</span>
+<span>  pageNextLabel <span class="op">=</span> <span class="st">"Next page"</span>,</span>
+<span>  pagePreviousLabel <span class="op">=</span> <span class="st">"Previous page"</span>,</span>
+<span>  pageNumberLabel <span class="op">=</span> <span class="st">"Page {page}"</span>,</span>
+<span>  pageJumpLabel <span class="op">=</span> <span class="st">"Go to page"</span>,</span>
+<span>  pageSizeOptionsLabel <span class="op">=</span> <span class="st">"Rows per page"</span>,</span>
+<span>  groupExpandLabel <span class="op">=</span> <span class="st">"Toggle group"</span>,</span>
+<span>  detailsExpandLabel <span class="op">=</span> <span class="st">"Toggle details"</span>,</span>
+<span>  selectAllRowsLabel <span class="op">=</span> <span class="st">"Select all rows"</span>,</span>
+<span>  selectAllSubRowsLabel <span class="op">=</span> <span class="st">"Select all rows in group"</span>,</span>
+<span>  selectRowLabel <span class="op">=</span> <span class="st">"Select row"</span>,</span>
+<span>  defaultGroupHeader <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  detailsCollapseLabel <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deselectAllRowsLabel <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deselectAllSubRowsLabel <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  deselectRowLabel <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -258,34 +258,34 @@ strings in <code><a href="reactable.html">reactable()</a></code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="reactable.html">reactable</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>,</span>
-<span class="r-in">  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">  paginationType <span class="op">=</span> <span class="st">"simple"</span>,</span>
-<span class="r-in">  language <span class="op">=</span> <span class="fu">reactableLang</span><span class="op">(</span></span>
-<span class="r-in">    searchPlaceholder <span class="op">=</span> <span class="st">"Search..."</span>,</span>
-<span class="r-in">    noData <span class="op">=</span> <span class="st">"No entries found"</span>,</span>
-<span class="r-in">    pageInfo <span class="op">=</span> <span class="st">"{rowStart}\u2013{rowEnd} of {rows} entries"</span>,</span>
-<span class="r-in">    pagePrevious <span class="op">=</span> <span class="st">"\u276e"</span>,</span>
-<span class="r-in">    pageNext <span class="op">=</span> <span class="st">"\u276f"</span>,</span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="co"># Accessible labels for assistive technology, such as screen readers</span></span>
-<span class="r-in">    pagePreviousLabel <span class="op">=</span> <span class="st">"Previous page"</span>,</span>
-<span class="r-in">    pageNextLabel <span class="op">=</span> <span class="st">"Next page"</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<div id="htmlwidget-0f03fc748eebe80144f9" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-0f03fc748eebe80144f9">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7],"Sepal.Width":[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2],"Petal.Length":[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6],"Petal.Width":[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"searchable":true,"paginationType":"simple","language":{"searchPlaceholder":"Search...","noData":"No entries found","pageNext":"❯","pagePrevious":"❮","pageInfo":"{rowStart}–{rowEnd} of {rows} entries","pageNextLabel":"Next page","pagePreviousLabel":"Previous page"},"dataKey":"17a57cee4a0d0f3e43fc51c028070b99"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><span class="r-in"></span>
-<span class="r-in"><span class="co"># Set the default language for all tables</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.language <span class="op">=</span> <span class="fu">reactableLang</span><span class="op">(</span></span>
-<span class="r-in">  searchPlaceholder <span class="op">=</span> <span class="st">"Search..."</span>,</span>
-<span class="r-in">  noData <span class="op">=</span> <span class="st">"No entries found"</span>,</span>
-<span class="r-in">  pageInfo <span class="op">=</span> <span class="st">"{rowStart} to {rowEnd} of {rows} entries"</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>, searchable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<div id="htmlwidget-bab3125487041d33cc3d" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-bab3125487041d33cc3d">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7],"Sepal.Width":[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2],"Petal.Length":[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6],"Petal.Width":[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"searchable":true,"language":{"searchPlaceholder":"Search...","noData":"No entries found","pageInfo":"{rowStart} to {rowEnd} of {rows} entries"},"dataKey":"17a57cee4a0d0f3e43fc51c028070b99"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="reactable.html">reactable</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>,</span></span>
+<span class="r-in"><span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  paginationType <span class="op">=</span> <span class="st">"simple"</span>,</span></span>
+<span class="r-in"><span>  language <span class="op">=</span> <span class="fu">reactableLang</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    searchPlaceholder <span class="op">=</span> <span class="st">"Search..."</span>,</span></span>
+<span class="r-in"><span>    noData <span class="op">=</span> <span class="st">"No entries found"</span>,</span></span>
+<span class="r-in"><span>    pageInfo <span class="op">=</span> <span class="st">"{rowStart}\u2013{rowEnd} of {rows} entries"</span>,</span></span>
+<span class="r-in"><span>    pagePrevious <span class="op">=</span> <span class="st">"\u276e"</span>,</span></span>
+<span class="r-in"><span>    pageNext <span class="op">=</span> <span class="st">"\u276f"</span>,</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Accessible labels for assistive technology, such as screen readers</span></span></span>
+<span class="r-in"><span>    pagePreviousLabel <span class="op">=</span> <span class="st">"Previous page"</span>,</span></span>
+<span class="r-in"><span>    pageNextLabel <span class="op">=</span> <span class="st">"Next page"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<div id="htmlwidget-bbb00e796ea96a94d523" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-bbb00e796ea96a94d523">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7],"Sepal.Width":[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2],"Petal.Length":[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6],"Petal.Width":[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"searchable":true,"paginationType":"simple","language":{"searchPlaceholder":"Search...","noData":"No entries found","pageNext":"❯","pagePrevious":"❮","pageInfo":"{rowStart}–{rowEnd} of {rows} entries","pageNextLabel":"Next page","pagePreviousLabel":"Previous page"},"dataKey":"17a57cee4a0d0f3e43fc51c028070b99"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set the default language for all tables</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.language <span class="op">=</span> <span class="fu">reactableLang</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  searchPlaceholder <span class="op">=</span> <span class="st">"Search..."</span>,</span></span>
+<span class="r-in"><span>  noData <span class="op">=</span> <span class="st">"No entries found"</span>,</span></span>
+<span class="r-in"><span>  pageInfo <span class="op">=</span> <span class="st">"{rowStart} to {rowEnd} of {rows} entries"</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>, searchable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<div id="htmlwidget-5ea96822cdbcdf524124" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-5ea96822cdbcdf524124">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5,5,5.2,5.2,4.7],"Sepal.Width":[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3,3,4,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3,3.4,3.5,3.4,3.2],"Petal.Length":[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5,1.5,1.6,1.4,1.1,1.2,1.5,1.3,1.4,1.7,1.5,1.7,1.5,1,1.7,1.9,1.6,1.6,1.5,1.4,1.6],"Petal.Width":[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1,0.2,0.2,0.1,0.1,0.2,0.4,0.4,0.3,0.3,0.3,0.2,0.4,0.2,0.5,0.2,0.2,0.4,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"searchable":true,"language":{"searchPlaceholder":"Search...","noData":"No entries found","pageInfo":"{rowStart} to {rowEnd} of {rows} entries"},"dataKey":"17a57cee4a0d0f3e43fc51c028070b99"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

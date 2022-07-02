@@ -120,23 +120,23 @@ JavaScript render functions
 <tr>
 <td>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-  Species <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-    cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="va">value</span><span class="op">)</span>
-    <span class="op">}</span>
-  <span class="op">)</span>
-<span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Species <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>    cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </td>
 <td>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-  Species <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-    cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo) {
-      return '&lt;b&gt;' + cellInfo.value + '&lt;/b&gt;'
-    }"</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Species <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>    cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo) {</span></span>
+<span><span class="st">      return '&lt;b&gt;' + cellInfo.value + '&lt;/b&gt;'</span></span>
+<span><span class="st">    }"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </td>
 </tr>
 <tr>
@@ -167,45 +167,45 @@ JavaScript render functions
 </blockquote>
 <p>For example, you can easily add a column total using an R render function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>
-
-<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
-  <span class="va">data</span>,
-  searchable <span class="op">=</span> <span class="cn">TRUE</span>,
-  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">}</span><span class="op">)</span>,
-    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<div id="htmlwidget-8e9ddf923781922daa0a" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8e9ddf923781922daa0a">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span>,</span>
+<span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div id="htmlwidget-3979532f1b3a049f13aa" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-3979532f1b3a049f13aa">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>
-
-<span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
-  <span class="va">data</span>,
-  searchable <span class="op">=</span> <span class="cn">TRUE</span>,
-  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-      html <span class="op">=</span> <span class="cn">TRUE</span>,
-      footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(column, state) {
-        const values = state.data.map(function(row) {
-          return row[column.id]
-        })
-        let total = 0
-        values.forEach(function(value) {
-          total += value
-        })
-        return '&lt;b&gt;$' + total.toFixed(2) + '&lt;/b&gt;'
-      }"</span><span class="op">)</span>
-    <span class="op">)</span>,
-    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<div id="htmlwidget-4945ed5671cf492c7153" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-4945ed5671cf492c7153">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        const values = state.data.map(function(row) {\n          return row[column.id]\n        })\n        let total = 0\n        values.forEach(function(value) {\n          total += value\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"9b8c70fd6614a05a1a1416e6995ad341"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>      html <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(column, state) {</span></span>
+<span><span class="st">        const values = state.data.map(function(row) {</span></span>
+<span><span class="st">          return row[column.id]</span></span>
+<span><span class="st">        })</span></span>
+<span><span class="st">        let total = 0</span></span>
+<span><span class="st">        values.forEach(function(value) {</span></span>
+<span><span class="st">          total += value</span></span>
+<span><span class="st">        })</span></span>
+<span><span class="st">        return '&lt;b&gt;$' + total.toFixed(2) + '&lt;/b&gt;'</span></span>
+<span><span class="st">      }"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div id="htmlwidget-f166c436bdc7d1ce5cc9" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f166c436bdc7d1ce5cc9">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        const values = state.data.map(function(row) {\n          return row[column.id]\n        })\n        let total = 0\n        values.forEach(function(value) {\n          total += value\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"9b8c70fd6614a05a1a1416e6995ad341"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -215,48 +215,48 @@ JavaScript render functions
 </h3>
 <p>To customize cell rendering, provide an R function with up to 3 optional arguments:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co"># input:</span>
-    <span class="co">#   - value, the cell value</span>
-    <span class="co">#   - index, the row index (optional)</span>
-    <span class="co">#   - name, the column name (optional)</span>
-    <span class="co">#</span>
-    <span class="co"># output:</span>
-    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span>
-    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"color: red"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">}</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># input:</span></span>
+<span>    <span class="co">#   - value, the cell value</span></span>
+<span>    <span class="co">#   - index, the row index (optional)</span></span>
+<span>    <span class="co">#   - name, the column name (optional)</span></span>
+<span>    <span class="co">#</span></span>
+<span>    <span class="co"># output:</span></span>
+<span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"color: red"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cells-js-render-function">JavaScript render function<a class="anchor" aria-label="anchor" href="#cells-js-render-function"></a>
 </h3>
 <p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code>, with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
-    function(cellInfo, state) {
-      // input:
-      //  - cellInfo, an object containing cell info
-      //  - state, an object containing the table state (optional, new in v0.3.0)
-      //
-      // output:
-      //  - content to render (e.g. an HTML string)
-      return '&lt;div&gt;' + cellInfo.value + '&lt;/div&gt;'
-    }
-  "</span><span class="op">)</span>,
-  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">    function(cellInfo, state) {</span></span>
+<span><span class="st">      // input:</span></span>
+<span><span class="st">      //  - cellInfo, an object containing cell info</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //</span></span>
+<span><span class="st">      // output:</span></span>
+<span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
+<span><span class="st">      return '&lt;div&gt;' + cellInfo.value + '&lt;/div&gt;'</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  "</span><span class="op">)</span>,</span>
+<span>  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>With JavaScript functions, you can also customize rendering of grouped cells and aggregated cells:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  grouped <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo, state) {
-    return cellInfo.value
-  }"</span><span class="op">)</span>,
-  aggregated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo, state) {
-    return cellInfo.value
-  }"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  grouped <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo, state) {</span></span>
+<span><span class="st">    return cellInfo.value</span></span>
+<span><span class="st">  }"</span><span class="op">)</span>,</span>
+<span>  aggregated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo, state) {</span></span>
+<span><span class="st">    return cellInfo.value</span></span>
+<span><span class="st">  }"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="cellinfo-properties">
 <code>cellInfo</code> properties<a class="anchor" aria-label="anchor" href="#cellinfo-properties"></a>
@@ -488,37 +488,37 @@ JavaScript render functions
 </h3>
 <p>To customize header rendering, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  header <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co"># input:</span>
-    <span class="co">#   - value, the header value</span>
-    <span class="co">#   - name, the column name (optional)</span>
-    <span class="co">#</span>
-    <span class="co"># output:</span>
-    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span>
-    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span>
-  <span class="op">}</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  header <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># input:</span></span>
+<span>    <span class="co">#   - value, the header value</span></span>
+<span>    <span class="co">#   - name, the column name (optional)</span></span>
+<span>    <span class="co">#</span></span>
+<span>    <span class="co"># output:</span></span>
+<span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="headers-js-render-function">JavaScript render function<a class="anchor" aria-label="anchor" href="#headers-js-render-function"></a>
 </h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
-    function(column, state) {
-      // input:
-      //  - column, an object containing column properties
-      //  - state, an object containing the table state (optional, new in v0.3.0)
-      //
-      // output:
-      //  - content to render (e.g. an HTML string)
-      return '&lt;div&gt;' + column.name + '&lt;/div&gt;'
-    }
-  "</span><span class="op">)</span>,
-  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">    function(column, state) {</span></span>
+<span><span class="st">      // input:</span></span>
+<span><span class="st">      //  - column, an object containing column properties</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //</span></span>
+<span><span class="st">      // output:</span></span>
+<span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
+<span><span class="st">      return '&lt;div&gt;' + column.name + '&lt;/div&gt;'</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  "</span><span class="op">)</span>,</span>
+<span>  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="column-properties">
 <code>column</code> properties<a class="anchor" aria-label="anchor" href="#column-properties"></a>
@@ -710,37 +710,37 @@ function to set the column filter value
 </h3>
 <p>To add footer content, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co"># input:</span>
-    <span class="co">#   - values, the column values</span>
-    <span class="co">#   - name, the column name (optional)</span>
-    <span class="co">#</span>
-    <span class="co"># output:</span>
-    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span>
-    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Total:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">}</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># input:</span></span>
+<span>    <span class="co">#   - values, the column values</span></span>
+<span>    <span class="co">#   - name, the column name (optional)</span></span>
+<span>    <span class="co">#</span></span>
+<span>    <span class="co"># output:</span></span>
+<span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Total:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="footers-js-render-function">JavaScript render function<a class="anchor" aria-label="anchor" href="#footers-js-render-function"></a>
 </h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>
-  footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
-    function(column, state) {
-      // input:
-      //  - column, an object containing column properties
-      //  - state, an object containing the table state (optional, new in v0.3.0)
-      //
-      // output:
-      //  - content to render (e.g. an HTML string)
-      return '&lt;div&gt;Rows: ' + state.data.length + '&lt;/div&gt;'
-    }
-  "</span><span class="op">)</span>,
-  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
+<span>  footer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">    function(column, state) {</span></span>
+<span><span class="st">      // input:</span></span>
+<span><span class="st">      //  - column, an object containing column properties</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //</span></span>
+<span><span class="st">      // output:</span></span>
+<span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
+<span><span class="st">      return '&lt;div&gt;Rows: ' + state.data.length + '&lt;/div&gt;'</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  "</span><span class="op">)</span>,</span>
+<span>  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="column-properties-1">
 <code>column</code> properties<a class="anchor" aria-label="anchor" href="#column-properties-1"></a>
@@ -932,39 +932,39 @@ function to set the column filter value
 </h3>
 <p>To add expandable row details, provide an R function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
-  details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co"># input:</span>
-    <span class="co">#   - index, the row index</span>
-    <span class="co">#   - name, the column name (optional)</span>
-    <span class="co">#</span>
-    <span class="co"># output:</span>
-    <span class="co">#   - content to render (e.g., an HTML tag or nested table), or NULL to hide details</span>
-    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Details for row:"</span>, <span class="va">index</span><span class="op">)</span>,
-      <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">index</span>, <span class="op">]</span><span class="op">)</span>
-    <span class="op">)</span>
-  <span class="op">}</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
+<span>  details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># input:</span></span>
+<span>    <span class="co">#   - index, the row index</span></span>
+<span>    <span class="co">#   - name, the column name (optional)</span></span>
+<span>    <span class="co">#</span></span>
+<span>    <span class="co"># output:</span></span>
+<span>    <span class="co">#   - content to render (e.g., an HTML tag or nested table), or NULL to hide details</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Details for row:"</span>, <span class="va">index</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">index</span>, <span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="details-js-render-function">JavaScript render function<a class="anchor" aria-label="anchor" href="#details-js-render-function"></a>
 </h3>
 <p>Or a JavaScript function with up to 2 optional arguments:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span>
-  details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"
-    function(rowInfo, state) {
-      // input:
-      //  - rowInfo, an object containing row info
-      //  - state, an object containing the table state (optional, new in v0.3.0)
-      //
-      // output:
-      //  - content to render (e.g. an HTML string)
-      return '&lt;div&gt;Details for row: ' + rowInfo.index + '&lt;/div&gt;'
-    }
-  "</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
+<span>  details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">    function(rowInfo, state) {</span></span>
+<span><span class="st">      // input:</span></span>
+<span><span class="st">      //  - rowInfo, an object containing row info</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //</span></span>
+<span><span class="st">      // output:</span></span>
+<span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
+<span><span class="st">      return '&lt;div&gt;Details for row: ' + rowInfo.index + '&lt;/div&gt;'</span></span>
+<span><span class="st">    }</span></span>
+<span><span class="st">  "</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="rowinfo-properties">
 <code>rowInfo</code> properties<a class="anchor" aria-label="anchor" href="#rowinfo-properties"></a>
