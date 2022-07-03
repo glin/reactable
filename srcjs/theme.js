@@ -1,4 +1,4 @@
-import { css as emotionCss } from '@emotion/css'
+import createEmotion from '@emotion/css/create-instance'
 
 export function createTheme(options) {
   if (!options) return null
@@ -227,8 +227,58 @@ function removeEmptyProps(obj) {
   }
 }
 
+// Defer Emotion initialization until DOM is loaded and theming is used
+let emotion
+function getEmotion() {
+  if (emotion) {
+    return emotion
+  }
+  // Emotion appends style tags to head by default. Instead, we insert styles
+  // immediately after the reactable stylesheet for two reasons:
+  //
+  // 1. Some HTML documents (pkgdown) may place htmlDependencies in the body
+  //    instead of head, causing Emotion theme styles in head to come before the
+  //    the reactable stylesheet and not override default styles properly.
+  //    R Markdown and Shiny put htmlDependencies in head properly.
+  // 2. User styles in head may be overrided by the theme since Emotion appends to
+  //    the end of head, after any existing styles in head. This is not as important
+  //    as reason 1, however.
+  let container
+  let insertionPoint
+  if (isBrowser()) {
+    for (let link of document.querySelectorAll('link')) {
+      const filename = link.href.substring(link.href.lastIndexOf('/') + 1)
+      if (link.rel === 'stylesheet' && filename === 'reactable.css') {
+        container = link.parentElement
+        insertionPoint = link
+        break
+      }
+    }
+  }
+  emotion = createEmotion({
+    // Class prefix and unique key to prevent conflicts with other Emotion instances
+    key: 'reactable',
+    container: container,
+    insertionPoint: insertionPoint
+  })
+  return emotion
+}
+
+function isBrowser() {
+  return typeof document !== 'undefined'
+}
+
+// Reset Emotion instance and styles, intended for testing use only
+export function resetEmotion() {
+  if (emotion) {
+    emotion.flush()
+    emotion = null
+  }
+}
+
 // Emotion css wrapper that returns null instead of an unused class
 export function css(...args) {
+  const emotion = getEmotion()
   args = args.filter(arg => arg != null)
-  return args.length ? emotionCss(args) : null
+  return args.length ? emotion.css(args) : null
 }

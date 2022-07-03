@@ -6,6 +6,7 @@ import { matchers } from '@emotion/jest'
 
 import Reactable, { getInstance } from '../Reactable'
 import * as reactable from '../Reactable'
+import { resetEmotion } from '../theme'
 import { downloadCSV } from '../utils'
 
 jest.mock('../utils', () => ({
@@ -8189,6 +8190,14 @@ describe('pagination', () => {
 })
 
 describe('themes', () => {
+  // Clean up DOM after each test inserts style tags into head or body.
+  // Doesn't completely reset state, but works well enough for tests.
+  afterEach(() => {
+    resetEmotion()
+    document.head.innerHTML = ''
+    document.body.innerHTML = ''
+  })
+
   it('applies theme styles to the table', () => {
     const props = {
       data: { a: [1, 2], b: ['aa', 'bb'] },
@@ -8392,6 +8401,50 @@ describe('themes', () => {
     expect(tableB).toHaveStyleRule('background', 'red')
     expect(tableA).not.toHaveStyleRule('color', 'red')
     expect(tableB).toHaveStyleRule('color', 'red')
+  })
+
+  it('theme styles are appended to head by default with correct class prefix', () => {
+    const style = document.createElement('style')
+    document.head.appendChild(style)
+    const props = {
+      data: { a: [] },
+      columns: [{ name: 'a', id: 'a' }],
+      theme: { style: { background: 'aliceblue' } }
+    }
+    const { container } = render(<Reactable {...props} />)
+    const styleElements = document.head.querySelectorAll('style')
+    expect(styleElements).toHaveLength(2)
+    expect(styleElements[0]).toBe(style)
+    const match = styleElements[1].innerHTML.match(/\.(reactable-[^{]+){background:aliceblue;}/)
+    expect(match).toBeTruthy()
+    const themeClass = match[1]
+    expect(getRoot(container)).toHaveClass(themeClass)
+  })
+
+  it('theme styles are appended right after reactable.css stylesheet if present, even if in body', () => {
+    const emptyLink = document.createElement('link')
+    const linkStylesheet = document.createElement('link')
+    linkStylesheet.rel = 'stylesheet'
+    linkStylesheet.href = 'lib/reactable-0.3.0.9000/reactable.css'
+    const linkOtherStylesheet = document.createElement('link')
+    linkOtherStylesheet.rel = 'stylesheet'
+    linkOtherStylesheet.href = 'lib/otherlib-0.3.0.9000/otherlib.css'
+    document.body.appendChild(emptyLink)
+    document.body.appendChild(linkStylesheet)
+    document.body.appendChild(linkOtherStylesheet)
+
+    const props = {
+      data: { a: [] },
+      columns: [{ name: 'a', id: 'a' }],
+      theme: { style: { background: 'theme-styles-test' } }
+    }
+    render(<Reactable {...props} />)
+    const linkElements = document.body.querySelectorAll('link, style')
+    expect(linkElements).toHaveLength(4)
+    expect(linkElements[0]).toBe(emptyLink)
+    expect(linkElements[1]).toBe(linkStylesheet)
+    expect(linkElements[2].innerHTML).toMatch(/\.reactable-[^{]+{background:theme-styles-test;}/)
+    expect(linkElements[3]).toBe(linkOtherStylesheet)
   })
 })
 

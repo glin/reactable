@@ -1,4 +1,5 @@
 const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = (env, argv) => {
   // Set NODE_ENV for Babel
@@ -43,7 +44,7 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [
-            'style-loader',
+            MiniCssExtractPlugin.loader,
             'css-loader',
             {
               loader: 'postcss-loader',
@@ -57,6 +58,8 @@ module.exports = (env, argv) => {
         }
       ]
     },
+
+    plugins: [new MiniCssExtractPlugin()],
 
     externals: {
       react: 'window.React',

@@ -21,6 +21,8 @@
 * `NULL` values in list-columns now correctly appear as missing values instead of
   `[object Object]`. `NULL` values are now represented as `null` values in JavaScript,
   instead of an empty object, `{}`.
+* `reactableTheme()` styles no longer override custom user CSS in the
+  HTML document `<head>`.
 
 ## Breaking changes
 

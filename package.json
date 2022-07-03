@@ -37,10 +37,10 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.1.0",
+    "mini-css-extract-plugin": "^2.6.1",
     "postcss": "^8.4.14",
     "postcss-loader": "^4.3.0",
     "prettier": "^2.0.5",
-    "style-loader": "^2.0.0",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.6.0"
   },
