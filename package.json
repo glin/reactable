@@ -4,8 +4,8 @@
     "dev": "webpack --mode development",
     "build:watch": "webpack --mode production --watch",
     "dev:watch": "webpack --mode development --watch",
-    "test": "jest",
-    "test:cover": "jest --coverage",
+    "test": "jest srcjs",
+    "test:cover": "jest srcjs --coverage",
     "lint": "eslint srcjs",
     "format": "prettier --write srcjs"
   },
