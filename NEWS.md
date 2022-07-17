@@ -207,6 +207,11 @@ rarely used, so most code should continue to work upon upgrading.
   ([#71](https://github.com/glin/reactable/issues/71)).
 * Increased the default width of the row selection column to match the row
   details column (45px).
+* The default cell padding can no longer be overridden using custom CSS or inline
+  styles on cells. To customize the cell padding, use a theme instead, like
+  `reactableTheme(cellPadding = "...")` ([#248](https://github.com/glin/reactable/issues/248),
+  ([#142](https://github.com/glin/reactable/issues/142),
+  [#177](https://github.com/glin/reactable/issues/177)).
 
 ## Minor improvements and bug fixes
 
