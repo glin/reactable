@@ -11,6 +11,11 @@
   root font size. For example, Bootstrap 3 sets a default root font size of `10px`,
   so you may need to adjust the `rem` values before adapting examples to your site.
   (Bootstrap 4 and above no longer change the default root font size).
+* R style functions no longer apply to aggregated cells and rows incorrectly
+  (@fawda123, [#250](https://github.com/glin/reactable/issues/250)).
+* JavaScript render functions and style functions no longer receive an invalid
+  `cellInfo.index` or `rowInfo.index` property for aggregated cells and rows
+  ([#250](https://github.com/glin/reactable/issues/250)).
 
 ## Breaking changes
 

@@ -506,9 +506,7 @@ describe('pad rows', () => {
   })
 
   it('renders a minimum of 1 row by default (minRows = 1)', () => {
-    const { container } = render(
-      <Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} />
-    )
+    const { container } = render(<Reactable data={{ a: [] }} columns={[{ name: 'a', id: 'a' }]} />)
     const dataRows = getDataRows(container)
     expect(dataRows).toHaveLength(0)
     const padRows = getPadRows(container)
@@ -6073,9 +6071,7 @@ describe('expandable row details', () => {
   it('expanders language', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'] },
-      columns: [
-        { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` }
-      ],
+      columns: [{ name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.values.a}` }],
       language: {
         detailsExpandLabel: '_Toggle details'
       }
@@ -6215,7 +6211,7 @@ describe('grouping and aggregation', () => {
           cell: (cellInfo, state) => {
             return (
               `${cellInfo.value}: aggregated=${cellInfo.aggregated}, ` +
-              `isGrouped=${cellInfo.isGrouped}, row=${cellInfo.index}, ` +
+              `isGrouped=${cellInfo.isGrouped}, row=${cellInfo.viewIndex}, ` +
               `page=${state.page}`
             )
           }
@@ -6274,10 +6270,10 @@ describe('grouping and aggregation', () => {
             ]
             expect(cellInfo.column.id).toEqual('a')
             expect(cellInfo.column.name).toEqual('col-a')
-            expect(cellInfo.index >= 0).toEqual(true)
+            expect(cellInfo.index).toBe(undefined)
             expect(cellInfo.viewIndex >= 0).toEqual(true)
             expect(cellInfo.page).toEqual(0)
-            expect(cellInfo.value).toEqual(['a', '', 'missing'][cellInfo.index])
+            expect(cellInfo.value).toEqual(['a', '', 'missing'][cellInfo.viewIndex])
             expect(cellInfo.aggregated).toEqual(true)
             expect(cellInfo.filterValue).toEqual(undefined)
             expect(cellInfo.level).toEqual(0)
@@ -6288,9 +6284,9 @@ describe('grouping and aggregation', () => {
                 { a: 'a', b: null },
                 { a: '', b: null },
                 { a: null, b: null }
-              ][cellInfo.index]
+              ][cellInfo.viewIndex]
             )
-            expect(cellInfo.subRows).toEqual(rows[cellInfo.index]._subRows)
+            expect(cellInfo.subRows).toEqual(rows[cellInfo.viewIndex]._subRows)
             expect(state.page).toEqual(0)
             expect(state.pageSize).toEqual(10)
             expect(state.pages).toEqual(1)
@@ -6316,6 +6312,35 @@ describe('grouping and aggregation', () => {
     }
     const { container } = render(<Reactable {...props} />)
     expect(getCellsText(container, '.col-a')).toEqual(['\u200ba', '\u200b\u200b', '\u200bmissing'])
+  })
+
+  it('grouped cells and rows do not use R style and class functions', () => {
+    const props = {
+      data: { a: [1, 2, 1], b: ['a', 'b', 'c'] },
+      columns: [
+        {
+          name: 'col-a',
+          id: 'a',
+          className: ['cell', 'cell', 'cell'],
+          style: [{ color: 'red' }, { color: 'red' }, { color: 'red' }]
+        },
+        { name: 'col-b', id: 'b' }
+      ],
+      rowClassName: ['row', 'row', 'row'],
+      rowStyle: [{ color: 'red' }, { color: 'red' }, { color: 'red' }],
+      groupBy: ['a']
+    }
+    const { container } = render(<Reactable {...props} />)
+    const rows = getRows(container)
+    rows.forEach(row => {
+      expect(row).not.toHaveClass('row')
+      expect(row).not.toHaveStyle('color: red')
+    })
+    const cells = getCells(container)
+    cells.forEach(cell => {
+      expect(cell).not.toHaveClass('cell')
+      expect(cell).not.toHaveStyle('color: red')
+    })
   })
 
   it('aggregates values', () => {
@@ -6568,7 +6593,7 @@ describe('grouping and aggregation', () => {
             if (!isExpanded) {
               expect(cellInfo.column.id).toEqual('b')
               expect(cellInfo.column.name).toEqual('col-b')
-              expect(cellInfo.index).toEqual(0)
+              expect(cellInfo.index).toBe(undefined)
               expect(cellInfo.viewIndex).toEqual(0)
               expect(cellInfo.page).toEqual(0)
               expect(cellInfo.value).toEqual(2)
@@ -6603,19 +6628,19 @@ describe('grouping and aggregation', () => {
 
             // Two child rows when expanded
             if (cellInfo.level > 0) {
-              expect(cellInfo.index === 0 || cellInfo.index === 1).toEqual(true)
-              expect(cellInfo.value).toEqual([1.5, 3][cellInfo.index])
+              expect(cellInfo.index).toBe(undefined)
+              expect(cellInfo.value).toEqual({ 1: 1.5, 2: 3 }[cellInfo.viewIndex])
               expect(cellInfo.aggregated).toEqual(true)
               expect(cellInfo.level).toEqual(1)
               expect(cellInfo.expanded).toBeFalsy()
               expect(cellInfo.selected).toEqual(false)
               expect(cellInfo.row).toEqual(
-                [
-                  { a: 'a', b: 1.5, c: 'x', d: null },
-                  { a: 'b', b: 3, c: 'x', d: null }
-                ][cellInfo.index]
+                {
+                  1: { a: 'a', b: 1.5, c: 'x', d: null },
+                  2: { a: 'b', b: 3, c: 'x', d: null }
+                }[cellInfo.viewIndex]
               )
-              expect(cellInfo.subRows.length).toEqual([2, 1][cellInfo.index])
+              expect(cellInfo.subRows.length).toEqual({ 1: 2, 2: 1 }[cellInfo.viewIndex])
               expect(state.page).toEqual(0)
               expect(state.pageSize).toEqual(10)
               expect(state.pages).toEqual(1)
@@ -6712,7 +6737,7 @@ describe('grouping and aggregation', () => {
           format: { cell: { suffix: '__cell' }, aggregated: { prefix: 'agg__' } },
           aggregate: () => '',
           // Formatting should be applied before aggregated cell renderers
-          aggregated: cellInfo => `${cellInfo.value}b-${cellInfo.level}-${cellInfo.index}`,
+          aggregated: cellInfo => `${cellInfo.value}b-${cellInfo.level}-${cellInfo.viewIndex}`,
           className: 'col-b'
         },
         { name: 'col-c', id: 'c' },
@@ -6726,10 +6751,10 @@ describe('grouping and aggregation', () => {
     expect(getByText('b__cell_a (1)')).toBeVisible()
     expect(getCellsText(container, '.col-b')).toEqual([
       'agg__b-0-0',
-      'agg__b-1-0',
+      'agg__b-1-1',
       '1__cell',
       '2__cell',
-      'agg__b-1-1',
+      'agg__b-1-4',
       '3__cell'
     ])
   })
@@ -6744,7 +6769,7 @@ describe('grouping and aggregation', () => {
       expect(column.id).toEqual('b')
       expect(column.name).toEqual('col-b')
       expect(column.filterValue).toEqual(undefined)
-      expect(rowInfo.index).toEqual(0)
+      expect(rowInfo.index).toBe(undefined)
       expect(rowInfo.viewIndex).toEqual(0)
       expect(rowInfo.aggregated).toEqual(true)
       expect(rowInfo.level).toEqual(0)
@@ -6854,7 +6879,7 @@ describe('grouping and aggregation', () => {
       if (isExpanded) {
         return
       }
-      expect(rowInfo.index).toEqual(0)
+      expect(rowInfo.index).toBe(undefined)
       expect(rowInfo.viewIndex).toEqual(0)
       expect(rowInfo.aggregated).toEqual(true)
       expect(rowInfo.level).toEqual(0)
@@ -7359,14 +7384,14 @@ describe('cell click actions', () => {
         {
           name: 'col-b',
           id: 'b',
-          aggregated: cellInfo => `b-agg-${cellInfo.level}-${cellInfo.index}`,
+          aggregated: cellInfo => `b-agg-${cellInfo.level}-${cellInfo.viewIndex}`,
           details: () => 'details-b'
         },
         { name: 'col-c', id: 'c' },
         {
           name: 'col-d',
           id: 'd',
-          aggregated: cellInfo => `d-agg-${cellInfo.level}-${cellInfo.index}`
+          aggregated: cellInfo => `d-agg-${cellInfo.level}-${cellInfo.viewIndex}`
         }
       ],
       groupBy: ['c', 'a'],
@@ -7391,7 +7416,7 @@ describe('cell click actions', () => {
     fireEvent.click(expanders[0])
     expect(getRows(container)).toHaveLength(3)
 
-    fireEvent.click(getByText('d-agg-1-0'))
+    fireEvent.click(getByText('d-agg-1-1'))
     expect(getRows(container)).toHaveLength(5)
 
     // Clicking should still expand row details

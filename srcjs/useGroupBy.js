@@ -2,6 +2,7 @@
 // - Pass row objects and aggregated row objects to aggregate functions
 // - Include groupBy columns in aggregations
 // - Set nesting depth for leaf rows
+// - Omit row index properties on aggregated rows
 
 import React from 'react'
 import {
@@ -332,7 +333,12 @@ function useInstance(instance) {
             subRows,
             leafRows,
             depth,
-            index,
+            // Originally, aggregated rows had a row index corresponding to the index within
+            // rowGroupsMap. This row index doesn't map to a valid data row and overlaps
+            // with the leaf rows, so explicitly omit it.
+            // index: undefined,
+            index: undefined,
+            groupIndex: index,
             // All columns that can be aggregated (including groupBy columns)
             aggregatedColumns
           }
