@@ -1126,6 +1126,7 @@ reactable(
 ```
 
 ### Column widths
+
 By default, columns have a minimum width of 100px and stretch to fill the table.
 You can control the width of a column using the following arguments in `colDef()`:
 
@@ -1232,8 +1233,10 @@ reactable(
 ```
 
 ### Custom CSS
+
 For more control over styling, you can add custom class names to the table and
 apply your own CSS:
+
 ```{r}
 reactable(
   iris[1:18, ],
@@ -1268,6 +1271,7 @@ reactable(
 ```
 
 In R Markdown documents, you can embed CSS using a `css` language chunk:
+
 ```{r, echo=FALSE, comment=NA}
 cat('```{css, echo=FALSE}
 .my-tbl {
@@ -1295,6 +1299,10 @@ external style sheet:
 - [Using custom CSS in R Markdown documents](https://bookdown.org/yihui/rmarkdown/html-document.html#custom-css)
 - [Using custom CSS in Shiny apps](https://shiny.rstudio.com/articles/css.html)
 
+> **NOTE:** If you inspect a table's HTML, you might find CSS classes like `.rt-table` on
+> different elements of the table. These CSS classes are undocumented and subject to change,
+> so we recommend adding your own custom class names, or using [themes](#theming) to customize
+> parts of the table that aren't covered by the custom class names.
 
 ## Theming
 
@@ -1322,7 +1330,9 @@ reactable(
 ```
 
 ### Global theme
+
 To set the default theme for all tables, use the global `reactable.theme` option:
+
 ```{r}
 options(reactable.theme = reactableTheme(
   color = "hsl(233, 9%, 87%)",
@@ -1351,12 +1361,14 @@ options(reactable.theme = NULL)
 ```
 
 ### Nested selectors
+
 You can use nested CSS selectors in theme styles to target the current element,
 using `&` as the selector, or other child elements (just like in Sass).
 This is useful for adding pseudo-classes like `&:hover`, or adding styles in a
 certain context like `.outer-container &`.
 
 For example, to highlight headers when sorting:
+
 ```{r}
 reactable(
   iris[1:5, ],
@@ -1373,6 +1385,7 @@ reactable(
 ```
 
 Or to apply a dark theme when a parent element has a certain class, like `.dark`:
+
 ```{r theme_toggle, eval=FALSE}
 theme <- reactableTheme(
   style = list(".dark &" = list(color = "#fff", background = "#282a36")),
@@ -1398,11 +1411,13 @@ div(class = "themeable-tbl dark", tbl)
 ```
 
 ### Dynamic theming
+
 Themes can also be functions that return a `reactableTheme()` for
 context-specific styling.
 
 For example, to style tables in RStudio R Notebooks only when a dark
 editor theme is active:
+
 ```{r, eval=FALSE}
 options(reactable.theme = function() {
   theme <- reactableTheme(
