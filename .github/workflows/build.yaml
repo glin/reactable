@@ -3,8 +3,7 @@ on: [push, pull_request]
 name: build
 
 permissions:
-  contents: read
-  pages: write
+  contents: write
 
 jobs:
   build-r:
