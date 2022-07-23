@@ -4,6 +4,7 @@ name: build
 
 permissions:
   contents: read
+  pages: write
 
 jobs:
   build-r:
