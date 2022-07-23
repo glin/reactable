@@ -4,6 +4,8 @@ name: build
 
 permissions:
   contents: write
+  deployments: write
+  statuses: write
 
 jobs:
   build-r:
