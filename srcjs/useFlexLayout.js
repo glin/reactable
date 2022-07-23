@@ -118,7 +118,9 @@ function useInstance(instance) {
           column.flexWidth = isFixedWidth ? 0 : column.totalMinWidth
         }
       }
-      totalFlexWidth += column.flexWidth
+      if (column.isVisible) {
+        totalFlexWidth += column.flexWidth
+      }
     })
     return totalFlexWidth
   }

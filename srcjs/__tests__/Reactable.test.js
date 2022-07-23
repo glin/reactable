@@ -1910,6 +1910,31 @@ describe('column widths and flex layout', () => {
     )
   })
 
+  it('column group widths ignore hidden columns', () => {
+    const props = {
+      data: { a: [1], b: [1], c: [1], d: [1] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', show: false },
+        { name: 'c', id: 'c', show: false },
+        { name: 'd', id: 'd' }
+      ],
+      columnGroups: [{ name: 'group', columns: ['a', 'b'] }]
+    }
+    const { container } = render(<Reactable {...props} />)
+    const groupHeaders = getGroupHeaders(container)
+    expect(groupHeaders).toHaveLength(1)
+    const ungroupedHeaders = getUngroupedHeaders(container)
+    expect(ungroupedHeaders).toHaveLength(1)
+
+    expect(groupHeaders[0]).toHaveStyle(
+      'flex: 100 0 auto; min-width: 100px; width: 100px; max-width:'
+    )
+    expect(ungroupedHeaders[0]).toHaveStyle(
+      'flex: 100 0 auto; min-width: 100px; width: 100px; max-width:'
+    )
+  })
+
   it('should have min-width on thead, tbody, and tfoot', () => {
     const props = {
       data: { a: [1, 2], b: ['a', 'b'], c: ['c', 'd'] },

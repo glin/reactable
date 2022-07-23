@@ -16,6 +16,8 @@
 * JavaScript render functions and style functions no longer receive an invalid
   `cellInfo.index` or `rowInfo.index` property for aggregated cells and rows
   ([#250](https://github.com/glin/reactable/issues/250)).
+* Column group header widths are now calculated correctly with hidden columns
+  in the column group (@Patrikios, [#253](https://github.com/glin/reactable/issues/253)).
 
 ## Breaking changes
 
