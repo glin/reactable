@@ -1262,3 +1262,14 @@ test_that("reactable_html", {
   html <- reactable_html(NULL, "color: red", NULL)
   expect_equal(html[[4]], htmltools::tags$div(style = "color: #333;color: red"))
 })
+
+test_that("reactable.yaml widget dependencies are included with correct version", {
+  deps <- htmlwidgets::getDependency("reactable")
+  reactableDep <- Find(function(x) x$name == "reactable", deps)
+  expect_true(!is.null(reactableDep))
+  # Keep widget dependency version in sync with package version
+  expect_equal(package_version(reactableDep$version), packageVersion("reactable"))
+  # Ensure reactable.css is included and named correctly, as it's also used as
+  # the insertion point for theme style injection
+  expect_equal(reactableDep$stylesheet, "reactable.css")
+})
