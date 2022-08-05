@@ -154,7 +154,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         if (col.cell instanceof Array && !cellInfo.aggregated) {
           value = col.cell[cellInfo.index]
           if (value) {
-            value = hydrate({ Fragment, WidgetContainer }, col.cell[cellInfo.index])
+            value = hydrate({ Fragment, WidgetContainer }, value)
           }
         }
       }

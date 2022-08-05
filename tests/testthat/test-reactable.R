@@ -173,12 +173,14 @@ test_that("data with list-columns are serialized correctly", {
       list(x = TRUE),
       # Length-1 data frame columns should still be arrays
       data.frame(x = "y"),
+      # NULLs should be serialized as null, not jsonlite's default {}
+      NULL,
       NA
     ))
   )
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null]}')
+  expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null,null]}')
 })
 
 test_that("data supports Crosstalk", {
