@@ -19,8 +19,8 @@
 * Column group header widths are now calculated correctly with hidden columns
   in the column group (@Patrikios, [#253](https://github.com/glin/reactable/issues/253)).
 * `NULL` values in list-columns now correctly appear as missing values instead of
-  `[object Object]`. `NULL` values are now represented as `null` values in JavaScript,
-  instead of an empty object, `{}`.
+  `[object Object]`. `NULL` values are now represented as `null` values in JavaScript
+  instead of an empty object like {}.
 * `reactableTheme()` styles no longer override custom user CSS in the
   HTML document `<head>`.
 
