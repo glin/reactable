@@ -388,4 +388,8 @@ Reactable.getState('cars-table')
 .main-container blockquote {
   font-size: inherit;
 }
+
+h3 {
+  font-weight: 600;
+}
 ```
