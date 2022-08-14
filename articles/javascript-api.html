@@ -106,9 +106,9 @@
       <div class="d-none name"><code>javascript-api.Rmd</code></div>
     </div>
 
-      <blockquote>
+      <div class="callout">
 <p>New in v0.3.0</p>
-</blockquote>
+</div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -188,9 +188,9 @@
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, elementId <span class="op">=</span> <span class="st">"cars-table"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<blockquote>
-<p><strong>NOTE</strong>: <code><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">htmltools::browsable()</a></code> is a convenient way to view the rendered HTML when copying code into the console. It isn’t required to render HTML in R Markdown documents or Shiny apps.</p>
-</blockquote>
+<div class="callout-note">
+<p><strong>Note:</strong> <code><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">htmltools::browsable()</a></code> is a convenient way to view the rendered HTML when copying code into the console. It isn’t required to render HTML in R Markdown documents or Shiny apps.</p>
+</div>
 <p>To reuse this button in other tables, you can also convert it into a function that generates download buttons:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
@@ -485,6 +485,10 @@
 
 .main-container blockquote {
   font-size: inherit;
+}
+
+h3 {
+  font-weight: 600;
 }
 </style>
 </div>
