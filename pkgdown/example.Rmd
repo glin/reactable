@@ -10,5 +10,5 @@ output:
 ```{r, echo=FALSE}
 library(reactable)
 
-reactable(iris, style = list(fontSize = "14px"))
+reactable(iris)
 ```
