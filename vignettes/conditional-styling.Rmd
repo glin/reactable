@@ -178,7 +178,9 @@ colDef(
 )
 ```
 
-> NOTE: R functions cannot apply styles to aggregated cells.
+::: {.callout-note}
+**Note:** R functions cannot apply styles to aggregated cells.
+:::
 
 ### JavaScript functions {#cell-js-functions}
 
@@ -296,7 +298,9 @@ reactable(
 )
 ```
 
-> NOTE: R functions cannot apply styles to aggregated rows.
+::: {.callout-note}
+**Note:** R functions cannot apply styles to aggregated rows.
+:::
 
 ### JavaScript functions {#row-js-functions}
 

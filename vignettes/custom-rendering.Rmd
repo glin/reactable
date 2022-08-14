@@ -95,7 +95,9 @@ dynamic behavior (e.g., render based on filtered state) or have a very large tab
 
 #### Example: column total with filtering
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 For example, you can easily add a column total using an R render function:
 

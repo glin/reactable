@@ -38,7 +38,9 @@ propsTable <- function(props) {
 }
 ```
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 Custom filter methods and custom filter inputs let you change how filtering is done
 in reactable. By default, all filter inputs are text inputs that filter data using
@@ -191,10 +193,12 @@ For more information on React or using React from R, see the
 [React documentation](https://reactjs.org/) and
 [reactR package documentation](https://react-r.github.io/reactR/index.html).
 
-> **TIP:** Many column filter inputs do not have a visible text label, including
-> the default text inputs. If your custom filter does not have a visible text label,
-> be sure to give it an accessible name using the
-> [`aria-label` attribute or similar technique](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label).
+::: {.callout-tip}
+**Tip:** Many column filter inputs do not have a visible text label, including
+the default text inputs. If your custom filter does not have a visible text label,
+be sure to give it an accessible name using the
+[`aria-label` attribute or similar technique](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label).
+:::
 
 ### R render function {#filter-r-render-function}
 

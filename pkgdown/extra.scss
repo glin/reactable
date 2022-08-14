@@ -222,6 +222,41 @@ a[href='#main'] {
   }
 }
 
+// Custom callouts
+.callout {
+  margin: 1rem 0;
+  padding: 0.625rem 1.25rem;
+  border-left: 0.25rem solid #e9ecef;
+
+  &-box {
+    @extend .callout;
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e9ecef;
+    border-left-width: 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
+
+  &-note {
+    @extend .callout-box;
+    border-left-color: #5bc0de;
+  }
+
+  &-tip {
+    @extend .callout-box;
+    border-left-color: #3fb618;
+  }
+
+  &-warning {
+    @extend .callout-box;
+    border-left-color: #f0ad4e;
+  }
+}
+
 .reactable {
   font-size: 0.875rem;
 }

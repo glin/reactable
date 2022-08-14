@@ -65,8 +65,10 @@ Sorting toggles between ascending and descending order by default. To clear
 the sort, hold the shift key while sorting, and the sorting will additionally
 toggle between ascending, descending, and unsorted order.
 
-> Ascending order means the lowest, first, or earliest values will appear first.
-> Descending order means the largest, last, or latest values will appear first.
+::: {.callout-note}
+**Note:** Ascending order means the lowest, first, or earliest values will appear first.
+Descending order means the largest, last, or latest values will appear first.
+:::
 
 ### Default sorted columns
 
@@ -292,12 +294,16 @@ Tables are paginated by default, but you can disable pagination by setting `pagi
 reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 ```
 
-> **NOTE:** Disabling pagination is not recommended for large tables with many
-> interactive elements (such as links, expand buttons, or selection checkboxes),
-> as that can make it difficult for keyboard users to navigate the page.
+::: {.callout-tip}
+**Tip:** Disabling pagination is not recommended for large tables with many
+interactive elements (such as links, expand buttons, or selection checkboxes),
+as that can make it difficult for keyboard users to navigate the page.
+:::
 
 ## Grouping and Aggregation
+
 You can group rows in a table by specifying one or more columns in `groupBy`:
+
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
@@ -305,6 +311,7 @@ reactable(data, groupBy = "Manufacturer")
 ```
 
 When rows are grouped, you can aggregate data in a column using an `aggregate` function:
+
 ```{r}
 data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
 
@@ -432,7 +439,9 @@ reactable(
 
 ### Include sub rows in pagination
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 By default, sub rows are excluded from pagination and always shown on the same
 page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
@@ -678,7 +687,9 @@ reactable(data, columns = list(
 
 ### Grouped cell rendering
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -742,7 +753,9 @@ reactable(
 
 ### Header rendering
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 ```{r}
 library(htmltools)
@@ -798,7 +811,9 @@ reactable(
 
 #### JavaScript render function
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 ```{r}
 reactable(
@@ -840,7 +855,9 @@ reactable(
 
 ## Expandable Row Details
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 You can make rows expandable with additional content through `details`, which
 takes an R or JavaScript render function. See [Custom Rendering](custom-rendering.html)
@@ -896,7 +913,9 @@ reactable(iris[1:5, ], details = function(index) {
 
 ### Multiple row details
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 You can add `details` to individual columns, and even show multiple details for a row:
 
@@ -966,7 +985,9 @@ reactable(sleep[1:6, ], columns = list(
 
 #### JavaScript style function
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 ```{r}
 reactable(sleep[1:6, ], columns = list(
@@ -1017,7 +1038,9 @@ reactable(sleep[1:6, ],
 
 #### JavaScript style function
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 ```{r}
 reactable(sleep[1:6, ],
@@ -1195,7 +1218,9 @@ reactable(
 
 ### Vertical alignment
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 You can change the vertical alignment of cell content using the `vAlign` or
 `headerVAlign` arguments in `colDef()` and `colGroup()`. `vAlign` controls the
@@ -1299,10 +1324,12 @@ external style sheet:
 - [Using custom CSS in R Markdown documents](https://bookdown.org/yihui/rmarkdown/html-document.html#custom-css)
 - [Using custom CSS in Shiny apps](https://shiny.rstudio.com/articles/css.html)
 
-> **NOTE:** If you inspect a table's HTML, you might find CSS classes like `.rt-table` on
-> different elements of the table. These CSS classes are undocumented and subject to change,
-> so we recommend adding your own custom class names, or using [themes](#theming) to customize
-> parts of the table that aren't covered by the custom class names.
+::: {.callout-note}
+**Note:** If you inspect a table's HTML, you might find CSS classes like `.rt-table` on
+different elements of the table. These CSS classes are undocumented and subject to change,
+so we recommend adding your own custom class names, or using [themes](#theming) to customize
+parts of the table that aren't covered by the custom class names.
+:::
 
 ## Theming
 
@@ -1469,7 +1496,9 @@ reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 
 ## Sticky Columns
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 You can make columns sticky when scrolling horizontally using the `sticky`
 argument in `colDef()` or `colGroup()`. Set `sticky` to either `"left"`
@@ -1496,7 +1525,9 @@ reactable(
 )
 ```
 
-> **NOTE:** Sticky columns are not supported in IE11.
+::: {.callout-note}
+**Note:** Sticky columns are not supported in IE11.
+:::
 
 Before v0.3.0, columns could be made sticky by applying custom styles.
 This method was harder to use and did not work well with column resizing,
@@ -1579,7 +1610,9 @@ reactable(iris[1:5, ], rownames = TRUE)
 
 ### Row headers
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 You can mark up cells in a column as row headers by setting `rowHeader` to `TRUE`
 in `colDef()`.
@@ -1630,7 +1663,9 @@ reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 
 ### Custom action
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 This example uses a custom click action to create custom "show details" action
 buttons in each row of the table:
@@ -1671,11 +1706,12 @@ reactable(
 )
 ```
 
-> **WARNING:** Custom click actions are currently not accessible to keyboard
-> users, and are generally not recommended. If they must be used, ensure that
-> they can be triggered by a keyboard through other means, such as a button
-> in the example above.
-
+::: {.callout-warning}
+**Warning:** Custom click actions are currently not accessible to keyboard
+users, and are generally not recommended. If they must be used, ensure that
+they can be triggered by a keyboard through other means, such as a button
+in the example above.
+:::
 
 ## Language Options
 
@@ -1776,9 +1812,6 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-> **NOTE:** `selectionId` can also be used to get the selected rows in Shiny,
-> but this will be deprecated in a future release.
 
 #### Default selected rows
 
@@ -2015,33 +2048,35 @@ shiny::fluidRow(
 )
 ```
 
-> **NOTE:** This example uses `shiny::fluidRow()` and `shiny::column()` to create
-> a Bootstrap grid layout, which works with all Bootstrap versions. `crosstalk::bscols()`
-> can also create a grid, but is only compatible with Bootstrap 3. If you're not using
-> Bootstrap, here's an alternative way to create a responsive grid using CSS grid.
->
-> <details>
-> <summary>Example: grid layout using CSS grid</summary>
-> ```{r, eval=FALSE}
-> library(crosstalk)
->
-> cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
-> data <- SharedData$new(cars)
->
-> div(
->   style = "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;",
->   div(
->     filter_checkbox("type", "Type", data, ~Type),
->     filter_slider("price", "Price", data, ~Price, width = "100%"),
->     filter_select("mfr", "Manufacturer", data, ~Manufacturer)
->   ),
->   div(
->     style = "grid-column: span 2;",
->     reactable(data, minRows = 10)
->   )
-> )
-> ```
-> </details>
+::: {.callout-note}
+**Note:** This example uses `shiny::fluidRow()` and `shiny::column()` to create
+a Bootstrap grid layout, which works with all Bootstrap versions. `crosstalk::bscols()`
+can also create a grid, but is only compatible with Bootstrap 3. If you're not using
+Bootstrap, here's an alternative way to create a responsive grid using CSS grid.
+
+<details>
+<summary>Example: grid layout using CSS grid</summary>
+```{r, eval=FALSE}
+library(crosstalk)
+
+cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
+data <- SharedData$new(cars)
+
+div(
+  style = "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;",
+  div(
+    filter_checkbox("type", "Type", data, ~Type),
+    filter_slider("price", "Price", data, ~Price, width = "100%"),
+    filter_select("mfr", "Manufacturer", data, ~Manufacturer)
+  ),
+  div(
+    style = "grid-column: span 2;",
+    reactable(data, minRows = 10)
+  )
+)
+```
+</details>
+:::
 
 ### Linked selection
 
@@ -2085,7 +2120,9 @@ htmltools::browsable(
 
 ## JavaScript API
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 You can use the JavaScript API to create custom interactive controls for your table
 without the use of Shiny, or add cross-widget interactions beyond what Crosstalk provides.

@@ -13,9 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
-> Sticky columns are now supported using a `sticky` argument in `colDef()`
-> and `colGroup()`, so use that if possible.
-> See [Sticky Columns](./examples.html#sticky-columns) for examples.
+::: {.callout-note}
+**Note:** Sticky columns are now supported using a `sticky` argument in `colDef()`
+and `colGroup()`, so use that if possible.
+See [Sticky Columns](./examples.html#sticky-columns) for examples.
+:::
 
 ### Basic sticky columns
 

@@ -38,7 +38,9 @@ propsTable <- function(props) {
 }
 ```
 
-> New in v0.3.0
+::: {.callout}
+New in v0.3.0
+:::
 
 ## Introduction
 
@@ -137,9 +139,11 @@ htmltools::browsable(
 )
 ```
 
-> **NOTE**: `htmltools::browsable()` is a convenient way to view the rendered HTML when
-> copying code into the console. It isn't required to render HTML in R Markdown documents
-> or Shiny apps.
+::: {.callout-note}
+**Note:** `htmltools::browsable()` is a convenient way to view the rendered HTML when
+copying code into the console. It isn't required to render HTML in R Markdown documents
+or Shiny apps.
+:::
 
 To reuse this button in other tables, you can also convert it into a function that
 generates download buttons:

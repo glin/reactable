@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
-> A collection of recipes used to create the reactable demos
+A collection of recipes used to create the reactable demos.
 
 ## Insert links
 
@@ -463,7 +463,9 @@ reactable(ratings, columns = list(
 
 ## Show data from other columns
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 To access data from another column, get the current row data using the
 row index argument in an R render function, or `cellInfo.row` in a
@@ -551,7 +553,9 @@ reactable(
 
 ### Dynamic totals
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 To update the total when filtering the table, calculate the total in a
 JavaScript render function:
@@ -833,7 +837,9 @@ reactable(
 
 ## Borders between groups of data
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 To add borders between groups, use an R or JavaScript function to style rows
 based on the previous or next row's data. If the table can be sorted, use a
@@ -874,7 +880,9 @@ reactable(
 
 ## Merge cells
 
-> This example requires reactable v0.3.0 or above.
+::: {.callout}
+This example requires reactable v0.3.0 or above.
+:::
 
 You can give the appearance of merged cells by hiding cells based on the
 previous row's data. Just like with the example above, you'll need a JavaScript
@@ -973,13 +981,19 @@ htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:4
                      rel = "stylesheet")
 ```
 
-> As a side note, the reactable package documentation uses the default system fonts
-> installed on your operating system (also known as a
-> [system font stack](https://css-tricks.com/snippets/css/system-font-stack)):
->
-> ```css
-> font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-> ```
+::: {.callout-tip}
+**Tip:** The reactable package documentation uses the default system fonts
+installed on your operating system (also known as a
+[system font stack](https://css-tricks.com/snippets/css/system-font-stack)), which
+load fast and look familiar:
+
+```css
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+```
+
+[Bootstrap 5 also uses a system font stack](https://getbootstrap.com/docs/5.0/content/reboot/#native-font-stack)
+by default.
+:::
 
 ## Custom sort indicators
 

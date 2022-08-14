@@ -13,8 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
-> More examples of [custom filtering](./custom-filtering.html). Note that the
-> examples on this page do not support IE 11.
+More examples of [custom filtering](./custom-filtering.html). Note that the
+examples on this page do not support IE 11.
 
 ## Material UI Range Filter
 
