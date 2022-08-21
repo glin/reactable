@@ -1054,14 +1054,15 @@ test_that("column class functions", {
   expect_equal(attribs$columns[[2]]$className, list("2-1-y", "4-2-y", "6-3-y"))
   expect_equal(attribs$columns[[3]]$className, list("3-1", "3-2", "3-3"))
 
-  # POSIXlt objects should be handled
+  # POSIXlt objects should be handled correctly (mostly just on R <= 3.4)
   data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))
   tbl <- reactable(data, columns = list(
     p = colDef(class = function(value) value)
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[4]]$className,
-               list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05")))
+               # Use as.list(c(...)) instead of list() to preserve tzone attributes
+               as.list(c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))))
 
   # JS functions
   tbl <- reactable(data, columns = list(
@@ -1092,14 +1093,15 @@ test_that("column style functions", {
   expect_equal(attribs$columns[[3]]$style,
                list(list(content = "3-1"), list(content = "3-2"), list(content = "3-3")))
 
-  # POSIXlt objects should be handled
+  # POSIXlt objects should be handled correctly (mostly just on R <= 3.4)
   data$p <- c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))
   tbl <- reactable(data, columns = list(
     p = colDef(style = function(value) value)
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[4]]$style,
-               list(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05")))
+               # Use as.list(c(...)) instead of list() to preserve tzone attributes
+               as.list(c(as.POSIXlt("2019-01-01"), as.POSIXlt("2019-05-01"), as.POSIXlt("2019-07-05"))))
 
   # JS functions
   tbl <- reactable(data, columns = list(
