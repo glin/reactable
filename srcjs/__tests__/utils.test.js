@@ -1,8 +1,6 @@
 import {
   classNames,
   getFirstDefined,
-  getStrIncludesLocale,
-  strIncludes,
   getLeafColumns,
   convertRowsToV6,
   rowsToCSV,
@@ -21,35 +19,6 @@ test('getFirstDefined', () => {
   expect(getFirstDefined(1, 2)).toEqual(1)
   expect(getFirstDefined(undefined, 2, 3)).toEqual(2)
   expect(getFirstDefined(null, undefined, false, true)).toEqual(false)
-})
-
-test('strIncludes', () => {
-  expect(strIncludes('asd', 'asd')).toEqual(true)
-  expect(strIncludes('asd', 'as')).toEqual(true)
-  expect(strIncludes('asd', 'ASD')).toEqual(true)
-  expect(strIncludes('asd', 'SD')).toEqual(true)
-  expect(strIncludes('asd', '')).toEqual(true)
-  expect(strIncludes('bottle', 'botl')).toEqual(false)
-  expect(strIncludes('bottle', ' botl')).toEqual(false)
-  expect(strIncludes('bottle', 'bottle.')).toEqual(false)
-  expect(strIncludes('bottle', 'bó')).toEqual(false)
-  expect(strIncludes('', 'asd')).toEqual(false)
-})
-
-test('getStrIncludesLocale', () => {
-  const strIncludesLocale = getStrIncludesLocale()
-  expect(strIncludesLocale('SLÁN', 'slan')).toEqual(true)
-  expect(strIncludesLocale('bottle', 'bó')).toEqual(true)
-  expect(strIncludesLocale('BOTTLE', 'bó')).toEqual(true)
-  expect(strIncludesLocale('asd', 'asd')).toEqual(true)
-  expect(strIncludesLocale('asd', 'as')).toEqual(true)
-  expect(strIncludesLocale('asd', 'ASD')).toEqual(true)
-  expect(strIncludesLocale('asd', 'SD')).toEqual(true)
-  expect(strIncludesLocale('asd', '')).toEqual(true)
-  expect(strIncludesLocale('bottle', 'botl')).toEqual(false)
-  expect(strIncludesLocale('bottle', ' botl')).toEqual(false)
-  expect(strIncludesLocale('bottle', 'bottle.')).toEqual(false)
-  expect(strIncludesLocale('', 'asd')).toEqual(false)
 })
 
 test('getLeafColumns', () => {
