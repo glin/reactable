@@ -1,4 +1,4 @@
-import { reactWidget } from 'reactR'
+import { reactWidget } from './reactR'
 
 import Reactable from './Reactable'
 

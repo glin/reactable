@@ -28,6 +28,18 @@ Other contributors:
 \itemize{
   \item Tanner Linsley (React Table library) [contributor, copyright holder]
   \item  Emotion team and other contributors (Emotion library) [contributor, copyright holder]
+  \item Kent Russell (reactR package) [contributor, copyright holder]
+  \item Ramnath Vaidyanathan (htmlwidgets package) [contributor, copyright holder]
+  \item Joe Cheng (htmlwidgets package) [contributor, copyright holder]
+  \item JJ Allaire (htmlwidgets package) [contributor, copyright holder]
+  \item Yihui Xie (htmlwidgets package) [contributor, copyright holder]
+  \item Kenton Russell (htmlwidgets package) [contributor, copyright holder]
+  \item  Facebook, Inc. and its affiliates (React library) [contributor, copyright holder]
+  \item  FormatJS (FormatJS libraries) [contributor, copyright holder]
+  \item  Feross Aboukhadijeh, and other contributors (buffer library) [contributor, copyright holder]
+  \item Roman Shtylman (process library) [contributor, copyright holder]
+  \item James Halliday (stream-browserify library) [contributor, copyright holder]
+  \item  RStudio, PBC [funder, copyright holder]
 }
 
 }

@@ -47,13 +47,16 @@ devtools::test()
 covr::report()
 ```
 
-Run JS tests:
+Run JavaScript tests:
 
 ```bash
 npm test
 
 # With test coverage
 npm run test:cover
+
+# Update test snapshots
+npm run test:update
 ```
 
 ### Linting and Formatting

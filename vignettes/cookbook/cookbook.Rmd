@@ -14,6 +14,8 @@ resource_files:
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
+
+options(reactable.static = TRUE)
 ```
 
 A collection of recipes used to create the reactable demos.

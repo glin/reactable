@@ -82,3 +82,7 @@ export function downloadCSV(content, filename) {
     window.URL.revokeObjectURL(url)
   }
 }
+
+export function isBrowser() {
+  return typeof document !== 'undefined'
+}

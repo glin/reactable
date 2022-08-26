@@ -1,5 +1,7 @@
 import createEmotion from '@emotion/css/create-instance'
 
+import { isBrowser } from './utils'
+
 export function createTheme(options) {
   if (!options) return null
   let {
@@ -229,7 +231,7 @@ function removeEmptyProps(obj) {
 
 // Defer Emotion initialization until DOM is loaded and theming is used
 let emotion
-function getEmotion() {
+export function getEmotion() {
   if (emotion) {
     return emotion
   }
@@ -262,10 +264,6 @@ function getEmotion() {
     insertionPoint: insertionPoint
   })
   return emotion
-}
-
-function isBrowser() {
-  return typeof document !== 'undefined'
 }
 
 // Reset Emotion instance and styles, intended for testing use only

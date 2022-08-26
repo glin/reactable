@@ -1275,3 +1275,156 @@ test_that("reactable.yaml widget dependencies are included with correct version"
   # the insertion point for theme style injection
   expect_equal(reactableDep$stylesheet, "reactable.css")
 })
+
+# Static rendering (experimental)
+test_that("static rendering", {
+  data <- data.frame(
+    x = c(1, 2),
+    y = c("a", "column-y-cell"),
+    z = I(list(list(1,2,3), list(4,5,6))),
+    stringsAsFactors = FALSE
+  )
+
+  expect_error(reactable(data, static = "true"), "`static` must be TRUE or FALSE")
+
+  # expect_snapshot() uses capture.output(), which forces UTF-8 characters to latin-1 on
+  # Windows R <= 4.1 or other non-UTF-8 platforms. expect_snapshot_value() is harder to read
+  # but handles UTF-8 characters.
+  # For any errors like `Error: lexical error: invalid char in json text.`, delete the snapshot
+  # entirely and regenerate.
+  expect_snapshot_html_with_utf8 <- function(x) expect_snapshot_value(as.character(x))
+
+  tbl <- reactable(
+    data,
+    static = TRUE,
+    elementId = "stable-id-static-rendering"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_true(grepl("data-react-ssr", rendered$html))
+  expect_true(grepl(">column-y-cell<", rendered$html))
+  expect_snapshot(cat(rendered$html))
+
+  # JS evals should always be serialized as an array
+  expect_true(grepl('"evals":[]', rendered$html, fixed = TRUE))
+
+  # Themes critical CSS should be included in <head>
+  tbl <- reactable(
+    data,
+    static = TRUE,
+    theme = reactableTheme(color = "blue", borderWidth = 3),
+    elementId = "stable-id-theme-critical-css"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_true(grepl('<style data-emotion="reactable .+color:blue;', rendered$head))
+  expect_snapshot(cat(rendered$head))
+  expect_snapshot(cat(rendered$html))
+
+  # Custom render functions and JS evals should work
+  tbl <- reactable(
+    data,
+    columns = list(
+      x = colDef(cell = JS("cellInfo => `js-rendered_${cellInfo.value}_`")),
+      y = colDef(cell = function(value) htmltools::tags$b(value))
+    ),
+    static = TRUE,
+    elementId = "stable-id-custom-js-evals"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_true(grepl("js-rendered_2_", rendered$html))
+  expect_true(grepl("<b>column-y-cell</b>", rendered$html))
+  expect_snapshot(cat(rendered$html))
+
+  # Custom render functions and JS evals that call React externally should work
+  tbl <- reactable(
+    data,
+    columns = list(
+      y = colDef(cell = JS("cellInfo => React.createElement('b', null, cellInfo.value)"))
+    ),
+    static = TRUE,
+    elementId = "stable-id-external-React"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_true(grepl("<b>column-y-cell</b>", rendered$html))
+  expect_snapshot(cat(rendered$html))
+
+  # Known limitation: default expanded rows with defaultExpanded = TRUE is not currently supported.
+  # Note: add a test for nested tables if it ever does become supported.
+  tbl <- reactable(
+    data.frame(x = 1),
+    details = function(i) "row-details",
+    static = TRUE,
+    elementId = "stable-id-row-details"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_false(grepl(">row-details<", rendered$html))
+  expect_snapshot_html_with_utf8(rendered$html)
+
+  # Embedded HTML widgets' root elements and widget scripts should not be statically rendered
+  tbl <- reactable(
+    data.frame(x = 1),
+    columns = list(x = colDef(cell = function() {
+      sparkline::sparkline(c(1, 2), elementId = "stable-id-sparkline")
+    })),
+    static = TRUE,
+    elementId = "stable-id-html-widgets"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  expect_false(grepl("sparkline", strsplit(rendered$html, "<script")[[1]][[1]]))
+  expect_equal(lengths(gregexpr("<script ", rendered$html)), 1) # Should only be one <script> for reactable
+  expect_snapshot(cat(rendered$html))
+
+  # Column formatting features that depend on Intl polyfills should work
+  formatData <- data.frame(
+    str = "str",
+    pct = 0.75,
+    currency_USD = 10,
+    currency_EUR = 11.123,
+    date = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"),
+    time = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"),
+    num = 1234.1234,
+    locale_hi_IN = 1234567.4,
+    stringsAsFactors = FALSE
+  )
+  tbl <- reactable(
+    formatData,
+    columns = list(
+      str = colDef(format = colFormat(prefix = "pre_", suffix = "_suffix")),
+      pct = colDef(format = colFormat(percent = TRUE)),
+      currency_USD = colDef(format = colFormat(currency = "USD")),
+      currency_EUR = colDef(format = colFormat(currency = "EUR")),
+      date = colDef(format = colFormat(datetime = TRUE, prefix = "_date_", suffix = "_date_")),
+      time = colDef(format = colFormat(time = TRUE, prefix = "_time_", suffix = "_time_")),
+      num = colDef(format = colFormat(digits = 1, separators = TRUE)),
+      # Current limitation: locales other than "en" aren't supported for now
+      locale_hi_IN = colDef(format = colFormat(locales = "hi-IN", currency = "INR", separators = TRUE))
+    ),
+    static = TRUE,
+    elementId = "stable-id-formatting-intl-polyfills"
+  )
+  rendered <- htmltools::renderTags(tbl)
+  html <- rendered$html
+  expect_true(grepl("pre_str_suffix", html, fixed = TRUE))
+  expect_true(grepl(">75%<", html, fixed = TRUE))
+  expect_true(grepl(">$10.00<", html, fixed = TRUE))
+  expect_true(grepl(">€11.12<", html, fixed = TRUE))
+  expect_true(grepl(">1,234.1<", html, fixed = TRUE))
+  expect_true(grepl(">₹1,234,567.40<", html, fixed = TRUE))
+  # Date/time formatting depends on the local timezone, which can't easily be controlled in tests
+  expect_false(grepl("_date_2019-05-06T03:22:15Z_date_", html))
+  html <- sub(">_date_.+_date_<", ">_date_replaced_date_<", html)
+  expect_false(grepl("_time_2019-05-06T03:22:15Z_time_", html))
+  html <- sub(">_time_.+_time_<", ">_time_replaced_time_<", html)
+  expect_snapshot_html_with_utf8(html)
+
+  # Should fall back to client-side rendering when there are rendering errors
+  tbl <- reactable(
+    data,
+    columns = list(x = colDef(cell = JS("throw new Error('error rendering JS')"))),
+    static = TRUE,
+    elementId = "stable-id-CSR-fallback"
+  )
+  expect_warning({ rendered <- htmltools::renderTags(tbl) }, "Failed to render table to static HTML:\n.+Error: error rendering JS")
+  expect_false(grepl("data-reactable-ssr", rendered$html))
+  expect_false(grepl(">column-y-cell<", rendered$html))
+  expect_snapshot(cat(rendered$html))
+})

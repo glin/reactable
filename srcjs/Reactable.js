@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import {
+  safeUseLayoutEffect,
   useExpanded,
   useFilters,
   useGetLatest,
@@ -645,7 +646,7 @@ function Table({
 
   // Reset searched state when table is no longer searchable
   const searchableRef = React.useRef(searchable)
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     if (searchableRef.current && !searchable) {
       const setGlobalFilter = instance.setGlobalFilter
       setGlobalFilter(undefined)
@@ -827,7 +828,7 @@ function Table({
 
   // Reset filtered state when table is no longer filterable
   const filterableRef = React.useRef(isFilterable)
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     if (filterableRef.current && !isFilterable) {
       const setAllFilters = instance.setAllFilters
       setAllFilters(instance.visibleColumns.map(col => ({ id: col.id, value: undefined })))
@@ -893,7 +894,7 @@ function Table({
     )
   }
 
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     const toggleAllRowsExpanded = instance.toggleAllRowsExpanded
     if (defaultExpanded) {
       toggleAllRowsExpanded(true)
@@ -1290,7 +1291,9 @@ function Table({
   // because grouping happens after filtering (and swapping these hooks would
   // disable dynamic aggregation). Instead, we track the max number of rows
   // per dataset, so at least the pagination doesn't disappear upon filtering.
-  const maxRowCount = React.useRef(0)
+  const maxRowCount = React.useRef(
+    paginateSubRows ? instance.flatRows.length : instance.rows.length
+  )
 
   React.useEffect(() => {
     maxRowCount.current = 0
@@ -1362,7 +1365,7 @@ function Table({
   // but only when it has a scrollbar.
   const tableElement = React.useRef(null)
   const [tableHasScrollbar, setTableHasScrollbar] = React.useState(false)
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     const checkTableHasScrollbar = () => {
       const { scrollHeight, clientHeight, scrollWidth, clientWidth } = tableElement.current
       const hasScrollbar = scrollHeight > clientHeight || scrollWidth > clientWidth
@@ -1464,7 +1467,7 @@ function Table({
   // useLayoutEffect so the hook runs in order with other useLayoutEffect hooks.
   const ctRef = React.useRef(null)
 
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     if (!crosstalkGroup || !window.crosstalk) {
       return
     }
@@ -1559,7 +1562,7 @@ function Table({
   }, [crosstalkKey, crosstalkGroup, crosstalkId, instance.setFilter, instance.setRowsSelected])
 
   // Don't set Crosstalk selection on initial render
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     if (!ctRef.current) {
       return
     }
@@ -1570,7 +1573,7 @@ function Table({
 
   // Set Crosstalk selection. useLayoutEffect to avoid visual flickering when
   // selecting a row and clearing a pre-existing selection at the same time.
-  React.useLayoutEffect(() => {
+  safeUseLayoutEffect(() => {
     if (!ctRef.current || !selection) {
       return
     }

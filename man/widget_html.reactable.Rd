@@ -4,7 +4,7 @@
 \alias{widget_html.reactable}
 \title{Called by HTMLWidgets to produce the widget's root element}
 \usage{
-widget_html.reactable(id, style, class, ...)
+widget_html.reactable(id, style, class, width = NULL, ...)
 }
 \arguments{
 \item{id}{Element ID.}

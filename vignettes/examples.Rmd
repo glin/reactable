@@ -11,6 +11,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
+
+options(reactable.static = TRUE)
 ```
 
 ## Basic Usage

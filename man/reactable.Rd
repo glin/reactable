@@ -52,6 +52,7 @@ reactable(
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
   elementId = NULL,
+  static = getOption("reactable.static", FALSE),
   selectionId = NULL
 )
 }
@@ -194,6 +195,9 @@ Can also be a function that returns a \code{\link[=reactableTheme]{reactableThem
 \code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}
 
 \item{elementId}{Element ID for the widget.}
+
+\item{static}{\strong{Experimental}. Render the table as static HTML? Defaults to the
+global \code{reactable.static} option. Requires the V8 package.}
 
 \item{selectionId}{Deprecated. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}

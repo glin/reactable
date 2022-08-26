@@ -6,7 +6,20 @@ Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library"),
     person(family = "Emotion team and other contributors", role = c("ctb", "cph"),
-           comment = "Emotion library")
+           comment = "Emotion library"),
+    person("Kent", "Russell", role = c("ctb", "cph"), comment = "reactR package"),
+    person("Ramnath", "Vaidyanathan", role = c("ctb", "cph"), comment = "htmlwidgets package"),
+    person("Joe", "Cheng", role = c("ctb", "cph"), comment = "htmlwidgets package"),
+    person("JJ", "Allaire", role = c("ctb", "cph"), comment = "htmlwidgets package"),
+    person("Yihui", "Xie", role = c("ctb", "cph"), comment = "htmlwidgets package"),
+    person("Kenton", "Russell", role = c("ctb", "cph"), comment = "htmlwidgets package"),
+    person(family = "Facebook, Inc. and its affiliates", role = c("ctb", "cph"), comment = "React library"),
+    person(family = "FormatJS", role = c("ctb", "cph"), comment = "FormatJS libraries"),
+    person(family = "Feross Aboukhadijeh, and other contributors", role = c("ctb", "cph"),
+           comment = "buffer library"),
+    person("Roman", "Shtylman", role = c("ctb", "cph"), comment = "process library"),
+    person("James", "Halliday", role = c("ctb", "cph"), comment = "stream-browserify library"),
+    person(family = "RStudio, PBC", role = c("fnd", "cph"))
     )
 Description: Interactive data tables for R, based on the 'React Table'
     JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
@@ -19,7 +32,7 @@ Depends:
 Imports:
     digest,
     htmltools,
-    htmlwidgets,
+    htmlwidgets (>= 1.5.3),
     jsonlite,
     reactR
 Suggests:
@@ -33,7 +46,8 @@ Suggests:
     shiny,
     sparkline,
     testthat,
-    tippy
+    tippy,
+    V8
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

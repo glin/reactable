@@ -1,11 +1,11 @@
-import { reactWidget } from 'reactR'
+import { reactWidget } from '../reactR'
+
+jest.mock('../reactR', () => ({
+  reactWidget: jest.fn()
+}))
 
 import Reactable, { getState } from '../Reactable'
 import * as reactable from '../index'
-
-jest.mock('reactR', () => ({
-  reactWidget: jest.fn()
-}))
 
 test('reactWidget', () => {
   expect(reactWidget).toHaveBeenCalledTimes(1)

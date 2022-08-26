@@ -15,4 +15,4 @@
 ^pkgdown$
 ^srcjs$
 ^vignettes$
-^webpack\.config\.js$
+^webpack\.config.*\.js$
