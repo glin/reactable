@@ -26,9 +26,9 @@
 
 ## Breaking changes
 
-* Support for Internet Explorer 11 (IE 11) is deprecated, and this will be the last
-  release to support IE 11. Future releases may still work on IE 11, but will no
-  longer be tested. The documentation website no longer supports IE 11.
+* Support for Internet Explorer 11 (IE 11) is deprecated. Existing features will continue
+  to work in IE 11, but new features may not support IE 11, and IE 11 is no longer tested.
+* The documentation website no longer supports IE 11.
 
 # reactable 0.3.0
 
