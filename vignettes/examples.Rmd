@@ -2174,7 +2174,7 @@ htmltools::browsable(
       )
     ),
     
-    tags$hr("aria-hidden" = "false"),
+    tags$hr("aria-hidden" = "true"),
 
     reactable(data, defaultPageSize = 5, elementId = "cars-filter-table")
   )
@@ -2226,7 +2226,7 @@ htmltools::browsable(
       lapply(c("Manufacturer", "Model", "Type"), tags$option)
     ),
 
-    tags$hr("aria-hidden" = "false"),
+    tags$hr("aria-hidden" = "true"),
 
     reactable(
       data,
