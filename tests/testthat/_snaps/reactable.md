@@ -9,9 +9,9 @@
 ---
 
     Code
-      cat(rendered$head)
+      cat(styleDep$head)
     Output
-        <style data-emotion="reactable 1rdr7a4 1ub9dy9 d7nd0n">.reactable-1rdr7a4{color:blue;}.reactable-1ub9dy9{border-width:3px;}.reactable-d7nd0n{border-width:3px;}.rt-bordered .reactable-d7nd0n,.rt-outlined .reactable-d7nd0n{border-width:3px;}</style>
+      <style data-emotion="reactable 1rdr7a4 1ub9dy9 d7nd0n">.reactable-1rdr7a4{color:blue;}.reactable-1ub9dy9{border-width:3px;}.reactable-d7nd0n{border-width:3px;}.rt-bordered .reactable-d7nd0n,.rt-outlined .reactable-d7nd0n{border-width:3px;}</style>
 
 ---
 

@@ -1315,8 +1315,12 @@ test_that("static rendering", {
     elementId = "stable-id-theme-critical-css"
   )
   rendered <- htmltools::renderTags(tbl)
-  expect_true(grepl('<style data-emotion="reactable .+color:blue;', rendered$head))
-  expect_snapshot(cat(rendered$head))
+  styleDep <- Find(
+    function(dep) !is.null(dep$head) && grepl('<style data-emotion="reactable .+color:blue;', dep$head),
+    rendered$dependencies
+  )
+  expect_true(!is.null(styleDep))
+  expect_snapshot(cat(styleDep$head))
   expect_snapshot(cat(rendered$html))
 
   # Custom render functions and JS evals should work

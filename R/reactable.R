@@ -833,10 +833,19 @@ widget_html.reactable <- function(id, style, class, width = NULL, ...) {
         ssrHTML <- htmltools::HTML(output$html)
         ssrStyles <- if (nzchar(output$css)) {
           ids <- paste(output$ids, collapse = " ")
-          htmltools::tags$head(
-            # Make sure to keep this in sync with Emotion cache key
-            htmltools::tags$style(`data-emotion` = paste("reactable", ids), output$css)
-          )
+          # Make sure to keep this in sync with the Emotion cache key.
+          # Since this isn't well documented at https://emotion.sh/docs/ssr#when-using-emotioncss,
+          # data-emotion="{cache-key} {space-separated-ids}" allows for hydration to
+          # occur automatically without having to call emotion.cache.hydrate(ids),
+          # and prevents duplicate styles from being inserted into the page.
+          emotionAttr <- sprintf("reactable %s", ids)
+          styles <- htmltools::tags$style(`data-emotion` = emotionAttr, output$css)
+          # Use an empty htmlDependency to insert style tags into <head>. This prevents
+          # duplicate style tags when rendering duplicate tables and works around a
+          # pkgdown issue. pkgdown ignores tags$head() but does use head content from
+          # htmlDependencies, although still inserts the head content at the top of
+          # <body> instead of <head>.
+          htmltools::htmlDependency(emotionAttr, "1", "", head = as.character(styles), package = "reactable")
         }
       }, error = function(e) {
         warning(sprintf("Failed to render table to static HTML:\n%s", e), call. = FALSE)
