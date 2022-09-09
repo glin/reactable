@@ -4,7 +4,7 @@ export function sum(values) {
     return 0
   }
   const result = numbers.reduce((a, b) => a + b, 0)
-  // Adjust for precision errors
+  // Adjust for floating-point precision errors
   return round(result, 12)
 }
 
@@ -14,7 +14,7 @@ export function mean(values) {
     return NaN
   }
   const result = sum(numbers) / numbers.length
-  // Adjust for precision errors
+  // Adjust for floating-point precision errors
   return round(result, 12)
 }
 

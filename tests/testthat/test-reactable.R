@@ -1381,6 +1381,8 @@ test_that("static rendering", {
   formatData <- data.frame(
     str = "str",
     pct = 0.75,
+    # Test for floating-point precision issues: should not be formatted as 52.90000000000001%
+    pct_digits = 0.529,
     currency_USD = 10,
     currency_EUR = 11.123,
     date = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"),
@@ -1394,6 +1396,7 @@ test_that("static rendering", {
     columns = list(
       str = colDef(format = colFormat(prefix = "pre_", suffix = "_suffix")),
       pct = colDef(format = colFormat(percent = TRUE)),
+      pct_digits = colDef(format = colFormat(percent = TRUE)),
       currency_USD = colDef(format = colFormat(currency = "USD")),
       currency_EUR = colDef(format = colFormat(currency = "EUR")),
       date = colDef(format = colFormat(datetime = TRUE, prefix = "_date_", suffix = "_date_")),
@@ -1409,6 +1412,7 @@ test_that("static rendering", {
   html <- rendered$html
   expect_true(grepl("pre_str_suffix", html, fixed = TRUE))
   expect_true(grepl(">75%<", html, fixed = TRUE))
+  expect_true(grepl(">52.9%<", html, fixed = TRUE))
   expect_true(grepl(">$10.00<", html, fixed = TRUE))
   expect_true(grepl(">€11.12<", html, fixed = TRUE))
   expect_true(grepl(">1,234.1<", html, fixed = TRUE))

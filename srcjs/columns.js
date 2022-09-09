@@ -490,10 +490,14 @@ export function formatValue(value, options) {
     if (separators || percent || currency || digits != null || locales) {
       // While Number.toLocaleString supports up to 20 fraction digits,
       // IE11 only supports up to 18 digits when formatting as percentages.
-      const maximumFractionDigits = 18
+      let maximumFractionDigits = 18
       const options = { useGrouping: separators ? true : false }
       if (percent) {
         options.style = 'percent'
+        // Use lower fraction digits to mitigate floating-point precision errors with
+        // percent formatting, which can happen when using the Intl polyfill in V8.
+        // This is the same as the rounding digits used by the aggregators.
+        maximumFractionDigits = 12
       }
       if (currency) {
         options.style = 'currency'
