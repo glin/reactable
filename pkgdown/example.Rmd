@@ -7,6 +7,10 @@ output:
     self_contained: false
 ---
 
+```{r, include=FALSE}
+options(reactable.static = TRUE)
+```
+
 ```{r, echo=FALSE}
 library(reactable)
 
