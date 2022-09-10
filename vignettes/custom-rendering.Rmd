@@ -67,7 +67,7 @@ reactable(iris, columns = list(
 reactable(iris, columns = list(
   Species = colDef(
     cell = JS("function(cellInfo) {
-      return '<b>' + cellInfo.value + '</b>'
+      return `<b>${cellInfo.value}</b>'
     }")
   )
 ))
@@ -177,7 +177,7 @@ colDef(
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>' + cellInfo.value + '</div>'
+      return `<div>${cellInfo.value}</div>`
     }
   "),
   html = TRUE  # to render as HTML
@@ -273,7 +273,7 @@ colDef(
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>' + column.name + '</div>'
+      return `<div>${column.name}</div>`
     }
   "),
   html = TRUE  # to render as HTML
@@ -336,7 +336,7 @@ colDef(
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>Rows: ' + state.sortedData.length + '</div>'
+      return `<div>Rows: ${state.sortedData.length}</div>`
     }
   "),
   html = TRUE  # to render as HTML
@@ -392,7 +392,7 @@ reactable(
       //
       // output:
       //  - content to render (e.g. an HTML string)
-      return '<div>Details for row: ' + rowInfo.index + '</div>'
+      return `<div>Details for row: ${rowInfo.index}</div>`
     }
   ")
 )
