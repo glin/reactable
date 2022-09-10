@@ -763,7 +763,7 @@ library(htmltools)
 reactable(
   iris[1:5, ],
   defaultColDef = colDef(header = function(value) {
-    units <- div(style = "color: #999", "cm")
+    units <- div(style = "color: #737373", "cm")
     div(title = value, value, units)
   }),
   columns = list(
@@ -772,11 +772,11 @@ reactable(
       html = TRUE,
       align = "left",
       header = JS('function(column) {
-        return column.name + `<div style="color: #999">cm</div>`
+        return column.name + `<div style="color: #737373">cm</div>`
       }')
     ),
     Species = colDef(header = function(value) {
-      tags$a(href = "https://wikipedia.org/wiki/List_of_Iris_species", title = "Iris species", value)
+      tags$a(href = "https://wikipedia.org/wiki/List_of_Iris_species", value)
     })
   )
 )
@@ -784,13 +784,15 @@ reactable(
 
 
 ## Footers
-You can add column footers by specifying content to render in `footer`.
 
-`footer` can also be an R or JavaScript render function — see
-[Custom Rendering](custom-rendering.html) for details on how to
-use render functions.
+You can add column footers using the `footer` argument in `colDef()`.
 
-#### R render function
+`footer` can either be custom content to render (e.g., a character string or HTML tag),
+or a custom render function. See [Custom Rendering](custom-rendering.html) to learn
+more about using custom render functions.
+
+### R render function {#footers-r-render-function}
+
 ```{r, message=FALSE}
 library(dplyr)
 library(htmltools)
@@ -809,7 +811,7 @@ reactable(
 )
 ```
 
-#### JavaScript render function
+### JavaScript render function {#footers-js-render-function}
 
 ::: {.callout}
 This example requires reactable v0.3.0 or above.
@@ -837,7 +839,8 @@ reactable(
 )
 ```
 
-#### Embedding HTML widgets {#embedding-html-widgets-footers}
+### Embedding HTML widgets {#embedding-html-widgets-footers}
+
 ```{r}
 library(sparkline)
 
