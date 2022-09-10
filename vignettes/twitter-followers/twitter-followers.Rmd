@@ -7,8 +7,15 @@ resource_files:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+options(reactable.static = TRUE)
 ```
 
+```{css ref.label="styles", echo=FALSE}
+```
+
+```{r ref.label="font_styles", echo=FALSE}
+```
 
 ```{r table, echo=FALSE}
 library(reactable)
@@ -94,12 +101,11 @@ How it was made: [Building the Twitter Followers Demo](../building-twitter-follo
 ```{r ref.label="table", eval=FALSE}
 ```
 
-```{r}
-tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
-          rel = "stylesheet")
+```{r font_styles, eval=FALSE}
+htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
 ```
 
-```{css}
+```{css styles, eval=FALSE}
 .twitter-followers {
   margin: 0 auto;
   width: 575px;
@@ -162,12 +168,5 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 
 .bar {
   height: 100%;
-}
-```
-
-```{css echo=FALSE}
-/* rmarkdown html documents */
-h1.title {
-  display: none;
 }
 ```

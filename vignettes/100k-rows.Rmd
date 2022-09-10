@@ -7,6 +7,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 set.seed(5)
+
+options(reactable.static = TRUE)
 ```
 
 ```{r}

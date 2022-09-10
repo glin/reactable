@@ -7,6 +7,17 @@ resource_files:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+options(reactable.static = TRUE)
+```
+
+```{css ref.label="styles", echo=FALSE}
+```
+
+```{r ref.label="font_styles", echo=FALSE}
+```
+
+```{css ref.label="pkgdown_styles", echo=FALSE}
 ```
 
 ```{r table, echo=FALSE}
@@ -167,11 +178,14 @@ Full source: [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.
 ```{r ref.label="table", eval=FALSE}
 ```
 
-```{r}
-tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
+```{r font_styles, eval=FALSE}
+htmltools::tags$link(
+  href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
+  rel = "stylesheet"
+)
 ```
 
-```{css}
+```{css styles, eval=FALSE}
 .standings {
   font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.875rem;
@@ -267,14 +281,10 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mon
 ```
 
 
-```{css echo=FALSE}
+```{css pkgdown_styles, include=FALSE}
 /* rmarkdown html documents */
 .main-container {
   max-width: 1054px !important;
-}
-
-h1.title {
-  display: none;
 }
 
 /* pkgdown articles */
