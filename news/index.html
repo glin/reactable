@@ -162,7 +162,7 @@
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
-<p>The <code>colInfo.column</code> and <code>colInfo.data</code> properties in header and cell render functions are now <strong>deprecated</strong>. The <code>colInfo</code> object now contains all of the same properties as <code>colInfo.column</code>, and is now referred to as <code>column</code> in the documentation. When possible, replace usages of <code>colInfo</code> with <code>column</code>, <code>colInfo.column</code> with <code>column</code>, and <code>colInfo.data</code> with <code>state.data</code> or <code>state.sortedData</code>.</p>
+<p>The <code>colInfo.column</code> and <code>colInfo.data</code> properties in header and cell render functions are now <strong>deprecated</strong>. The <code>colInfo</code> object now contains all of the same properties as <code>colInfo.column</code>, and is now referred to as <code>column</code> in the documentation. When possible, replace usages of <code>colInfo</code> with <code>column</code>, <code>colInfo.column</code> with <code>column</code>, and <code>colInfo.data</code> with <code>state.sortedData</code> (current rows after sorting and filtering) or <code>state.data</code> (the original data).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Old</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(colInfo) {</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">column</span><span class="op">.</span><span class="at">id</span></span>
@@ -172,7 +172,7 @@
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">// New</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(column<span class="op">,</span> state) {</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  column<span class="op">.</span><span class="at">id</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  state<span class="op">.</span><span class="at">data</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  state<span class="op">.</span><span class="at">sortedData</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>

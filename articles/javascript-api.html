@@ -385,7 +385,7 @@
 <td>
 <code>[{ id: "Petal.Length", desc: true }, ...]</code>
 </td>
-<td>array of columns being sorted in the table</td>
+<td>columns being sorted in the table</td>
 </tr>
 <tr>
 <th scope="row">
@@ -416,21 +416,12 @@
 </tr>
 <tr>
 <th scope="row">
-<code>pageRows</code>
-</th>
-<td>
-<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
-</td>
-<td>array of row data values in the page</td>
-</tr>
-<tr>
-<th scope="row">
 <code>filters</code>
 </th>
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>array of column filter values</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -448,7 +439,16 @@
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>array of selected row indices (zero-based)</td>
+<td>selected row indices (zero-based)</td>
+</tr>
+<tr>
+<th scope="row">
+<code>pageRows</code>
+</th>
+<td>
+<code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
+</td>
+<td>current row data on the page</td>
 </tr>
 <tr>
 <th scope="row">
@@ -457,7 +457,7 @@
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>sorted array of row data values in the table</td>
+<td>current row data in the table (after sorting, filtering, grouping)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -466,7 +466,7 @@
 <td>
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
-<td>original array of row data values in the table</td>
+<td>original row data in the table</td>
 </tr>
 </tbody>
 </table>
