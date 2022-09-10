@@ -226,7 +226,7 @@ rowInfoProps <- dplyr::tribble(
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
   "expanded", "true", "whether the row is expanded (new in v0.3.0)",
-  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of sub row data values (aggregated rows only)",
+  "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sub rows data (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected"
 )
@@ -253,16 +253,16 @@ propsTable(columnProps)
 ```{r, echo=FALSE, asis=TRUE}
 stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "columns being sorted in the table",
   "page", "2", "page index (zero-based, new in v0.3.0)",
   "pageSize", "10", "page size (new in v0.3.0)",
   "pages", "5", "number of pages (new in v0.3.0)",
-  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values (new in v0.3.0)",
+  "filters", '[{ id: "Species", value: "petal" }]', "column filter values (new in v0.3.0)",
   "searchValue", '"petal"', "table search value (new in v0.3.0)",
-  "selected", '[0, 1, 4]', "array of selected row indices (zero-based, new in v0.3.0)",
-  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
-  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
+  "selected", '[0, 1, 4]', "selected row indices (zero-based, new in v0.3.0)",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table"
 )
 
 propsTable(stateProps)

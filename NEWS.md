@@ -138,7 +138,8 @@ rarely used, so most code should continue to work upon upgrading.
   functions are now **deprecated**. The `colInfo` object now contains all of the same
   properties as `colInfo.column`, and is now referred to as `column` in the documentation.
   When possible, replace usages of `colInfo` with `column`, `colInfo.column`
-  with `column`, and `colInfo.data` with `state.data` or `state.sortedData`.
+  with `column`, and `colInfo.data` with `state.sortedData` (current rows after sorting
+  and filtering) or `state.data` (the original data).
   ```js
   // Old
   function(colInfo) {
@@ -149,7 +150,7 @@ rarely used, so most code should continue to work upon upgrading.
   // New
   function(column, state) {
     column.id
-    state.data
+    state.sortedData
   }
   ```
 * The `state.expanded` property has been **removed**. To check whether a row is

@@ -826,7 +826,7 @@ reactable(
     Sales = colDef(
       footer = JS("function(column, state) {
         let total = 0
-        state.data.forEach(function(row) {
+        state.sortedData.forEach(function(row) {
           total += row[column.id]
         })
         return '$' + total.toFixed(2)

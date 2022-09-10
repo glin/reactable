@@ -357,16 +357,16 @@ An object with the following properties:
 ```{r, echo=FALSE, asis=TRUE}
 stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "array of columns being sorted in the table",
+  "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "columns being sorted in the table",
   "page", "2", "page index (zero-based)",
   "pageSize", "10", "page size",
   "pages", "5", "number of pages",
-  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "array of row data values in the page",
-  "filters", '[{ id: "Species", value: "petal" }]', "array of column filter values",
+  "filters", '[{ id: "Species", value: "petal" }]', "column filter values",
   "searchValue", '"petal"', "table search value",
-  "selected", '[0, 1, 4]', "array of selected row indices (zero-based)",
-  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sorted array of row data values in the table",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original array of row data values in the table"
+  "selected", '[0, 1, 4]', "selected row indices (zero-based)",
+  "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
+  "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table"
 )
 
 propsTable(stateProps)
