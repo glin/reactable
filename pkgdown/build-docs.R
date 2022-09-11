@@ -1,5 +1,18 @@
+# Create client-rendered versions of the Examples and Cookbook docs for comparison
+examples_src <- readLines("vignettes/examples.Rmd")
+examples_src <- sub("options(reactable.static = TRUE)", "options(reactable.static = FALSE)", examples_src, fixed = TRUE)
+writeLines(examples_src, "vignettes/examples-no-static.Rmd")
+
+cookbook_src <- readLines("vignettes/cookbook/cookbook.Rmd")
+cookbook_src <- sub("options(reactable.static = TRUE)", "options(reactable.static = FALSE)", cookbook_src, fixed = TRUE)
+writeLines(cookbook_src, "vignettes/cookbook/cookbook-no-static.Rmd")
+
 pkgdown::build_site()
 
+unlink("vignettes/examples-no-static.Rmd")
+unlink("vignettes/cookbook/cookbook-no-static.Rmd")
+
+# Replace example table image in README with an actual table
 index_html <- xml2::read_html("docs/index.html")
 
 example <- xml2::xml_find_first(index_html, ".//*/comment()[contains(., 'pkgdown:example')]/following-sibling::*")
