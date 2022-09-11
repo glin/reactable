@@ -1,0 +1,73 @@
+html {
+  font-size: 1rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+}
+
+.container-fluid {
+  min-width: 576px;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar {
+  padding: 1.25rem 0;
+  height: 100vh;
+  min-width: 200px;
+  overflow-y: scroll;
+}
+
+.content {
+  padding: 1.25rem 0.625rem;
+  width: 100%;
+  max-width: 960px;
+  overflow: auto;
+}
+
+@media (max-width: 760px) {
+  .content {
+    padding: 1.25rem 0;
+  }
+}
+
+.title {
+  margin: 0 0.625rem 0.625rem 0;
+  font-size: 1.5rem;
+}
+
+#table {
+  margin-top: 0.75rem;
+}
+
+.tag {
+  padding: 0.1rem 1.25rem;
+  border-radius: 30px;
+  font-weight: 600;
+  background-color: #eee;
+}
+
+.num-high {
+  color: hsl(121, 33%, 23%);
+  background-color: hsl(121, 33%, 86%);
+}
+
+.num-med {
+  color: hsl(50, 81%, 20%);
+  background-color: hsl(50, 81%, 87%);
+}
+
+.num-low {
+  color: hsl(0, 75%, 32%);
+  background-color: hsl(0, 75%, 92%);
+}

@@ -5,12 +5,14 @@ articles:
   100k-rows: 100k-rows.html
   building-twitter-followers: building-twitter-followers.html
   conditional-styling: conditional-styling.html
+  cookbook-no-static: cookbook/cookbook-no-static.html
   cookbook: cookbook/cookbook.html
   cran-packages: cran-packages/cran-packages.html
   custom-filtering-extra: custom-filtering-extra.html
   custom-filtering: custom-filtering.html
   custom-rendering: custom-rendering.html
   custom-sort-icons: custom-sort-icons.html
+  examples-no-static: examples-no-static.html
   examples: examples.html
   internationalization: internationalization.html
   javascript-api: javascript-api.html
@@ -22,5 +24,5 @@ articles:
   sticky-columns: sticky-columns.html
   twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2022-09-10T22:20Z
+last_built: 2022-09-11T15:49Z
 

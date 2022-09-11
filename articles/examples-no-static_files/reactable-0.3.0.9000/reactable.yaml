@@ -1,0 +1,5 @@
+dependencies:
+  - name: reactable
+    version: 0.3.0.9000
+    src: htmlwidgets
+    stylesheet: reactable.css

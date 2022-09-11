@@ -98,7 +98,8 @@
 
 
 <script src="nba-box-score_files/core-js-2.5.3/shim.min.js"></script><script src="nba-box-score_files/react-17.0.0/react.min.js"></script><script src="nba-box-score_files/react-17.0.0/react-dom.min.js"></script><script src="nba-box-score_files/reactwidget-1.0.0/react-tools.js"></script><script src="nba-box-score_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="nba-box-score_files/reactable-0.3.0.9000/reactable.css" rel="stylesheet">
-<script src="nba-box-score_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
+<script src="nba-box-score_files/reactable-binding-0.3.0.9000/reactable.js"></script><style data-emotion="reactable 1xdhyk6 1626bqa">.reactable-1626bqa{padding:8px;}</style>
+<div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>NBA Box Score</h1>
@@ -106,20 +107,775 @@
       <div class="d-none name"><code>nba-box-score.Rmd</code></div>
     </div>
 
-      <div class="box-score">
+      <style type="text/css">
+.box-score {
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+.box-score a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+.box-score a:hover,
+.box-score a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
+}
+
+.header {
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.game-date {
+  font-size: 1rem;
+}
+
+.line-score {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.line-score-tbl {
+  margin: 0 auto;
+  max-width: 32rem;
+  font-size: 0.9375rem;
+}
+
+.line-score-header {
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.line-score-final {
+  font-weight: 500;
+}
+
+.team-name {
+  font-weight: 500;
+}
+
+.team-record {
+  margin-left: 0.375rem;
+  color: hsl(0, 0%, 45%);
+  font-size: 0.75rem;
+}
+
+.box-score-title {
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  background-color: hsl(205, 100%, 36%);
+  color: hsl(0, 0%, 98%);
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+.box-score-tbl {
+  font-size: 0.75rem;
+  letter-spacing: 0.2px;
+}
+
+.box-score-header {
+  border-bottom-width: 1px;
+  background-color: hsl(205, 93%, 16%);
+  color: hsl(0, 0%, 98%);
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.box-score-header:hover,
+.box-score-header:focus,
+.box-score-header[aria-sort="ascending"],
+.box-score-header[aria-sort="descending"] {
+  background-color: hsl(205, 100%, 36%);
+}
+
+.box-score-header[aria-sort="ascending"] {
+  box-shadow: inset 0 10px 0 -6px #efaa10;
+}
+
+.box-score-header[aria-sort="descending"] {
+  box-shadow: inset 0 -10px 0 -6px #efaa10;
+}
+
+.sorted {
+  background-color: hsla(0, 0%, 60%, 0.1);
+}
+
+.box-score-total {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;display=fallback" rel="stylesheet">
+<style type="text/css">
+/* rmarkdown html documents */
+.main-container {
+  max-width: 1024px !important;
+}
+
+/* pkgdown articles */
+.row > main {
+  max-width: 1024px;
+}
+</style>
+<div class="box-score">
 <h2 class="header">
 Raptors vs. Warriors:
 <a class="external-link game-date" href="https://stats.nba.com/game/0041800403" target="_blank">Jun 5, 2019</a>
 </h2>
 <div class="line-score">
-<div id="htmlwidget-d6d5b428b19362483406" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-d6d5b428b19362483406">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"TEAM_ID":[1610612761,1610612744],"TEAM_CITY_NAME":["Toronto","Golden State"],"TEAM_NICKNAME":["Raptors","Warriors"],"TEAM_WINS_LOSSES":["2-1","1-2"],"PTS_QTR1":[36,29],"PTS_QTR2":[24,23],"PTS_QTR3":[36,31],"PTS_QTR4":[27,26],"PTS":[123,109]},"columns":[{"id":"TEAM_ID","name":"TEAM_ID","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"TEAM_CITY_NAME","name":"","type":"character","minWidth":250,"align":"left","headerClassName":"line-score-header","cell":[{"name":"Fragment","attribs":[],"children":[{"name":"a","attribs":{"href":"https://stats.nba.com/team/1610612761/traditional","target":"_blank","className":"team-name"},"children":["Toronto Raptors"]},{"name":"span","attribs":{"className":"team-record"},"children":["2-1"]}]},{"name":"Fragment","attribs":[],"children":[{"name":"a","attribs":{"href":"https://stats.nba.com/team/1610612744/traditional","target":"_blank","className":"team-name"},"children":["Golden State Warriors"]},{"name":"span","attribs":{"className":"team-record"},"children":["1-2"]}]}]},{"id":"TEAM_NICKNAME","name":"TEAM_NICKNAME","type":"character","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"TEAM_WINS_LOSSES","name":"TEAM_WINS_LOSSES","type":"character","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"PTS_QTR1","name":"Q1","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR2","name":"Q2","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR3","name":"Q3","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR4","name":"Q4","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS","name":"Final","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header","className":"line-score-final"}],"sortable":false,"className":"line-score-tbl","dataKey":"7154efc491ccdfb5cc8df2b8a4b88883"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-14bf15d9ce220acb1c94" class="reactable html-widget" style="width:auto;height:auto;" data-react-ssr><div class="Reactable ReactTable line-score-tbl"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-th rt-align-left line-score-header" role="columnheader" style="position:relative;flex:250 0 auto;min-width:250px;width:250px"><div class="rt-th-inner"></div></div>
+<div class="rt-th rt-align-center line-score-header" role="columnheader" style="position:relative;flex:50 0 auto;min-width:50px;width:50px"><div class="rt-th-inner">Q1</div></div>
+<div class="rt-th rt-align-center line-score-header" role="columnheader" style="position:relative;flex:50 0 auto;min-width:50px;width:50px"><div class="rt-th-inner">Q2</div></div>
+<div class="rt-th rt-align-center line-score-header" role="columnheader" style="position:relative;flex:50 0 auto;min-width:50px;width:50px"><div class="rt-th-inner">Q3</div></div>
+<div class="rt-th rt-align-center line-score-header" role="columnheader" style="position:relative;flex:50 0 auto;min-width:50px;width:50px"><div class="rt-th-inner">Q4</div></div>
+<div class="rt-th rt-align-center line-score-header" role="columnheader" style="position:relative;flex:50 0 auto;min-width:50px;width:50px"><div class="rt-th-inner">Final</div></div>
+</div></div>
+<div class="rt-tbody" role="rowgroup" style="min-width:500px">
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:250 0 auto;min-width:250px;width:250px"><div class="rt-td-inner">
+<a href="https://stats.nba.com/team/1610612761/traditional" target="_blank" class="external-link team-name">Toronto Raptors</a><span class="team-record">2-1</span>
+</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">36</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">24</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">36</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">27</div></div>
+<div class="rt-td rt-align-center line-score-final" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">123</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:250 0 auto;min-width:250px;width:250px"><div class="rt-td-inner">
+<a href="https://stats.nba.com/team/1610612744/traditional" target="_blank" class="external-link team-name">Golden State Warriors</a><span class="team-record">1-2</span>
+</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">29</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">23</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">31</div></div>
+<div class="rt-td rt-align-center" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">26</div></div>
+<div class="rt-td rt-align-center line-score-final" role="cell" style="flex:50 0 auto;min-width:50px;width:50px"><div class="rt-td-inner">109</div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+</div></div></div>
+<script type="application/json" data-for="htmlwidget-14bf15d9ce220acb1c94">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"TEAM_ID":[1610612761,1610612744],"TEAM_CITY_NAME":["Toronto","Golden State"],"TEAM_NICKNAME":["Raptors","Warriors"],"TEAM_WINS_LOSSES":["2-1","1-2"],"PTS_QTR1":[36,29],"PTS_QTR2":[24,23],"PTS_QTR3":[36,31],"PTS_QTR4":[27,26],"PTS":[123,109]},"columns":[{"id":"TEAM_ID","name":"TEAM_ID","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"TEAM_CITY_NAME","name":"","type":"character","minWidth":250,"align":"left","headerClassName":"line-score-header","cell":[{"name":"Fragment","attribs":[],"children":[{"name":"a","attribs":{"href":"https://stats.nba.com/team/1610612761/traditional","target":"_blank","className":"team-name"},"children":["Toronto Raptors"]},{"name":"span","attribs":{"className":"team-record"},"children":["2-1"]}]},{"name":"Fragment","attribs":[],"children":[{"name":"a","attribs":{"href":"https://stats.nba.com/team/1610612744/traditional","target":"_blank","className":"team-name"},"children":["Golden State Warriors"]},{"name":"span","attribs":{"className":"team-record"},"children":["1-2"]}]}]},{"id":"TEAM_NICKNAME","name":"TEAM_NICKNAME","type":"character","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"TEAM_WINS_LOSSES","name":"TEAM_WINS_LOSSES","type":"character","minWidth":50,"align":"center","headerClassName":"line-score-header","show":false},{"id":"PTS_QTR1","name":"Q1","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR2","name":"Q2","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR3","name":"Q3","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS_QTR4","name":"Q4","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header"},{"id":"PTS","name":"Final","type":"numeric","minWidth":50,"align":"center","headerClassName":"line-score-header","className":"line-score-final"}],"sortable":false,"className":"line-score-tbl","dataKey":"7154efc491ccdfb5cc8df2b8a4b88883"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="box-score-title">Toronto Raptors</div>
-<div id="htmlwidget-40c3d0eff89993d03603" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-40c3d0eff89993d03603">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"PLAYER_ID":[202695,1627783,201188,201980,200768,1627832,201586,1627775,1626181,201975,202391,1626259,1628384],"PLAYER_NAME":["Kawhi Leonard","Pascal Siakam","Marc Gasol","Danny Green","Kyle Lowry","Fred VanVleet","Serge Ibaka","Patrick McCaw","Norman Powell","Jodie Meeks","Jeremy Lin","Malcolm Miller","OG Anunoby"],"START_POSITION":["F","F","C","G","G","","","","","","","",""],"MIN":["2022-09-10T00:38:25Z","2022-09-10T00:38:40Z","2022-09-10T00:26:10Z","2022-09-10T00:27:12Z","2022-09-10T00:43:22Z","2022-09-10T00:33:19Z","2022-09-10T00:21:50Z","2022-09-10T00:02:13Z","2022-09-10T00:06:13Z","2022-09-10T00:00:52Z","2022-09-10T00:00:52Z","2022-09-10T00:00:52Z",null],"MIN_STR":["38:25","38:40","26:10","27:12","43:22","33:19","21:50","2:13","6:13","0:52","0:52","0:52",null],"FGM":[9,8,6,6,8,4,2,0,0,0,0,0,"NA"],"FGA":[17,16,11,10,16,8,4,0,0,0,0,0,"NA"],"FG_PCT":[0.529,0.5,0.545,0.6,0.5,0.5,0.5,0,0,0,0,0,"NA"],"FG3M":[2,0,1,6,5,3,0,0,0,0,0,0,"NA"],"FG3A":[6,3,4,10,9,6,0,0,0,0,0,0,"NA"],"FG3_PCT":[0.333,0,0.25,0.6,0.556,0.5,0,0,0,0,0,0,"NA"],"FTM":[10,2,4,0,2,0,2,0,0,0,0,0,"NA"],"FTA":[11,2,4,0,2,0,2,0,0,0,0,0,"NA"],"FT_PCT":[0.909,1,1,0,1,0,1,0,0,0,0,0,"NA"],"OREB":[2,1,0,0,0,1,1,0,0,0,0,0,"NA"],"DREB":[5,8,7,5,4,2,4,0,0,0,0,0,"NA"],"REB":[7,9,7,5,4,3,5,0,0,0,0,0,"NA"],"AST":[6,6,4,1,9,2,1,1,0,0,0,0,"NA"],"STL":[2,0,0,1,1,3,2,0,0,0,0,0,"NA"],"BLK":[2,0,0,1,1,0,6,0,0,0,0,0,"NA"],"TO":[4,2,2,1,3,0,2,0,0,0,0,0,"NA"],"PF":[3,0,4,5,3,3,4,0,0,0,0,0,"NA"],"PTS":[30,18,17,18,23,11,6,0,0,0,0,0,"NA"],"PLUS_MINUS":[6,22,14,11,14,4,0,-5,-2,2,2,2,"NA"]},"columns":[{"id":"PLAYER_ID","name":"PLAYER_ID","type":"numeric","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"PLAYER_NAME","name":"Player","type":"character","sortNALast":true,"footer":{"name":"span","attribs":{"className":"box-score-total"},"children":["Totals"]},"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","defaultSortDesc":false,"cell":[{"name":"a","attribs":{"href":"https://stats.nba.com/player/202695","target":"_blank"},"children":["Kawhi Leonard"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627783","target":"_blank"},"children":["Pascal Siakam"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201188","target":"_blank"},"children":["Marc Gasol"," ",{"name":"sup","attribs":{},"children":["C"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201980","target":"_blank"},"children":["Danny Green"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/200768","target":"_blank"},"children":["Kyle Lowry"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627832","target":"_blank"},"children":["Fred VanVleet"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201586","target":"_blank"},"children":["Serge Ibaka"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627775","target":"_blank"},"children":["Patrick McCaw"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626181","target":"_blank"},"children":["Norman Powell"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201975","target":"_blank"},"children":["Jodie Meeks"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202391","target":"_blank"},"children":["Jeremy Lin"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626259","target":"_blank"},"children":["Malcolm Miller"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628384","target":"_blank"},"children":["OG Anunoby"]}],"width":130},{"id":"START_POSITION","name":"START_POSITION","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"MIN","name":"Min","type":"Date","sortNALast":true,"footer":"240:00","minWidth":60,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["38:25","38:40","26:10","27:12","43:22","33:19","21:50","2:13","6:13","0:52","0:52","0:52","DNP"],"align":"right"},{"id":"MIN_STR","name":"MIN_STR","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FGM","name":"FG","type":"numeric","sortNALast":true,"footer":"43-82","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["9-17","8-16","6-11","6-10","8-16","4-8","2-4","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FGA","name":"FGA","type":"numeric","sortNALast":true,"footer":"82","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG_PCT","name":"FG%","type":"numeric","sortNALast":true,"footer":"52.4%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FG3M","name":"3P","type":"numeric","sortNALast":true,"footer":"17-38","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["2-6","0-3","1-4","6-10","5-9","3-6","0-0","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FG3A","name":"3PA","type":"numeric","sortNALast":true,"footer":"38","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG3_PCT","name":"3P%","type":"numeric","sortNALast":true,"footer":"44.7%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FTM","name":"FT","type":"numeric","sortNALast":true,"footer":"20-21","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["10-11","2-2","4-4","0-0","2-2","0-0","2-2","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FTA","name":"FTA","type":"numeric","sortNALast":true,"footer":"21","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FT_PCT","name":"FT%","type":"numeric","sortNALast":true,"footer":"95.2%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"OREB","name":"ORB","type":"numeric","sortNALast":true,"footer":"5","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"DREB","name":"DRB","type":"numeric","sortNALast":true,"footer":"35","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"REB","name":"REB","type":"numeric","sortNALast":true,"footer":"40","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"AST","name":"AST","type":"numeric","sortNALast":true,"footer":"30","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"STL","name":"STL","type":"numeric","sortNALast":true,"footer":"9","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"BLK","name":"BLK","type":"numeric","sortNALast":true,"footer":"10","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"TO","name":"TO","type":"numeric","sortNALast":true,"footer":"14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PF","name":"PF","type":"numeric","sortNALast":true,"footer":"22","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PTS","name":"PTS","type":"numeric","sortNALast":true,"footer":"123","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PLUS_MINUS","name":"+/-","type":"numeric","sortNALast":true,"footer":"+14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["+6","+22","+14","+11","+14","+4","+0","-5","-2","+2","+2","+2",""]}],"defaultSortDesc":true,"defaultSorted":[{"id":"PTS","desc":true}],"pagination":false,"highlight":true,"striped":true,"showSortIcon":false,"className":"box-score-tbl","theme":{"cellPadding":"8px"},"dataKey":"77023f98611640571697d587197137ac"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className","tag.attribs.columns.5.className","tag.attribs.columns.6.className","tag.attribs.columns.7.className","tag.attribs.columns.8.className","tag.attribs.columns.9.className","tag.attribs.columns.10.className","tag.attribs.columns.11.className","tag.attribs.columns.12.className","tag.attribs.columns.13.className","tag.attribs.columns.14.className","tag.attribs.columns.15.className","tag.attribs.columns.16.className","tag.attribs.columns.17.className","tag.attribs.columns.18.className","tag.attribs.columns.19.className","tag.attribs.columns.20.className","tag.attribs.columns.21.className","tag.attribs.columns.22.className","tag.attribs.columns.23.className"],"jsHooks":[]}</script><div class="box-score-title">Golden State Warriors</div>
-<div id="htmlwidget-a9ff28f280aa15e86c77" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a9ff28f280aa15e86c77">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"PLAYER_ID":[2738,203110,202326,2733,201939,1626188,101106,1628035,1628395,201973,1628980,1627745,202691],"PLAYER_NAME":["Andre Iguodala","Draymond Green","DeMarcus Cousins","Shaun Livingston","Stephen Curry","Quinn Cook","Andrew Bogut","Alfonzo McKinnie","Jordan Bell","Jonas Jerebko","Jacob Evans","Damian Jones","Klay Thompson"],"START_POSITION":["F","F","C","G","G","","","","","","","",""],"MIN":["2022-09-10T00:30:38Z","2022-09-10T00:40:36Z","2022-09-10T00:19:24Z","2022-09-10T00:17:20Z","2022-09-10T00:43:15Z","2022-09-10T00:26:38Z","2022-09-10T00:21:36Z","2022-09-10T00:18:05Z","2022-09-10T00:09:23Z","2022-09-10T00:09:51Z","2022-09-10T00:01:37Z","2022-09-10T00:01:37Z",null],"MIN_STR":["30:38","40:36","19:24","17:20","43:15","26:38","21:36","18:05","9:23","9:51","1:37","1:37",null],"FGM":[4,6,1,1,14,4,3,1,1,1,0,0,"NA"],"FGA":[8,14,7,4,31,9,4,4,1,6,3,0,"NA"],"FG_PCT":[0.5,0.429,0.143,0.25,0.452,0.444,0.75,0.25,1,0.167,0,0,"NA"],"FG3M":[2,2,0,0,6,0,0,1,0,1,0,0,"NA"],"FG3A":[6,6,1,0,14,2,0,3,0,3,1,0,"NA"],"FG3_PCT":[0.333,0.333,0,0,0.429,0,0,0.333,0,0.333,0,0,"NA"],"FTM":[1,3,2,2,13,1,0,0,0,3,0,0,"NA"],"FTA":[2,3,3,2,14,1,0,1,0,4,0,0,"NA"],"FT_PCT":[0.5,1,0.667,1,0.929,1,0,0,0,0.75,0,0,"NA"],"OREB":[2,1,0,1,2,0,3,1,1,2,0,0,"NA"],"DREB":[4,6,3,1,6,1,4,2,1,0,0,0,"NA"],"REB":[6,7,3,2,8,1,7,3,2,2,0,0,"NA"],"AST":[3,4,2,2,7,2,3,1,0,1,0,0,"NA"],"STL":[1,2,1,0,2,1,1,0,0,0,0,0,"NA"],"BLK":[0,0,0,0,0,0,1,0,2,0,0,0,"NA"],"TO":[0,4,3,0,3,2,1,1,0,0,0,0,"NA"],"PF":[0,4,2,2,1,2,3,4,2,1,0,0,"NA"],"PTS":[11,17,4,4,47,9,6,3,2,6,0,0,"NA"],"PLUS_MINUS":[-14,-10,-12,-14,-8,-8,0,0,-2,0,-1,-1,"NA"]},"columns":[{"id":"PLAYER_ID","name":"PLAYER_ID","type":"numeric","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"PLAYER_NAME","name":"Player","type":"character","sortNALast":true,"footer":{"name":"span","attribs":{"className":"box-score-total"},"children":["Totals"]},"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","defaultSortDesc":false,"cell":[{"name":"a","attribs":{"href":"https://stats.nba.com/player/2738","target":"_blank"},"children":["Andre Iguodala"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/203110","target":"_blank"},"children":["Draymond Green"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202326","target":"_blank"},"children":["DeMarcus Cousins"," ",{"name":"sup","attribs":{},"children":["C"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/2733","target":"_blank"},"children":["Shaun Livingston"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201939","target":"_blank"},"children":["Stephen Curry"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626188","target":"_blank"},"children":["Quinn Cook"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/101106","target":"_blank"},"children":["Andrew Bogut"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628035","target":"_blank"},"children":["Alfonzo McKinnie"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628395","target":"_blank"},"children":["Jordan Bell"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201973","target":"_blank"},"children":["Jonas Jerebko"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628980","target":"_blank"},"children":["Jacob Evans"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627745","target":"_blank"},"children":["Damian Jones"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202691","target":"_blank"},"children":["Klay Thompson"]}],"width":130},{"id":"START_POSITION","name":"START_POSITION","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"MIN","name":"Min","type":"Date","sortNALast":true,"footer":"240:00","minWidth":60,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["30:38","40:36","19:24","17:20","43:15","26:38","21:36","18:05","9:23","9:51","1:37","1:37","DNP"],"align":"right"},{"id":"MIN_STR","name":"MIN_STR","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FGM","name":"FG","type":"numeric","sortNALast":true,"footer":"36-91","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["4-8","6-14","1-7","1-4","14-31","4-9","3-4","1-4","1-1","1-6","0-3","0-0",null]},{"id":"FGA","name":"FGA","type":"numeric","sortNALast":true,"footer":"91","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG_PCT","name":"FG%","type":"numeric","sortNALast":true,"footer":"39.6%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FG3M","name":"3P","type":"numeric","sortNALast":true,"footer":"12-36","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["2-6","2-6","0-1","0-0","6-14","0-2","0-0","1-3","0-0","1-3","0-1","0-0",null]},{"id":"FG3A","name":"3PA","type":"numeric","sortNALast":true,"footer":"36","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG3_PCT","name":"3P%","type":"numeric","sortNALast":true,"footer":"33.3%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FTM","name":"FT","type":"numeric","sortNALast":true,"footer":"25-30","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["1-2","3-3","2-3","2-2","13-14","1-1","0-0","0-1","0-0","3-4","0-0","0-0",null]},{"id":"FTA","name":"FTA","type":"numeric","sortNALast":true,"footer":"30","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FT_PCT","name":"FT%","type":"numeric","sortNALast":true,"footer":"83.3%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"OREB","name":"ORB","type":"numeric","sortNALast":true,"footer":"13","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"DREB","name":"DRB","type":"numeric","sortNALast":true,"footer":"28","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"REB","name":"REB","type":"numeric","sortNALast":true,"footer":"41","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"AST","name":"AST","type":"numeric","sortNALast":true,"footer":"25","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"STL","name":"STL","type":"numeric","sortNALast":true,"footer":"8","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"BLK","name":"BLK","type":"numeric","sortNALast":true,"footer":"3","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"TO","name":"TO","type":"numeric","sortNALast":true,"footer":"14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PF","name":"PF","type":"numeric","sortNALast":true,"footer":"21","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PTS","name":"PTS","type":"numeric","sortNALast":true,"footer":"109","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PLUS_MINUS","name":"+/-","type":"numeric","sortNALast":true,"footer":"-14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["-14","-10","-12","-14","-8","-8","+0","+0","-2","+0","-1","-1",""]}],"defaultSortDesc":true,"defaultSorted":[{"id":"PTS","desc":true}],"pagination":false,"highlight":true,"striped":true,"showSortIcon":false,"className":"box-score-tbl","theme":{"cellPadding":"8px"},"dataKey":"4d4187ce73cc753322b0d8595cb0c6d2"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className","tag.attribs.columns.5.className","tag.attribs.columns.6.className","tag.attribs.columns.7.className","tag.attribs.columns.8.className","tag.attribs.columns.9.className","tag.attribs.columns.10.className","tag.attribs.columns.11.className","tag.attribs.columns.12.className","tag.attribs.columns.13.className","tag.attribs.columns.14.className","tag.attribs.columns.15.className","tag.attribs.columns.16.className","tag.attribs.columns.17.className","tag.attribs.columns.18.className","tag.attribs.columns.19.className","tag.attribs.columns.20.className","tag.attribs.columns.21.className","tag.attribs.columns.22.className","tag.attribs.columns.23.className"],"jsHooks":[]}</script>
+<div id="htmlwidget-c8f7d7111e6891138920" class="reactable html-widget" style="width:auto;height:auto;" data-react-ssr><div class="Reactable ReactTable box-score-tbl"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:970px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-th rt-align-left box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:0 0 auto;min-width:130px;width:130px;max-width:130px" aria-label="Sort Player" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner reactable-1626bqa">Player</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:60 0 auto;min-width:60px;width:60px" aria-label="Sort Min" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">Min</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FG" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FG</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FG%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FG%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort 3P" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">3P</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort 3P%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">3P%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FT" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FT</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FT%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FT%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort ORB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">ORB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort DRB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">DRB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort REB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">REB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort AST" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">AST</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort STL" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">STL</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort BLK" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">BLK</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort TO" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">TO</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort PF" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">PF</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort PTS" aria-sort="descending" tabindex="0"><div class="rt-th-inner reactable-1626bqa">PTS</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort +/-" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">+/-</div></div>
+</div></div>
+<div class="rt-tbody" role="rowgroup" style="min-width:970px">
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/202695" target="_blank" class="external-link">Kawhi Leonard<!-- --> <sup>F</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">38:25</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">9-17</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">52.9%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">10-11</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">90.9%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">30</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+6</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/200768" target="_blank" class="external-link">Kyle Lowry<!-- --> <sup>G</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">43:22</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">8-16</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">5-9</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">55.6%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">9</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">23</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+14</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201980" target="_blank" class="external-link">Danny Green<!-- --> <sup>G</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">27:12</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">6-10</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">60%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">6-10</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">60%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">18</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+11</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1627783" target="_blank" class="external-link">Pascal Siakam<!-- --> <sup>F</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">38:40</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">8-16</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">8</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">9</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">18</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+22</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201188" target="_blank" class="external-link">Marc Gasol<!-- --> <sup>C</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">26:10</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">6-11</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">54.5%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">25%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">4-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">17</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+14</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1627832" target="_blank" class="external-link">Fred VanVleet</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">33:19</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">4-8</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">3-6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">11</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+4</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201586" target="_blank" class="external-link">Serge Ibaka</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">21:50</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+0</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1626259" target="_blank" class="external-link">Malcolm Miller</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">0:52</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+2</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/202391" target="_blank" class="external-link">Jeremy Lin</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">0:52</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+2</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201975" target="_blank" class="external-link">Jodie Meeks</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">0:52</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+2</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1626181" target="_blank" class="external-link">Norman Powell</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">6:13</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-2</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1627775" target="_blank" class="external-link">Patrick McCaw</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">2:13</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-5</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1628384" target="_blank" class="external-link">OG Anunoby</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">DNP</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+<div class="rt-tfoot" role="rowgroup" style="min-width:970px"><div class="rt-tr" role="row">
+<div class="rt-td rt-td-footer rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><span class="box-score-total">Totals</span></div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">240:00</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">43-82</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">52.4%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">17-38</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">44.7%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">20-21</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">95.2%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">5</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">35</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">40</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">30</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">9</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">10</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">14</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">22</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">123</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+14</div></div>
+</div></div>
+</div></div></div>
+<script type="application/json" data-for="htmlwidget-c8f7d7111e6891138920">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"PLAYER_ID":[202695,1627783,201188,201980,200768,1627832,201586,1627775,1626181,201975,202391,1626259,1628384],"PLAYER_NAME":["Kawhi Leonard","Pascal Siakam","Marc Gasol","Danny Green","Kyle Lowry","Fred VanVleet","Serge Ibaka","Patrick McCaw","Norman Powell","Jodie Meeks","Jeremy Lin","Malcolm Miller","OG Anunoby"],"START_POSITION":["F","F","C","G","G","","","","","","","",""],"MIN":["2022-09-11T00:38:25Z","2022-09-11T00:38:40Z","2022-09-11T00:26:10Z","2022-09-11T00:27:12Z","2022-09-11T00:43:22Z","2022-09-11T00:33:19Z","2022-09-11T00:21:50Z","2022-09-11T00:02:13Z","2022-09-11T00:06:13Z","2022-09-11T00:00:52Z","2022-09-11T00:00:52Z","2022-09-11T00:00:52Z",null],"MIN_STR":["38:25","38:40","26:10","27:12","43:22","33:19","21:50","2:13","6:13","0:52","0:52","0:52",null],"FGM":[9,8,6,6,8,4,2,0,0,0,0,0,"NA"],"FGA":[17,16,11,10,16,8,4,0,0,0,0,0,"NA"],"FG_PCT":[0.529,0.5,0.545,0.6,0.5,0.5,0.5,0,0,0,0,0,"NA"],"FG3M":[2,0,1,6,5,3,0,0,0,0,0,0,"NA"],"FG3A":[6,3,4,10,9,6,0,0,0,0,0,0,"NA"],"FG3_PCT":[0.333,0,0.25,0.6,0.556,0.5,0,0,0,0,0,0,"NA"],"FTM":[10,2,4,0,2,0,2,0,0,0,0,0,"NA"],"FTA":[11,2,4,0,2,0,2,0,0,0,0,0,"NA"],"FT_PCT":[0.909,1,1,0,1,0,1,0,0,0,0,0,"NA"],"OREB":[2,1,0,0,0,1,1,0,0,0,0,0,"NA"],"DREB":[5,8,7,5,4,2,4,0,0,0,0,0,"NA"],"REB":[7,9,7,5,4,3,5,0,0,0,0,0,"NA"],"AST":[6,6,4,1,9,2,1,1,0,0,0,0,"NA"],"STL":[2,0,0,1,1,3,2,0,0,0,0,0,"NA"],"BLK":[2,0,0,1,1,0,6,0,0,0,0,0,"NA"],"TO":[4,2,2,1,3,0,2,0,0,0,0,0,"NA"],"PF":[3,0,4,5,3,3,4,0,0,0,0,0,"NA"],"PTS":[30,18,17,18,23,11,6,0,0,0,0,0,"NA"],"PLUS_MINUS":[6,22,14,11,14,4,0,-5,-2,2,2,2,"NA"]},"columns":[{"id":"PLAYER_ID","name":"PLAYER_ID","type":"numeric","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"PLAYER_NAME","name":"Player","type":"character","sortNALast":true,"footer":{"name":"span","attribs":{"className":"box-score-total"},"children":["Totals"]},"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","defaultSortDesc":false,"cell":[{"name":"a","attribs":{"href":"https://stats.nba.com/player/202695","target":"_blank"},"children":["Kawhi Leonard"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627783","target":"_blank"},"children":["Pascal Siakam"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201188","target":"_blank"},"children":["Marc Gasol"," ",{"name":"sup","attribs":{},"children":["C"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201980","target":"_blank"},"children":["Danny Green"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/200768","target":"_blank"},"children":["Kyle Lowry"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627832","target":"_blank"},"children":["Fred VanVleet"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201586","target":"_blank"},"children":["Serge Ibaka"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627775","target":"_blank"},"children":["Patrick McCaw"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626181","target":"_blank"},"children":["Norman Powell"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201975","target":"_blank"},"children":["Jodie Meeks"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202391","target":"_blank"},"children":["Jeremy Lin"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626259","target":"_blank"},"children":["Malcolm Miller"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628384","target":"_blank"},"children":["OG Anunoby"]}],"width":130},{"id":"START_POSITION","name":"START_POSITION","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"MIN","name":"Min","type":"Date","sortNALast":true,"footer":"240:00","minWidth":60,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["38:25","38:40","26:10","27:12","43:22","33:19","21:50","2:13","6:13","0:52","0:52","0:52","DNP"],"align":"right"},{"id":"MIN_STR","name":"MIN_STR","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FGM","name":"FG","type":"numeric","sortNALast":true,"footer":"43-82","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["9-17","8-16","6-11","6-10","8-16","4-8","2-4","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FGA","name":"FGA","type":"numeric","sortNALast":true,"footer":"82","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG_PCT","name":"FG%","type":"numeric","sortNALast":true,"footer":"52.4%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FG3M","name":"3P","type":"numeric","sortNALast":true,"footer":"17-38","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["2-6","0-3","1-4","6-10","5-9","3-6","0-0","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FG3A","name":"3PA","type":"numeric","sortNALast":true,"footer":"38","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG3_PCT","name":"3P%","type":"numeric","sortNALast":true,"footer":"44.7%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FTM","name":"FT","type":"numeric","sortNALast":true,"footer":"20-21","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["10-11","2-2","4-4","0-0","2-2","0-0","2-2","0-0","0-0","0-0","0-0","0-0",null]},{"id":"FTA","name":"FTA","type":"numeric","sortNALast":true,"footer":"21","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FT_PCT","name":"FT%","type":"numeric","sortNALast":true,"footer":"95.2%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"OREB","name":"ORB","type":"numeric","sortNALast":true,"footer":"5","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"DREB","name":"DRB","type":"numeric","sortNALast":true,"footer":"35","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"REB","name":"REB","type":"numeric","sortNALast":true,"footer":"40","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"AST","name":"AST","type":"numeric","sortNALast":true,"footer":"30","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"STL","name":"STL","type":"numeric","sortNALast":true,"footer":"9","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"BLK","name":"BLK","type":"numeric","sortNALast":true,"footer":"10","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"TO","name":"TO","type":"numeric","sortNALast":true,"footer":"14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PF","name":"PF","type":"numeric","sortNALast":true,"footer":"22","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PTS","name":"PTS","type":"numeric","sortNALast":true,"footer":"123","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PLUS_MINUS","name":"+/-","type":"numeric","sortNALast":true,"footer":"+14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["+6","+22","+14","+11","+14","+4","+0","-5","-2","+2","+2","+2",""]}],"defaultSortDesc":true,"defaultSorted":[{"id":"PTS","desc":true}],"pagination":false,"highlight":true,"striped":true,"showSortIcon":false,"className":"box-score-tbl","theme":{"cellPadding":"8px"},"dataKey":"8623f321bf7f1f4e0a7a6794478080c5"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className","tag.attribs.columns.5.className","tag.attribs.columns.6.className","tag.attribs.columns.7.className","tag.attribs.columns.8.className","tag.attribs.columns.9.className","tag.attribs.columns.10.className","tag.attribs.columns.11.className","tag.attribs.columns.12.className","tag.attribs.columns.13.className","tag.attribs.columns.14.className","tag.attribs.columns.15.className","tag.attribs.columns.16.className","tag.attribs.columns.17.className","tag.attribs.columns.18.className","tag.attribs.columns.19.className","tag.attribs.columns.20.className","tag.attribs.columns.21.className","tag.attribs.columns.22.className","tag.attribs.columns.23.className"],"jsHooks":[]}</script><div class="box-score-title">Golden State Warriors</div>
+<div id="htmlwidget-68091e08fa60b73e3629" class="reactable html-widget" style="width:auto;height:auto;" data-react-ssr><div class="Reactable ReactTable box-score-tbl"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:970px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-th rt-align-left box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:0 0 auto;min-width:130px;width:130px;max-width:130px" aria-label="Sort Player" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner reactable-1626bqa">Player</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:60 0 auto;min-width:60px;width:60px" aria-label="Sort Min" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">Min</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FG" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FG</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FG%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FG%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort 3P" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">3P</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort 3P%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">3P%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FT" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FT</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:55 0 auto;min-width:55px;width:55px" aria-label="Sort FT%" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">FT%</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort ORB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">ORB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort DRB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">DRB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort REB" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">REB</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort AST" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">AST</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort STL" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">STL</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort BLK" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">BLK</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort TO" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">TO</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort PF" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">PF</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort PTS" aria-sort="descending" tabindex="0"><div class="rt-th-inner reactable-1626bqa">PTS</div></div>
+<div class="rt-th rt-align-right box-score-header reactable-1xdhyk6" role="columnheader" style="position:relative;flex:45 0 auto;min-width:45px;width:45px" aria-label="Sort +/-" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner reactable-1626bqa">+/-</div></div>
+</div></div>
+<div class="rt-tbody" role="rowgroup" style="min-width:970px">
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201939" target="_blank" class="external-link">Stephen Curry<!-- --> <sup>G</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">43:15</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">14-31</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">45.2%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">6-14</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">42.9%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">13-14</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">92.9%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">8</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">47</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-8</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/203110" target="_blank" class="external-link">Draymond Green<!-- --> <sup>F</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">40:36</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">6-14</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">42.9%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">3-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">17</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-10</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/2738" target="_blank" class="external-link">Andre Iguodala<!-- --> <sup>F</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">30:38</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">4-8</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">50%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">11</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-14</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1626188" target="_blank" class="external-link">Quinn Cook</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">26:38</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">4-9</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">44.4%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">9</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-8</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/201973" target="_blank" class="external-link">Jonas Jerebko</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">9:51</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">16.7%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">3-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">75%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+0</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/101106" target="_blank" class="external-link">Andrew Bogut</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">21:36</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">3-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">75%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">6</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+0</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/2733" target="_blank" class="external-link">Shaun Livingston<!-- --> <sup>G</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">17:20</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">25%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-14</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/202326" target="_blank" class="external-link">DeMarcus Cousins<!-- --> <sup>C</sup></a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">19:24</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-7</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">14.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">2-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">66.7%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-12</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1628035" target="_blank" class="external-link">Alfonzo McKinnie</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">18:05</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-4</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">25%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">4</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">+0</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1628395" target="_blank" class="external-link">Jordan Bell</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">9:23</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">1-1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">100%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">2</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-2</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1627745" target="_blank" class="external-link">Damian Jones</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">1:37</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-1</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/1628980" target="_blank" class="external-link">Jacob Evans</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">1:37</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-3</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-1</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0-0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">0%</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">0</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-1</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr rt-tr-striped rt-tr-highlight" role="row" style="flex:1 0 auto;min-width:970px">
+<div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><a href="https://stats.nba.com/player/202691" target="_blank" class="external-link">Klay Thompson</a></div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">DNP</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right sorted reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+<div class="rt-td rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">​</div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+<div class="rt-tfoot" role="rowgroup" style="min-width:970px"><div class="rt-tr" role="row">
+<div class="rt-td rt-td-footer rt-align-left reactable-1xdhyk6" role="cell" style="flex:0 0 auto;min-width:130px;width:130px;max-width:130px"><div class="rt-td-inner reactable-1626bqa"><span class="box-score-total">Totals</span></div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:60 0 auto;min-width:60px;width:60px"><div class="rt-td-inner reactable-1626bqa">240:00</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">36-91</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">39.6%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">12-36</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">33.3%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">25-30</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:55 0 auto;min-width:55px;width:55px"><div class="rt-td-inner reactable-1626bqa">83.3%</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">13</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">28</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">41</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">25</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">8</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">3</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">14</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">21</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">109</div></div>
+<div class="rt-td rt-td-footer rt-align-right reactable-1xdhyk6" role="cell" style="flex:45 0 auto;min-width:45px;width:45px"><div class="rt-td-inner reactable-1626bqa">-14</div></div>
+</div></div>
+</div></div></div>
+<script type="application/json" data-for="htmlwidget-68091e08fa60b73e3629">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"PLAYER_ID":[2738,203110,202326,2733,201939,1626188,101106,1628035,1628395,201973,1628980,1627745,202691],"PLAYER_NAME":["Andre Iguodala","Draymond Green","DeMarcus Cousins","Shaun Livingston","Stephen Curry","Quinn Cook","Andrew Bogut","Alfonzo McKinnie","Jordan Bell","Jonas Jerebko","Jacob Evans","Damian Jones","Klay Thompson"],"START_POSITION":["F","F","C","G","G","","","","","","","",""],"MIN":["2022-09-11T00:30:38Z","2022-09-11T00:40:36Z","2022-09-11T00:19:24Z","2022-09-11T00:17:20Z","2022-09-11T00:43:15Z","2022-09-11T00:26:38Z","2022-09-11T00:21:36Z","2022-09-11T00:18:05Z","2022-09-11T00:09:23Z","2022-09-11T00:09:51Z","2022-09-11T00:01:37Z","2022-09-11T00:01:37Z",null],"MIN_STR":["30:38","40:36","19:24","17:20","43:15","26:38","21:36","18:05","9:23","9:51","1:37","1:37",null],"FGM":[4,6,1,1,14,4,3,1,1,1,0,0,"NA"],"FGA":[8,14,7,4,31,9,4,4,1,6,3,0,"NA"],"FG_PCT":[0.5,0.429,0.143,0.25,0.452,0.444,0.75,0.25,1,0.167,0,0,"NA"],"FG3M":[2,2,0,0,6,0,0,1,0,1,0,0,"NA"],"FG3A":[6,6,1,0,14,2,0,3,0,3,1,0,"NA"],"FG3_PCT":[0.333,0.333,0,0,0.429,0,0,0.333,0,0.333,0,0,"NA"],"FTM":[1,3,2,2,13,1,0,0,0,3,0,0,"NA"],"FTA":[2,3,3,2,14,1,0,1,0,4,0,0,"NA"],"FT_PCT":[0.5,1,0.667,1,0.929,1,0,0,0,0.75,0,0,"NA"],"OREB":[2,1,0,1,2,0,3,1,1,2,0,0,"NA"],"DREB":[4,6,3,1,6,1,4,2,1,0,0,0,"NA"],"REB":[6,7,3,2,8,1,7,3,2,2,0,0,"NA"],"AST":[3,4,2,2,7,2,3,1,0,1,0,0,"NA"],"STL":[1,2,1,0,2,1,1,0,0,0,0,0,"NA"],"BLK":[0,0,0,0,0,0,1,0,2,0,0,0,"NA"],"TO":[0,4,3,0,3,2,1,1,0,0,0,0,"NA"],"PF":[0,4,2,2,1,2,3,4,2,1,0,0,"NA"],"PTS":[11,17,4,4,47,9,6,3,2,6,0,0,"NA"],"PLUS_MINUS":[-14,-10,-12,-14,-8,-8,0,0,-2,0,-1,-1,"NA"]},"columns":[{"id":"PLAYER_ID","name":"PLAYER_ID","type":"numeric","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"PLAYER_NAME","name":"Player","type":"character","sortNALast":true,"footer":{"name":"span","attribs":{"className":"box-score-total"},"children":["Totals"]},"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","defaultSortDesc":false,"cell":[{"name":"a","attribs":{"href":"https://stats.nba.com/player/2738","target":"_blank"},"children":["Andre Iguodala"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/203110","target":"_blank"},"children":["Draymond Green"," ",{"name":"sup","attribs":{},"children":["F"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202326","target":"_blank"},"children":["DeMarcus Cousins"," ",{"name":"sup","attribs":{},"children":["C"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/2733","target":"_blank"},"children":["Shaun Livingston"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201939","target":"_blank"},"children":["Stephen Curry"," ",{"name":"sup","attribs":{},"children":["G"]}]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1626188","target":"_blank"},"children":["Quinn Cook"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/101106","target":"_blank"},"children":["Andrew Bogut"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628035","target":"_blank"},"children":["Alfonzo McKinnie"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628395","target":"_blank"},"children":["Jordan Bell"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/201973","target":"_blank"},"children":["Jonas Jerebko"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1628980","target":"_blank"},"children":["Jacob Evans"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/1627745","target":"_blank"},"children":["Damian Jones"]},{"name":"a","attribs":{"href":"https://stats.nba.com/player/202691","target":"_blank"},"children":["Klay Thompson"]}],"width":130},{"id":"START_POSITION","name":"START_POSITION","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"MIN","name":"Min","type":"Date","sortNALast":true,"footer":"240:00","minWidth":60,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["30:38","40:36","19:24","17:20","43:15","26:38","21:36","18:05","9:23","9:51","1:37","1:37","DNP"],"align":"right"},{"id":"MIN_STR","name":"MIN_STR","type":"character","sortNALast":true,"minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FGM","name":"FG","type":"numeric","sortNALast":true,"footer":"36-91","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["4-8","6-14","1-7","1-4","14-31","4-9","3-4","1-4","1-1","1-6","0-3","0-0",null]},{"id":"FGA","name":"FGA","type":"numeric","sortNALast":true,"footer":"91","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG_PCT","name":"FG%","type":"numeric","sortNALast":true,"footer":"39.6%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FG3M","name":"3P","type":"numeric","sortNALast":true,"footer":"12-36","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["2-6","2-6","0-1","0-0","6-14","0-2","0-0","1-3","0-0","1-3","0-1","0-0",null]},{"id":"FG3A","name":"3PA","type":"numeric","sortNALast":true,"footer":"36","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FG3_PCT","name":"3P%","type":"numeric","sortNALast":true,"footer":"33.3%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"FTM","name":"FT","type":"numeric","sortNALast":true,"footer":"25-30","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["1-2","3-3","2-3","2-2","13-14","1-1","0-0","0-1","0-0","3-4","0-0","0-0",null]},{"id":"FTA","name":"FTA","type":"numeric","sortNALast":true,"footer":"30","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","show":false},{"id":"FT_PCT","name":"FT%","type":"numeric","sortNALast":true,"footer":"83.3%","minWidth":55,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","format":{"cell":{"percent":true},"aggregated":{"percent":true}}},{"id":"OREB","name":"ORB","type":"numeric","sortNALast":true,"footer":"13","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"DREB","name":"DRB","type":"numeric","sortNALast":true,"footer":"28","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"REB","name":"REB","type":"numeric","sortNALast":true,"footer":"41","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"AST","name":"AST","type":"numeric","sortNALast":true,"footer":"25","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"STL","name":"STL","type":"numeric","sortNALast":true,"footer":"8","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"BLK","name":"BLK","type":"numeric","sortNALast":true,"footer":"3","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"TO","name":"TO","type":"numeric","sortNALast":true,"footer":"14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PF","name":"PF","type":"numeric","sortNALast":true,"footer":"21","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PTS","name":"PTS","type":"numeric","sortNALast":true,"footer":"109","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header"},{"id":"PLUS_MINUS","name":"+/-","type":"numeric","sortNALast":true,"footer":"-14","minWidth":45,"className":"function(rowInfo, column, state) {\n        // Highlight sorted columns\n        for (let i = 0; i < state.sorted.length; i++) {\n          if (state.sorted[i].id === column.id) {\n            return 'sorted'\n          }\n        }\n      }","headerClassName":"box-score-header","cell":["-14","-10","-12","-14","-8","-8","+0","+0","-2","+0","-1","-1",""]}],"defaultSortDesc":true,"defaultSorted":[{"id":"PTS","desc":true}],"pagination":false,"highlight":true,"striped":true,"showSortIcon":false,"className":"box-score-tbl","theme":{"cellPadding":"8px"},"dataKey":"f9993bd830ee3f376592a65b0e4bb1e4"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className","tag.attribs.columns.5.className","tag.attribs.columns.6.className","tag.attribs.columns.7.className","tag.attribs.columns.8.className","tag.attribs.columns.9.className","tag.attribs.columns.10.className","tag.attribs.columns.11.className","tag.attribs.columns.12.className","tag.attribs.columns.13.className","tag.attribs.columns.14.className","tag.attribs.columns.15.className","tag.attribs.columns.16.className","tag.attribs.columns.17.className","tag.attribs.columns.18.className","tag.attribs.columns.19.className","tag.attribs.columns.20.className","tag.attribs.columns.21.className","tag.attribs.columns.22.className","tag.attribs.columns.23.className"],"jsHooks":[]}</script>
 </div>
 <hr>
 <p>Source: <a href="https://stats.nba.com/game/0041800403" class="external-link">NBA.com</a></p>
@@ -280,8 +1036,7 @@ Source Code
 <span>  <span class="fu">box_score_tbl</span><span class="op">(</span><span class="va">player_stats</span>, <span class="va">team_stats</span>, <span class="st">"GSW"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tags</span><span class="op">$</span><span class="fu">link</span><span class="op">(</span>href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Roboto:400,500&amp;display=fallback"</span>, rel <span class="op">=</span> <span class="st">"stylesheet"</span><span class="op">)</span></span></code></pre></div>
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;display=fallback" rel="stylesheet">
+<code class="sourceCode R"><span><span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">link</span><span class="op">(</span>href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Roboto:400,500&amp;display=fallback"</span>, rel <span class="op">=</span> <span class="st">"stylesheet"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.box-score</span> {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">'Roboto'</span><span class="op">,</span> Helvetica<span class="op">,</span> Arial<span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -383,124 +1138,7 @@ Source Code
 <span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.8125</span><span class="dt">rem</span><span class="op">;</span></span>
 <span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">500</span><span class="op">;</span></span>
 <span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<style type="text/css">
-.box-score {
-  font-family: 'Roboto', Helvetica, Arial, sans-serif;
-}
-
-.box-score a {
-  color: #337ab7;
-  text-decoration: none;
-}
-
-.box-score a:hover,
-.box-score a:focus {
-  text-decoration: underline;
-  text-decoration-thickness: max(1px, 0.0625rem);
-}
-
-.header {
-  text-align: center;
-  font-size: 1.25rem;
-}
-
-.game-date {
-  font-size: 1rem;
-}
-
-.line-score {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.line-score-tbl {
-  margin: 0 auto;
-  max-width: 32rem;
-  font-size: 0.9375rem;
-}
-
-.line-score-header {
-  font-size: 0.8125rem;
-  font-weight: 400;
-}
-
-.line-score-final {
-  font-weight: 500;
-}
-
-.team-name {
-  font-weight: 500;
-}
-
-.team-record {
-  margin-left: 0.375rem;
-  color: hsl(0, 0%, 45%);
-  font-size: 0.75rem;
-}
-
-.box-score-title {
-  margin-top: 1.5rem;
-  padding: 0.5rem;
-  background-color: hsl(205, 100%, 36%);
-  color: hsl(0, 0%, 98%);
-  font-size: 0.9375rem;
-  font-weight: 400;
-}
-
-.box-score-tbl {
-  font-size: 0.75rem;
-  letter-spacing: 0.2px;
-}
-
-.box-score-header {
-  border-bottom-width: 1px;
-  background-color: hsl(205, 93%, 16%);
-  color: hsl(0, 0%, 98%);
-  font-weight: 400;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.box-score-header:hover,
-.box-score-header:focus,
-.box-score-header[aria-sort="ascending"],
-.box-score-header[aria-sort="descending"] {
-  background-color: hsl(205, 100%, 36%);
-}
-
-.box-score-header[aria-sort="ascending"] {
-  box-shadow: inset 0 10px 0 -6px #efaa10;
-}
-
-.box-score-header[aria-sort="descending"] {
-  box-shadow: inset 0 -10px 0 -6px #efaa10;
-}
-
-.sorted {
-  background-color: hsla(0, 0%, 60%, 0.1);
-}
-
-.box-score-total {
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-</style>
-<style type="text/css">
-/* rmarkdown html documents */
-.main-container {
-  max-width: 1024px !important;
-}
-
-h1.title {
-  display: none;
-}
-
-/* pkgdown articles */
-.row > main {
-  max-width: 1024px;
-}
-</style></main>
+  </main>
 </div>
 
 
@@ -508,7 +1146,7 @@ h1.title {
 
       <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Greg Lin.</p>
+<p>Developed by Greg Lin, RStudio, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">

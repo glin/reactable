@@ -106,13 +106,377 @@
       <div class="d-none name"><code>twitter-followers.Rmd</code></div>
     </div>
 
-      <div class="twitter-followers">
+      <style type="text/css">
+.twitter-followers {
+  margin: 0 auto;
+  width: 575px;
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.followers-header {
+  margin: 1.125rem 0;
+  font-size: 1rem;
+}
+
+.followers-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.followers-tbl {
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+}
+
+.followers-tbl a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.followers-tbl a:hover,
+.followers-tbl a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
+}
+
+.header {
+  border-bottom: 2px solid #555;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.header:hover {
+  background-color: #eee;
+}
+
+.bar-cell {
+  display: flex;
+  align-items: center;
+}
+
+.number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 0.84375rem;
+  white-space: pre;
+}
+
+.bar-chart {
+  flex-grow: 1;
+  margin-left: 0.375rem;
+  height: 0.875rem;
+}
+
+.bar {
+  height: 100%;
+}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700%7CFira+Mono&amp;display=fallback" rel="stylesheet">
+<div class="twitter-followers">
 <div class="followers-header">
 <h2 class="followers-title">Candidates whose followers are loyal only to them</h2>
 Share of each 2020 candidate's followers who don't follow any other candidates
 </div>
-<div id="htmlwidget-f1206dcdd97579efaf94" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-f1206dcdd97579efaf94">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"account":["marwilliamson","BernieSanders","Hickenlooper","CoryBooker","JoeBiden","AndrewYang","TulsiGabbard","BetoORourke","amyklobuchar","PeteButtigieg","SenGillibrand","KamalaHarris","JulianCastro","sethmoulton","JayInslee","ewarren","TimRyan","JohnDelaney","MichaelBennet","ericswalwell"],"followers":[2610335,9254423,144816,4246252,3558333,267897,349443,1424745,692985,1033834,1410303,2640072,212582,138450,51504,2486101,20080,20266,21053,84415],"exclusive_followers_pct":[0.748,0.632,0.563,0.525,0.438,0.434,0.347,0.265,0.24,0.237,0.233,0.223,0.214,0.201,0.19,0.164,0.156,0.129,0.117,0.092]},"columns":[{"id":"account","name":"account","type":"character","align":"left","headerClassName":"header","cell":[{"name":"a","attribs":{"href":"https://twitter.com/marwilliamson","target":"_blank"},"children":["@marwilliamson"]},{"name":"a","attribs":{"href":"https://twitter.com/BernieSanders","target":"_blank"},"children":["@BernieSanders"]},{"name":"a","attribs":{"href":"https://twitter.com/Hickenlooper","target":"_blank"},"children":["@Hickenlooper"]},{"name":"a","attribs":{"href":"https://twitter.com/CoryBooker","target":"_blank"},"children":["@CoryBooker"]},{"name":"a","attribs":{"href":"https://twitter.com/JoeBiden","target":"_blank"},"children":["@JoeBiden"]},{"name":"a","attribs":{"href":"https://twitter.com/AndrewYang","target":"_blank"},"children":["@AndrewYang"]},{"name":"a","attribs":{"href":"https://twitter.com/TulsiGabbard","target":"_blank"},"children":["@TulsiGabbard"]},{"name":"a","attribs":{"href":"https://twitter.com/BetoORourke","target":"_blank"},"children":["@BetoORourke"]},{"name":"a","attribs":{"href":"https://twitter.com/amyklobuchar","target":"_blank"},"children":["@amyklobuchar"]},{"name":"a","attribs":{"href":"https://twitter.com/PeteButtigieg","target":"_blank"},"children":["@PeteButtigieg"]},{"name":"a","attribs":{"href":"https://twitter.com/SenGillibrand","target":"_blank"},"children":["@SenGillibrand"]},{"name":"a","attribs":{"href":"https://twitter.com/KamalaHarris","target":"_blank"},"children":["@KamalaHarris"]},{"name":"a","attribs":{"href":"https://twitter.com/JulianCastro","target":"_blank"},"children":["@JulianCastro"]},{"name":"a","attribs":{"href":"https://twitter.com/sethmoulton","target":"_blank"},"children":["@sethmoulton"]},{"name":"a","attribs":{"href":"https://twitter.com/JayInslee","target":"_blank"},"children":["@JayInslee"]},{"name":"a","attribs":{"href":"https://twitter.com/ewarren","target":"_blank"},"children":["@ewarren"]},{"name":"a","attribs":{"href":"https://twitter.com/TimRyan","target":"_blank"},"children":["@TimRyan"]},{"name":"a","attribs":{"href":"https://twitter.com/JohnDelaney","target":"_blank"},"children":["@JohnDelaney"]},{"name":"a","attribs":{"href":"https://twitter.com/MichaelBennet","target":"_blank"},"children":["@MichaelBennet"]},{"name":"a","attribs":{"href":"https://twitter.com/ericswalwell","target":"_blank"},"children":["@ericswalwell"]}],"width":150},{"id":"followers","name":"followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":[{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,610,335"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.2063506282347%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["9,254,423"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"100%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  144,816"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.56483013581722%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["4,246,252"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"45.8834872795419%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["3,558,333"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"38.4500794917198%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  267,897"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.89479960014795%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  349,443"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"3.77595664256972%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,424,745"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.3952872048317%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  692,985"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"7.48814918012717%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,033,834"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"11.1712421184984%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,410,303"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.2392320947508%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,640,072"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.527678062695%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  212,582"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.29708540446012%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  138,450"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.49604140636321%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   51,504"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.556533886553489%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,486,101"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"26.8639222564173%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,080"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.216977330731478%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,266"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.218987180508174%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   21,053"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.22749122230527%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   84,415"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.912158434945107%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]}]},{"id":"exclusive_followers_pct","name":"Exclusive Followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":"function(cellInfo) {\n        // Format as percentage\n        const pct = (cellInfo.value * 100).toFixed(1) + \"%\"\n        // Pad single-digit numbers\n        let value = pct.padStart(5)\n        // Show % on first row only\n        if (cellInfo.viewIndex > 0) {\n          value = value.replace(\"%\", \" \")\n        }\n        // Render bar chart\n        return `\n          <div class=\"bar-cell\">\n            <span class=\"number\">${value}<\/span>\n            <div class=\"bar-chart\" style=\"background-color: #e1e1e1\">\n              <div class=\"bar\" style=\"width: ${pct}; background-color: #fc5185\"><\/div>\n            <\/div>\n          <\/div>\n        `\n      }","html":true}],"defaultSorted":[{"id":"exclusive_followers_pct","desc":true}],"pagination":false,"compact":true,"className":"followers-tbl","dataKey":"233d94e35d7d90e66c31412bc8b4ed9f"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.2.cell"],"jsHooks":[]}</script>
+<div id="htmlwidget-e8106c7b211e8d62c10f" class="reactable html-widget" style="width:auto;height:auto;" data-react-ssr><div class="Reactable ReactTable followers-tbl rt-compact"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:350px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-th rt-align-left header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:150px;width:150px;max-width:150px" aria-label="Sort account" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">account</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+<div class="rt-th rt-align-left header" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort followers" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">followers</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+<div class="rt-th rt-align-left header" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Exclusive Followers" aria-sort="descending" tabindex="0"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">Exclusive Followers</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+</div></div>
+<div class="rt-tbody" role="rowgroup" style="min-width:350px">
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/marwilliamson" target="_blank" class="external-link">@marwilliamson</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">2,610,335</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:28.2063506282347%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">74.8%</span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 74.8%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/BernieSanders" target="_blank" class="external-link">@BernieSanders</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">9,254,423</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:100%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">63.2 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 63.2%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/Hickenlooper" target="_blank" class="external-link">@Hickenlooper</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  144,816</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:1.56483013581722%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">56.3 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 56.3%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/CoryBooker" target="_blank" class="external-link">@CoryBooker</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">4,246,252</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:45.8834872795419%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">52.5 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 52.5%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/JoeBiden" target="_blank" class="external-link">@JoeBiden</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">3,558,333</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:38.4500794917198%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">43.8 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 43.8%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/AndrewYang" target="_blank" class="external-link">@AndrewYang</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  267,897</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:2.89479960014795%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">43.4 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 43.4%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/TulsiGabbard" target="_blank" class="external-link">@TulsiGabbard</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  349,443</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:3.77595664256972%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">34.7 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 34.7%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/BetoORourke" target="_blank" class="external-link">@BetoORourke</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">1,424,745</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:15.3952872048317%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">26.5 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 26.5%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/amyklobuchar" target="_blank" class="external-link">@amyklobuchar</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  692,985</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:7.48814918012717%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">24.0 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 24.0%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/PeteButtigieg" target="_blank" class="external-link">@PeteButtigieg</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">1,033,834</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:11.1712421184984%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">23.7 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 23.7%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/SenGillibrand" target="_blank" class="external-link">@SenGillibrand</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">1,410,303</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:15.2392320947508%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">23.3 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 23.3%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/KamalaHarris" target="_blank" class="external-link">@KamalaHarris</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">2,640,072</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:28.527678062695%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">22.3 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 22.3%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/JulianCastro" target="_blank" class="external-link">@JulianCastro</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  212,582</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:2.29708540446012%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">21.4 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 21.4%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/sethmoulton" target="_blank" class="external-link">@sethmoulton</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">  138,450</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:1.49604140636321%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">20.1 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 20.1%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/JayInslee" target="_blank" class="external-link">@JayInslee</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">   51,504</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:0.556533886553489%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">19.0 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 19.0%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/ewarren" target="_blank" class="external-link">@ewarren</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">2,486,101</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:26.8639222564173%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">16.4 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 16.4%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/TimRyan" target="_blank" class="external-link">@TimRyan</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">   20,080</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:0.216977330731478%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">15.6 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 15.6%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/JohnDelaney" target="_blank" class="external-link">@JohnDelaney</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">   20,266</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:0.218987180508174%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">12.9 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 12.9%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/MichaelBennet" target="_blank" class="external-link">@MichaelBennet</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">   21,053</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:0.22749122230527%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number">11.7 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 11.7%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:350px">
+<div class="rt-td rt-align-left" role="cell" style="flex:0 0 auto;min-width:150px;width:150px;max-width:150px"><div class="rt-td-inner"><a href="https://twitter.com/ericswalwell" target="_blank" class="external-link">@ericswalwell</a></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="bar-cell">
+<span class="number">   84,415</span><div style="margin-right:0.375rem" class="bar-chart"><div style="width:0.912158434945107%;background-color:#3fc1c9" class="bar"></div></div>
+</div></div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner"><div class="rt-text-content" style="display:inline">
+          <div class="bar-cell">
+            <span class="number"> 9.2 </span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: 9.2%; background-color: #fc5185"></div>
+            </div>
+          </div>
+        </div></div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+</div></div></div>
+<script type="application/json" data-for="htmlwidget-e8106c7b211e8d62c10f">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"account":["marwilliamson","BernieSanders","Hickenlooper","CoryBooker","JoeBiden","AndrewYang","TulsiGabbard","BetoORourke","amyklobuchar","PeteButtigieg","SenGillibrand","KamalaHarris","JulianCastro","sethmoulton","JayInslee","ewarren","TimRyan","JohnDelaney","MichaelBennet","ericswalwell"],"followers":[2610335,9254423,144816,4246252,3558333,267897,349443,1424745,692985,1033834,1410303,2640072,212582,138450,51504,2486101,20080,20266,21053,84415],"exclusive_followers_pct":[0.748,0.632,0.563,0.525,0.438,0.434,0.347,0.265,0.24,0.237,0.233,0.223,0.214,0.201,0.19,0.164,0.156,0.129,0.117,0.092]},"columns":[{"id":"account","name":"account","type":"character","align":"left","headerClassName":"header","cell":[{"name":"a","attribs":{"href":"https://twitter.com/marwilliamson","target":"_blank"},"children":["@marwilliamson"]},{"name":"a","attribs":{"href":"https://twitter.com/BernieSanders","target":"_blank"},"children":["@BernieSanders"]},{"name":"a","attribs":{"href":"https://twitter.com/Hickenlooper","target":"_blank"},"children":["@Hickenlooper"]},{"name":"a","attribs":{"href":"https://twitter.com/CoryBooker","target":"_blank"},"children":["@CoryBooker"]},{"name":"a","attribs":{"href":"https://twitter.com/JoeBiden","target":"_blank"},"children":["@JoeBiden"]},{"name":"a","attribs":{"href":"https://twitter.com/AndrewYang","target":"_blank"},"children":["@AndrewYang"]},{"name":"a","attribs":{"href":"https://twitter.com/TulsiGabbard","target":"_blank"},"children":["@TulsiGabbard"]},{"name":"a","attribs":{"href":"https://twitter.com/BetoORourke","target":"_blank"},"children":["@BetoORourke"]},{"name":"a","attribs":{"href":"https://twitter.com/amyklobuchar","target":"_blank"},"children":["@amyklobuchar"]},{"name":"a","attribs":{"href":"https://twitter.com/PeteButtigieg","target":"_blank"},"children":["@PeteButtigieg"]},{"name":"a","attribs":{"href":"https://twitter.com/SenGillibrand","target":"_blank"},"children":["@SenGillibrand"]},{"name":"a","attribs":{"href":"https://twitter.com/KamalaHarris","target":"_blank"},"children":["@KamalaHarris"]},{"name":"a","attribs":{"href":"https://twitter.com/JulianCastro","target":"_blank"},"children":["@JulianCastro"]},{"name":"a","attribs":{"href":"https://twitter.com/sethmoulton","target":"_blank"},"children":["@sethmoulton"]},{"name":"a","attribs":{"href":"https://twitter.com/JayInslee","target":"_blank"},"children":["@JayInslee"]},{"name":"a","attribs":{"href":"https://twitter.com/ewarren","target":"_blank"},"children":["@ewarren"]},{"name":"a","attribs":{"href":"https://twitter.com/TimRyan","target":"_blank"},"children":["@TimRyan"]},{"name":"a","attribs":{"href":"https://twitter.com/JohnDelaney","target":"_blank"},"children":["@JohnDelaney"]},{"name":"a","attribs":{"href":"https://twitter.com/MichaelBennet","target":"_blank"},"children":["@MichaelBennet"]},{"name":"a","attribs":{"href":"https://twitter.com/ericswalwell","target":"_blank"},"children":["@ericswalwell"]}],"width":150},{"id":"followers","name":"followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":[{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,610,335"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.2063506282347%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["9,254,423"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"100%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  144,816"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.56483013581722%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["4,246,252"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"45.8834872795419%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["3,558,333"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"38.4500794917198%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  267,897"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.89479960014795%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  349,443"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"3.77595664256972%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,424,745"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.3952872048317%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  692,985"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"7.48814918012717%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,033,834"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"11.1712421184984%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["1,410,303"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"15.2392320947508%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,640,072"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"28.527678062695%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  212,582"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"2.29708540446012%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["  138,450"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"1.49604140636321%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   51,504"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.556533886553489%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["2,486,101"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"26.8639222564173%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,080"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.216977330731478%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   20,266"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.218987180508174%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   21,053"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.22749122230527%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]},{"name":"div","attribs":{"className":"bar-cell"},"children":[{"name":"span","attribs":{"className":"number"},"children":["   84,415"]},{"name":"div","attribs":{"style":{"marginRight":"0.375rem"},"className":"bar-chart"},"children":[{"name":"div","attribs":{"style":{"width":"0.912158434945107%","backgroundColor":"#3fc1c9"},"className":"bar"},"children":[]}]}]}]},{"id":"exclusive_followers_pct","name":"Exclusive Followers","type":"numeric","align":"left","headerClassName":"header","defaultSortDesc":true,"cell":"function(cellInfo) {\n        // Format as percentage\n        const pct = (cellInfo.value * 100).toFixed(1) + \"%\"\n        // Pad single-digit numbers\n        let value = pct.padStart(5)\n        // Show % on first row only\n        if (cellInfo.viewIndex > 0) {\n          value = value.replace(\"%\", \" \")\n        }\n        // Render bar chart\n        return `\n          <div class=\"bar-cell\">\n            <span class=\"number\">${value}<\/span>\n            <div class=\"bar-chart\" style=\"background-color: #e1e1e1\">\n              <div class=\"bar\" style=\"width: ${pct}; background-color: #fc5185\"><\/div>\n            <\/div>\n          <\/div>\n        `\n      }","html":true}],"defaultSorted":[{"id":"exclusive_followers_pct","desc":true}],"pagination":false,"compact":true,"className":"followers-tbl","dataKey":"233d94e35d7d90e66c31412bc8b4ed9f"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.2.cell"],"jsHooks":[]}</script>
 </div>
 <hr>
 <p>Source: <a href="https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/" class="external-link">FiveThirtyEight</a></p>
@@ -191,9 +555,7 @@ Source Code
 <span>  <span class="va">tbl</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tags</span><span class="op">$</span><span class="fu">link</span><span class="op">(</span>href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&amp;display=fallback"</span>,</span>
-<span>          rel <span class="op">=</span> <span class="st">"stylesheet"</span><span class="op">)</span></span></code></pre></div>
-<link href="https://fonts.googleapis.com/css?family=Karla:400,700%7CFira+Mono&amp;display=fallback" rel="stylesheet">
+<code class="sourceCode R"><span><span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">link</span><span class="op">(</span>href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&amp;display=fallback"</span>, rel <span class="op">=</span> <span class="st">"stylesheet"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.twitter-followers</span> {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">0</span> <span class="bu">auto</span><span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">width</span>: <span class="dv">575</span><span class="dt">px</span><span class="op">;</span></span>
@@ -257,77 +619,7 @@ Source Code
 <span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="fu">.bar</span> {</span>
 <span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
 <span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<style type="text/css">
-.twitter-followers {
-  margin: 0 auto;
-  width: 575px;
-  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.followers-header {
-  margin: 1.125rem 0;
-  font-size: 1rem;
-}
-
-.followers-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.followers-tbl {
-  font-size: 0.875rem;
-  line-height: 1.125rem;
-}
-
-.followers-tbl a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.followers-tbl a:hover,
-.followers-tbl a:focus {
-  text-decoration: underline;
-  text-decoration-thickness: max(1px, 0.0625rem);
-}
-
-.header {
-  border-bottom: 2px solid #555;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  text-transform: uppercase;
-}
-
-.header:hover {
-  background-color: #eee;
-}
-
-.bar-cell {
-  display: flex;
-  align-items: center;
-}
-
-.number {
-  font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 0.84375rem;
-  white-space: pre;
-}
-
-.bar-chart {
-  flex-grow: 1;
-  margin-left: 0.375rem;
-  height: 0.875rem;
-}
-
-.bar {
-  height: 100%;
-}
-</style>
-<style type="text/css">
-/* rmarkdown html documents */
-h1.title {
-  display: none;
-}
-</style></main>
+  </main>
 </div>
 
 
@@ -335,7 +627,7 @@ h1.title {
 
       <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Greg Lin.</p>
+<p>Developed by Greg Lin, RStudio, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">

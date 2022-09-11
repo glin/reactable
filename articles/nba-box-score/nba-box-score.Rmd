@@ -7,6 +7,17 @@ resource_files:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+options(reactable.static = TRUE)
+```
+
+```{css ref.label='styles', echo=FALSE}
+```
+
+```{r ref.label='font_styles', echo=FALSE}
+```
+
+```{css ref.label='pkgdown_styles', echo=FALSE}
 ```
 
 ```{r box_score, echo=FALSE}
@@ -174,11 +185,11 @@ Raw data: [`line_score.csv`](line_score.csv), [`player_stats.csv`](player_stats.
 ```{r ref.label="box_score", eval=FALSE}
 ```
 
-```{r}
-tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display=fallback", rel = "stylesheet")
+```{r font_styles, eval=FALSE}
+htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display=fallback", rel = "stylesheet")
 ```
 
-```{css}
+```{css styles, eval=FALSE}
 .box-score {
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
 }
@@ -282,14 +293,10 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display
 }
 ```
 
-```{css echo=FALSE}
+```{css pkgdown_styles, include=FALSE}
 /* rmarkdown html documents */
 .main-container {
   max-width: 1024px !important;
-}
-
-h1.title {
-  display: none;
 }
 
 /* pkgdown articles */

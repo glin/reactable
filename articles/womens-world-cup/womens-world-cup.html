@@ -106,13 +106,606 @@
       <div class="d-none name"><code>womens-world-cup.Rmd</code></div>
     </div>
 
-      <div class="standings">
+      <style type="text/css">
+.standings {
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+}
+
+.title {
+  margin-top: 2rem;
+  margin-bottom: 1.125rem;
+  font-size: 1rem;
+}
+
+.title h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.standings-table {
+  margin-bottom: 1.25rem;
+}
+
+.header {
+  border-bottom-color: #555;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* Highlight headers when sorting */
+.header:hover,
+.header[aria-sort="ascending"],
+.header[aria-sort="descending"] {
+  background-color: #eee;
+}
+
+.border-left {
+  border-left: 2px solid #555;
+}
+
+/* Use box-shadow to create row borders that appear behind vertical borders */
+.cell {
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.group-last .cell {
+  box-shadow: inset 0 -2px 0 #555;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+}
+
+.team-flag {
+  height: 1.3rem;
+  border: 1px solid #f0f0f0;
+}
+
+.team-name {
+  margin-left: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.team-record {
+  margin-left: 0.35rem;
+  color: hsl(0, 0%, 45%);
+  font-size: 0.8125rem;
+}
+
+.group {
+  font-size: 1.1875rem;
+}
+
+.number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 1rem;
+  white-space: pre;
+}
+
+.spi-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 1.875rem;
+  height: 1.875rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  color: #000;
+  font-size: 0.8125rem;
+  letter-spacing: -1px;
+}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700%7CFira+Mono&amp;display=fallback" rel="stylesheet">
+<style type="text/css">
+/* rmarkdown html documents */
+.main-container {
+  max-width: 1054px !important;
+}
+
+/* pkgdown articles */
+.row > main {
+  max-width: 1054px;
+}
+
+.page-header {
+  display: none;
+}
+</style>
+<div class="standings">
 <div class="title">
 <h2>2019 Women's World Cup Predictions</h2>
 Soccer Power Index (SPI) ratings and chances of advancing for every team
 </div>
-<div id="htmlwidget-5aa8b63b2803dcf2c872" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-5aa8b63b2803dcf2c872">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"team":["USA","France","Germany","Canada","England","Netherlands","Australia","Sweden","Japan","Brazil","Spain","Norway","China","Italy","New Zealand","Nigeria","Cameroon","South Korea","Scotland","Argentina","Chile","South Africa","Thailand","Jamaica"],"points":[6,6,6,6,6,6,3,6,4,3,3,3,3,6,0,3,0,0,0,1,0,0,0,0],"group":["F","A","B","E","D","E","C","F","D","C","B","A","B","C","E","A","E","A","D","D","F","B","F","C"],"spi":[98.32748,96.29671,93.76549,93.51599,91.92311,92.67529,92.82054,88.44996,90.31291,89.47398,86.53061,83.68324,82.6652,76.137,77.62324,71.65054,65.8396,76.36337,53.97942,39.18661,46.53391,56.69038,40.69282,53.51525],"global_o":[5.52561,4.31375,3.96791,3.67537,3.5156,3.8588,4.21769,2.98755,3.78342,3.589,3.12364,2.96979,2.69201,2.97985,2.82453,2.35033,2.13554,2.70504,2.0491,1.50978,1.82545,1.71768,2.04038,2.47074],"global_d":[0.58179,0.52137,0.67818,0.5698,0.63717,0.73539,0.89761,0.6263,0.90887,0.87289,0.82417,0.90942,0.79838,1.34724,1.15653,1.11681,1.21653,1.14036,1.69041,1.85584,1.83067,1.2548,2.37858,2.11961],"group_1":[0.82956,0.99483,0.98483,0.3883,0.7057,0.6117,0.12812,0.17044,0.2943,0.25916,0.01082,0.00515,0.00435,0.61272,0,2e-05,0,0,0,0,0,0,0,0],"group_2":[0.17044,0.00515,0.01517,0.6117,0.2943,0.3883,0.53618,0.82956,0.62818,0.22349,0.69832,0.94029,0.28651,0.24033,0,0.05077,0,0.00379,0,0.07752,0,0,0,0],"group_3":[0,2e-05,0,0,0,0,0.33529,0,0.07752,0.51735,0.2907,0.05358,0.70479,0.14695,0.48334,0.90873,0.51666,0.03767,0.52512,0.39736,0.66262,0.00451,0.33738,0.00041],"make_round_of_16":[1,1,1,1,1,1,0.99862,1,1,0.9994,0.99367,0.99766,0.92813,1,0.40427,0.49519,0.2266,0.017,0.51934,0.24587,0.14801,0.0038,0.02218,0.00026],"make_quarters":[0.78079,0.78367,0.8928,0.59192,0.6851,0.59166,0.53811,0.4669,0.46314,0.42681,0.30836,0.44246,0.33744,0.37442,0.09699,0.13261,0.03779,0.00621,0.02828,0.00546,0.00781,0.00072,0.00054,1e-05],"make_semis":[0.47307,0.42052,0.48039,0.3614,0.43053,0.36983,0.26179,0.20267,0.26616,0.17353,0.10742,0.17536,0.10723,0.08802,0.03725,0.02736,0.01084,0.00209,0.00324,0.00043,0.00072,0.0001,5e-05,0],"make_final":[0.35076,0.30038,0.2771,0.20157,0.16465,0.18514,0.10214,0.10316,0.09314,0.06693,0.04509,0.04192,0.03367,0.01963,0.00614,0.00609,0.00124,0.00051,0.00068,4e-05,1e-05,1e-05,0,0],"win_league":[0.23618,0.19428,0.12256,0.09031,0.08003,0.07576,0.04791,0.04006,0.03515,0.02666,0.01759,0.01617,0.00994,0.00407,0.00178,0.00111,0.00028,0.0001,5e-05,1e-05,0,0,0,0]},"columns":[{"id":"team","name":"team","type":"character","vAlign":"center","headerVAlign":"bottom","className":"cell","headerClassName":"header","defaultSortDesc":false,"cell":[{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"USA flag","src":"images/USA.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["USA"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"France flag","src":"images/France.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["France"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Germany flag","src":"images/Germany.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Germany"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Canada flag","src":"images/Canada.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Canada"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"England flag","src":"images/England.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["England"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Netherlands flag","src":"images/Netherlands.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Netherlands"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Australia flag","src":"images/Australia.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Australia"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Sweden flag","src":"images/Sweden.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Sweden"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Japan flag","src":"images/Japan.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Japan"]},{"name":"span","attribs":{"className":"team-record"},"children":["4 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Brazil flag","src":"images/Brazil.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Brazil"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Spain flag","src":"images/Spain.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Spain"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Norway flag","src":"images/Norway.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Norway"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"China flag","src":"images/China.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["China"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Italy flag","src":"images/Italy.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Italy"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"New Zealand flag","src":"images/New Zealand.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["New Zealand"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Nigeria flag","src":"images/Nigeria.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Nigeria"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Cameroon flag","src":"images/Cameroon.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Cameroon"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"South Korea flag","src":"images/South Korea.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["South Korea"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Scotland flag","src":"images/Scotland.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Scotland"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Argentina flag","src":"images/Argentina.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Argentina"]},{"name":"span","attribs":{"className":"team-record"},"children":["1 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Chile flag","src":"images/Chile.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Chile"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"South Africa flag","src":"images/South Africa.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["South Africa"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Thailand flag","src":"images/Thailand.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Thailand"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Jamaica flag","src":"images/Jamaica.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Jamaica"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]}],"minWidth":200,"headerStyle":{"fontWeight":700}},{"id":"points","name":"points","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell","headerClassName":"header","show":false},{"id":"group","name":"group","type":"character","vAlign":"center","headerVAlign":"bottom","className":"cell group","headerClassName":"header","defaultSortDesc":false,"maxWidth":75,"align":"center","headerStyle":{"fontWeight":700}},{"id":"spi","name":"spi","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","format":{"cell":{"digits":1},"aggregated":{"digits":1}},"maxWidth":55,"align":"center"},{"id":"global_o","name":"Off.","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","cell":[{"name":"div","attribs":{"style":{"background":"#44AB43"},"className":"spi-rating"},"children":["5.5"]},{"name":"div","attribs":{"style":{"background":"#9FD49E"},"className":"spi-rating"},"children":["4.3"]},{"name":"div","attribs":{"style":{"background":"#B9DFB9"},"className":"spi-rating"},"children":["4.0"]},{"name":"div","attribs":{"style":{"background":"#CFE9CF"},"className":"spi-rating"},"children":["3.7"]},{"name":"div","attribs":{"style":{"background":"#DBEFDB"},"className":"spi-rating"},"children":["3.5"]},{"name":"div","attribs":{"style":{"background":"#C1E3C1"},"className":"spi-rating"},"children":["3.9"]},{"name":"div","attribs":{"style":{"background":"#A6D7A6"},"className":"spi-rating"},"children":["4.2"]},{"name":"div","attribs":{"style":{"background":"#F8E7E0"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#C7E6C7"},"className":"spi-rating"},"children":["3.8"]},{"name":"div","attribs":{"style":{"background":"#D6ECD5"},"className":"spi-rating"},"children":["3.6"]},{"name":"div","attribs":{"style":{"background":"#F8F9F5"},"className":"spi-rating"},"children":["3.1"]},{"name":"div","attribs":{"style":{"background":"#F8E5DE"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#F9C1B3"},"className":"spi-rating"},"children":["2.7"]},{"name":"div","attribs":{"style":{"background":"#F8E6DF"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#F9D2C7"},"className":"spi-rating"},"children":["2.8"]},{"name":"div","attribs":{"style":{"background":"#FB947F"},"className":"spi-rating"},"children":["2.4"]},{"name":"div","attribs":{"style":{"background":"#FC785F"},"className":"spi-rating"},"children":["2.1"]},{"name":"div","attribs":{"style":{"background":"#F9C3B5"},"className":"spi-rating"},"children":["2.7"]},{"name":"div","attribs":{"style":{"background":"#FC6D52"},"className":"spi-rating"},"children":["2.0"]},{"name":"div","attribs":{"style":{"background":"#FF2700"},"className":"spi-rating"},"children":["1.5"]},{"name":"div","attribs":{"style":{"background":"#FD5030"},"className":"spi-rating"},"children":["1.8"]},{"name":"div","attribs":{"style":{"background":"#FE421F"},"className":"spi-rating"},"children":["1.7"]},{"name":"div","attribs":{"style":{"background":"#FC6C50"},"className":"spi-rating"},"children":["2.0"]},{"name":"div","attribs":{"style":{"background":"#FAA492"},"className":"spi-rating"},"children":["2.5"]}],"maxWidth":55,"align":"center"},{"id":"global_d","name":"Def.","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","defaultSortDesc":false,"cell":[{"name":"div","attribs":{"style":{"background":"#55B254"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#44AB43"},"className":"spi-rating"},"children":["0.5"]},{"name":"div","attribs":{"style":{"background":"#70BF6F"},"className":"spi-rating"},"children":["0.7"]},{"name":"div","attribs":{"style":{"background":"#51B150"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#64B964"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#80C680"},"className":"spi-rating"},"children":["0.7"]},{"name":"div","attribs":{"style":{"background":"#AFDBAE"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#61B861"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#B2DCB1"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#A8D8A7"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#9AD199"},"className":"spi-rating"},"children":["0.8"]},{"name":"div","attribs":{"style":{"background":"#B2DCB2"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#92CE92"},"className":"spi-rating"},"children":["0.8"]},{"name":"div","attribs":{"style":{"background":"#F9DAD0"},"className":"spi-rating"},"children":["1.3"]},{"name":"div","attribs":{"style":{"background":"#F8FBF7"},"className":"spi-rating"},"children":["1.2"]},{"name":"div","attribs":{"style":{"background":"#EDF7ED"},"className":"spi-rating"},"children":["1.1"]},{"name":"div","attribs":{"style":{"background":"#F8F1EB"},"className":"spi-rating"},"children":["1.2"]},{"name":"div","attribs":{"style":{"background":"#F4FAF4"},"className":"spi-rating"},"children":["1.1"]},{"name":"div","attribs":{"style":{"background":"#FB9E8B"},"className":"spi-rating"},"children":["1.7"]},{"name":"div","attribs":{"style":{"background":"#FC8169"},"className":"spi-rating"},"children":["1.9"]},{"name":"div","attribs":{"style":{"background":"#FB866E"},"className":"spi-rating"},"children":["1.8"]},{"name":"div","attribs":{"style":{"background":"#F8EAE3"},"className":"spi-rating"},"children":["1.3"]},{"name":"div","attribs":{"style":{"background":"#FF2700"},"className":"spi-rating"},"children":["2.4"]},{"name":"div","attribs":{"style":{"background":"#FD5434"},"className":"spi-rating"},"children":["2.1"]}],"maxWidth":55,"align":"center"},{"id":"group_1","name":"1st Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number border-left","headerClassName":"header","cell":[" 83%",">99%"," 98%"," 39%"," 71%"," 61%"," 13%"," 17%"," 29%"," 26%","  1%"," <1%"," <1%"," 61%","  – "," <1%","  – ","  – ","  – ","  – ","  – ","  – ","  – ","  – "],"maxWidth":70,"align":"center"},{"id":"group_2","name":"2nd Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 17%"," <1%","  2%"," 61%"," 29%"," 39%"," 54%"," 83%"," 63%"," 22%"," 70%"," 94%"," 29%"," 24%","  – ","  5%","  – "," <1%","  – ","  8%","  – ","  – ","  – ","  – "],"maxWidth":70,"align":"center"},{"id":"group_3","name":"3rd Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":["  – "," <1%","  – ","  – ","  – ","  – "," 34%","  – ","  8%"," 52%"," 29%","  5%"," 70%"," 15%"," 48%"," 91%"," 52%","  4%"," 53%"," 40%"," 66%"," <1%"," 34%"," <1%"],"maxWidth":70,"align":"center"},{"id":"make_round_of_16","name":"Make Round of 16","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number border-left","headerClassName":"header","cell":["✓","✓","✓","✓","✓","✓",">99%","✓","✓",">99%",">99%",">99%"," 93%","✓"," 40%"," 50%"," 23%","  2%"," 52%"," 25%"," 15%"," <1%","  2%"," <1%"],"maxWidth":70,"style":[{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#36B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#44B5AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#AEDFAF"},{"color":"#111","background":"#9ED8AC"},{"color":"#111","background":"#CEEDB7"},{"color":"#111","background":"#FBFDF2"},{"color":"#111","background":"#9AD6AC"},{"color":"#111","background":"#C9ECB4"},{"color":"#111","background":"#DFF4C4"},{"color":"#aaa"},{"color":"#111","background":"#FAFDEF"},{"color":"#aaa"}]},{"id":"make_quarters","name":"Make Qtr-Finals","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 78%"," 78%"," 89%"," 59%"," 69%"," 59%"," 54%"," 47%"," 46%"," 43%"," 31%"," 44%"," 34%"," 37%"," 10%"," 13%","  4%"," <1%","  3%"," <1%"," <1%"," <1%"," <1%"," <1%"],"maxWidth":70,"style":[{"color":"#111","background":"#64C1AB"},{"color":"#111","background":"#63C1AB"},{"color":"#111","background":"#4CB8AB"},{"color":"#111","background":"#8CD0AB"},{"color":"#111","background":"#78C9AB"},{"color":"#111","background":"#8CD0AB"},{"color":"#111","background":"#97D4AB"},{"color":"#111","background":"#A3DAAD"},{"color":"#111","background":"#A4DAAD"},{"color":"#111","background":"#AADDAE"},{"color":"#111","background":"#BEE7B2"},{"color":"#111","background":"#A7DCAE"},{"color":"#111","background":"#B9E5B1"},{"color":"#111","background":"#B3E2B0"},{"color":"#111","background":"#EAF8CC"},{"color":"#111","background":"#E2F5C6"},{"color":"#111","background":"#F7FCE3"},{"color":"#aaa"},{"color":"#111","background":"#F9FDEA"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"make_semis","name":"Make Semifinals","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 47%"," 42%"," 48%"," 36%"," 43%"," 37%"," 26%"," 20%"," 27%"," 17%"," 11%"," 18%"," 11%","  9%","  4%","  3%","  1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – "],"maxWidth":90,"style":[{"color":"#111","background":"#A2DAAD"},{"color":"#111","background":"#ABDEAF"},{"color":"#111","background":"#A1D9AD"},{"color":"#111","background":"#B5E3B0"},{"color":"#111","background":"#A9DDAE"},{"color":"#111","background":"#B4E2B0"},{"color":"#111","background":"#C6EBB3"},{"color":"#111","background":"#D3EFBB"},{"color":"#111","background":"#C6EAB3"},{"color":"#111","background":"#D9F2C0"},{"color":"#111","background":"#E8F7CA"},{"color":"#111","background":"#D9F1BF"},{"color":"#111","background":"#E8F7CA"},{"color":"#111","background":"#ECF8CD"},{"color":"#111","background":"#F7FCE4"},{"color":"#111","background":"#F9FDEB"},{"color":"#111","background":"#FCFEF7"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"make_final","name":"Make Final","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 35%"," 30%"," 28%"," 20%"," 16%"," 19%"," 10%"," 10%","  9%","  7%","  5%","  4%","  3%","  2%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – ","  – "],"maxWidth":70,"style":[{"color":"#111","background":"#B7E3B1"},{"color":"#111","background":"#C0E7B2"},{"color":"#111","background":"#C4E9B3"},{"color":"#111","background":"#D3EFBB"},{"color":"#111","background":"#DBF2C1"},{"color":"#111","background":"#D7F1BE"},{"color":"#111","background":"#E9F7CB"},{"color":"#111","background":"#E9F7CB"},{"color":"#111","background":"#EBF8CD"},{"color":"#111","background":"#F1FAD1"},{"color":"#111","background":"#F5FCDE"},{"color":"#111","background":"#F6FCE0"},{"color":"#111","background":"#F7FCE6"},{"color":"#111","background":"#FAFDF0"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"win_league","name":"Win World Cup","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 24%"," 19%"," 12%","  9%","  8%","  8%","  5%","  4%","  4%","  3%","  2%","  2%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – ","  – ","  – ","  – "],"maxWidth":70,"style":[{"color":"#111","background":"#CCEDB6"},{"color":"#111","background":"#D5F0BC"},{"color":"#111","background":"#E4F6C8"},{"color":"#111","background":"#EBF8CD"},{"color":"#111","background":"#EEF9CF"},{"color":"#111","background":"#EFF9CF"},{"color":"#111","background":"#F5FBDC"},{"color":"#111","background":"#F6FCE2"},{"color":"#111","background":"#F7FCE5"},{"color":"#111","background":"#F9FDEB"},{"color":"#111","background":"#FBFDF2"},{"color":"#111","background":"#FBFDF3"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]}],"columnGroups":[{"headerVAlign":"bottom","name":"Team Rating","columns":["spi","global_o","global_d"]},{"headerVAlign":"bottom","name":"Chance of Finishing Group Stage In ...","columns":["group_1","group_2","group_3"]},{"headerVAlign":"bottom","name":"Knockout Stage Chances","columns":["make_round_of_16","make_quarters","make_semis","make_final","win_league"]}],"defaultSortDesc":true,"defaultSorted":[{"id":"win_league","desc":true}],"pagination":false,"borderless":true,"showSortIcon":false,"className":"standings-table","rowClassName":"\n    function(rowInfo, state) {\n      const firstSorted = state.sorted[0]\n      if (firstSorted && firstSorted.id === 'group') {\n        const nextRow = state.pageRows[rowInfo.viewIndex + 1]\n        if (nextRow && rowInfo.values['group'] !== nextRow.group) {\n          return 'group-last'\n        }\n      }\n    }","dataKey":"911197df1a2ba1d99439a45ff243c0b8"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.rowClassName"],"jsHooks":[]}</script>
+<div id="htmlwidget-9a76b765d5183e6d7e18" class="reactable html-widget" style="width:auto;height:auto;" data-react-ssr><div class="Reactable ReactTable standings-table rt-borderless"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:1020px">
+<div class="rt-tr rt-tr-group-header" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-th rt-th-group-none rt-align-center" role="columnheader" style="position:relative;flex:200 0 auto;min-width:275px;width:275px" aria-colspan="2"><div class="rt-th-inner">​</div></div>
+<div class="rt-th rt-th-group rt-align-center rt-valign-bottom" role="columnheader" style="position:relative;flex:0 0 auto;min-width:165px;width:165px;max-width:165px" aria-colspan="3"><div class="rt-th-inner">Team Rating</div></div>
+<div class="rt-th rt-th-group rt-align-center rt-valign-bottom" role="columnheader" style="position:relative;flex:0 0 auto;min-width:210px;width:210px;max-width:210px" aria-colspan="3"><div class="rt-th-inner">Chance of Finishing Group Stage In ...</div></div>
+<div class="rt-th rt-th-group rt-align-center rt-valign-bottom" role="columnheader" style="position:relative;flex:0 0 auto;min-width:370px;width:370px;max-width:370px" aria-colspan="5"><div class="rt-th-inner">Knockout Stage Chances</div></div>
+</div>
+<div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-th rt-align-left rt-valign-bottom header" role="columnheader" style="position:relative;flex:200 0 auto;min-width:200px;width:200px;font-weight:700" aria-label="Sort team" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner">team</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:75px;width:75px;max-width:75px;font-weight:700" aria-label="Sort group" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner">group</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:55px;width:55px;max-width:55px" aria-label="Sort spi" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">spi</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:55px;width:55px;max-width:55px" aria-label="Sort Off." aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">Off.</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:55px;width:55px;max-width:55px" aria-label="Sort Def." aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner">Def.</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort 1st Place" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">1st Place</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort 2nd Place" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">2nd Place</div></div>
+<div class="rt-th rt-align-center rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort 3rd Place" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">3rd Place</div></div>
+<div class="rt-th rt-align-right rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort Make Round of 16" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">Make Round of 16</div></div>
+<div class="rt-th rt-align-right rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort Make Qtr-Finals" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">Make Qtr-Finals</div></div>
+<div class="rt-th rt-align-right rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:90px;width:90px;max-width:90px" aria-label="Sort Make Semifinals" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">Make Semifinals</div></div>
+<div class="rt-th rt-align-right rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort Make Final" aria-sort="none" tabindex="0" data-sort-hint="descending"><div class="rt-th-inner">Make Final</div></div>
+<div class="rt-th rt-align-right rt-valign-bottom header" role="columnheader" style="position:relative;flex:0 0 auto;min-width:70px;width:70px;max-width:70px" aria-label="Sort Win World Cup" aria-sort="descending" tabindex="0"><div class="rt-th-inner">Win World Cup</div></div>
+</div>
+</div>
+<div class="rt-tbody" role="rowgroup" style="min-width:1020px">
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="USA flag" src="images/USA.png" class="team-flag"><div>
+<span class="team-name">USA</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">F</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">98.3</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#44AB43" class="spi-rating">5.5</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#55B254" class="spi-rating">0.6</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 83%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 17%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#64C1AB"><div class="rt-td-inner"> 78%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#A2DAAD"><div class="rt-td-inner"> 47%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#B7E3B1"><div class="rt-td-inner"> 35%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#CCEDB6"><div class="rt-td-inner"> 24%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="France flag" src="images/France.png" class="team-flag"><div>
+<span class="team-name">France</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">A</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">96.3</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#9FD49E" class="spi-rating">4.3</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#44AB43" class="spi-rating">0.5</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">&gt;99%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#63C1AB"><div class="rt-td-inner"> 78%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#ABDEAF"><div class="rt-td-inner"> 42%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#C0E7B2"><div class="rt-td-inner"> 30%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#D5F0BC"><div class="rt-td-inner"> 19%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Germany flag" src="images/Germany.png" class="team-flag"><div>
+<span class="team-name">Germany</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">B</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">93.8</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#B9DFB9" class="spi-rating">4.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#70BF6F" class="spi-rating">0.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 98%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  2%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#4CB8AB"><div class="rt-td-inner"> 89%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#A1D9AD"><div class="rt-td-inner"> 48%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#C4E9B3"><div class="rt-td-inner"> 28%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#E4F6C8"><div class="rt-td-inner"> 12%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Canada flag" src="images/Canada.png" class="team-flag"><div>
+<span class="team-name">Canada</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">E</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">93.5</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#CFE9CF" class="spi-rating">3.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#51B150" class="spi-rating">0.6</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 39%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 61%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#8CD0AB"><div class="rt-td-inner"> 59%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#B5E3B0"><div class="rt-td-inner"> 36%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#D3EFBB"><div class="rt-td-inner"> 20%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#EBF8CD"><div class="rt-td-inner">  9%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="England flag" src="images/England.png" class="team-flag"><div>
+<span class="team-name">England</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">D</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">91.9</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#DBEFDB" class="spi-rating">3.5</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#64B964" class="spi-rating">0.6</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 71%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 29%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#78C9AB"><div class="rt-td-inner"> 69%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#A9DDAE"><div class="rt-td-inner"> 43%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#DBF2C1"><div class="rt-td-inner"> 16%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#EEF9CF"><div class="rt-td-inner">  8%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Netherlands flag" src="images/Netherlands.png" class="team-flag"><div>
+<span class="team-name">Netherlands</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">E</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">92.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#C1E3C1" class="spi-rating">3.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#80C680" class="spi-rating">0.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 61%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 39%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#8CD0AB"><div class="rt-td-inner"> 59%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#B4E2B0"><div class="rt-td-inner"> 37%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#D7F1BE"><div class="rt-td-inner"> 19%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#EFF9CF"><div class="rt-td-inner">  8%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Australia flag" src="images/Australia.png" class="team-flag"><div>
+<span class="team-name">Australia</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">C</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">92.8</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#A6D7A6" class="spi-rating">4.2</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#AFDBAE" class="spi-rating">0.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 13%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 54%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 34%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">&gt;99%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#97D4AB"><div class="rt-td-inner"> 54%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#C6EBB3"><div class="rt-td-inner"> 26%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#E9F7CB"><div class="rt-td-inner"> 10%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F5FBDC"><div class="rt-td-inner">  5%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Sweden flag" src="images/Sweden.png" class="team-flag"><div>
+<span class="team-name">Sweden</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">F</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">88.4</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8E7E0" class="spi-rating">3.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#61B861" class="spi-rating">0.6</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 17%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 83%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#A3DAAD"><div class="rt-td-inner"> 47%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#D3EFBB"><div class="rt-td-inner"> 20%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#E9F7CB"><div class="rt-td-inner"> 10%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F6FCE2"><div class="rt-td-inner">  4%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Japan flag" src="images/Japan.png" class="team-flag"><div>
+<span class="team-name">Japan</span><span class="team-record">4 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">D</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">90.3</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#C7E6C7" class="spi-rating">3.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#B2DCB1" class="spi-rating">0.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 29%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 63%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  8%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#A4DAAD"><div class="rt-td-inner"> 46%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#C6EAB3"><div class="rt-td-inner"> 27%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#EBF8CD"><div class="rt-td-inner">  9%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F7FCE5"><div class="rt-td-inner">  4%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Brazil flag" src="images/Brazil.png" class="team-flag"><div>
+<span class="team-name">Brazil</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">C</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">89.5</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#D6ECD5" class="spi-rating">3.6</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#A8D8A7" class="spi-rating">0.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 26%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 22%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 52%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">&gt;99%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#AADDAE"><div class="rt-td-inner"> 43%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#D9F2C0"><div class="rt-td-inner"> 17%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F1FAD1"><div class="rt-td-inner">  7%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F9FDEB"><div class="rt-td-inner">  3%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Spain flag" src="images/Spain.png" class="team-flag"><div>
+<span class="team-name">Spain</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">B</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">86.5</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8F9F5" class="spi-rating">3.1</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#9AD199" class="spi-rating">0.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 70%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 29%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#36B0AB"><div class="rt-td-inner">&gt;99%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#BEE7B2"><div class="rt-td-inner"> 31%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#E8F7CA"><div class="rt-td-inner"> 11%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F5FCDE"><div class="rt-td-inner">  5%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#FBFDF2"><div class="rt-td-inner">  2%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Norway flag" src="images/Norway.png" class="team-flag"><div>
+<span class="team-name">Norway</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">A</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">83.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8E5DE" class="spi-rating">3.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#B2DCB2" class="spi-rating">0.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 94%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  5%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">&gt;99%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#A7DCAE"><div class="rt-td-inner"> 44%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#D9F1BF"><div class="rt-td-inner"> 18%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F6FCE0"><div class="rt-td-inner">  4%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#FBFDF3"><div class="rt-td-inner">  2%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="China flag" src="images/China.png" class="team-flag"><div>
+<span class="team-name">China</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">B</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">82.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F9C1B3" class="spi-rating">2.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#92CE92" class="spi-rating">0.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 29%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 70%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#44B5AB"><div class="rt-td-inner"> 93%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#B9E5B1"><div class="rt-td-inner"> 34%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#E8F7CA"><div class="rt-td-inner"> 11%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F7FCE6"><div class="rt-td-inner">  3%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Italy flag" src="images/Italy.png" class="team-flag"><div>
+<span class="team-name">Italy</span><span class="team-record">6 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">C</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">76.1</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8E6DF" class="spi-rating">3.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F9DAD0" class="spi-rating">1.3</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 61%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 24%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 15%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#35B0AB"><div class="rt-td-inner">✓</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#B3E2B0"><div class="rt-td-inner"> 37%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#ECF8CD"><div class="rt-td-inner">  9%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#FAFDF0"><div class="rt-td-inner">  2%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="New Zealand flag" src="images/New%20Zealand.png" class="team-flag"><div>
+<span class="team-name">New Zealand</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">E</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">77.6</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F9D2C7" class="spi-rating">2.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8FBF7" class="spi-rating">1.2</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 48%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#AEDFAF"><div class="rt-td-inner"> 40%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#EAF8CC"><div class="rt-td-inner"> 10%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#F7FCE4"><div class="rt-td-inner">  4%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Nigeria flag" src="images/Nigeria.png" class="team-flag"><div>
+<span class="team-name">Nigeria</span><span class="team-record">3 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">A</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">71.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FB947F" class="spi-rating">2.4</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#EDF7ED" class="spi-rating">1.1</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  5%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 91%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#9ED8AC"><div class="rt-td-inner"> 50%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#E2F5C6"><div class="rt-td-inner"> 13%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#F9FDEB"><div class="rt-td-inner">  3%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Cameroon flag" src="images/Cameroon.png" class="team-flag"><div>
+<span class="team-name">Cameroon</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">E</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">65.8</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FC785F" class="spi-rating">2.1</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8F1EB" class="spi-rating">1.2</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 52%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#CEEDB7"><div class="rt-td-inner"> 23%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F7FCE3"><div class="rt-td-inner">  4%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#111;background:#FCFEF7"><div class="rt-td-inner">  1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="South Korea flag" src="images/South%20Korea.png" class="team-flag"><div>
+<span class="team-name">South Korea</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">A</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">76.4</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F9C3B5" class="spi-rating">2.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F4FAF4" class="spi-rating">1.1</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  4%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#FBFDF2"><div class="rt-td-inner">  2%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Scotland flag" src="images/Scotland.png" class="team-flag"><div>
+<span class="team-name">Scotland</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">D</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">54.0</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FC6D52" class="spi-rating">2.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FB9E8B" class="spi-rating">1.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 53%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#9AD6AC"><div class="rt-td-inner"> 52%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#F9FDEA"><div class="rt-td-inner">  3%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Argentina flag" src="images/Argentina.png" class="team-flag"><div>
+<span class="team-name">Argentina</span><span class="team-record">1 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">D</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">39.2</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FF2700" class="spi-rating">1.5</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FC8169" class="spi-rating">1.9</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  8%</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 40%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#C9ECB4"><div class="rt-td-inner"> 25%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Jamaica flag" src="images/Jamaica.png" class="team-flag"><div>
+<span class="team-name">Jamaica</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">C</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">53.5</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FAA492" class="spi-rating">2.5</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FD5434" class="spi-rating">2.1</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Thailand flag" src="images/Thailand.png" class="team-flag"><div>
+<span class="team-name">Thailand</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">F</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">40.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FC6C50" class="spi-rating">2.0</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FF2700" class="spi-rating">2.4</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 34%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#FAFDEF"><div class="rt-td-inner">  2%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="South Africa flag" src="images/South%20Africa.png" class="team-flag"><div>
+<span class="team-name">South Africa</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">B</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">56.7</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FE421F" class="spi-rating">1.7</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#F8EAE3" class="spi-rating">1.3</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:1020px">
+<div class="rt-td rt-align-left rt-valign-center cell" role="cell" style="flex:200 0 auto;min-width:200px;width:200px"><div class="rt-td-inner"><div class="team">
+<img alt="Chile flag" src="images/Chile.png" class="team-flag"><div>
+<span class="team-name">Chile</span><span class="team-record">0 pts.</span>
+</div>
+</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell group" role="cell" style="flex:0 0 auto;min-width:75px;width:75px;max-width:75px"><div class="rt-td-inner">F</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner">46.5</div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FD5030" class="spi-rating">1.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number" role="cell" style="flex:0 0 auto;min-width:55px;width:55px;max-width:55px"><div class="rt-td-inner"><div style="background:#FB866E" class="spi-rating">1.8</div></div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner">  – </div></div>
+<div class="rt-td rt-align-center rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px"><div class="rt-td-inner"> 66%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number border-left" role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#111;background:#DFF4C4"><div class="rt-td-inner"> 15%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:90px;width:90px;max-width:90px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner"> &lt;1%</div></div>
+<div class="rt-td rt-align-right rt-valign-center cell number " role="cell" style="flex:0 0 auto;min-width:70px;width:70px;max-width:70px;color:#aaa"><div class="rt-td-inner">  – </div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+</div></div></div>
+<script type="application/json" data-for="htmlwidget-9a76b765d5183e6d7e18">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"team":["USA","France","Germany","Canada","England","Netherlands","Australia","Sweden","Japan","Brazil","Spain","Norway","China","Italy","New Zealand","Nigeria","Cameroon","South Korea","Scotland","Argentina","Chile","South Africa","Thailand","Jamaica"],"points":[6,6,6,6,6,6,3,6,4,3,3,3,3,6,0,3,0,0,0,1,0,0,0,0],"group":["F","A","B","E","D","E","C","F","D","C","B","A","B","C","E","A","E","A","D","D","F","B","F","C"],"spi":[98.32748,96.29671,93.76549,93.51599,91.92311,92.67529,92.82054,88.44996,90.31291,89.47398,86.53061,83.68324,82.6652,76.137,77.62324,71.65054,65.8396,76.36337,53.97942,39.18661,46.53391,56.69038,40.69282,53.51525],"global_o":[5.52561,4.31375,3.96791,3.67537,3.5156,3.8588,4.21769,2.98755,3.78342,3.589,3.12364,2.96979,2.69201,2.97985,2.82453,2.35033,2.13554,2.70504,2.0491,1.50978,1.82545,1.71768,2.04038,2.47074],"global_d":[0.58179,0.52137,0.67818,0.5698,0.63717,0.73539,0.89761,0.6263,0.90887,0.87289,0.82417,0.90942,0.79838,1.34724,1.15653,1.11681,1.21653,1.14036,1.69041,1.85584,1.83067,1.2548,2.37858,2.11961],"group_1":[0.82956,0.99483,0.98483,0.3883,0.7057,0.6117,0.12812,0.17044,0.2943,0.25916,0.01082,0.00515,0.00435,0.61272,0,2e-05,0,0,0,0,0,0,0,0],"group_2":[0.17044,0.00515,0.01517,0.6117,0.2943,0.3883,0.53618,0.82956,0.62818,0.22349,0.69832,0.94029,0.28651,0.24033,0,0.05077,0,0.00379,0,0.07752,0,0,0,0],"group_3":[0,2e-05,0,0,0,0,0.33529,0,0.07752,0.51735,0.2907,0.05358,0.70479,0.14695,0.48334,0.90873,0.51666,0.03767,0.52512,0.39736,0.66262,0.00451,0.33738,0.00041],"make_round_of_16":[1,1,1,1,1,1,0.99862,1,1,0.9994,0.99367,0.99766,0.92813,1,0.40427,0.49519,0.2266,0.017,0.51934,0.24587,0.14801,0.0038,0.02218,0.00026],"make_quarters":[0.78079,0.78367,0.8928,0.59192,0.6851,0.59166,0.53811,0.4669,0.46314,0.42681,0.30836,0.44246,0.33744,0.37442,0.09699,0.13261,0.03779,0.00621,0.02828,0.00546,0.00781,0.00072,0.00054,1e-05],"make_semis":[0.47307,0.42052,0.48039,0.3614,0.43053,0.36983,0.26179,0.20267,0.26616,0.17353,0.10742,0.17536,0.10723,0.08802,0.03725,0.02736,0.01084,0.00209,0.00324,0.00043,0.00072,0.0001,5e-05,0],"make_final":[0.35076,0.30038,0.2771,0.20157,0.16465,0.18514,0.10214,0.10316,0.09314,0.06693,0.04509,0.04192,0.03367,0.01963,0.00614,0.00609,0.00124,0.00051,0.00068,4e-05,1e-05,1e-05,0,0],"win_league":[0.23618,0.19428,0.12256,0.09031,0.08003,0.07576,0.04791,0.04006,0.03515,0.02666,0.01759,0.01617,0.00994,0.00407,0.00178,0.00111,0.00028,0.0001,5e-05,1e-05,0,0,0,0]},"columns":[{"id":"team","name":"team","type":"character","vAlign":"center","headerVAlign":"bottom","className":"cell","headerClassName":"header","defaultSortDesc":false,"cell":[{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"USA flag","src":"images/USA.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["USA"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"France flag","src":"images/France.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["France"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Germany flag","src":"images/Germany.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Germany"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Canada flag","src":"images/Canada.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Canada"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"England flag","src":"images/England.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["England"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Netherlands flag","src":"images/Netherlands.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Netherlands"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Australia flag","src":"images/Australia.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Australia"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Sweden flag","src":"images/Sweden.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Sweden"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Japan flag","src":"images/Japan.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Japan"]},{"name":"span","attribs":{"className":"team-record"},"children":["4 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Brazil flag","src":"images/Brazil.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Brazil"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Spain flag","src":"images/Spain.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Spain"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Norway flag","src":"images/Norway.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Norway"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"China flag","src":"images/China.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["China"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Italy flag","src":"images/Italy.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Italy"]},{"name":"span","attribs":{"className":"team-record"},"children":["6 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"New Zealand flag","src":"images/New Zealand.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["New Zealand"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Nigeria flag","src":"images/Nigeria.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Nigeria"]},{"name":"span","attribs":{"className":"team-record"},"children":["3 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Cameroon flag","src":"images/Cameroon.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Cameroon"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"South Korea flag","src":"images/South Korea.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["South Korea"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Scotland flag","src":"images/Scotland.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Scotland"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Argentina flag","src":"images/Argentina.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Argentina"]},{"name":"span","attribs":{"className":"team-record"},"children":["1 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Chile flag","src":"images/Chile.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Chile"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"South Africa flag","src":"images/South Africa.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["South Africa"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Thailand flag","src":"images/Thailand.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Thailand"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]},{"name":"div","attribs":{"className":"team"},"children":[{"name":"img","attribs":{"alt":"Jamaica flag","src":"images/Jamaica.png","className":"team-flag"},"children":[]},{"name":"div","attribs":{},"children":[{"name":"span","attribs":{"className":"team-name"},"children":["Jamaica"]},{"name":"span","attribs":{"className":"team-record"},"children":["0 pts."]}]}]}],"minWidth":200,"headerStyle":{"fontWeight":700}},{"id":"points","name":"points","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell","headerClassName":"header","show":false},{"id":"group","name":"group","type":"character","vAlign":"center","headerVAlign":"bottom","className":"cell group","headerClassName":"header","defaultSortDesc":false,"maxWidth":75,"align":"center","headerStyle":{"fontWeight":700}},{"id":"spi","name":"spi","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","format":{"cell":{"digits":1},"aggregated":{"digits":1}},"maxWidth":55,"align":"center"},{"id":"global_o","name":"Off.","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","cell":[{"name":"div","attribs":{"style":{"background":"#44AB43"},"className":"spi-rating"},"children":["5.5"]},{"name":"div","attribs":{"style":{"background":"#9FD49E"},"className":"spi-rating"},"children":["4.3"]},{"name":"div","attribs":{"style":{"background":"#B9DFB9"},"className":"spi-rating"},"children":["4.0"]},{"name":"div","attribs":{"style":{"background":"#CFE9CF"},"className":"spi-rating"},"children":["3.7"]},{"name":"div","attribs":{"style":{"background":"#DBEFDB"},"className":"spi-rating"},"children":["3.5"]},{"name":"div","attribs":{"style":{"background":"#C1E3C1"},"className":"spi-rating"},"children":["3.9"]},{"name":"div","attribs":{"style":{"background":"#A6D7A6"},"className":"spi-rating"},"children":["4.2"]},{"name":"div","attribs":{"style":{"background":"#F8E7E0"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#C7E6C7"},"className":"spi-rating"},"children":["3.8"]},{"name":"div","attribs":{"style":{"background":"#D6ECD5"},"className":"spi-rating"},"children":["3.6"]},{"name":"div","attribs":{"style":{"background":"#F8F9F5"},"className":"spi-rating"},"children":["3.1"]},{"name":"div","attribs":{"style":{"background":"#F8E5DE"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#F9C1B3"},"className":"spi-rating"},"children":["2.7"]},{"name":"div","attribs":{"style":{"background":"#F8E6DF"},"className":"spi-rating"},"children":["3.0"]},{"name":"div","attribs":{"style":{"background":"#F9D2C7"},"className":"spi-rating"},"children":["2.8"]},{"name":"div","attribs":{"style":{"background":"#FB947F"},"className":"spi-rating"},"children":["2.4"]},{"name":"div","attribs":{"style":{"background":"#FC785F"},"className":"spi-rating"},"children":["2.1"]},{"name":"div","attribs":{"style":{"background":"#F9C3B5"},"className":"spi-rating"},"children":["2.7"]},{"name":"div","attribs":{"style":{"background":"#FC6D52"},"className":"spi-rating"},"children":["2.0"]},{"name":"div","attribs":{"style":{"background":"#FF2700"},"className":"spi-rating"},"children":["1.5"]},{"name":"div","attribs":{"style":{"background":"#FD5030"},"className":"spi-rating"},"children":["1.8"]},{"name":"div","attribs":{"style":{"background":"#FE421F"},"className":"spi-rating"},"children":["1.7"]},{"name":"div","attribs":{"style":{"background":"#FC6C50"},"className":"spi-rating"},"children":["2.0"]},{"name":"div","attribs":{"style":{"background":"#FAA492"},"className":"spi-rating"},"children":["2.5"]}],"maxWidth":55,"align":"center"},{"id":"global_d","name":"Def.","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number","headerClassName":"header","defaultSortDesc":false,"cell":[{"name":"div","attribs":{"style":{"background":"#55B254"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#44AB43"},"className":"spi-rating"},"children":["0.5"]},{"name":"div","attribs":{"style":{"background":"#70BF6F"},"className":"spi-rating"},"children":["0.7"]},{"name":"div","attribs":{"style":{"background":"#51B150"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#64B964"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#80C680"},"className":"spi-rating"},"children":["0.7"]},{"name":"div","attribs":{"style":{"background":"#AFDBAE"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#61B861"},"className":"spi-rating"},"children":["0.6"]},{"name":"div","attribs":{"style":{"background":"#B2DCB1"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#A8D8A7"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#9AD199"},"className":"spi-rating"},"children":["0.8"]},{"name":"div","attribs":{"style":{"background":"#B2DCB2"},"className":"spi-rating"},"children":["0.9"]},{"name":"div","attribs":{"style":{"background":"#92CE92"},"className":"spi-rating"},"children":["0.8"]},{"name":"div","attribs":{"style":{"background":"#F9DAD0"},"className":"spi-rating"},"children":["1.3"]},{"name":"div","attribs":{"style":{"background":"#F8FBF7"},"className":"spi-rating"},"children":["1.2"]},{"name":"div","attribs":{"style":{"background":"#EDF7ED"},"className":"spi-rating"},"children":["1.1"]},{"name":"div","attribs":{"style":{"background":"#F8F1EB"},"className":"spi-rating"},"children":["1.2"]},{"name":"div","attribs":{"style":{"background":"#F4FAF4"},"className":"spi-rating"},"children":["1.1"]},{"name":"div","attribs":{"style":{"background":"#FB9E8B"},"className":"spi-rating"},"children":["1.7"]},{"name":"div","attribs":{"style":{"background":"#FC8169"},"className":"spi-rating"},"children":["1.9"]},{"name":"div","attribs":{"style":{"background":"#FB866E"},"className":"spi-rating"},"children":["1.8"]},{"name":"div","attribs":{"style":{"background":"#F8EAE3"},"className":"spi-rating"},"children":["1.3"]},{"name":"div","attribs":{"style":{"background":"#FF2700"},"className":"spi-rating"},"children":["2.4"]},{"name":"div","attribs":{"style":{"background":"#FD5434"},"className":"spi-rating"},"children":["2.1"]}],"maxWidth":55,"align":"center"},{"id":"group_1","name":"1st Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number border-left","headerClassName":"header","cell":[" 83%",">99%"," 98%"," 39%"," 71%"," 61%"," 13%"," 17%"," 29%"," 26%","  1%"," <1%"," <1%"," 61%","  – "," <1%","  – ","  – ","  – ","  – ","  – ","  – ","  – ","  – "],"maxWidth":70,"align":"center"},{"id":"group_2","name":"2nd Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 17%"," <1%","  2%"," 61%"," 29%"," 39%"," 54%"," 83%"," 63%"," 22%"," 70%"," 94%"," 29%"," 24%","  – ","  5%","  – "," <1%","  – ","  8%","  – ","  – ","  – ","  – "],"maxWidth":70,"align":"center"},{"id":"group_3","name":"3rd Place","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":["  – "," <1%","  – ","  – ","  – ","  – "," 34%","  – ","  8%"," 52%"," 29%","  5%"," 70%"," 15%"," 48%"," 91%"," 52%","  4%"," 53%"," 40%"," 66%"," <1%"," 34%"," <1%"],"maxWidth":70,"align":"center"},{"id":"make_round_of_16","name":"Make Round of 16","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number border-left","headerClassName":"header","cell":["✓","✓","✓","✓","✓","✓",">99%","✓","✓",">99%",">99%",">99%"," 93%","✓"," 40%"," 50%"," 23%","  2%"," 52%"," 25%"," 15%"," <1%","  2%"," <1%"],"maxWidth":70,"style":[{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#36B0AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#44B5AB"},{"color":"#111","background":"#35B0AB"},{"color":"#111","background":"#AEDFAF"},{"color":"#111","background":"#9ED8AC"},{"color":"#111","background":"#CEEDB7"},{"color":"#111","background":"#FBFDF2"},{"color":"#111","background":"#9AD6AC"},{"color":"#111","background":"#C9ECB4"},{"color":"#111","background":"#DFF4C4"},{"color":"#aaa"},{"color":"#111","background":"#FAFDEF"},{"color":"#aaa"}]},{"id":"make_quarters","name":"Make Qtr-Finals","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 78%"," 78%"," 89%"," 59%"," 69%"," 59%"," 54%"," 47%"," 46%"," 43%"," 31%"," 44%"," 34%"," 37%"," 10%"," 13%","  4%"," <1%","  3%"," <1%"," <1%"," <1%"," <1%"," <1%"],"maxWidth":70,"style":[{"color":"#111","background":"#64C1AB"},{"color":"#111","background":"#63C1AB"},{"color":"#111","background":"#4CB8AB"},{"color":"#111","background":"#8CD0AB"},{"color":"#111","background":"#78C9AB"},{"color":"#111","background":"#8CD0AB"},{"color":"#111","background":"#97D4AB"},{"color":"#111","background":"#A3DAAD"},{"color":"#111","background":"#A4DAAD"},{"color":"#111","background":"#AADDAE"},{"color":"#111","background":"#BEE7B2"},{"color":"#111","background":"#A7DCAE"},{"color":"#111","background":"#B9E5B1"},{"color":"#111","background":"#B3E2B0"},{"color":"#111","background":"#EAF8CC"},{"color":"#111","background":"#E2F5C6"},{"color":"#111","background":"#F7FCE3"},{"color":"#aaa"},{"color":"#111","background":"#F9FDEA"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"make_semis","name":"Make Semifinals","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 47%"," 42%"," 48%"," 36%"," 43%"," 37%"," 26%"," 20%"," 27%"," 17%"," 11%"," 18%"," 11%","  9%","  4%","  3%","  1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – "],"maxWidth":90,"style":[{"color":"#111","background":"#A2DAAD"},{"color":"#111","background":"#ABDEAF"},{"color":"#111","background":"#A1D9AD"},{"color":"#111","background":"#B5E3B0"},{"color":"#111","background":"#A9DDAE"},{"color":"#111","background":"#B4E2B0"},{"color":"#111","background":"#C6EBB3"},{"color":"#111","background":"#D3EFBB"},{"color":"#111","background":"#C6EAB3"},{"color":"#111","background":"#D9F2C0"},{"color":"#111","background":"#E8F7CA"},{"color":"#111","background":"#D9F1BF"},{"color":"#111","background":"#E8F7CA"},{"color":"#111","background":"#ECF8CD"},{"color":"#111","background":"#F7FCE4"},{"color":"#111","background":"#F9FDEB"},{"color":"#111","background":"#FCFEF7"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"make_final","name":"Make Final","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 35%"," 30%"," 28%"," 20%"," 16%"," 19%"," 10%"," 10%","  9%","  7%","  5%","  4%","  3%","  2%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – ","  – "],"maxWidth":70,"style":[{"color":"#111","background":"#B7E3B1"},{"color":"#111","background":"#C0E7B2"},{"color":"#111","background":"#C4E9B3"},{"color":"#111","background":"#D3EFBB"},{"color":"#111","background":"#DBF2C1"},{"color":"#111","background":"#D7F1BE"},{"color":"#111","background":"#E9F7CB"},{"color":"#111","background":"#E9F7CB"},{"color":"#111","background":"#EBF8CD"},{"color":"#111","background":"#F1FAD1"},{"color":"#111","background":"#F5FCDE"},{"color":"#111","background":"#F6FCE0"},{"color":"#111","background":"#F7FCE6"},{"color":"#111","background":"#FAFDF0"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]},{"id":"win_league","name":"Win World Cup","type":"numeric","vAlign":"center","headerVAlign":"bottom","className":"cell number ","headerClassName":"header","cell":[" 24%"," 19%"," 12%","  9%","  8%","  8%","  5%","  4%","  4%","  3%","  2%","  2%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%"," <1%","  – ","  – ","  – ","  – "],"maxWidth":70,"style":[{"color":"#111","background":"#CCEDB6"},{"color":"#111","background":"#D5F0BC"},{"color":"#111","background":"#E4F6C8"},{"color":"#111","background":"#EBF8CD"},{"color":"#111","background":"#EEF9CF"},{"color":"#111","background":"#EFF9CF"},{"color":"#111","background":"#F5FBDC"},{"color":"#111","background":"#F6FCE2"},{"color":"#111","background":"#F7FCE5"},{"color":"#111","background":"#F9FDEB"},{"color":"#111","background":"#FBFDF2"},{"color":"#111","background":"#FBFDF3"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"},{"color":"#aaa"}]}],"columnGroups":[{"headerVAlign":"bottom","name":"Team Rating","columns":["spi","global_o","global_d"]},{"headerVAlign":"bottom","name":"Chance of Finishing Group Stage In ...","columns":["group_1","group_2","group_3"]},{"headerVAlign":"bottom","name":"Knockout Stage Chances","columns":["make_round_of_16","make_quarters","make_semis","make_final","win_league"]}],"defaultSortDesc":true,"defaultSorted":[{"id":"win_league","desc":true}],"pagination":false,"borderless":true,"showSortIcon":false,"className":"standings-table","rowClassName":"\n    function(rowInfo, state) {\n      const firstSorted = state.sorted[0]\n      if (firstSorted && firstSorted.id === 'group') {\n        const nextRow = state.pageRows[rowInfo.viewIndex + 1]\n        if (nextRow && rowInfo.values['group'] !== nextRow.group) {\n          return 'group-last'\n        }\n      }\n    }","dataKey":"911197df1a2ba1d99439a45ff243c0b8"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.rowClassName"],"jsHooks":[]}</script>
 Forecast from before 3rd group matches
 </div>
 <hr>
@@ -266,8 +859,10 @@ Source Code
 <span>  <span class="st">"Forecast from before 3rd group matches"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tags</span><span class="op">$</span><span class="fu">link</span><span class="op">(</span>href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&amp;display=fallback"</span>, rel <span class="op">=</span> <span class="st">"stylesheet"</span><span class="op">)</span></span></code></pre></div>
-<link href="https://fonts.googleapis.com/css?family=Karla:400,700%7CFira+Mono&amp;display=fallback" rel="stylesheet">
+<code class="sourceCode R"><span><span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">link</span><span class="op">(</span></span>
+<span>  href <span class="op">=</span> <span class="st">"https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&amp;display=fallback"</span>,</span>
+<span>  rel <span class="op">=</span> <span class="st">"stylesheet"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.standings</span> {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: Karla<span class="op">,</span> <span class="st">"Helvetica Neue"</span><span class="op">,</span> Helvetica<span class="op">,</span> Arial<span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.875</span><span class="dt">rem</span><span class="op">;</span></span>
@@ -360,119 +955,7 @@ Source Code
 <span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">0.8125</span><span class="dt">rem</span><span class="op">;</span></span>
 <span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="kw">letter-spacing</span>: <span class="dv">-1</span><span class="dt">px</span><span class="op">;</span></span>
 <span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<style type="text/css">
-.standings {
-  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.875rem;
-}
-
-.title {
-  margin-top: 2rem;
-  margin-bottom: 1.125rem;
-  font-size: 1rem;
-}
-
-.title h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.standings-table {
-  margin-bottom: 1.25rem;
-}
-
-.header {
-  border-bottom-color: #555;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  text-transform: uppercase;
-}
-
-/* Highlight headers when sorting */
-.header:hover,
-.header[aria-sort="ascending"],
-.header[aria-sort="descending"] {
-  background-color: #eee;
-}
-
-.border-left {
-  border-left: 2px solid #555;
-}
-
-/* Use box-shadow to create row borders that appear behind vertical borders */
-.cell {
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-}
-
-.group-last .cell {
-  box-shadow: inset 0 -2px 0 #555;
-}
-
-.team {
-  display: flex;
-  align-items: center;
-}
-
-.team-flag {
-  height: 1.3rem;
-  border: 1px solid #f0f0f0;
-}
-
-.team-name {
-  margin-left: 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 700;
-}
-
-.team-record {
-  margin-left: 0.35rem;
-  color: hsl(0, 0%, 45%);
-  font-size: 0.8125rem;
-}
-
-.group {
-  font-size: 1.1875rem;
-}
-
-.number {
-  font-family: "Fira Mono", Consolas, Monaco, monospace;
-  font-size: 1rem;
-  white-space: pre;
-}
-
-.spi-rating {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  width: 1.875rem;
-  height: 1.875rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  color: #000;
-  font-size: 0.8125rem;
-  letter-spacing: -1px;
-}
-</style>
-<style type="text/css">
-/* rmarkdown html documents */
-.main-container {
-  max-width: 1054px !important;
-}
-
-h1.title {
-  display: none;
-}
-
-/* pkgdown articles */
-.row > main {
-  max-width: 1054px;
-}
-
-.page-header {
-  display: none;
-}
-</style></main>
+  </main>
 </div>
 
 
@@ -480,7 +963,7 @@ h1.title {
 
       <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Greg Lin.</p>
+<p>Developed by Greg Lin, RStudio, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">
