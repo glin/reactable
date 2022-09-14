@@ -181,7 +181,7 @@ The downloaded data will include any filters that have been applied, and
 exclude any sorting or grouping. Hidden columns will also be included, but
 this may be customizable in the future.
 
-```js
+```ts
 Reactable.downloadDataCSV(
   tableId: string,
   filename = "data.csv"
@@ -202,7 +202,7 @@ Reactable.downloadDataCSV('cars-table', 'cars93.csv')
 
 Sets the search value of a table. To clear the search, set the value to `undefined`.
 
-```js
+```ts
 Reactable.setSearch(
   tableId: string,
   value: any
@@ -224,7 +224,7 @@ Reactable.setSearch('cars-table', undefined)
 Sets the filter value of a column. To clear the column filter, set the value
 to `undefined`.
 
-```js
+```ts
 Reactable.setFilter(
   tableId: string,
   columnId: string,
@@ -247,7 +247,7 @@ Reactable.setFilter('cars-table', 'Type', undefined)
 Sets all column filter values in the table. To clear the column filters,
 set `filters` to an empty array, `[]`.
 
-```js
+```ts
 Reactable.setAllFilters(
   tableId: string,
   filters: Array<{ id: string, value: any }>
@@ -273,7 +273,7 @@ Toggles the `groupBy` state for a column between grouped and ungrouped.
 To enable or disable grouping explicitly, set the optional `isGrouped` argument
 to `true` or `false`.
 
-```js
+```ts
 Reactable.toggleGroupBy(
   tableId: string,
   columnId: string,
@@ -299,7 +299,7 @@ Reactable.toggleGroupBy('cars-table', 'Type', false)
 Sets the `groupBy` columns for the table. To clear the `groupBy` columns,
 set `columnIds` to an empty array, `[]`.
 
-```js
+```ts
 Reactable.setGroupBy(
   tableId: string,
   columnIds: Array<string>
@@ -322,7 +322,7 @@ Toggles the expanded state of all rows in the table between expanded and collaps
 To expand or collapse rows explicitly, set the optional `isExpanded` argument to
 `true` or `false`.
 
-```js
+```ts
 Reactable.toggleAllRowsExpanded(
   tableId: string,
   isExpanded?: boolean
@@ -346,7 +346,7 @@ Reactable.toggleAllRowsExpanded('cars-table', false)
 
 Gets the current state of a table.
 
-```js
+```ts
 Reactable.getState(tableId: string)
 ```
 
