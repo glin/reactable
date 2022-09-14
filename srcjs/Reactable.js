@@ -20,6 +20,7 @@ import useGroupBy from './useGroupBy'
 import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
+import useMeta from './useMeta'
 import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
@@ -70,6 +71,10 @@ export function toggleAllRowsExpanded(tableId, isExpanded) {
 
 export function downloadDataCSV(tableId, filename = 'data.csv') {
   getInstance(tableId).downloadDataCSV(filename)
+}
+
+export function setMeta(tableId, meta) {
+  getInstance(tableId).setMeta(meta)
 }
 
 export default function Reactable({
@@ -458,6 +463,7 @@ function Table({
   height,
   theme,
   language,
+  meta: initialMeta,
   crosstalkKey,
   crosstalkGroup,
   crosstalkId,
@@ -547,6 +553,8 @@ function Table({
       })
     }
   }
+
+  const [meta, setMeta] = useMeta(initialMeta)
 
   const { state, ...instance } = useTable(
     {
@@ -673,6 +681,7 @@ function Table({
   const stateInfo = {
     ...state,
     searchValue: state.globalFilter,
+    meta,
     // For v6 compatibility
     sorted: state.sortBy,
     pageRows: convertRowsToV6(instance.page),
@@ -1430,6 +1439,11 @@ function Table({
     const toggleAllRowsExpanded = instance.toggleAllRowsExpanded
 
     const updateState = newState => {
+      if (newState.jsEvals) {
+        for (let key of newState.jsEvals) {
+          window.HTMLWidgets.evaluateStringMember(newState, key)
+        }
+      }
       if (newState.data != null) {
         const data = columnsToRows(newState.data)
         setNewData(data)
@@ -1453,6 +1467,9 @@ function Table({
           toggleAllRowsExpanded(false)
         }
       }
+      if (newState.meta !== undefined) {
+        setMeta(newState.meta)
+      }
     }
     window.Shiny.addCustomMessageHandler(`__reactable__${outputId}`, updateState)
   }, [
@@ -1460,7 +1477,8 @@ function Table({
     instance.setRowsSelected,
     instance.gotoPage,
     instance.toggleAllRowsExpanded,
-    getPageCount
+    getPageCount,
+    setMeta
   ])
 
   // Set up Crosstalk and apply initial selection/filtering.
@@ -1608,6 +1626,7 @@ function Table({
     const csv = rowsToCSV(instance.preGroupedRows.map(row => row.original))
     downloadCSV(csv, filename)
   }
+  instance.setMeta = setMeta
 
   const getTableInstance = useGetLatest(instance)
 
@@ -1705,6 +1724,7 @@ Reactable.propTypes = {
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   theme: PropTypes.object,
   language: PropTypes.object,
+  meta: PropTypes.object,
   crosstalkKey: PropTypes.array,
   crosstalkGroup: PropTypes.string,
   crosstalkId: PropTypes.string,

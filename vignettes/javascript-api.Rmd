@@ -342,6 +342,36 @@ Reactable.toggleAllRowsExpanded('cars-table', true)
 Reactable.toggleAllRowsExpanded('cars-table', false)
 ```
 
+### `Reactable.setMeta()`
+
+Sets the custom metadata for the table. `meta` can either be an object with new
+values, or a function that takes the previous metadata object and returns new values.
+
+New values are merged into the current metadata, so only the values specified in
+`meta` will be updated. To clear all metadata, set `meta` to `undefined`.
+
+```ts
+Reactable.setMeta(
+  tableId: string,
+  meta?: object | Function
+)
+```
+
+#### Examples
+
+```js
+// Set metadata, updating the values for the `count`, `enabled`, and `formatter` properties
+Reactable.setMeta('cars-table', { count: 123, enabled: true, formatter: value => '$' + value })
+
+// Set metadata using a function that increments `count` and toggles an `enabled` boolean
+Reactable.setMeta('cars-table', prevMeta => {
+  return { count: prevMeta.count + 1, enabled: !prevMeta.enabled }
+})
+
+// Clear metadata
+Reactable.setMeta('cars-table', undefined)
+```
+
 ### `Reactable.getState()`
 
 Gets the current state of a table.
@@ -366,7 +396,8 @@ stateProps <- dplyr::tribble(
   "selected", '[0, 1, 4]', "selected row indices (zero-based)",
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table"
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table",
+  "meta", '{ custom: 123 }', tagList("custom table metadata from", tags$code("reactable()"), "(new in v0.3.0.9000)")
 )
 
 propsTable(stateProps)

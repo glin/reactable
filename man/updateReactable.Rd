@@ -10,6 +10,7 @@ updateReactable(
   selected = NULL,
   expanded = NULL,
   page = NULL,
+  meta = NULL,
   session = NULL
 )
 }
@@ -30,6 +31,10 @@ or \code{NA} to deselect all rows.}
 to collapse all rows.}
 
 \item{page}{The current page. A single, positive integer.}
+
+\item{meta}{Custom table metadata. Either a named list with new values, or \code{NA}
+to clear all metadata. New values are merged into the current metadata, so only
+the values specified in \code{meta} will be updated.}
 
 \item{session}{The Shiny session object. Defaults to the current Shiny session.}
 }

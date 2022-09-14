@@ -105,6 +105,10 @@
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
 #' @param language Language options for the table, specified by
 #'   [reactableLang()]. Defaults to the global `reactable.language` option.
+#' @param meta Custom metadata to pass to JavaScript render functions or style functions.
+#'   A named list of values that can also be [JS()] expressions or functions.
+#'   Custom metadata can be accessed using the `state.meta` property, and updated
+#'   using `updateReactable()` in Shiny or `Reactable.setMeta()` in the JavaScript API.
 #' @param elementId Element ID for the widget.
 #' @param static Render the table to static HTML? Defaults to the global
 #'  `reactable.static` option. Requires the V8 package, which is not installed
@@ -217,6 +221,7 @@ reactable <- function(
   height = "auto",
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
+  meta = NULL,
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   selectionId = NULL
@@ -517,8 +522,13 @@ reactable <- function(
       stop("`theme` must be a reactable theme object")
     }
   }
+
   if (!is.null(language) && !is.reactableLang(language)) {
     stop("`language` must be a reactable language options object")
+  }
+
+  if (!is.null(meta) && !isNamedList(meta)) {
+    stop("`meta` must be a named list")
   }
 
   if (!is.logical(static)) {
@@ -690,6 +700,7 @@ reactable <- function(
     height = if (height != "auto") height,
     theme = theme,
     language = language,
+    meta = meta,
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
     elementId = elementId,

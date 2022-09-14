@@ -51,6 +51,7 @@ reactable(
   height = "auto",
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
+  meta = NULL,
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   selectionId = NULL
@@ -193,6 +194,11 @@ Can also be a function that returns a \code{\link[=reactableTheme]{reactableThem
 
 \item{language}{Language options for the table, specified by
 \code{\link[=reactableLang]{reactableLang()}}. Defaults to the global \code{reactable.language} option.}
+
+\item{meta}{Custom metadata to pass to JavaScript render functions or style functions.
+A named list of values that can also be \code{\link[=JS]{JS()}} expressions or functions.
+Custom metadata can be accessed using the \code{state.meta} property, and updated
+using \code{updateReactable()} in Shiny or \code{Reactable.setMeta()} in the JavaScript API.}
 
 \item{elementId}{Element ID for the widget.}
 

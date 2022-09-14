@@ -87,6 +87,33 @@ test_that("updateReactable", {
   updateReactable("mytbl", page = 2, session = session)
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(page = 1)))
 
+  # Update meta
+  expect_error(updateReactable("mytbl", meta = TRUE, session = session),
+               "`meta` must be a named list or NA")
+
+  updateReactable("mytbl", meta = list(custom = 123, fn = JS("n => n > 30")), session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(
+      meta = list(custom = 123, fn = JS("n => n > 30")),
+      jsEvals = I("meta.fn") # Should be wrapped in I() so length-1 arrays serialize as arrays
+    )
+  ))
+  updateReactable("mytbl", meta = NA, session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(meta = NA)
+  ))
+  updateReactable("mytbl", meta = list(), page = 1, session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(page = 0)
+  ))
+
+  # JS evals should not include data
+  updateReactable("mytbl", data = data.frame(x = I(list(fn = JS("() => {}")))), session = session)
+  expect_equal(session$lastMsg$message$jsEvals, NULL)
+
   # Should work with Shiny modules
   session <- mockSession(namespace = "mod")
   updateReactable("mytbl", selected = 2, session = session)

@@ -8448,6 +8448,61 @@ describe('themes', () => {
   })
 })
 
+describe('custom metadata', () => {
+  it('meta defaults to empty object', () => {
+    const assertProps = state => {
+      expect(state.meta).toEqual({})
+    }
+    const props = {
+      data: { a: ['a'] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          cell: (cellInfo, state) => {
+            assertProps(state)
+          }
+        }
+      ],
+      rowClassName: (rowInfo, state) => {
+        assertProps(state)
+      },
+      rowStyle: (rowInfo, state) => {
+        assertProps(state)
+      }
+    }
+    render(<Reactable {...props} />)
+  })
+
+  it('meta is set correctly', () => {
+    const meta = { custom: 123, data: { x: [1, 2] }, fn: n => n > 30 }
+    const assertProps = state => {
+      expect(state.meta).toEqual(meta)
+    }
+    const props = {
+      data: { a: ['a'], b: ['b'] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          cell: (cellInfo, state) => {
+            assertProps(state)
+          }
+        },
+        { name: 'b', id: 'b' }
+      ],
+      rowClassName: (rowInfo, state) => {
+        assertProps(state)
+      },
+      rowStyle: (rowInfo, state) => {
+        assertProps(state)
+      },
+      meta: meta
+    }
+    render(<Reactable {...props} />)
+  })
+})
+
 describe('updateReactable updates table state from Shiny', () => {
   beforeEach(() => {
     window.Shiny = {
@@ -8456,10 +8511,14 @@ describe('updateReactable updates table state from Shiny', () => {
       bindAll: jest.fn(),
       unbindAll: jest.fn()
     }
+    window.HTMLWidgets = {
+      evaluateStringMember: jest.fn()
+    }
   })
 
   afterEach(() => {
     delete window.Shiny
+    delete window.HTMLWidgets
   })
 
   it('updates selected rows', () => {
@@ -8638,6 +8697,38 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(getByLabelText('Select row')).toBeChecked()
     expect(getByText('detail-3')).toBeVisible()
     expect(getByText('3–3 of 3 rows')).toBeVisible()
+  })
+
+  it('updates meta', () => {
+    const props = {
+      data: { a: ['a'] },
+      columns: [{ name: 'a', id: 'a' }],
+      meta: { existingProp: true },
+      elementId: 'my-tbl'
+    }
+    render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [outputId, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    expect(outputId).toEqual('__reactable__shiny-output-container')
+
+    expect(reactable.getState('my-tbl').meta).toEqual({ existingProp: true })
+    const newState = { meta: { custom: 123, fn: 'n => n > 30' }, jsEvals: ['meta.fn'] }
+    act(() => updateState(newState))
+    expect(window.HTMLWidgets.evaluateStringMember).toHaveBeenCalledTimes(1)
+    expect(window.HTMLWidgets.evaluateStringMember).toHaveBeenCalledWith(newState, 'meta.fn')
+    expect(reactable.getState('my-tbl').meta).toEqual({
+      existingProp: true,
+      custom: 123,
+      fn: 'n => n > 30'
+    })
+
+    // Clear meta
+    act(() => updateState({ meta: null }))
+    expect(reactable.getState('my-tbl').meta).toEqual({})
   })
 
   it('does not enable updateState for tables that are not Shiny outputs', () => {
@@ -9561,5 +9652,31 @@ describe('reactable JavaScript API', () => {
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(4)
     expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
+  })
+
+  it('Reactable.setMeta', () => {
+    const props = {
+      data: { a: ['a'] },
+      columns: [{ name: 'a', id: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    expect(reactable.getState('my-tbl').meta).toEqual({})
+    act(() => reactable.setMeta('my-tbl', { custom: 123 }))
+    expect(reactable.getState('my-tbl').meta).toEqual({ custom: 123 })
+    // Should update only specified properties
+    act(() => reactable.setMeta('my-tbl', { other: true }))
+    expect(reactable.getState('my-tbl').meta).toEqual({ custom: 123, other: true })
+    // Should remove undefined values
+    act(() => reactable.setMeta('my-tbl', { other: undefined }))
+    expect(reactable.getState('my-tbl').meta).toEqual({ custom: 123 })
+    // setMeta accepts a callback
+    act(() => reactable.setMeta('my-tbl', prevMeta => ({ custom: prevMeta.custom + 1 })))
+    expect(reactable.getState('my-tbl').meta).toEqual({ custom: 124 })
+
+    // Clear meta
+    act(() => reactable.setMeta('my-tbl', undefined))
+    expect(reactable.getState('my-tbl').meta).toEqual({})
   })
 })

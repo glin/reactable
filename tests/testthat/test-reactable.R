@@ -1223,6 +1223,36 @@ test_that("language", {
                "`language` must be a reactable language options object")
 })
 
+test_that("meta", {
+  data <- data.frame(x = 1)
+
+  expect_error(reactable(data, meta = "meta"), "`meta` must be a named list")
+
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "meta"), NULL)
+
+  # Empty lists should be omitted, not serialized as an empty array through jsonlite
+  tbl <- reactable(data, meta = list())
+  expect_equal(getAttrib(tbl, "meta"), NULL)
+
+  meta <- list(
+    number = 30,
+    str = "str",
+    df = data.frame(y = 2),
+    func = JS("value => value > 30"),
+    na = NA,
+    naInteger = NA_integer_,
+    null = NULL,
+    date = as.POSIXct("2019-01-02 3:22:15"),
+    array = c(2, 4, 6),
+    arrayLength1 = 1,
+    list = list(1),
+    emptyList = list()  # will be serialized as []
+  )
+  tbl <- reactable(data, meta = meta)
+  expect_equal(getAttrib(tbl, "meta"), meta)
+})
+
 test_that("elementId", {
   data <- data.frame(x = 1)
 

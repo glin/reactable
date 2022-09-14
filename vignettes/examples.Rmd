@@ -600,6 +600,7 @@ If none of the built-in formatters apply to your data, you can use a
 
 
 ## Custom Rendering
+
 You can customize how data is displayed using an R or JavaScript function
 that returns custom content. R render functions support
 [Shiny HTML tags](https://shiny.rstudio.com/articles/tag-glossary.html) (or
@@ -617,6 +618,7 @@ for even more examples of custom rendering.
 ### Cell rendering
 
 #### R render function
+
 ```{r}
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
@@ -638,6 +640,7 @@ reactable(data, columns = list(
 ```
 
 #### JavaScript render function
+
 ```{r}
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
@@ -665,6 +668,7 @@ reactable(data, columns = list(
 ```
 
 #### Embedding HTML widgets
+
 ```{r message=FALSE}
 library(dplyr)
 library(sparkline)
@@ -720,6 +724,7 @@ reactable(
 ```
 
 ### Aggregated cell rendering
+
 ```{r, message=FALSE}
 library(dplyr)
 
@@ -780,6 +785,72 @@ reactable(
     Species = colDef(header = function(value) {
       tags$a(href = "https://wikipedia.org/wiki/List_of_Iris_species", value)
     })
+  )
+)
+```
+
+### Custom metadata {#custom-meta-rendering}
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+You can pass arbitrary data from R to JavaScript render functions using the `meta`
+argument in `reactable()`.
+
+`meta` should be a named list of values that can also be `JS()` expressions or functions.
+Custom metadata can be accessed from JavaScript using the `state.meta` property, and updated
+using `updateReactable()` in Shiny or [`Reactable.setMeta()`](./javascript-api.html#reactable-setmeta)
+in the JavaScript API.
+
+Use custom metadata to:
+
+- Simplify JavaScript render functions that need access to data outside of the table
+- Dynamically change how data is formatted without rerendering the table
+- Share JavaScript code or data between different render functions
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
+
+exchange_rates <- list(
+  USD = 1,
+  CAD = 1.30,
+  JPY = 137.56
+)
+
+tbl <- reactable(
+  data,
+  columns = list(
+    Price = colDef(
+      cell = JS("function(cellInfo, state) {
+        const { currency, exchangeRates } = state.meta
+        const converted = cellInfo.value * exchangeRates[currency]
+        return converted.toLocaleString(undefined, { style: 'currency', currency: currency })
+      }")
+    )
+  ),
+  meta = list(
+    currency = "USD",
+    exchangeRates = exchange_rates
+  ),
+  elementId = "cars-currency-table"
+)
+
+browsable(
+  tagList(
+    tags$label(
+      "Currency",
+      tags$select(
+        onchange = "Reactable.setMeta('cars-currency-table', { currency: event.target.value })",
+        lapply(names(exchange_rates), tags$option)
+      )
+    ),
+
+    tags$hr("aria-hidden" = "true"),
+
+    tbl
   )
 )
 ```
@@ -971,6 +1042,7 @@ for even more examples of conditional styling.
 ### Cell styling
 
 #### R style function
+
 ```{r}
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(
@@ -1059,6 +1131,73 @@ reactable(sleep[1:6, ],
       return 'bold'
     }
   }")
+)
+```
+
+### Custom metadata {#custom-meta-styling}
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+You can pass arbitrary data from R to JavaScript style functions using the `meta`
+argument in `reactable()`.
+
+`meta` should be a named list of values that can also be `JS()` expressions or functions.
+Custom metadata can be accessed from JavaScript using the `state.meta` property, and updated
+using `updateReactable()` in Shiny or [`Reactable.setMeta()`](./javascript-api.html#reactable-setmeta)
+in the JavaScript API.
+
+Use custom metadata to:
+
+- Simplify JavaScript style functions that need access to data outside of the table
+- Dynamically change how data is styled without rerendering the table
+- Share JavaScript code or data between different style functions
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
+
+mpg_normalized <- (data$MPG.city - min(data$MPG.city)) / (max(data$MPG.city) - min(data$MPG.city))
+mpg_colors <-  rgb(colorRamp(c("#ffe4cc", "#ff9f1a"))(mpg_normalized), maxColorValue = 255)
+
+tbl <- reactable(
+  data,
+  columns = list(
+    MPG.city = colDef(
+      style = JS("function(rowInfo, column, state) {
+        const { showColors, mpgColors } = state.meta
+        if (showColors) {
+          return { backgroundColor: mpgColors[rowInfo.index] }
+        }
+      }")
+    )
+  ),
+  meta = list(
+    mpgColors = mpg_colors,
+    showColors = TRUE
+  ),
+  elementId = "cars-colors-table"
+)
+
+browsable(
+  tagList(
+    tags$label(
+      tags$input(
+        type = "checkbox",
+        checked = NA,
+        onclick = "Reactable.setMeta('cars-colors-table', function(prevMeta) {
+          return { showColors: !prevMeta.showColors }
+        })"
+      ),
+      "Show color scale"
+    ),
+
+    tags$hr("aria-hidden" = "true"),
+
+    tbl
+  )
 )
 ```
 
@@ -1762,7 +1901,9 @@ options(reactable.language = NULL)
 ```
 
 ## Shiny
+
 To use reactable in Shiny apps, use `renderReactable()` and `reactableOutput()`:
+
 ```{r, eval=FALSE}
 library(shiny)
 library(reactable)
@@ -1782,6 +1923,7 @@ shinyApp(ui, server)
 ```
 
 ### Row selection
+
 You can enable row selection by setting `selection` to `"single"`
 for single selection, or `"multiple"` for multiple selection.
 

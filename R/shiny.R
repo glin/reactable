@@ -14,6 +14,9 @@
 #' @param expanded Expanded rows. Either `TRUE` to expand all rows, or `FALSE`
 #'   to collapse all rows.
 #' @param page The current page. A single, positive integer.
+#' @param meta Custom table metadata. Either a named list with new values, or `NA`
+#'   to clear all metadata. New values are merged into the current metadata, so only
+#'   the values specified in `meta` will be updated.
 #' @param session The Shiny session object. Defaults to the current Shiny session.
 #' @return None
 #'
@@ -88,7 +91,7 @@
 #'
 #' @export
 updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = NULL,
-                            page = NULL, session = NULL) {
+                            page = NULL, meta = NULL, session = NULL) {
   if (is.null(session)) {
     if (requireNamespace("shiny", quietly = TRUE)) {
       session <- shiny::getDefaultReactiveDomain()
@@ -137,12 +140,32 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     page <- as.integer(page - 1)
   }
 
+  if (!is.null(meta)) {
+    if (!isNamedList(meta) && !is.na(meta)) {
+      stop("`meta` must be a named list or NA")
+    }
+    # Allow empty lists, but don't serialize them as an empty array, []
+    if (identical(meta, list())) {
+      meta <- NULL
+    }
+  }
+
+  # Get JS evals for meta. Exclude other props like data - although data could
+  # potentially have JS() code within list-columns, it's not supported by reactable(), and
+  # JS() code just ends up as a string.
+  jsEvals <- htmlwidgets::JSEvals(list(meta = meta))
+  if (length(jsEvals) == 0) {
+    jsEvals <- NULL
+  }
+
   newState <- filterNulls(list(
     data = data,
     dataKey = dataKey,
     selected = selected,
     expanded = expanded,
-    page = page
+    page = page,
+    meta = meta,
+    jsEvals = jsEvals
   ))
 
   if (length(newState) > 0) {
