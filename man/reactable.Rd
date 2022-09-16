@@ -196,10 +196,18 @@ Can also be a function that returns a \code{\link[=reactableTheme]{reactableThem
 
 \item{elementId}{Element ID for the widget.}
 
-\item{static}{\strong{Experimental}. Render the table as static HTML? Defaults to the
-global \code{reactable.static} option. Requires the V8 package.}
+\item{static}{Render the table to static HTML? Defaults to the global
+\code{reactable.static} option. Requires the V8 package, which is not installed
+with reactable by default.
 
-\item{selectionId}{Deprecated. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
+With static rendering, tables are pre-rendered to their initial HTML so they appear
+immediately without any flash of content. Tables are then made interactive and
+subsequently rendered by JavaScript as needed.
+
+Static rendering is \strong{experimental}, and is not supported for tables
+rendered via \code{\link[=reactableOutput]{reactableOutput()}} in Shiny.}
+
+\item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}
 }
 \value{

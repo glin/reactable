@@ -21,6 +21,8 @@ navbar:
         href: articles/custom-filtering.html
       - text: JavaScript API
         href: articles/javascript-api.html
+      - text: Static Rendering
+        href: articles/static-rendering.html
     examples:
       text: Examples
       href: articles/examples.html

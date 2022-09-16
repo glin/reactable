@@ -106,9 +106,17 @@
 #' @param language Language options for the table, specified by
 #'   [reactableLang()]. Defaults to the global `reactable.language` option.
 #' @param elementId Element ID for the widget.
-#' @param static **Experimental**. Render the table as static HTML? Defaults to the
-#'   global `reactable.static` option. Requires the V8 package.
-#' @param selectionId Deprecated. Use [getReactableState()] to get the selected rows
+#' @param static Render the table to static HTML? Defaults to the global
+#'  `reactable.static` option. Requires the V8 package, which is not installed
+#'   with reactable by default.
+#'
+#'   With static rendering, tables are pre-rendered to their initial HTML so they appear
+#'   immediately without any flash of content. Tables are then made interactive and
+#'   subsequently rendered by JavaScript as needed.
+#'
+#'   Static rendering is **experimental**, and is not supported for tables
+#'   rendered via [reactableOutput()] in Shiny.
+#' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
 #'   and Shiny applications, or viewed from an R console.
