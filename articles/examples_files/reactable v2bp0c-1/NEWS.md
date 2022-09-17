@@ -1,5 +1,15 @@
 # reactable 0.3.0.9000 (Unreleased)
 
+## New features
+
+* **Experimental** support for rendering tables to static HTML in R. Use
+  `reactable(static = TRUE)` to render a table to static HTML, or `options(reactable.status = TRUE)`
+  to enable static rendering globally. With static rendering, tables are pre-rendered
+  to their initial HTML so they appear immediately without any flash of content.
+  Tables are then made interactive and subsequently rendered by JavaScript as needed.
+  Static rendering requires the V8 package, which is not installed with reactable
+  by default. Learn more in the [Static Rendering](articles/static-rendering.html) article.
+
 ## Minor improvements and bug fixes
 
 * Updated the documentation site for Internet Explorer 11 (IE 11) deprecation,
@@ -218,7 +228,7 @@ rarely used, so most code should continue to work upon upgrading.
 * The default cell padding can no longer be overridden using custom CSS or inline
   styles on cells. To customize the cell padding, use a theme instead, like
   `reactableTheme(cellPadding = "...")` ([#248](https://github.com/glin/reactable/issues/248),
-  ([#142](https://github.com/glin/reactable/issues/142),
+  [#142](https://github.com/glin/reactable/issues/142),
   [#177](https://github.com/glin/reactable/issues/177)).
 
 ## Minor improvements and bug fixes

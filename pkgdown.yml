@@ -20,9 +20,10 @@ articles:
   popular-movies: popular-movies/popular-movies.html
   shiny-demo: shiny-demo.html
   spotify-charts: spotify-charts/spotify-charts.html
+  static-rendering: static-rendering.html
   sticky-columns-selection: sticky-columns-selection.html
   sticky-columns: sticky-columns.html
   twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2022-09-11T15:49Z
+last_built: 2022-09-17T20:41Z
 

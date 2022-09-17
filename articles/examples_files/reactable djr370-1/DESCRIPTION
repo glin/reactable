@@ -1,6 +1,6 @@
 Package: reactable
 Type: Package
-Title: Interactive Data Tables Based on 'React Table'
+Title: Interactive Data Tables for R
 Version: 0.3.0.9000
 Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
@@ -52,4 +52,4 @@ Author: Greg Lin [aut, cre],
   James Halliday [ctb, cph] (stream-browserify library),
   RStudio, PBC [fnd, cph]
 Maintainer: Greg Lin <glin@glin.io>
-Built: R 4.2.1; ; 2022-09-11 15:49:50 UTC; unix
+Built: R 4.2.1; ; 2022-09-17 20:41:16 UTC; unix
