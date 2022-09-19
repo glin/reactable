@@ -93,6 +93,7 @@
 <span>  selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  expanded <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  page <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  meta <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  session <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -123,6 +124,12 @@ to collapse all rows.</p></dd>
 
 <dt>page</dt>
 <dd><p>The current page. A single, positive integer.</p></dd>
+
+
+<dt>meta</dt>
+<dd><p>Custom table metadata. Either a named list with new values, or <code>NA</code>
+to clear all metadata. New values are merged into the current metadata, so only
+the values specified in <code>meta</code> will be updated.</p></dd>
 
 
 <dt>session</dt>

@@ -181,8 +181,8 @@ JavaScript render functions
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-75b9ee4cc2630cc40ecf" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-75b9ee4cc2630cc40ecf">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
+<div id="htmlwidget-6763d02b25f06a20b0b2" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-6763d02b25f06a20b0b2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -203,8 +203,8 @@ JavaScript render functions
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-83fd0574c720d2643191" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-83fd0574c720d2643191">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<div id="htmlwidget-313410285232c9cdf879" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-313410285232c9cdf879">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -473,6 +473,19 @@ JavaScript render functions
 </td>
 <td>original row data in the table</td>
 </tr>
+<tr>
+<th scope="row">
+<code>meta</code>
+</th>
+<td>
+<code>{ custom: 123 }</code>
+</td>
+<td>
+custom table metadata from
+<code><a href="../reference/reactable.html">reactable()</a></code>
+(new in v0.3.0.9000)
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -695,6 +708,19 @@ function to set the column filter value
 </td>
 <td>original row data in the table</td>
 </tr>
+<tr>
+<th scope="row">
+<code>meta</code>
+</th>
+<td>
+<code>{ custom: 123 }</code>
+</td>
+<td>
+custom table metadata from
+<code><a href="../reference/reactable.html">reactable()</a></code>
+(new in v0.3.0.9000)
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -916,6 +942,19 @@ function to set the column filter value
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
 <td>original row data in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>meta</code>
+</th>
+<td>
+<code>{ custom: 123 }</code>
+</td>
+<td>
+custom table metadata from
+<code><a href="../reference/reactable.html">reactable()</a></code>
+(new in v0.3.0.9000)
+</td>
 </tr>
 </tbody>
 </table>
@@ -1148,6 +1187,19 @@ same as
 <code>[{ Petal.Length: 1.7, Species: "setosa" }, ...]</code>
 </td>
 <td>original row data in the table</td>
+</tr>
+<tr>
+<th scope="row">
+<code>meta</code>
+</th>
+<td>
+<code>{ custom: 123 }</code>
+</td>
+<td>
+custom table metadata from
+<code><a href="../reference/reactable.html">reactable()</a></code>
+(new in v0.3.0.9000)
+</td>
 </tr>
 </tbody>
 </table>

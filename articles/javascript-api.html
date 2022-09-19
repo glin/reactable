@@ -222,8 +222,8 @@
 </h3>
 <p>Downloads the table data to a CSV file. The downloaded file is named <code>data.csv</code> by default, but you can customize this using the optional <code>filename</code> argument.</p>
 <p>The downloaded data will include any filters that have been applied, and exclude any sorting or grouping. Hidden columns will also be included, but this may be customizable in the future.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">downloadDataCSV</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">downloadDataCSV</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  filename <span class="op">=</span> <span class="st">"data.csv"</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
@@ -241,9 +241,9 @@
 <code>Reactable.setSearch()</code><a class="anchor" aria-label="anchor" href="#reactable-setsearch"></a>
 </h3>
 <p>Sets the search value of a table. To clear the search, set the value to <code>undefined</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setSearch</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  value<span class="op">:</span> any</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setSearch</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  value<span class="op">:</span> <span class="dt">any</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-1">Examples<a class="anchor" aria-label="anchor" href="#examples-1"></a>
@@ -260,10 +260,10 @@
 <code>Reactable.setFilter()</code><a class="anchor" aria-label="anchor" href="#reactable-setfilter"></a>
 </h3>
 <p>Sets the filter value of a column. To clear the column filter, set the value to <code>undefined</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setFilter</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  columnId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  value<span class="op">:</span> any</span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setFilter</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  columnId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  value<span class="op">:</span> <span class="dt">any</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-2">Examples<a class="anchor" aria-label="anchor" href="#examples-2"></a>
@@ -280,9 +280,9 @@
 <code>Reactable.setAllFilters()</code><a class="anchor" aria-label="anchor" href="#reactable-setallfilters"></a>
 </h3>
 <p>Sets all column filter values in the table. To clear the column filters, set <code>filters</code> to an empty array, <code>[]</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setAllFilters</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  filters<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span>{ <span class="dt">id</span><span class="op">:</span> string<span class="op">,</span> <span class="dt">value</span><span class="op">:</span> any }<span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb13"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setAllFilters</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  filters<span class="op">:</span> Array<span class="op">&lt;</span>{ id<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> value<span class="op">:</span> <span class="dt">any</span> }<span class="op">&gt;</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-3">Examples<a class="anchor" aria-label="anchor" href="#examples-3"></a>
@@ -302,10 +302,10 @@
 <code>Reactable.toggleGroupBy()</code><a class="anchor" aria-label="anchor" href="#reactable-togglegroupby"></a>
 </h3>
 <p>Toggles the <code>groupBy</code> state for a column between grouped and ungrouped. To enable or disable grouping explicitly, set the optional <code>isGrouped</code> argument to <code>true</code> or <code>false</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleGroupBy</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  columnId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  isGrouped<span class="op">?:</span> boolean</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleGroupBy</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  columnId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  isGrouped<span class="op">?:</span> <span class="dt">boolean</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-4">Examples<a class="anchor" aria-label="anchor" href="#examples-4"></a>
@@ -325,9 +325,9 @@
 <code>Reactable.setGroupBy()</code><a class="anchor" aria-label="anchor" href="#reactable-setgroupby"></a>
 </h3>
 <p>Sets the <code>groupBy</code> columns for the table. To clear the <code>groupBy</code> columns, set <code>columnIds</code> to an empty array, <code>[]</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setGroupBy</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  columnIds<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span>string<span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setGroupBy</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  columnIds<span class="op">:</span> Array<span class="op">&lt;</span><span class="dt">string</span><span class="op">&gt;</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-5">Examples<a class="anchor" aria-label="anchor" href="#examples-5"></a>
@@ -344,9 +344,9 @@
 <code>Reactable.toggleAllRowsExpanded()</code><a class="anchor" aria-label="anchor" href="#reactable-toggleallrowsexpanded"></a>
 </h3>
 <p>Toggles the expanded state of all rows in the table between expanded and collapsed. To expand or collapse rows explicitly, set the optional <code>isExpanded</code> argument to <code>true</code> or <code>false</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsExpanded</span>(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> string<span class="op">,</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  isExpanded<span class="op">?:</span> boolean</span>
+<div class="sourceCode" id="cb19"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsExpanded</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  isExpanded<span class="op">?:</span> <span class="dt">boolean</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples-6">Examples<a class="anchor" aria-label="anchor" href="#examples-6"></a>
@@ -362,11 +362,36 @@
 </div>
 </div>
 <div class="section level3">
+<h3 id="reactable-setmeta">
+<code>Reactable.setMeta()</code><a class="anchor" aria-label="anchor" href="#reactable-setmeta"></a>
+</h3>
+<p>Sets the custom metadata for the table. <code>meta</code> can either be an object with new values, or a function that takes the previous metadata object and returns new values.</p>
+<p>New values are merged into the current metadata, so only the values specified in <code>meta</code> will be updated. To clear all metadata, set <code>meta</code> to <code>undefined</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  meta<span class="op">?:</span> <span class="dt">object</span> <span class="op">|</span> Function</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="section level4">
+<h4 id="examples-7">Examples<a class="anchor" aria-label="anchor" href="#examples-7"></a>
+</h4>
+<div class="sourceCode" id="cb22"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Set metadata, updating the values for the `count`, `enabled`, and `formatter` properties</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> { <span class="dt">count</span><span class="op">:</span> <span class="dv">123</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">formatter</span><span class="op">:</span> value <span class="kw">=&gt;</span> <span class="st">'$'</span> <span class="op">+</span> value })</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Set metadata using a function that increments `count` and toggles an `enabled` boolean</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevMeta <span class="kw">=&gt;</span> {</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { <span class="dt">count</span><span class="op">:</span> prevMeta<span class="op">.</span><span class="at">count</span> <span class="op">+</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="op">!</span>prevMeta<span class="op">.</span><span class="at">enabled</span> }</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Clear metadata</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="kw">undefined</span>)</span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
 <h3 id="reactable-getstate">
 <code>Reactable.getState()</code><a class="anchor" aria-label="anchor" href="#reactable-getstate"></a>
 </h3>
 <p>Gets the current state of a table.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(tableId<span class="op">:</span> string)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(tableId<span class="op">:</span> <span class="dt">string</span>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
 </h4>
@@ -469,15 +494,28 @@
 </td>
 <td>original row data in the table</td>
 </tr>
+<tr>
+<th scope="row">
+<code>meta</code>
+</th>
+<td>
+<code>{ custom: 123 }</code>
+</td>
+<td>
+custom table metadata from
+<code><a href="../reference/reactable.html">reactable()</a></code>
+(new in v0.3.0.9000)
+</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="section level4">
-<h4 id="examples-7">Examples<a class="anchor" aria-label="anchor" href="#examples-7"></a>
+<h4 id="examples-8">Examples<a class="anchor" aria-label="anchor" href="#examples-8"></a>
 </h4>
-<div class="sourceCode" id="cb22"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(<span class="st">'cars-table'</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">// { page: 2, searchValue: 'petal', ... }</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(<span class="st">'cars-table'</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">// { page: 2, searchValue: 'petal', ... }</span></span></code></pre></div>
 <style type="text/css">
 /* rmarkdown html documents */
 .main-container {

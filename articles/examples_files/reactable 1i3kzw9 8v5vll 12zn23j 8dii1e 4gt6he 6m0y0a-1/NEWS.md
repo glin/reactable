@@ -8,7 +8,13 @@
   to their initial HTML so they appear immediately without any flash of content.
   Tables are then made interactive and subsequently rendered by JavaScript as needed.
   Static rendering requires the V8 package, which is not installed with reactable
-  by default. Learn more in the [Static Rendering](articles/static-rendering.html) article.
+  by default. Learn more in the [Static Rendering](https://glin.github.io/reactable/articles/static-rendering.html) article.
+* `reactable()` gains a `meta` argument to pass arbitrary data from R to JavaScript
+  render functions and style functions ([#255](https://github.com/glin/reactable/issues/255)).
+  Custom metadata can be accessed using the `state.meta` property, and updated
+  using `updateReactable()` in Shiny or `Reactable.setMeta()` in the JavaScript API.
+  See examples of using [custom metadata for custom rendering](https://glin.github.io/reactable/articles/examples.html#custom-meta-rendering)
+  or [custom metadata for conditional styling](https://glin.github.io/reactable/articles/examples.html#custom-meta-styling).
 
 ## Minor improvements and bug fixes
 
