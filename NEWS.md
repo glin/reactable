@@ -8,7 +8,7 @@
   to their initial HTML so they appear immediately without any flash of content.
   Tables are then made interactive and subsequently rendered by JavaScript as needed.
   Static rendering requires the V8 package, which is not installed with reactable
-  by default. Learn more in the [Static Rendering](articles/static-rendering.html) article.
+  by default. Learn more in the [Static Rendering](https://glin.github.io/reactable/articles/static-rendering.html) article.
 
 ## Minor improvements and bug fixes
 
