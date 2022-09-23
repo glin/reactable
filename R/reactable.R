@@ -724,10 +724,7 @@ reactable <- function(
     sizingPolicy = htmlwidgets::sizingPolicy(knitr.figure = FALSE),
     package = "reactable",
     dependencies = dependencies,
-    elementId = elementId,
-    preRenderHook = function(instance) {
-      instance
-    }
+    elementId = elementId
   )
 }
 
