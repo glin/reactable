@@ -604,8 +604,8 @@ If none of the built-in formatters apply to your data, you can use a
 You can customize how data is displayed using an R or JavaScript function
 that returns custom content. R render functions support
 [Shiny HTML tags](https://shiny.rstudio.com/articles/tag-glossary.html) (or
-[`htmltools`](https://mastering-shiny.org/advanced-ui.html#generating-html)) and
-[`htmlwidgets`](https://www.htmlwidgets.org/),
+[`htmltools`](https://unleash-shiny.rinterface.com/htmltools-overview.html)) and
+[HTML widgets](https://www.htmlwidgets.org/),
 while JavaScript render functions allow for more dynamic behavior.
 
 You can also render content as HTML using `colDef(html = TRUE)`. Note that all
