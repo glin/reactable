@@ -458,7 +458,25 @@ reactable(data, groupBy = "Type", paginateSubRows = TRUE)
 
 
 ## Column Formatting
-You can format data in a column by providing `colFormat()` options to `format`:
+
+You can format data in a column by providing `colFormat()` options to the `format`
+argument in `colDef()`.
+
+The formatters for numbers, dates, times, and currencies are locale-sensitive and
+automatically adapt to language preferences of the user's browser. This means, for
+example, that users will see dates formatted in their own timezone or numbers formatted
+in their own locale.
+
+To use a specific locale for data formatting, provide a vector of BCP 47 language
+tags in the `locales` argument. See a list of
+[common BCP 47 language tags](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
+for reference.
+
+::: {.callout-note}
+**Note:** Column formatters change how data is displayed without affecting the underlying
+data. Sorting, filtering, and grouping will still work on the original data.
+:::
+
 ```{r}
 data <- data.frame(
   price_USD = c(123456.56, 132, 5650.12),
@@ -479,16 +497,8 @@ reactable(data, columns = list(
 ))
 ```
 
-By default, numbers, dates, times, and currencies are formatted in the locale of
-the browser. This means users may see different results, depending on the language
-preferences for their browser.
-
-To use a specific locale for data formatting, provide a vector of BCP 47 language
-tags in the `locales` argument. See a list of
-[common BCP 47 language tags](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
-for reference.
-
 ### Date formatting
+
 ```{r}
 datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-09-22 14:20:00"),
                         tz = "America/New_York")
@@ -510,6 +520,7 @@ reactable(data, columns = list(
 ```
 
 ### Currency formatting
+
 ```{r}
 data <- data.frame(
   USD = c(12.12, 2141.213, 0.42, 1.55, 34414),
@@ -539,9 +550,11 @@ reactable(data, columns = list(
 ```
 
 ### Formatting aggregated cells
+
 Column formatters apply to both standard and aggregated cells by default. If you
 want to format aggregated cells separately, provide a named list of `cell` and
 `aggregated` options:
+
 ```{r, eval=FALSE}
 colDef(
   format = list(
@@ -552,6 +565,7 @@ colDef(
 ```
 
 For example, only the aggregated `States` are formatted here:
+
 ```{r}
 data <- data.frame(
   States = state.name,
@@ -578,8 +592,10 @@ reactable(
 ```
 
 ### Displaying missing values
+
 Missing values are ignored by formatters and shown as empty cells by default.
 You can customize their display text by setting `na` on a column:
+
 ```{r}
 reactable(
   data.frame(
@@ -595,6 +611,7 @@ reactable(
 ```
 
 ### Custom data formatting
+
 If none of the built-in formatters apply to your data, you can use a
 [custom cell renderer](#cell-rendering) instead.
 
@@ -614,6 +631,11 @@ raw HTML is escaped by default.
 See [Custom Rendering](custom-rendering.html) for details on how to
 use render functions, and the [Demo Cookbook](cookbook/cookbook.html)
 for even more examples of custom rendering.
+
+::: {.callout-note}
+**Note:** Custom rendering changes how data is displayed without affecting the underlying
+data. Sorting, filtering, and grouping will still work on the original data.
+:::
 
 ### Cell rendering
 
