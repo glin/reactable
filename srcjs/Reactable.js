@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import {
   safeUseLayoutEffect,
+  useAsyncDebounce,
   useExpanded,
   useFilters,
   useGetLatest,
@@ -75,6 +76,10 @@ export function downloadDataCSV(tableId, filename = 'data.csv') {
 
 export function setMeta(tableId, meta) {
   getInstance(tableId).setMeta(meta)
+}
+
+export function onStateChange(tableId, listenerFn) {
+  return getInstance(tableId).onStateChange(listenerFn)
 }
 
 export default function Reactable({
@@ -678,20 +683,22 @@ function Table({
   }
 
   const rowData = convertRowsToV6(instance.rows)
-  const stateInfo = {
-    ...state,
-    searchValue: state.globalFilter,
-    meta,
-    // For v6 compatibility
-    sorted: state.sortBy,
-    pageRows: convertRowsToV6(instance.page),
-    sortedData: rowData,
-    data: data,
-    page: state.pageIndex,
-    pageSize: state.pageSize,
-    pages: instance.pageCount,
-    selected: selectedRowIndexes
-  }
+  const stateInfo = React.useMemo(() => {
+    return {
+      ...state,
+      searchValue: state.globalFilter,
+      meta,
+      // For v6 compatibility
+      sorted: state.sortBy,
+      pageRows: convertRowsToV6(instance.page),
+      sortedData: rowData,
+      data: data,
+      page: state.pageIndex,
+      pageSize: state.pageSize,
+      pages: instance.pageCount,
+      selected: selectedRowIndexes
+    }
+  }, [state, meta, instance.page, rowData, data, instance.pageCount, selectedRowIndexes])
 
   const makeThead = () => {
     const theadProps = instance.getTheadProps()
@@ -1627,6 +1634,27 @@ function Table({
     downloadCSV(csv, filename)
   }
   instance.setMeta = setMeta
+
+  let stateCallbacks = React.useRef([])
+  instance.onStateChange = listenerFn => {
+    if (typeof listenerFn !== 'function') {
+      throw new Error('listenerFn must be a function')
+    }
+    stateCallbacks.current.push(listenerFn)
+    return function cancel() {
+      stateCallbacks.current = stateCallbacks.current.filter(cb => cb !== listenerFn)
+    }
+  }
+  // Debounce rapid state changes. Some actions can cause the table to render twice, e.g., when
+  // sorting and the pageIndex is automatically reset to 0 via an internal side effect.
+  const onStateChange = useAsyncDebounce(state => {
+    stateCallbacks.current.forEach(cb => {
+      cb(state)
+    })
+  }, 0)
+  React.useEffect(() => {
+    onStateChange(stateInfo)
+  }, [stateInfo, onStateChange])
 
   const getTableInstance = useGetLatest(instance)
 

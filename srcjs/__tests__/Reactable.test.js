@@ -1,6 +1,6 @@
 import React from 'react'
 import reactR from 'reactR'
-import { render, fireEvent, act } from '@testing-library/react'
+import { render, fireEvent, act, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { matchers } from '@emotion/jest'
 
@@ -9678,5 +9678,32 @@ describe('reactable JavaScript API', () => {
     // Clear meta
     act(() => reactable.setMeta('my-tbl', undefined))
     expect(reactable.getState('my-tbl').meta).toEqual({})
+  })
+
+  it('Reactable.onStateChange', async () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'] },
+      columns: [{ name: 'a', id: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    expect(() => reactable.onStateChange('my-tbl', 'not-a-function')).toThrow(
+      'listenerFn must be a function'
+    )
+
+    let currentState = null
+    reactable.onStateChange('my-tbl', state => {
+      currentState = state
+    })
+    expect(currentState).toEqual(null)
+
+    act(() => reactable.setSearch('my-tbl', 'aaa'))
+    await waitFor(() => expect(currentState.searchValue).toEqual('aaa'))
+    await waitFor(() => expect(currentState.groupBy).toEqual([]))
+
+    act(() => reactable.toggleGroupBy('my-tbl', 'a'))
+    await waitFor(() => expect(currentState.searchValue).toEqual('aaa'))
+    await waitFor(() => expect(currentState.groupBy).toEqual(['a']))
   })
 })

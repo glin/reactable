@@ -344,6 +344,10 @@ Reactable.toggleAllRowsExpanded('cars-table', false)
 
 ### `Reactable.setMeta()`
 
+::: {.callout}
+New in v0.3.0.9000
+:::
+
 Sets the custom metadata for the table. `meta` can either be an object with new
 values, or a function that takes the previous metadata object and returns new values.
 
@@ -380,7 +384,7 @@ Gets the current state of a table.
 Reactable.getState(tableId: string)
 ```
 
-#### Value
+#### Value {#state-properties}
 
 An object with the following properties:
 
@@ -409,6 +413,113 @@ propsTable(stateProps)
 Reactable.getState('cars-table')
 // { page: 2, searchValue: 'petal', ... }
 ```
+
+### `Reactable.onStateChange()`
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+Sets up a function that will be called whenever the table state changes.
+
+`listenerFn` should be a function that takes the current table state, an object with
+properties described at [state properties](#state-properties).
+
+`Reactable.onStateChange()` can only be run when the table has finished rendering,
+which isn't guaranteed to happen at page load time. To ensure that the table is ready
+before running `Reactable.onStateChange()`, you can either use `htmlwidgets::onRender()`
+for static widgets and Shiny outputs, or `htmlwidgets::onStaticRenderComplete()` for
+static widgets only.
+
+```ts
+Reactable.onStateChange(
+  tableId: string,
+  listenerFn: Function
+)
+```
+
+#### Value
+
+`Reactable.onStateChange` returns a function that can be called to cancel the listener function.
+
+#### Examples
+
+```js
+Reactable.onStateChange('cars-table', state => {
+  console.log('selected rows:', state.selected)
+})
+
+// Cancel the listener function
+cancel = Reactable.onStateChange('cars-table', listenerFn)
+cancel()
+```
+
+##### Static widgets
+
+```{r, eval=FALSE}
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+browsable(
+  tagList(
+    "Table state:",
+    tags$pre(id = "tbl-state", "{}"),
+    reactable(
+      data,
+      searchable = TRUE,
+      selection = "multiple",
+      onClick = "select",
+      elementId = "tbl"
+    ),
+    htmlwidgets::onStaticRenderComplete("
+      Reactable.onStateChange('tbl', state => {
+        const { selected, sorted, searchValue, pageIndex } = state
+        document.getElementById('tbl-state').textContent = JSON.stringify({
+          selected,
+          sorted,
+          searchValue,
+          pageIndex
+        })
+      })
+    ")
+  )
+)
+```
+
+##### Shiny outputs
+
+```{r, eval=FALSE}
+library(shiny)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+ui <- fluidPage(
+  reactableOutput("tbl"),
+  verbatimTextOutput("tbl_state")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    tbl <- reactable(data, searchable = TRUE)
+
+    htmlwidgets::onRender(tbl, "() => {
+      Reactable.onStateChange('tbl', state => {
+        const { sorted, searchValue } = state
+        Shiny.setInputValue('tbl_state', { sorted, searchValue })
+      })
+    }")
+  })
+  
+  output$tbl_state <- renderPrint({
+    writeLines("Table state:\n")
+    print(input$tbl_state)
+  })
+}
+
+shinyApp(ui, server)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */
