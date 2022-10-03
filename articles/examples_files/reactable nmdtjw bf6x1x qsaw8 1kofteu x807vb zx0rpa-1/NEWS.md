@@ -15,6 +15,9 @@
   using `updateReactable()` in Shiny or `Reactable.setMeta()` in the JavaScript API.
   See examples of using [custom metadata for custom rendering](https://glin.github.io/reactable/articles/examples.html#custom-meta-rendering)
   or [custom metadata for conditional styling](https://glin.github.io/reactable/articles/examples.html#custom-meta-styling).
+* New [`Reactable.onStateChange()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-onstatechange)
+  method in the JavaScript API that sets up a function to be called whenever the
+  table state changes ([#265](https://github.com/glin/reactable/issues/265)).
 
 ## Minor improvements and bug fixes
 

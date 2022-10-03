@@ -365,6 +365,9 @@
 <h3 id="reactable-setmeta">
 <code>Reactable.setMeta()</code><a class="anchor" aria-label="anchor" href="#reactable-setmeta"></a>
 </h3>
+<div class="callout">
+<p>New in v0.3.0.9000</p>
+</div>
 <p>Sets the custom metadata for the table. <code>meta</code> can either be an object with new values, or a function that takes the previous metadata object and returns new values.</p>
 <p>New values are merged into the current metadata, so only the values specified in <code>meta</code> will be updated. To clear all metadata, set <code>meta</code> to <code>undefined</code>.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(</span>
@@ -393,7 +396,7 @@
 <p>Gets the current state of a table.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(tableId<span class="op">:</span> <span class="dt">string</span>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
+<h4 id="state-properties">Value<a class="anchor" aria-label="anchor" href="#state-properties"></a>
 </h4>
 <p>An object with the following properties:</p>
 <div style="overflow: auto;" tabindex="0">
@@ -516,6 +519,102 @@ custom table metadata from
 </h4>
 <div class="sourceCode" id="cb24"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(<span class="st">'cars-table'</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">// { page: 2, searchValue: 'petal', ... }</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="reactable-onstatechange">
+<code>Reactable.onStateChange()</code><a class="anchor" aria-label="anchor" href="#reactable-onstatechange"></a>
+</h3>
+<div class="callout">
+<p>New in v0.3.0.9000</p>
+</div>
+<p>Sets up a function that will be called whenever the table state changes.</p>
+<p><code>listenerFn</code> should be a function that takes the current table state, an object with properties described at <a href="#state-properties">state properties</a>.</p>
+<p><code>Reactable.onStateChange()</code> can only be run when the table has finished rendering, which isn’t guaranteed to happen at page load time. To ensure that the table is ready before running <code>Reactable.onStateChange()</code>, you can either use <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onRender.html" class="external-link">htmlwidgets::onRender()</a></code> for static widgets and Shiny outputs, or <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onStaticRenderComplete.html" class="external-link">htmlwidgets::onStaticRenderComplete()</a></code> for static widgets only.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  listenerFn<span class="op">:</span> Function</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="section level4">
+<h4 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
+</h4>
+<p><code>Reactable.onStateChange</code> returns a function that can be called to cancel the listener function.</p>
+</div>
+<div class="section level4">
+<h4 id="examples-9">Examples<a class="anchor" aria-label="anchor" href="#examples-9"></a>
+</h4>
+<div class="sourceCode" id="cb26"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> state <span class="kw">=&gt;</span> {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">'selected rows:'</span><span class="op">,</span> state<span class="op">.</span><span class="at">selected</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Cancel the listener function</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>cancel <span class="op">=</span> Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> listenerFn)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cancel</span>()</span></code></pre></div>
+<div class="section level5">
+<h5 id="static-widgets">Static widgets<a class="anchor" aria-label="anchor" href="#static-widgets"></a>
+</h5>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Table state:"</span>,</span>
+<span>    <span class="va">tags</span><span class="op">$</span><span class="fu">pre</span><span class="op">(</span>id <span class="op">=</span> <span class="st">"tbl-state"</span>, <span class="st">"{}"</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
+<span>      <span class="va">data</span>,</span>
+<span>      searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      selection <span class="op">=</span> <span class="st">"multiple"</span>,</span>
+<span>      onClick <span class="op">=</span> <span class="st">"select"</span>,</span>
+<span>      elementId <span class="op">=</span> <span class="st">"tbl"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu">htmlwidgets</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/onStaticRenderComplete.html" class="external-link">onStaticRenderComplete</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">      Reactable.onStateChange('tbl', state =&gt; {</span></span>
+<span><span class="st">        const { selected, sorted, searchValue, pageIndex } = state</span></span>
+<span><span class="st">        document.getElementById('tbl-state').textContent = JSON.stringify({</span></span>
+<span><span class="st">          selected,</span></span>
+<span><span class="st">          sorted,</span></span>
+<span><span class="st">          searchValue,</span></span>
+<span><span class="st">          pageIndex</span></span>
+<span><span class="st">        })</span></span>
+<span><span class="st">      })</span></span>
+<span><span class="st">    "</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level5">
+<h5 id="shiny-outputs">Shiny outputs<a class="anchor" aria-label="anchor" href="#shiny-outputs"></a>
+</h5>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.rstudio.com/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/reactable-shiny.html">reactableOutput</a></span><span class="op">(</span><span class="st">"tbl"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"tbl_state"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reactable-shiny.html">renderReactable</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span>, searchable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="fu">htmlwidgets</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/onRender.html" class="external-link">onRender</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="st">"() =&gt; {</span></span>
+<span><span class="st">      Reactable.onStateChange('tbl', state =&gt; {</span></span>
+<span><span class="st">        const { sorted, searchValue } = state</span></span>
+<span><span class="st">        Shiny.setInputValue('tbl_state', { sorted, searchValue })</span></span>
+<span><span class="st">      })</span></span>
+<span><span class="st">    }"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">tbl_state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderPrint</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="st">"Table state:\n"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">tbl_state</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
 <style type="text/css">
 /* rmarkdown html documents */
 .main-container {
@@ -530,6 +629,7 @@ h3 {
   font-weight: 600;
 }
 </style>
+</div>
 </div>
 </div>
 </div>
