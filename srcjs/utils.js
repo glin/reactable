@@ -1,3 +1,6 @@
+import React from 'react'
+import { useGetLatest } from 'react-table'
+
 export function classNames(...classes) {
   return classes.filter(cls => cls).join(' ')
 }
@@ -85,4 +88,42 @@ export function downloadCSV(content, filename) {
 
 export function isBrowser() {
   return typeof document !== 'undefined'
+}
+
+// useAsyncDebounce from react-table without async/await (which seems to be unnecessary anyway)
+// to avoid adding regenerator-runtime to bundle.
+export function useAsyncDebounce(defaultFn, defaultWait = 0) {
+  const debounceRef = React.useRef({})
+
+  const getDefaultFn = useGetLatest(defaultFn)
+  const getDefaultWait = useGetLatest(defaultWait)
+
+  return React.useCallback(
+    (...args) => {
+      if (!debounceRef.current.promise) {
+        debounceRef.current.promise = new Promise((resolve, reject) => {
+          debounceRef.current.resolve = resolve
+          debounceRef.current.reject = reject
+        })
+      }
+
+      if (debounceRef.current.timeout) {
+        clearTimeout(debounceRef.current.timeout)
+      }
+
+      debounceRef.current.timeout = setTimeout(() => {
+        delete debounceRef.current.timeout
+        try {
+          debounceRef.current.resolve(getDefaultFn()(...args))
+        } catch (err) {
+          debounceRef.current.reject(err)
+        } finally {
+          delete debounceRef.current.promise
+        }
+      }, getDefaultWait())
+
+      return debounceRef.current.promise
+    },
+    [getDefaultFn, getDefaultWait]
+  )
 }

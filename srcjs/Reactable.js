@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
 import {
   safeUseLayoutEffect,
-  useAsyncDebounce,
   useExpanded,
   useFilters,
   useGetLatest,
@@ -25,7 +24,14 @@ import useMeta from './useMeta'
 import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
-import { classNames, convertRowsToV6, getLeafColumns, rowsToCSV, downloadCSV } from './utils'
+import {
+  classNames,
+  convertRowsToV6,
+  getLeafColumns,
+  rowsToCSV,
+  downloadCSV,
+  useAsyncDebounce
+} from './utils'
 
 import './react-table.css'
 import './reactable.css'
