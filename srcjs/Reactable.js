@@ -1419,19 +1419,38 @@ function Table({
       return
     }
     // Convert to R's 1-based indices
-    const selectedIndexes = selectedRowIndexes.map(index => index + 1)
-    const stateInfo = {
-      // Convert to R's 1-based indices
-      page: state.pageIndex + 1,
-      pageSize: state.pageSize,
-      pages: instance.pageCount,
+    const selectedIndexes = stateInfo.selected.map(index => index + 1)
+    // Convert to R's 1-based indices
+    const page = stateInfo.page + 1
+    // Convert sortBy array to named list of "asc" and "desc"
+    let sorted = stateInfo.sorted.length > 0 ? {} : null
+    for (let sortInfo of stateInfo.sorted) {
+      sorted[sortInfo.id] = sortInfo.desc ? 'desc' : 'asc'
+    }
+
+    // NOTE: any object arrays will be simplified into vectors by jsonlite by default. Avoid sending
+    // arrays without transforming them first, or adding a custom input type and input handler.
+    const state = {
+      page: page,
+      pageSize: stateInfo.pageSize,
+      pages: stateInfo.pages,
+      sorted: sorted,
       selected: selectedIndexes
     }
-    Object.keys(stateInfo).forEach(prop => {
+    // Shiny.onInputChange has built-in debouncing, so it's not strictly necessary to
+    // debounce rapid state changes here.
+    Object.keys(state).forEach(prop => {
       // NOTE: output IDs must always come first to work with Shiny modules
-      window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, stateInfo[prop])
+      window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, state[prop])
     })
-  }, [nested, state.pageIndex, state.pageSize, instance.pageCount, selectedRowIndexes])
+  }, [
+    nested,
+    stateInfo.page,
+    stateInfo.pageSize,
+    stateInfo.pages,
+    stateInfo.sorted,
+    stateInfo.selected
+  ])
 
   // Getter for the latest page count
   const getPageCount = useGetLatest(instance.pageCount)

@@ -8790,8 +8790,11 @@ describe('getReactableState gets table state from Shiny', () => {
 
   it('calls Shiny.onInputChange when table state changes', () => {
     const props = {
-      data: { a: [1, 2, 3, 4] },
-      columns: [{ name: 'a', id: 'a' }],
+      data: { a: [1, 2, 3, 4], b: [1, 2, 3, 4] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', defaultSortDesc: true }
+      ],
       selection: 'multiple',
       defaultPageSize: 2,
       showPageSizeOptions: true,
@@ -8807,7 +8810,8 @@ describe('getReactableState gets table state from Shiny', () => {
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__sorted', null)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(5, 'tbl__reactable__selected', [])
     window.Shiny.onInputChange.mockReset()
 
     // Selected rows
@@ -8816,24 +8820,31 @@ describe('getReactableState gets table state from Shiny', () => {
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
     expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__sorted', null)
+    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(5, 'tbl__reactable__selected', [2])
     window.Shiny.onInputChange.mockReset()
 
     // Current page
     fireEvent.click(getNextButton(container))
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 2)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith('tbl__reactable__page', 2)
     window.Shiny.onInputChange.mockReset()
 
     // Pages, page size
     const pageSizeSelect = getPageSizeSelect(container)
     fireEvent.change(pageSizeSelect, { target: { value: 4 } })
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(1, 'tbl__reactable__page', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(2, 'tbl__reactable__pageSize', 4)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(3, 'tbl__reactable__pages', 1)
-    expect(window.Shiny.onInputChange).toHaveBeenNthCalledWith(4, 'tbl__reactable__selected', [2])
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith('tbl__reactable__pageSize', 4)
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith('tbl__reactable__pages', 1)
+    window.Shiny.onInputChange.mockReset()
+
+    // Sorted state
+    const sortableHeaders = getSortableHeaders(container)
+    fireEvent.click(sortableHeaders[1])
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith('tbl__reactable__sorted', { b: 'desc' })
+    fireEvent.click(sortableHeaders[0], { shiftKey: true })
+    expect(window.Shiny.onInputChange).toHaveBeenCalledWith('tbl__reactable__sorted', {
+      b: 'desc',
+      a: 'asc'
+    })
     window.Shiny.onInputChange.mockReset()
   })
 

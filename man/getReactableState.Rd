@@ -9,9 +9,9 @@ getReactableState(outputId, name = NULL, session = NULL)
 \arguments{
 \item{outputId}{The Shiny output ID of the \code{reactable} instance.}
 
-\item{name}{Name of a state value to get. One of \code{"page"}, \code{"pageSize"},
-\code{"pages"}, or \code{"selected"}. If unspecified, all values will be returned
-in a named list.}
+\item{name}{Character vector of state value(s) to get. Values must be one of \code{"page"},
+\code{"pageSize"}, \code{"pages"}, \code{sorted}, or \code{"selected"}. If unspecified, all values will
+be returned.}
 
 \item{session}{The Shiny session object. Defaults to the current Shiny session.}
 }
@@ -21,8 +21,13 @@ If \code{name} is specified, one of the following values:
 \item \code{page}: the current page
 \item \code{pageSize}: the page size
 \item \code{pages}: the number of pages
+\item \code{sorted}: the sorted columns - a named list of columns with values of \code{"asc"} for
+ascending order or \code{"desc"} for descending order, or \code{NULL} if no columns are sorted
 \item \code{selected}: the selected rows - a numeric vector of row indices, or \code{NULL} if no rows are selected
 }
+
+If \code{name} contains more than one value, \code{getReactableState()} returns a named list of
+the specified values.
 
 If \code{name} is unspecified, \code{getReactableState()} returns a named list containing all values.
 
@@ -37,20 +42,23 @@ if (interactive()) {
 
 library(shiny)
 library(reactable)
+library(htmltools)
 
 ui <- fluidPage(
   actionButton("prev_page_btn", "Previous page"),
   actionButton("next_page_btn", "Next page"),
   reactableOutput("table"),
-  verbatimTextOutput("table_state")
+  verbatimTextOutput("table_state"),
+  uiOutput("selected_row_details")
 )
 
 server <- function(input, output) {
   output$table <- renderReactable({
     reactable(
-      iris,
+      MASS::Cars93[, 1:5],
       showPageSizeOptions = TRUE,
-      selection = "multiple"
+      selection = "multiple",
+      onClick = "select"
     )
   })
 
@@ -73,6 +81,18 @@ server <- function(input, output) {
     if (state$page < state$pages) {
       updateReactable("table", page = state$page + 1)
     }
+  })
+
+  output$selected_row_details <- renderUI({
+    selected <- getReactableState("table", "selected")
+    req(selected)
+    details <- MASS::Cars93[selected, -c(1:5)]
+    tagList(
+      h2("Selected row details"),
+      tags$pre(
+        paste(capture.output(print(details, width = 1200)), collapse = "\n")
+      )
+    )
   })
 }
 

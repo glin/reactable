@@ -178,15 +178,21 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
 #' `getReactableState()` gets the state of a reactable instance within a Shiny application.
 #'
 #' @param outputId The Shiny output ID of the `reactable` instance.
-#' @param name Name of a state value to get. One of `"page"`, `"pageSize"`,
-#'   `"pages"`, or `"selected"`. If unspecified, all values will be returned
-#'   in a named list.
+#' @param name Character vector of state value(s) to get. Values must be one of `"page"`,
+#'   `"pageSize"`, `"pages"`, `sorted`, or `"selected"`. If unspecified, all values will
+#'   be returned.
 #' @param session The Shiny session object. Defaults to the current Shiny session.
 #' @return If `name` is specified, one of the following values:
+#'
 #'   - `page`: the current page
 #'   - `pageSize`: the page size
 #'   - `pages`: the number of pages
+#'   - `sorted`: the sorted columns - a named list of columns with values of `"asc"` for
+#'      ascending order or `"desc"` for descending order, or `NULL` if no columns are sorted
 #'   - `selected`: the selected rows - a numeric vector of row indices, or `NULL` if no rows are selected
+#'
+#'  If `name` contains more than one value, `getReactableState()` returns a named list of
+#'  the specified values.
 #'
 #'  If `name` is unspecified, `getReactableState()` returns a named list containing all values.
 #'
@@ -198,20 +204,23 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
 #'
 #' library(shiny)
 #' library(reactable)
+#' library(htmltools)
 #'
 #' ui <- fluidPage(
 #'   actionButton("prev_page_btn", "Previous page"),
 #'   actionButton("next_page_btn", "Next page"),
 #'   reactableOutput("table"),
-#'   verbatimTextOutput("table_state")
+#'   verbatimTextOutput("table_state"),
+#'   uiOutput("selected_row_details")
 #' )
 #'
 #' server <- function(input, output) {
 #'   output$table <- renderReactable({
 #'     reactable(
-#'       iris,
+#'       MASS::Cars93[, 1:5],
 #'       showPageSizeOptions = TRUE,
-#'       selection = "multiple"
+#'       selection = "multiple",
+#'       onClick = "select"
 #'     )
 #'   })
 #'
@@ -234,6 +243,18 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
 #'     if (state$page < state$pages) {
 #'       updateReactable("table", page = state$page + 1)
 #'     }
+#'   })
+#'
+#'   output$selected_row_details <- renderUI({
+#'     selected <- getReactableState("table", "selected")
+#'     req(selected)
+#'     details <- MASS::Cars93[selected, -c(1:5)]
+#'     tagList(
+#'       h2("Selected row details"),
+#'       tags$pre(
+#'         paste(capture.output(print(details, width = 1200)), collapse = "\n")
+#'       )
+#'     )
 #'   })
 #' }
 #'
@@ -260,10 +281,10 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
     session$input[[sprintf("%s__reactable__%s", outputId, name)]]
   }
 
-  props <- c("page", "pageSize", "pages", "selected")
+  props <- c("page", "pageSize", "pages", "sorted", "selected")
   if (!is.null(name)) {
-    if (!is.character(name) || !name %in% props) {
-      stop(paste("`name` must be one of", paste(sprintf('"%s"', props), collapse = ", ")))
+    if (!is.character(name) || any(!name %in% props)) {
+      stop(paste("`name` values must be one of", paste(sprintf('"%s"', props), collapse = ", ")))
     }
     if (length(name) == 1) {
       return(getState(outputId, name))
