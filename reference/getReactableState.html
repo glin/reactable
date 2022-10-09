@@ -97,9 +97,9 @@
 
 
 <dt>name</dt>
-<dd><p>Name of a state value to get. One of <code>"page"</code>, <code>"pageSize"</code>,
-<code>"pages"</code>, or <code>"selected"</code>. If unspecified, all values will be returned
-in a named list.</p></dd>
+<dd><p>Character vector of state value(s) to get. Values must be one of <code>"page"</code>,
+<code>"pageSize"</code>, <code>"pages"</code>, <code>sorted</code>, or <code>"selected"</code>. If unspecified, all values will
+be returned.</p></dd>
 
 
 <dt>session</dt>
@@ -113,8 +113,14 @@ in a named list.</p></dd>
 <p>If <code>name</code> is specified, one of the following values:</p><ul><li><p><code>page</code>: the current page</p></li>
 <li><p><code>pageSize</code>: the page size</p></li>
 <li><p><code>pages</code>: the number of pages</p></li>
+<li><p><code>sorted</code>: the sorted columns - a named list of columns with values of <code>"asc"</code> for
+ascending order or <code>"desc"</code> for descending order, or <code>NULL</code> if no columns are sorted</p></li>
 <li><p><code>selected</code>: the selected rows - a numeric vector of row indices, or <code>NULL</code> if no rows are selected</p></li>
-</ul><p>If <code>name</code> is unspecified, <code>getReactableState()</code> returns a named list containing all values.</p>
+</ul><p>If <code>name</code> contains more than one value, <code>getReactableState()</code> returns a named list of
+the specified values.</p>
+
+
+<p>If <code>name</code> is unspecified, <code>getReactableState()</code> returns a named list containing all values.</p>
 
 
 <p>If the table has not been rendered yet, <code>getReactableState()</code> returns <code>NULL</code>.</p>
@@ -127,20 +133,23 @@ in a named list.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.rstudio.com/" class="external-link">shiny</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"prev_page_btn"</span>, <span class="st">"Previous page"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"next_page_btn"</span>, <span class="st">"Next page"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="reactable-shiny.html">reactableOutput</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"table_state"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"table_state"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/htmlOutput.html" class="external-link">uiOutput</a></span><span class="op">(</span><span class="st">"selected_row_details"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">output</span><span class="op">$</span><span class="va">table</span> <span class="op">&lt;-</span> <span class="fu"><a href="reactable-shiny.html">renderReactable</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="reactable.html">reactable</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="va">iris</span>,</span></span>
+<span class="r-in"><span>      <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>      showPageSizeOptions <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>      selection <span class="op">=</span> <span class="st">"multiple"</span></span></span>
+<span class="r-in"><span>      selection <span class="op">=</span> <span class="st">"multiple"</span>,</span></span>
+<span class="r-in"><span>      onClick <span class="op">=</span> <span class="st">"select"</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -163,6 +172,18 @@ in a named list.</p></dd>
 <span class="r-in"><span>    <span class="kw">if</span> <span class="op">(</span><span class="va">state</span><span class="op">$</span><span class="va">page</span> <span class="op">&lt;</span> <span class="va">state</span><span class="op">$</span><span class="va">pages</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>      <span class="fu"><a href="updateReactable.html">updateReactable</a></span><span class="op">(</span><span class="st">"table"</span>, page <span class="op">=</span> <span class="va">state</span><span class="op">$</span><span class="va">page</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">}</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">output</span><span class="op">$</span><span class="va">selected_row_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">selected</span> <span class="op">&lt;-</span> <span class="fu">getReactableState</span><span class="op">(</span><span class="st">"table"</span>, <span class="st">"selected"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/req.html" class="external-link">req</a></span><span class="op">(</span><span class="va">selected</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">details</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="va">selected</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">h2</a></span><span class="op">(</span><span class="st">"Selected row details"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      <span class="va">tags</span><span class="op">$</span><span class="fu">pre</span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html" class="external-link">capture.output</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">details</span>, width <span class="op">=</span> <span class="fl">1200</span><span class="op">)</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

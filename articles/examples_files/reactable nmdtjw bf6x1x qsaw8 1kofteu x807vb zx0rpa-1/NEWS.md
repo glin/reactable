@@ -18,6 +18,7 @@
 * New [`Reactable.onStateChange()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-onstatechange)
   method in the JavaScript API that sets up a function to be called whenever the
   table state changes ([#265](https://github.com/glin/reactable/issues/265)).
+* `getReactableState()` now includes the current sorted columns ([#265](https://github.com/glin/reactable/issues/265)).
 
 ## Minor improvements and bug fixes
 
@@ -42,6 +43,7 @@
   instead of an empty object like {}.
 * `reactableTheme()` styles no longer override custom user CSS in the
   HTML document `<head>`.
+* `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
 
 ## Breaking changes
 
