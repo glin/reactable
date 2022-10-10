@@ -980,8 +980,20 @@ function Table({
     const rows = instance.page.map((row, viewIndex) => {
       instance.prepareRow(row)
 
+      // toggleRowSelected that supports single selection
+      const toggleRowSelected = set => {
+        if (set == null) {
+          set = !row.isSelected
+        }
+        if (selection === 'single') {
+          instance.setRowsSelected([])
+        }
+        row.toggleRowSelected(set)
+      }
+
       const rowInfo = {
         ...row,
+        toggleRowSelected,
         // For v6 compatibility
         viewIndex,
         row: row.values, // Deprecated in v0.3.0
@@ -1130,19 +1142,13 @@ function Table({
                 }
               }
 
-              let toggleRowSelected
-              if (selection === 'multiple' || (selection === 'single' && !cell.isAggregated)) {
-                toggleRowSelected = () => {
-                  if (selection === 'single') {
-                    instance.setRowsSelected([])
-                  }
-                  row.toggleRowSelected(!row.isSelected)
-                }
-              }
-              if (column.selectable && toggleRowSelected) {
+              const canRowSelect =
+                selection === 'multiple' || (selection === 'single' && !cell.isAggregated)
+
+              if (column.selectable && canRowSelect) {
                 cellProps = {
                   ...cellProps,
-                  onClick: toggleRowSelected,
+                  onClick: () => toggleRowSelected(),
                   className: classNames(cellProps.className, 'rt-td-select')
                 }
                 let ariaLabel
@@ -1155,7 +1161,7 @@ function Table({
                   <SelectInputComponent
                     type={selection === 'multiple' ? 'checkbox' : 'radio'}
                     checked={row.isSelected}
-                    onChange={toggleRowSelected}
+                    onChange={() => toggleRowSelected()}
                     aria-label={ariaLabel}
                   />
                 )
@@ -1165,8 +1171,8 @@ function Table({
               if (onClick && !cellProps.onClick) {
                 if (onClick === 'expand') {
                   cellProps.onClick = () => row.toggleRowExpanded()
-                } else if (onClick === 'select' && toggleRowSelected) {
-                  cellProps.onClick = toggleRowSelected
+                } else if (onClick === 'select' && canRowSelect) {
+                  cellProps.onClick = () => toggleRowSelected()
                 } else if (typeof onClick === 'function') {
                   cellProps.onClick = () => onClick(rowInfo, column, stateInfo)
                 }
