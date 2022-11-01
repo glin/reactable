@@ -3,6 +3,7 @@
 #' examples and an extensive usage guide.
 #' @keywords internal
 #' @import htmlwidgets
+#' @import htmltools
 #' @name reactable-package
 #' @aliases reactable-package
 "_PACKAGE"
@@ -217,8 +218,8 @@ reactable <- function(
   rowClass = NULL,
   rowStyle = NULL,
   fullWidth = TRUE,
-  width = "auto",
-  height = "auto",
+  width = NULL,
+  height = NULL,
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
   meta = NULL,
@@ -696,24 +697,17 @@ reactable <- function(
     rowClassName = rowClass,
     rowStyle = rowStyle,
     inline = if (!fullWidth) TRUE,
-    width = if (width != "auto") width,
-    height = if (height != "auto") height,
+    width = width,
+    height = height,
     theme = theme,
     language = language,
     meta = meta,
     crosstalkKey = crosstalkKey,
     crosstalkGroup = crosstalkGroup,
     elementId = elementId,
-    dataKey = dataKey
+    dataKey = dataKey,
+    static = static
   ))
-
-  if (static) {
-    # HACK: widget_html is the only way to customize the widget HTML, but it
-    # doesn't have access to the widget attributes. To work around this, we attach
-    # the widget attributes as an attribute on width, which just happens to be passed
-    # as-is for static rendered HTML widgets.
-    attr(width, "ssrGetAttribs") <- function() component$attribs
-  }
 
   htmlwidgets::createWidget(
     name = "reactable",
@@ -721,7 +715,11 @@ reactable <- function(
     width = width,
     height = height,
     # Don't limit width when rendered inside an R Notebook
-    sizingPolicy = htmlwidgets::sizingPolicy(knitr.figure = FALSE),
+    sizingPolicy = htmlwidgets::sizingPolicy(
+      defaultWidth = "auto",
+      defaultHeight = "auto",
+      knitr.figure = FALSE
+    ),
     package = "reactable",
     dependencies = dependencies,
     elementId = elementId
@@ -809,6 +807,86 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
   htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
 }
 
+#' Convert a reactable widget to HTML tags
+#'
+#' This S3 method exists to enable [reactable()]'s `static` rendering option.
+#'
+#' @param x a [reactable()] instance.
+#' @param standalone
+#'
+#' @export
+as.tags.reactable <- function(x, standalone = FALSE) {
+  # Should call htmlwidgets:::as.tags.htmlwidget(), which calls htmlwidgets::toHTML()
+  result <- NextMethod("as.tags", x, standalone = standalone)
+
+  # Make sure react is loaded before the reactable dependencies
+  dependencies <- c(
+    list(
+      reactR::html_dependency_corejs(), # Necessary for RStudio Viewer version < 1.2 and IE11
+      reactR::html_dependency_react(),
+      reactR::html_dependency_reacttools()
+    ),
+    htmlDependencies(result)
+  )
+
+  result <- attachDependencies(result, dependencies)
+
+  attribs <- x$x$tag$attribs
+  if (!isTRUE(attribs$static)) {
+    return(result)
+  }
+
+  # TODO: warn if this is running inside renderReactable()?
+  input_json <- toJSON(list(
+    props = attribs,
+    evals = htmlwidgets::JSEvals(attribs)
+  ))
+
+  output <- list()
+
+  tryCatch({
+    ctx <- V8::v8()
+    ctx$source(system.file("htmlwidgets/reactable.server.js", package = "reactable", mustWork = TRUE))
+    output <- ctx$call("Reactable.renderToHTML", input_json)
+  }, error = function(e) {
+    stop("Failed to render table to static HTML:\n", conditionMessage(e), call. = FALSE)
+  })
+
+  ssrHTML <- HTML(output$html)
+  ssrCSS <- NULL
+
+  if (any(nzchar(output$css))) {
+    ids <- paste(output$ids, collapse = " ")
+    # Make sure to keep this in sync with the Emotion cache key.
+    # Since this isn't well documented at https://emotion.sh/docs/ssr#when-using-emotioncss,
+    # data-emotion="{cache-key} {space-separated-ids}" allows for hydration to
+    # occur automatically without having to call emotion.cache.hydrate(ids),
+    # and prevents duplicate styles from being inserted into the page.
+    emotionAttr <- sprintf("reactable %s", ids)
+    styles <- tags$style(`data-emotion` = emotionAttr, htmltools::HTML(output$css))
+    # Use an empty htmlDependency to insert style tags into <head>. This prevents
+    # duplicate style tags when rendering duplicate tables and works around a
+    # pkgdown issue. pkgdown ignores tags$head() but does use head content from
+    # htmlDependencies, although still inserts the head content at the top of
+    # <body> instead of <head>.
+    ssrCSS <- htmlDependency(
+      emotionAttr, "1", "", head = as.character(styles), package = "reactable"
+    )
+  }
+
+  # Temporarily wrap result in additional tag to avoid this issue
+  # https://github.com/rstudio/htmltools/issues/334
+  wrapper <- htmltools::tag("WRAPPER", list(result))
+  wrapper <- tagAppendChildren(
+    wrapper, ssrHTML, ssrCSS, .cssSelector = ".reactable"
+  )
+  wrapper <- tagAppendAttributes(
+    wrapper, `data-react-ssr` = NA, .cssSelector = ".reactable"
+  )
+  browsable(wrapper$children)
+}
+
+
 
 #' Called by HTMLWidgets to produce the widget's root element
 #'
@@ -817,90 +895,14 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @param class Element class.
 #' @param ... Additional arguments.
 #' @keywords internal
-widget_html.reactable <- function(id, style, class, width = NULL, ...) {
+widget_html.reactable <- function(id, style, class, ...) {
   # Set text color in R Notebooks to prevent contrast issues when
   # using a dark editor theme and htmltools 0.4.0.
   if (isTRUE(getOption("rstudio.notebook.executing"))) {
     style <- paste0("color: #333;", style)
   }
 
-  # Static (server-side) rendering using V8
-  ssrHTML <- NULL
-  ssrStyles <- NULL
-  # HACK: widget_html is the only way to customize the widget HTML, but it
-  # doesn't have access to the widget attributes. To work around this, we access
-  # the widget through an attribute on width, which just happens to be passed as-is
-  # for static rendered HTML widgets. This won't be present for Shiny widget outputs,
-  # which can't use static rendering anyway.
-  ssrGetAttribs <- attr(width, "ssrGetAttribs")
-  if (!is.null(ssrGetAttribs)) {
-    if (requireNamespace("V8", quietly = TRUE)) {
-      attribs <- ssrGetAttribs()
-      input <- list(
-        props = attribs,
-        evals = htmlwidgets::JSEvals(attribs)
-      )
-
-      ctx <- V8::v8()
-      ctx$source(system.file("htmlwidgets/reactable.server.js", package = "reactable", mustWork = TRUE))
-
-      tryCatch({
-        output <- ctx$call("Reactable.renderToHTML", toJSON(input))
-        ssrHTML <- htmltools::HTML(output$html)
-        ssrStyles <- if (nzchar(output$css)) {
-          ids <- paste(output$ids, collapse = " ")
-          # Make sure to keep this in sync with the Emotion cache key.
-          # Since this isn't well documented at https://emotion.sh/docs/ssr#when-using-emotioncss,
-          # data-emotion="{cache-key} {space-separated-ids}" allows for hydration to
-          # occur automatically without having to call emotion.cache.hydrate(ids),
-          # and prevents duplicate styles from being inserted into the page.
-          emotionAttr <- sprintf("reactable %s", ids)
-          styles <- htmltools::tags$style(`data-emotion` = emotionAttr, output$css)
-          # Use an empty htmlDependency to insert style tags into <head>. This prevents
-          # duplicate style tags when rendering duplicate tables and works around a
-          # pkgdown issue. pkgdown ignores tags$head() but does use head content from
-          # htmlDependencies, although still inserts the head content at the top of
-          # <body> instead of <head>.
-          htmltools::htmlDependency(emotionAttr, "1", "", head = as.character(styles), package = "reactable")
-        }
-      }, error = function(e) {
-        warning(sprintf("Failed to render table to static HTML:\n%s", e), call. = FALSE)
-      })
-    } else {
-      # Fall back to client-side rendering if SSR doesn't work for some reason
-      warning('The V8 package must be installed to use `reactable(static = TRUE)`.
-Do you need to run `install.packages("V8")`?', call. = FALSE)
-    }
-  }
-
-  if (!is.null(ssrHTML)) {
-    htmltools::tagList(
-      # Necessary for RStudio Viewer version < 1.2 and IE11
-      reactR::html_dependency_corejs(),
-      reactR::html_dependency_react(),
-      reactR::html_dependency_reacttools(),
-      ssrStyles,
-      htmltools::tags$div(
-        id = id,
-        class = class,
-        style = style,
-        `data-react-ssr` = NA,
-        ssrHTML
-      )
-    )
-  } else {
-    htmltools::tagList(
-      # Necessary for RStudio Viewer version < 1.2 and IE11
-      reactR::html_dependency_corejs(),
-      reactR::html_dependency_react(),
-      reactR::html_dependency_reacttools(),
-      htmltools::tags$div(
-        id = id,
-        class = class,
-        style = style
-      )
-    )
-  }
+  htmltools::tags$div(id = id, class = class, style = style)
 }
 
 # Deprecated convention for htmlwidgets <= 1.5.2 support
