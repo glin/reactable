@@ -44,6 +44,8 @@
 * `reactableTheme()` styles no longer override custom user CSS in the
   HTML document `<head>`.
 * `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
+* Using `reactable()` on a dplyr grouped data frame ( `dplyr::group_by()` or `grouped_df`) with `rownames = TRUE`
+  no longer adds a `stringsAsFactors` column to the table (@daattali, [#283](https://github.com/glin/reactable/issues/283)).
 
 ## Breaking changes
 

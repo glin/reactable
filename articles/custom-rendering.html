@@ -107,8 +107,12 @@
       <div class="d-none name"><code>custom-rendering.Rmd</code></div>
     </div>
 
-      <p>You may want to customize how your data is displayed beyond what the built-in formatters provide. For example, inserting a link, combining data from multiple columns, or showing a column total that updates on filtering.</p>
-<p>In reactable, you can customize data rendering using either an R or JavaScript function that returns custom content:</p>
+      <p>You may want to customize how your data is displayed beyond
+what the built-in formatters provide. For example, inserting a link,
+combining data from multiple columns, or showing a column total that
+updates on filtering.</p>
+<p>In reactable, you can customize data rendering using either an R or
+JavaScript function that returns custom content:</p>
 <table style="table-layout: fixed;" class="table">
 <thead><tr>
 <th>
@@ -146,7 +150,8 @@ JavaScript render functions
 <ul>
 <li>Easier to use but more static</li>
 <li>Render once, when the table is created</li>
-<li>Supports <a href="https://shiny.rstudio.com/articles/tag-glossary.html" class="external-link"><code>htmltools</code></a> and <a href="https://www.htmlwidgets.org/" class="external-link"><code>htmlwidgets</code></a>
+<li>Supports <a href="https://shiny.rstudio.com/articles/tag-glossary.html" class="external-link"><code>htmltools</code></a>
+and <a href="https://www.htmlwidgets.org/" class="external-link"><code>htmlwidgets</code></a>
 </li>
 </ul>
 </td>
@@ -160,14 +165,18 @@ JavaScript render functions
 </tr>
 </tbody>
 </table>
-<p>Whichever one to use depends on the situation and personal preference. You might prefer to use R render functions except in cases where you need more dynamic behavior (e.g., render based on filtered state) or have a very large table.</p>
+<p>Whichever one to use depends on the situation and personal
+preference. You might prefer to use R render functions except in cases
+where you need more dynamic behavior (e.g., render based on filtered
+state) or have a very large table.</p>
 <div class="section level4">
 <h4 id="example-column-total-with-filtering">Example: column total with filtering<a class="anchor" aria-label="anchor" href="#example-column-total-with-filtering"></a>
 </h4>
 <div class="callout">
 <p>This example requires reactable v0.3.0 or above.</p>
 </div>
-<p>For example, you can easily add a column total using an R render function:</p>
+<p>For example, you can easily add a column total using an R render
+function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -181,8 +190,10 @@ JavaScript render functions
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-1e0b9b691b3a37c4204b" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-1e0b9b691b3a37c4204b">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that, you need a JavaScript render function with access to the client-side filtered state:</p>
+<div id="htmlwidget-37d0d2d27323f39e5736" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-37d0d2d27323f39e5736">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that,
+you need a JavaScript render function with access to the client-side
+filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">24</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -203,8 +214,8 @@ JavaScript render functions
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-dfdbeadddea2a34ed826" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-dfdbeadddea2a34ed826">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<div id="htmlwidget-dfbae7280caac080917c" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-dfbae7280caac080917c">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -212,7 +223,8 @@ JavaScript render functions
 <div class="section level3">
 <h3 id="cells-r-render-function">R render function<a class="anchor" aria-label="anchor" href="#cells-r-render-function"></a>
 </h3>
-<p>To customize cell rendering, provide an R function with up to 3 optional arguments:</p>
+<p>To customize cell rendering, provide an R function with up to 3
+optional arguments:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
@@ -230,7 +242,8 @@ JavaScript render functions
 <div class="section level3">
 <h3 id="cells-js-render-function">JavaScript render function<a class="anchor" aria-label="anchor" href="#cells-js-render-function"></a>
 </h3>
-<p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code>, with up to 2 optional arguments:</p>
+<p>Or a JavaScript function, wrapped in <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code>, with up to 2
+optional arguments:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  cell <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"</span></span>
@@ -246,7 +259,8 @@ JavaScript render functions
 <span><span class="st">  "</span><span class="op">)</span>,</span>
 <span>  html <span class="op">=</span> <span class="cn">TRUE</span>  <span class="co"># to render as HTML</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>With JavaScript functions, you can also customize rendering of grouped cells and aggregated cells:</p>
+<p>With JavaScript functions, you can also customize rendering of
+grouped cells and aggregated cells:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  grouped <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(cellInfo, state) {</span></span>
@@ -498,7 +512,8 @@ custom table metadata from
 <div class="section level3">
 <h3 id="headers-r-render-function">R render function<a class="anchor" aria-label="anchor" href="#headers-r-render-function"></a>
 </h3>
-<p>To customize header rendering, provide an R function with up to 2 optional arguments:</p>
+<p>To customize header rendering, provide an R function with up to 2
+optional arguments:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  header <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
@@ -733,7 +748,8 @@ custom table metadata from
 <div class="section level3">
 <h3 id="footers-r-render-function">R render function<a class="anchor" aria-label="anchor" href="#footers-r-render-function"></a>
 </h3>
-<p>To add footer content, provide an R function with up to 2 optional arguments:</p>
+<p>To add footer content, provide an R function with up to 2 optional
+arguments:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
@@ -968,7 +984,8 @@ custom table metadata from
 <div class="section level3">
 <h3 id="details-r-render-function">R render function<a class="anchor" aria-label="anchor" href="#details-r-render-function"></a>
 </h3>
-<p>To add expandable row details, provide an R function with up to 2 optional arguments:</p>
+<p>To add expandable row details, provide an R function with up to 2
+optional arguments:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
