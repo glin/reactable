@@ -324,6 +324,12 @@ test_that("rownames", {
   attribs <- getAttribs(tbl)
   expect_equal(as.character(attribs$data), '{"x":[1,2,3]}')
   expect_equal(length(attribs$columns), 1)
+
+  # Should work with grouped_df from dplyr. cbind.data.frame() uses stringsAsFactors, but
+  # dplyr:::cbind.grouped_df() ignores it
+  grouped_df <- dplyr::grouped_df(data.frame(x = c(1, 2)), "x")
+  tbl <- reactable(grouped_df, rownames = TRUE)
+  expect_equal(as.character(getAttrib(tbl, "data")), '{".rownames":[1,2],"x":[1,2]}')
 })
 
 test_that("groupBy", {
