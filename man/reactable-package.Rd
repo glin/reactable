@@ -39,7 +39,7 @@ Other contributors:
   \item  Feross Aboukhadijeh, and other contributors (buffer library) [contributor, copyright holder]
   \item Roman Shtylman (process library) [contributor, copyright holder]
   \item James Halliday (stream-browserify library) [contributor, copyright holder]
-  \item  RStudio, PBC [funder, copyright holder]
+  \item  Posit Software, PBC [funder, copyright holder]
 }
 
 }
