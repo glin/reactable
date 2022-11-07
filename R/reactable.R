@@ -816,23 +816,15 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #'
 #' @export
 as.tags.reactable <- function(x, standalone = FALSE) {
+  # Only need the static attribute for decided whether to SSR
+  attribs <- x$x$tag$attribs
+  static <- attribs$static
+  x$x$tag$attribs$static <- NULL
+
   # Should call htmlwidgets:::as.tags.htmlwidget(), which calls htmlwidgets::toHTML()
   result <- NextMethod("as.tags", x, standalone = standalone)
 
-  # Make sure react is loaded before the reactable dependencies
-  dependencies <- c(
-    list(
-      reactR::html_dependency_corejs(), # Necessary for RStudio Viewer version < 1.2 and IE11
-      reactR::html_dependency_react(),
-      reactR::html_dependency_reacttools()
-    ),
-    htmlDependencies(result)
-  )
-
-  result <- attachDependencies(result, dependencies)
-
-  attribs <- x$x$tag$attribs
-  if (!isTRUE(attribs$static)) {
+  if (!isTRUE(static)) {
     return(result)
   }
 
@@ -849,8 +841,12 @@ as.tags.reactable <- function(x, standalone = FALSE) {
     ctx$source(system.file("htmlwidgets/reactable.server.js", package = "reactable", mustWork = TRUE))
     output <- ctx$call("Reactable.renderToHTML", input_json)
   }, error = function(e) {
-    stop("Failed to render table to static HTML:\n", conditionMessage(e), call. = FALSE)
+    warning("Failed to render table to static HTML:\n", conditionMessage(e), call. = FALSE)
   })
+
+  if (length(output) == 0) {
+    return(result)
+  }
 
   ssrHTML <- HTML(output$html)
   ssrCSS <- NULL
@@ -902,7 +898,19 @@ widget_html.reactable <- function(id, style, class, ...) {
     style <- paste0("color: #333;", style)
   }
 
-  htmltools::tags$div(id = id, class = class, style = style)
+  htmltools::tags$div(
+    id = id, class = class, style = style, reactDependencies()
+  )
+}
+
+# Make sure react.js come before reactable.js. Note this "workaround"
+# wouldn't be needed with ramnathv/htmlwidgets#324
+reactDependencies <- function() {
+  list(
+    reactR::html_dependency_corejs(), # Necessary for RStudio Viewer version < 1.2 and IE11
+    reactR::html_dependency_react(),
+    reactR::html_dependency_reacttools()
+  )
 }
 
 # Deprecated convention for htmlwidgets <= 1.5.2 support
