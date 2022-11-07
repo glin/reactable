@@ -3799,10 +3799,10 @@ describe('filtering', () => {
           footer: (column, state) => {
             lastColumn.footer = column
             lastState.footer = state
-          }
+          },
+          details: (rowInfo, state) => (lastState.details = state)
         }
       ],
-      details: (rowInfo, state) => (lastState.details = state),
       filterable: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -4354,10 +4354,10 @@ describe('searching', () => {
           id: 'b',
           cell: (cellInfo, state) => (lastState.cell = state),
           header: (column, state) => (lastState.header = state),
-          footer: (column, state) => (lastState.footer = state)
+          footer: (column, state) => (lastState.footer = state),
+          details: (rowInfo, state) => (lastState.details = state)
         }
       ],
-      details: (rowInfo, state) => (lastState.details = state),
       searchable: true
     }
     const { container } = render(<Reactable {...props} />)
@@ -9689,6 +9689,65 @@ describe('reactable JavaScript API', () => {
     // Clear meta
     act(() => reactable.setMeta('my-tbl', undefined))
     expect(reactable.getState('my-tbl').meta).toEqual({})
+  })
+
+  it('Reactable.setData', () => {
+    const props = {
+      data: { a: ['a'], b: ['b'] },
+      columns: [
+        { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.index}` },
+        { name: 'b', id: 'b' }
+      ],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+
+    expect(() => reactable.setData('my-tbl', 'not-data')).toThrow(
+      'data must be an array of row objects or an object containing column arrays'
+    )
+    // Row format
+    const rowData = [
+      { a: 'a1', b: 'b1' },
+      { a: 'a2', b: 'b2' }
+    ]
+    expect(reactable.getState('my-tbl').data).toEqual([{ a: 'a', b: 'b' }])
+    act(() => reactable.setData('my-tbl', rowData))
+    expect(reactable.getState('my-tbl').data).toEqual(rowData)
+    // Column format
+    act(() =>
+      reactable.setData('my-tbl', { a: ['x', 'y'], b: ['q', 'w'], c: ['unused', 'unused'] })
+    )
+    expect(reactable.getState('my-tbl').data).toEqual([
+      { a: 'x', b: 'q', c: 'unused' },
+      { a: 'y', b: 'w', c: 'unused' }
+    ])
+
+    // Should reset selected state by default
+    const selectRowCheckboxes = getSelectRowCheckboxes(container)
+    const selectRow1Checkbox = selectRowCheckboxes[1]
+    fireEvent.click(selectRow1Checkbox)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    act(() => reactable.setData('my-tbl', rowData))
+    expect(selectRow1Checkbox.checked).toEqual(false)
+
+    // Don't reset selected state
+    fireEvent.click(selectRow1Checkbox)
+    expect(selectRow1Checkbox.checked).toEqual(true)
+    act(() => reactable.setData('my-tbl', rowData, { resetSelected: false }))
+    expect(selectRow1Checkbox.checked).toEqual(true)
+
+    // Should persist expanded state by default
+    const expanders = getExpanders(container)
+    expect(expanders).toHaveLength(2)
+    fireEvent.click(expanders[0])
+    expect(getRowDetails(container)[0].textContent).toEqual('row details: 0')
+    act(() => reactable.setData('my-tbl', rowData))
+    expect(getRowDetails(container)[0].textContent).toEqual('row details: 0')
+
+    // Reset expanded state
+    act(() => reactable.setData('my-tbl', rowData, { resetExpanded: true }))
+    expect(getRowDetails(container)).toHaveLength(0)
   })
 
   it('Reactable.onStateChange', async () => {

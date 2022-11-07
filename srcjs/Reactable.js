@@ -84,6 +84,10 @@ export function setMeta(tableId, meta) {
   getInstance(tableId).setMeta(meta)
 }
 
+export function setData(tableId, data, options) {
+  getInstance(tableId).setData(data, options)
+}
+
 export function onStateChange(tableId, listenerFn) {
   return getInstance(tableId).onStateChange(listenerFn)
 }
@@ -1665,6 +1669,22 @@ function Table({
     downloadCSV(csv, filename)
   }
   instance.setMeta = setMeta
+  instance.setData = (data, options = {}) => {
+    options = Object.assign({ resetSelected: true, resetExpanded: false }, options)
+    if (typeof data !== 'object' || data == null) {
+      throw new Error('data must be an array of row objects or an object containing column arrays')
+    }
+    if (!Array.isArray(data)) {
+      data = columnsToRows(data)
+    }
+    setNewData(data)
+    if (options.resetSelected) {
+      instance.setRowsSelected([])
+    }
+    if (options.resetExpanded) {
+      instance.toggleAllRowsExpanded(false)
+    }
+  }
 
   let stateCallbacks = React.useRef([])
   instance.onStateChange = listenerFn => {
