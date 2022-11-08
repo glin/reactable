@@ -40,6 +40,7 @@ filtered = data.filter(penguin => {
   return penguin.bill_length > billLengthMin && islands.includes(penguin.island)
 })
 
+// Update table data when filtered data changes
 Reactable.setData('tbl', filtered)
 ```
 
@@ -58,6 +59,15 @@ reactable(
 ```
 
 ## Using reactable to filter Observable charts
+
+```{ojs}
+// Create an Observable value that automatically tracks the table's filtered data
+filteredData = Generators.observe(change => {
+  return Reactable.onStateChange('tbl-input', state => {
+    change(state.sortedData)
+  })
+})
+```
 
 ```{r}
 library(reactable)
@@ -136,14 +146,6 @@ reactable(
   minRows = 5,
   elementId = "tbl-input"
 )
-```
-
-```{ojs}
-filteredData = Generators.observe(next => {
-  Reactable.onStateChange('tbl-input', state => {
-    next(state.sortedData)
-  })
-})
 ```
 
 ### Penguin body mass by sex and species
