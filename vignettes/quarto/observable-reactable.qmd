@@ -10,11 +10,12 @@ Examples of using Observable with reactable in Quarto, based on the [Observable 
 from the Quarto documentation.
 
 :::{.callout-note}
-These examples require new features in reactable v0.3.0.9000 (unreleased).
-[Install reactable from GitHub](https://github.com/glin/reactable/#installation) to try them out.
+This is a work in progress, and requires new features in reactable v0.3.0.9000 (unreleased).
+[Install reactable from GitHub](https://github.com/glin/reactable/#installation) to try out
+the examples.
 :::
 
-Source: [observable-reactable.qmd](https://github.com/glin/reactable/blob/main/vignettes/quarto/observable-reactable.qmd)
+Source code: [observable-reactable.qmd](https://github.com/glin/reactable/blob/main/vignettes/quarto/observable-reactable.qmd)
 
 ## Using Observable Inputs to filter reactable
 
