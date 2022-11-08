@@ -23,7 +23,7 @@ Authors@R: c(
     )
 Description: Interactive data tables for R, based on the 'React Table'
     JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
-    documents and 'Shiny' applications, or viewed from an R console.
+    or 'Quarto' documents, 'Shiny' applications, or viewed from an R console.
 License: MIT + file LICENSE
 URL: https://glin.github.io/reactable/,
         https://github.com/glin/reactable
@@ -52,4 +52,4 @@ Author: Greg Lin [aut, cre],
   James Halliday [ctb, cph] (stream-browserify library),
   Posit Software, PBC [fnd, cph]
 Maintainer: Greg Lin <glin@glin.io>
-Built: R 4.2.2; ; 2022-11-07 01:09:43 UTC; unix
+Built: R 4.2.2; ; 2022-11-08 21:19:31 UTC; unix
