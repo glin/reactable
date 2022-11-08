@@ -486,7 +486,7 @@ Reactable.onStateChange('cars-table', state => {
 })
 
 // Cancel the listener function
-cancel = Reactable.onStateChange('cars-table', listenerFn)
+const cancel = Reactable.onStateChange('cars-table', listenerFn)
 cancel()
 ```
 
