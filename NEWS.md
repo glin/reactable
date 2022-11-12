@@ -44,6 +44,8 @@
 * `reactableTheme()` styles no longer override custom user CSS in the
   HTML document `<head>`.
 * `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
+* `reactable()` now respects `htmlwidget::sizingPolicy()`'s `viewer.fill` and `browser.fill` and fills the
+  RStudio Viewer pane by default (@cpsievert, [#280](https://github.com/glin/reactable/issues/280)).
 
 ## Breaking changes
 

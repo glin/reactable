@@ -828,7 +828,13 @@ as.tags.reactable <- function(x, standalone = FALSE) {
     return(result)
   }
 
-  # TODO: warn if this is running inside renderReactable()?
+  if (!requireNamespace("V8", quietly = TRUE)) {
+    # Fall back to client-side rendering if V8 isn't installed
+    warning('The V8 package must be installed to use `reactable(static = TRUE)`.
+Do you need to run `install.packages("V8")`?', call. = FALSE)
+    return(result)
+  }
+
   input_json <- toJSON(list(
     props = attribs,
     evals = htmlwidgets::JSEvals(attribs)
