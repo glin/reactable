@@ -9,8 +9,10 @@
 \arguments{
 \item{x}{a \code{\link[=reactable]{reactable()}} instance.}
 
-\item{standalone}{}
+\item{standalone}{Logical value indicating whether the widget is being
+rendered in a standalone context.}
 }
 \description{
 This S3 method exists to enable \code{\link[=reactable]{reactable()}}'s \code{static} rendering option.
 }
+\keyword{internal}

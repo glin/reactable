@@ -812,8 +812,10 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' This S3 method exists to enable [reactable()]'s `static` rendering option.
 #'
 #' @param x a [reactable()] instance.
-#' @param standalone
+#' @param standalone Logical value indicating whether the widget is being
+#'   rendered in a standalone context.
 #'
+#' @keywords internal
 #' @export
 as.tags.reactable <- function(x, standalone = FALSE) {
   # Only need the static attribute for decided whether to SSR
