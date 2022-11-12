@@ -376,6 +376,42 @@ Reactable.setMeta('cars-table', prevMeta => {
 Reactable.setMeta('cars-table', undefined)
 ```
 
+### `Reactable.setData()`
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+Updates the table data. `data` can either be in row or column format. In row format, `data` is an array
+of row objects. In column format, `data` is an object containing arrays of column values. `data` should
+have all the same columns as the original table data.
+
+When updating data, the selected rows and current page will reset by default. All other state will persist,
+including sorting, filtering, and grouping state.
+
+```ts
+Reactable.setData(
+  tableId: string,
+  data: Array<object> | object
+)
+```
+
+#### Examples
+
+```js
+// Update data in row format
+Reactable.setData('cars-table', [
+  { Model: 'Legend', Type: 'Midsize' },
+  { Model: 'Integra', Type: 'Small' }
+])
+
+// Update data in column format
+Reactable.setData('cars-table', {
+  Model: ['Legend', 'Integra'],
+  Type: ['Midsize', 'Small']
+})
+```
+
 ### `Reactable.getState()`
 
 Gets the current state of a table.
@@ -450,7 +486,7 @@ Reactable.onStateChange('cars-table', state => {
 })
 
 // Cancel the listener function
-cancel = Reactable.onStateChange('cars-table', listenerFn)
+const cancel = Reactable.onStateChange('cars-table', listenerFn)
 cancel()
 ```
 

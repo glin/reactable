@@ -84,6 +84,10 @@ export function setMeta(tableId, meta) {
   getInstance(tableId).setMeta(meta)
 }
 
+export function setData(tableId, data, options) {
+  getInstance(tableId).setData(data, options)
+}
+
 export function onStateChange(tableId, listenerFn) {
   return getInstance(tableId).onStateChange(listenerFn)
 }
@@ -980,8 +984,20 @@ function Table({
     const rows = instance.page.map((row, viewIndex) => {
       instance.prepareRow(row)
 
+      // toggleRowSelected that supports single selection
+      const toggleRowSelected = set => {
+        if (set == null) {
+          set = !row.isSelected
+        }
+        if (selection === 'single') {
+          instance.setRowsSelected([])
+        }
+        row.toggleRowSelected(set)
+      }
+
       const rowInfo = {
         ...row,
+        toggleRowSelected,
         // For v6 compatibility
         viewIndex,
         row: row.values, // Deprecated in v0.3.0
@@ -1130,19 +1146,13 @@ function Table({
                 }
               }
 
-              let toggleRowSelected
-              if (selection === 'multiple' || (selection === 'single' && !cell.isAggregated)) {
-                toggleRowSelected = () => {
-                  if (selection === 'single') {
-                    instance.setRowsSelected([])
-                  }
-                  row.toggleRowSelected(!row.isSelected)
-                }
-              }
-              if (column.selectable && toggleRowSelected) {
+              const canRowSelect =
+                selection === 'multiple' || (selection === 'single' && !cell.isAggregated)
+
+              if (column.selectable && canRowSelect) {
                 cellProps = {
                   ...cellProps,
-                  onClick: toggleRowSelected,
+                  onClick: () => toggleRowSelected(),
                   className: classNames(cellProps.className, 'rt-td-select')
                 }
                 let ariaLabel
@@ -1155,7 +1165,7 @@ function Table({
                   <SelectInputComponent
                     type={selection === 'multiple' ? 'checkbox' : 'radio'}
                     checked={row.isSelected}
-                    onChange={toggleRowSelected}
+                    onChange={() => toggleRowSelected()}
                     aria-label={ariaLabel}
                   />
                 )
@@ -1165,8 +1175,8 @@ function Table({
               if (onClick && !cellProps.onClick) {
                 if (onClick === 'expand') {
                   cellProps.onClick = () => row.toggleRowExpanded()
-                } else if (onClick === 'select' && toggleRowSelected) {
-                  cellProps.onClick = toggleRowSelected
+                } else if (onClick === 'select' && canRowSelect) {
+                  cellProps.onClick = () => toggleRowSelected()
                 } else if (typeof onClick === 'function') {
                   cellProps.onClick = () => onClick(rowInfo, column, stateInfo)
                 }
@@ -1659,6 +1669,22 @@ function Table({
     downloadCSV(csv, filename)
   }
   instance.setMeta = setMeta
+  instance.setData = (data, options = {}) => {
+    options = Object.assign({ resetSelected: true, resetExpanded: false }, options)
+    if (typeof data !== 'object' || data == null) {
+      throw new Error('data must be an array of row objects or an object containing column arrays')
+    }
+    if (!Array.isArray(data)) {
+      data = columnsToRows(data)
+    }
+    setNewData(data)
+    if (options.resetSelected) {
+      instance.setRowsSelected([])
+    }
+    if (options.resetExpanded) {
+      instance.toggleAllRowsExpanded(false)
+    }
+  }
 
   let stateCallbacks = React.useRef([])
   instance.onStateChange = listenerFn => {

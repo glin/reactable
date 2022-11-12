@@ -258,11 +258,11 @@ reactable <- function(
     stop("`rownames` must be TRUE or FALSE")
   } else if (rownames) {
     rownamesKey <- ".rownames"
-    # Get row names from attribute to preserve type (in case of integer row names)
-    data <- cbind(
-      stats::setNames(list(attr(data, "row.names")), rownamesKey),
-      data,
-      stringsAsFactors = FALSE
+    # Get row names from attribute to preserve type (in case of integer row names).
+    # cbind.data.frame() is for consistent behavior with dplyr's grouped_df in R <= 3.6
+    data <- cbind.data.frame(
+      stats::setNames(data.frame(attr(data, "row.names"), stringsAsFactors = FALSE), rownamesKey),
+      data
     )
     rownamesColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE)
     if (rownamesKey %in% names(columns)) {

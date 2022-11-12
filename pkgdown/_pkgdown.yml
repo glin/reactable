@@ -47,6 +47,8 @@ navbar:
         href: articles/100k-rows.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
+      - text: Quarto and Observable
+        href: https://glin.quarto.pub/observable-reactable/
     tutorials:
       text: Tutorials
       menu:

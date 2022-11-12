@@ -18,6 +18,8 @@
 * New [`Reactable.onStateChange()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-onstatechange)
   method in the JavaScript API that sets up a function to be called whenever the
   table state changes ([#265](https://github.com/glin/reactable/issues/265)).
+* New [`Reactable.setData()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setdata)
+  method in the JavaScript API for updating the table data ([#278](https://github.com/glin/reactable/issues/278)).
 * `getReactableState()` now includes the current sorted columns ([#265](https://github.com/glin/reactable/issues/265)).
 
 ## Minor improvements and bug fixes
@@ -46,6 +48,8 @@
 * `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
 * `reactable()` now respects `htmlwidget::sizingPolicy()`'s `viewer.fill` and `browser.fill` and fills the
   RStudio Viewer pane by default (@cpsievert, [#280](https://github.com/glin/reactable/issues/280)).
+* Using `reactable()` on a dplyr grouped data frame ( `dplyr::group_by()` or `grouped_df`) with `rownames = TRUE`
+  no longer adds a `stringsAsFactors` column to the table (@daattali, [#283](https://github.com/glin/reactable/issues/283)).
 
 ## Breaking changes
 

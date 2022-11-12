@@ -1,0 +1,171 @@
+---
+title: "Using Observable with reactable in Quarto"
+format:
+  html:
+    echo: false
+    code-tools: true
+---
+
+Examples of using Observable with reactable in Quarto, based on the [Observable JS Penguins example](https://quarto.org/docs/interactive/ojs/examples/penguins.html)
+from the Quarto documentation.
+
+:::{.callout-note}
+This is a work in progress, and requires new features in reactable v0.3.0.9000 (unreleased).
+[Install reactable from GitHub](https://github.com/glin/reactable/#installation) to try out
+the examples.
+:::
+
+Source code: [observable-reactable.qmd](https://github.com/glin/reactable/blob/main/vignettes/quarto/observable-reactable.qmd)
+
+## Using Observable Inputs to filter reactable
+
+```{ojs}
+//| panel: input
+viewof billLengthMin = Inputs.range(
+  [32, 50], 
+  { value: 35, step: 1, label: "Bill length (min):" }
+)
+
+viewof islands = Inputs.checkbox(
+  ["Torgersen", "Biscoe", "Dream"], 
+  { value: ["Torgersen", "Biscoe"], label: "Islands:" }
+)
+```
+
+```{ojs}
+//| include: false
+data = FileAttachment("palmer-penguins.csv").csv({ typed: true })
+
+filtered = data.filter(penguin => {
+  return penguin.bill_length > billLengthMin && islands.includes(penguin.island)
+})
+
+// Update table data when filtered data changes
+Reactable.setData('tbl', filtered)
+```
+
+```{r}
+library(reactable)
+
+data <- read.csv("palmer-penguins.csv")
+
+reactable(
+  data,
+  wrap = FALSE,
+  resizable = TRUE,
+  minRows = 10,
+  elementId = "tbl"
+)
+```
+
+## Using reactable to filter Observable charts
+
+```{ojs}
+// Create an Observable value that automatically tracks the table's filtered data
+filteredData = Generators.observe(change => {
+  return Reactable.onStateChange('tbl-input', state => {
+    change(state.sortedData)
+  })
+})
+```
+
+```{r}
+library(reactable)
+library(htmltools)
+
+data <- read.csv("palmer-penguins.csv")
+
+# Select input filter with an "All" default option
+selectFilter <- function(tableId, style = "width: 100%; height: 100%;") {
+  function(values, name) {
+    tags$select(
+      # Set to undefined to clear the filter
+      onchange = sprintf("
+        const value = event.target.value
+        Reactable.setFilter('%s', '%s', value === '__ALL__' ? undefined : value)
+      ", tableId, name),
+      # "All" has a special value to clear the filter, and is the default option
+      tags$option(value = "__ALL__", "All"),
+      lapply(unique(values), tags$option),
+      "aria-label" = sprintf("Filter %s", name),
+      style = style
+    )
+  }
+}
+
+# Min range filter input that handles NaNs
+minRangeFilter <- function(tableId, style = "width: 100%;") {
+  function(values, name) {
+    values <- na.omit(values)
+    oninput <- sprintf("Reactable.setFilter('%s', '%s', this.value)", tableId, name)
+    tags$input(
+      type = "range",
+      min = floor(min(values)),
+      max = ceiling(max(values)),
+      value = floor(min(values)),
+      oninput = oninput,
+      style = style,
+      "aria-label" = sprintf("Filter by minimum %s", name)
+    )
+  }
+}
+
+# Min value filter method that handles NaNs
+filterMinValue <- JS("(rows, columnId, filterValue) => {
+  return rows.filter(row => {
+    const value = row.values[columnId]
+    return !isNaN(value) && value >= filterValue
+  })
+}")
+
+reactable(
+  data,
+  columns = list(
+    species = colDef(
+      filterInput = selectFilter("tbl-input")
+    ),
+    island = colDef(
+      filterInput = selectFilter("tbl-input")
+    ),
+    bill_length = colDef(
+      filterMethod = filterMinValue,
+      filterInput = minRangeFilter("tbl-input")
+    ),
+    sex = colDef(
+      filterInput = selectFilter("tbl-input"),
+      # Exact match filter method
+      filterMethod = JS("(rows, columnId, filterValue) => {
+        return rows.filter(row => row.values[columnId] === filterValue)
+      }")
+    )
+  ),
+  filterable = TRUE,
+  wrap = FALSE,
+  resizable = TRUE,
+  defaultPageSize = 5,
+  minRows = 5,
+  elementId = "tbl-input"
+)
+```
+
+### Penguin body mass by sex and species
+
+```{ojs}
+Plot.rectY(filteredData, 
+  Plot.binX(
+    { y: "count" }, 
+    { x: "body_mass", fill: "species", thresholds: 20 }
+  ))
+  .plot({
+    facet: {
+      data: filteredData,
+      x: "sex",
+      y: "species",
+      marginRight: 80
+    },
+    marks: [
+      Plot.frame(),
+    ]
+  }
+)
+```

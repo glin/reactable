@@ -6,7 +6,7 @@
 \alias{_PACKAGE}
 \title{reactable: Interactive Data Tables for R}
 \description{
-Interactive data tables for R, based on the 'React Table' JavaScript library. Provides an HTML widget that can be used in 'R Markdown' documents and 'Shiny' applications, or viewed from an R console.
+Interactive data tables for R, based on the 'React Table' JavaScript library. Provides an HTML widget that can be used in 'R Markdown' or 'Quarto' documents, 'Shiny' applications, or viewed from an R console.
 }
 \details{
 See the \href{https://glin.github.io/reactable/}{online documentation} for
@@ -39,7 +39,7 @@ Other contributors:
   \item  Feross Aboukhadijeh, and other contributors (buffer library) [contributor, copyright holder]
   \item Roman Shtylman (process library) [contributor, copyright holder]
   \item James Halliday (stream-browserify library) [contributor, copyright holder]
-  \item  RStudio, PBC [funder, copyright holder]
+  \item  Posit Software, PBC [funder, copyright holder]
 }
 
 }

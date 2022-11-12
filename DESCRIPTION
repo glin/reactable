@@ -19,11 +19,11 @@ Authors@R: c(
            comment = "buffer library"),
     person("Roman", "Shtylman", role = c("ctb", "cph"), comment = "process library"),
     person("James", "Halliday", role = c("ctb", "cph"), comment = "stream-browserify library"),
-    person(family = "RStudio, PBC", role = c("fnd", "cph"))
+    person(family = "Posit Software, PBC", role = c("fnd", "cph"))
     )
 Description: Interactive data tables for R, based on the 'React Table'
     JavaScript library. Provides an HTML widget that can be used in 'R Markdown'
-    documents and 'Shiny' applications, or viewed from an R console.
+    or 'Quarto' documents, 'Shiny' applications, or viewed from an R console.
 License: MIT + file LICENSE
 URL: https://glin.github.io/reactable/, https://github.com/glin/reactable
 BugReports: https://github.com/glin/reactable/issues
