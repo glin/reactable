@@ -29,8 +29,6 @@ test_that("reactable handles invalid args", {
   expect_error(reactable(df, rowClass = 123))
   expect_error(reactable(df, rowStyle = 555))
   expect_error(reactable(df, fullWidth = "yes"))
-  expect_error(reactable(df, width = "asd"))
-  expect_error(reactable(df, height = "asd"))
 })
 
 test_that("reactable", {
@@ -50,11 +48,10 @@ test_that("reactable", {
   expected <- list(
     data = data,
     columns = columns,
-    dataKey = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns)),
+    static = FALSE
   )
   expect_equal(attribs, expected)
-  expect_equal(tbl$width, "auto")
-  expect_equal(tbl$height, "auto")
 
   # Table options
   tbl <- reactable(data.frame(x = "a", stringsAsFactors = TRUE), rownames = TRUE,
@@ -64,7 +61,7 @@ test_that("reactable", {
                    outlined = TRUE, bordered = TRUE, borderless = TRUE, striped = TRUE,
                    compact = TRUE, wrap = FALSE, showSortIcon = FALSE,
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
-                   fullWidth = FALSE, width = "400px", height = "100%")
+                   fullWidth = FALSE)
   attribs <- getAttribs(tbl)
   data <- data.frame(.rownames = 1, x = "a")
   data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
@@ -93,14 +90,10 @@ test_that("reactable", {
     className = "tbl",
     style = list(color = "red"),
     inline = TRUE,
-    width = "400px",
-    height = "100%",
-    dataKey = digest::digest(list(data, columns))
+    dataKey = digest::digest(list(data, columns)),
+    static = FALSE
   )
   expect_equal(attribs, expected)
-  expect_equal(tbl$width, "400px")
-  expect_equal(tbl$height, "100%")
-  expect_equal(tbl$sizingPolicy$knitr$figure, FALSE)
 
   # Style
   tbl <- reactable(data.frame(x = 1), style = " border-bottom: 1px solid; top: 50px")
@@ -1157,6 +1150,24 @@ test_that("rowClass and rowStyle", {
                list(list("background-color" = "red"), list(color = "red"), NULL))
 })
 
+test_that("width, height, and sizingPolicy", {
+  data <- data.frame(x = 1)
+  expect_error(reactable(data, width = "not a valid CSS unit"))
+  expect_error(reactable(data, height = "not a valid CSS unit"))
+
+  tbl <- reactable(data)
+  expect_equal(tbl$width, NULL)
+  expect_equal(tbl$height, NULL)
+
+  tbl <- reactable(data, width = "400px", height = "100%")
+  expect_equal(tbl$width, "400px")
+  expect_equal(tbl$height, "100%")
+
+  expect_equal(tbl$sizingPolicy$knitr$figure, FALSE)
+  expect_equal(tbl$sizingPolicy$defaultWidth, "auto")
+  expect_equal(tbl$sizingPolicy$defaultHeight, "auto")
+})
+
 test_that("theme", {
   data <- data.frame(x = 1)
 
@@ -1285,20 +1296,20 @@ test_that("reactableOutput", {
   expect_true(length(deps) > 0)
 
   # Output container should have data-reactable-output ID set
-  expect_equal(output[[1]][[4]]$attribs[["data-reactable-output"]], "mytbl")
-  expect_equal(output[[1]][[4]]$name, "div")
-  expect_equal(output[[1]][[4]]$attribs$id, "mytbl")
+  expect_equal(output[[1]]$attribs[["data-reactable-output"]], "mytbl")
+  expect_equal(output[[1]]$name, "div")
+  expect_equal(output[[1]]$attribs$id, "mytbl")
 })
 
 test_that("reactable_html", {
   html <- reactable_html("id", "color: red", "class")
-  expect_equal(html[[4]], htmltools::tags$div(id = "id", class = "class", style = "color: red"))
+  expect_equal(html, htmltools::tags$div(id = "id", class = "class", style = "color: red", reactDependencies()))
 
   # Text color should be set in R Notebooks
   old <- options(rstudio.notebook.executing = TRUE)
   on.exit(options(old))
   html <- reactable_html(NULL, "color: red", NULL)
-  expect_equal(html[[4]], htmltools::tags$div(style = "color: #333;color: red"))
+  expect_equal(html, htmltools::tags$div(style = "color: #333;color: red", reactDependencies()))
 })
 
 test_that("reactable.yaml widget dependencies are included with correct version", {
@@ -1467,7 +1478,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-CSR-fallback"
   )
-  expect_warning({ rendered <- htmltools::renderTags(tbl) }, "Failed to render table to static HTML:\n.+Error: error rendering JS")
+  expect_warning({ rendered <- htmltools::renderTags(tbl) }, "Failed to render table to static HTML:\nError: error rendering JS")
   expect_false(grepl("data-reactable-ssr", rendered$html))
   expect_false(grepl(">column-y-cell<", rendered$html))
   expect_snapshot(cat(rendered$html))
