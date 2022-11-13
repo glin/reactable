@@ -106,6 +106,8 @@
 <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code> styles no longer override custom user CSS in the HTML document <code>&lt;head&gt;</code>.</li>
 <li>
 <code><a href="../reference/getReactableState.html">getReactableState()</a></code> now accepts multiple values in its <code>name</code> argument to return a subset of state values.</li>
+<li>
+<code><a href="../reference/reactable.html">reactable()</a></code> now respects <code>htmlwidget::sizingPolicy()</code>’s <code>viewer.fill</code> and <code>browser.fill</code> and fills the RStudio Viewer pane by default (<a href="https://github.com/cpsievert" class="external-link">@cpsievert</a>, <a href="https://github.com/glin/reactable/issues/280" class="external-link">#280</a>).</li>
 <li>Using <code><a href="../reference/reactable.html">reactable()</a></code> on a dplyr grouped data frame ( <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code> or <code>grouped_df</code>) with <code>rownames = TRUE</code> no longer adds a <code>stringsAsFactors</code> column to the table (<a href="https://github.com/daattali" class="external-link">@daattali</a>, <a href="https://github.com/glin/reactable/issues/283" class="external-link">#283</a>).</li>
 </ul></div>
 <div class="section level3">

@@ -46,19 +46,7 @@
     <loc>/articles/examples.html</loc>
   </url>
   <url>
-    <loc>/articles/examples_files/reactable 1i3kzw9 8v5vll 12zn23j 8dii1e 4gt6he 6m0y0a-1/html/00Index.html</loc>
-  </url>
-  <url>
     <loc>/articles/examples_files/reactable 1yuake7 1tk1va a8iz64 mnmdts-1/html/00Index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/examples_files/reactable djr370-1/html/00Index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/examples_files/reactable nmdtjw bf6x1x qsaw8 1kofteu x807vb zx0rpa-1/html/00Index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/examples_files/reactable v2bp0c-1/html/00Index.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
@@ -107,6 +95,9 @@
   </url>
   <url>
     <loc>/news/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/as.tags.reactable.html</loc>
   </url>
   <url>
     <loc>/reference/colDef.html</loc>

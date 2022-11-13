@@ -46,6 +46,8 @@
 * `reactableTheme()` styles no longer override custom user CSS in the
   HTML document `<head>`.
 * `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
+* `reactable()` now respects `htmlwidget::sizingPolicy()`'s `viewer.fill` and `browser.fill` and fills the
+  RStudio Viewer pane by default (@cpsievert, [#280](https://github.com/glin/reactable/issues/280)).
 * Using `reactable()` on a dplyr grouped data frame ( `dplyr::group_by()` or `grouped_df`) with `rownames = TRUE`
   no longer adds a `stringsAsFactors` column to the table (@daattali, [#283](https://github.com/glin/reactable/issues/283)).
 
