@@ -151,7 +151,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
           value = col.cell({ ...cellInfo, value }, state)
         }
         // Make sure we don't render aggregated cells for R renderers
-        if (col.cell instanceof Array && !cellInfo.aggregated) {
+        if (Array.isArray(col.cell) && !cellInfo.aggregated) {
           value = col.cell[cellInfo.index]
           if (value) {
             value = hydrate({ Fragment, WidgetContainer }, value)
@@ -326,7 +326,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         let className
         if (typeof col.className === 'function') {
           className = col.className(rowInfo, column, state)
-        } else if (col.className instanceof Array) {
+        } else if (Array.isArray(col.className)) {
           className = col.className[rowInfo.index]
         } else {
           className = col.className
@@ -337,7 +337,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
         let style
         if (typeof col.style === 'function') {
           style = col.style(rowInfo, column, state)
-        } else if (col.style instanceof Array) {
+        } else if (Array.isArray(col.style)) {
           style = col.style[rowInfo.index]
         } else {
           style = col.style

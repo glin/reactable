@@ -960,7 +960,7 @@ function Table({
         props.html = content
       }
       props.children = content
-    } else if (details instanceof Array) {
+    } else if (Array.isArray(details)) {
       let content = details[rowInfo.index]
       if (content == null) {
         // No content to render. Although this row has no expander, it may still
@@ -1021,7 +1021,7 @@ function Table({
         let rowCls
         if (typeof rowClassName === 'function') {
           rowCls = rowClassName(rowInfo, stateInfo)
-        } else if (rowClassName instanceof Array) {
+        } else if (Array.isArray(rowClassName)) {
           rowCls = rowClassName[rowInfo.index]
         } else {
           rowCls = rowClassName
@@ -1031,7 +1031,7 @@ function Table({
       if (rowStyle) {
         if (typeof rowStyle === 'function') {
           rowProps.style = rowStyle(rowInfo, stateInfo)
-        } else if (rowStyle instanceof Array) {
+        } else if (Array.isArray(rowStyle)) {
           rowProps.style = rowStyle[rowInfo.index]
         } else {
           rowProps.style = rowStyle
@@ -1088,7 +1088,7 @@ function Table({
 
               let hasDetails
               if (column.details && !row.isGrouped) {
-                if (column.details instanceof Array && column.details[row.index] == null) {
+                if (Array.isArray(column.details) && column.details[row.index] == null) {
                   // Don't expand rows without content
                 } else {
                   hasDetails = true
@@ -1211,7 +1211,7 @@ function Table({
           let rowCls
           if (typeof rowClassName === 'function') {
             rowCls = rowClassName(undefined, stateInfo)
-          } else if (rowClassName instanceof Array) {
+          } else if (Array.isArray(rowClassName)) {
             // rowClassName not used for pad rows
           } else {
             rowCls = rowClassName
@@ -1221,7 +1221,7 @@ function Table({
         if (rowStyle) {
           if (typeof rowStyle === 'function') {
             rowProps.style = rowStyle(undefined, stateInfo)
-          } else if (rowStyle instanceof Array) {
+          } else if (Array.isArray(rowStyle)) {
             // rowStyle not used for pad rows
           } else {
             rowProps.style = rowStyle
