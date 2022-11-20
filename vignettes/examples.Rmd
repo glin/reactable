@@ -2343,6 +2343,41 @@ htmltools::browsable(
 )
 ```
 
+### CSV download button in Shiny
+
+While you can create download buttons in Shiny using `shiny::downloadButton()`, you may
+still prefer to use the JavaScript API, as [`Reactable.downloadDataCSV()`](./javascript-api.html#reactable-downloaddatacsv)
+automatically applies any client-side filtering that has been done to the table.
+
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+library(htmltools)
+
+csvDownloadButton <- function(id, filename = "data.csv", label = "Download as CSV") {
+  tags$button(
+    tagList(icon("download"), label),
+    onclick = sprintf("Reactable.downloadDataCSV('%s', '%s')", id, filename)
+  )
+}
+
+ui <- fluidPage(
+  csvDownloadButton("cars_table", filename = "cars.csv"),
+  reactableOutput("cars_table")
+)
+
+server <- function(input, output) {
+  output$cars_table <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")],
+      searchable = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
 ### Custom column filter
 
 ```{r}
