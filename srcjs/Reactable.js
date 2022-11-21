@@ -76,8 +76,12 @@ export function toggleAllRowsExpanded(tableId, isExpanded) {
   getInstance(tableId).toggleAllRowsExpanded(isExpanded)
 }
 
-export function downloadDataCSV(tableId, filename = 'data.csv') {
-  getInstance(tableId).downloadDataCSV(filename)
+export function downloadDataCSV(tableId, filename = 'data.csv', options = {}) {
+  getInstance(tableId).downloadDataCSV(filename, options)
+}
+
+export function getDataCSV(tableId, options = {}) {
+  return getInstance(tableId).getDataCSV(options)
 }
 
 export function setMeta(tableId, meta) {
@@ -490,10 +494,9 @@ function Table({
     return newData ? newData : originalData
   }, [newData, originalData])
 
-  const dataColumns = React.useMemo(
-    () => columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), []),
-    [columns]
-  )
+  const dataColumns = React.useMemo(() => {
+    return columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), [])
+  }, [columns])
 
   // Must be memoized to prevent re-filtering on every render
   const globalFilter = React.useMemo(() => {
@@ -1660,13 +1663,21 @@ function Table({
 
   // Expose a limited JavaScript API to the table instance
   instance.state = stateInfo
-  instance.downloadDataCSV = (filename = 'data.csv') => {
+  instance.downloadDataCSV = (filename, options = {}) => {
+    filename = filename || 'data.csv'
+    const csv = instance.getDataCSV(options)
+    downloadCSV(csv, filename)
+  }
+  instance.getDataCSV = (options = {}) => {
+    // Ignore columns without data (e.g., selection or details columns) by default
+    if (!options.columnIds && data.length > 0) {
+      options.columnIds = Object.keys(data[0])
+    }
     // Ensure rows are flattened and ignore sort order. Unlike instance.flatRows,
     // instance.preGroupedRows excludes aggregated rows and uses the original data order.
-    // Also ignore columns without data (e.g., selection or details columns) using
-    // row.original rather than row.values.
-    const csv = rowsToCSV(instance.preGroupedRows.map(row => row.original))
-    downloadCSV(csv, filename)
+    const rows = instance.preGroupedRows.map(row => row.values)
+    const csv = rowsToCSV(rows, options)
+    return csv
   }
   instance.setMeta = setMeta
   instance.setData = (data, options = {}) => {

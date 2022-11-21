@@ -1,5 +1,5 @@
 ---
-title: "JavaScript API"
+title: 'JavaScript API'
 output:
   html_document:
     toc: true
@@ -174,17 +174,26 @@ For more examples of custom controls that use the JavaScript API, check out the
 
 ### `Reactable.downloadDataCSV()`
 
-Downloads the table data to a CSV file. The downloaded file is named `data.csv`
+Downloads the table data to a CSV file. The downloaded file will be named `data.csv`
 by default, but you can customize this using the optional `filename` argument.
 
 The downloaded data will include any filters that have been applied, and
 exclude any sorting or grouping. Hidden columns will also be included, but
 this may be customizable in the future.
 
+For further customization, you can use the `options` argument to only include specific
+columns, exclude column headers, or change the field separator (new in v0.3.0.9000).
+
 ```ts
 Reactable.downloadDataCSV(
   tableId: string,
-  filename = "data.csv"
+  filename = "data.csv",
+  // New in v0.3.0.9000
+  options?: {
+    columnIds: string[],
+    headers: true,
+    sep: ','
+  }
 )
 ```
 
@@ -196,6 +205,51 @@ Reactable.downloadDataCSV('cars-table')
 
 // Download table data to a file named cars93.csv
 Reactable.downloadDataCSV('cars-table', 'cars93.csv')
+
+// Download table data to a tab-separated values file
+Reactable.downloadDataCSV('cars-table', 'cars93.tsv', { sep: '\t' })
+
+// Download table data with custom columns and headers excluded
+Reactable.downloadDataCSV('cars-table', 'cars93.csv', {
+  columnIds: ['Model', 'Type'],
+  headers: false
+})
+```
+
+### `Reactable.getDataCSV()`
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+Gets the table data as a CSV string. Same as [`Reactable.downloadDataCSV()`](#reactable-downloaddatacsv)
+but does not download the data.
+
+```ts
+Reactable.getDataCSV(
+  tableId: string,
+  options?: {
+    columnIds: string[],
+    headers: true,
+    sep: ','
+  }
+)
+```
+
+#### Value
+
+A string with the table data in CSV format.
+
+#### Examples
+
+```js
+// Get table data as a CSV string
+const csv = Reactable.getDataCSV('cars-table')
+console.log(csv)
+
+// Get table data as a tab-separted values string
+const tsv = Reactable.getDataCSV('cars-table', { sep: '\t' })
+console.log(tsv)
 ```
 
 ### `Reactable.setSearch()`
@@ -261,7 +315,10 @@ Reactable.setAllFilters(
 Reactable.setAllFilters('cars-table', [{ id: 'Type', value: 'midsize' }])
 
 // Set the column filters for the "Type" and "Model" columns
-Reactable.setAllFilters('cars-table', [{ id: 'Type', value: 'midsize' }, { id: 'Model', value: 'legend' }])
+Reactable.setAllFilters('cars-table', [
+  { id: 'Type', value: 'midsize' },
+  { id: 'Model', value: 'legend' }
+])
 
 // Clear all column filters
 Reactable.setAllFilters([])
@@ -302,7 +359,7 @@ set `columnIds` to an empty array, `[]`.
 ```ts
 Reactable.setGroupBy(
   tableId: string,
-  columnIds: Array<string>
+  columnIds: string[]
 )
 ```
 
@@ -546,7 +603,7 @@ server <- function(input, output) {
       })
     }")
   })
-  
+
   output$tbl_state <- renderPrint({
     writeLines("Table state:\n")
     print(input$tbl_state)
@@ -555,7 +612,6 @@ server <- function(input, output) {
 
 shinyApp(ui, server)
 ```
-
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */

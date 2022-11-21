@@ -111,7 +111,7 @@ test('convertRowsToV6', () => {
 })
 
 test('rowsToCSV', () => {
-  expect(rowsToCSV([])).toEqual('')
+  expect(rowsToCSV([])).toEqual('\n')
   expect(rowsToCSV([{ a: 'b' }])).toEqual('a\nb\n')
   expect(
     rowsToCSV([
@@ -157,9 +157,16 @@ test('rowsToCSV', () => {
   ).toEqual('emptyStr,null,numberNA,numberNaN\n,,NA,NaN\n')
 
   // CSV-unsafe characters
-  expect(rowsToCSV([{ comma: ',', dquote: '"', mix: '"ab,,cd""', '"comma, "': 'header' }])).toEqual(
-    'comma,dquote,mix,"""comma, """\n",","""","""ab,,cd""""",header\n'
-  )
+  expect(
+    rowsToCSV([
+      {
+        comma: ',',
+        dquote: '"',
+        mix: '"ab,,cd""',
+        '"comma, "': 'header'
+      }
+    ])
+  ).toEqual('comma,dquote,mix,"""comma, """\n",","""","""ab,,cd""""",header\n')
 
   // Multiple rows
   expect(
@@ -169,6 +176,31 @@ test('rowsToCSV', () => {
       { a: 'C', b: 0, c: '' }
     ])
   ).toEqual('a,b,c\na,12,\nb,-23,\nC,0,\n')
+
+  const rows = [
+    { a: 'a', b: 12, c: null },
+    { a: 'b', b: -23, c: '' }
+  ]
+
+  // Custom columns
+  expect(rowsToCSV(rows, { columnIds: ['c', 'a'] })).toEqual(`c,a
+,a
+,b
+`)
+
+  // No headers
+  expect(rowsToCSV(rows, { headers: false })).toEqual(`a,12,
+b,-23,
+`)
+
+  // Custom separator/delimiter
+  expect(rowsToCSV(rows, { sep: '\t' })).toEqual(`a\tb\tc
+a\t12\t
+b\t-23\t
+`)
+  expect(rowsToCSV([{ tab: 'a\tb', comma: ',' }], { sep: '\t' })).toEqual(`tab\tcomma
+"a\tb"\t,
+`)
 })
 
 describe('downloadCSV', () => {

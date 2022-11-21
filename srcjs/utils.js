@@ -38,10 +38,8 @@ export function convertRowsToV6(rows) {
   })
 }
 
-export function rowsToCSV(rows) {
-  if (rows.length === 0) {
-    return ''
-  }
+export function rowsToCSV(rows, options = {}) {
+  let { columnIds, headers = true, sep = ',' } = options
   const rowToCSV = row => {
     return row
       .map(value => {
@@ -55,20 +53,25 @@ export function rowsToCSV(rows) {
           value = JSON.stringify(value)
         }
         // Escape CSV-unsafe characters
-        if (typeof value === 'string' && value.match(/[",]/)) {
+        if (typeof value === 'string' && (value.includes('"') || value.includes(sep))) {
           value = `"${value.replace(/"/g, '""')}"`
         }
         return value
       })
-      .join(',')
+      .join(sep)
   }
-  let csv = []
-  const headers = Object.keys(rows[0])
-  csv.push(rowToCSV(headers))
+  let csvRows = []
+  if (!columnIds) {
+    columnIds = rows.length > 0 ? Object.keys(rows[0]) : []
+  }
+  if (headers) {
+    csvRows.push(rowToCSV(columnIds))
+  }
   for (let row of rows) {
-    csv.push(rowToCSV(Object.values(row)))
+    const values = columnIds.map(id => row[id])
+    csvRows.push(rowToCSV(values))
   }
-  return csv.join('\n') + '\n'
+  return csvRows.join('\n') + '\n'
 }
 
 export function downloadCSV(content, filename) {
