@@ -650,6 +650,9 @@ is.colFormat <- function(x) {
 }
 
 colType <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  }
   if (is.numeric(x)) {
     return("numeric")
   }

@@ -833,7 +833,7 @@ test_that("row details", {
   expect_equal(
     attribs$columns[[1]],
     list(
-      id = ".details", name = "", type = "NULL", sortable = FALSE,
+      id = ".details", name = "", type = NULL, sortable = FALSE,
       resizable = FALSE, filterable = FALSE, searchable = FALSE, width = 45,
       align = "center", details = list("a", NULL)
     )
@@ -975,7 +975,7 @@ test_that("row selection", {
   attribs <- getAttribs(tbl)
   expect_equal(attribs$selection, "single")
   expect_equal(attribs$columns[[1]], list(
-    id = ".selection", name = "", type = "NULL", resizable = FALSE,
+    id = ".selection", name = "", type = NULL, resizable = FALSE,
     width = 45, selectable = TRUE
   ))
 
@@ -995,7 +995,7 @@ test_that("row selection", {
   ))
   attribs <- getAttribs(tbl)
   expect_equal(attribs$columns[[1]], list(
-    id = ".selection", name = "", type = "NULL", resizable = TRUE,
+    id = ".selection", name = "", type = NULL, resizable = TRUE,
     width = 100, selectable = TRUE, className = "my-cls"
   ))
 
