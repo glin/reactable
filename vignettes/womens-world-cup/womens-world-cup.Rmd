@@ -215,6 +215,7 @@ htmltools::tags$link(
 
 /* Highlight headers when sorting */
 .header:hover,
+.header:focus,
 .header[aria-sort="ascending"],
 .header[aria-sort="descending"] {
   background-color: #eee;
