@@ -201,6 +201,26 @@ describe('tables', () => {
     rows = getDataRows(container)
     expect(rows).toHaveLength(2)
   })
+
+  it('converts string NA, NaN, Inf, -Inf in numeric columns', () => {
+    const props = {
+      data: { a: [1, 'NA', 'NaN', 'Inf', '-Inf'], b: ['str', 'NA', 'NaN', 'Inf', '-Inf'] },
+      columns: [
+        { name: 'a', id: 'a', type: 'numeric' },
+        { name: 'b', id: 'b' }
+      ],
+      rowClassName: (rowInfo, state) => {
+        expect(state.data).toEqual([
+          { a: 1, b: 'str' },
+          { a: null, b: 'NA' },
+          { a: NaN, b: 'NaN' },
+          { a: Infinity, b: 'Inf' },
+          { a: -Infinity, b: '-Inf' }
+        ])
+      }
+    }
+    render(<Reactable {...props} />)
+  })
 })
 
 describe('tbody', () => {
@@ -921,6 +941,21 @@ describe('cells', () => {
     fireEvent.click(getNextButton(container))
     expect(cellsA[0].textContent).toEqual('3')
     expect(cellsB[0].textContent).toEqual('2-c')
+  })
+
+  it('renders missing values', () => {
+    const props = {
+      data: { a: ['a', '', null], b: [1, 'NA', 'NaN'], c: [null, true, null] },
+      columns: [
+        { name: 'a', id: 'a', na: 'missing-str', className: 'col-a' },
+        { name: 'b', id: 'b', type: 'numeric', na: 'missing-num', className: 'col-b' },
+        { name: 'c', id: 'c', className: 'col-c' }
+      ]
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(getCellsText(container, '.col-a')).toEqual(['a', '\u200b', 'missing-str'])
+    expect(getCellsText(container, '.col-b')).toEqual(['1', 'missing-num', 'missing-num'])
+    expect(getCellsText(container, '.col-c')).toEqual(['\u200b', 'true', '\u200b'])
   })
 })
 
@@ -8645,8 +8680,11 @@ describe('updateReactable updates table state from Shiny', () => {
 
   it('updates data', () => {
     const props = {
-      data: { a: ['c1', 'c2', 'c3', 'c4'] },
-      columns: [{ name: 'a', id: 'a' }],
+      data: { a: ['c1', 'c2', 'c3', 'c4'], b: [1, 2, 3, 4] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b', type: 'numeric' }
+      ],
       defaultPageSize: 3
     }
     const { getByText, queryByText, rerender } = render(
@@ -8659,10 +8697,13 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(outputId).toEqual('__reactable__shiny-output-container')
 
     expect(getByText('c1')).toBeVisible()
-    act(() => updateState({ data: { a: ['newc1', 'newc2', 'newc3'] } }))
+    act(() => updateState({ data: { a: ['newc1', 'newc2', 'newc3'], b: [155, 'NA', 'NaN'] } }))
     expect(getByText('newc1')).toBeVisible()
     expect(getByText('newc2')).toBeVisible()
     expect(getByText('newc3')).toBeVisible()
+    expect(getByText('155')).toBeVisible()
+    expect(queryByText('NA')).toEqual(null)
+    expect(queryByText('NaN')).toEqual(null)
 
     // After updating data, rerendering with new data should work
     rerender(<Reactable {...props} data={{ a: ['b1', 'b2', 'b'] }} />)
@@ -9704,10 +9745,10 @@ describe('reactable JavaScript API', () => {
 
   it('Reactable.setData', () => {
     const props = {
-      data: { a: ['a'], b: ['b'] },
+      data: { a: ['a'], b: [1] },
       columns: [
         { name: 'a', id: 'a', details: rowInfo => `row details: ${rowInfo.index}` },
-        { name: 'b', id: 'b' }
+        { name: 'b', id: 'b', type: 'numeric' }
       ],
       selection: 'multiple',
       elementId: 'my-tbl'
@@ -9719,19 +9760,18 @@ describe('reactable JavaScript API', () => {
     )
     // Row format
     const rowData = [
-      { a: 'a1', b: 'b1' },
-      { a: 'a2', b: 'b2' }
+      { a: 'a1', b: 1 },
+      { a: 'a2', b: 'NA' } // Strings left as-is in row format
     ]
-    expect(reactable.getState('my-tbl').data).toEqual([{ a: 'a', b: 'b' }])
+    expect(reactable.getState('my-tbl').data).toEqual([{ a: 'a', b: 1 }])
     act(() => reactable.setData('my-tbl', rowData))
     expect(reactable.getState('my-tbl').data).toEqual(rowData)
+
     // Column format
-    act(() =>
-      reactable.setData('my-tbl', { a: ['x', 'y'], b: ['q', 'w'], c: ['unused', 'unused'] })
-    )
+    act(() => reactable.setData('my-tbl', { a: ['x', 'y'], b: [3, 'NA'], c: ['unused', 'unused'] }))
     expect(reactable.getState('my-tbl').data).toEqual([
-      { a: 'x', b: 'q', c: 'unused' },
-      { a: 'y', b: 'w', c: 'unused' }
+      { a: 'x', b: 3, c: 'unused' },
+      { a: 'y', b: null, c: 'unused' }
     ])
 
     // Should reset selected state by default

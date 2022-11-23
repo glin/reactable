@@ -1,5 +1,5 @@
 export function sum(values) {
-  const numbers = toNumbers(values)
+  const numbers = omitMissingNumbers(values)
   if (numbers.length === 0) {
     return 0
   }
@@ -9,7 +9,7 @@ export function sum(values) {
 }
 
 export function mean(values) {
-  const numbers = toNumbers(values)
+  const numbers = omitMissingNumbers(values)
   if (numbers.length === 0) {
     return NaN
   }
@@ -19,7 +19,7 @@ export function mean(values) {
 }
 
 export function maxNumber(values) {
-  const numbers = toNumbers(values)
+  const numbers = omitMissingNumbers(values)
   if (numbers.length === 0) {
     return NaN
   }
@@ -27,7 +27,7 @@ export function maxNumber(values) {
 }
 
 export function minNumber(values) {
-  const numbers = toNumbers(values)
+  const numbers = omitMissingNumbers(values)
   if (numbers.length === 0) {
     return NaN
   }
@@ -35,7 +35,7 @@ export function minNumber(values) {
 }
 
 export function median(values) {
-  const numbers = toNumbers(values)
+  const numbers = omitMissingNumbers(values)
   if (numbers.length === 0) {
     return NaN
   }
@@ -120,26 +120,6 @@ export function round(n, digits = 3) {
   return (Math.sign(n) * Math.round(Math.abs(n) * c)) / c
 }
 
-function toNumbers(values) {
-  return values.map(normalizeNumber).filter(n => !Number.isNaN(n))
-}
-
-export function normalizeNumber(n) {
-  if (typeof n === 'number') {
-    return n
-  }
-  if (n == null || isNA(n)) {
-    return NaN
-  }
-  if (n === 'Inf') {
-    return Infinity
-  }
-  if (n === '-Inf') {
-    return -Infinity
-  }
-  return Number(n)
-}
-
-export function isNA(value) {
-  return value === 'NA' || value === 'NaN'
+function omitMissingNumbers(values) {
+  return values.filter(n => n != null && !Number.isNaN(n))
 }

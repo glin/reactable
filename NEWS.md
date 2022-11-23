@@ -58,6 +58,18 @@
 
 ## Breaking changes
 
+* Numeric `NA` values are now represented as `null` in JavaScript instead of an `"NA"` string.
+  Numeric `NaN`, `Inf`, and `-Inf` values are now represented as `NaN`, `Infinity`, and `-Infinity`
+  in JavaScript instead of `"NaN"`, `"Inf"`, and `"-Inf"` strings. (@daattali, [#261](https://github.com/glin/reactable/issues/261))
+  ```js
+  function(cellInfo) {
+    // Old
+    cellInfo.value // "NA", "NaN", "Inf", "-Inf"
+
+    // New
+    cellInfo.value // null, NaN, Infinity, -Infinity
+  }
+  ```
 * Support for Internet Explorer 11 (IE 11) is deprecated. Existing features will continue
   to work in IE 11, but new features may not support IE 11, and IE 11 is no longer tested.
 * The documentation website no longer supports IE 11.

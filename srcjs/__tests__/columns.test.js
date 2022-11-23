@@ -3,6 +3,7 @@ import reactR from 'reactR'
 import { render } from '@testing-library/react'
 
 import {
+  normalizeColumnData,
   columnsToRows,
   RawHTML,
   addColumnGroups,
@@ -16,6 +17,23 @@ import * as aggregators from '../aggregators'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
+
+test('normalizeColumnData', () => {
+  const data = { a: [1, 'NA', 'NaN', 'Inf', '-Inf', NaN], b: ['x', 'y', 'z', 'NA', null, ''] }
+  const columns = [
+    { id: 'b', type: 'not-numeric' },
+    { id: 'a', type: 'numeric' }
+  ]
+  const rows = normalizeColumnData(data, columns)
+  expect(rows).toEqual([
+    { a: 1, b: 'x' },
+    { a: null, b: 'y' },
+    { a: NaN, b: 'z' },
+    { a: Infinity, b: 'NA' },
+    { a: -Infinity, b: null },
+    { a: NaN, b: '' }
+  ])
+})
 
 describe('columnsToRows', () => {
   test('converts column-wise data to row-wise format', () => {
@@ -323,10 +341,10 @@ describe('buildColumnDefs', () => {
   test('NA and NaN rendering', () => {
     // Default rendering of numeric NAs
     let cols = buildColumnDefs([{ id: 'x', type: 'numeric', grouped: cellInfo => cellInfo.value }])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('\u200b')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('\u200b')
-    expect(cols[0].Grouped({ value: 'NA' })).toEqual('\u200b')
-    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('\u200b')
+    expect(cols[0].Cell({ value: null })).toEqual('\u200b')
+    expect(cols[0].Cell({ value: NaN })).toEqual('\u200b')
+    expect(cols[0].Grouped({ value: null })).toEqual('\u200b')
+    expect(cols[0].Grouped({ value: NaN })).toEqual('\u200b')
 
     // Default rendering of non-numeric NAs (serialized as nulls)
     cols = buildColumnDefs([{ id: 'x', grouped: cellInfo => cellInfo.value }])
@@ -338,11 +356,11 @@ describe('buildColumnDefs', () => {
       { id: 'x', type: 'numeric', na: '---', grouped: cellInfo => cellInfo.value },
       { id: 'y', na: 'missing', grouped: cellInfo => cellInfo.value }
     ])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('---')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('---')
+    expect(cols[0].Cell({ value: null })).toEqual('---')
+    expect(cols[0].Cell({ value: NaN })).toEqual('---')
     expect(cols[1].Cell({ value: null })).toEqual('missing')
-    expect(cols[0].Grouped({ value: 'NA' })).toEqual('---')
-    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('---')
+    expect(cols[0].Grouped({ value: null })).toEqual('---')
+    expect(cols[0].Grouped({ value: NaN })).toEqual('---')
     expect(cols[1].Grouped({ value: null })).toEqual('missing')
 
     // Works with renderers, ignored by formatters
@@ -361,11 +379,11 @@ describe('buildColumnDefs', () => {
         grouped: cellInfo => `__${cellInfo.value ? cellInfo.value : 'missing'}__`
       }
     ])
-    expect(cols[0].Cell({ value: 'NA' })).toEqual('__missing__')
-    expect(cols[0].Cell({ value: 'NaN' })).toEqual('__missing__')
+    expect(cols[0].Cell({ value: null })).toEqual('__missing__')
+    expect(cols[0].Cell({ value: NaN })).toEqual('__missing__')
     expect(cols[1].Cell({ value: null })).toEqual('__missing__')
-    expect(cols[0].Grouped({ value: 'NA' })).toEqual('__missing__')
-    expect(cols[0].Grouped({ value: 'NaN' })).toEqual('__missing__')
+    expect(cols[0].Grouped({ value: null })).toEqual('__missing__')
+    expect(cols[0].Grouped({ value: NaN })).toEqual('__missing__')
     expect(cols[1].Grouped({ value: null })).toEqual('__missing__')
   })
 
@@ -377,7 +395,7 @@ describe('buildColumnDefs', () => {
     // Numeric sort
     cols = buildColumnDefs([{ id: 'x', type: 'numeric' }])
     expect(cols[0].sortType({ values: { x: 111 } }, { values: { x: 2 } }, 'x')).toEqual(1)
-    expect(cols[0].sortType({ values: { x: 111 } }, { values: { x: 'Inf' } }, 'x')).toEqual(-1)
+    expect(cols[0].sortType({ values: { x: 111 } }, { values: { x: Infinity } }, 'x')).toEqual(-1)
 
     // Sort missing values last
     cols = buildColumnDefs([{ id: 'x', sortNALast: true }])
@@ -472,8 +490,8 @@ describe('buildColumnDefs', () => {
     let cols = buildColumnDefs([{ id: 'x', type: 'numeric' }])
     expect(cols[0].Cell({ value: 123 })).toEqual('123')
     expect(cols[0].Cell({ value: 0 })).toEqual('0')
-    expect(cols[0].Cell({ value: 'Inf' })).toEqual('Inf')
-    expect(cols[0].Cell({ value: '-Inf' })).toEqual('-Inf')
+    expect(cols[0].Cell({ value: Infinity })).toEqual('Infinity')
+    expect(cols[0].Cell({ value: -Infinity })).toEqual('-Infinity')
     expect(cols[0].align).toEqual('right')
     expect(cols[0].className).toEqual(undefined)
     expect(cols[0].getProps({ index: 0 }, {}, null).className).toEqual('rt-align-right')
@@ -849,7 +867,7 @@ describe('createCompareFunction', () => {
       ['xyz', null, 1],
       [null, 'Z', -1],
       [null, null, 0],
-      [null, 'Inf', -1],
+      [null, Infinity, -1],
       [true, false, 1],
       [false, true, -1],
       [true, true, 0]
@@ -881,40 +899,56 @@ describe('createCompareFunction', () => {
       [0, 1, -1],
       [1, 0, 1],
       [5, 5.01, -1],
-      ['NA', 0, -1],
-      [0, 'NA', 1],
-      ['NA', 'NA', 0],
-      ['Inf', 1, 1],
-      ['-Inf', 1, -1],
-      [1, 'Inf', -1],
-      [-1, '-Inf', 1],
-      ['Inf', 'Inf', 0],
-      ['-Inf', '-Inf', 0],
-      ['NA', 'Inf', -1],
-      ['Inf', 'NA', 1],
-      ['NA', '-Inf', -1],
-      ['-Inf', 'NA', 1],
-      ['2', '10', -1]
+      [NaN, 0, -1],
+      [0, NaN, 1],
+      [null, 0, -1],
+      [0, null, 1],
+      [NaN, NaN, 0],
+      [null, null, 0],
+      [Infinity, 1, 1],
+      [-Infinity, 1, -1],
+      [1, Infinity, -1],
+      [-1, -Infinity, 1],
+      [Infinity, Infinity, 0],
+      [-Infinity, -Infinity, 0],
+      [NaN, Infinity, -1],
+      [Infinity, NaN, 1],
+      [NaN, -Infinity, -1],
+      [-Infinity, NaN, 1],
+      [null, Infinity, -1],
+      [Infinity, null, 1],
+      [null, -Infinity, -1],
+      [-Infinity, null, 1],
+      // Strings aren't converted (and shouldn't appear), but should still be sorted as strings
+      ['2', '10', 1]
     ]
     tests.forEach(([a, b, order]) => {
-      expect(compareNumbers(a, b)).toEqual(order)
+      expect({ a, b, order: compareNumbers(a, b) }).toEqual({ a, b, order })
     })
   })
 
   test('compare numbers with naLast', () => {
     const compareNumbers = createCompareFunction({ type: 'numeric', naLast: true })
     const tests = [
-      ['NA', 0, true, -1],
-      ['NA', 0, false, 1],
-      [0, 'NA', true, 1],
-      [0, 'NA', false, -1],
-      ['NA', '-Inf', true, -1],
-      ['-Inf', 'NA', false, -1],
-      ['NA', 'NA', true, 0],
-      ['NA', 'NA', false, 0]
+      [NaN, 0, true, -1],
+      [NaN, 0, false, 1],
+      [0, NaN, true, 1],
+      [0, NaN, false, -1],
+      [NaN, -Infinity, true, -1],
+      [-Infinity, NaN, false, -1],
+      [NaN, NaN, true, 0],
+      [NaN, NaN, false, 0],
+      [null, 0, true, -1],
+      [null, 0, false, 1],
+      [0, null, true, 1],
+      [0, null, false, -1],
+      [null, -Infinity, true, -1],
+      [-Infinity, null, false, -1],
+      [null, null, true, 0],
+      [null, null, false, 0]
     ]
     tests.forEach(([a, b, desc, order]) => {
-      expect(compareNumbers(a, b, desc)).toEqual(order)
+      expect({ a, b, order: compareNumbers(a, b, desc) }).toEqual({ a, b, order })
     })
   })
 })

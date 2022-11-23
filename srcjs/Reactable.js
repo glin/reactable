@@ -21,7 +21,7 @@ import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
 import useMeta from './useMeta'
-import { columnsToRows, buildColumnDefs, emptyValue, getSubRows, RawHTML } from './columns'
+import { buildColumnDefs, emptyValue, getSubRows, normalizeColumnData, RawHTML } from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
 import {
@@ -111,7 +111,7 @@ export default function Reactable({
   dataKey,
   ...rest
 }) {
-  data = columnsToRows(data)
+  data = normalizeColumnData(data, columns)
   columns = buildColumnDefs(columns, columnGroups, {
     sortable,
     defaultSortDesc,
@@ -1490,7 +1490,7 @@ function Table({
         }
       }
       if (newState.data != null) {
-        const data = columnsToRows(newState.data)
+        const data = normalizeColumnData(newState.data, dataColumns)
         setNewData(data)
       }
       if (newState.selected != null) {
@@ -1522,6 +1522,7 @@ function Table({
     instance.setRowsSelected,
     instance.gotoPage,
     instance.toggleAllRowsExpanded,
+    dataColumns,
     getPageCount,
     setMeta
   ])
@@ -1685,8 +1686,9 @@ function Table({
     if (typeof data !== 'object' || data == null) {
       throw new Error('data must be an array of row objects or an object containing column arrays')
     }
+    // If data is in row format, it's assumed to have all numbers normalized (NA/NaN/Inf/-Inf not as strings)
     if (!Array.isArray(data)) {
-      data = columnsToRows(data)
+      data = normalizeColumnData(data, dataColumns)
     }
     setNewData(data)
     if (options.resetSelected) {

@@ -10,17 +10,17 @@ import {
   count,
   unique,
   frequency,
-  getAggregateFunction,
-  normalizeNumber
+  getAggregateFunction
 } from '../aggregators'
 
 test('sum', () => {
   expect(sum([1, 2, 3, 4, -1])).toEqual(9)
   expect(sum([1])).toEqual(1)
   expect(sum([0.1, 0.2])).toEqual(0.3)
-  expect(sum([1, 2, 'NA'])).toEqual(3)
-  expect(sum([1, 2, 'Inf'])).toEqual(Infinity)
-  expect(sum([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(sum([1, 2, null])).toEqual(3)
+  expect(sum([1, 2, NaN])).toEqual(3)
+  expect(sum([1, 2, Infinity])).toEqual(Infinity)
+  expect(sum([1, 2, -Infinity])).toEqual(-Infinity)
   expect(sum([])).toEqual(0)
 })
 
@@ -28,10 +28,11 @@ test('mean', () => {
   expect(mean([1, 2, 3, 4, 0])).toEqual(2)
   expect(mean([1])).toEqual(1)
   expect(mean([0.1, 0.2])).toEqual(0.15)
-  expect(mean([1, 2, 'NA'])).toEqual(1.5)
-  expect(mean([1, 2, 'Inf'])).toEqual(Infinity)
-  expect(mean([1, 2, '-Inf'])).toEqual(-Infinity)
-  expect(mean(['Inf', '-Inf'])).toEqual(NaN)
+  expect(mean([1, 2, null])).toEqual(1.5)
+  expect(mean([1, 2, NaN])).toEqual(1.5)
+  expect(mean([1, 2, Infinity])).toEqual(Infinity)
+  expect(mean([1, 2, -Infinity])).toEqual(-Infinity)
+  expect(mean([Infinity, -Infinity])).toEqual(NaN)
   expect(mean([])).toEqual(NaN)
 })
 
@@ -39,9 +40,10 @@ test('maxNumber', () => {
   expect(maxNumber([1, 2, 3, 4, 0])).toEqual(4)
   expect(maxNumber([1])).toEqual(1)
   expect(maxNumber([0.1, 0.2])).toEqual(0.2)
-  expect(maxNumber([1, 2, 'NA'])).toEqual(2)
-  expect(maxNumber([1, 2, 'Inf'])).toEqual(Infinity)
-  expect(maxNumber([1, 2, '-Inf'])).toEqual(2)
+  expect(maxNumber([1, 2, null])).toEqual(2)
+  expect(maxNumber([1, 2, NaN])).toEqual(2)
+  expect(maxNumber([1, 2, Infinity])).toEqual(Infinity)
+  expect(maxNumber([1, 2, -Infinity])).toEqual(2)
   expect(maxNumber([])).toEqual(NaN)
 })
 
@@ -49,9 +51,10 @@ test('minNumber', () => {
   expect(minNumber([1, 2, 3, 4, 0])).toEqual(0)
   expect(minNumber([1])).toEqual(1)
   expect(minNumber([-0.1, 0.2])).toEqual(-0.1)
-  expect(minNumber([1, 2, 'NA'])).toEqual(1)
-  expect(minNumber([1, 2, 'Inf'])).toEqual(1)
-  expect(minNumber([1, 2, '-Inf'])).toEqual(-Infinity)
+  expect(minNumber([1, 2, null])).toEqual(1)
+  expect(minNumber([1, 2, NaN])).toEqual(1)
+  expect(minNumber([1, 2, Infinity])).toEqual(1)
+  expect(minNumber([1, 2, -Infinity])).toEqual(-Infinity)
   expect(minNumber([])).toEqual(NaN)
 })
 
@@ -59,10 +62,11 @@ test('median', () => {
   expect(median([1, 2, 3, 4, 0])).toEqual(2)
   expect(median([1])).toEqual(1)
   expect(median([-0.1, 0.2])).toEqual(0.05)
-  expect(median([1, 2, 'NA'])).toEqual(1.5)
-  expect(median([1, 2, 'Inf'])).toEqual(2)
-  expect(median(['Inf', 'Inf', '-Inf'])).toEqual(Infinity)
-  expect(median(['Inf', '-Inf'])).toEqual(NaN)
+  expect(median([1, 2, null])).toEqual(1.5)
+  expect(median([1, 2, NaN])).toEqual(1.5)
+  expect(median([1, 2, Infinity])).toEqual(2)
+  expect(median([Infinity, Infinity, -Infinity])).toEqual(Infinity)
+  expect(median([Infinity, -Infinity])).toEqual(NaN)
   expect(median([])).toEqual(NaN)
 })
 
@@ -74,7 +78,9 @@ test('round', () => {
   expect(round(0.1 + 0.2)).toEqual(0.3)
   expect(round(123.1, -5)).toEqual(123)
   expect(round(Infinity, 3)).toEqual(Infinity)
+  expect(round(-Infinity, 3)).toEqual(-Infinity)
   expect(round(NaN, 3)).toEqual(NaN)
+  expect(round(null, 3)).toEqual(null)
   expect(round(-1.123)).toEqual(-1.123)
   expect(round(-1.15, 1)).toEqual(-1.2)
   expect(round(-1.1, 0)).toEqual(-1)
@@ -157,19 +163,4 @@ test('getAggregateFunction', () => {
   expect(getAggregateFunction('unique')).toEqual(unique)
   expect(getAggregateFunction('frequency', 'numeric')).toEqual(frequency)
   expect(getAggregateFunction('frequency')).toEqual(frequency)
-})
-
-test('normalizeNumber', () => {
-  expect(normalizeNumber(1)).toEqual(1)
-  expect(normalizeNumber(0)).toEqual(0)
-  expect(normalizeNumber(-1)).toEqual(-1)
-  expect(normalizeNumber(-1.2345)).toEqual(-1.2345)
-  expect(normalizeNumber(null)).toEqual(NaN)
-  expect(normalizeNumber(undefined)).toEqual(NaN)
-  expect(normalizeNumber('NA')).toEqual(NaN)
-  expect(normalizeNumber('NaN')).toEqual(NaN)
-  expect(normalizeNumber('Inf')).toEqual(Infinity)
-  expect(normalizeNumber('-Inf')).toEqual(-Infinity)
-  expect(normalizeNumber('12')).toEqual(12)
-  expect(normalizeNumber('-12')).toEqual(-12)
 })

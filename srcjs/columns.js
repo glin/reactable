@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
-import { getAggregateFunction, isNA, normalizeNumber } from './aggregators'
+import { getAggregateFunction } from './aggregators'
 import { classNames, escapeRegExp, getFirstDefined, getLeafColumns } from './utils'
 
 // Use zero-width spaces to preserve the height of empty cells
@@ -13,6 +13,39 @@ const subRowsKey = '.subRows'
 
 export function getSubRows(row) {
   return row[subRowsKey] || []
+}
+
+// Normalize raw column data from R for use in reactable
+export function normalizeColumnData(data, columns) {
+  for (let col of columns) {
+    if (col.type === 'numeric' && data[col.id]) {
+      convertJSONNumbers(data[col.id])
+    }
+  }
+  return columnsToRows(data)
+}
+
+// Convert JSON-serialized numbers to JavaScript numbers in place. jsonlite::toJSON() converts
+// numeric NA, NaN, Inf, -Inf to strings, as there isn't a way to represent them in JSON otherwise.
+export function convertJSONNumbers(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    let n = arr[i]
+    if (typeof n === 'number') {
+      continue
+    }
+    if (n === 'NA') {
+      n = null
+    } else if (n === 'NaN') {
+      n = NaN
+    } else if (n === 'Inf') {
+      n = Infinity
+    } else if (n === '-Inf') {
+      n = -Infinity
+    } else {
+      n = Number(n)
+    }
+    arr[i] = n
+  }
 }
 
 // Convert column-based data to rows
@@ -137,7 +170,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.Cell = function Cell(cellInfo, state) {
       let value = cellInfo.value
 
-      const isMissingValue = value == null || (col.type === 'numeric' && isNA(value))
+      const isMissingValue = value == null || Number.isNaN(value)
       if (isMissingValue) {
         value = col.na
       }
@@ -181,7 +214,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
       col.Grouped = function Grouped(cellInfo, state) {
         let value = cellInfo.value
 
-        const isMissingValue = value == null || (col.type === 'numeric' && isNA(value))
+        const isMissingValue = value == null || Number.isNaN(value)
         if (isMissingValue) {
           value = col.na
         }
@@ -437,13 +470,10 @@ export function addColumnGroups(columns, groups) {
   return columns
 }
 
-// Compare function that handles numbers (NAs and Inf/-Inf) and optionally
-// sorts missing values (NA, NaN, NULL) last.
+// Compare function that handles numbers and optionally sorts missing values (null, NaN) last.
 export function createCompareFunction({ type, naLast } = {}) {
   return function compare(a, b, desc) {
     if (type === 'numeric') {
-      a = normalizeNumber(a)
-      b = normalizeNumber(b)
       a = Number.isNaN(a) ? null : a
       b = Number.isNaN(b) ? null : b
     } else {
