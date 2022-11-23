@@ -10,22 +10,22 @@
   Static rendering requires the V8 package, which is not installed with reactable
   by default. Learn more in the [Static Rendering](https://glin.github.io/reactable/articles/static-rendering.html) article.
 * `reactable()` gains a `meta` argument to pass arbitrary data from R to JavaScript
-  render functions and style functions ([#255](https://github.com/glin/reactable/issues/255)).
-  Custom metadata can be accessed using the `state.meta` property, and updated
-  using `updateReactable()` in Shiny or `Reactable.setMeta()` in the JavaScript API.
-  See examples of using [custom metadata for custom rendering](https://glin.github.io/reactable/articles/examples.html#custom-meta-rendering)
+  render functions and style functions. Custom metadata can be accessed using the `state.meta` property, and updated
+  using `updateReactable()` in Shiny or `Reactable.setMeta()` in the JavaScript API. See examples of using
+  [custom metadata for custom rendering](https://glin.github.io/reactable/articles/examples.html#custom-meta-rendering)
   or [custom metadata for conditional styling](https://glin.github.io/reactable/articles/examples.html#custom-meta-styling).
+  ([#255](https://github.com/glin/reactable/issues/255))
 * New [`Reactable.onStateChange()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-onstatechange)
   method in the JavaScript API that sets up a function to be called whenever the
   table state changes ([#265](https://github.com/glin/reactable/issues/265)).
 * New [`Reactable.setData()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setdata)
-  method in the JavaScript API for updating the table data ([#278](https://github.com/glin/reactable/issues/278)).
+  method in the JavaScript API for updating the table data. ([#278](https://github.com/glin/reactable/issues/278))
 * [`Reactable.downloadDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-downloaddatacsv)
   in the JavaScript API now supports an additional `options` argument to change the field separator, include
   specific columns, and exclude column headers. ([#239](https://github.com/glin/reactable/issues/239), [#293](https://github.com/glin/reactable/issues/293))
 * New [`Reactable.getDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-getdatacsv)
   method in the JavaScript API to get the table data as a CSV string.
-* `getReactableState()` now includes the current sorted columns ([#265](https://github.com/glin/reactable/issues/265)).
+* `getReactableState()` now includes the current sorted columns. ([#265](https://github.com/glin/reactable/issues/265))
 
 ## Minor improvements and bug fixes
 
@@ -38,13 +38,13 @@
   root font size. For example, Bootstrap 3 sets a default root font size of `10px`,
   so you may need to adjust the `rem` values before adapting examples to your site.
   (Bootstrap 4 and above no longer change the default root font size).
-* R style functions no longer apply to aggregated cells and rows incorrectly
-  (@fawda123, [#250](https://github.com/glin/reactable/issues/250)).
+* R style functions no longer apply to aggregated cells and rows incorrectly.
+  (@fawda123, [#250](https://github.com/glin/reactable/issues/250))
 * JavaScript render functions and style functions no longer receive an invalid
-  `cellInfo.index` or `rowInfo.index` property for aggregated cells and rows
-  ([#250](https://github.com/glin/reactable/issues/250)).
+  `cellInfo.index` or `rowInfo.index` property for aggregated cells and rows.
+  ([#250](https://github.com/glin/reactable/issues/250))
 * Column group header widths are now calculated correctly with hidden columns
-  in the column group (@Patrikios, [#253](https://github.com/glin/reactable/issues/253)).
+  in the column group. (@Patrikios, [#253](https://github.com/glin/reactable/issues/253))
 * `NULL` values in list-columns now correctly appear as missing values instead of
   `[object Object]`. `NULL` values are now represented as `null` values in JavaScript
   instead of an empty object like {}.
@@ -52,9 +52,9 @@
   HTML document `<head>`.
 * `getReactableState()` now accepts multiple values in its `name` argument to return a subset of state values.
 * `reactable()` now respects `htmlwidget::sizingPolicy()`'s `viewer.fill` and `browser.fill` and fills the
-  RStudio Viewer pane by default (@cpsievert, [#280](https://github.com/glin/reactable/issues/280)).
+  RStudio Viewer pane by default. (@cpsievert, [#280](https://github.com/glin/reactable/issues/280))
 * Using `reactable()` on a dplyr grouped data frame ( `dplyr::group_by()` or `grouped_df`) with `rownames = TRUE`
-  no longer adds a `stringsAsFactors` column to the table (@daattali, [#283](https://github.com/glin/reactable/issues/283)).
+  no longer adds a `stringsAsFactors` column to the table. (@daattali, [#283](https://github.com/glin/reactable/issues/283))
 
 ## Breaking changes
 
