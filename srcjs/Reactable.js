@@ -1670,10 +1670,12 @@ function Table({
     downloadCSV(csv, filename)
   }
   instance.getDataCSV = (options = {}) => {
-    // Ignore columns without data (e.g., selection or details columns) by default
-    if (!options.columnIds && data.length > 0) {
-      options.columnIds = Object.keys(data[0])
+    if (!options.columnIds) {
+      options.columnIds = dataColumns.map(col => col.id)
     }
+    // Ignore columns without data (e.g., selection or details columns) by default
+    const dataColumnIds = data.length > 0 ? Object.keys(data[0]) : []
+    options.columnIds = options.columnIds.filter(id => dataColumnIds.includes(id))
     // Ensure rows are flattened and ignore sort order. Unlike instance.flatRows,
     // instance.preGroupedRows excludes aggregated rows and uses the original data order.
     const rows = instance.preGroupedRows.map(row => row.values)

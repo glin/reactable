@@ -9664,7 +9664,11 @@ describe('reactable JavaScript API', () => {
 
   it('Reactable.downloadDataCSV and Reactable.getDataCSV', () => {
     const props = {
-      data: { a: ['a11', 'a12', 'a23'], b: [2, 3, 3] },
+      data: {
+        a: ['a11', 'a12', 'a23'],
+        b: [2, 3, 3],
+        __unused: ['should ignore data not in columns']
+      },
       columns: [
         { name: 'a', id: 'a' },
         // Should include hidden columns
@@ -9691,7 +9695,7 @@ describe('reactable JavaScript API', () => {
     )
 
     // Custom options
-    const options = { columnIds: ['b', 'a'], headers: false, sep: '\t' }
+    const options = { columnIds: ['b', 'a', 'notindata'], headers: false, sep: '\t' }
     reactable.downloadDataCSV('my-tbl', null, options)
     expect(downloadCSV).toHaveBeenCalledTimes(3)
     expect(downloadCSV).toHaveBeenLastCalledWith('2\ta11\n3\ta12\n3\ta23\n', 'data.csv')
@@ -9715,6 +9719,12 @@ describe('reactable JavaScript API', () => {
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(5)
     expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
+
+    // Should download an empty file when there's no data. In the future, this should include column headers.
+    rerender(<Reactable {...props} data={{a: [], b: []}} />)
+    reactable.downloadDataCSV('my-tbl')
+    expect(downloadCSV).toHaveBeenCalledTimes(6)
+    expect(downloadCSV).toHaveBeenLastCalledWith('\n', 'data.csv')
   })
 
   it('Reactable.setMeta', () => {
