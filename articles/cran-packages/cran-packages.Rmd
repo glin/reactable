@@ -136,7 +136,8 @@ tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&dis
   color: hsl(213, 13%, 33%);
 }
 
-.header[aria-sort]:hover {
+.header[aria-sort]:hover,
+.header[aria-sort]:focus {
   color: hsl(213, 55%, 50%);
 }
 
