@@ -308,6 +308,7 @@ describe('rows', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 'cellC', b: 'c' },
         { a: 'cellB', b: 'b' },
@@ -676,6 +677,7 @@ describe('cells', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -823,6 +825,7 @@ describe('cells', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
       expect(state.sortedData).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
       expect(state.data).toEqual([{ a: 'cellA' }, { a: 'cellB' }])
@@ -1029,6 +1032,7 @@ describe('headers', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -1210,6 +1214,7 @@ describe('column groups', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: 'c' },
         { a: 2, b: 'b', c: 'd' }
@@ -1490,6 +1495,7 @@ describe('footers', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a', c: true },
         { a: 2, b: 'b', c: false }
@@ -1717,6 +1723,31 @@ describe('hidden columns', () => {
     expect(getHeaders(container)).toHaveLength(0)
     expect(queryByText('col-a')).toEqual(null)
     expect(queryByText('col-b')).toEqual(null)
+  })
+
+  it('hiddenColumns state should be available in state', () => {
+    let lastState = {}
+    const makeProps = show => ({
+      data: { a: ['aaa1', 'aaa2'], b: ['aaa', 'bbb'], c: [1, 2] },
+      columns: [
+        { name: 'a', id: 'a', show },
+        {
+          name: 'b',
+          id: 'b',
+          cell: (cellInfo, state) => {
+            lastState = state
+          }
+        },
+        { name: 'c', id: 'c', show }
+      ],
+      // Always-hidden __crosstalk__ column should not appear in hiddenColumns
+      crosstalkKey: ['key1', 'key2'],
+      crosstalkGroup: 'group'
+    })
+    const { rerender } = render(<Reactable {...makeProps()} />)
+    expect(lastState.hiddenColumns).toEqual([])
+    rerender(<Reactable {...makeProps(false)} />)
+    expect(lastState.hiddenColumns).toEqual(['a', 'c'])
   })
 })
 
@@ -5583,6 +5614,7 @@ describe('expandable row details', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         { a: 1, b: 'a' },
         { a: 2, b: 'b' }
@@ -6356,6 +6388,7 @@ describe('grouping and aggregation', () => {
             expect(state.filters).toEqual([])
             expect(state.searchValue).toEqual(undefined)
             expect(state.selected).toEqual([])
+            expect(state.hiddenColumns).toEqual([])
             expect(state.pageRows).toEqual(rows)
             expect(state.sortedData).toEqual(rows)
             expect(state.data).toEqual([
@@ -6673,6 +6706,7 @@ describe('grouping and aggregation', () => {
               expect(state.filters).toEqual([])
               expect(state.searchValue).toEqual(undefined)
               expect(state.selected).toEqual([])
+              expect(state.hiddenColumns).toEqual([])
               expect(state.pageRows).toEqual(rows)
               expect(state.sortedData).toEqual(rows)
               expect(state.data).toEqual([
@@ -6710,6 +6744,7 @@ describe('grouping and aggregation', () => {
               expect(state.filters).toEqual([])
               expect(state.searchValue).toEqual(undefined)
               expect(state.selected).toEqual([])
+              expect(state.hiddenColumns).toEqual([])
               expect(state.pageRows).toEqual([rows[0], rows[0]._subRows[0], rows[0]._subRows[1]])
               expect(state.sortedData).toEqual([rows[0], rows[0]._subRows[0], rows[0]._subRows[1]])
               expect(state.data).toEqual([
@@ -6859,6 +6894,7 @@ describe('grouping and aggregation', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         {
           c: 'x',
@@ -6969,6 +7005,7 @@ describe('grouping and aggregation', () => {
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
       expect(state.selected).toEqual([])
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual([
         {
           c: 'x',
@@ -7066,6 +7103,7 @@ describe('grouping and aggregation', () => {
       expect(state.groupBy).toEqual(['c', 'a'])
       expect(state.filters).toEqual([])
       expect(state.searchValue).toEqual(undefined)
+      expect(state.hiddenColumns).toEqual([])
       expect(state.pageRows).toEqual(expectedRows)
       expect(state.sortedData).toEqual(expectedRows)
       expect(state.data).toEqual([
@@ -7530,6 +7568,7 @@ describe('cell click actions', () => {
           expect(state.filters).toEqual([])
           expect(state.searchValue).toEqual(undefined)
           expect(state.selected).toEqual([])
+          expect(state.hiddenColumns).toEqual([])
           expect(state.pageRows).toEqual([
             { a: 'aaa1', b: 'bbb1', c: 'ccc1' },
             { a: 'aaa2', b: 'bbb2', c: 'ccc2' }
@@ -9513,6 +9552,7 @@ describe('reactable JavaScript API', () => {
     expect(state.filters).toEqual([])
     expect(state.searchValue).toEqual(undefined)
     expect(state.selected).toEqual([])
+    expect(state.hiddenColumns).toEqual([])
     expect(state.pageRows).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
     expect(state.sortedData).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
     expect(state.data).toEqual([{ a: 'aaa1' }, { a: 'bbb2' }])
@@ -9721,10 +9761,69 @@ describe('reactable JavaScript API', () => {
     expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
 
     // Should download an empty file when there's no data. In the future, this should include column headers.
-    rerender(<Reactable {...props} data={{a: [], b: []}} />)
+    rerender(<Reactable {...props} data={{ a: [], b: [] }} />)
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(6)
     expect(downloadCSV).toHaveBeenLastCalledWith('\n', 'data.csv')
+  })
+
+  it('Reactable.toggleHideColumn', () => {
+    const props = {
+      data: { a: ['a', 'b'], b: [1, 2], c: [1, 2] },
+      columns: [
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { queryByText } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual([])
+
+    act(() => reactable.toggleHideColumn('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual(['a'])
+    expect(queryByText('col-a')).toEqual(null)
+
+    act(() => reactable.toggleHideColumn('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual([])
+    expect(queryByText('col-a')).toBeVisible()
+
+    act(() => reactable.toggleHideColumn('my-tbl', 'b', false))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual([])
+    act(() => reactable.toggleHideColumn('my-tbl', 'b', true))
+    act(() => reactable.toggleHideColumn('my-tbl', 'b', true))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual(['b'])
+    expect(queryByText('col-b')).toEqual(null)
+  })
+
+  it('Reactable.setHiddenColumns', () => {
+    const props = {
+      data: { a: ['a', 'b'], b: [1, 2], c: [1, 2] },
+      columns: [
+        { name: 'col-a', id: 'a' },
+        { name: 'col-b', id: 'b' },
+        { name: 'col-c', id: 'c' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { queryByText } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual([])
+
+    act(() => reactable.setHiddenColumns('my-tbl', ['c', 'a']))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual(['c', 'a'])
+    expect(queryByText('col-a')).toEqual(null)
+    expect(queryByText('col-c')).toEqual(null)
+
+    act(() => reactable.setHiddenColumns('my-tbl', []))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual([])
+    expect(queryByText('col-a')).toBeVisible()
+    expect(queryByText('col-c')).toBeVisible()
+
+    act(() => reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('b')))
+    act(() => reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('c')))
+    expect(reactable.getState('my-tbl').hiddenColumns).toEqual(['b', 'c'])
+    expect(queryByText('col-b')).toEqual(null)
+    expect(queryByText('col-c')).toEqual(null)
   })
 
   it('Reactable.setMeta', () => {

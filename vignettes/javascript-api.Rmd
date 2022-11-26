@@ -433,6 +433,69 @@ Reactable.setMeta('cars-table', prevMeta => {
 Reactable.setMeta('cars-table', undefined)
 ```
 
+### `Reactable.toggleHideColumn()`
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+Toggles the hidden state for a column between hidden and shown.
+To hide or show a column explicitly, set the optional `isHidden` argument to `true` or `false`.
+
+```ts
+Reactable.toggleHideColumn(
+  tableId: string,
+  columnId: string,
+  isHidden?: boolean
+)
+```
+
+#### Examples
+
+```js
+// Toggle hidden state for the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type')
+
+// Hide the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type', true)
+
+// Show the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type', false)
+```
+
+### `Reactable.setHiddenColumns()`
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+Sets the hidden columns for the table. `columnIds` can either be an array of column IDs, or a
+function that takes the previous hidden column IDs and returns new column IDs.
+
+To clear the hidden columns, set `columnIds` to an empty array, `[]`.
+
+```ts
+Reactable.setHiddenColumns(
+  tableId: string,
+  columnIds: string[] | Function
+)
+```
+
+#### Examples
+
+```js
+// Set the hidden columns to "Type" and "Manufacturer"
+Reactable.setHiddenColumns('cars-table', ['Type', 'Manufacturer'])
+
+// Set hidden columns using a function that adds "Type" to the existing hidden columns
+Reactable.setMeta('cars-table', prevHiddenColumns => {
+  return prevHiddenColumns.concat('Type')
+})
+
+// Clear the hidden columns
+Reactable.setHiddenColumns('cars-table', [])
+```
+
 ### `Reactable.setData()`
 
 ::: {.callout}
@@ -494,7 +557,8 @@ stateProps <- dplyr::tribble(
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table",
-  "meta", '{ custom: 123 }', tagList("custom table metadata from", tags$code("reactable()"), "(new in v0.3.0.9000)")
+  "meta", '{ custom: 123 }', tagList("custom table metadata from", tags$code("reactable()"), "(new in v0.3.0.9000)"),
+  "hiddenColumns", '["Petal.Length"]', "columns being hidden in the table"
 )
 
 propsTable(stateProps)

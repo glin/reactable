@@ -88,6 +88,14 @@ export function setMeta(tableId, meta) {
   getInstance(tableId).setMeta(meta)
 }
 
+export function toggleHideColumn(tableId, columnId, isHidden) {
+  getInstance(tableId).toggleHideColumn(columnId, isHidden)
+}
+
+export function setHiddenColumns(tableId, columns) {
+  getInstance(tableId).setHiddenColumns(columns)
+}
+
 export function setData(tableId, data, options) {
   getInstance(tableId).setData(data, options)
 }
@@ -701,6 +709,7 @@ function Table({
       ...state,
       searchValue: state.globalFilter,
       meta,
+      hiddenColumns: state.hiddenColumns.filter(id => id !== crosstalkId),
       // For v6 compatibility
       sorted: state.sortBy,
       pageRows: convertRowsToV6(instance.page),
@@ -711,7 +720,16 @@ function Table({
       pages: instance.pageCount,
       selected: selectedRowIndexes
     }
-  }, [state, meta, instance.page, rowData, data, instance.pageCount, selectedRowIndexes])
+  }, [
+    state,
+    meta,
+    crosstalkId,
+    instance.page,
+    rowData,
+    data,
+    instance.pageCount,
+    selectedRowIndexes
+  ])
 
   const makeThead = () => {
     const theadProps = instance.getTheadProps()
@@ -1683,6 +1701,14 @@ function Table({
     return csv
   }
   instance.setMeta = setMeta
+  const origToggleHideColumn = instance.toggleHideColumn
+  instance.toggleHideColumn = (columnId, isHidden) => {
+    // Prevent duplicate column IDs from being added to hiddenColumns
+    if (isHidden && stateInfo.hiddenColumns.includes(columnId)) {
+      return
+    }
+    origToggleHideColumn(columnId, isHidden)
+  }
   instance.setData = (data, options = {}) => {
     options = Object.assign({ resetSelected: true, resetExpanded: false }, options)
     if (typeof data !== 'object' || data == null) {

@@ -17,7 +17,7 @@
   ([#255](https://github.com/glin/reactable/issues/255))
 * New [`Reactable.onStateChange()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-onstatechange)
   method in the JavaScript API that sets up a function to be called whenever the
-  table state changes ([#265](https://github.com/glin/reactable/issues/265)).
+  table state changes. ([#265](https://github.com/glin/reactable/issues/265))
 * New [`Reactable.setData()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setdata)
   method in the JavaScript API for updating the table data. ([#278](https://github.com/glin/reactable/issues/278))
 * [`Reactable.downloadDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-downloaddatacsv)
@@ -25,6 +25,10 @@
   specific columns, and exclude column headers. ([#239](https://github.com/glin/reactable/issues/239), [#293](https://github.com/glin/reactable/issues/293))
 * New [`Reactable.getDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-getdatacsv)
   method in the JavaScript API to get the table data as a CSV string.
+* New [`Reactable.toggleHideColumn()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-togglehidecolumn)
+  and [`Reactable.setHiddenColumns()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-sethiddencolumns)
+  methods in the JavaScript API to toggle or set hidden columns. JavaScript render functions and style functions
+  also receive a new `state.hiddenColumns` property for the hidden columns in the table. ([#246](https://github.com/glin/reactable/issues/246))
 * `getReactableState()` now includes the current sorted columns. ([#265](https://github.com/glin/reactable/issues/265))
 
 ## Minor improvements and bug fixes

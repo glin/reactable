@@ -2491,6 +2491,40 @@ htmltools::browsable(
 )
 ```
 
+### Column visibility toggle button
+
+::: {.callout}
+New in v0.3.0.9000
+:::
+
+```{r}
+library(htmltools)
+
+data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price",
+                            "AirBags", "DriveTrain", "Cylinders", "EngineSize")]
+
+htmltools::browsable(
+  tagList(
+    tags$button(
+      "Show/hide more columns",
+      onclick = "Reactable.setHiddenColumns('cars-vis-table', prevColumns => {
+        return prevColumns.length === 0 ? ['AirBags', 'DriveTrain', 'Cylinders', 'EngineSize'] : []
+      })"
+    ),
+    reactable(
+      data,
+      columns = list(
+        AirBags = colDef(show = FALSE),
+        DriveTrain = colDef(show = FALSE),
+        Cylinders = colDef(show = FALSE),
+        EngineSize = colDef(show = FALSE)
+      ),
+      elementId = "cars-vis-table"
+    )
+  )
+)
+```
+
 
 ```{css echo=FALSE}
 /* rmarkdown html documents */

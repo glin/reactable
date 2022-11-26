@@ -280,7 +280,8 @@ stateProps <- dplyr::tribble(
   "selected", '[0, 1, 4]', "selected row indices (zero-based)",
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
-  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table"
+  "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table",
+  "hiddenColumns", '["Petal.Length"]', "columns being hidden in the table"
 )
 
 propsTable(stateProps)
