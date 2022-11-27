@@ -1,0 +1,9 @@
+colDef                  Column definitions
+colFormat               Column formatting options
+colGroup                Column group definitions
+getReactableState       Get the state of a reactable instance
+reactable               Create an interactive data table
+reactable-shiny         Shiny bindings for reactable
+reactableLang           Language options
+reactableTheme          Theme options
+updateReactable         Update a reactable instance

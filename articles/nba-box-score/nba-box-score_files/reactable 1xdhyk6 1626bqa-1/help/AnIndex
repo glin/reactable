@@ -5,6 +5,7 @@ colFormat	colFormat
 colGroup	colGroup
 getReactableState	getReactableState
 JS	reexports
+knit_print.reactable	knit_print.reactable
 reactable	reactable
 reactable-shiny	reactable-shiny
 reactableLang	reactableLang
