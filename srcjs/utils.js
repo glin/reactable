@@ -39,7 +39,7 @@ export function convertRowsToV6(rows) {
 }
 
 export function rowsToCSV(rows, options = {}) {
-  let { columnIds, headers = true, sep = ',' } = options
+  let { columnIds, headers = true, sep = ',', dec = '.' } = options
   const rowToCSV = row => {
     return row
       .map(value => {
@@ -51,6 +51,8 @@ export function rowsToCSV(rows, options = {}) {
           value = value.toISOString()
         } else if (typeof value !== 'string' && typeof value !== 'number') {
           value = JSON.stringify(value)
+        } else if (dec !== '.' && typeof value === 'number') {
+          value = value.toString().replace('.', dec)
         }
         // Escape CSV-unsafe characters
         if (typeof value === 'string' && (value.includes('"') || value.includes(sep))) {

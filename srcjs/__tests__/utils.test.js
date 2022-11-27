@@ -179,7 +179,7 @@ test('rowsToCSV', () => {
 
   const rows = [
     { a: 'a', b: 12, c: null },
-    { a: 'b', b: -23, c: '' }
+    { a: 'b', b: -23.55, c: '' }
   ]
 
   // Custom columns
@@ -190,16 +190,26 @@ test('rowsToCSV', () => {
 
   // No headers
   expect(rowsToCSV(rows, { headers: false })).toEqual(`a,12,
-b,-23,
+b,-23.55,
 `)
 
   // Custom separator/delimiter
   expect(rowsToCSV(rows, { sep: '\t' })).toEqual(`a\tb\tc
 a\t12\t
-b\t-23\t
+b\t-23.55\t
 `)
   expect(rowsToCSV([{ tab: 'a\tb', comma: ',' }], { sep: '\t' })).toEqual(`tab\tcomma
 "a\tb"\t,
+`)
+
+  // Custom decimal separator
+  expect(rowsToCSV(rows, { dec: ',' })).toEqual(`a,b,c
+a,12,
+b,"-23,55",
+`)
+  expect(rowsToCSV(rows, { sep: ';', dec: ',' })).toEqual(`a;b;c
+a;12;
+b;-23,55;
 `)
 })
 

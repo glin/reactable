@@ -9706,7 +9706,7 @@ describe('reactable JavaScript API', () => {
     const props = {
       data: {
         a: ['a11', 'a12', 'a23'],
-        b: [2, 3, 3],
+        b: [2.1, 3, 3],
         __unused: ['should ignore data not in columns']
       },
       columns: [
@@ -9724,25 +9724,25 @@ describe('reactable JavaScript API', () => {
 
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(1)
-    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\na23,3\n', 'data.csv')
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2.1\na12,3\na23,3\n', 'data.csv')
 
     // Custom filename
     reactable.downloadDataCSV('my-tbl', 'my_custom_filename.csv')
     expect(downloadCSV).toHaveBeenCalledTimes(2)
     expect(downloadCSV).toHaveBeenLastCalledWith(
-      'a,b\na11,2\na12,3\na23,3\n',
+      'a,b\na11,2.1\na12,3\na23,3\n',
       'my_custom_filename.csv'
     )
 
     // Custom options
-    const options = { columnIds: ['b', 'a', 'notindata'], headers: false, sep: '\t' }
+    const options = { columnIds: ['b', 'a', 'notindata'], headers: false, sep: '\t', dec: ',' }
     reactable.downloadDataCSV('my-tbl', null, options)
     expect(downloadCSV).toHaveBeenCalledTimes(3)
-    expect(downloadCSV).toHaveBeenLastCalledWith('2\ta11\n3\ta12\n3\ta23\n', 'data.csv')
+    expect(downloadCSV).toHaveBeenLastCalledWith('2,1\ta11\n3\ta12\n3\ta23\n', 'data.csv')
 
     // getDataCSV
     const csv = reactable.getDataCSV('my-tbl', options)
-    expect(csv).toEqual('2\ta11\n3\ta12\n3\ta23\n')
+    expect(csv).toEqual('2,1\ta11\n3\ta12\n3\ta23\n')
 
     // Should download filtered data
     const searchInput = getSearchInput(container)
@@ -9752,13 +9752,13 @@ describe('reactable JavaScript API', () => {
     fireEvent.click(sortableHeaders[0])
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(4)
-    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2.1\na12,3\n', 'data.csv')
 
     // Should use flattened rows and exclude aggregated rows when grouped
     rerender(<Reactable {...props} groupBy={['b']} />)
     reactable.downloadDataCSV('my-tbl')
     expect(downloadCSV).toHaveBeenCalledTimes(5)
-    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2\na12,3\n', 'data.csv')
+    expect(downloadCSV).toHaveBeenLastCalledWith('a,b\na11,2.1\na12,3\n', 'data.csv')
 
     // Should download an empty file when there's no data. In the future, this should include column headers.
     rerender(<Reactable {...props} data={{ a: [], b: [] }} />)

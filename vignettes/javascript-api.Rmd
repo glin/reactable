@@ -181,8 +181,8 @@ The downloaded data will include any filters that have been applied, and
 exclude any sorting or grouping. Hidden columns will also be included, but
 this may be customizable in the future.
 
-For further customization, you can use the `options` argument to only include specific
-columns, exclude column headers, or change the field separator (new in v0.3.0.9000).
+For further customization, you can use the `options` argument to only include specific columns,
+exclude column headers, change the field separator, or change the decimal separator (new in v0.3.0.9000).
 
 ```ts
 Reactable.downloadDataCSV(
@@ -192,7 +192,8 @@ Reactable.downloadDataCSV(
   options?: {
     columnIds: string[],
     headers: true,
-    sep: ','
+    sep: ',',
+    dec: '.'
   }
 )
 ```
@@ -231,7 +232,8 @@ Reactable.getDataCSV(
   options?: {
     columnIds: string[],
     headers: true,
-    sep: ','
+    sep: ',',
+    dec: '.'
   }
 )
 ```
