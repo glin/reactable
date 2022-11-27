@@ -21,8 +21,8 @@
 * New [`Reactable.setData()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setdata)
   method in the JavaScript API for updating the table data. ([#278](https://github.com/glin/reactable/issues/278))
 * [`Reactable.downloadDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-downloaddatacsv)
-  in the JavaScript API now supports an additional `options` argument to change the field separator, include
-  specific columns, and exclude column headers. ([#239](https://github.com/glin/reactable/issues/239), [#293](https://github.com/glin/reactable/issues/293))
+  in the JavaScript API now supports an additional `options` argument to change the field or decimal separator,
+  include specific columns, and exclude column headers. ([#239](https://github.com/glin/reactable/issues/239), [#293](https://github.com/glin/reactable/issues/293))
 * New [`Reactable.getDataCSV()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-getdatacsv)
   method in the JavaScript API to get the table data as a CSV string.
 * New [`Reactable.toggleHideColumn()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-togglehidecolumn)

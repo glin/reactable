@@ -253,8 +253,9 @@ the optional <code>filename</code> argument.</p>
 and exclude any sorting or grouping. Hidden columns will also be
 included, but this may be customizable in the future.</p>
 <p>For further customization, you can use the <code>options</code>
-argument to only include specific columns, exclude column headers, or
-change the field separator (new in v0.3.0.9000).</p>
+argument to only include specific columns, exclude column headers,
+change the field separator, or change the decimal separator (new in
+v0.3.0.9000).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">downloadDataCSV</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  filename <span class="op">=</span> <span class="st">"data.csv"</span><span class="op">,</span></span>
@@ -262,9 +263,10 @@ change the field separator (new in v0.3.0.9000).</p>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  options<span class="op">?:</span> {</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    columnIds<span class="op">:</span> <span class="dt">string</span>[]<span class="op">,</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    sep<span class="op">:</span> <span class="st">','</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    sep<span class="op">:</span> <span class="st">','</span><span class="op">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    dec<span class="op">:</span> <span class="st">'.'</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h4>
@@ -298,9 +300,10 @@ but does not download the data.</p>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  options<span class="op">?:</span> {</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    columnIds<span class="op">:</span> <span class="dt">string</span>[]<span class="op">,</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    sep<span class="op">:</span> <span class="st">','</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    sep<span class="op">:</span> <span class="st">','</span><span class="op">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    dec<span class="op">:</span> <span class="st">'.'</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
 </h4>
