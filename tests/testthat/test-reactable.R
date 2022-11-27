@@ -1487,7 +1487,16 @@ test_that("static rendering", {
     elementId = "stable-id-CSR-fallback"
   )
   expect_warning({ rendered <- htmltools::renderTags(tbl) }, "Failed to render table to static HTML:\nError: error rendering JS")
-  expect_false(grepl("data-reactable-ssr", rendered$html))
+  expect_false(grepl("data-react-ssr", rendered$html))
   expect_false(grepl(">column-y-cell<", rendered$html))
   expect_snapshot(cat(rendered$html))
+
+  # Custom knit_print method should work
+  tbl <- reactable(data, static = TRUE)
+  output <- knitr::knit_print(tbl, options = list(screenshot.force = FALSE))
+  expect_true(grepl("data-react-ssr", output))
+
+  tbl <- reactable(data)
+  output <- knitr::knit_print(tbl, options = list(screenshot.force = FALSE))
+  expect_false(grepl("data-react-ssr", output))
 })

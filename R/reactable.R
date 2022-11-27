@@ -714,10 +714,10 @@ reactable <- function(
     reactR::reactMarkup(component),
     width = width,
     height = height,
-    # Don't limit width when rendered inside an R Notebook
     sizingPolicy = htmlwidgets::sizingPolicy(
       defaultWidth = "auto",
       defaultHeight = "auto",
+      # Don't limit width when rendered inside an R Notebook
       knitr.figure = FALSE
     ),
     package = "reactable",
@@ -823,7 +823,7 @@ as.tags.reactable <- function(x, standalone = FALSE) {
   static <- attribs$static
   x$x$tag$attribs$static <- NULL
 
-  # Should call htmlwidgets:::as.tags.htmlwidget(), which calls htmlwidgets::toHTML()
+  # Should call htmlwidgets:::as.tags.htmlwidget(), which calls htmlwidgets:::toHTML()
   result <- NextMethod("as.tags", x, standalone = standalone)
 
   if (!isTRUE(static)) {
@@ -887,10 +887,24 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
   wrapper <- tagAppendAttributes(
     wrapper, `data-react-ssr` = NA, .cssSelector = ".reactable"
   )
-  browsable(wrapper$children)
+  browsable(as.tags(wrapper$children))
 }
 
-
+#' Print a reactable widget for knitr
+#'
+#' This S3 method exists to enable [reactable()]'s `static` rendering option.
+#'
+#' @param x A [reactable()] instance.
+#' @param ... Additional arguments passed to the S3 method.
+#'
+#' @keywords internal
+#' @export
+knit_print.reactable <- function(x, ...) {
+  # knitr options (out.width/out.height) are ignored here because as.tags() doesn't
+  # pass it to htmlwidgets:::toHTML(), but this is fine because reactable disables
+  # knitr.figure in the sizing policy.
+  knitr::knit_print(htmltools::as.tags(x, standalone = FALSE), ...)
+}
 
 #' Called by HTMLWidgets to produce the widget's root element
 #'

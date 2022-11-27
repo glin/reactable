@@ -1,6 +1,7 @@
 .onLoad <- function(...) {
   registerMethods(list(
-    c("htmltools", "as.tags", "reactable")
+    c("htmltools", "as.tags", "reactable"),
+    c("knitr", "knit_print", "reactable")
   ))
 }
 
