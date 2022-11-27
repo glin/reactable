@@ -237,6 +237,17 @@ test_that("columns", {
     list(id = "lgl", name = "lgl", type = "logical"),
     list(id = "lst", name = "lst", type = "AsIs")
   ))
+
+  # Complex numbers currently fail due to `jsonlite::toJSON(3i, digits = NA)` error
+  tryCatch({
+    tbl <- reactable(data.frame(cpl = 3i))
+    columns <- getAttrib(tbl, "columns")
+    expect_equal(columns, list(id = "cpl", name = "cpl", type = "complex"))
+    writeLines("complex numbers test passed")
+  },
+  error = function(e) {
+    # Skipped due to error, "invalid value -2147483648 for 'digits' argument"
+  })
 })
 
 test_that("columnGroups", {
