@@ -19,7 +19,10 @@ jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
 
 test('normalizeColumnData', () => {
-  const data = { a: [1, 'NA', 'NaN', 'Inf', '-Inf', NaN], b: ['x', 'y', 'z', 'NA', null, ''] }
+  const data = {
+    a: [1, 'NA', 'NaN', 'Inf', '-Inf', NaN, null],
+    b: ['x', 'y', 'z', 'NA', null, '', 'NaN']
+  }
   const columns = [
     { id: 'b', type: 'not-numeric' },
     { id: 'a', type: 'numeric' }
@@ -31,7 +34,8 @@ test('normalizeColumnData', () => {
     { a: NaN, b: 'z' },
     { a: Infinity, b: 'NA' },
     { a: -Infinity, b: null },
-    { a: NaN, b: '' }
+    { a: NaN, b: '' },
+    { a: null, b: 'NaN' }
   ])
 })
 

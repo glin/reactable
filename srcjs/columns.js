@@ -30,7 +30,8 @@ export function normalizeColumnData(data, columns) {
 export function convertJSONNumbers(arr) {
   for (let i = 0; i < arr.length; i++) {
     let n = arr[i]
-    if (typeof n === 'number') {
+    // Numeric columns can have nulls in pre-grouped data
+    if (typeof n === 'number' || n == null) {
       continue
     }
     if (n === 'NA') {
