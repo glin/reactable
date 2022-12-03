@@ -2320,6 +2320,10 @@ JavaScript API in R Markdown documents or Shiny apps, and the full API reference
 
 ### CSV download button
 
+[`Reactable.downloadDataCSV()`](./javascript-api.html#reactable-downloaddatacsv) downloads table data to a CSV file,
+including any filters that have been applied. See the JavaScript API guide for more details on usage, including
+how to customize the field separator, decimal separator, included columns, and more.
+
 ```{r}
 library(htmltools)
 library(fontawesome)
