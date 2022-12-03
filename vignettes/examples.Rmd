@@ -814,7 +814,7 @@ reactable(
 ### Custom metadata {#custom-meta-rendering}
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 You can pass arbitrary data from R to JavaScript render functions using the `meta`
@@ -1159,7 +1159,7 @@ reactable(sleep[1:6, ],
 ### Custom metadata {#custom-meta-styling}
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 You can pass arbitrary data from R to JavaScript style functions using the `meta`
@@ -2498,7 +2498,7 @@ htmltools::browsable(
 ### Column visibility toggle button
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 ```{r}

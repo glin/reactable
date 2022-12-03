@@ -10,9 +10,7 @@ Examples of using Observable with reactable in Quarto, based on the [Observable 
 from the Quarto documentation.
 
 :::{.callout-note}
-This is a work in progress, and requires new features in reactable v0.3.0.9000 (unreleased).
-[Install reactable from GitHub](https://github.com/glin/reactable/#installation) to try out
-the examples.
+This is a work in progress, and requires new features in reactable v0.4.0.
 :::
 
 Source code: [observable-reactable.qmd](https://github.com/glin/reactable/blob/main/vignettes/quarto/observable-reactable.qmd)

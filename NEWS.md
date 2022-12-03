@@ -1,4 +1,4 @@
-# reactable 0.3.0.9000 (Unreleased)
+# reactable 0.4.0
 
 ## New features
 

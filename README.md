@@ -111,7 +111,7 @@ To learn more about using reactable, check out the examples below.
 | --------- | --------- | --------- | --------- | --------- |
 | IE 11*, Edge | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
 
-\* Support for Internet Explorer 11 was deprecated in reactable v0.3.0.9000.
+\* Support for Internet Explorer 11 was deprecated in reactable v0.4.0.
 
 ## License
 MIT

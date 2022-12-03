@@ -182,13 +182,13 @@ exclude any sorting or grouping. Hidden columns will also be included, but
 this may be customizable in the future.
 
 For further customization, you can use the `options` argument to only include specific columns,
-exclude column headers, change the field separator, or change the decimal separator (new in v0.3.0.9000).
+exclude column headers, change the field separator, or change the decimal separator (new in v0.4.0).
 
 ```ts
 Reactable.downloadDataCSV(
   tableId: string,
   filename = "data.csv",
-  // New in v0.3.0.9000
+  // New in v0.4.0
   options?: {
     columnIds: string[],
     headers: true,
@@ -220,7 +220,7 @@ Reactable.downloadDataCSV('cars-table', 'cars93.csv', {
 ### `Reactable.getDataCSV()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Gets the table data as a CSV string. Same as [`Reactable.downloadDataCSV()`](#reactable-downloaddatacsv)
@@ -404,7 +404,7 @@ Reactable.toggleAllRowsExpanded('cars-table', false)
 ### `Reactable.setMeta()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Sets the custom metadata for the table. `meta` can either be an object with new
@@ -438,7 +438,7 @@ Reactable.setMeta('cars-table', undefined)
 ### `Reactable.toggleHideColumn()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Toggles the hidden state for a column between hidden and shown.
@@ -468,7 +468,7 @@ Reactable.toggleHideColumn('cars-table', 'Type', false)
 ### `Reactable.setHiddenColumns()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Sets the hidden columns for the table. `columnIds` can either be an array of column IDs, or a
@@ -501,7 +501,7 @@ Reactable.setHiddenColumns('cars-table', [])
 ### `Reactable.setData()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Updates the table data. `data` can either be in row or column format. In row format, `data` is an array
@@ -559,7 +559,7 @@ stateProps <- dplyr::tribble(
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table",
-  "meta", '{ custom: 123 }', tagList("custom table metadata from", tags$code("reactable()"), "(new in v0.3.0.9000)"),
+  "meta", '{ custom: 123 }', tagList("custom table metadata from", tags$code("reactable()"), "(new in v0.4.0)"),
   "hiddenColumns", '["Petal.Length"]', "columns being hidden in the table"
 )
 
@@ -576,7 +576,7 @@ Reactable.getState('cars-table')
 ### `Reactable.onStateChange()`
 
 ::: {.callout}
-New in v0.3.0.9000
+New in v0.4.0
 :::
 
 Sets up a function that will be called whenever the table state changes.
