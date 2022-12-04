@@ -1,4 +1,8 @@
+# reactable 0.4.0.9000 (Unreleased)
+
 # reactable 0.4.0
+
+[Documentation - reactable 0.4.0](https://v0-4-0--reactable-docs.netlify.app/)
 
 ## New features
 
