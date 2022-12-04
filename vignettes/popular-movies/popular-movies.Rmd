@@ -124,7 +124,7 @@ function renderMovie(cellInfo) {
   const genres = ' ' + cellInfo.row['genres'].join(', ')
 
   let runtime = cellInfo.row['runtime']
-  if (typeof runtime === 'number') {
+  if (runtime != null) {
     const hours = Math.floor(runtime / 60)
     const mins = runtime % 60
     runtime = [hours > 0 ? hours + 'h' : '', mins > 0 ? mins + 'm' : ''].join(' ')
