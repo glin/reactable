@@ -469,7 +469,7 @@ in their own locale.
 
 To use a specific locale for data formatting, provide a vector of BCP 47 language
 tags in the `locales` argument. See a list of
-[common BCP 47 language tags](https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
+[common BCP 47 language tags](https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
 for reference.
 
 ::: {.callout-note}
