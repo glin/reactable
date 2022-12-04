@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.3.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
     </a>
 
     
@@ -99,8 +99,8 @@
        
 
 
-<script src="conditional-styling_files/core-js-2.5.3/shim.min.js"></script><script src="conditional-styling_files/react-17.0.0/react.min.js"></script><script src="conditional-styling_files/react-17.0.0/react-dom.min.js"></script><script src="conditional-styling_files/reactwidget-1.0.0/react-tools.js"></script><script src="conditional-styling_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="conditional-styling_files/reactable-0.3.0.9000/reactable.css" rel="stylesheet">
-<script src="conditional-styling_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
+<script src="conditional-styling_files/core-js-2.5.3/shim.min.js"></script><script src="conditional-styling_files/react-17.0.0/react.min.js"></script><script src="conditional-styling_files/react-17.0.0/react-dom.min.js"></script><script src="conditional-styling_files/reactwidget-1.0.0/react-tools.js"></script><script src="conditional-styling_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="conditional-styling_files/reactable-0.4.0.9000/reactable.css" rel="stylesheet">
+<script src="conditional-styling_files/reactable-binding-0.4.0.9000/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Conditional Styling</h1>
@@ -185,8 +185,8 @@ utilities</a> to apply a color scale to a column:</p>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-86c40d1f0df87633abf8" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-86c40d1f0df87633abf8">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"dataKey":"0044c2329a3ab1b5c24bdf8246cab48d"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-88e509a0976740b43875" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-88e509a0976740b43875">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric","style":[{"background":"#FFCC8C"},{"background":"#FFCC8C"},{"background":"#FFE4CC"},{"background":"#FFB54D"},{"background":"#FFCC8C"}]},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"dataKey":"0044c2329a3ab1b5c24bdf8246cab48d"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level4">
 <h4 id="example-highlight-sorted-columns">Example: highlight sorted columns<a class="anchor" aria-label="anchor" href="#example-highlight-sorted-columns"></a>
@@ -216,8 +216,8 @@ determine whether a column is currently being sorted:</p>
   background: rgba(0, 0, 0, 0.03);
 }
 </style>
-<div id="htmlwidget-adefd51c9816d3e6de2a" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-adefd51c9816d3e6de2a">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Species","name":"Species","type":"factor","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"dataKey":"8b83271018d128796ce242f25b64e3e9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
+<div id="htmlwidget-2fe829e48edb382e1169" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-2fe829e48edb382e1169">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"},{"id":"Species","name":"Species","type":"factor","className":"function(rowInfo, column, state) {\n      // Highlight sorted columns\n      for (let i = 0; i < state.sorted.length; i++) {\n        if (state.sorted[i].id === column.id) {\n          return 'sorted'\n        }\n      }\n    }"}],"defaultSorted":[{"id":"Petal.Length","desc":false}],"dataKey":"8b83271018d128796ce242f25b64e3e9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.className","tag.attribs.columns.1.className","tag.attribs.columns.2.className","tag.attribs.columns.3.className","tag.attribs.columns.4.className"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cell-styling">Cell Styling<a class="anchor" aria-label="anchor" href="#cell-styling"></a>
@@ -308,7 +308,7 @@ optional arguments:</p>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data values (new in v0.3.0)</td>
+<td>row data values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -357,7 +357,7 @@ same as
 <td>
 <code>true</code>
 </td>
-<td>whether the row is expanded (new in v0.3.0)</td>
+<td>whether the row is expanded</td>
 </tr>
 <tr>
 <th scope="row">
@@ -427,7 +427,7 @@ same as
 <td>
 <code>"petal"</code>
 </td>
-<td>column filter value  (new in v0.3.0)</td>
+<td>column filter value </td>
 </tr>
 <tr>
 <th scope="row">
@@ -440,7 +440,7 @@ same as
 function to set the column filter value
 (set to 
 <code>undefined</code>
- to clear the filter) (new in v0.3.0)
+ to clear the filter)
 </td>
 </tr>
 </tbody>
@@ -475,7 +475,7 @@ function to set the column filter value
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -484,7 +484,7 @@ function to set the column filter value
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -493,7 +493,7 @@ function to set the column filter value
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -502,7 +502,7 @@ function to set the column filter value
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -511,7 +511,7 @@ function to set the column filter value
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -520,7 +520,7 @@ function to set the column filter value
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -559,7 +559,7 @@ function to set the column filter value
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
@@ -659,7 +659,7 @@ rows.</p>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data values (new in v0.3.0)</td>
+<td>row data values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -708,7 +708,7 @@ same as
 <td>
 <code>true</code>
 </td>
-<td>whether the row is expanded (new in v0.3.0)</td>
+<td>whether the row is expanded</td>
 </tr>
 <tr>
 <th scope="row">
@@ -769,7 +769,7 @@ same as
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -778,7 +778,7 @@ same as
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -787,7 +787,7 @@ same as
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -796,7 +796,7 @@ same as
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -805,7 +805,7 @@ same as
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -814,7 +814,7 @@ same as
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -853,7 +853,7 @@ same as
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>

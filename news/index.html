@@ -12,7 +12,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.3.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
     </a>
 
     
@@ -82,9 +82,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0.9000" id="reactable-0309000-unreleased">reactable 0.3.0.9000 (Unreleased)<a class="anchor" aria-label="anchor" href="#reactable-0309000-unreleased"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0.9000" id="reactable-0409000-unreleased">reactable 0.4.0.9000 (Unreleased)<a class="anchor" aria-label="anchor" href="#reactable-0409000-unreleased"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="reactable-040">reactable 0.4.0<a class="anchor" aria-label="anchor" href="#reactable-040"></a></h2><p class="text-muted">CRAN release: 2022-12-04</p>
+<p><a href="https://v0-4-0--reactable-docs.netlify.app/" class="external-link">Documentation - reactable 0.4.0</a></p>
 <div class="section level3">
-<h3 id="new-features-0-3-0-9000">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0-9000"></a></h3>
+<h3 id="new-features-0-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
 <ul><li>
 <strong>Experimental</strong> support for rendering tables to static HTML in R. Use <code>reactable(static = TRUE)</code> to render a table to static HTML, or <code>options(reactable.status = TRUE)</code> to enable static rendering globally. With static rendering, tables are pre-rendered to their initial HTML so they appear immediately without any flash of content. Tables are then made interactive and subsequently rendered by JavaScript as needed. Static rendering requires the V8 package, which is not installed with reactable by default. Learn more in the <a href="https://glin.github.io/reactable/articles/static-rendering.html" class="external-link">Static Rendering</a> article.</li>
 <li>
@@ -99,7 +103,7 @@
 <code><a href="../reference/getReactableState.html">getReactableState()</a></code> now includes the current sorted columns. (<a href="https://github.com/glin/reactable/issues/265" class="external-link">#265</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="minor-improvements-and-bug-fixes-0-3-0-9000">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-3-0-9000"></a></h3>
+<h3 id="minor-improvements-and-bug-fixes-0-4-0">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-4-0"></a></h3>
 <ul><li>Updated the documentation site for Internet Explorer 11 (IE 11) deprecation, Bootstrap 5 theming, and better accessibility. Examples now use modern JavaScript features that aren’t supported in IE 11, like template literals and arrow functions. Examples now also use scalable font sizes and length units where appropriate (i.e., <code>rem</code>/<code>em</code> instead of <code>px</code>). The documentation site uses the default root font size of <code>16px</code>, so examples may look different on pages that change the root font size. For example, Bootstrap 3 sets a default root font size of <code>10px</code>, so you may need to adjust the <code>rem</code> values before adapting examples to your site. (Bootstrap 4 and above no longer change the default root font size).</li>
 <li>R style functions no longer apply to aggregated cells and rows incorrectly. (<a href="https://github.com/fawda123" class="external-link">@fawda123</a>, <a href="https://github.com/glin/reactable/issues/250" class="external-link">#250</a>)</li>
 <li>JavaScript render functions and style functions no longer receive an invalid <code>cellInfo.index</code> or <code>rowInfo.index</code> property for aggregated cells and rows. (<a href="https://github.com/glin/reactable/issues/250" class="external-link">#250</a>)</li>
@@ -115,7 +119,7 @@
 <li>Using <code><a href="../reference/reactable.html">reactable()</a></code> on a dplyr grouped data frame ( <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code> or <code>grouped_df</code>) with <code>rownames = TRUE</code> no longer adds a <code>stringsAsFactors</code> column to the table. (<a href="https://github.com/daattali" class="external-link">@daattali</a>, <a href="https://github.com/glin/reactable/issues/283" class="external-link">#283</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-0-3-0-9000">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0-9000"></a></h3>
+<h3 id="breaking-changes-0-4-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
 <ul><li>
 <p>Numeric <code>NA</code> values are now represented as <code>null</code> in JavaScript instead of an <code>"NA"</code> string. Numeric <code>NaN</code>, <code>Inf</code>, and <code>-Inf</code> values are now represented as <code>NaN</code>, <code>Infinity</code>, and <code>-Infinity</code> in JavaScript instead of <code>"NaN"</code>, <code>"Inf"</code>, and <code>"-Inf"</code> strings. (<a href="https://github.com/daattali" class="external-link">@daattali</a>, <a href="https://github.com/glin/reactable/issues/261" class="external-link">#261</a>)</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>

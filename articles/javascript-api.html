@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.3.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
     </a>
 
     
@@ -99,8 +99,8 @@
        
 
 
-<script src="javascript-api_files/core-js-2.5.3/shim.min.js"></script><script src="javascript-api_files/react-17.0.0/react.min.js"></script><script src="javascript-api_files/react-17.0.0/react-dom.min.js"></script><script src="javascript-api_files/reactwidget-1.0.0/react-tools.js"></script><script src="javascript-api_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="javascript-api_files/reactable-0.3.0.9000/reactable.css" rel="stylesheet">
-<script src="javascript-api_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
+<script src="javascript-api_files/core-js-2.5.3/shim.min.js"></script><script src="javascript-api_files/react-17.0.0/react.min.js"></script><script src="javascript-api_files/react-17.0.0/react-dom.min.js"></script><script src="javascript-api_files/reactwidget-1.0.0/react-tools.js"></script><script src="javascript-api_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="javascript-api_files/reactable-0.4.0.9000/reactable.css" rel="stylesheet">
+<script src="javascript-api_files/reactable-binding-0.4.0.9000/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>JavaScript API</h1>
@@ -108,10 +108,7 @@
       <div class="d-none name"><code>javascript-api.Rmd</code></div>
     </div>
 
-      <div class="callout">
-<p>New in v0.3.0</p>
-</div>
-<div class="section level2">
+      <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The JavaScript API lets you manipulate and access tables from
@@ -255,11 +252,11 @@ included, but this may be customizable in the future.</p>
 <p>For further customization, you can use the <code>options</code>
 argument to only include specific columns, exclude column headers,
 change the field separator, or change the decimal separator (new in
-v0.3.0.9000).</p>
+v0.4.0).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">downloadDataCSV</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  filename <span class="op">=</span> <span class="st">"data.csv"</span><span class="op">,</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// New in v0.3.0.9000</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// New in v0.4.0</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  options<span class="op">?:</span> {</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    columnIds<span class="op">:</span> <span class="dt">string</span>[]<span class="op">,</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
@@ -291,7 +288,7 @@ v0.3.0.9000).</p>
 <code>Reactable.getDataCSV()</code><a class="anchor" aria-label="anchor" href="#reactable-getdatacsv"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Gets the table data as a CSV string. Same as <a href="#reactable-downloaddatacsv"><code>Reactable.downloadDataCSV()</code></a>
 but does not download the data.</p>
@@ -466,7 +463,7 @@ and collapsed. To expand or collapse rows explicitly, set the optional
 <code>Reactable.setMeta()</code><a class="anchor" aria-label="anchor" href="#reactable-setmeta"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Sets the custom metadata for the table. <code>meta</code> can either
 be an object with new values, or a function that takes the previous
@@ -498,7 +495,7 @@ set <code>meta</code> to <code>undefined</code>.</p>
 <code>Reactable.toggleHideColumn()</code><a class="anchor" aria-label="anchor" href="#reactable-togglehidecolumn"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Toggles the hidden state for a column between hidden and shown. To
 hide or show a column explicitly, set the optional <code>isHidden</code>
@@ -526,7 +523,7 @@ argument to <code>true</code> or <code>false</code>.</p>
 <code>Reactable.setHiddenColumns()</code><a class="anchor" aria-label="anchor" href="#reactable-sethiddencolumns"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Sets the hidden columns for the table. <code>columnIds</code> can
 either be an array of column IDs, or a function that takes the previous
@@ -557,7 +554,7 @@ array, <code>[]</code>.</p>
 <code>Reactable.setData()</code><a class="anchor" aria-label="anchor" href="#reactable-setdata"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Updates the table data. <code>data</code> can either be in row or
 column format. In row format, <code>data</code> is an array of row
@@ -705,7 +702,7 @@ grouping state.</p>
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
@@ -733,7 +730,7 @@ custom table metadata from
 <code>Reactable.onStateChange()</code><a class="anchor" aria-label="anchor" href="#reactable-onstatechange"></a>
 </h3>
 <div class="callout">
-<p>New in v0.3.0.9000</p>
+<p>New in v0.4.0</p>
 </div>
 <p>Sets up a function that will be called whenever the table state
 changes.</p>

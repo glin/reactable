@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.3.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
     </a>
 
     
@@ -99,8 +99,8 @@
        
 
 
-<script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="custom-rendering_files/reactable-0.3.0.9000/reactable.css" rel="stylesheet">
-<script src="custom-rendering_files/reactable-binding-0.3.0.9000/reactable.js"></script><div class="row">
+<script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="custom-rendering_files/reactable-0.4.0.9000/reactable.css" rel="stylesheet">
+<script src="custom-rendering_files/reactable-binding-0.4.0.9000/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Custom Rendering</h1>
@@ -191,8 +191,8 @@ function:</p>
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-5256e0bfc4fadbc93dda" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-5256e0bfc4fadbc93dda">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that,
+<div id="htmlwidget-7769557602316813d8ea" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-7769557602316813d8ea">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that,
 you need a JavaScript render function with access to the client-side
 filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -215,8 +215,8 @@ filtered state:</p>
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-b752fbd14a6790fae325" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-b752fbd14a6790fae325">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<div id="htmlwidget-d0704624a01db9938caf" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-d0704624a01db9938caf">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -251,7 +251,7 @@ optional arguments:</p>
 <span><span class="st">    function(cellInfo, state) {</span></span>
 <span><span class="st">      // input:</span></span>
 <span><span class="st">      //  - cellInfo, an object containing cell info</span></span>
-<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional)</span></span>
 <span><span class="st">      //</span></span>
 <span><span class="st">      // output:</span></span>
 <span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
@@ -344,7 +344,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>true</code>
 </td>
-<td>whether the row is expanded (new in v0.3.0)</td>
+<td>whether the row is expanded</td>
 </tr>
 <tr>
 <th scope="row">
@@ -353,7 +353,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>"petal"</code>
 </td>
-<td>column filter value (new in v0.3.0)</td>
+<td>column filter value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -380,7 +380,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>true</code>
 </td>
-<td>whether the row is selected (new in v0.3.0)</td>
+<td>whether the row is selected</td>
 </tr>
 </tbody>
 </table>
@@ -414,7 +414,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -423,7 +423,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -432,7 +432,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -441,7 +441,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -450,7 +450,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -459,7 +459,7 @@ grouped cells and aggregated cells:</p>
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -498,7 +498,7 @@ grouped cells and aggregated cells:</p>
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
@@ -547,7 +547,7 @@ optional arguments:</p>
 <span><span class="st">    function(column, state) {</span></span>
 <span><span class="st">      // input:</span></span>
 <span><span class="st">      //  - column, an object containing column properties</span></span>
-<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional)</span></span>
 <span><span class="st">      //</span></span>
 <span><span class="st">      // output:</span></span>
 <span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
@@ -575,7 +575,7 @@ optional arguments:</p>
 <td>
 <code>"Petal.Length"</code>
 </td>
-<td>column ID (new in v0.3.0)</td>
+<td>column ID</td>
 </tr>
 <tr>
 <th scope="row">
@@ -584,7 +584,7 @@ optional arguments:</p>
 <td>
 <code>"Petal Length"</code>
 </td>
-<td>column display name (new in v0.3.0)</td>
+<td>column display name</td>
 </tr>
 <tr>
 <th scope="row">
@@ -593,7 +593,7 @@ optional arguments:</p>
 <td>
 <code>"petal"</code>
 </td>
-<td>column filter value (new in v0.3.0)</td>
+<td>column filter value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -606,7 +606,7 @@ optional arguments:</p>
 function to set the column filter value
 (set to 
 <code>undefined</code>
- to clear the filter) (new in v0.3.0)
+ to clear the filter)
 </td>
 </tr>
 <tr>
@@ -659,7 +659,7 @@ function to set the column filter value
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -668,7 +668,7 @@ function to set the column filter value
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -677,7 +677,7 @@ function to set the column filter value
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -686,7 +686,7 @@ function to set the column filter value
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -695,7 +695,7 @@ function to set the column filter value
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -704,7 +704,7 @@ function to set the column filter value
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -743,7 +743,7 @@ function to set the column filter value
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
@@ -792,7 +792,7 @@ arguments:</p>
 <span><span class="st">    function(column, state) {</span></span>
 <span><span class="st">      // input:</span></span>
 <span><span class="st">      //  - column, an object containing column properties</span></span>
-<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional)</span></span>
 <span><span class="st">      //</span></span>
 <span><span class="st">      // output:</span></span>
 <span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
@@ -820,7 +820,7 @@ arguments:</p>
 <td>
 <code>"Petal.Length"</code>
 </td>
-<td>column ID (new in v0.3.0)</td>
+<td>column ID</td>
 </tr>
 <tr>
 <th scope="row">
@@ -829,7 +829,7 @@ arguments:</p>
 <td>
 <code>"Petal Length"</code>
 </td>
-<td>column display name (new in v0.3.0)</td>
+<td>column display name</td>
 </tr>
 <tr>
 <th scope="row">
@@ -838,7 +838,7 @@ arguments:</p>
 <td>
 <code>"petal"</code>
 </td>
-<td>column filter value (new in v0.3.0)</td>
+<td>column filter value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -851,7 +851,7 @@ arguments:</p>
 function to set the column filter value
 (set to 
 <code>undefined</code>
- to clear the filter) (new in v0.3.0)
+ to clear the filter)
 </td>
 </tr>
 <tr>
@@ -904,7 +904,7 @@ function to set the column filter value
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -913,7 +913,7 @@ function to set the column filter value
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -922,7 +922,7 @@ function to set the column filter value
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -931,7 +931,7 @@ function to set the column filter value
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -940,7 +940,7 @@ function to set the column filter value
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -949,7 +949,7 @@ function to set the column filter value
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -988,7 +988,7 @@ function to set the column filter value
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
@@ -1040,7 +1040,7 @@ optional arguments:</p>
 <span><span class="st">    function(rowInfo, state) {</span></span>
 <span><span class="st">      // input:</span></span>
 <span><span class="st">      //  - rowInfo, an object containing row info</span></span>
-<span><span class="st">      //  - state, an object containing the table state (optional, new in v0.3.0)</span></span>
+<span><span class="st">      //  - state, an object containing the table state (optional)</span></span>
 <span><span class="st">      //</span></span>
 <span><span class="st">      // output:</span></span>
 <span><span class="st">      //  - content to render (e.g. an HTML string)</span></span>
@@ -1067,7 +1067,7 @@ optional arguments:</p>
 <td>
 <code>{ Petal.Length: 1.7, Species: "setosa" }</code>
 </td>
-<td>row data values (new in v0.3.0)</td>
+<td>row data values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1107,7 +1107,7 @@ same as
 <td>
 <code>true</code>
 </td>
-<td>whether the row is expanded (new in v0.3.0)</td>
+<td>whether the row is expanded</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1159,7 +1159,7 @@ same as
 <td>
 <code>2</code>
 </td>
-<td>page index (zero-based, new in v0.3.0)</td>
+<td>page index (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1168,7 +1168,7 @@ same as
 <td>
 <code>10</code>
 </td>
-<td>page size (new in v0.3.0)</td>
+<td>page size</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1177,7 +1177,7 @@ same as
 <td>
 <code>5</code>
 </td>
-<td>number of pages (new in v0.3.0)</td>
+<td>number of pages</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1186,7 +1186,7 @@ same as
 <td>
 <code>[{ id: "Species", value: "petal" }]</code>
 </td>
-<td>column filter values (new in v0.3.0)</td>
+<td>column filter values</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1195,7 +1195,7 @@ same as
 <td>
 <code>"petal"</code>
 </td>
-<td>table search value (new in v0.3.0)</td>
+<td>table search value</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1204,7 +1204,7 @@ same as
 <td>
 <code>[0, 1, 4]</code>
 </td>
-<td>selected row indices (zero-based, new in v0.3.0)</td>
+<td>selected row indices (zero-based)</td>
 </tr>
 <tr>
 <th scope="row">
@@ -1243,7 +1243,7 @@ same as
 <td>
 custom table metadata from
 <code><a href="../reference/reactable.html">reactable()</a></code>
-(new in v0.3.0.9000)
+(new in v0.4.0)
 </td>
 </tr>
 <tr>
