@@ -441,10 +441,6 @@ reactable(
 
 ### Include sub rows in pagination
 
-::: {.callout}
-New in v0.3.0
-:::
-
 By default, sub rows are excluded from pagination and always shown on the same
 page when expanded. To include sub rows in pagination, you can set `paginateSubRows`
 to `TRUE`. This is recommended for grouped tables with a large number of rows
@@ -714,10 +710,6 @@ reactable(data, columns = list(
 ```
 
 ### Grouped cell rendering
-
-::: {.callout}
-New in v0.3.0
-:::
 
 ```{r}
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -1384,10 +1376,6 @@ reactable(
 
 ### Vertical alignment
 
-::: {.callout}
-New in v0.3.0
-:::
-
 You can change the vertical alignment of cell content using the `vAlign` or
 `headerVAlign` arguments in `colDef()` and `colGroup()`. `vAlign` controls the
 alignment of data cells, while `headerVAlign` controls the alignment of header cells.
@@ -1662,10 +1650,6 @@ reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
 
 ## Sticky Columns
 
-::: {.callout}
-New in v0.3.0
-:::
-
 You can make columns sticky when scrolling horizontally using the `sticky`
 argument in `colDef()` or `colGroup()`. Set `sticky` to either `"left"`
 or `"right"` to make the column stick to the left or right side.
@@ -1766,10 +1750,6 @@ reactable(iris[1:5, ], rownames = TRUE)
 ```
 
 ### Row headers
-
-::: {.callout}
-New in v0.3.0
-:::
 
 You can mark up cells in a column as row headers by setting `rowHeader` to `TRUE`
 in `colDef()`.
@@ -2307,10 +2287,6 @@ htmltools::browsable(
 ```
 
 ## JavaScript API
-
-::: {.callout}
-New in v0.3.0
-:::
 
 You can use the JavaScript API to create custom interactive controls for your table
 without the use of Shiny, or add cross-widget interactions beyond what Crosstalk provides.

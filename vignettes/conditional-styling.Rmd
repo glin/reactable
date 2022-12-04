@@ -220,12 +220,12 @@ colDef(
 ```{r, echo=FALSE, asis=TRUE}
 rowInfoProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
-  "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values (new in v0.3.0)",
+  "values", '{ Petal.Length: 1.7, Species: "setosa" }', "row data values",
   "row", '{ Petal.Length: 1.7, Species: "setosa" }', tagList("same as ", tags$code("values"), " (deprecated in v0.3.0)"),
   "index", "20", "row index (zero-based)",
   "viewIndex", "0", "row index within the page (zero-based)",
   "aggregated", "true", "whether the row is aggregated",
-  "expanded", "true", "whether the row is expanded (new in v0.3.0)",
+  "expanded", "true", "whether the row is expanded",
   "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sub rows data (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
   "selected", "true", "whether the row is selected"
@@ -241,8 +241,8 @@ columnProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "id", '"Petal.Length"', "column ID",
   "name", '"Petal Length"', "column display name",
-  "filterValue", '"petal"', "column filter value  (new in v0.3.0)",
-  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter) (new in v0.3.0)")
+  "filterValue", '"petal"', "column filter value ",
+  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter)")
 )
 
 propsTable(columnProps)
@@ -254,12 +254,12 @@ propsTable(columnProps)
 stateProps <- dplyr::tribble(
   ~Property, ~Example, ~Description,
   "sorted", '[{ id: "Petal.Length", desc: true }, ...]', "columns being sorted in the table",
-  "page", "2", "page index (zero-based, new in v0.3.0)",
-  "pageSize", "10", "page size (new in v0.3.0)",
-  "pages", "5", "number of pages (new in v0.3.0)",
-  "filters", '[{ id: "Species", value: "petal" }]', "column filter values (new in v0.3.0)",
-  "searchValue", '"petal"', "table search value (new in v0.3.0)",
-  "selected", '[0, 1, 4]', "selected row indices (zero-based, new in v0.3.0)",
+  "page", "2", "page index (zero-based)",
+  "pageSize", "10", "page size",
+  "pages", "5", "number of pages",
+  "filters", '[{ id: "Species", value: "petal" }]', "column filter values",
+  "searchValue", '"petal"', "table search value",
+  "selected", '[0, 1, 4]', "selected row indices (zero-based)",
   "pageRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data on the page",
   "sortedData", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "current row data in the table (after sorting, filtering, grouping)",
   "data", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "original row data in the table",

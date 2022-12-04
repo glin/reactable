@@ -38,10 +38,6 @@ propsTable <- function(props) {
 }
 ```
 
-::: {.callout}
-New in v0.3.0
-:::
-
 ## Introduction
 
 The JavaScript API lets you manipulate and access tables from JavaScript.
