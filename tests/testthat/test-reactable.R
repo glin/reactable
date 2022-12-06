@@ -1344,6 +1344,19 @@ test_that("reactable.yaml widget dependencies are included with correct version"
 
 # Static rendering (experimental)
 test_that("static rendering", {
+  # Skip static rendering tests if V8 was built against a version of libv8 without
+  # ICU / i18n support. If running on Fedora, this is an issue with Fedora's V8 package
+  # that was fixed in Fedora 37. The workaround on Fedora <= 36 is to build the V8
+  # R package using DOWNLOAD_STATIC_LIBV8=true.
+  # https://github.com/jeroen/V8/issues/65
+  # https://bugzilla.redhat.com/show_bug.cgi?id=1755114
+  tryCatch({
+    V8::new_context()$eval("''.localeCompare('')")
+  }, error = function(e) {
+    # If libv8 lacks i18n support, the error is typically: "RangeError: Internal error: Icu error."
+    skip("V8 was built against a version of libv8 without i18n support")
+  })
+
   data <- data.frame(
     x = c(1, 2),
     y = c("a", "column-y-cell"),
