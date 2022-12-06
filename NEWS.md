@@ -1,4 +1,4 @@
-# reactable 0.4.0.9000 (Unreleased)
+# reactable 0.4.1
 
 * Fixed a failing test on Fedora 36 and earlier.
 
