@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.1.9000</span>
     </a>
 
     
@@ -99,8 +99,8 @@
        
 
 
-<script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="custom-rendering_files/reactable-0.4.0.9000/reactable.css" rel="stylesheet">
-<script src="custom-rendering_files/reactable-binding-0.4.0.9000/reactable.js"></script><div class="row">
+<script src="custom-rendering_files/core-js-2.5.3/shim.min.js"></script><script src="custom-rendering_files/react-17.0.0/react.min.js"></script><script src="custom-rendering_files/react-17.0.0/react-dom.min.js"></script><script src="custom-rendering_files/reactwidget-1.0.0/react-tools.js"></script><script src="custom-rendering_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="custom-rendering_files/reactable-0.4.1.9000/reactable.css" rel="stylesheet">
+<script src="custom-rendering_files/reactable-binding-0.4.1.9000/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Custom Rendering</h1>
@@ -130,7 +130,7 @@ JavaScript render functions
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  Species <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>    cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
+<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -186,13 +186,13 @@ function:</p>
 <span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    Price <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">values</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"$%.2f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="op">}</span><span class="op">)</span>,</span>
-<span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>footer <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">b</span><span class="op">(</span><span class="st">"Total"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-604f666e445a12b0bd34" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-604f666e445a12b0bd34">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that,
+<div id="htmlwidget-e2b137ee0bd068be23c1" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e2b137ee0bd068be23c1">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":{"name":"b","attribs":{},"children":["Total"]}},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":{"name":"b","attribs":{},"children":["$84.20"]}}],"searchable":true,"dataKey":"a12328ecc1b583a8c73b18c8bf724af4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>However, the column total doesn’t update with filtering. For that,
 you need a JavaScript render function with access to the client-side
 filtered state:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -215,8 +215,8 @@ filtered state:</p>
 <span>    Manufacturer <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>html <span class="op">=</span> <span class="cn">TRUE</span>, footer <span class="op">=</span> <span class="st">"&lt;b&gt;Total&lt;/b&gt;"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-31ab85dd90b34697a8d5" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-31ab85dd90b34697a8d5">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
+<div id="htmlwidget-a9b85dcac3c1615511c3" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-a9b85dcac3c1615511c3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Chrylser","Chrysler","Chrysler","Dodge","Dodge"],"Model":["Concorde","LeBaron","Imperial","Colt","Shadow"],"Type":["Large","Compact","Large","Small","Small"],"Price":[18.4,15.8,29.5,9.2,11.3]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","footer":"<b>Total<\/b>","html":true},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","footer":"function(column, state) {\n        let total = 0\n        state.sortedData.forEach(function(row) {\n          total += row[column.id]\n        })\n        return '<b>$' + total.toFixed(2) + '<\/b>'\n      }","html":true}],"searchable":true,"dataKey":"da4ee320cd0d6da7e02aaac40c10eae9"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.footer"],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="cells">Cells<a class="anchor" aria-label="anchor" href="#cells"></a>
@@ -236,7 +236,7 @@ optional arguments:</p>
 <span>    <span class="co">#</span></span>
 <span>    <span class="co"># output:</span></span>
 <span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
-<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"color: red"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span>style <span class="op">=</span> <span class="st">"color: red"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -533,7 +533,7 @@ optional arguments:</p>
 <span>    <span class="co">#</span></span>
 <span>    <span class="co"># output:</span></span>
 <span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
-<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -778,7 +778,7 @@ arguments:</p>
 <span>    <span class="co">#</span></span>
 <span>    <span class="co"># output:</span></span>
 <span>    <span class="co">#   - content to render (e.g. an HTML tag or widget)</span></span>
-<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Total:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Total:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -1023,7 +1023,7 @@ optional arguments:</p>
 <span>    <span class="co">#</span></span>
 <span>    <span class="co"># output:</span></span>
 <span>    <span class="co">#   - content to render (e.g., an HTML tag or nested table), or NULL to hide details</span></span>
-<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
+<span>    <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Details for row:"</span>, <span class="va">index</span><span class="op">)</span>,</span>
 <span>      <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">index</span>, <span class="op">]</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>

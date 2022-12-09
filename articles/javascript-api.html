@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.4.0.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.1.9000</span>
     </a>
 
     
@@ -99,8 +99,8 @@
        
 
 
-<script src="javascript-api_files/core-js-2.5.3/shim.min.js"></script><script src="javascript-api_files/react-17.0.0/react.min.js"></script><script src="javascript-api_files/react-17.0.0/react-dom.min.js"></script><script src="javascript-api_files/reactwidget-1.0.0/react-tools.js"></script><script src="javascript-api_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="javascript-api_files/reactable-0.4.0.9000/reactable.css" rel="stylesheet">
-<script src="javascript-api_files/reactable-binding-0.4.0.9000/reactable.js"></script><div class="row">
+<script src="javascript-api_files/core-js-2.5.3/shim.min.js"></script><script src="javascript-api_files/react-17.0.0/react.min.js"></script><script src="javascript-api_files/react-17.0.0/react-dom.min.js"></script><script src="javascript-api_files/reactwidget-1.0.0/react-tools.js"></script><script src="javascript-api_files/htmlwidgets-1.5.4/htmlwidgets.js"></script><link href="javascript-api_files/reactable-0.4.1.9000/reactable.css" rel="stylesheet">
+<script src="javascript-api_files/reactable-binding-0.4.1.9000/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>JavaScript API</h1>
@@ -127,8 +127,8 @@ beyond what Crosstalk provides.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
 <span>    <span class="va">tags</span><span class="op">$</span><span class="fu">button</span><span class="op">(</span><span class="st">"Download as CSV"</span>, onclick <span class="op">=</span> <span class="st">"Reactable.downloadDataCSV('cars-table')"</span><span class="op">)</span>,</span>
 <span></span>
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
@@ -199,15 +199,15 @@ output:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
 <span>    <span class="va">tags</span><span class="op">$</span><span class="fu">button</span><span class="op">(</span><span class="st">"Download as CSV"</span>, onclick <span class="op">=</span> <span class="st">"Reactable.downloadDataCSV('cars-table', 'cars.csv')"</span><span class="op">)</span>,</span>
 <span></span>
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, elementId <span class="op">=</span> <span class="st">"cars-table"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="callout-note">
-<p><strong>Note:</strong> <code><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">htmltools::browsable()</a></code> is a
+<p><strong>Note:</strong> <code><a href="https://rstudio.github.io/htmltools/reference/browsable.html" class="external-link">htmltools::browsable()</a></code> is a
 convenient way to view the rendered HTML when copying code into the
 console. It isn’t required to render HTML in R Markdown documents or
 Shiny apps.</p>
@@ -218,14 +218,14 @@ function that generates download buttons:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">csvDownloadButton</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tableId</span>, <span class="va">label</span> <span class="op">=</span> <span class="st">"Download as CSV"</span>, <span class="va">filename</span> <span class="op">=</span> <span class="st">"data.csv"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/htmltools/man/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">button</span><span class="op">(</span></span>
+<span>  <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">button</span><span class="op">(</span></span>
 <span>    <span class="va">label</span>,</span>
 <span>    onclick <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Reactable.downloadDataCSV('%s', '%s')"</span>, <span class="va">tableId</span>, <span class="va">filename</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span><span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
 <span>    <span class="fu">csvDownloadButton</span><span class="op">(</span><span class="st">"cars-table"</span>, <span class="st">"Download as CSV"</span>, filename <span class="op">=</span> <span class="st">"cars.csv"</span><span class="op">)</span>,</span>
 <span></span>
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, elementId <span class="op">=</span> <span class="st">"cars-table"</span><span class="op">)</span></span>
@@ -771,8 +771,8 @@ called to cancel the listener function.</p>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/browsable.html" class="external-link">browsable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Table state:"</span>,</span>
 <span>    <span class="va">tags</span><span class="op">$</span><span class="fu">pre</span><span class="op">(</span>id <span class="op">=</span> <span class="st">"tbl-state"</span>, <span class="st">"{}"</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
