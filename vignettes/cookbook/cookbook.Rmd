@@ -977,11 +977,59 @@ reactable(
 )
 ```
 
-```{r}
+To use a custom font that's not installed on your users' systems by default, use the [`@font-face`](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face)
+CSS rule to add the font and specify where to download it from.
+
+Online font services such as [Google Fonts](https://fonts.google.com/) can make this easier by hosting
+custom fonts and providing 1-2 lines of HTML to copy into your document to use those fonts.
+
+For example, to include a font from Google Fonts in an R Markdown document, add a `<link>` tag pointing to the
+font stylesheet somewhere:
+
+````{verbatim, lang = "markdown"}
+```{r, echo=FALSE}
 # Add a custom font from Google Fonts
 htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
                      rel = "stylesheet")
 ```
+````
+
+```{r, echo=FALSE}
+# Add a custom font from Google Fonts
+htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+                     rel = "stylesheet")
+```
+
+Or in Shiny apps, the `<link>` tag can be included in the `<head>` of the page via `ui`:
+
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  tags$head(
+    tags$link(
+      href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+      rel = "stylesheet"
+    ),
+    tags$style("
+      body {
+        font-family: Work Sans, sans-serif;
+      }
+    ")
+  ),
+  reactable(
+    MASS::Cars93[, 1:5],
+    defaultSorted = "Price"
+  )
+)
+
+server <- function(input, output) {}
+
+shinyApp(ui, server)
+```
+
+For an example of using self-hosted custom fonts, see the [Popular Movies](../popular-movies/popular-movies.html) demo.
 
 ::: {.callout-tip}
 **Tip:** The reactable package documentation uses the default system fonts
