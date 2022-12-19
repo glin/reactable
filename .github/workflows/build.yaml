@@ -44,7 +44,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          # Temporarily install htmlwidgets >= 1.6.0 for tests
+          extra-packages: |
+            any::rcmdcheck
+            htmlwidgets?source
 
       - uses: r-lib/actions/check-r-package@v2
 
