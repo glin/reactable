@@ -1,5 +1,5 @@
 pandoc: 2.19.2
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   100k-rows: 100k-rows.html
@@ -25,5 +25,5 @@ articles:
   sticky-columns: sticky-columns.html
   twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2022-12-09T00:46Z
+last_built: 2022-12-19T03:38Z
 
