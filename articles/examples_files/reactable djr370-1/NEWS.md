@@ -1,5 +1,10 @@
 # reactable 0.4.1.9000 (Unreleased)
 
+## Minor improvements and bug fixes
+
+* Fixed rendering of embedded HTML widgets when `htmlwidgets` 1.6.0 or later is installed.
+  In general, fixed rendering of any Shiny HTML tags with duplicate attributes. (@tomsing1, [#306](https://github.com/glin/reactable/issues/304))
+
 # reactable 0.4.1
 
 [Documentation - reactable 0.4.1](https://v0-4-1--reactable-docs.netlify.app/)
