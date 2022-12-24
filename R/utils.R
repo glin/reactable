@@ -131,6 +131,7 @@ asReactTag <- function(x) {
   # Filter null elements for proper hydration
   x$children <- filterNulls(x$children)
   x$children <- lapply(x$children, asReactTag)
+  x <- normalizeTagAttributes(x)
   x$attribs <- asReactAttributes(x$attribs, x$name)
   x
 }
@@ -170,6 +171,18 @@ unnestTagList <- function(x) {
   }, x, list())
 
   htmltools::attachDependencies(tags, htmlDeps)
+}
+
+# Normalize tags that may have duplicate attributes, such as duplicate class attributes
+# in HTML widgets with htmlwidgets >= 1.6.0.
+normalizeTagAttributes <- function(tag) {
+  attribNames <- names(tag$attribs)
+  for (dupAttrib in attribNames[duplicated(attribNames)]) {
+    combinedValue <- htmltools::tagGetAttribute(tag, dupAttrib)
+    tag$attribs[attribNames == dupAttrib] <- NULL
+    tag$attribs[[dupAttrib]] <- combinedValue
+  }
+  tag
 }
 
 # Transform HTML attributes to React DOM attributes.

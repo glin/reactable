@@ -158,6 +158,14 @@ test_that("asReactTag", {
   # Attributes should be preserved
   expect_equal(asReactTag(div(factor("xy"))), div("xy"))
   expect_equal(asReactTag(div(div(as.Date("2019-01-03")))), div(div("2019-01-03")))
+
+  # Duplicate attributes should be included and collapsed (e.g., for likelihood of
+  # duplicate class attributes in HTML widgets with htmlwidgets >= 1.6.0)
+  expect_equal(asReactTag(div(class = "a", class = "b")), div(className = "a b"))
+  expect_equal(
+    asReactTag(span(class = "a", test = "t", style = list(color = "red"), class = "bb", style = list(color = "blue"))),
+    span(test = "t", style = list(list(color = "red"), list(color = "blue")), className = "a bb")
+  )
 })
 
 test_that("asReactTag preserves HTML dependencies", {
