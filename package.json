@@ -46,7 +46,7 @@
     "autoprefixer": "^10.4.7",
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "css-loader": "^3.6.0",
+    "css-loader": "^6.7.3",
     "cssnano": "^5.1.9",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^22.4.1",
