@@ -1,4 +1,4 @@
-# reactable 0.4.2.9000 (Unreleased)
+# reactable 0.4.3
 
 * Fixed a failing CRAN check on the `r-devel-linux-x86_64-fedora-clang` platform. ([#308](https://github.com/glin/reactable/issues/308))
 
