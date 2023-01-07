@@ -1350,6 +1350,22 @@ test_that("static rendering", {
   # R package using DOWNLOAD_STATIC_LIBV8=true.
   # https://github.com/jeroen/V8/issues/65
   # https://bugzilla.redhat.com/show_bug.cgi?id=1755114
+  #
+  # On CRAN's fedora-clang platform, where V8 is installed with g++ and not clang, all
+  # uncaught exceptions cause V8 to seg fault, which causes this check and other error handling
+  # tests to fail. Skip all tests if running on a platform with this issue.
+  # See notes on CRAN's fedora-clang platform: https://www.stats.ox.ac.uk/pub/bdr/Rconfig/r-devel-linux-x86_64-fedora-clang
+  #
+  # The test for the uncaught exception seg fault must be run in a separate R process.
+  # If a seg fault occurs, the output is typically: "free(): double free detected in tcache 2"
+  code <- "V8::new_context()$eval('not_defined')"
+  output <- suppressWarnings(
+    system2(R.home("bin/R"), c("-e", shQuote(code)), stdout = TRUE, stderr = TRUE)
+  )
+  if (attr(output, "status") > 0 && !grepl("ReferenceError", paste(output, collapse = "\n"))) {
+    skip(sprintf("V8 crashed on an uncaught exception, unable to run error handling tests.\nThis is probably V8 installed with g++ on fedora-clang. Test output:\n%s", paste(output, collapse = "\n")))
+  }
+
   tryCatch({
     V8::new_context()$eval("''.localeCompare('')")
   }, error = function(e) {
