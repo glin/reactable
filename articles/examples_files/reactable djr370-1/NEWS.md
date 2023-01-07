@@ -1,5 +1,7 @@
 # reactable 0.4.2.9000 (Unreleased)
 
+* Fixed a failing CRAN check on the `r-devel-linux-x86_64-fedora-clang` platform. ([#308](https://github.com/glin/reactable/issues/308))
+
 # reactable 0.4.2
 
 [Documentation - reactable 0.4.2](https://v0-4-2--reactable-docs.netlify.app/)
