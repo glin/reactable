@@ -1,6 +1,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  overflow-y: scroll; // Prevent scrollbar layout shifting
+  // Temporarily removed. This breaks the ToC after upgrading to Bootstrap 5.2.2 (bslib 0.4.2) from 5.1.1 (bslib 0.4.1)
+  // overflow-y: scroll; // Prevent scrollbar layout shifting
   font-size: 1rem; // Override pkgdown on xxl breakpoint
 }
 
