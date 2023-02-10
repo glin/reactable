@@ -646,6 +646,11 @@ reactable <- function(
     })
   }
 
+  # Override the htmlwidgets default JSON serialization options for data:
+  #
+  # * Serialize numbers with max precision
+  # * Preserve numeric NA, NaN, Inf, and -Inf as strings
+  # * Serialize both dates/datetimes as ISO 8601
   data <- toJSON(data)
 
   # Create a unique key for the data. The key is used to fully reset state when

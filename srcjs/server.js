@@ -15,10 +15,13 @@ global.React = React
 const cache = getEmotion().cache
 const { extractCritical } = createEmotionServer(cache)
 
-export function renderToHTML(inputString) {
-  const input = JSON.parse(inputString)
+// Render to HTML for static rendering
+export function renderToHTML(inputJson) {
+  const input = JSON.parse(inputJson)
 
   const props = input.props
+  // Table data comes through double-serialized, first with reactable's custom serialization
+  // options, and then with the htmlwidgets default serialization.
   props.data = JSON.parse(props.data)
 
   // Resolve strings marked as JavaScript literals to objects
@@ -28,6 +31,8 @@ export function renderToHTML(inputString) {
     }
   }
 
-  const { html, css, ids } = extractCritical(ReactDOMServer.renderToString(<Reactable {...props} />))
+  const { html, css, ids } = extractCritical(
+    ReactDOMServer.renderToString(<Reactable {...props} />)
+  )
   return { html, css, ids }
 }
