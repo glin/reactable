@@ -1,6 +1,7 @@
 import {
   classNames,
   getFirstDefined,
+  removeEmptyProps,
   getLeafColumns,
   convertRowsToV6,
   rowsToCSV,
@@ -19,6 +20,18 @@ test('getFirstDefined', () => {
   expect(getFirstDefined(1, 2)).toEqual(1)
   expect(getFirstDefined(undefined, 2, 3)).toEqual(2)
   expect(getFirstDefined(null, undefined, false, true)).toEqual(false)
+})
+
+test('removeEmptyProps', () => {
+  let obj = {}
+  removeEmptyProps(obj)
+  expect(obj).toEqual({})
+  obj = { x: 1, y: null, z: undefined }
+  removeEmptyProps(obj)
+  expect(obj).toEqual({ x: 1 })
+  obj = { x: 1, y: { a: 'a', empty: null }, z: {} }
+  removeEmptyProps(obj)
+  expect(obj).toEqual({ x: 1, y: { a: 'a' } })
 })
 
 test('getLeafColumns', () => {

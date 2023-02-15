@@ -1,6 +1,6 @@
 import createEmotion from '@emotion/css/create-instance'
 
-import { isBrowser } from './utils'
+import { isBrowser, removeEmptyProps } from './utils'
 
 export function createTheme(options) {
   if (!options) return null
@@ -213,20 +213,6 @@ function getFirstDefinedProp(objects, prop, defaultVal) {
 // URL encoder that escapes parentheses (for data URLs)
 function urlEncode(str) {
   return encodeURIComponent(str).replace('(', '%28').replace(')', '%29')
-}
-
-// Remove undefined/null properties and empty objects
-function removeEmptyProps(obj) {
-  for (let [key, value] of Object.entries(obj)) {
-    if (typeof value === 'object') {
-      removeEmptyProps(value)
-      if (Object.keys(value).length === 0) {
-        delete obj[key]
-      }
-    } else if (value == null) {
-      delete obj[key]
-    }
-  }
 }
 
 // Defer Emotion initialization until DOM is loaded and theming is used

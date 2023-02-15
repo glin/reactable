@@ -38,6 +38,7 @@ Imports:
 Suggests:
     covr,
     crosstalk,
+    data.table,
     dplyr,
     fontawesome,
     knitr,

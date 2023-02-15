@@ -153,7 +153,6 @@ function reducer(state, action, previousState, instance) {
 
     const handleRowById = id => {
       const row = rowsById[id]
-
       if (!row.isGrouped) {
         if (shouldExist) {
           newSelectedRowIds[id] = true
@@ -377,6 +376,15 @@ function getRowIsSelected(row, selectedRowIds) {
   if (subRows && subRows.length) {
     let allChildrenSelected = true
     let someSelected = false
+
+    // TODO: For server-side pagination, if sub rows are paginated, there's no way to know 
+    // whether all sub rows are selected if not present on the page. Row selection needs 
+    // to be fully server-side, so this is a temporary workaround to prevent grouped
+    // rows from always appearing as selected.
+    const availableSubRows = subRows.filter(row => row != null)
+    if (availableSubRows.length !== subRows.length) {
+      return false
+    }
 
     subRows.forEach(subRow => {
       // Bail out early if we know both of these

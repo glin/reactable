@@ -3,13 +3,24 @@ import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
 import { getAggregateFunction } from './aggregators'
-import { classNames, escapeRegExp, getFirstDefined, getLeafColumns } from './utils'
+import {
+  classNames,
+  escapeRegExp,
+  getFirstDefined,
+  getLeafColumns,
+  removeEmptyProps
+} from './utils'
 
 // Use zero-width spaces to preserve the height of empty cells
 export const emptyValue = '\u200b'
 
 // Override default subRows property
 const subRowsKey = '.subRows'
+
+export const rowSelectedKey = '.selected'
+export const rowExpandedKey = '.expanded'
+
+export const rowStateKey = '__state'
 
 export function getSubRows(row) {
   return row[subRowsKey] || []
@@ -56,6 +67,11 @@ export function columnsToRows(columns) {
   if (names.length === 0) {
     return []
   }
+
+  if (columns[rowStateKey]) {
+    columns[rowStateKey] = normalizeColumnData(columns[rowStateKey], numericRowStateColumns)
+  }
+
   const rows = new Array(columns[names[0]].length)
   for (let i = 0; i < rows.length; i++) {
     rows[i] = {}
@@ -71,6 +87,40 @@ export function columnsToRows(columns) {
     }
   }
   return rows
+}
+
+const numericRowStateColumns = [{ id: 'index', type: 'numeric' }]
+export function materializedRowsToData(rows, paginateSubRows) {
+  const parentRowIds = {}
+  return rows.map(row => {
+    let parentId
+    let subRowCount
+    if (paginateSubRows) {
+      parentId = parentRowIds[row.id]
+      subRowCount = row.subRows.length
+      row.subRows.forEach(subRow => {
+        parentRowIds[subRow.id] = row.id
+      })
+    }
+    const rowState = {
+      id: row.id,
+      index: row.index,
+      grouped: row.isGrouped ? true : null,
+      parentId,
+      subRowCount,
+      // Currently unused
+      expanded: row.isExpanded ? true : null,
+      selected: row.isSelected ? true : null
+    }
+    removeEmptyProps(rowState)
+    const dataRow = { ...row.values, [rowStateKey]: rowState }
+    if (!paginateSubRows) {
+      if (row.subRows && row.subRows.length > 0) {
+        dataRow[subRowsKey] = materializedRowsToData(row.subRows)
+      }
+    }
+    return dataRow
+  })
 }
 
 export function RawHTML({ html, className, ...props }) {

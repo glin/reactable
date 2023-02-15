@@ -30,6 +30,12 @@ filterNulls <- function(x) {
   Filter(Negate(is.null), x)
 }
 
+# Ensures that length-1 vectors are always serialized to JSON as lists
+asJSONList <- function(x) {
+  if (is.null(x)) return(x)
+  I(x)
+}
+
 is.JS <- function(x) {
   inherits(x, class(JS("")))
 }
@@ -333,4 +339,11 @@ callFunc <- function(func, ...) {
   args <- list(...)
   numArgs <- length(formals(func))
   do.call(func, args[seq_len(numArgs)])
+}
+
+debugLog <- function(...) {
+  if (isTRUE(getOption("reactable.debug"))) {
+    msg <- paste(...)
+    message(sprintf("%s DEBUG %s", Sys.time(), msg))
+  }
 }

@@ -121,6 +121,7 @@
 #'
 #'   Static rendering is **experimental**, and is not supported for tables
 #'   rendered via [reactableOutput()] in Shiny.
+#' @param server Enable server-side data processing in Shiny apps?
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
@@ -225,6 +226,7 @@ reactable <- function(
   meta = NULL,
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
+  server = FALSE,
   selectionId = NULL
 ) {
   crosstalkKey <- NULL
@@ -646,6 +648,67 @@ reactable <- function(
     })
   }
 
+  preRenderHook <- NULL
+  serverPageCount <- NULL
+  serverRowCount <- NULL
+  if (!isFALSE(server)) {
+    backend <- if (isTRUE(server)) {
+      getServerBackend(getOption("reactable.server.backend", "V8"))
+    } else {
+      getServerBackend(server)
+    }
+
+    initialProps <- list(
+      data = data,
+      columns = cols,
+      pagination = pagination,
+      paginateSubRows = paginateSubRows,
+      pageIndex = 0,
+      pageSize = defaultPageSize,
+      sortBy = columnSortDefs(defaultSorted),
+      groupBy = groupBy,
+      searchMethod = searchMethod
+      # TODO add expanded, selectedRowIds
+    )
+
+    initFunc <- backend[["init"]]
+    if (is.function(initFunc)) {
+      do.call(initFunc, initialProps)
+    }
+
+    dataFunc <- backend[["data"]]
+    if (!is.function(dataFunc)) {
+      stop("reactable server backend must have a data() method defined")
+    }
+
+    # Pre-calculate initial page. This could be undesired in some cases, so it
+    # may be optional in the future.
+    initialPage <- do.call(dataFunc, initialProps)
+    data <- initialPage$data
+    serverPageCount <- initialPage$pageCount
+    serverRowCount <- initialPage$rowCount
+
+    preRenderHook <- function(instance) {
+      session <- if (requireNamespace("shiny", quietly = TRUE)) {
+        shiny::getDefaultReactiveDomain()
+      }
+      if (is.null(session)) {
+        # Not in an active Shiny session or Shiny not installed. Fall back to client-side
+        # mode using the original data.
+        instance$x$tag$attribs$data <- toJSON(initialProps$data)
+        return(instance)
+      }
+      outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
+      dataURL <- session$registerDataObj(
+        outputId,
+        c(list(backend = backend), initialProps),
+        reactableFilterFunc
+      )
+      instance$x$tag$attribs$dataURL <- dataURL
+      instance
+    }
+  }
+
   # Override the htmlwidgets default JSON serialization options for data:
   #
   # * Serialize numbers with max precision
@@ -711,7 +774,9 @@ reactable <- function(
     crosstalkGroup = crosstalkGroup,
     elementId = elementId,
     dataKey = dataKey,
-    static = static
+    static = static,
+    serverPageCount = serverPageCount,
+    serverRowCount = serverRowCount
   ))
 
   htmlwidgets::createWidget(
@@ -727,7 +792,8 @@ reactable <- function(
     ),
     package = "reactable",
     dependencies = dependencies,
-    elementId = elementId
+    elementId = elementId,
+    preRenderHook = preRenderHook
   )
 }
 

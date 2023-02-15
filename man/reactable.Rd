@@ -54,6 +54,7 @@ reactable(
   meta = NULL,
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
+  server = FALSE,
   selectionId = NULL
 )
 }
@@ -212,6 +213,8 @@ subsequently rendered by JavaScript as needed.
 
 Static rendering is \strong{experimental}, and is not supported for tables
 rendered via \code{\link[=reactableOutput]{reactableOutput()}} in Shiny.}
+
+\item{server}{Enable server-side data processing in Shiny apps?}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}

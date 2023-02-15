@@ -306,3 +306,50 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 
   state
 }
+
+reactableFilterFunc <- function(data, req) {
+  body <- rawToChar(req$rook.input$read())
+  params <- parseParams(body)
+
+  start <- Sys.time()
+  resolvedData <- do.call(data$backend[["data"]], mergeLists(data, params))
+  end <- Sys.time()
+
+  debugLog(sprintf("(reactableFilterFunc) time to resolve data: %s\n%s", format(end - start, units = "secs"), toJSON(resolvedData)))
+
+  shiny::httpResponse(
+    status = 200L,
+    content_type = "application/json",
+    content = toJSON(resolvedData)
+  )
+}
+
+# Parse data parameters from JSON, ensuring empty arrays deserialize as NULL,
+# and arrays of objects deserialize as lists instead of data frames.
+parseParams <- function(json) {
+  params <- jsonlite::parse_json(json, simplifyVector = TRUE, simplifyDataFrame = FALSE)
+  params <- lapply(params, function(x) {
+    if (is.list(x) && length(x) == 0) NULL else x
+  })
+  params
+}
+
+getServerBackend <- function(backend) {
+  if (!is.character(backend)) {
+    return(backend)
+  }
+
+  backends <- list(
+    V8 = serverV8,
+    data.frame = serverDf,
+    data.table = serverDt
+  )
+
+  if (!backend %in% names(backends)) {
+    stop(paste("reactable server backend must be one of", paste(sprintf('"%s"', names(backends)), collapse = ", ")))
+  }
+
+  debugLog("(getServerBackend) using server backend:", backend)
+
+  backends[[backend]]()
+}

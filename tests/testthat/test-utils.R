@@ -36,6 +36,13 @@ test_that("filterNulls", {
   expect_equal(filterNulls(list(1, NULL, 2)), list(1, 2))
 })
 
+test_that("asJSONList", {
+  expect_equal(as.character(toJSON(asJSONList("x"))), '["x"]')
+  expect_equal(as.character(toJSON(asJSONList(c(1, 2)))), '[1,2]')
+  expect_equal(as.character(toJSON(asJSONList(c()))), 'null')
+  expect_equal(asJSONList(NULL), NULL)
+})
+
 test_that("isNamedList", {
   expect_true(isNamedList(list()))
   expect_true(isNamedList(list(a = 1, b = 2)))

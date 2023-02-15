@@ -1,0 +1,11 @@
+test_that("basic pagination", {
+  data <- dataFrame(x = c(1, 2, 3), y = c("a", "b", "c"))
+  tbl <- reactable(data)
+  columns <- getAttrib(tbl, "columns")
+  backend <- serverV8()
+  backend$init(data = data, columns = columns)
+  results <- backend$data(pageIndex = 0, pageSize = 10)
+  expect_equal(nrow(results$data), 3)
+  expect_equal(results$pageCount, 1)
+  expect_equal(results$rowCount, 3)
+})

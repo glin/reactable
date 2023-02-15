@@ -21,7 +21,17 @@ import useResizeColumns from './useResizeColumns'
 import useRowSelect from './useRowSelect'
 import usePagination from './usePagination'
 import useMeta from './useMeta'
-import { buildColumnDefs, emptyValue, getSubRows, normalizeColumnData, RawHTML } from './columns'
+import {
+  buildColumnDefs,
+  emptyValue,
+  getSubRows,
+  materializedRowsToData,
+  normalizeColumnData,
+  rowExpandedKey,
+  rowSelectedKey,
+  rowStateKey,
+  RawHTML
+} from './columns'
 import { defaultLanguage, renderTemplate } from './language'
 import { createTheme, css } from './theme'
 import {
@@ -145,6 +155,76 @@ export default function Reactable({
       // Reset all state when the data changes. By default, most of the table state
       // persists when the data changes (sorted, filtered, grouped state, etc.).
       key={dataKey}
+      {...rest}
+    />
+  )
+}
+
+// Objects and arrays must be memoized to prevent unnecessary recalculations of data
+function useMemoizedObject(obj) {
+  const objStr = JSON.stringify(obj)
+  return React.useMemo(() => {
+    return obj
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [objStr])
+}
+
+export function ReactableData({
+  data,
+  columns,
+  columnGroups,
+  sortable,
+  defaultSortDesc,
+  showSortIcon,
+  showSortable,
+  filterable,
+  resizable,
+  // Controlled state
+  sortBy,
+  filters,
+  searchValue,
+  groupBy,
+  expanded,
+  selectedRowIds,
+  ...rest
+}) {
+
+  data = React.useMemo(
+    () => normalizeColumnData(data, columns),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+  columns = React.useMemo(
+    () =>
+      buildColumnDefs(columns, columnGroups, {
+        sortable,
+        defaultSortDesc,
+        showSortIcon,
+        showSortable,
+        filterable,
+        resizable
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
+  // Objects and arrays must be memoized to prevent unnecessary recalculations of data
+  sortBy = useMemoizedObject(sortBy || [])
+  filters = useMemoizedObject(filters || [])
+  groupBy = useMemoizedObject(groupBy || [])
+  expanded = useMemoizedObject(expanded || {})
+  selectedRowIds = useMemoizedObject(selectedRowIds || {})
+
+  return (
+    <TableData
+      data={data}
+      columns={columns}
+      sortBy={sortBy}
+      filters={filters}
+      searchValue={searchValue}
+      groupBy={groupBy}
+      expanded={expanded}
+      selectedRowIds={selectedRowIds}
       {...rest}
     />
   )
@@ -453,6 +533,187 @@ SelectInputComponent.propTypes = {
   'aria-label': PropTypes.string
 }
 
+function TableData({
+  data,
+  columns,
+  groupBy,
+  searchMethod,
+  pagination,
+  paginateSubRows,
+  selection,
+  crosstalkGroup,
+  crosstalkId,
+  setResolvedData,
+  // Controlled state
+  pageSize,
+  pageIndex,
+  sortBy,
+  filters,
+  searchValue,
+  expanded,
+  selectedRowIds
+}) {
+
+  const dataColumns = React.useMemo(
+    () => columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), []),
+    [columns]
+  )
+
+  // Must be memoized to prevent re-filtering on every render
+  const globalFilter = React.useMemo(() => {
+    if (searchMethod) {
+      return searchMethod
+    }
+    return function globalFilter(rows, columnIds, searchValue) {
+      const matchers = dataColumns.reduce((obj, col) => {
+        obj[col.id] = col.createMatcher(searchValue)
+        return obj
+      }, {})
+
+      rows = rows.filter(row => {
+        for (const id of columnIds) {
+          const value = row.values[id]
+          if (matchers[id](value)) {
+            return true
+          }
+        }
+      })
+      return rows
+    }
+  }, [dataColumns, searchMethod])
+
+  const useRowSelectColumn = function useRowSelectColumn(hooks) {
+    if (selection) {
+      hooks.visibleColumns.push(columns => {
+        const selectionCol = {
+          // Apply defaults from existing selection column
+          ...columns.find(col => col.selectable),
+          selectable: true,
+          // Disable sorting, filtering, and searching for selection columns
+          disableSortBy: true,
+          filterable: false,
+          disableFilters: true,
+          disableGlobalFilter: true
+        }
+        // Make selection column the first column, even before grouped columns
+        return [selectionCol, ...columns.filter(col => !col.selectable)]
+      })
+    }
+  }
+
+  const useCrosstalkColumn = function useCrosstalkColumn(hooks) {
+    if (crosstalkGroup) {
+      hooks.visibleColumns.push(columns => {
+        const ctCol = {
+          id: crosstalkId,
+          filter: (rows, id, value) => {
+            if (!value) {
+              return rows
+            }
+            return rows.filter(row => {
+              if (value.includes(row.index)) {
+                return true
+              }
+            })
+          },
+          disableGlobalFilter: true
+        }
+        return columns.concat(ctCol)
+      })
+
+      hooks.stateReducers.push(state => {
+        if (!state.hiddenColumns.includes(crosstalkId)) {
+          return {
+            ...state,
+            hiddenColumns: state.hiddenColumns.concat(crosstalkId)
+          }
+        }
+        return state
+      })
+    }
+  }
+
+  const instance = useTable(
+    {
+      columns,
+      data,
+      useControlledState: state => {
+        return React.useMemo(
+          () => ({
+            ...state,
+            pageIndex,
+            pageSize,
+            sortBy,
+            filters,
+            globalFilter: searchValue,
+            groupBy,
+            expanded,
+            selectedRowIds
+          }),
+          // These dependencies are required for proper table updates
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+          [
+            state,
+            pageIndex,
+            pageSize,
+            sortBy,
+            filters,
+            searchValue,
+            groupBy,
+            expanded,
+            selectedRowIds
+          ]
+        )
+      },
+      globalFilter,
+      paginateExpandedRows: paginateSubRows ? true : false,
+      disablePagination: !pagination,
+      getSubRows,
+      // Disable manual row expansion
+      manualExpandedKey: null,
+      // Maintain grouped state when the data changes
+      autoResetGroupBy: false,
+      // Maintain sorted state when the data changes
+      autoResetSortBy: false,
+      // Maintain expanded state when groupBy, sortBy, defaultPageSize change.
+      // Expanded state is still reset when the data changes via dataKey or updateReactable.
+      autoResetExpanded: false,
+      // Maintain filtered state when the data changes
+      autoResetFilters: false,
+      autoResetGlobalFilter: false,
+      // Maintain selected state when groupBy, sortBy, defaultPageSize change.
+      // Selected state is still reset when the data changes via dataKey or updateReactable.
+      autoResetSelectedRows: false,
+      // Maintain resized state when the data changes
+      autoResetResize: false,
+      // Reset current page when the data changes (e.g., sorting, filtering, searching)
+      autoResetPage: true
+    },
+    useResizeColumns,
+    useFlexLayout,
+    useStickyColumns,
+    useFilters,
+    useGlobalFilter,
+    useGroupBy,
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useRowSelect,
+    useRowSelectColumn,
+    useCrosstalkColumn
+  )
+
+  if (setResolvedData) {
+    setResolvedData({
+      data: materializedRowsToData(instance.page, paginateSubRows),
+      pageCount: instance.pageCount,
+      rowCount: instance.rows.length
+    })
+  }
+
+  return null
+}
+
 function Table({
   data: originalData,
   columns,
@@ -495,12 +756,19 @@ function Table({
   crosstalkGroup,
   crosstalkId,
   elementId,
-  nested
+  nested,
+  dataURL,
+  serverPageCount: initialServerPageCount,
+  serverRowCount: initialServerRowCount
 }) {
   const [newData, setNewData] = React.useState(null)
   const data = React.useMemo(() => {
     return newData ? newData : originalData
   }, [newData, originalData])
+
+  const useServerData = dataURL != null
+  const [serverPageCount, setServerPageCount] = React.useState(initialServerPageCount)
+  const [serverRowCount, setServerRowCount] = React.useState(initialServerRowCount)
 
   const dataColumns = React.useMemo(() => {
     return columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), [])
@@ -582,6 +850,80 @@ function Table({
 
   const [meta, setMeta] = useMeta(initialMeta)
 
+  function useServerSideRows(hooks) {
+    hooks.useInstance.push(instance => {
+      const {
+        rows,
+        manualPagination,
+        rowsById
+      } = instance
+
+      if (!manualPagination) {
+        return
+      }
+
+      // Set proper row indexes and IDs
+      const setRowProps = (rows) => {
+        rows.forEach((row) => {
+          const rowState = row.original[rowStateKey]
+          // Fall back for backends that don't implement row state
+          if (!rowState) {
+            return
+          }
+          row.index = rowState.index
+          // Not used for now because we need ability to select/expand all first
+          if (rowState.selected) {
+            row.original[rowSelectedKey] = rowState.selected
+          }
+          // Not used for now because we need ability to select/expand all first
+          if (rowState.expanded) {
+            row.original[rowExpandedKey] = rowState.expanded
+          }
+          if (rowState.grouped) {
+            row.isGrouped = true
+          }
+          // Rebuild sub rows
+          if (rowState.parentId != null) {
+            rowsById[rowState.parentId].subRows.push(row)
+            // Set parentId on row to tell useGroupBy that this is a nested row
+            // TODO change this so useGroupBy gets a properly nested row structure, not flat rows
+            row.parentId = rowState.parentId
+          }
+          // Set row props on sub rows. Skip this when sub rows are paginated, since sub rows
+          // exist in both row.subRows and the flat list of rows.
+          if (!paginateSubRows) {
+            setRowProps(row.subRows, row)
+          }
+        })
+
+        // Add placeholder subRows for aggregated row counts
+        if (paginateSubRows) {
+          rows.forEach(row => {
+            const rowState = row.original[rowStateKey]
+            row.subRows.length = rowState.subRowCount
+          })
+        }
+      }
+      setRowProps(rows)
+    })
+  }
+
+  const getRowId = React.useMemo(() => {
+    const defaultGetRowId = (row, index, parent) => {
+      return `${parent ? [parent.id, index].join('.') : index}`
+    }
+    if (!useServerData) {
+      return defaultGetRowId
+    }
+    return (row, index, parent) => {
+      if (row[rowStateKey]) {
+        return row[rowStateKey].id
+      }
+      // Fall back for backends that don't implement row state
+      return defaultGetRowId(row, index, parent)
+    }
+  }, [useServerData])
+
   const { state, ...instance } = useTable(
     {
       columns,
@@ -599,8 +941,7 @@ function Table({
       paginateExpandedRows: paginateSubRows ? true : false,
       disablePagination: !pagination,
       getSubRows,
-      // Disable manual row expansion
-      manualExpandedKey: null,
+      getRowId,
       // Maintain grouped state when the data changes
       autoResetGroupBy: false,
       // Maintain sorted state when the data changes
@@ -617,8 +958,22 @@ function Table({
       // Maintain resized state when the data changes
       autoResetResize: false,
       // Reset current page when the data changes (e.g., sorting, filtering, searching)
-      autoResetPage: true
+      autoResetPage: true,
+      manualPagination: useServerData,
+      manualSortBy: useServerData,
+      manualGlobalFilter: useServerData,
+      manualFilters: useServerData,
+      manualGroupBy: useServerData,
+      // TODO for when server-side row selection is implemented - need the ability to select all first
+      // manualRowSelectedKey: useServerData ? rowSelectedKey : null,
+      // TODO for when server-side row expansion is implemented
+      // Disable manual row expansion
+      manualExpandedKey: null,
+      // Prevent duplicate sub rows when sub rows are paginated server-side
+      expandSubRows: !(useServerData && paginateSubRows),
+      pageCount: useServerData ? serverPageCount : -1
     },
+    useServerSideRows,
     useResizeColumns,
     useFlexLayout,
     useStickyColumns,
@@ -632,6 +987,64 @@ function Table({
     useRowSelectColumn,
     useCrosstalkColumn
   )
+
+  // Server-side data
+  const skipInitialFetch = React.useRef(
+    initialServerRowCount != null && initialServerPageCount != null
+  )
+  React.useEffect(() => {
+    if (!useServerData) {
+      return
+    }
+    // Skip initial data fetch if the first page was provided
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false
+      return
+    }
+    const url = new window.URL(dataURL, window.location)
+    const params = {
+      pageIndex: state.pageIndex,
+      pageSize: state.pageSize,
+      sortBy: state.sortBy,
+      filters: state.filters,
+      searchValue: state.globalFilter,
+      groupBy: state.groupBy,
+      expanded: state.expanded,
+      selectedRowIds: state.selectedRowIds
+    }
+    window
+      .fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+      })
+      .then(res => res.json())
+      .then(body => {
+        const data = normalizeColumnData(body.data, dataColumns)
+        const pageCount = body.pageCount
+        const rowCount = body.rowCount
+        setNewData(data)
+        setServerPageCount(pageCount)
+        setServerRowCount(rowCount)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }, [
+    useServerData,
+    dataURL,
+    state.pageIndex,
+    state.pageSize,
+    state.sortBy,
+    state.filters,
+    state.globalFilter,
+    state.groupBy,
+    state.expanded,
+    state.selectedRowIds,
+    dataColumns
+  ])
 
   // Update table when default values change (preserves behavior from v6)
   useMountedLayoutEffect(() => {
@@ -1371,7 +1784,8 @@ function Table({
         ? Math.min(state.pageSize, ...(pageSizeOptions || []))
         : state.pageSize
 
-      if (maxRowCount.current <= minPageSize) {
+      const rowCount = serverRowCount != null ? serverRowCount : maxRowCount.current
+      if (rowCount <= minPageSize) {
         return null
       }
     }
@@ -1389,7 +1803,7 @@ function Table({
         canPrevious={instance.canPreviousPage}
         onPageChange={instance.gotoPage}
         onPageSizeChange={instance.setPageSize}
-        rowCount={instance.rows.length}
+        rowCount={serverRowCount != null ? serverRowCount : instance.rows.length}
         theme={theme}
         language={language}
       />
@@ -1850,7 +2264,10 @@ Reactable.propTypes = {
   crosstalkId: PropTypes.string,
   elementId: PropTypes.string,
   nested: PropTypes.bool,
-  dataKey: PropTypes.string
+  dataKey: PropTypes.string,
+  dataURL: PropTypes.string,
+  serverPageCount: PropTypes.number,
+  serverRowCount: PropTypes.number
 }
 
 Reactable.defaultProps = {
@@ -1864,3 +2281,6 @@ Reactable.defaultProps = {
   showSortIcon: true,
   crosstalkId: '__crosstalk__'
 }
+
+ReactableData.propTypes = Reactable.propTypes
+ReactableData.defaultProps = Reactable.defaultProps

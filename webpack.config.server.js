@@ -59,7 +59,10 @@ module.exports = (env, argv) => {
         // For @emotion/server/create-instance
         Buffer: ['buffer', 'Buffer'],
         // For @emotion/server/create-instance
-        process: 'process/browser'
+        process: 'process/browser',
+        // For react-test-renderer
+        setTimeout: [path.resolve(__dirname, 'srcjs/server-globals.js'), 'setTimeout'],
+        clearTimeout: [path.resolve(__dirname, 'srcjs/server-globals.js'), 'clearTimeout']
       })
     ],
 

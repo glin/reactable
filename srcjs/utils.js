@@ -9,6 +9,20 @@ export function getFirstDefined(...args) {
   return args.find(x => x != null)
 }
 
+// Recursively remove undefined/null properties and empty objects
+export function removeEmptyProps(obj) {
+  for (let [key, value] of Object.entries(obj)) {
+    if (value == null) {
+      delete obj[key]
+    } else if (typeof value === 'object') {
+      removeEmptyProps(value)
+      if (Object.keys(value).length === 0) {
+        delete obj[key]
+      }
+    }
+  }
+}
+
 export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

@@ -201,7 +201,52 @@ function useInstance(instance) {
     nonGroupedFlatRows,
     nonGroupedRowsById
   ] = React.useMemo(() => {
-    if (manualGroupBy || !groupBy.length) {
+    if (groupBy.length === 0) {
+      return [rows, flatRows, rowsById, emptyArray, emptyObject, flatRows, rowsById]
+    }
+
+    if (manualGroupBy) {
+      // Ensure that the list of filtered columns exist
+      const existingGroupBy = groupBy.filter(g => allColumns.find(col => col.id === g))
+
+      // Derive grouping props in each row that aren't present in manually grouped data.
+      // Note that this excludes groupByVal and leafRows.
+      const setGroupingProps = (rows, depth = 0) => {
+        // Set nesting depth
+        rows.forEach(row => {
+          row.depth = depth
+        })
+
+        // Last level - these are leaf rows
+        if (depth === existingGroupBy.length) {
+          return
+        }
+
+        const columnId = existingGroupBy[depth]
+
+        // Find the columns that can be aggregated, including any columns in groupBy.
+        // groupBy columns that aren't in the row's group are allowed to be aggregated.
+        const groupedColumns = existingGroupBy.slice(0, depth + 1)
+        const aggregatedColumns = allColumns
+          .filter(col => !groupedColumns.includes(col.id))
+          .map(col => col.id)
+
+        rows.forEach(row => {
+          if (!row.isGrouped) {
+            return
+          }
+
+          // Required but unset: row.groupByID, row.isGrouped
+          row.groupByID = columnId
+          // All columns that can be aggregated (including groupBy columns)
+          row.aggregatedColumns = aggregatedColumns
+          setGroupingProps(row.subRows, depth + 1)
+        })
+      }
+
+      const flatRows = rows.filter(row => row.parentId == null)
+      setGroupingProps(flatRows)
+
       return [rows, flatRows, rowsById, emptyArray, emptyObject, flatRows, rowsById]
     }
 
