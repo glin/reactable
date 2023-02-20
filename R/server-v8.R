@@ -7,6 +7,7 @@ serverV8 <- function() {
       columns = NULL,
       pagination = NULL,
       paginateSubRows = NULL,
+      searchMethod = NULL,
       ...
     ) {
 
@@ -26,7 +27,8 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         data = data,
         columns = columns,
         pagination = pagination,
-        paginateSubRows = paginateSubRows
+        paginateSubRows = paginateSubRows,
+        searchMethod = searchMethod
       ))
 
       evals <- htmlwidgets::JSEvals(attribs)
@@ -52,7 +54,6 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
       # TODO currently unused/unimplemented props
       selectedRowIds = NULL,
       expanded = NULL,
-      searchMethod = NULL,
       ...
     ) {
 

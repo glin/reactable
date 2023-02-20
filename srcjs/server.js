@@ -64,7 +64,7 @@ export function renderToData(inputJson) {
   debugLog('renderToData() input: ', JSON.stringify(input, null, 2))
   const { props, evals } = input
 
-  // Resolve strings marked as JavaScript literals to objects
+  // Resolve strings marked as JavaScript literals to objects, e.g., searchMethod
   if (evals) {
     for (let key of evals) {
       evaluateStringMember(props, key)
