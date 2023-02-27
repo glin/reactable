@@ -400,6 +400,7 @@ reactable <- function(
     if (!all(names(defaultSorted) %in% colnames(data))) {
       stop("`defaultSorted` columns must exist in `data`")
     }
+    defaultSorted <- columnSortDefs(defaultSorted)
   }
   if (!is.logical(pagination)) {
     stop("`pagination` must be TRUE or FALSE")
@@ -665,7 +666,7 @@ reactable <- function(
       paginateSubRows = paginateSubRows,
       pageIndex = 0,
       pageSize = defaultPageSize,
-      sortBy = columnSortDefs(defaultSorted),
+      sortBy = defaultSorted,
       groupBy = groupBy,
       searchMethod = searchMethod
       # TODO add expanded, selectedRowIds
@@ -736,7 +737,7 @@ reactable <- function(
     searchable = if (searchable) TRUE,
     searchMethod = searchMethod,
     defaultSortDesc = if (isDescOrder(defaultSortOrder)) TRUE,
-    defaultSorted = columnSortDefs(defaultSorted),
+    defaultSorted = defaultSorted,
     pagination = if (!pagination) FALSE,
     defaultPageSize = if (setArgs["defaultPageSize"]) defaultPageSize,
     showPageSizeOptions = if (setArgs["showPageSizeOptions"]) showPageSizeOptions,
