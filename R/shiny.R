@@ -337,7 +337,7 @@ getServerBackend <- function(backend) {
   }
 
   backends <- list(
-    V8 = serverV8,
+    v8 = serverV8,
     data.frame = serverDf,
     data.table = serverDt
   )

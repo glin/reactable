@@ -655,7 +655,7 @@ reactable <- function(
   serverRowCount <- NULL
   if (!isFALSE(server)) {
     backend <- if (isTRUE(server)) {
-      getServerBackend(getOption("reactable.server.backend", "V8"))
+      getServerBackend(getOption("reactable.server.backend", "v8"))
     } else {
       getServerBackend(server)
     }

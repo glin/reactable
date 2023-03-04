@@ -187,3 +187,8 @@ test_that("parseParams", {
   expect_equal(parseParams(json), expected)
   expect_equal(as.character(toJSON(expected)), json)
 })
+
+test_that("getServerBackend", {
+  expect_equal(getServerBackend("v8"), serverV8())
+  expect_error(getServerBackend("notexists"), 'reactable server backend must be one of "v8", "data.frame", "data.table"')
+})
