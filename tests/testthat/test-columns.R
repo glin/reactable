@@ -1,6 +1,6 @@
 test_that("colDef", {
   # Default args
-  expect_equal(colDef(), structure(list(), .Names = character(0), class = "colDef"))
+  expect_equal(colDef(), structure(namedList(), class = "colDef"))
 
   # Valid args
   col <- colDef(name = "col", aggregate = "sum",
@@ -250,7 +250,7 @@ test_that("sort order", {
 
 test_that("colGroup", {
   # Default args
-  expect_equal(colGroup(), structure(list(), .Names = character(0), class = "colGroup"))
+  expect_equal(colGroup(), structure(namedList(), class = "colGroup"))
 
   # Valid args
   group <- colGroup(name = "name", columns = c("colA", "colB"), html = TRUE, align = "right",
@@ -310,7 +310,7 @@ test_that("is.colGroup", {
 
 test_that("colFormat", {
   # Default args
-  expect_equal(colFormat(), structure(list(), .Names = character(0), class = "colFormat"))
+  expect_equal(colFormat(), structure(namedList(), class = "colFormat"))
 
   # Valid args
   options <- colFormat(prefix = "a", suffix = "b", digits = 5, separators = TRUE,

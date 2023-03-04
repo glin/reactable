@@ -324,13 +324,10 @@ reactableFilterFunc <- function(data, req) {
   )
 }
 
-# Parse data parameters from JSON, ensuring empty arrays deserialize as NULL,
+# Parse data parameters from JSON, ensuring arrays always deserialize as lists,
 # and arrays of objects deserialize as lists instead of data frames.
 parseParams <- function(json) {
-  params <- jsonlite::parse_json(json, simplifyVector = TRUE, simplifyDataFrame = FALSE)
-  params <- lapply(params, function(x) {
-    if (is.list(x) && length(x) == 0) NULL else x
-  })
+  params <- jsonlite::parse_json(json, simplifyDataFrame = FALSE)
   params
 }
 

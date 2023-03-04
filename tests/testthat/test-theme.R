@@ -1,5 +1,5 @@
 test_that("reactableTheme", {
-  expect_equal(reactableTheme(), structure(list(), .Names = character(0), class = "reactableTheme"))
+  expect_equal(reactableTheme(), structure(namedList(), class = "reactableTheme"))
   expect_equal(
     reactableTheme(cellPadding = paste0("3", "px"), style = list(color = "#fff")),
     structure(list(cellPadding = "3px", style = list(color = "#fff")), class = "reactableTheme")

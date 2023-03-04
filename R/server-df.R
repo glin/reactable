@@ -73,6 +73,7 @@ dfSortBy <- function(df, by) {
 }
 
 dfGroupBy <- function(df, by, columns = NULL, depth = 0) {
+  by <- unlist(by)
   if (length(by) == depth) {
     return(df)
   }

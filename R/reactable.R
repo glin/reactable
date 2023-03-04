@@ -281,6 +281,7 @@ reactable <- function(
     if (any(sapply(columns[groupBy], function(col) !is.null(col[["details"]])))) {
       stop("`details` cannot be used on a grouping column")
     }
+    groupBy <- as.list(groupBy)
   }
 
   if (!is.logical(sortable)) {
@@ -730,7 +731,7 @@ reactable <- function(
     data = data,
     columns = cols,
     columnGroups = columnGroups,
-    groupBy = as.list(groupBy),
+    groupBy = groupBy,
     sortable = if (!sortable) FALSE,
     resizable = if (resizable) TRUE,
     filterable = if (filterable) TRUE,

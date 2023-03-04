@@ -59,7 +59,7 @@ test_that("dfGroupBy grouped by a string column", {
     model = c("Integra", "Legend", "90", "100", "535i"),
     price = c(1, 2, 2, 10, 5)
   )
-  grouped <- dfGroupBy(df, "mfr")
+  grouped <- dfGroupBy(df, list("mfr"))
 
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),
@@ -88,7 +88,7 @@ test_that("dfGroupBy grouped by a numeric column", {
     model = c("Integra", "Legend", "90"),
     price = c(1, 2, 2)
   )
-  grouped <- dfGroupBy(df, "price")
+  grouped <- dfGroupBy(df, list("price"))
 
   expected <- listSafeDataFrame(
     price = c(1, 2),
@@ -113,7 +113,7 @@ test_that("dfGroupBy grouped by a factor column", {
     model = c("Integra", "Legend", "90", "100", "535i"),
     price = c(1, 2, 2, 10, 5)
   )
-  grouped <- dfGroupBy(df, "mfr")
+  grouped <- dfGroupBy(df, list("mfr"))
 
   expected <- listSafeDataFrame(
     mfr = factor(c("Acura", "Audi", "BMW"), levels = levels),
@@ -141,7 +141,7 @@ test_that("dfGroupBy grouped by a list-column", {
     model = c("Integra", "Legend", "90"),
     price = I(list(list(1), list(2), list(2)))
   )
-  grouped <- dfGroupBy(df, "price")
+  grouped <- dfGroupBy(df, list("price"))
 
   expected <- listSafeDataFrame(
     price = list(list(1), list(2)),
@@ -166,7 +166,7 @@ test_that("dfGroupBy grouped by multiple columns", {
     price = c(1, 2, 2, 10, 5),
     type = c("Small", "Midsize", "Compact", "Compact", "Midsize")
   )
-  grouped <- dfGroupBy(df, c("mfr", "type"))
+  grouped <- dfGroupBy(df, list("mfr", "type"))
 
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),
@@ -220,7 +220,7 @@ test_that("dfGroupBy with aggregate functions", {
     )),
     "columns"
   )
-  grouped <- dfGroupBy(df, "mfr", columns = columns)
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
 
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),
@@ -255,7 +255,7 @@ test_that("dfGroupBy with aggregate functions grouped by a factor column", {
     reactable(df, columns = list(price = colDef(aggregate = "sum"))),
     "columns"
   )
-  grouped <- dfGroupBy(df, "mfr", columns = columns)
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
 
   expected <- listSafeDataFrame(
     mfr = factor(c("Acura", "Audi", "BMW"), levels = levels),
@@ -288,7 +288,7 @@ test_that("dfGroupBy with aggregate functions grouped by a factor column", {
     reactable(df, columns = list(price = colDef(aggregate = "unique"))),
     "columns"
   )
-  grouped <- dfGroupBy(df, "mfr", columns = columns)
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
 
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi"),
@@ -322,7 +322,7 @@ test_that("dfGroupBy with aggregate functions grouped by multiple columns", {
     )),
     "columns"
   )
-  grouped <- dfGroupBy(df, c("mfr", "type"), columns = columns)
+  grouped <- dfGroupBy(df, list("mfr", "type"), columns = columns)
 
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),

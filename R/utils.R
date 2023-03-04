@@ -53,6 +53,15 @@ isNamedList <- function(x) {
   TRUE
 }
 
+namedList <- function(...) {
+  l <- list(...)
+  if (length(l) == 0) {
+    structure(list(), names = character(0))
+  } else {
+    l
+  }
+}
+
 is.Date <- function(x) {
   inherits(x, "Date")
 }

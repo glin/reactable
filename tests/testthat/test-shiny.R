@@ -159,20 +159,31 @@ test_that("getReactableState", {
 })
 
 test_that("parseParams", {
-  # Empty arrays should be NULL, arrays of primitives should be vectors
-  expect_equal(
-    parseParams('{"filters":[],"sortBy":[],"pageIndex":0,"pageSize":10,"groupBy":["a"]}'),
-    list(filters = NULL, sortBy = NULL, pageIndex = 0, pageSize = 10, groupBy = "a")
+  # Empty arrays should be empty lists, empty objects should be empty named lists,
+  # arrays of primitives should be lists
+  json <- '{"filters":[],"sortBy":[],"expanded":{},"selectedRowIds":{},"pageIndex":0,"pageSize":10,"groupBy":["a"]}'
+  expected <- list(
+    filters = list(),
+    sortBy = list(),
+    expanded = namedList(),
+    selectedRowIds = namedList(),
+    pageIndex = 0,
+    pageSize = 10,
+    groupBy = list("a")
   )
+  expect_equal(parseParams(json), expected)
+  # Ensure that the deserialized results can be serialized back to the original JSON
+  expect_equal(as.character(toJSON(expected)), json)
 
+  # Multi-value arrays
   expect_equal(
-    parseParams('{"filters":[],"sortBy":[],"pageIndex":0,"pageSize":10,"groupBy":["a", "b"]}'),
-    list(filters = NULL, sortBy = NULL, pageIndex = 0, pageSize = 10, groupBy = c("a", "b"))
+    parseParams('{"filters":[],"groupBy":["a", "b"]}'),
+    list(filters = list(), groupBy = list("a", "b"))
   )
 
   # Arrays of objects should be lists, not data frames
-  expect_equal(
-    parseParams('{"sortBy":[{"id":"a"},{"id":"b","desc":true}]}'),
-    list(sortBy = list(list(id = "a"), list(id = "b", desc = TRUE)))
-  )
+  json <- '{"sortBy":[{"id":"a"},{"id":"b","desc":true}]}'
+  expected <- list(sortBy = list(list(id = "a"), list(id = "b", desc = TRUE)))
+  expect_equal(parseParams(json), expected)
+  expect_equal(as.character(toJSON(expected)), json)
 })
