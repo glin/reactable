@@ -121,7 +121,10 @@
 #'
 #'   Static rendering is **experimental**, and is not supported for tables
 #'   rendered via [reactableOutput()] in Shiny.
-#' @param server Enable server-side data processing in Shiny apps?
+#' @param server Enable server-side data processing in Shiny apps? Requires the
+#'   V8 package, which is not installed with reactable by default.
+#'
+#'   Server-side data processing is currently **experimental**.
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
