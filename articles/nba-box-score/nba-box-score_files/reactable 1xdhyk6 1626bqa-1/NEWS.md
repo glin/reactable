@@ -1,5 +1,7 @@
 # reactable 0.4.3.9000 (Unreleased)
 
+* Fixed a failing CRAN check.
+
 # reactable 0.4.3
 
 [Documentation - reactable 0.4.3](https://v0-4-3--reactable-docs.netlify.app/)
