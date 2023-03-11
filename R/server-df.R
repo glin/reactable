@@ -43,6 +43,10 @@ serverDf <- function() {
 
 dfFilter <- function(df, filters) {
   for (filter in filters) {
+    # Ignore invalid columns
+    if (!filter$id %in% colnames(df)) {
+      next
+    }
     df <- df[grepl(tolower(filter$value), tolower(df[[filter$id]]), fixed = TRUE), ]
   }
   df

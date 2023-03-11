@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { renderToHTML } from '../server'
+import { renderToHTML, setInitialProps, renderToData, resetTestRenderer } from '../server'
 
 // These tests run in Node and are intentionally minimal. See test-reactable.R for
 // more comprehensive tests that run in true V8 environments (different from Node).
@@ -35,5 +35,100 @@ describe('renderToHTML', () => {
     expect(html).toMatchSnapshot()
     expect(css).toEqual('.reactable-1galy0v{color:red;}.reactable-1rsvkai{padding:1rem;}')
     expect(ids).toEqual(['1galy0v', '1xdhyk6', '1rsvkai'])
+  })
+})
+
+describe('renderToData', () => {
+  beforeEach(() => {
+    resetTestRenderer()
+  })
+
+  it('renders tables to data', () => {
+    const propsJson = `{
+      "props": {
+        "data": {
+          "Manufacturer": ["Acura", "Acura"],
+          "Model": ["Integra", "Legend"],
+          "Type": ["Small", "Midsize"]
+        },
+        "columns": [
+          { "id": "Manufacturer", "name": "Manufacturer", "type": "factor" },
+          { "id": "Model", "name": "Model", "type": "factor" },
+          { "id": "Type", "name": "Type", "type": "factor" }
+        ],
+        "pagination": true,
+        "paginateSubRows": false
+      }
+    }`
+    setInitialProps(propsJson)
+
+    const inputJson = `{
+      "props": {
+        "pageIndex": 0,
+        "pageSize": 10
+      }
+    }`
+
+    const data = renderToData(inputJson)
+    const expected = {
+      data: [
+        { Manufacturer: 'Acura', Model: 'Integra', Type: 'Small', __state: { id: '0', index: 0 } },
+        { Manufacturer: 'Acura', Model: 'Legend', Type: 'Midsize', __state: { id: '1', index: 1 } }
+      ],
+      pageCount: 1,
+      rowCount: 2
+    }
+    expect(data).toEqual(expected)
+  })
+
+  it('renders tables to data with JS evals', () => {
+    const propsJson = `{
+      "props": {
+        "data": {
+          "Manufacturer": ["Acura", "Acura"],
+          "Model": ["Integra", "Legend"],
+          "Type": ["Small", "Midsize"]
+        },
+        "columns": [
+          { "id": "Manufacturer", "name": "Manufacturer", "type": "factor" },
+          { "id": "Model", "name": "Model", "type": "factor", "aggregate": "() => '__aggregated__'" },
+          { "id": "Type", "name": "Type", "type": "factor" }
+        ],
+        "pagination": true,
+        "paginateSubRows": false
+      },
+      "evals": ["columns.1.aggregate"]
+    }`
+    setInitialProps(propsJson)
+
+    const inputJson = `{ "props": { "pageIndex": 0, "pageSize": 10, "groupBy": ["Manufacturer"] } }`
+    const data = renderToData(inputJson)
+    const expected = {
+      data: [
+        {
+          '.subRows': [
+            {
+              Manufacturer: 'Acura',
+              Model: 'Integra',
+              Type: 'Small',
+              __state: { id: '0', index: 0 }
+            },
+            {
+              Manufacturer: 'Acura',
+              Model: 'Legend',
+              Type: 'Midsize',
+              __state: { id: '1', index: 1 }
+            }
+          ],
+          Manufacturer: 'Acura',
+          Model: '__aggregated__',
+          Type: null,
+          __state: { grouped: true, id: 'Manufacturer:Acura' }
+        }
+      ],
+      pageCount: 1,
+      rowCount: 1
+    }
+    expect(data).toEqual(expected)
   })
 })

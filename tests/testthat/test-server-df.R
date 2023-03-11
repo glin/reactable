@@ -53,6 +53,104 @@ test_that("dfSortBy", {
   )
 })
 
+test_that("dfFilter", {
+  df <- dataFrame(
+    chr = c("aaa", "AAA", "aaa", "cba", "B", "b"),
+    num = c(1, 2, 3, 12, 123, 2123)
+  )
+
+  # No filters
+  expect_equal(
+    dfFilter(df, list()),
+    df
+  )
+
+  # Invalid columns should be ignored
+  expect_equal(
+    dfFilter(df, list(list(id = "non-existent column", value = ""))),
+    df
+  )
+
+  # Valid column - no match
+  expect_equal(
+    dfFilter(df, list(list(id = "chr", value = "no-match"))),
+    dataFrame(
+      chr = character(0),
+      num = numeric(0)
+    )
+  )
+
+  # String filtering (case-insensitive)
+  expect_equal(
+    dfFilter(df, list(list(id = "chr", value = "a"))),
+    dataFrame(
+      chr = c("aaa", "AAA", "aaa", "cba"),
+      num = c(1, 2, 3, 12)
+    )
+  )
+
+  # Numeric filtering - doesn't filter by prefix currently
+  expect_equal(
+    dfFilter(df, list(list(id = "num", value = "1"))),
+    dataFrame(
+      chr = c("aaa", "cba", "B", "b"),
+      num = c(1, 12, 123, 2123),
+      row.names = as.integer(c(1, 4, 5, 6))
+    )
+  )
+
+  # Multiple filters
+  expect_equal(
+    dfFilter(df, list(list(id = "num", value = "21"), list(id = "chr", value = "b"))),
+    dataFrame(
+      chr = c("b"),
+      num = c(2123),
+      row.names = as.integer(c(6))
+    )
+  )
+})
+
+test_that("dfGlobalSearch", {
+  df <- dataFrame(
+    chr = c("aaa", "AAA", "aaa", "cba", "B", "b"),
+    num = c(1, 2, 3, 12, 123, 2123)
+  )
+
+  # Empty search value
+  expect_equal(
+    dfGlobalSearch(df, ""),
+    df
+  )
+
+  # No match
+  expect_equal(
+    dfGlobalSearch(df, "no-match"),
+    dataFrame(
+      chr = character(0),
+      num = numeric(0)
+    )
+  )
+
+  # String search (case-insensitive)
+  expect_equal(
+    dfGlobalSearch(df, "a"),
+    dataFrame(
+      chr = c("aaa", "AAA", "aaa", "cba"),
+      num = c(1, 2, 3, 12)
+    )
+  )
+
+  # Numeric searching - doesn't filter by prefix currently
+  expect_equal(
+    dfGlobalSearch(df, "1"),
+    dataFrame(
+      chr = c("aaa", "cba", "B", "b"),
+      num = c(1, 12, 123, 2123),
+      row.names = as.integer(c(1, 4, 5, 6))
+    )
+  )
+})
+
 test_that("dfGroupBy grouped by a string column", {
   df <- dataFrame(
     mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),

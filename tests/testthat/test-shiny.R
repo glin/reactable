@@ -158,6 +158,32 @@ test_that("getReactableState", {
   ))
 })
 
+test_that("reactableFilterFunc", {
+  backend <- list(
+    data = function(pageIndex = NULL, pageSize = NULL, groupBy = NULL, ...) {
+      list(idx = pageIndex, size = pageSize, grp = groupBy)
+    }
+  )
+  data <- list(
+    backend = backend,
+    pageIndex = -1,
+    groupBy = list("a")
+  )
+
+  body <- '{"pageIndex":0,"pageSize":10}'
+  req <- list(rook.input = list(read = function() {
+    charToRaw(body)
+  }))
+
+  resp <- reactableFilterFunc(data, req)
+  expected <- shiny::httpResponse(
+    status = 200L,
+    content_type = "application/json",
+    content = toJSON(list(idx = 0, size = 10, grp = list("a")))
+  )
+  expect_equal(resp, expected)
+})
+
 test_that("parseParams", {
   # Empty arrays should be empty lists, empty objects should be empty named lists,
   # arrays of primitives should be lists
@@ -190,5 +216,7 @@ test_that("parseParams", {
 
 test_that("getServerBackend", {
   expect_equal(getServerBackend("v8"), serverV8())
+  customBackend <- list(data = function() {})
+  expect_equal(getServerBackend(customBackend), customBackend)
   expect_error(getServerBackend("notexists"), 'reactable server backend must be one of "v8", "data.frame", "data.table"')
 })

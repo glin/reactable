@@ -95,6 +95,12 @@ export function renderToData(inputJson) {
   return result
 }
 
+// Only used for testing
+export function resetTestRenderer() {
+  initialProps = null
+  testRenderer = null
+}
+
 let debugLoggingEnabled
 export function enableDebugLogging(enabled = true) {
   debugLoggingEnabled = enabled
