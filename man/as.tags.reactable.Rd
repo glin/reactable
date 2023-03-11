@@ -4,13 +4,15 @@
 \alias{as.tags.reactable}
 \title{Convert a reactable widget to HTML tags}
 \usage{
-\method{as.tags}{reactable}(x, standalone = FALSE)
+\method{as.tags}{reactable}(x, standalone = FALSE, ...)
 }
 \arguments{
 \item{x}{a \code{\link[=reactable]{reactable()}} instance.}
 
 \item{standalone}{Logical value indicating whether the widget is being
 rendered in a standalone context.}
+
+\item{...}{Additional arguments passed to the S3 method.}
 }
 \description{
 This S3 method exists to enable \code{\link[=reactable]{reactable()}}'s \code{static} rendering option.

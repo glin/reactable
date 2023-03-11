@@ -814,17 +814,18 @@ renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @param x a [reactable()] instance.
 #' @param standalone Logical value indicating whether the widget is being
 #'   rendered in a standalone context.
+#' @param ... Additional arguments passed to the S3 method.
 #'
 #' @keywords internal
 #' @export
-as.tags.reactable <- function(x, standalone = FALSE) {
+as.tags.reactable <- function(x, standalone = FALSE, ...) {
   # Only need the static attribute for decided whether to SSR
   attribs <- x$x$tag$attribs
   static <- attribs$static
   x$x$tag$attribs$static <- NULL
 
   # Should call htmlwidgets:::as.tags.htmlwidget(), which calls htmlwidgets:::toHTML()
-  result <- NextMethod("as.tags", x, standalone = standalone)
+  result <- NextMethod("as.tags", x, standalone = standalone, ...)
 
   if (!isTRUE(static)) {
     return(result)
