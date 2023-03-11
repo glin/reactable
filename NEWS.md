@@ -1,4 +1,4 @@
-# reactable 0.4.3.9000
+# reactable 0.4.4
 
 * Fixed a failing CRAN check.
 
