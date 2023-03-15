@@ -31,8 +31,8 @@ BugReports: https://github.com/glin/reactable/issues
 Depends: R (>= 3.1)
 Imports: digest, htmltools (>= 0.5.2), htmlwidgets (>= 1.5.3),
         jsonlite, reactR
-Suggests: covr, crosstalk, dplyr, fontawesome, knitr, leaflet, MASS,
-        rmarkdown, shiny, sparkline, testthat, tippy, V8
+Suggests: covr, crosstalk, data.table, dplyr, fontawesome, knitr,
+        leaflet, MASS, rmarkdown, shiny, sparkline, testthat, tippy, V8
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -53,4 +53,4 @@ Author: Greg Lin [aut, cre],
   James Halliday [ctb, cph] (stream-browserify library),
   Posit Software, PBC [fnd, cph]
 Maintainer: Greg Lin <glin@glin.io>
-Built: R 4.2.2; ; 2023-03-13 01:10:57 UTC; unix
+Built: R 4.2.2; ; 2023-03-15 05:24:11 UTC; unix
