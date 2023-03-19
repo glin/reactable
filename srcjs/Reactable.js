@@ -188,7 +188,6 @@ export function ReactableData({
   selectedRowIds,
   ...rest
 }) {
-
   data = React.useMemo(
     () => normalizeColumnData(data, columns),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -553,7 +552,6 @@ function TableData({
   expanded,
   selectedRowIds
 }) {
-
   const dataColumns = React.useMemo(
     () => columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), []),
     [columns]
@@ -703,11 +701,32 @@ function TableData({
     useCrosstalkColumn
   )
 
+  // Track the max number of rows for auto-shown pagination. Unfortunately, the max
+  // number of rows can't be determined up front in a grouped and filtered table
+  // because grouping happens after filtering (and swapping these hooks would
+  // disable dynamic aggregation). Instead, we track the max number of rows
+  // per dataset, so at least the pagination doesn't disappear upon filtering.
+  const maxRowCount = React.useRef(
+    paginateSubRows ? instance.flatRows.length : instance.rows.length
+  )
+
+  React.useEffect(() => {
+    maxRowCount.current = 0
+  }, [data])
+
+  React.useEffect(() => {
+    const rowCount = paginateSubRows ? instance.flatRows.length : instance.rows.length
+    if (rowCount > maxRowCount.current) {
+      maxRowCount.current = rowCount
+    }
+  }, [paginateSubRows, instance.flatRows, instance.rows])
+
   if (setResolvedData) {
     setResolvedData({
       data: materializedRowsToData(instance.page, paginateSubRows),
       pageCount: instance.pageCount,
-      rowCount: instance.rows.length
+      rowCount: instance.rows.length,
+      maxRowCount: maxRowCount.current
     })
   }
 
@@ -759,7 +778,8 @@ function Table({
   nested,
   dataURL,
   serverPageCount: initialServerPageCount,
-  serverRowCount: initialServerRowCount
+  serverRowCount: initialServerRowCount,
+  serverMaxRowCount: initialServerMaxRowCount
 }) {
   const [newData, setNewData] = React.useState(null)
   const data = React.useMemo(() => {
@@ -769,6 +789,7 @@ function Table({
   const useServerData = dataURL != null
   const [serverPageCount, setServerPageCount] = React.useState(initialServerPageCount)
   const [serverRowCount, setServerRowCount] = React.useState(initialServerRowCount)
+  const [serverMaxRowCount, setServerMaxRowCount] = React.useState(initialServerMaxRowCount)
 
   const dataColumns = React.useMemo(() => {
     return columns.reduce((cols, col) => cols.concat(getLeafColumns(col)), [])
@@ -852,19 +873,15 @@ function Table({
 
   function useServerSideRows(hooks) {
     hooks.useInstance.push(instance => {
-      const {
-        rows,
-        manualPagination,
-        rowsById
-      } = instance
+      const { rows, manualPagination, rowsById } = instance
 
       if (!manualPagination) {
         return
       }
 
       // Set proper row indexes and IDs
-      const setRowProps = (rows) => {
-        rows.forEach((row) => {
+      const setRowProps = rows => {
+        rows.forEach(row => {
           const rowState = row.original[rowStateKey]
           // Fall back for backends that don't implement row state
           if (!rowState) {
@@ -1023,11 +1040,11 @@ function Table({
       .then(res => res.json())
       .then(body => {
         const data = normalizeColumnData(body.data, dataColumns)
-        const pageCount = body.pageCount
-        const rowCount = body.rowCount
+        const { pageCount, rowCount, maxRowCount } = body
         setNewData(data)
         setServerPageCount(pageCount)
         setServerRowCount(rowCount)
+        setServerMaxRowCount(maxRowCount)
       })
       .catch(err => {
         console.error(err)
@@ -1757,6 +1774,8 @@ function Table({
   // because grouping happens after filtering (and swapping these hooks would
   // disable dynamic aggregation). Instead, we track the max number of rows
   // per dataset, so at least the pagination doesn't disappear upon filtering.
+  //
+  // Unused for server-side pagination.
   const maxRowCount = React.useRef(
     paginateSubRows ? instance.flatRows.length : instance.rows.length
   )
@@ -1784,7 +1803,17 @@ function Table({
         ? Math.min(state.pageSize, ...(pageSizeOptions || []))
         : state.pageSize
 
-      const rowCount = serverRowCount != null ? serverRowCount : maxRowCount.current
+      let rowCount
+      if (serverMaxRowCount != null) {
+        rowCount = serverMaxRowCount
+      } else if (serverRowCount != null) {
+        // If the optional server-side maxRowCount isn't provided, fall back to
+        // serverRowCount so at least the pagination bar appears when expanding
+        // a table past its initial page.
+        rowCount = serverRowCount
+      } else {
+        rowCount = maxRowCount.current
+      }
       if (rowCount <= minPageSize) {
         return null
       }
@@ -2267,7 +2296,8 @@ Reactable.propTypes = {
   dataKey: PropTypes.string,
   dataURL: PropTypes.string,
   serverPageCount: PropTypes.number,
-  serverRowCount: PropTypes.number
+  serverRowCount: PropTypes.number,
+  serverMaxRowCount: PropTypes.number
 }
 
 Reactable.defaultProps = {

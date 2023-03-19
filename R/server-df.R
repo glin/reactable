@@ -181,9 +181,18 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   resolvedData(page, pageCount = pageCount, rowCount = rowCount)
 }
 
-resolvedData <- function(data, pageCount = NULL, rowCount = NULL) {
+#' The result from processing a server-side data request.
+#'
+#' @param data The resolved data. A data frame.
+#' @param pageCount The current page count.
+#' @param rowCount The current row count.
+#' @param maxRowCount The maximum row count. Optional. Used to determine whether
+#'   the pagination bar should be kept visible when filtering or searching
+#'   reduces the current rows to one page, or when expanding rows
+#'   (when paginateSubRows is `TRUE`) would expand the table beyond one page.
+resolvedData <- function(data, pageCount = NULL, rowCount = NULL, maxRowCount = NULL) {
   structure(
-    list(data = data, pageCount = pageCount, rowCount = rowCount),
+    list(data = data, pageCount = pageCount, rowCount = rowCount, maxRowCount = maxRowCount),
     class = "reactable_resolvedData"
   )
 }

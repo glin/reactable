@@ -88,7 +88,12 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         stop(sprintf("Failed to server render table:\n%s", e), call. = FALSE)
       })
 
-      return(resolvedData(result$data, pageCount = result$pageCount, rowCount = result$rowCount))
+      return(resolvedData(
+        result$data,
+        pageCount = result$pageCount,
+        rowCount = result$rowCount,
+        maxRowCount = result$maxRowCount
+      ))
     }
   )
 }

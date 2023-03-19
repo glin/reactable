@@ -76,7 +76,8 @@ describe('renderToData', () => {
         { Manufacturer: 'Acura', Model: 'Legend', Type: 'Midsize', __state: { id: '1', index: 1 } }
       ],
       pageCount: 1,
-      rowCount: 2
+      rowCount: 2,
+      maxRowCount: 2
     }
     expect(data).toEqual(expected)
   })
@@ -127,7 +128,8 @@ describe('renderToData', () => {
         }
       ],
       pageCount: 1,
-      rowCount: 1
+      rowCount: 1,
+      maxRowCount: 1
     }
     expect(data).toEqual(expected)
   })
