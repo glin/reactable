@@ -90,7 +90,6 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
 
       return(resolvedData(
         result$data,
-        pageCount = result$pageCount,
         rowCount = result$rowCount,
         maxRowCount = result$maxRowCount
       ))

@@ -7,15 +7,15 @@ test_that("serverDf - basic pagination", {
   )
   expect_equal(
     backend$data(data = df),
-    resolvedData(df, pageCount = 1, rowCount = 5)
+    resolvedData(df, rowCount = 5)
   )
   expect_equal(
     backend$data(df, pageIndex = 0, pageSize = 10),
-    resolvedData(df, pageCount = 1, rowCount = 5)
+    resolvedData(df, rowCount = 5)
   )
   expect_equal(
     backend$data(df, pageIndex = 1, pageSize = 3),
-    resolvedData(df[4:5, ], pageCount = 2, rowCount = 5)
+    resolvedData(df[4:5, ], rowCount = 5)
   )
 })
 
@@ -559,38 +559,38 @@ test_that("dfPaginate", {
   # Default - no pagination
   expect_equal(
     dfPaginate(df),
-    resolvedData(df, pageCount = 1, rowCount = 5)
+    resolvedData(df, rowCount = 5)
   )
 
   # One page
   expect_equal(
     dfPaginate(df, pageIndex = 0, pageSize = 10),
-    resolvedData(df, pageCount = 1, rowCount = 5)
+    resolvedData(df, rowCount = 5)
   )
 
   # Multiple pages
   expect_equal(
     dfPaginate(df, pageIndex = 0, pageSize = 3),
-    resolvedData(df[1:3, ], pageCount = 2, rowCount = 5)
+    resolvedData(df[1:3, ], rowCount = 5)
   )
   expect_equal(
     dfPaginate(df, pageIndex = 1, pageSize = 3),
-    resolvedData(df[4:5, ], pageCount = 2, rowCount = 5)
+    resolvedData(df[4:5, ], rowCount = 5)
   )
 
   # Out of boundaries page index
   expect_equal(
     dfPaginate(df, pageIndex = -2, pageSize = 3),
-    resolvedData(df[1:3, ], pageCount = 2, rowCount = 5)
+    resolvedData(df[1:3, ], rowCount = 5)
   )
   expect_equal(
     dfPaginate(df, pageIndex = 999, pageSize = 3),
-    resolvedData(df[4:5, ], pageCount = 2, rowCount = 5)
+    resolvedData(df[4:5, ], rowCount = 5)
   )
 
   # Zero rows
   expect_equal(
     dfPaginate(df[0, ], pageIndex = 0, pageSize = 10),
-    resolvedData(df[0, ], pageCount = 0, rowCount = 0)
+    resolvedData(df[0, ], rowCount = 0)
   )
 })

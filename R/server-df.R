@@ -159,7 +159,7 @@ dataFrame <- function(...) {
 
 dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   if (is.null(pageSize)) {
-    return(resolvedData(df, pageCount = 1, rowCount = nrow(df)))
+    return(resolvedData(df, rowCount = nrow(df)))
   }
 
   # Ensure page index is within boundaries
@@ -178,21 +178,20 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   rowCount <- nrow(df)
   pageCount <- ceiling(rowCount / pageSize)
 
-  resolvedData(page, pageCount = pageCount, rowCount = rowCount)
+  resolvedData(page, rowCount = rowCount)
 }
 
 #' The result from processing a server-side data request.
 #'
 #' @param data The resolved data. A data frame.
-#' @param pageCount The current page count.
 #' @param rowCount The current row count.
 #' @param maxRowCount The maximum row count. Optional. Used to determine whether
 #'   the pagination bar should be kept visible when filtering or searching
 #'   reduces the current rows to one page, or when expanding rows
 #'   (when paginateSubRows is `TRUE`) would expand the table beyond one page.
-resolvedData <- function(data, pageCount = NULL, rowCount = NULL, maxRowCount = NULL) {
+resolvedData <- function(data, rowCount = NULL, maxRowCount = NULL) {
   structure(
-    list(data = data, pageCount = pageCount, rowCount = rowCount, maxRowCount = maxRowCount),
+    list(data = data, rowCount = rowCount, maxRowCount = maxRowCount),
     class = "reactable_resolvedData"
   )
 }

@@ -724,7 +724,6 @@ function TableData({
   if (setResolvedData) {
     setResolvedData({
       data: materializedRowsToData(instance.page, paginateSubRows),
-      pageCount: instance.pageCount,
       rowCount: instance.rows.length,
       maxRowCount: maxRowCount.current
     })
@@ -777,7 +776,6 @@ function Table({
   elementId,
   nested,
   dataURL,
-  serverPageCount: initialServerPageCount,
   serverRowCount: initialServerRowCount,
   serverMaxRowCount: initialServerMaxRowCount
 }) {
@@ -787,7 +785,6 @@ function Table({
   }, [newData, originalData])
 
   const useServerData = dataURL != null
-  const [serverPageCount, setServerPageCount] = React.useState(initialServerPageCount)
   const [serverRowCount, setServerRowCount] = React.useState(initialServerRowCount)
   const [serverMaxRowCount, setServerMaxRowCount] = React.useState(initialServerMaxRowCount)
 
@@ -988,7 +985,7 @@ function Table({
       manualExpandedKey: null,
       // Prevent duplicate sub rows when sub rows are paginated server-side
       expandSubRows: !(useServerData && paginateSubRows),
-      pageCount: useServerData ? serverPageCount : -1
+      rowCount: useServerData ? serverRowCount : null
     },
     useServerSideRows,
     useResizeColumns,
@@ -1006,9 +1003,7 @@ function Table({
   )
 
   // Server-side data
-  const skipInitialFetch = React.useRef(
-    initialServerRowCount != null && initialServerPageCount != null
-  )
+  const skipInitialFetch = React.useRef(initialServerRowCount != null)
   React.useEffect(() => {
     if (!useServerData) {
       return
@@ -1040,9 +1035,8 @@ function Table({
       .then(res => res.json())
       .then(body => {
         const data = normalizeColumnData(body.data, dataColumns)
-        const { pageCount, rowCount, maxRowCount } = body
+        const { rowCount, maxRowCount } = body
         setNewData(data)
-        setServerPageCount(pageCount)
         setServerRowCount(rowCount)
         setServerMaxRowCount(maxRowCount)
       })
@@ -2295,7 +2289,6 @@ Reactable.propTypes = {
   nested: PropTypes.bool,
   dataKey: PropTypes.string,
   dataURL: PropTypes.string,
-  serverPageCount: PropTypes.number,
   serverRowCount: PropTypes.number,
   serverMaxRowCount: PropTypes.number
 }

@@ -4,6 +4,10 @@
 //   pagination bar and API can still be used when pagination is disabled).
 // - Provide instance.pageRowCount for the number of paginated rows on the
 //   page, excluding expanded rows when paginateExpandedRows = false.
+// - Support a rowCount option in useTable() for manual pagination as an
+//   alternative to pageCount. Server-side pagination typically requires
+//   the server-side row count to be known, so providing page count is
+//   unnecessary when it can be derived from row count and page size.
 
 import React from 'react'
 import {
@@ -93,7 +97,9 @@ function useInstance(instance) {
     state: { pageIndex, expanded, globalFilter, filters, groupBy, sortBy },
     dispatch,
     data,
-    manualPagination
+    manualPagination,
+    // User-specified row count when using manual pagination. Takes precedence over pageCount.
+    rowCount: userRowCount
   } = instance
 
   ensurePluginOrder(
@@ -115,7 +121,16 @@ function useInstance(instance) {
   // isn't known until other row-manipulating hooks have run (e.g., useGroupBy).
   const pageSize = disablePagination ? rows.length : instance.state.pageSize
 
-  const pageCount = manualPagination ? userPageCount : Math.ceil(rows.length / pageSize)
+  let pageCount
+  if (manualPagination) {
+    // Prefer user-specified row count for manual pagination. Server-side pagination
+    // typically requires the server-side row count to be known, so providing page count
+    // is unnecessary when it can be derived from row count and page size.
+    pageCount =
+      userRowCount != null && userRowCount >= 0 ? Math.ceil(userRowCount / pageSize) : userPageCount
+  } else {
+    pageCount = Math.ceil(rows.length / pageSize)
+  }
 
   const pageOptions = React.useMemo(
     () => (pageCount > 0 ? [...new Array(pageCount)].fill(null).map((d, i) => i) : []),

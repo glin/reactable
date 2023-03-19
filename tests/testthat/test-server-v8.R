@@ -26,7 +26,7 @@ test_that("pagination", {
     id = c("0", "1", "2", "3", "4"),
     index = c(0, 1, 2, 3, 4)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 5, maxRowCount = 5))
+  expect_equal(results, resolvedData(expected, rowCount = 5, maxRowCount = 5))
 
   results <- backend$data(pageIndex = 1, pageSize = 2)
   expected <- dataFrame(x = c(3, 4), y = c("c", "d"))
@@ -34,7 +34,7 @@ test_that("pagination", {
     id = c("2", "3"),
     index = c(2, 3)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 3, rowCount = 5, maxRowCount = 5))
+  expect_equal(results, resolvedData(expected, rowCount = 5, maxRowCount = 5))
 })
 
 test_that("sorting", {
@@ -56,7 +56,7 @@ test_that("sorting", {
     id = c("3", "0", "1", "2", "4", "5"),
     index = c(3, 0, 1, 2, 4, 5)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 6, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 6, maxRowCount = 6))
 
   # Multiple column sort with descending order
   df <- dataFrame(
@@ -94,12 +94,12 @@ test_that("filtering", {
   # No filters
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list())
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(df, pageCount = 1, rowCount = 6, maxRowCount = 6))
+  expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # Invalid columns should be ignored
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "non-existent column", value = "")))
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(df, pageCount = 1, rowCount = 6, maxRowCount = 6))
+  expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # Valid column - no match
   # NOTE: Empty results come back as an empty array right now, rather than a
@@ -107,7 +107,7 @@ test_that("filtering", {
   # may be fixed in the future.
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "no-match")))
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(list(), pageCount = 0, rowCount = 0, maxRowCount = 6))
+  expect_equal(results, resolvedData(list(), rowCount = 0, maxRowCount = 6))
 
   # String filtering (case-insensitive)
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "a")))
@@ -116,7 +116,7 @@ test_that("filtering", {
     chr = c("aaa", "AAA", "aaa", "cba"),
     num = c(1, 2, 3, 12)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 4, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 4, maxRowCount = 6))
 
   # Numeric filtering - should filter by prefix
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "num", value = "1")))
@@ -125,7 +125,7 @@ test_that("filtering", {
     chr = c("aaa", "cba", "B"),
     num = c(1, 12, 123)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 3, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 3, maxRowCount = 6))
 
   # Multiple filters
   results <- backend$data(pageIndex = 0, pageSize = 10,
@@ -135,7 +135,7 @@ test_that("filtering", {
     chr = c("b"),
     num = c(2123)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 1, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 1, maxRowCount = 6))
 })
 
 test_that("searching", {
@@ -152,7 +152,7 @@ test_that("searching", {
   # Empty search value
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "")
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(df, pageCount = 1, rowCount = 6, maxRowCount = 6))
+  expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # No match
   # NOTE: Empty results come back as an empty array right now, rather than a
@@ -160,7 +160,7 @@ test_that("searching", {
   # may be fixed in the future.
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "no-match")
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(list(), pageCount = 0, rowCount = 0, maxRowCount = 6))
+  expect_equal(results, resolvedData(list(), rowCount = 0, maxRowCount = 6))
 
   # String search (case-insensitive)
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "a")
@@ -169,7 +169,7 @@ test_that("searching", {
     chr = c("aaa", "AAA", "aaa", "cba"),
     num = c(1, 2, 3, 12)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 4, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 4, maxRowCount = 6))
 
   # Numeric searching - should filter by prefix
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "1")
@@ -178,5 +178,5 @@ test_that("searching", {
     chr = c("aaa", "cba", "B"),
     num = c(1, 12, 123)
   )
-  expect_equal(results, resolvedData(expected, pageCount = 1, rowCount = 3, maxRowCount = 6))
+  expect_equal(results, resolvedData(expected, rowCount = 3, maxRowCount = 6))
 })

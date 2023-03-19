@@ -8,14 +8,14 @@ test_that("serverDt - basic pagination", {
   dt <- data.table::as.data.table(df)
   expect_equal(
     backend$data(data = df),
-    resolvedData(dt, pageCount = 1, rowCount = 5)
+    resolvedData(dt, rowCount = 5)
   )
   expect_equal(
     backend$data(df, pageIndex = 0, pageSize = 10),
-    resolvedData(dt, pageCount = 1, rowCount = 5)
+    resolvedData(dt, rowCount = 5)
   )
   expect_equal(
     backend$data(df, pageIndex = 1, pageSize = 3),
-    resolvedData(dt[4:5, ], pageCount = 2, rowCount = 5)
+    resolvedData(dt[4:5, ], rowCount = 5)
   )
 })
