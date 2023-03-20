@@ -191,7 +191,7 @@ Object {
 }
 `;
 
-exports[`renderToData sets maxRowCount correctly when data is grouped 1`] = `
+exports[`renderToData sets maxRowCount correctly when data is grouped, paginateSubRows=true 1`] = `
 Object {
   "data": Array [
     Object {

@@ -180,3 +180,65 @@ test_that("searching", {
   )
   expect_equal(results, resolvedData(expected, rowCount = 3, maxRowCount = 6))
 })
+
+test_that("grouping", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(1, 2, 2, 10, 5),
+    type = c("Small", "Midsize", "Compact", "Compact", "Midsize")
+  )
+  tbl <- reactable(df, columns = list(
+    mfr = colDef(aggregate = "count"), # Should be ignored for initial grouped columns
+    price = colDef(aggregate = "sum"),
+    type = colDef(aggregate = "count") # Should work for subsequent grouped columns
+  ))
+  columns <- getAttrib(tbl, "columns")
+
+  backend <- serverV8()
+  backend$init(data = df, columns = columns)
+
+  results <- backend$data(pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
+  expected <- listSafeDataFrame(
+    mfr = c("Acura", "Audi", "BMW"),
+    type = c(2, 2, 1),
+    model = c(NA, NA, NA),
+    price = c(3, 12, 5)
+  )
+  expect_equal(results$data[, colnames(expected)], expected)
+  expect_equal(sapply(results$data$.subRows, nrow), c(2, 1, 1))
+  expect_equal(results$rowCount, 3)
+  expect_equal(results$maxRowCount, 3)
+  expect_snapshot(results)
+})
+
+test_that("grouping with paginateSubRows=true", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(1, 2, 2, 10, 5),
+    type = c("Small", "Midsize", "Compact", "Compact", "Midsize")
+  )
+  tbl <- reactable(df, columns = list(
+    mfr = colDef(aggregate = "count"), # Should be ignored for initial grouped columns
+    price = colDef(aggregate = "sum"),
+    type = colDef(aggregate = "count") # Should work for subsequent grouped columns
+  ))
+  columns <- getAttrib(tbl, "columns")
+
+  backend <- serverV8()
+  backend$init(data = df, columns = columns, paginateSubRows = TRUE)
+
+  results <- backend$data(pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
+  expected <- listSafeDataFrame(
+    mfr = c("Acura", "Audi", "BMW"),
+    type = c(2, 2, 1),
+    model = c(NA, NA, NA),
+    price = c(3, 12, 5)
+  )
+  expect_equal(results$data[, colnames(expected)], expected)
+  expect_null(results$data$.subRows)
+  expect_equal(results$rowCount, 3)
+  expect_equal(results$maxRowCount, 12)
+  expect_snapshot(results)
+})
