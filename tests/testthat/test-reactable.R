@@ -1389,11 +1389,19 @@ test_that("static rendering", {
   # entirely and regenerate.
   expect_snapshot_html_with_utf8 <- function(x) expect_snapshot_value(as.character(x))
 
+  expect_and_replace_dataKey <- function(tbl, newDataKey = "__predictable_data_key__") {
+    dataKey <- tbl$x$tag$attribs$dataKey
+    expect_true(is.character(dataKey) && nchar(dataKey) > 0)
+    tbl$x$tag$attribs$dataKey <- newDataKey
+    tbl
+  }
+
   tbl <- reactable(
     data,
     static = TRUE,
     elementId = "stable-id-static-rendering"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   expect_true(grepl("data-react-ssr", rendered$html))
   expect_true(grepl(">column-y-cell<", rendered$html))
@@ -1409,6 +1417,7 @@ test_that("static rendering", {
     theme = reactableTheme(color = "blue", borderWidth = 3),
     elementId = "stable-id-theme-critical-css"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   styleDep <- Find(
     function(dep) !is.null(dep$head) && grepl('<style data-emotion="reactable .+color:blue;', dep$head),
@@ -1428,6 +1437,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-custom-js-evals"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   expect_true(grepl("js-rendered_2_", rendered$html))
   expect_true(grepl("<b>column-y-cell</b>", rendered$html))
@@ -1442,6 +1452,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-external-React"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   expect_true(grepl("<b>column-y-cell</b>", rendered$html))
   expect_snapshot(cat(rendered$html))
@@ -1454,6 +1465,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-row-details"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   expect_false(grepl(">row-details<", rendered$html))
   expect_snapshot_html_with_utf8(rendered$html)
@@ -1467,6 +1479,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-html-widgets"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   expect_false(grepl("sparkline", strsplit(rendered$html, "<script")[[1]][[1]]))
   expect_equal(lengths(gregexpr("<script ", rendered$html)), 1) # Should only be one <script> for reactable
@@ -1503,6 +1516,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-formatting-intl-polyfills"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   rendered <- htmltools::renderTags(tbl)
   html <- rendered$html
   expect_true(grepl("pre_str_suffix", html, fixed = TRUE))
@@ -1526,6 +1540,7 @@ test_that("static rendering", {
     static = TRUE,
     elementId = "stable-id-CSR-fallback"
   )
+  tbl <- expect_and_replace_dataKey(tbl)
   expect_warning({ rendered <- htmltools::renderTags(tbl) }, "Failed to render table to static HTML:\nError: error rendering JS")
   expect_false(grepl("data-react-ssr", rendered$html))
   expect_false(grepl(">column-y-cell<", rendered$html))
