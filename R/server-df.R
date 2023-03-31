@@ -163,8 +163,8 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   }
 
   # Ensure page index is within boundaries
-  maxRowCount <- nrow(df)
-  maxPageIndex <- max(ceiling(maxRowCount / pageSize) - 1, 0)
+  rowCount <- nrow(df)
+  maxPageIndex <- max(ceiling(rowCount / pageSize) - 1, 0)
   if (pageIndex < 0) {
     pageIndex <- 0
   } else if (pageIndex > maxPageIndex) {
@@ -174,9 +174,6 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   rowStart <- min(pageIndex * pageSize + 1, nrow(df))
   rowEnd <- min(pageIndex * pageSize + pageSize, nrow(df))
   page <- df[rowStart:rowEnd, ]
-
-  rowCount <- nrow(df)
-  pageCount <- ceiling(rowCount / pageSize)
 
   resolvedData(page, rowCount = rowCount)
 }
