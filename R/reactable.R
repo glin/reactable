@@ -657,11 +657,7 @@ reactable <- function(
   serverPageCount <- NULL
   serverRowCount <- NULL
   if (!isFALSE(server)) {
-    backend <- if (isTRUE(server)) {
-      getServerBackend(getOption("reactable.server.backend", "v8"))
-    } else {
-      getServerBackend(server)
-    }
+    backend <- getServerBackend(getOption("reactable.server.backend"))
 
     initialProps <- list(
       data = data,

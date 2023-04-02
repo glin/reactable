@@ -216,7 +216,8 @@ test_that("parseParams", {
 
 test_that("getServerBackend", {
   expect_equal(getServerBackend("v8"), serverV8())
+  expect_equal(getServerBackend(), serverV8())
   customBackend <- list(data = function() {})
   expect_equal(getServerBackend(customBackend), customBackend)
-  expect_error(getServerBackend("notexists"), 'reactable server backend must be one of "v8", "data.frame", "data.table"')
+  expect_equal(getServerBackend("doesNotExist"), serverV8())
 })
