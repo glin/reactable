@@ -102,12 +102,9 @@ test_that("filtering", {
   expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # Valid column - no match
-  # NOTE: Empty results come back as an empty array right now, rather than a
-  # object of columns (empty data frame). This coincidentally works fine, but
-  # may be fixed in the future.
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "no-match")))
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(list(), rowCount = 0, maxRowCount = 6))
+  expect_equal(results, resolvedData(data.frame(), rowCount = 0, maxRowCount = 6))
 
   # String filtering (case-insensitive)
   results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "a")))
@@ -155,12 +152,9 @@ test_that("searching", {
   expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # No match
-  # NOTE: Empty results come back as an empty array right now, rather than a
-  # object of columns (empty data frame). This coincidentally works fine, but
-  # may be fixed in the future.
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "no-match")
   results$data[["__state"]] <- NULL
-  expect_equal(results, resolvedData(list(), rowCount = 0, maxRowCount = 6))
+  expect_equal(results, resolvedData(data.frame(), rowCount = 0, maxRowCount = 6))
 
   # String search (case-insensitive)
   results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "a")

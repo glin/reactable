@@ -88,6 +88,13 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         stop(sprintf("Failed to server render table:\n%s", e), call. = FALSE)
       })
 
+      # NOTE: Empty results come back as an empty array right now, rather than a
+      # object of columns (empty data frame). This coincidentally works fine, but
+      # could be fixed in the future.
+      if (identical(result$data, list())) {
+        result$data <- data.frame()
+      }
+
       return(resolvedData(
         result$data,
         rowCount = result$rowCount,
