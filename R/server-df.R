@@ -1,44 +1,48 @@
 serverDf <- function() {
-  list(
-    data = function(
-      data = NULL,
-      columns = NULL,
-      pageIndex = 0,
-      pageSize = NULL,
-      sortBy = NULL,
-      filters = NULL,
-      searchValue = NULL,
-      groupBy = NULL,
-      pagination = NULL,
-      paginateSubRows = NULL,
-      expanded = NULL,
-      ...
-    ) {
+  structure(list(), class = "reactable_serverDf")
+}
 
-      # Column filters - simple text match for now
-      if (length(filters) > 0) {
-        data <- dfFilter(data, filters)
-      }
+reactableServerData.reactable_serverDf <- function(
+  x,
+  data = NULL,
+  columns = NULL,
+  pageIndex = 0,
+  pageSize = 0,
+  sortBy = NULL,
+  filters = NULL,
+  searchValue = NULL,
+  groupBy = NULL,
+  pagination = NULL,
+  paginateSubRows = NULL,
+  # Unused/unimplemented props
+  selectedRowIds = NULL,
+  expanded = NULL,
+  searchMethod = NULL,
+  ...
+) {
 
-      # Global searching - simple text match for now
-      if (!is.null(searchValue)) {
-        data <- dfGlobalSearch(data, searchValue)
-      }
+  # Column filters - simple text match for now
+  if (length(filters) > 0) {
+    data <- dfFilter(data, filters)
+  }
 
-      # Sorting
-      if (length(sortBy) > 0) {
-        data <- dfSortBy(data, sortBy)
-      }
+  # Global searching - simple text match for now
+  if (!is.null(searchValue)) {
+    data <- dfGlobalSearch(data, searchValue)
+  }
 
-      # Grouping and aggregation
-      if (length(groupBy) > 0) {
-        data <- dfGroupBy(data, groupBy, columns)
-      }
+  # Sorting
+  if (length(sortBy) > 0) {
+    data <- dfSortBy(data, sortBy)
+  }
 
-      # Pagination
-      dfPaginate(data, pageIndex, pageSize)
-    }
-  )
+  # Grouping and aggregation
+  if (length(groupBy) > 0) {
+    data <- dfGroupBy(data, groupBy, columns)
+  }
+
+  # Pagination
+  dfPaginate(data, pageIndex, pageSize)
 }
 
 dfFilter <- function(df, filters) {
@@ -176,21 +180,6 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   page <- df[rowStart:rowEnd, ]
 
   resolvedData(page, rowCount = rowCount)
-}
-
-#' The result from processing a server-side data request.
-#'
-#' @param data The resolved data. A data frame.
-#' @param rowCount The current row count.
-#' @param maxRowCount The maximum row count. Optional. Used to determine whether
-#'   the pagination bar should be kept visible when filtering or searching
-#'   reduces the current rows to one page, or when expanding rows
-#'   (when paginateSubRows is `TRUE`) would expand the table beyond one page.
-resolvedData <- function(data, rowCount = NULL, maxRowCount = NULL) {
-  structure(
-    list(data = data, rowCount = rowCount, maxRowCount = maxRowCount),
-    class = "reactable_resolvedData"
-  )
 }
 
 # For strings, max/min/median are locale dependent and usually different from JavaScript

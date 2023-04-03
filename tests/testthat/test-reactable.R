@@ -1342,22 +1342,21 @@ test_that("reactable.yaml widget dependencies are included with correct version"
   expect_equal(reactableDep$stylesheet, "reactable.css")
 })
 
-# Static rendering (experimental)
-test_that("static rendering", {
-  # Skip static rendering tests if V8 was built against a version of libv8 without
-  # ICU / i18n support. If running on Fedora, this is an issue with Fedora's V8 package
-  # that was fixed in Fedora 37. The workaround on Fedora <= 36 is to build the V8
-  # R package using DOWNLOAD_STATIC_LIBV8=true.
-  # https://github.com/jeroen/V8/issues/65
-  # https://bugzilla.redhat.com/show_bug.cgi?id=1755114
-  #
-  # On CRAN's fedora-clang platform, where V8 is installed with g++ and not clang, all
-  # uncaught exceptions cause V8 to seg fault, which causes this check and other error handling
-  # tests to fail. Skip all tests if running on a platform with this issue.
-  # See notes on CRAN's fedora-clang platform: https://www.stats.ox.ac.uk/pub/bdr/Rconfig/r-devel-linux-x86_64-fedora-clang
-  #
-  # The test for the uncaught exception seg fault must be run in a separate R process.
-  # If a seg fault occurs, the output is typically: "free(): double free detected in tcache 2"
+# Skip tests that rely on V8 if V8 was built against a version of libv8 without
+# ICU / i18n support. If running on Fedora, this is an issue with Fedora's V8 package
+# that was fixed in Fedora 37. The workaround on Fedora <= 36 is to build the V8
+# R package using DOWNLOAD_STATIC_LIBV8=true.
+# https://github.com/jeroen/V8/issues/65
+# https://bugzilla.redhat.com/show_bug.cgi?id=1755114
+#
+# On CRAN's fedora-clang platform, where V8 is installed with g++ and not clang, all
+# uncaught exceptions cause V8 to seg fault, which causes this check and other error handling
+# tests to fail. Skip all tests if running on a platform with this issue.
+# See notes on CRAN's fedora-clang platform: https://www.stats.ox.ac.uk/pub/bdr/Rconfig/r-devel-linux-x86_64-fedora-clang
+#
+# The test for the uncaught exception seg fault must be run in a separate R process.
+# If a seg fault occurs, the output is typically: "free(): double free detected in tcache 2"
+skip_if_v8_fails <- function() {
   code <- "V8::new_context()$eval('not_defined')"
   output <- suppressWarnings(
     system2(R.home("bin/R"), c("-e", shQuote(code)), stdout = TRUE, stderr = TRUE)
@@ -1372,6 +1371,11 @@ test_that("static rendering", {
     # If libv8 lacks i18n support, the error is typically: "RangeError: Internal error: Icu error."
     skip("V8 was built against a version of libv8 without i18n support")
   })
+}
+
+# Static rendering (experimental)
+test_that("static rendering", {
+  skip_if_v8_fails()
 
   data <- data.frame(
     x = c(1, 2),
@@ -1554,4 +1558,67 @@ test_that("static rendering", {
   tbl <- reactable(data)
   output <- knitr::knit_print(tbl, options = list(screenshot.force = FALSE))
   expect_false(grepl("data-react-ssr", output))
+})
+
+test_that("server-side data", {
+  skip_if_v8_fails()
+
+  data <- dataFrame(x = c(1, 1, 2, 4, 5), y = c("a", "b", "c", "d", "e"))
+  tbl <- reactable(data)
+
+  # Should default to V8 backend and return first page
+  tbl <- reactable(data, defaultPageSize = 3, server = TRUE)
+  expect_equal(as.character(getAttrib(tbl, "data")), '{"x":[1,1,2],"y":["a","b","c"],"__state":{"id":["0","1","2"],"index":[0,1,2]}}')
+  expect_equal(getAttrib(tbl, "serverRowCount"), 5)
+  expect_equal(getAttrib(tbl, "serverMaxRowCount"), 5)
+
+  # Should set serverMaxRowCount correctly
+  tbl <- reactable(data, defaultPageSize = 3, groupBy = "x", paginateSubRows = TRUE, server = TRUE)
+  expect_equal(getAttrib(tbl, "serverRowCount"), 4)
+  expect_equal(getAttrib(tbl, "serverMaxRowCount"), 9)
+
+  # Custom backend
+  backend <- structure(list(), class = "custom_backend")
+  # reactableServerData should be required
+  expect_error(reactable(data, server = backend), "reactable server backends must have a `reactableServerData` S3 method defined.")
+
+  # reactableServerInit should be optional
+  reactableServerData.custom_backend <- function(...) {
+    resolvedData(data = data.frame(z = c(1, 2, 3)), rowCount = 20, maxRowCount = 21)
+  }
+  registerS3method("reactableServerData", "custom_backend", reactableServerData.custom_backend)
+
+  tbl <- reactable(data, server = backend)
+  expect_equal(as.character(getAttrib(tbl, "data")), '{"z":[1,2,3]}')
+  expect_equal(getAttrib(tbl, "serverRowCount"), 20)
+  expect_equal(getAttrib(tbl, "serverMaxRowCount"), 21)
+
+  # Optional reactableServerInit should be called
+  initCalled <- FALSE
+  reactableServerInit.custom_backend <- function(...) {
+    initCalled <<- TRUE
+  }
+  registerS3method("reactableServerInit", "custom_backend", reactableServerInit.custom_backend)
+  tbl <- reactable(data, server = backend)
+  expect_true(initCalled)
+
+  # Global option should work when server = TRUE
+  old <- options(reactable.server.backend = backend)
+  on.exit(options(old))
+  tbl <- reactable(data, server = backend)
+  expect_equal(as.character(getAttrib(tbl, "data")), '{"z":[1,2,3]}')
+
+  # Global option should be overridable
+  newBackend <- structure(list(), class = "new_backend")
+  reactableServerData.new_backend <- function(...) {
+    resolvedData(data = data.frame(), rowCount = 12345)
+  }
+  registerS3method("reactableServerData", "new_backend", reactableServerData.new_backend)
+  tbl <- reactable(data, server = newBackend)
+  expect_equal(getAttrib(tbl, "serverRowCount"), 12345)
+
+  # reactableServerData should return resolvedData()
+  reactableServerInit.custom_backend <- function(...) "not resolvedData"
+  registerS3method("reactableServerData", "custom_backend", reactableServerInit.custom_backend)
+  expect_error(reactable(data, server = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })

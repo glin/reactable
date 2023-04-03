@@ -673,19 +673,14 @@ reactable <- function(
       # TODO add expanded, selectedRowIds
     )
 
-    initFunc <- backend[["init"]]
-    if (is.function(initFunc)) {
-      do.call(initFunc, initialProps)
-    }
-
-    dataFunc <- backend[["data"]]
-    if (!is.function(dataFunc)) {
-      stop("reactable server backend must have a data() method defined")
-    }
+    do.call(reactableServerInit, c(list(backend), initialProps))
 
     # Pre-calculate initial page. This could be undesired in some cases, so it
     # may be optional in the future.
-    initialPage <- do.call(dataFunc, initialProps)
+    initialPage <- do.call(reactableServerData, c(list(backend), initialProps))
+    if (!is.resolvedData(initialPage)) {
+      stop("reactable server backends must return a `resolvedData()` object from `reactableServerData()`")
+    }
     data <- initialPage$data
     serverRowCount <- initialPage$rowCount
     serverMaxRowCount <- initialPage$maxRowCount

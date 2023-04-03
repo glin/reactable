@@ -76,3 +76,7 @@ reference:
   - reactable-shiny
   - updateReactable
   - getReactableState
+- title: Custom server data backends
+  contents:
+  - reactable-server
+  - resolvedData

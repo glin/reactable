@@ -307,13 +307,153 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
   state
 }
 
+#' Create custom server-side data backends for Shiny
+#'
+#' @description
+#' Custom server-side data backends are created using the
+#' [S3 object system](https://adv-r.hadley.nz/s3.html).
+#'
+#' To create a custom server-side data backend, provide an S3 object to the
+#' `server` argument in [reactable()] with the following S3 methods defined:
+#'
+#' - `reactableServerInit` initializes the server backend (optional).
+#' - `reactableServerData` handles requests for data and should return a
+#'   [resolvedData()] object.
+#'
+#' Custom backend methods do not have to accept every argument, and can choose
+#' not to implement certain features such as grouping, row expansion, or
+#' row selection.
+#'
+#' If there is no server-side implementation for row expansion and row selection,
+#' reactable will fall back to client-side row expansion and selection. This means
+#' row expansion and selection will only work for rows on the current page, so for
+#' example, selecting all rows in the table will only select rows on the current page.
+#'
+#' Custom backend methods should accept additional arguments via `...` in case
+#' new arguments are added in the future.
+#'
+#' @param x The server backend.
+#' @param data The original table data. A data frame.
+#' @param columns Table columns. A list of [colDef()] objects.
+#' @param pageIndex The current page index. Starts at zero.
+#' @param pageSize The current page size.
+#' @param sortBy The current sorted columns. `NULL` if empty.
+#' @param filters The current column filters. `NULL` if empty.
+#' @param searchValue The current global search value. `NULL` if empty.
+#' @param searchMethod The custom search method. A [JS()] function.
+#' @param groupBy The current grouped columns. `NULL` if empty.
+#' @param pagination Whether pagination is enabled, `TRUE` or `FALSE`.
+#' @param paginateSubRows Whether sub rows are paginated, `TRUE` or `FALSE`.
+#' @param expanded The current expanded rows.
+#' @param selectedRowIds The current selected rows.
+#' @param ... Additional arguments passed to the S3 method.
+#' @return
+#' - `reactableServerData()` should return a [resolvedData()] object.
+#' - `reactableServerData()` should not return any value.
+#'
+#' @name reactable-server
+#'
+#' @export
+reactableServerInit <- function(
+  x,
+  data = NULL,
+  columns = NULL,
+  pageIndex = 0,
+  pageSize = 0,
+  sortBy = NULL,
+  filters = NULL,
+  searchValue = NULL,
+  searchMethod = NULL,
+  groupBy = NULL,
+  pagination = NULL,
+  paginateSubRows = NULL,
+  selectedRowIds = NULL,
+  expanded = NULL,
+  ...
+) {
+  UseMethod("reactableServerInit")
+}
+
+#' @rdname reactable-server
+#'
+#' @export
+reactableServerData <- function(
+    x,
+    data = NULL,
+    columns = NULL,
+    pageIndex = 0,
+    pageSize = 0,
+    sortBy = NULL,
+    filters = NULL,
+    searchValue = NULL,
+    searchMethod = NULL,
+    groupBy = NULL,
+    pagination = NULL,
+    paginateSubRows = NULL,
+    selectedRowIds = NULL,
+    expanded = NULL,
+    ...
+) {
+  UseMethod("reactableServerData")
+}
+
+# Default reactableServerInit method: no-op, since initialization is optional.
+reactableServerInit.default <- function(...) {
+  # No-op
+}
+
+# Default reactableServerData method
+reactableServerData.default <- function(...) {
+  stop(
+    "reactable server backends must have a `reactableServerData` S3 method defined.\n\nFor more details, see `?reactable::reactableServerData`",
+    call. = FALSE
+  )
+}
+
+#' The result from handling a server-side data request
+#'
+#' @param data The current page of data. A data frame.
+#' @param rowCount The row count of the current page.
+#' @param maxRowCount The maximum row count. Optional. Used to determine whether
+#'   the pagination bar should be kept visible when filtering or searching
+#'   reduces the current rows to one page, or when expanding rows
+#'   (when paginateSubRows is `TRUE`) would expand the table beyond one page.
+#'
+#' @seealso [reactableServerInit()] and [reactableServerData()] for creating custom
+#'   server-side data backends.
+#'
+#' @export
+resolvedData <- function(data, rowCount = NULL, maxRowCount = NULL) {
+  if (!is.data.frame(data)) {
+    stop("`data` must be a data frame")
+  }
+  if (!is.numeric(rowCount)) {
+    stop("`rowCount` must be provided and numeric")
+  }
+  if (!is.null(maxRowCount) && !is.numeric(maxRowCount)) {
+    stop("`maxRowCount` must be numeric")
+  }
+  structure(
+    list(data = data, rowCount = rowCount, maxRowCount = maxRowCount),
+    class = "reactable_resolvedData"
+  )
+}
+
+is.resolvedData <- function(x) {
+  inherits(x, "reactable_resolvedData")
+}
+
 reactableFilterFunc <- function(data, req) {
   body <- rawToChar(req$rook.input$read())
   params <- parseParams(body)
 
   start <- Sys.time()
-  resolvedData <- do.call(data$backend[["data"]], mergeLists(data, params))
+  resolvedData <- do.call(reactableServerData, c(list(data$backend), mergeLists(data, params)))
   end <- Sys.time()
+
+  if (!is.resolvedData(resolvedData)) {
+    stop("reactable server backends must return a `resolvedData()` object from `reactableServerData()`")
+  }
 
   debugLog(sprintf("(reactableFilterFunc) time to resolve data: %s\n%s", format(end - start, units = "secs"), toJSON(resolvedData)))
 
@@ -338,8 +478,8 @@ getServerBackend <- function(backend = NULL) {
 
   backends <- list(
     v8 = serverV8,
-    data.frame = serverDf,
-    data.table = serverDt
+    df = serverDf,
+    dt = serverDt
   )
 
   if (is.null(backend) || !backend %in% names(backends)) {

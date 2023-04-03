@@ -6,15 +6,15 @@ test_that("serverDf - basic pagination", {
     b = c(1, 2, 3, 4, 5)
   )
   expect_equal(
-    backend$data(data = df),
+    reactableServerData(backend, data = df, pageSize = NULL),
     resolvedData(df, rowCount = 5)
   )
   expect_equal(
-    backend$data(df, pageIndex = 0, pageSize = 10),
+    reactableServerData(backend, data = df, pageIndex = 0, pageSize = 10),
     resolvedData(df, rowCount = 5)
   )
   expect_equal(
-    backend$data(df, pageIndex = 1, pageSize = 3),
+    reactableServerData(backend, data = df, pageIndex = 1, pageSize = 3),
     resolvedData(df[4:5, ], rowCount = 5)
   )
 })

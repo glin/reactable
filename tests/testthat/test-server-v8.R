@@ -4,10 +4,10 @@ test_that("serverV8 handles server rendering errors", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
   expect_error(
-    backend$data(pageIndex = 0, pageSize = 10, sortBy = "not an array"),
+    reactableServerData(backend, pageIndex = 0, pageSize = 10, sortBy = "not an array"),
     "Failed to server render table:.+"
   )
 })
@@ -18,9 +18,9 @@ test_that("pagination", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
-  results <- backend$data(pageIndex = 0, pageSize = 10)
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10)
   expected <- df
   expected[["__state"]] <- dataFrame(
     id = c("0", "1", "2", "3", "4"),
@@ -28,7 +28,7 @@ test_that("pagination", {
   )
   expect_equal(results, resolvedData(expected, rowCount = 5, maxRowCount = 5))
 
-  results <- backend$data(pageIndex = 1, pageSize = 2)
+  results <- reactableServerData(backend, pageIndex = 1, pageSize = 2)
   expected <- dataFrame(x = c(3, 4), y = c("c", "d"))
   expected[["__state"]] <- dataFrame(
     id = c("2", "3"),
@@ -46,9 +46,9 @@ test_that("sorting", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
-  results <- backend$data(pageIndex = 0, pageSize = 10, sortBy = list(list(id = "x")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, sortBy = list(list(id = "x")))
   expected <- dataFrame(
     x = c("a", "aaa", "AAA", "aaa", "B", "b")
   )
@@ -68,10 +68,10 @@ test_that("sorting", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
-  results <- backend$data(pageIndex = 0, pageSize = 10,
-                          sortBy = list(list(id = "mfr", desc = TRUE), list(id = "price")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10,
+                                 sortBy = list(list(id = "mfr", desc = TRUE), list(id = "price")))
   expected <- dataFrame(
     mfr = c("BMW", "Audi", "Audi", "Acura", "Acura"),
     model = c("535i", "90", "100", "Integra", "Legend"),
@@ -89,25 +89,25 @@ test_that("filtering", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
   # No filters
-  results <- backend$data(pageIndex = 0, pageSize = 10, filters = list())
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, filters = list())
   results$data[["__state"]] <- NULL
   expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # Invalid columns should be ignored
-  results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "non-existent column", value = "")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, filters = list(list(id = "non-existent column", value = "")))
   results$data[["__state"]] <- NULL
   expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # Valid column - no match
-  results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "no-match")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "no-match")))
   results$data[["__state"]] <- NULL
   expect_equal(results, resolvedData(data.frame(), rowCount = 0, maxRowCount = 6))
 
   # String filtering (case-insensitive)
-  results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "a")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, filters = list(list(id = "chr", value = "a")))
   results$data[["__state"]] <- NULL
   expected <- dataFrame(
     chr = c("aaa", "AAA", "aaa", "cba"),
@@ -116,7 +116,7 @@ test_that("filtering", {
   expect_equal(results, resolvedData(expected, rowCount = 4, maxRowCount = 6))
 
   # Numeric filtering - should filter by prefix
-  results <- backend$data(pageIndex = 0, pageSize = 10, filters = list(list(id = "num", value = "1")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, filters = list(list(id = "num", value = "1")))
   results$data[["__state"]] <- NULL
   expected <- dataFrame(
     chr = c("aaa", "cba", "B"),
@@ -125,8 +125,8 @@ test_that("filtering", {
   expect_equal(results, resolvedData(expected, rowCount = 3, maxRowCount = 6))
 
   # Multiple filters
-  results <- backend$data(pageIndex = 0, pageSize = 10,
-                          filters = list(list(id = "num", value = "21"), list(id = "chr", value = "b")))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10,
+                                 filters = list(list(id = "num", value = "21"), list(id = "chr", value = "b")))
   results$data[["__state"]] <- NULL
   expected <- dataFrame(
     chr = c("b"),
@@ -144,20 +144,20 @@ test_that("searching", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
   # Empty search value
-  results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "")
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, searchValue = "")
   results$data[["__state"]] <- NULL
   expect_equal(results, resolvedData(df, rowCount = 6, maxRowCount = 6))
 
   # No match
-  results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "no-match")
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, searchValue = "no-match")
   results$data[["__state"]] <- NULL
   expect_equal(results, resolvedData(data.frame(), rowCount = 0, maxRowCount = 6))
 
   # String search (case-insensitive)
-  results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "a")
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, searchValue = "a")
   results$data[["__state"]] <- NULL
   expected <- dataFrame(
     chr = c("aaa", "AAA", "aaa", "cba"),
@@ -166,7 +166,7 @@ test_that("searching", {
   expect_equal(results, resolvedData(expected, rowCount = 4, maxRowCount = 6))
 
   # Numeric searching - should filter by prefix
-  results <- backend$data(pageIndex = 0, pageSize = 10, searchValue = "1")
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, searchValue = "1")
   results$data[["__state"]] <- NULL
   expected <- dataFrame(
     chr = c("aaa", "cba", "B"),
@@ -190,9 +190,9 @@ test_that("grouping", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns)
+  reactableServerInit(backend, data = df, columns = columns)
 
-  results <- backend$data(pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),
     type = c(2, 2, 1),
@@ -221,9 +221,9 @@ test_that("grouping with paginateSubRows=true", {
   columns <- getAttrib(tbl, "columns")
 
   backend <- serverV8()
-  backend$init(data = df, columns = columns, paginateSubRows = TRUE)
+  reactableServerInit(backend, data = df, columns = columns, paginateSubRows = TRUE)
 
-  results <- backend$data(pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
+  results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
   expected <- listSafeDataFrame(
     mfr = c("Acura", "Audi", "BMW"),
     type = c(2, 2, 1),

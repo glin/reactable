@@ -1,7 +1,7 @@
 serverV8 <- function() {
   private <- new.env(parent = emptyenv())
 
-  list(
+  structure(list(
     init = function(
       data = NULL,
       columns = NULL,
@@ -46,7 +46,7 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
 
     data = function(
       pageIndex = 0,
-      pageSize = NULL,
+      pageSize = 0,
       sortBy = NULL,
       filters = NULL,
       searchValue = NULL,
@@ -101,5 +101,13 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         maxRowCount = result$maxRowCount
       ))
     }
-  )
+  ), class = "reactable_serverV8")
+}
+
+reactableServerInit.reactable_serverV8 <- function(x, ...) {
+  x$init(...)
+}
+
+reactableServerData.reactable_serverV8 <- function(x, ...) {
+  x$data(...)
 }

@@ -158,12 +158,24 @@ test_that("getReactableState", {
   ))
 })
 
+test_that("resolvedData", {
+  expect_error(resolvedData(123), "`data` must be a data frame")
+  expect_error(resolvedData(data.frame(x = 1)), "`rowCount` must be provided and numeric")
+  expect_error(resolvedData(data.frame(x = 1), rowCount = "4"), "`rowCount` must be provided and numeric")
+  expect_error(resolvedData(data.frame(x = 1), rowCount = 4, maxRowCount = "x"), "`maxRowCount` must be numeric")
+  result <- resolvedData(data.frame(x = 1), rowCount = 4, maxRowCount = 20)
+  expect_equal(result$data, data.frame(x = 1))
+  expect_equal(result$rowCount, 4)
+  expect_equal(result$maxRowCount, 20)
+})
+
 test_that("reactableFilterFunc", {
-  backend <- list(
-    data = function(pageIndex = NULL, pageSize = NULL, groupBy = NULL, ...) {
-      list(idx = pageIndex, size = pageSize, grp = groupBy)
-    }
-  )
+  backend <- structure(list(), class = "test_backend")
+  reactableServerData.test_backend <- function(pageIndex = NULL, pageSize = NULL, groupBy = NULL, ...) {
+    resolvedData(data.frame(idx = pageIndex, size = pageSize, grp = groupBy), rowCount = 5)
+  }
+  registerS3method("reactableServerData", "test_backend", reactableServerData.test_backend)
+
   data <- list(
     backend = backend,
     pageIndex = -1,
@@ -179,9 +191,13 @@ test_that("reactableFilterFunc", {
   expected <- shiny::httpResponse(
     status = 200L,
     content_type = "application/json",
-    content = toJSON(list(idx = 0, size = 10, grp = list("a")))
+    content = toJSON(resolvedData(data.frame(idx = 0, size = 10, grp = list("a")), rowCount = 5))
   )
   expect_equal(resp, expected)
+
+  reactableServerData.test_backend <- function(...) "not resolvedData"
+  registerS3method("reactableServerData", "test_backend", reactableServerData.test_backend)
+  expect_error(reactableFilterFunc(data, req), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })
 
 test_that("parseParams", {
