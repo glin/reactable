@@ -654,8 +654,8 @@ reactable <- function(
   }
 
   preRenderHook <- NULL
-  serverPageCount <- NULL
   serverRowCount <- NULL
+  serverMaxRowCount <- NULL
   if (!isFALSE(server)) {
     backend <- getServerBackend(getOption("reactable.server.backend"))
 
@@ -686,8 +686,8 @@ reactable <- function(
     # may be optional in the future.
     initialPage <- do.call(dataFunc, initialProps)
     data <- initialPage$data
-    serverPageCount <- initialPage$pageCount
     serverRowCount <- initialPage$rowCount
+    serverMaxRowCount <- initialPage$maxRowCount
 
     preRenderHook <- function(instance) {
       session <- if (requireNamespace("shiny", quietly = TRUE)) {
@@ -776,8 +776,8 @@ reactable <- function(
     elementId = elementId,
     dataKey = dataKey,
     static = static,
-    serverPageCount = serverPageCount,
-    serverRowCount = serverRowCount
+    serverRowCount = serverRowCount,
+    serverMaxRowCount = serverMaxRowCount
   ))
 
   htmlwidgets::createWidget(
