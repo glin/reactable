@@ -331,8 +331,8 @@ parseParams <- function(json) {
   params
 }
 
-getServerBackend <- function(backend) {
-  if (!is.character(backend)) {
+getServerBackend <- function(backend = NULL) {
+  if (!is.null(backend) && !is.character(backend)) {
     return(backend)
   }
 
@@ -342,8 +342,8 @@ getServerBackend <- function(backend) {
     data.table = serverDt
   )
 
-  if (!backend %in% names(backends)) {
-    stop(paste("reactable server backend must be one of", paste(sprintf('"%s"', names(backends)), collapse = ", ")))
+  if (is.null(backend) || !backend %in% names(backends)) {
+    backend <- "v8"
   }
 
   debugLog("(getServerBackend) using server backend:", backend)

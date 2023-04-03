@@ -657,7 +657,8 @@ reactable <- function(
   serverRowCount <- NULL
   serverMaxRowCount <- NULL
   if (!isFALSE(server)) {
-    backend <- getServerBackend(getOption("reactable.server.backend"))
+    backend <- if (isTRUE(server)) getOption("reactable.server.backend") else server
+    backend <- getServerBackend(backend = backend)
 
     initialProps <- list(
       data = data,
