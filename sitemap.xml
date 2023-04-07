@@ -133,6 +133,9 @@
     <loc>/reference/reactable-package.html</loc>
   </url>
   <url>
+    <loc>/reference/reactable-server.html</loc>
+  </url>
+  <url>
     <loc>/reference/reactable-shiny.html</loc>
   </url>
   <url>
@@ -146,6 +149,9 @@
   </url>
   <url>
     <loc>/reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>/reference/resolvedData.html</loc>
   </url>
   <url>
     <loc>/reference/updateReactable.html</loc>

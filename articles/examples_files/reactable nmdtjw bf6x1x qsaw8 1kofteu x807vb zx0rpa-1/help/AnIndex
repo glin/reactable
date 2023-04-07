@@ -7,12 +7,16 @@ getReactableState	getReactableState
 JS	reexports
 knit_print.reactable	knit_print.reactable
 reactable	reactable
+reactable-server	reactable-server
 reactable-shiny	reactable-shiny
 reactableLang	reactableLang
 reactableOutput	reactable-shiny
+reactableServerData	reactable-server
+reactableServerInit	reactable-server
 reactableTheme	reactableTheme
 reexports	reexports
 renderReactable	reactable-shiny
+resolvedData	resolvedData
 updateReactable	updateReactable
 widget_html.reactable	widget_html.reactable
 _PACKAGE	reactable-package
