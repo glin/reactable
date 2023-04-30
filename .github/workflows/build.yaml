@@ -94,6 +94,10 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 1
 
+      - name: Rebuild pkgdown site search index for GitHub Pages
+        if: matrix.config.release && github.ref == 'refs/heads/main'
+        run: Rscript pkgdown/build-search-gh.R
+
       - name: Deploy pkgdown site to GitHub Pages
         if: matrix.config.release && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4.3.3
