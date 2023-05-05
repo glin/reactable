@@ -1,3 +1,7 @@
+# For local docs testing with search, use:
+# servr::httw("docs")
+# servr::daemon_stop()
+
 # Create client-rendered versions of the Examples and Cookbook docs for comparison
 examples_src <- readLines("vignettes/examples.Rmd")
 examples_src <- sub("options(reactable.static = TRUE)", "options(reactable.static = FALSE)", examples_src, fixed = TRUE)

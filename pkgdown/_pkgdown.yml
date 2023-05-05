@@ -80,3 +80,9 @@ reference:
   contents:
   - reactable-server
   - resolvedData
+
+# Exclude duplicate no-static examples from search index
+search:
+  exclude:
+    - 'articles/examples-no-static.html'
+    - 'articles/cookbook/cookbook-no-static.html'
