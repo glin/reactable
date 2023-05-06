@@ -17,16 +17,16 @@ Francois (2011, <doi:10.18637/jss.v040.i08>), the book by Eddelbuettel (2013,
 <doi:10.1080/00031305.2017.1375990>); see 'citation(""Rcpp"")' for details.","2019-03-17","GPL (>= 2)","http://www.rcpp.org, http://dirk.eddelbuettel.com/code/rcpp.html,
 https://github.com/RcppCore/Rcpp","yes",NA,6003023,"R (>= 3.0.0)","methods, utils",NA,"RUnit, inline, rbenchmark, knitr, rmarkdown, pinp, pkgKitten (>= 0.1.2)"
 "dplyr","A Grammar of Data Manipulation","0.8.3","Hadley Wickham [aut, cre] (<https://orcid.org/0000-0003-4757-117X>),
-Romain François [aut] (<https://orcid.org/0000-0002-2444-4226>),
+Romain FranÃ§ois [aut] (<https://orcid.org/0000-0002-2444-4226>),
 Lionel Henry [aut],
-Kirill Müller [aut] (<https://orcid.org/0000-0002-1416-3412>),
+Kirill MÃ¼ller [aut] (<https://orcid.org/0000-0002-1416-3412>),
 RStudio [cph, fnd]","Hadley Wickham <hadley@rstudio.com>","A fast, consistent tool for working with data frame like objects,
 both in memory and out of memory.","2019-07-04","MIT + file LICENSE","http://dplyr.tidyverse.org, https://github.com/tidyverse/dplyr","yes",NA,5497363,"R (>= 3.2.0)","assertthat (>= 0.2.0), glue (>= 1.3.0), magrittr (>= 1.5), methods, pkgconfig, R6, Rcpp (>= 1.0.1), rlang (>= 0.4.0), tibble (>= 2.0.0), tidyselect (>= 0.2.5), utils","BH, plogr (>= 0.2.0), Rcpp (>= 1.0.1)","bit64, callr, covr, crayon (>= 1.3.4), DBI, dbplyr, dtplyr, ggplot2, hms, knitr, Lahman, lubridate, MASS, mgcv, microbenchmark, nycflights13, rmarkdown, RMySQL, RPostgreSQL, RSQLite, testthat, withr, broom, purrr, readr"
-"tibble","Simple Data Frames","2.1.3","Kirill Müller [aut, cre],
+"tibble","Simple Data Frames","2.1.3","Kirill MÃ¼ller [aut, cre],
 Hadley Wickham [aut],
 Romain Francois [ctb],
 Jennifer Bryan [ctb],
-RStudio [cph]","Kirill Müller <krlmlr+r@mailbox.org>","Provides a 'tbl_df' class (the 'tibble') that provides
+RStudio [cph]","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","Provides a 'tbl_df' class (the 'tibble') that provides
 stricter checking and better formatting than the traditional data frame.","2019-06-06","MIT + file LICENSE","http://tibble.tidyverse.org/, https://github.com/tidyverse/tibble","yes",NA,5233800,"R (>= 3.1.0)","cli, crayon (>= 1.3.4), fansi (>= 0.4.0), methods, pillar (>= 1.3.1), pkgconfig, rlang (>= 0.3.0), utils",NA,"bench, covr, dplyr, htmltools, import, knitr, mockr, nycflights13, rmarkdown, testthat, withr"
 "ggplot2","Create Elegant Data Visualisations Using the Grammar of Graphics","3.2.0","Hadley Wickham [aut, cre],
 Winston Chang [aut],
@@ -44,9 +44,9 @@ and it takes care of the details.","2019-06-16","GPL-2 | file LICENSE","http://g
 Python's Literal String Interpolation <https://www.python.org/dev/peps/pep-0498/> and Docstrings
 <https://www.python.org/dev/peps/pep-0257/> and Julia's Triple-Quoted String Literals
 <https://docs.julialang.org/en/stable/manual/strings/#triple-quoted-string-literals>.","2019-03-12","MIT + file LICENSE","https://github.com/tidyverse/glue","yes",NA,4487818,"R (>= 3.1)","methods",NA,"testthat, covr, magrittr, crayon, knitr, rmarkdown, DBI, RSQLite, R.utils, forcats, microbenchmark, rprintf, stringr, ggplot2, dplyr, withr"
-"pillar","Coloured Formatting for Columns","1.4.2","Kirill Müller [aut, cre],
+"pillar","Coloured Formatting for Columns","1.4.2","Kirill MÃ¼ller [aut, cre],
 Hadley Wickham [aut],
-RStudio [cph]","Kirill Müller <krlmlr+r@mailbox.org>","Provides 'pillar' and 'colonnade' generics designed for formatting columns
+RStudio [cph]","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","Provides 'pillar' and 'colonnade' generics designed for formatting columns
 of data using the full range of colours provided by modern terminals.","2019-06-29","GPL-3","https://github.com/r-lib/pillar","no",NA,4481377,NA,"cli, crayon (>= 1.3.4), fansi, rlang (>= 0.3.0), utf8 (>= 1.1.0), vctrs",NA,"knitr, lubridate, testthat, withr"
 "data.table","Extension of `data.frame`","1.12.2","Matt Dowle [aut, cre],
 Arun Srinivasan [aut],
@@ -91,9 +91,9 @@ and lighter-weight, and they are not built on S4 classes so they do not
 require the methods package. These classes allow public and private
 members, and they support inheritance, even when the classes are defined in
 different packages.","2019-02-14","MIT + file LICENSE","https://r6.r-lib.org, https://github.com/r-lib/R6/","no",NA,4116156,"R (>= 3.0)",NA,NA,"knitr, microbenchmark, pryr, testthat, ggplot2, scales"
-"cli","Helpers for Developing Command Line Interfaces","1.1.0","Gábor Csárdi [aut, cre],
+"cli","Helpers for Developing Command Line Interfaces","1.1.0","GÃ¡bor CsÃ¡rdi [aut, cre],
 Hadley Wickham [ctb],
-Kirill Müller [ctb]","Gábor Csárdi <csardi.gabor@gmail.com>","A suite of tools designed to build attractive command line
+Kirill MÃ¼ller [ctb]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","A suite of tools designed to build attractive command line
 interfaces ('CLIs'). Includes tools for drawing rules, boxes, trees, and
 'Unicode' symbols with 'ASCII' alternatives.","2019-03-19","MIT + file LICENSE","https://github.com/r-lib/cli#readme","no",NA,4050925,"R (>= 2.10)","assertthat, crayon (>= 1.3.4), methods, utils",NA,"covr, fansi, mockery, testthat, webshot, withr"
 "stringr","Simple, Consistent Wrappers for Common String Operations","1.4.0","Hadley Wickham [aut, cre, cph],
@@ -150,7 +150,7 @@ Steven Akins [ctb],
 Bao Nguyen [ctb],
 Thierry Onkelinx [ctb]","Thomas J. Leeper <thosjleeper@gmail.com>","A simple client package for the Amazon Web Services ('AWS') Simple
 Storage Service ('S3') 'REST' 'API' <https://aws.amazon.com/s3/>.","2018-05-25","GPL (>= 2)","https://github.com/cloudyr/aws.s3","no",NA,3640248,NA,"utils, tools, httr, xml2 (> 1.0.0), base64enc, digest, aws.signature (>= 0.3.7)",NA,"testthat, datasets"
-"pkgconfig","Private Configuration for 'R' Packages","2.0.2","Gábor Csárdi","Gábor Csárdi <csardi.gabor@gmail.com>","Set configuration options on a per-package basis.
+"pkgconfig","Private Configuration for 'R' Packages","2.0.2","GÃ¡bor CsÃ¡rdi","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","Set configuration options on a per-package basis.
 Options set by a given package only apply to that package,
 other packages are unaffected.","2018-08-16","MIT + file LICENSE","https://github.com/r-lib/pkgconfig#readme","no",NA,3634207,NA,"utils",NA,"covr, testthat, disposables (>= 1.0.3)"
 "curl","A Modern and Flexible Web Client for R","4.0","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
@@ -182,8 +182,8 @@ included: 'algorithm' 'align' 'any' 'atomic' 'bimap' 'bind'
 'multiprcecision' 'numeric' 'pending' 'phoenix' 'preprocessor'
 'propery_tree' 'random' 'range' 'scope_exit' 'smart_ptr' 'sort' 'spirit'
 'tuple' 'type_traits' 'typeof' 'unordered' 'utility' 'uuid'.","2019-01-07","BSL-1.0",NA,"no",NA,3568714,NA,NA,NA,NA
-"crayon","Colored Terminal Output","1.3.4","Gábor Csárdi [aut, cre],
-Brodie Gaslam [ctb]","Gábor Csárdi <csardi.gabor@gmail.com>","Colored terminal output on terminals that support 'ANSI'
+"crayon","Colored Terminal Output","1.3.4","GÃ¡bor CsÃ¡rdi [aut, cre],
+Brodie Gaslam [ctb]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","Colored terminal output on terminals that support 'ANSI'
 color and highlight codes. It also works in 'Emacs' 'ESS'. 'ANSI'
 color support is automatically detected. Colors and highlighting can
 be combined and nested. New styles can also be created easily.
@@ -255,7 +255,7 @@ Kohske Takahashi [ctb],
 Lorenz Walthert [ctb],
 Lucas Gallindo [ctb],
 Marius Hofert [ctb],
-Martin Modrák [ctb],
+Martin ModrÃ¡k [ctb],
 Michael Chirico [ctb],
 Michael Friendly [ctb],
 Michal Bojanowski [ctb],
@@ -416,7 +416,7 @@ It makes it easy to implement select-like functions in your own
 packages in a way that is consistent with other 'tidyverse'
 interfaces for selection.","2018-10-11","GPL-3",NA,"yes",NA,2918933,"R (>= 3.1)","glue (>= 1.3.0), purrr, rlang (>= 0.2.2), Rcpp (>= 0.12.0)","Rcpp (>= 0.12.0),","covr, dplyr, testthat"
 "withr","Run Code 'With' Temporarily Modified Global State","2.1.2","Jim Hester [aut, cre],
-Kirill Müller [aut],
+Kirill MÃ¼ller [aut],
 Kevin Ushey [aut],
 Hadley Wickham [aut],
 Winston Chang [aut],
@@ -521,8 +521,8 @@ Jim Hester [aut, cre],
 Romain Francois [aut],
 R Core Team [ctb] (Date time code adapted from R),
 RStudio [cph, fnd],
-Jukka Jylänki [ctb, cph] (grisu3 implementation),
-Mikkel Jørgensen [ctb, cph] (grisu3 implementation)","Jim Hester <james.hester@rstudio.com>","The goal of 'readr' is to provide a fast and friendly way to read
+Jukka JylÃ¤nki [ctb, cph] (grisu3 implementation),
+Mikkel JÃ¸rgensen [ctb, cph] (grisu3 implementation)","Jim Hester <james.hester@rstudio.com>","The goal of 'readr' is to provide a fast and friendly way to read
 rectangular data (like 'csv', 'tsv', and 'fwf'). It is designed to flexibly
 parse many types of data found in the wild, while still cleanly failing when
 data unexpectedly changes.","2018-12-21","GPL (>= 2) | file LICENSE","http://readr.tidyverse.org, https://github.com/tidyverse/readr","yes","GNU make",2637284,"R (>= 3.1)","Rcpp (>= 0.12.0.5), tibble, hms (>= 0.4.1), R6, clipr, crayon, methods","Rcpp, BH","curl, testthat, knitr, rmarkdown, stringi, covr, spelling"
@@ -553,11 +553,11 @@ contains helper functions to compile 'LaTeX' documents, and install missing
 Noam Ross [ctb, cph],
 Bob Rudis [ctb, cph],
 Marco Sciaini [ctb, cph],
-Cédric Scherer [ctb, cph]","Simon Garnier <garnier@njit.edu>","Implementation of the 'viridis' - the default -, 'magma', 'plasma',
+CÃ©dric Scherer [ctb, cph]","Simon Garnier <garnier@njit.edu>","Implementation of the 'viridis' - the default -, 'magma', 'plasma',
 'inferno', and 'cividis' color maps for 'R'. 'viridis', 'magma', 'plasma',
 and 'inferno' are ported from 'matplotlib' <http://matplotlib.org/>, a
 popular plotting library for 'python'. 'cividis', was developed by Jamie R.
-Nuñez and Sean M. Colby. These color maps are designed in such a way that
+NuÃ±ez and Sean M. Colby. These color maps are designed in such a way that
 they will analytically be perfectly perceptually-uniform, both in regular
 form and also when converted to black-and-white. They are also designed to
 be perceived by readers with the most common form of color blindness (all
@@ -568,9 +568,9 @@ be found at <https://cran.r-project.org/package=viridis>.","2018-02-01","MIT + f
 Time intervals: 1337000 -> 15d 11h 23m 20s.
 Vague time intervals: 2674000 -> about a month ago.
 Bytes: 1337 -> 1.34 kB.","2015-07-13","MIT + file LICENSE","https://github.com/gaborcsardi/prettyunits","no",NA,2566273,NA,"magrittr, assertthat, methods",NA,"testthat"
-"hms","Pretty Time of Day","0.5.0","Kirill Müller [aut, cre],
+"hms","Pretty Time of Day","0.5.0","Kirill MÃ¼ller [aut, cre],
 The R Consortium [fnd],
-RStudio [fnd]","Kirill Müller <krlmlr+r@mailbox.org>","Implements an S3 class for storing and formatting time-of-day
+RStudio [fnd]","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","Implements an S3 class for storing and formatting time-of-day
 values, based on the 'difftime' class.","2019-07-09","GPL-3","https://github.com/tidyverse/hms","no",NA,2499887,NA,"methods, pkgconfig, rlang, vctrs (>= 0.2.0)",NA,"crayon, lubridate, pillar (>= 1.1.0), testthat"
 "xml2","Parse XML","1.2.0","Hadley Wickham [aut],
 James Hester [aut, cre],
@@ -627,14 +627,14 @@ Kenton Russell [aut, cph],
 RStudio [cph]","Joe Cheng <joe@rstudio.com>","A framework for creating HTML widgets that render in various
 contexts including the R console, 'R Markdown' documents, and 'Shiny'
 web applications.","2018-09-30","MIT + file LICENSE","https://github.com/ramnathv/htmlwidgets","no",NA,2475617,NA,"grDevices, htmltools (>= 0.3), jsonlite (>= 0.9.16), yaml",NA,"knitr (>= 1.8)"
-"plogr","The 'plog' C++ Logging Library","0.2.0","Kirill Müller [aut, cre],
-Sergey Podobry [cph] (Author of the bundled plog library)","Kirill Müller <krlmlr+r@mailbox.org>","
+"plogr","The 'plog' C++ Logging Library","0.2.0","Kirill MÃ¼ller [aut, cre],
+Sergey Podobry [cph] (Author of the bundled plog library)","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","
 A simple header-only logging library for C++.
 Add 'LinkingTo: plogr' to 'DESCRIPTION', and '#include <plogr.h>' in your C++ modules to use it.","2018-03-25","MIT + file LICENSE","https://github.com/krlmlr/plogr#readme","no",NA,2449010,NA,NA,NA,"Rcpp"
-"processx","Execute and Control System Processes","3.4.1","Gábor Csárdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
+"processx","Execute and Control System Processes","3.4.1","GÃ¡bor CsÃ¡rdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
 Winston Chang [aut],
 RStudio [cph, fnd],
-Mango Solutions [cph, fnd]","Gábor Csárdi <csardi.gabor@gmail.com>","Tools to run system processes in the background.
+Mango Solutions [cph, fnd]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","Tools to run system processes in the background.
 It can check if a background process is running; wait on a background
 process to finish; get the exit status of finished processes; kill
 background processes. It can read the standard output and error of
@@ -643,16 +643,16 @@ a process for standard output or error, with a timeout. It can also
 poll several processes at once.","2019-07-18","MIT + file LICENSE","https://processx.r-lib.org,
 https://github.com/r-lib/processx#readme","yes",NA,2445900,NA,"ps (>= 1.2.0), R6, utils",NA,"callr (>= 3.2.0), codetools, covr, crayon, curl, debugme, parallel, testthat, withr"
 "sys","Powerful and Reliable Tools for Running System Commands in R","3.2","Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),
-Gábor Csárdi [ctb]","Jeroen Ooms <jeroen@berkeley.edu>","Drop-in replacements for the base system2() function with fine control
+GÃ¡bor CsÃ¡rdi [ctb]","Jeroen Ooms <jeroen@berkeley.edu>","Drop-in replacements for the base system2() function with fine control
 and consistent behavior across platforms. Supports clean interruption, timeout,
 background tasks, and streaming STDIN / STDOUT / STDERR over binary or text
 connections. Arguments on Windows automatically get encoded and quoted to work
 on different locales.","2019-04-23","MIT + file LICENSE","https://github.com/jeroen/sys#readme","yes",NA,2429136,NA,NA,NA,"unix (>= 1.4), spelling, testthat"
 "labeling","Axis Labeling","0.3","Justin Talbot","Justin Talbot <justintalbot@gmail.com>","Provides a range of axis labeling algorithms","2014-08-23","MIT + file LICENSE | Unlimited",NA,"no",NA,2425915,NA,NA,NA,NA
-"callr","Call R from R","3.3.1","Gábor Csárdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
+"callr","Call R from R","3.3.1","GÃ¡bor CsÃ¡rdi [aut, cre, cph] (<https://orcid.org/0000-0001-7098-9676>),
 Winston Chang [aut],
 RStudio [cph, fnd],
-Mango Solutions [cph, fnd]","Gábor Csárdi <csardi.gabor@gmail.com>","It is sometimes useful to perform a computation in a
+Mango Solutions [cph, fnd]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","It is sometimes useful to perform a computation in a
 separate R process, without affecting the current R process at all.
 This packages does exactly that.","2019-07-18","MIT + file LICENSE","https://github.com/r-lib/callr#readme","no",NA,2380631,NA,"processx (>= 3.4.0), R6, utils",NA,"cliapp, covr, crayon, knitr, pingr, ps, rmarkdown, rprojroot, spelling, testthat, tibble, withr"
 "rstudioapi","Safely Access the RStudio API","0.10","Kevin Ushey [aut, cre],
@@ -669,7 +669,7 @@ https://tinycthread.github.io/),
 Evan Nemerson [ctb, cph] (TinyCThread library,
 https://tinycthread.github.io/)","Joe Cheng <joe@rstudio.com>","Executes arbitrary R or C functions some time after the current
 time, after the R execution stack has emptied.","2019-02-11","GPL (>= 2)","https://github.com/r-lib/later","yes",NA,2314492,NA,"Rcpp (>= 0.12.9), rlang","Rcpp, BH","knitr, rmarkdown, testthat"
-"progress","Terminal Progress Bars","1.2.2","Gábor Csárdi [aut, cre], Rich FitzJohn [aut]","Gábor Csárdi <csardi.gabor@gmail.com>","Configurable Progress bars, they may include percentage,
+"progress","Terminal Progress Bars","1.2.2","GÃ¡bor CsÃ¡rdi [aut, cre], Rich FitzJohn [aut]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","Configurable Progress bars, they may include percentage,
 elapsed time, and/or the estimated completion time. They work in
 terminals, in 'Emacs' 'ESS', 'RStudio', 'Windows' 'Rgui' and the
 'macOS' 'R.app'. The package also provides a 'C++' 'API', that works
@@ -748,8 +748,8 @@ and alert the user.","2019-07-02","GPL-3","https://github.com/r-lib/ellipsis","y
 "ps","List, Query, Manipulate System Processes","1.3.0","Jay Loden [aut],
 Dave Daeschler [aut],
 Giampaolo Rodola' [aut],
-Gábor Csárdi [aut, cre],
-RStudio [cph]","Gábor Csárdi <csardi.gabor@gmail.com>","List, query and manipulate all system processes, on 'Windows',
+GÃ¡bor CsÃ¡rdi [aut, cre],
+RStudio [cph]","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","List, query and manipulate all system processes, on 'Windows',
 'Linux' and 'macOS'.","2018-12-21","BSD_3_clause + file LICENSE","https://github.com/r-lib/ps#readme","yes",NA,2078196,"R (>= 3.1)","utils",NA,"callr, covr, curl, pingr, processx (>= 3.1.0), R6, rlang, testthat, tibble"
 "fs","Cross-Platform File System Operations Based on 'libuv'","1.3.1","Jim Hester [aut, cre],
 Hadley Wickham [aut],
@@ -759,8 +759,8 @@ RStudio [cph, fnd]","Jim Hester <james.f.hester@gmail.com>","A cross-platform in
 top of the 'libuv' C library.","2019-05-06","GPL-3","http://fs.r-lib.org, https://github.com/r-lib/fs","yes","GNU make",2036878,"R (>= 3.1)","methods, Rcpp","Rcpp","testthat, covr, pillar (>= 1.0.0), crayon, rmarkdown, knitr, withr, spelling"
 "DBI","R Database Interface","1.0.0","R Special Interest Group on Databases (R-SIG-DB) [aut],
 Hadley Wickham [aut],
-Kirill Müller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>),
-R Consortium [fnd]","Kirill Müller <krlmlr+r@mailbox.org>","A database interface definition for communication
+Kirill MÃ¼ller [aut, cre] (<https://orcid.org/0000-0002-1416-3412>),
+R Consortium [fnd]","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","A database interface definition for communication
 between R and relational database management systems.  All
 classes in this package are virtual and need to be extended by
 the various R/DBMS implementations.","2018-05-02","LGPL (>= 2)","http://r-dbi.github.io/DBI","no",NA,2027103,"R (>= 3.0.0), methods",NA,NA,"blob, covr, hms, knitr, magrittr, rprojroot, rmarkdown, RSQLite (>= 1.1-2), testthat, xml2"
@@ -826,7 +826,7 @@ https://github.com/WizardMac/ReadStat","yes","GNU make",1978498,"R (>= 3.2)","fo
 Anton Antonov [ctb]","Baptiste Auguie <baptiste.auguie@gmail.com>","Provides a number of user-level functions to work with ""grid""
 graphics, notably to arrange multiple grid-based plots on a page, and draw
 tables.","2017-09-09","GPL (>= 2)",NA,"no",NA,1861299,NA,"gtable, grid, grDevices, graphics, utils",NA,"ggplot2, egg, lattice, knitr, testthat"
-"igraph","Network Analysis and Visualization","1.2.4.1","See AUTHORS file.","Gábor Csárdi <csardi.gabor@gmail.com>","Routines for simple graphs and network analysis. It can
+"igraph","Network Analysis and Visualization","1.2.4.1","See AUTHORS file.","GÃ¡bor CsÃ¡rdi <csardi.gabor@gmail.com>","Routines for simple graphs and network analysis. It can
 handle large graphs very well and provides functions for generating random
 and regular graphs, graph visualization, centrality methods and much more.","2019-04-22","GPL (>= 2)","http://igraph.org","yes","gmp (optional), libxml2 (optional), glpk (optional)",1830935,"methods","graphics, grDevices, magrittr, Matrix, pkgconfig (>= 2.0.0), stats, utils",NA,"ape, digest, graph, igraphdata, rgl, scales, stats4, tcltk, testthat"
 "generics","Common S3 Generics not Provided by Base R Methods Related to
@@ -856,7 +856,7 @@ RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Wrappers around the 'xml2'
 make it easy to download, then manipulate, HTML and XML.","2019-05-15","GPL-3","http://rvest.tidyverse.org/, https://github.com/tidyverse/rvest","no",NA,1749438,"R (>= 3.2), xml2","httr (>= 0.5), magrittr, selectr",NA,"covr, knitr, png, rmarkdown, spelling, stringi (>= 0.3.1), testthat"
 "remotes","R Package Installation from Remote Repositories, Including
 'GitHub'","2.1.0","Jim Hester [aut, cre],
-Gábor Csárdi [aut],
+GÃ¡bor CsÃ¡rdi [aut],
 Hadley Wickham [aut],
 Winston Chang [aut],
 RStudio [cph],
@@ -873,7 +873,7 @@ RStudio [cph]","Hadley Wickham <hadley@rstudio.com>","Defines new notions of pro
 used to provide tools for consistent and well-founded type-coercion
 and size-recycling, and are in turn connected to ideas of type- and
 size-stability useful for analyzing function interfaces.","2019-07-05","GPL-3","https://github.com/r-lib/vctrs","yes",NA,1592780,"R (>= 3.2)","backports, ellipsis (>= 0.2.0), digest, glue, rlang (>= 0.4.0), zeallot",NA,"bit64, covr, crayon, generics, knitr, pillar (>= 1.4.1), pkgdown, rmarkdown, testthat, tibble"
-"rprojroot","Finding Files in Project Subdirectories","1.3-2","Kirill Müller [aut, cre]","Kirill Müller <krlmlr+r@mailbox.org>","Robust, reliable and flexible paths to files below a
+"rprojroot","Finding Files in Project Subdirectories","1.3-2","Kirill MÃ¼ller [aut, cre]","Kirill MÃ¼ller <krlmlr+r@mailbox.org>","Robust, reliable and flexible paths to files below a
 project root. The 'root' of a project is defined as a directory
 that matches a certain criterion, e.g., it contains a certain
 regular file.","2018-01-03","GPL-3","https://github.com/krlmlr/rprojroot,
