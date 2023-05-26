@@ -114,6 +114,14 @@ export function onStateChange(tableId, listenerFn) {
   return getInstance(tableId).onStateChange(listenerFn)
 }
 
+export function gotoPage(tableId, pageIndex) {
+  getInstance(tableId).gotoPage(pageIndex)
+}
+
+export function setPageSize(tableId, pageSize) {
+  getInstance(tableId).setPageSize(pageSize)
+}
+
 export default function Reactable({
   data,
   columns,

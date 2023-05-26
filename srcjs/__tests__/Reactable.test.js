@@ -21,6 +21,19 @@ afterEach(() => jest.clearAllMocks())
 
 expect.extend(matchers)
 
+// expect.toThrow() doesn't suppress console errors, so this can be used to test errors instead.
+// https://github.com/jestjs/jest/issues/5785
+const expectToThrow = func => {
+  // Even though the error is caught, it still gets printed to the console
+  // so we mock that out to avoid the wall of red text.
+  jest.spyOn(console, 'error')
+  console.error.mockImplementation(() => {})
+
+  expect(func).toThrow()
+
+  console.error.mockRestore()
+}
+
 const getRoot = container => container.querySelector('.Reactable.ReactTable')
 const getTable = container => container.querySelector('.rt-table')
 const getThead = container => container.querySelector('.rt-thead')
@@ -9819,8 +9832,12 @@ describe('reactable JavaScript API', () => {
     expect(queryByText('col-a')).toBeVisible()
     expect(queryByText('col-c')).toBeVisible()
 
-    act(() => reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('b')))
-    act(() => reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('c')))
+    act(() =>
+      reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('b'))
+    )
+    act(() =>
+      reactable.setHiddenColumns('my-tbl', prevHiddenColumns => prevHiddenColumns.concat('c'))
+    )
     expect(reactable.getState('my-tbl').hiddenColumns).toEqual(['b', 'c'])
     expect(queryByText('col-b')).toEqual(null)
     expect(queryByText('col-c')).toEqual(null)
@@ -9936,4 +9953,64 @@ describe('reactable JavaScript API', () => {
     await waitFor(() => expect(currentState.searchValue).toEqual('aaa'))
     await waitFor(() => expect(currentState.groupBy).toEqual(['a']))
   })
+
+  it('Reactable.gotoPage', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'] },
+      columns: [{ name: 'a', id: 'a' }],
+      defaultPageSize: 2,
+      elementId: 'my-tbl'
+    }
+    const { queryByText } = render(<Reactable {...props} />)
+
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(0)
+
+    act(() => reactable.gotoPage('my-tbl', 1))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(1)
+    expect(queryByText('a1')).toEqual(null)
+    expect(queryByText('a3')).toBeVisible()
+
+    act(() => reactable.gotoPage('my-tbl', 0))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(0)
+    expect(queryByText('a1')).toBeVisible()
+    expect(queryByText('a3')).toEqual(null)
+
+    // Should ignore page indexes beyond range
+    act(() => reactable.gotoPage('my-tbl', 1))
+    act(() => reactable.gotoPage('my-tbl', -1))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(1)
+    act(() => reactable.gotoPage('my-tbl', 999))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(1)
+
+    // Should accept a callback
+    act(() => reactable.gotoPage('my-tbl', currentIndex => currentIndex + 1))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(2)
+    act(() => reactable.gotoPage('my-tbl', currentIndex => currentIndex - 1))
+    expect(reactable.getState('my-tbl').pageIndex).toEqual(1)
+  })
+})
+
+it('Reactable.setPageSize', () => {
+  const props = {
+    data: { a: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'] },
+    columns: [{ name: 'a', id: 'a' }],
+    defaultPageSize: 2,
+    elementId: 'my-tbl'
+  }
+  const { queryByText } = render(<Reactable {...props} />)
+
+  expect(reactable.getState('my-tbl').pageSize).toEqual(2)
+
+  act(() => reactable.setPageSize('my-tbl', 1))
+  expect(reactable.getState('my-tbl').pageSize).toEqual(1)
+  expect(queryByText('a2')).toEqual(null)
+
+  act(() => reactable.setPageSize('my-tbl', 6))
+  expect(reactable.getState('my-tbl').pageSize).toEqual(6)
+
+  act(() => reactable.setPageSize('my-tbl', 999))
+  expect(reactable.getState('my-tbl').pageSize).toEqual(999)
+
+  // Invalid values should err
+  expectToThrow(() => act(() => reactable.setPageSize('my-tbl', -1)))
 })

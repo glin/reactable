@@ -675,6 +675,64 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+### `Reactable.gotoPage()`
+
+::: {.callout}
+New in v0.4.4.9000
+:::
+
+Changes the current page. `pageIndex` can either be a number or a function that takes
+the previous `pageIndex` and returns the new value.
+
+`pageIndex` is zero-based, so the first page would have a `pageIndex` of `0`.
+If `pageIndex` is outside the valid `pageIndex` range, `Reactable.gotoPage()` will do nothing.
+
+```ts
+Reactable.gotoPage(
+  tableId: string,
+  pageIndex?: number | Function
+)
+```
+
+#### Examples
+
+```js
+// Go to page index 0 (the first page)
+Reactable.gotoPage('cars-table', 0)
+
+// Go to page index 2 (the third page)
+Reactable.gotoPage('cars-table', 2)
+
+// Go to the next page
+Reactable.gotoPage('cars-table', prevPage => prevPage + 1)
+
+// Go to the previous page
+Reactable.gotoPage('cars-table', prevPage => prevPage - 1)
+```
+
+### `Reactable.setPageSize()`
+
+::: {.callout}
+New in v0.4.4.9000
+:::
+
+Sets the current page size.
+
+```ts
+Reactable.gotoPage(
+  tableId: string,
+  pageSize?: number
+)
+```
+
+#### Examples
+
+```js
+// Set the page size to 10
+Reactable.setPageSize('cars-table', 10)
+```
+
+
 ```{css echo=FALSE}
 /* rmarkdown html documents */
 .main-container {
