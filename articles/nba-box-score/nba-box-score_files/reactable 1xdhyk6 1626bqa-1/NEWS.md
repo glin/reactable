@@ -1,5 +1,12 @@
 # reactable 0.4.4.9000 (Unreleased)
 
+## New features
+
+* New [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
+  and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
+  methods in the JavaScript API to change the current page or set the current page size.
+  ([#322](https://github.com/glin/reactable/issues/322))
+
 # reactable 0.4.4
 
 [Documentation - reactable 0.4.4](https://v0-4-4--reactable-docs.netlify.app/)
