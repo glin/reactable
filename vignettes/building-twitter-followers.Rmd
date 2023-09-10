@@ -153,10 +153,10 @@ https://data.fivethirtyeight.com, licensed under [CC by 4.0](https://github.com/
 
 You can download the [raw data](https://github.com/fivethirtyeight/twitter-overlap) for this article,
 but we'll conveniently begin working with a cleaned CSV file:
-[`twitter_followers.csv`](https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv).
+[`twitter_followers.csv`](https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv).
 
 ```{r}
-data <- read.csv("https://glin.github.io/reactable/articles/twitter-followers/twitter_followers.csv",
+data <- read.csv("https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv",
                  stringsAsFactors = FALSE)
 
 dplyr::glimpse(data)
