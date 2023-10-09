@@ -2,6 +2,31 @@
 
 ## New features
 
+* Experimental support for server-side data processing in Shiny apps. Use
+  `reactable(server = TRUE)` to render a table using server-side data processing in Shiny.
+  Server-side data processing requires the V8 package, which is not installed
+  with reactable by default. ([#22](https://github.com/glin/reactable/issues/22))
+  ```r
+  library(shiny)
+  library(reactable)
+
+  tbl <- reactable(
+    mtcars,
+    server = TRUE
+  )
+
+  ui <- fluidPage(
+    reactableOutput("tbl")
+  )
+
+  server <- function(input, output) {
+    output$tbl <- renderReactable({
+      tbl
+    })
+  }
+
+  shinyApp(ui, server)
+  ```
 * New [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
   and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
   methods in the JavaScript API to change the current page or set the current page size.
