@@ -576,7 +576,7 @@ reactable(
         state.sortedData.forEach(function(row) {
           total += row[column.id]
         })
-        return '$' + total.toFixed(2)
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
       }")
     )
   ),
@@ -601,7 +601,7 @@ reactable(
         state.sortedData.forEach(function(row) {
           total += row[column.id]
         })
-        return '$' + total.toFixed(2)
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
       }")
     )
   ),

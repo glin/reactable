@@ -765,7 +765,7 @@ reactable(
       aggregate = "sum",
       # Render aggregated cell as currency
       aggregated = JS("function(cellInfo) {
-        return '$' + cellInfo.value.toFixed(2)
+        return cellInfo.value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
       }")
     )
   )
@@ -918,7 +918,7 @@ reactable(
         state.sortedData.forEach(function(row) {
           total += row[column.id]
         })
-        return '$' + total.toFixed(2)
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
       }")
     )
   ),
