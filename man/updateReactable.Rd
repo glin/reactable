@@ -8,6 +8,7 @@ updateReactable(
   outputId,
   data = NULL,
   selected = NULL,
+  hidden = NULL,
   expanded = NULL,
   page = NULL,
   meta = NULL,
@@ -26,6 +27,8 @@ including sorting, filtering, and grouping state.}
 
 \item{selected}{Selected rows. Either a numeric vector of row indices,
 or \code{NA} to deselect all rows.}
+
+\item{hidden}{Hidden columns. A character vector that contains the column names to be hidden.}
 
 \item{expanded}{Expanded rows. Either \code{TRUE} to expand all rows, or \code{FALSE}
 to collapse all rows.}
@@ -57,6 +60,7 @@ ui <- fluidPage(
   actionButton("select_btn", "Select rows"),
   actionButton("clear_btn", "Clear selection"),
   actionButton("expand_btn", "Expand rows"),
+  actionButton("hide_btn", "Hide columns"),
   actionButton("collapse_btn", "Collapse rows"),
   actionButton("page_btn", "Change page"),
   selectInput("filter_type", "Filter type", unique(data$Type), multiple = TRUE),
@@ -88,6 +92,11 @@ server <- function(input, output) {
     # Expand all rows
     updateReactable("table", expanded = TRUE)
   })
+
+  observeEvent(input$hide_btn, {
+    # Hide columns
+    updateReactable("table", hidden = c('Type', 'Price'))
+    })
 
   observeEvent(input$collapse_btn, {
     # Collapse all rows

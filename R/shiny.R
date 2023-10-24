@@ -13,6 +13,8 @@
 #'   or `NA` to deselect all rows.
 #' @param expanded Expanded rows. Either `TRUE` to expand all rows, or `FALSE`
 #'   to collapse all rows.
+#' @param hidden Hidden columns. A character vector that contains the column names to be 
+#'   hidden.
 #' @param page The current page. A single, positive integer.
 #' @param meta Custom table metadata. Either a named list with new values, or `NA`
 #'   to clear all metadata. New values are merged into the current metadata, so only
@@ -33,6 +35,7 @@
 #'   actionButton("select_btn", "Select rows"),
 #'   actionButton("clear_btn", "Clear selection"),
 #'   actionButton("expand_btn", "Expand rows"),
+#'   actionButton("hide_btn", "Hide columns"),
 #'   actionButton("collapse_btn", "Collapse rows"),
 #'   actionButton("page_btn", "Change page"),
 #'   selectInput("filter_type", "Filter type", unique(data$Type), multiple = TRUE),
@@ -65,6 +68,11 @@
 #'     updateReactable("table", expanded = TRUE)
 #'   })
 #'
+#'   observeEvent(input$hide_btn, {
+#'     # Hide columns
+#'     updateReactable("table", hidden = c('Type', 'Price'))
+#'   })
+#'
 #'   observeEvent(input$collapse_btn, {
 #'     # Collapse all rows
 #'     updateReactable("table", expanded = FALSE)
@@ -91,7 +99,7 @@
 #'
 #' @export
 updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = NULL,
-                            page = NULL, meta = NULL, session = NULL) {
+                            page = NULL, meta = NULL, hidden=NA, session = NULL) {
   if (is.null(session)) {
     if (requireNamespace("shiny", quietly = TRUE)) {
       session <- shiny::getDefaultReactiveDomain()
@@ -128,6 +136,12 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     selected <- as.list(as.integer(selected) - 1)
   }
 
+  if (!all(is.na(hidden))){
+    if (!(is.character(hidden) || is.null(hidden))) {
+      stop("`hidden` must be character array or NULL")
+    }
+  }
+
   if (!is.null(expanded) && !is.logical(expanded)) {
     stop("`expanded` must be TRUE or FALSE")
   }
@@ -157,7 +171,6 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
   if (length(jsEvals) == 0) {
     jsEvals <- NULL
   }
-
   newState <- filterNulls(list(
     data = data,
     dataKey = dataKey,
@@ -167,6 +180,13 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     meta = meta,
     jsEvals = jsEvals
   ))
+
+  if (is.null(hidden)){
+    newState[['hidden']] <- list(NULL)
+  }
+  else if (!all(is.na(hidden))){
+    newState[['hidden']] <- hidden
+  }
 
   if (length(newState) > 0) {
     session$sendCustomMessage(sprintf("__reactable__%s", outputId), newState)

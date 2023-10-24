@@ -1943,6 +1943,7 @@ function Table({
       return
     }
     const setRowsSelected = instance.setRowsSelected
+    const setHiddenColumns = instance.setHiddenColumns
     const gotoPage = instance.gotoPage
     const toggleAllRowsExpanded = instance.toggleAllRowsExpanded
 
@@ -1959,6 +1960,13 @@ function Table({
       if (newState.selected != null) {
         const selectedRowIds = newState.selected.map(index => String(index))
         setRowsSelected(selectedRowIds)
+      }
+      if (newState.hidden != null) {
+        const hiddenArray = Array.isArray(newState.hidden) ? newState.hidden: [newState.hidden]
+        setHiddenColumns(hiddenArray)
+      }
+      else{
+        setHiddenColumns([])
       }
       if (newState.page != null) {
         // Get the latest page count in case a data update changes the number of pages
@@ -1983,6 +1991,7 @@ function Table({
   }, [
     nested,
     instance.setRowsSelected,
+    instance.setHiddenColumns,
     instance.gotoPage,
     instance.toggleAllRowsExpanded,
     dataColumns,
