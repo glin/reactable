@@ -776,6 +776,9 @@ reactable <- function(
     serverMaxRowCount = serverMaxRowCount
   ))
 
+  # Temporary workaround for JS() not working in htmlwidgets 1.6.3
+  class(component) <- c(class(component), "list")
+
   htmlwidgets::createWidget(
     name = "reactable",
     reactR::reactMarkup(component),
