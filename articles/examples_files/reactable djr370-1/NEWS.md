@@ -32,6 +32,10 @@
   methods in the JavaScript API to change the current page or set the current page size.
   ([#322](https://github.com/glin/reactable/issues/322))
 
+## Minor improvements and bug fixes
+
+* Fixed `JS()` not working when `htmlwidgets` 1.6.3 or later is installed. ([#348](https://github.com/glin/reactable/issues/348))
+
 # reactable 0.4.4
 
 [Documentation - reactable 0.4.4](https://v0-4-4--reactable-docs.netlify.app/)
