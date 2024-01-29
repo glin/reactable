@@ -2056,8 +2056,9 @@ function Table({
         ct.skipNextSelection = true
         setRowsSelected([])
       } else {
-        // Selections from table should clear selections from other widgets
-        setCrosstalkSelection(null)
+        // Selections from table should clear selections from other widgets.
+        // Crosstalk uses undefined as the default selection value (for no selection).
+        setCrosstalkSelection(undefined)
       }
     })
 
