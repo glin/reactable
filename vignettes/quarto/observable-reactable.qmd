@@ -31,15 +31,9 @@ viewof islands = Inputs.checkbox(
 ```
 
 ```{ojs}
-//| include: false
-data = FileAttachment("palmer-penguins.csv").csv({ typed: true })
-
-filtered = data.filter(penguin => {
-  return penguin.bill_length > billLengthMin && islands.includes(penguin.island)
-})
-
-// Update table data when filtered data changes
-Reactable.setData('tbl', filtered)
+// Update table filters when filtered data changes
+Reactable.setFilter('tbl', 'bill_length', billLengthMin)
+Reactable.setFilter('tbl', 'island', islands)
 ```
 
 ```{r}
@@ -47,11 +41,29 @@ library(reactable)
 
 data <- read.csv("palmer-penguins.csv")
 
+# Min value filter method
+filterMinValue <- JS("(rows, columnId, filterValue) => {
+  return rows.filter(row => row.values[columnId] >= filterValue)
+}")
+
+# Filters rows included within a list of values like ['Torgersen', 'Biscoe']
+filterIncludesValue <- JS("(rows, columnId, filterValue) => {
+  return rows.filter(row => filterValue.includes(row.values[columnId]))
+}")
+
 reactable(
   data,
   wrap = FALSE,
   resizable = TRUE,
   minRows = 10,
+  columns = list(
+    bill_length = colDef(
+      filterMethod = filterMinValue
+    ),
+    island = colDef(
+      filterMethod = filterIncludesValue
+    )
+  ),
   elementId = "tbl"
 )
 ```
