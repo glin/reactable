@@ -58,12 +58,8 @@ jobs:
         if: matrix.config.release
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
-
-      # Install Quarto for pkgdown Quarto vignettes
-      # https://pkgdown.r-lib.org/articles/quarto.html#github-actions
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+          # Pin pkgdown to 2.0.9 for bug with using image filenames with spaces, and Quarto needs to be set up as well
+          extra-packages: local::., pkgdown@2.0.9
 
       - name: Build pkgdown site
         if: matrix.config.release
