@@ -60,6 +60,11 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
 
+      # Install Quarto for pkgdown Quarto vignettes
+      # https://pkgdown.r-lib.org/articles/quarto.html#github-actions
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
       - name: Build pkgdown site
         if: matrix.config.release
         run: Rscript pkgdown/build-docs.R
