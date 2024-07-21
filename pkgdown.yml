@@ -1,5 +1,5 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   100k-rows: 100k-rows.html
@@ -17,6 +17,7 @@ articles:
   internationalization: internationalization.html
   javascript-api: javascript-api.html
   nba-box-score: nba-box-score/nba-box-score.html
+  observable-reactable: quarto/observable-reactable.html
   popular-movies: popular-movies/popular-movies.html
   shiny-demo: shiny-demo.html
   spotify-charts: spotify-charts/spotify-charts.html
@@ -25,5 +26,5 @@ articles:
   sticky-columns: sticky-columns.html
   twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2024-02-04T19:59Z
+last_built: 2024-07-21T22:22Z
 
