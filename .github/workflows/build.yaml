@@ -20,19 +20,19 @@ jobs:
           - { os: macOS-latest, r: 'release' }
           - { os: windows-latest, r: 'release' }
           - { os: windows-latest, r: 'oldrel' }
-          - { os: ubuntu-20.04, r: 'devel', http-user-agent: 'release' }
-          - { os: ubuntu-20.04, r: 'release', release: true }
-          - { os: ubuntu-20.04, r: 'oldrel-1' }
-          - { os: ubuntu-20.04, r: 'oldrel-2' }
-          - { os: ubuntu-20.04, r: 'oldrel-3' }
-          - { os: ubuntu-20.04, r: 'oldrel-4' }
+          - { os: ubuntu-22.04, r: 'devel', http-user-agent: 'release' }
+          - { os: ubuntu-22.04, r: 'release', release: true }
+          - { os: ubuntu-22.04, r: 'oldrel-1' }
+          - { os: ubuntu-22.04, r: 'oldrel-2' }
+          - { os: ubuntu-22.04, r: 'oldrel-3' }
+          - { os: ubuntu-22.04, r: 'oldrel-4' }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -80,7 +80,7 @@ jobs:
 
       - name: Deploy pkgdown site to Netlify
         if: matrix.config.release
-        uses: nwtgck/actions-netlify@v2.1
+        uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './docs'
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -110,11 +110,11 @@ jobs:
     name: Node.js
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -127,4 +127,4 @@ jobs:
         run: npm run lint
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
