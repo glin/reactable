@@ -3,7 +3,6 @@
 \docType{package}
 \name{reactable-package}
 \alias{reactable-package}
-\alias{_PACKAGE}
 \title{reactable: Interactive Data Tables for R}
 \description{
 Interactive data tables for R, based on the 'React Table' JavaScript library. Provides an HTML widget that can be used in 'R Markdown' or 'Quarto' documents, 'Shiny' applications, or viewed from an R console.

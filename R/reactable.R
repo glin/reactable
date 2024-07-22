@@ -22,7 +22,8 @@
 #' @param columnGroups List of column group definitions. See [colGroup()].
 #' @param rownames Show row names? Defaults to `TRUE` if the data has row names.
 #'
-#'   To customize the row names column, use `".rownames"` as the column name.
+#'   To customize the row names column, add a column definition using `".rownames"`
+#'   as the column name.
 #'
 #'   Cells in the row names column are automatically marked up as row headers
 #'   for assistive technologies.

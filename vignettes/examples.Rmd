@@ -1731,7 +1731,7 @@ reactable(
 ### Row names
 
 Row names are shown by default if present. You can customize the row names column
-using `".rownames"` as the column name:
+by adding a column definition using `".rownames"` as the column name:
 
 ```{r}
 reactable(
