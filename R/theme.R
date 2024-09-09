@@ -37,9 +37,9 @@
 #'
 #' @param tableBodyStyle Additional CSS for the table body element.
 #'
-#' @param rowGroupStyle Additional CSS for row groups.
+#' @param rowGroupStyle Additional CSS for rows. Includes row details.
 #'
-#' @param rowStyle Additional CSS for rows.
+#' @param rowStyle Additional CSS for rows. Does not include row details.
 #' @param rowStripedStyle Additional CSS for striped rows.
 #' @param rowHighlightStyle Additional CSS for highlighted rows.
 #' @param rowSelectedStyle Additional CSS for selected rows.

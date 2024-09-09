@@ -61,9 +61,9 @@ the pagination bar and search input).}
 
 \item{tableBodyStyle}{Additional CSS for the table body element.}
 
-\item{rowGroupStyle}{Additional CSS for row groups.}
+\item{rowGroupStyle}{Additional CSS for rows. Includes row details.}
 
-\item{rowStyle}{Additional CSS for rows.}
+\item{rowStyle}{Additional CSS for rows. Does not include row details.}
 
 \item{rowStripedStyle}{Additional CSS for striped rows.}
 
