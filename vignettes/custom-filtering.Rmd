@@ -339,6 +339,35 @@ reactable(
 )
 ```
 
+### Exact text match
+
+This example shows how you can filter a column using a case-sensitive exact text match.
+(Try searching for "BMW" and then "bmw").
+
+Note that some columns may be numeric or another non-string type, so you can use
+[`String()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/String)
+to convert values to strings before comparing them with the filter value.
+
+```{r}
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(
+  data,
+  columns = list(
+    Manufacturer = colDef(
+      filterable = TRUE,
+      # Filter by case-sensitive exact text match
+      filterMethod = JS("function(rows, columnId, filterValue) {
+        return rows.filter(function(row) {
+          return String(row.values[columnId]) === filterValue
+        })
+      }")
+    )
+  ),
+  defaultPageSize = 5
+)
+```
+
 ### Numeric value filtering
 
 This example shows how you can filter a numeric column based on a minimum value.
