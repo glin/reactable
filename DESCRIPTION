@@ -34,7 +34,7 @@ Imports:
     htmltools (>= 0.5.2),
     htmlwidgets (>= 1.5.3),
     jsonlite,
-    reactR
+    reactR (>= 0.6.1)
 Suggests:
     covr,
     crosstalk,
