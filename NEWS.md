@@ -35,7 +35,7 @@
 ## Minor improvements and bug fixes
 
 * Fixed `JS()` not working when `htmlwidgets` 1.6.3 or later is installed. ([#348](https://github.com/glin/reactable/issues/348))
-* `Reactable` JS function has been exposed and is now accessible as `window.Reactable.Reactable`. ([#400](https://github.com/glin/reactable/issues/400))
+* `Reactable` JS function, responsible for creating React Table object, has been exposed and is accessible at `window.Reactable.Reactable`. ([#400](https://github.com/glin/reactable/issues/400))
 
 # reactable 0.4.4
 
