@@ -1331,7 +1331,7 @@ test_that("reactable_html", {
   expect_equal(html, htmltools::tags$div(style = "color: #333;color: red", reactDependencies()))
 })
 
-test_that("reactable.yaml widget dependencies are included with correct version", {
+test_that("reactable.yaml widget dependencies are included with correct version. If this test fails, update inst/htmlwidgets/reactable.yaml", {
   deps <- htmlwidgets::getDependency("reactable")
   reactableDep <- Find(function(x) x$name == "reactable", deps)
   expect_true(!is.null(reactableDep))
