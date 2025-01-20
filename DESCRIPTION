@@ -1,7 +1,7 @@
 Package: reactable
 Type: Package
 Title: Interactive Data Tables for R
-Version: 0.4.4.9000
+Version: 0.4.4.9001
 Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library"),
@@ -34,7 +34,7 @@ Imports:
     htmltools (>= 0.5.2),
     htmlwidgets (>= 1.5.3),
     jsonlite,
-    reactR
+    reactR (>= 0.6.1)
 Suggests:
     covr,
     crosstalk,
