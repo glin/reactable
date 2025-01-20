@@ -3,7 +3,7 @@ import * as ReactDOMServer from 'react-dom/server'
 import TestRenderer from 'react-test-renderer'
 import createEmotionServer from '@emotion/server/create-instance'
 
-import Reactable from './Reactable'
+import { Reactable } from './Reactable'
 import { ReactableData } from './Reactable'
 import { evaluateStringMember } from './htmlwidgets'
 import './intl-polyfill'

@@ -122,7 +122,7 @@ export function setPageSize(tableId, pageSize) {
   getInstance(tableId).setPageSize(pageSize)
 }
 
-export default function Reactable({
+export function Reactable({
   data,
   columns,
   columnGroups,
