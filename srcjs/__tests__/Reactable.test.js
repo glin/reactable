@@ -4,7 +4,7 @@ import { render, fireEvent, act, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { matchers } from '@emotion/jest'
 
-import Reactable, { getInstance } from '../Reactable'
+import { Reactable, getInstance } from '../Reactable'
 import * as reactable from '../Reactable'
 import { resetEmotion } from '../theme'
 import { downloadCSV } from '../utils'
