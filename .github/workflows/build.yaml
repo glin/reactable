@@ -44,8 +44,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          # leaflet needs terra, which does not support R <= 4.0
           extra-packages: |
             any::rcmdcheck
+            leaflet=?ignore-before-r=4.1.0
 
       - uses: r-lib/actions/check-r-package@v2
 
