@@ -1,7 +1,7 @@
 Package: reactable
 Type: Package
 Title: Interactive Data Tables for R
-Version: 0.4.4.9000
+Version: 0.4.4.9001
 Authors@R: c(
     person("Greg", "Lin", email = "glin@glin.io", role = c("aut", "cre")),
     person("Tanner", "Linsley", role = c("ctb", "cph"), comment = "React Table library"),
@@ -30,7 +30,7 @@ URL: https://glin.github.io/reactable/,
 BugReports: https://github.com/glin/reactable/issues
 Depends: R (>= 3.1)
 Imports: digest, htmltools (>= 0.5.2), htmlwidgets (>= 1.5.3),
-        jsonlite, reactR
+        jsonlite, reactR (>= 0.6.1)
 Suggests: covr, crosstalk, data.table, dplyr, fontawesome, knitr,
         leaflet, MASS, rmarkdown, shiny, sparkline, testthat, tippy, V8
 Encoding: UTF-8
@@ -53,4 +53,4 @@ Author: Greg Lin [aut, cre],
   James Halliday [ctb, cph] (stream-browserify library),
   Posit Software, PBC [fnd, cph]
 Maintainer: Greg Lin <glin@glin.io>
-Built: R 4.4.1; ; 2024-09-09 04:25:34 UTC; unix
+Built: R 4.4.2; ; 2025-01-21 00:33:05 UTC; unix

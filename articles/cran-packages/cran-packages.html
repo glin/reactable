@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.4.4.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.4.9001</span>
     </a>
 
     
@@ -99,9 +99,9 @@
        
 
 
-<script src="cran-packages_files/core-js-2.5.3/shim.min.js"></script><script src="cran-packages_files/react-18.2.0/react.min.js"></script><script src="cran-packages_files/react-18.2.0/react-dom.min.js"></script><script src="cran-packages_files/reactwidget-2.0.0/react-tools.umd.cjs"></script><link href="cran-packages_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="cran-packages_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="cran-packages_files/reactable-0.4.4.9000/reactable.css" rel="stylesheet">
-<script src="cran-packages_files/reactable-binding-0.4.4.9000/reactable.js"></script><div class="row">
+<script src="cran-packages_files/core-js-2.5.3/shim.min.js"></script><script src="cran-packages_files/react-18.2.0/react.min.js"></script><script src="cran-packages_files/react-18.2.0/react-dom.min.js"></script><script src="cran-packages_files/reactwidget-2.0.0/react-tools.js"></script><link href="cran-packages_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="cran-packages_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="cran-packages_files/reactable-0.4.4.9001/reactable.css" rel="stylesheet">
+<script src="cran-packages_files/reactable-binding-0.4.4.9001/reactable.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>CRAN Packages</h1>
@@ -124,7 +124,7 @@ Source Code
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pkgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"cran_pkgs.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">versions</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html" class="external-link">read_json</a></span><span class="op">(</span><span class="st">"versions.json"</span>, simplifyDataFrame <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">versions</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html" class="external-link">read_json</a></span><span class="op">(</span><span class="st">"versions.json"</span>, simplifyDataFrame <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">row_details</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pkg</span> <span class="op">&lt;-</span> <span class="va">pkgs</span><span class="op">[</span><span class="va">index</span>, <span class="op">]</span></span>

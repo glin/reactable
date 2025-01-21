@@ -28,7 +28,7 @@
 
     <!-- Add version badge -->
     <a href="../../news/index.html">
-      <span class="badge bg-secondary navbar-badge">0.4.4.9000</span>
+      <span class="badge bg-secondary navbar-badge">0.4.4.9001</span>
     </a>
 
     
@@ -99,9 +99,9 @@
        
 
 
-<script src="popular-movies_files/core-js-2.5.3/shim.min.js"></script><script src="popular-movies_files/react-18.2.0/react.min.js"></script><script src="popular-movies_files/react-18.2.0/react-dom.min.js"></script><script src="popular-movies_files/reactwidget-2.0.0/react-tools.umd.cjs"></script><link href="popular-movies_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="popular-movies_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="popular-movies_files/reactable-0.4.4.9000/reactable.css" rel="stylesheet">
-<script src="popular-movies_files/reactable-binding-0.4.4.9000/reactable.js"></script><link href="popular-movies_files/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="popular-movies_files/core-js-2.5.3/shim.min.js"></script><script src="popular-movies_files/react-18.2.0/react.min.js"></script><script src="popular-movies_files/react-18.2.0/react-dom.min.js"></script><script src="popular-movies_files/reactwidget-2.0.0/react-tools.js"></script><link href="popular-movies_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="popular-movies_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="popular-movies_files/reactable-0.4.4.9001/reactable.css" rel="stylesheet">
+<script src="popular-movies_files/reactable-binding-0.4.4.9001/reactable.js"></script><link href="popular-movies_files/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
 <script src="popular-movies_files/crosstalk-1.2.1/js/crosstalk.min.js"></script><div class="row">
   <!-- Don't add toc if the article has no toc -->
   <main id="main"><div class="page-header">
@@ -489,7 +489,7 @@ Source Code
 <span></span>
 <span><span class="co"># tmdb_movies.json is a JSON dataset with 2000 rows and 22 columns.</span></span>
 <span><span class="co"># Some of these columns contain nested lists (e.g., multiple genres per movie).</span></span>
-<span><span class="va">movies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="st">"tmdb_movies.json"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">movies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="st">"tmdb_movies.json"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    genres <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">genres</span>, <span class="va">as.list</span><span class="op">)</span>,</span>
 <span>    popularity_rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rank.html" class="external-link">rank</a></span><span class="op">(</span><span class="op">-</span><span class="va">popularity</span>, ties.method <span class="op">=</span> <span class="st">"first"</span><span class="op">)</span>,</span>
@@ -672,7 +672,7 @@ Source Code
 <span><span class="st">        }</span></span>
 <span><span class="st">      }</span></span>
 <span><span class="st">    })()</span></span>
-<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">keys_by_value</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">keys_by_value</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
 <span>    class <span class="op">=</span> <span class="va">class</span>,</span>
@@ -723,7 +723,7 @@ Source Code
 <span><span class="st">        }</span></span>
 <span><span class="st">      }</span></span>
 <span><span class="st">    })()</span></span>
-<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">values_by_key</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">values_by_key</span><span class="op">)</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
 <span>    class <span class="op">=</span> <span class="va">class</span>,</span>
@@ -758,7 +758,7 @@ Source Code
 <span><span class="st">        }</span></span>
 <span><span class="st">      }</span></span>
 <span><span class="st">    })()</span></span>
-<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">values_by_key</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="st">  "</span>, <span class="va">id</span>, <span class="va">shared_data</span><span class="op">$</span><span class="fu">groupName</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">values_by_key</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="va">min</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">min</span><span class="op">)</span><span class="op">)</span> <span class="va">min</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span></span>
 <span>  <span class="va">max</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">max</span><span class="op">)</span><span class="op">)</span> <span class="va">max</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">values</span><span class="op">)</span></span>
