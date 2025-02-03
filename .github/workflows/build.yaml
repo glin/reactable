@@ -36,6 +36,14 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
+      - name: Configure pak and setup-r action to use manylinux_2_28
+        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.r != 'devel'
+        run: |
+          # Override PPM repo and do not autodetect the distro (setup-r action env var)
+          echo "RSPM=https://p3m.dev/cran/__linux__/manylinux_2_28/latest" >> $GITHUB_ENV
+          # Disable automatic system requirements installation since it is unnecessary (pak env var)
+          echo "PKG_SYSREQS=FALSE" >> $GITHUB_ENV
+
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
