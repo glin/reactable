@@ -486,7 +486,7 @@ Reactable.setHiddenColumns(
 Reactable.setHiddenColumns('cars-table', ['Type', 'Manufacturer'])
 
 // Set hidden columns using a function that adds "Type" to the existing hidden columns
-Reactable.setMeta('cars-table', prevHiddenColumns => {
+Reactable.setHiddenColumns('cars-table', prevHiddenColumns => {
   return prevHiddenColumns.concat('Type')
 })
 
