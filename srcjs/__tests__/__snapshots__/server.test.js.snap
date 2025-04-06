@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renderToData renders tables to data with JS evals 1`] = `
-Object {
-  "data": Array [
-    Object {
-      ".subRows": Array [
-        Object {
+{
+  "data": [
+    {
+      ".subRows": [
+        {
           "Manufacturer": "Acura",
           "Model": "Integra",
           "Type": "Small",
-          "__state": Object {
+          "__state": {
             "id": "0",
             "index": 0,
           },
         },
-        Object {
+        {
           "Manufacturer": "Acura",
           "Model": "Legend",
           "Type": "Midsize",
-          "__state": Object {
+          "__state": {
             "id": "1",
             "index": 1,
           },
@@ -27,7 +27,7 @@ Object {
       "Manufacturer": "Acura",
       "Model": "__aggregated__",
       "Type": null,
-      "__state": Object {
+      "__state": {
         "grouped": true,
         "id": "Manufacturer:Acura",
       },
@@ -39,31 +39,31 @@ Object {
 `;
 
 exports[`renderToData renders tables to data with updates 1`] = `
-Object {
-  "data": Array [
-    Object {
+{
+  "data": [
+    {
       "Manufacturer": "Acura",
       "Model": "Integra",
       "Type": "Small",
-      "__state": Object {
+      "__state": {
         "id": "0",
         "index": 0,
       },
     },
-    Object {
+    {
       "Manufacturer": "Acura",
       "Model": "Legend",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "1",
         "index": 1,
       },
     },
-    Object {
+    {
       "Manufacturer": "Audi",
       "Model": "90",
       "Type": "Compact",
-      "__state": Object {
+      "__state": {
         "id": "2",
         "index": 2,
       },
@@ -75,22 +75,22 @@ Object {
 `;
 
 exports[`renderToData renders tables to data with updates 2`] = `
-Object {
-  "data": Array [
-    Object {
+{
+  "data": [
+    {
       "Manufacturer": "Audi",
       "Model": "100",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "3",
         "index": 3,
       },
     },
-    Object {
+    {
       "Manufacturer": "BMW",
       "Model": "535i",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "4",
         "index": 4,
       },
@@ -102,49 +102,49 @@ Object {
 `;
 
 exports[`renderToData sets maxRowCount correctly when data is filtered 1`] = `
-Object {
-  "data": Array [
-    Object {
+{
+  "data": [
+    {
       "Manufacturer": "Acura",
       "Model": "Integra",
       "Type": "Small",
-      "__state": Object {
+      "__state": {
         "id": "0",
         "index": 0,
       },
     },
-    Object {
+    {
       "Manufacturer": "Acura",
       "Model": "Legend",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "1",
         "index": 1,
       },
     },
-    Object {
+    {
       "Manufacturer": "Audi",
       "Model": "90",
       "Type": "Compact",
-      "__state": Object {
+      "__state": {
         "id": "2",
         "index": 2,
       },
     },
-    Object {
+    {
       "Manufacturer": "Audi",
       "Model": "100",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "3",
         "index": 3,
       },
     },
-    Object {
+    {
       "Manufacturer": "BMW",
       "Model": "535i",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "4",
         "index": 4,
       },
@@ -156,31 +156,31 @@ Object {
 `;
 
 exports[`renderToData sets maxRowCount correctly when data is filtered 2`] = `
-Object {
-  "data": Array [
-    Object {
+{
+  "data": [
+    {
       "Manufacturer": "Acura",
       "Model": "Legend",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "1",
         "index": 1,
       },
     },
-    Object {
+    {
       "Manufacturer": "Audi",
       "Model": "100",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "3",
         "index": 3,
       },
     },
-    Object {
+    {
       "Manufacturer": "BMW",
       "Model": "535i",
       "Type": "Midsize",
-      "__state": Object {
+      "__state": {
         "id": "4",
         "index": 4,
       },
@@ -192,51 +192,51 @@ Object {
 `;
 
 exports[`renderToData sets maxRowCount correctly when data is grouped, paginateSubRows=true 1`] = `
-Object {
-  "data": Array [
-    Object {
+{
+  "data": [
+    {
       "Manufacturer": "Acura",
       "Min.Price": null,
       "Model": null,
       "Price": null,
       "Type": null,
-      "__state": Object {
+      "__state": {
         "grouped": true,
         "id": "Manufacturer:Acura",
         "subRowCount": 2,
       },
     },
-    Object {
+    {
       "Manufacturer": "Audi",
       "Min.Price": null,
       "Model": null,
       "Price": null,
       "Type": null,
-      "__state": Object {
+      "__state": {
         "grouped": true,
         "id": "Manufacturer:Audi",
         "subRowCount": 2,
       },
     },
-    Object {
+    {
       "Manufacturer": "BMW",
       "Min.Price": null,
       "Model": null,
       "Price": null,
       "Type": null,
-      "__state": Object {
+      "__state": {
         "grouped": true,
         "id": "Manufacturer:BMW",
         "subRowCount": 1,
       },
     },
-    Object {
+    {
       "Manufacturer": "Buick",
       "Min.Price": null,
       "Model": null,
       "Price": null,
       "Type": null,
-      "__state": Object {
+      "__state": {
         "grouped": true,
         "id": "Manufacturer:Buick",
         "subRowCount": 2,
@@ -248,8 +248,8 @@ Object {
 }
 `;
 
-exports[`renderToHTML renders tables to HTML 1`] = `"<div class=\\"Reactable ReactTable\\"><div class=\\"rt-table\\" role=\\"table\\"><div class=\\"rt-thead\\" role=\\"rowgroup\\" style=\\"min-width:300px\\"><div class=\\"rt-tr rt-tr-header\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:300px\\"><div class=\\"rt-th rt-align-left\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Manufacturer\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Manufacturer</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div><div class=\\"rt-th rt-align-left\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Model\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Model</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div><div class=\\"rt-th rt-align-left\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Type\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Type</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div></div></div><div class=\\"rt-tbody\\" role=\\"rowgroup\\" style=\\"min-width:300px\\"><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:300px\\"><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Acura</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Integra</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Small</div></div></div></div><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:300px\\"><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Acura</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Legend</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Midsize</div></div></div></div><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:300px\\"><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Audi</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">90</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Compact</div></div></div></div><div class=\\"rt-no-data\\" aria-live=\\"assertive\\"></div></div></div></div>"`;
+exports[`renderToHTML renders tables to HTML 1`] = `"<div class="Reactable ReactTable"><div class="rt-table" role="table"><div class="rt-thead" role="rowgroup" style="min-width:300px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:300px"><div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Manufacturer" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header"><div class="rt-text-content">Manufacturer</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div><div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Model" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header"><div class="rt-text-content">Model</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div><div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Type" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header"><div class="rt-text-content">Type</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div></div></div><div class="rt-tbody" role="rowgroup" style="min-width:300px"><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:300px"><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Integra</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Small</div></div></div></div><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:300px"><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Legend</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div></div></div><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:300px"><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Audi</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">90</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Compact</div></div></div></div><div class="rt-no-data" aria-live="assertive"></div></div></div></div>"`;
 
-exports[`renderToHTML renders tables to HTML with JS evals 1`] = `"<div class=\\"Reactable ReactTable\\"><div class=\\"rt-table\\" role=\\"table\\"><div class=\\"rt-thead\\" role=\\"rowgroup\\" style=\\"min-width:200px\\"><div class=\\"rt-tr rt-tr-header\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-th rt-align-left\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Manufacturer\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Manufacturer</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div><div class=\\"rt-th rt-align-left\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Model\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Model</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div></div></div><div class=\\"rt-tbody\\" role=\\"rowgroup\\" style=\\"min-width:200px\\"><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Acura</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Integra__</div></div></div></div><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Acura</div></div><div class=\\"rt-td rt-align-left\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner\\">Legend__</div></div></div></div><div class=\\"rt-no-data\\" aria-live=\\"assertive\\"></div></div></div></div>"`;
+exports[`renderToHTML renders tables to HTML with JS evals 1`] = `"<div class="Reactable ReactTable"><div class="rt-table" role="table"><div class="rt-thead" role="rowgroup" style="min-width:200px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Manufacturer" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header"><div class="rt-text-content">Manufacturer</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div><div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Model" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header"><div class="rt-text-content">Model</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div></div></div><div class="rt-tbody" role="rowgroup" style="min-width:200px"><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Integra__</div></div></div></div><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div><div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Legend__</div></div></div></div><div class="rt-no-data" aria-live="assertive"></div></div></div></div>"`;
 
-exports[`renderToHTML renders tables to HTML with theme styles 1`] = `"<div class=\\"Reactable ReactTable reactable-1galy0v\\"><div class=\\"rt-table\\" role=\\"table\\"><div class=\\"rt-thead\\" role=\\"rowgroup\\" style=\\"min-width:200px\\"><div class=\\"rt-tr rt-tr-header\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-th rt-align-left reactable-1xdhyk6\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Manufacturer\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner reactable-1rsvkai\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Manufacturer</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div><div class=\\"rt-th rt-align-left reactable-1xdhyk6\\" role=\\"columnheader\\" style=\\"position:relative;flex:100 0 auto;min-width:100px;width:100px\\" aria-label=\\"Sort Model\\" aria-sort=\\"none\\" tabindex=\\"0\\" data-sort-hint=\\"ascending\\"><div class=\\"rt-th-inner reactable-1rsvkai\\"><div class=\\"rt-sort-header\\"><div class=\\"rt-text-content\\">Model</div><span class=\\"rt-sort-right\\" aria-hidden=\\"true\\"></span></div></div></div></div></div><div class=\\"rt-tbody\\" role=\\"rowgroup\\" style=\\"min-width:200px\\"><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-td rt-align-left reactable-1xdhyk6\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner reactable-1rsvkai\\">Acura</div></div><div class=\\"rt-td rt-align-left reactable-1xdhyk6\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner reactable-1rsvkai\\">Integra</div></div></div></div><div class=\\"rt-tr-group\\"><div class=\\"rt-tr\\" role=\\"row\\" style=\\"flex:1 0 auto;min-width:200px\\"><div class=\\"rt-td rt-align-left reactable-1xdhyk6\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner reactable-1rsvkai\\">Acura</div></div><div class=\\"rt-td rt-align-left reactable-1xdhyk6\\" role=\\"cell\\" style=\\"flex:100 0 auto;min-width:100px;width:100px\\"><div class=\\"rt-td-inner reactable-1rsvkai\\">Legend</div></div></div></div><div class=\\"rt-no-data\\" aria-live=\\"assertive\\"></div></div></div></div>"`;
+exports[`renderToHTML renders tables to HTML with theme styles 1`] = `"<div class="Reactable ReactTable reactable-1galy0v"><div class="rt-table" role="table"><div class="rt-thead" role="rowgroup" style="min-width:200px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-th rt-align-left reactable-1xdhyk6" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Manufacturer" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner reactable-1rsvkai"><div class="rt-sort-header"><div class="rt-text-content">Manufacturer</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div><div class="rt-th rt-align-left reactable-1xdhyk6" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Model" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner reactable-1rsvkai"><div class="rt-sort-header"><div class="rt-text-content">Model</div><span class="rt-sort-right" aria-hidden="true"></span></div></div></div></div></div><div class="rt-tbody" role="rowgroup" style="min-width:200px"><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner reactable-1rsvkai">Acura</div></div><div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner reactable-1rsvkai">Integra</div></div></div></div><div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:200px"><div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner reactable-1rsvkai">Acura</div></div><div class="rt-td rt-align-left reactable-1xdhyk6" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner reactable-1rsvkai">Legend</div></div></div></div><div class="rt-no-data" aria-live="assertive"></div></div></div></div>"`;
