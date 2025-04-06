@@ -11,4 +11,3 @@ import '@formatjs/intl-pluralrules/polyfill'
 import '@formatjs/intl-numberformat/polyfill'
 // Current limitation: only locale data for en is included for now
 import '@formatjs/intl-numberformat/locale-data/en'
-
