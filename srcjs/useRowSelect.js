@@ -97,7 +97,6 @@ const defaultGetToggleAllPageRowsSelectedProps = (props, { instance }) => [
   }
 ]
 
-// eslint-disable-next-line max-params
 function reducer(state, action, previousState, instance) {
   if (action.type === actions.init) {
     return {

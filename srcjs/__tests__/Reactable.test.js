@@ -8858,11 +8858,13 @@ describe('updateReactable updates table state from Shiny', () => {
       data: { a: [1, 2] },
       columns: [{ name: 'a', id: 'a' }]
     }
-    render(
-      <div data-reactable-output="not-a-shiny-output-container">
-        <Reactable {...props} />
-      </div>
-    )
+    expect(() => {
+      render(
+        <div data-reactable-output="not-a-shiny-output-container">
+          <Reactable {...props} />
+        </div>
+      )
+    }).not.toThrow()
     // Should not call Shiny.addCustomMessageHandler
   })
 })
@@ -8977,19 +8979,23 @@ describe('getReactableState gets table state from Shiny', () => {
       data: { a: [1, 2] },
       columns: [{ name: 'a', id: 'a' }]
     }
-    render(
-      <div data-reactable-output="not-a-shiny-output-container">
-        <Reactable {...props} />
-      </div>
-    )
+    expect(() => {
+      render(
+        <div data-reactable-output="not-a-shiny-output-container">
+          <Reactable {...props} />
+        </div>
+      )
+    }).not.toThrow()
     // Should not call Shiny.onInputChange
 
     window.Shiny = undefined
-    render(
-      <div data-reactable-output="not-a-shiny-output-container">
-        <Reactable {...props} />
-      </div>
-    )
+    expect(() => {
+      render(
+        <div data-reactable-output="not-a-shiny-output-container">
+          <Reactable {...props} />
+        </div>
+      )
+    }).not.toThrow()
   })
 })
 
