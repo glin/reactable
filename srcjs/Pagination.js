@@ -90,7 +90,11 @@ export default class Pagination extends React.Component {
     // on the page can exceed the page size.
     const rowEnd = Math.max(Math.min(page * pageSize + pageSize, rowCount), pageRowCount)
     const pageInfo = renderTemplate(language.pageInfo, { rowStart, rowEnd, rows: rowCount })
-    return <div className="rt-page-info" aria-live="polite">{pageInfo}</div>
+    return (
+      <div className="rt-page-info" aria-live="polite">
+        {pageInfo}
+      </div>
+    )
   }
 
   renderPageSizeOptions({ pageSize, pageSizeOptions, onPageSizeChange, language }) {
