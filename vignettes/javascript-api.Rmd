@@ -245,7 +245,7 @@ A string with the table data in CSV format.
 const csv = Reactable.getDataCSV('cars-table')
 console.log(csv)
 
-// Get table data as a tab-separted values string
+// Get table data as a tab-separated values string
 const tsv = Reactable.getDataCSV('cars-table', { sep: '\t' })
 console.log(tsv)
 ```
@@ -486,7 +486,7 @@ Reactable.setHiddenColumns(
 Reactable.setHiddenColumns('cars-table', ['Type', 'Manufacturer'])
 
 // Set hidden columns using a function that adds "Type" to the existing hidden columns
-Reactable.setMeta('cars-table', prevHiddenColumns => {
+Reactable.setHiddenColumns('cars-table', prevHiddenColumns => {
   return prevHiddenColumns.concat('Type')
 })
 
