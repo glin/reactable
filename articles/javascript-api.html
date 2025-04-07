@@ -314,7 +314,7 @@ but does not download the data.</p>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="kw">const</span> csv <span class="op">=</span> Reactable<span class="op">.</span><span class="fu">getDataCSV</span>(<span class="st">'cars-table'</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(csv)</span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">// Get table data as a tab-separted values string</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">// Get table data as a tab-separated values string</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="kw">const</span> tsv <span class="op">=</span> Reactable<span class="op">.</span><span class="fu">getDataCSV</span>(<span class="st">'cars-table'</span><span class="op">,</span> { <span class="dt">sep</span><span class="op">:</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span> })</span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(tsv)</span></code></pre></div>
 </div>
@@ -542,7 +542,7 @@ array, <code>[]</code>.</p>
 <span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> [<span class="st">'Type'</span><span class="op">,</span> <span class="st">'Manufacturer'</span>])</span>
 <span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a></span>
 <span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">// Set hidden columns using a function that adds "Type" to the existing hidden columns</span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevHiddenColumns <span class="kw">=&gt;</span> {</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevHiddenColumns <span class="kw">=&gt;</span> {</span>
 <span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>  <span class="cf">return</span> prevHiddenColumns<span class="op">.</span><span class="fu">concat</span>(<span class="st">'Type'</span>)</span>
 <span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>})</span>
 <span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a></span>
