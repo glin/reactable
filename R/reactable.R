@@ -1002,7 +1002,6 @@ widget_html.reactable <- function(id, style, class, ...) {
 # wouldn't be needed with ramnathv/htmlwidgets#324
 reactDependencies <- function() {
   list(
-    reactR::html_dependency_corejs(), # Necessary for RStudio Viewer version < 1.2 and IE11
     reactR::html_dependency_react(),
     reactR::html_dependency_reacttools()
   )
