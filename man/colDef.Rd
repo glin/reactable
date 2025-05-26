@@ -144,7 +144,9 @@ while all other content is left-aligned.}
 \code{"left"} or \code{"right"} to make the column stick to the left or right side.
 
 If a sticky column is in a column group, all columns in the group will
-automatically be made sticky, including the column group header.}
+automatically be made sticky, including the column group header.
+
+Sticky columns do not work if \code{fullWidth} is set to \code{FALSE} in \code{reactable()}.}
 
 \item{class}{Additional CSS classes to apply to cells. Can also be an R function
 that takes the cell value, row index, and column name as arguments, or a \code{\link[=JS]{JS()}}

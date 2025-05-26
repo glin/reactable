@@ -78,6 +78,8 @@
 #'
 #'   If a sticky column is in a column group, all columns in the group will
 #'   automatically be made sticky, including the column group header.
+#' 
+#'   Sticky columns do not work if `fullWidth` is set to `FALSE` in `reactable()`.
 #' @param class Additional CSS classes to apply to cells. Can also be an R function
 #'   that takes the cell value, row index, and column name as arguments, or a [JS()]
 #'   function that takes a row info object, column object, and table state object
