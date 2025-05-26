@@ -36,6 +36,7 @@
 
 * Fixed `JS()` not working when `htmlwidgets` 1.6.3 or later is installed. ([#348](https://github.com/glin/reactable/issues/348))
 * In `reactableTheme()`, `stripedColor` and `highlightColor` now work when using sticky columns. (@grcatlin, [#401](https://github.com/glin/reactable/issues/401))
+* In Crosstalk tables, pagination no longer resets when selecting a row on a page greater than 1. (@msaltieri, [#349](https://github.com/glin/reactable/issues/349))
 
 ## Breaking changes
 
