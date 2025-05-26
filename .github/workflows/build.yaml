@@ -88,6 +88,17 @@ jobs:
             echo "NETLIFY_ALIAS=${version_alias}-${github_sha_short}" >> $GITHUB_ENV
           fi
 
+      - name: Rebuild pkgdown site search index for GitHub Pages
+        if: matrix.config.release && github.ref == 'refs/heads/main'
+        run: Rscript pkgdown/build-search-gh.R
+
+      - name: Deploy pkgdown site to GitHub Pages
+        if: matrix.config.release && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+          branch: gh-pages
+          folder: docs
+
       - name: Deploy pkgdown site to Netlify
         if: matrix.config.release
         uses: nwtgck/actions-netlify@v3.0
@@ -102,17 +113,8 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 5
-
-      - name: Rebuild pkgdown site search index for GitHub Pages
-        if: matrix.config.release && github.ref == 'refs/heads/main'
-        run: Rscript pkgdown/build-search-gh.R
-
-      - name: Deploy pkgdown site to GitHub Pages
-        if: matrix.config.release && github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
-        with:
-          branch: gh-pages
-          folder: docs
+        # Work around Netlify error of "Error: Unprocessable Entity" even though the deployment succeeds
+        continue-on-error: true
 
   build-node:
     runs-on: ubuntu-latest
