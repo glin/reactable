@@ -115,7 +115,15 @@ export function createTheme(options) {
         backgroundColor: stripedColor,
         ...rowStripedStyle
       },
+      '&.rt-tr-striped-sticky': {
+        backgroundColor: stripedColor,
+        ...rowStripedStyle
+      },
       '&.rt-tr-highlight:hover': {
+        backgroundColor: highlightColor,
+        ...rowHighlightStyle
+      },
+      '&.rt-tr-highlight-sticky:hover': {
         backgroundColor: highlightColor,
         ...rowHighlightStyle
       },

@@ -110,7 +110,15 @@ describe('createTheme', () => {
           backgroundColor: 'stripedColor',
           rowStripedStyle: 'rowStripedStyle'
         },
+        '&.rt-tr-striped-sticky': {
+          backgroundColor: 'stripedColor',
+          rowStripedStyle: 'rowStripedStyle'
+        },
         '&.rt-tr-highlight:hover': {
+          backgroundColor: 'highlightColor',
+          rowHighlightStyle: 'rowHighlightStyle'
+        },
+        '&.rt-tr-highlight-sticky:hover': {
           backgroundColor: 'highlightColor',
           rowHighlightStyle: 'rowHighlightStyle'
         },
