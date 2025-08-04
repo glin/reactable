@@ -48,7 +48,7 @@ test_that("reactable", {
   expected <- list(
     data = data,
     columns = columns,
-    dataKey = digest::digest(list(data, columns)),
+    dataKey = digest::digest(list(data = data, columns = columns, meta = NULL)),
     static = FALSE
   )
   expect_equal(attribs, expected)
@@ -90,7 +90,7 @@ test_that("reactable", {
     className = "tbl",
     style = list(color = "red"),
     inline = TRUE,
-    dataKey = digest::digest(list(data, columns)),
+    dataKey = digest::digest(list(data = data, columns = columns, meta = NULL)),
     static = FALSE
   )
   expect_equal(attribs, expected)
@@ -211,6 +211,20 @@ test_that("data supports Crosstalk", {
   expect_equal(as.character(attribs$data), '{"x":[[1,2,3],{"x":1}]}')
   expect_equal(attribs$crosstalkKey, I(list(list(1,2,3), list(x = 1))))
   expect_equal(attribs$crosstalkGroup, data$groupName())
+})
+
+test_that("dataKey", {
+  df <- data.frame(x = 1)
+  tbl <- reactable(
+    df,
+    columns = list(x = colDef(cell = function(value) value)),
+    meta = list(m = "data")
+  )
+  attribs <- getAttribs(tbl)
+  expect_equal(
+    attribs$dataKey,
+    digest::digest(list(data = attribs$data, columns = attribs$columns, meta = attribs$meta))
+  )
 })
 
 test_that("columns", {

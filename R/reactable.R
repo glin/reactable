@@ -716,7 +716,7 @@ reactable <- function(
 
   # Create a unique key for the data. The key is used to fully reset state when
   # the data changes (for tables in Shiny).
-  dataKey <- digest::digest(list(data, cols))
+  dataKey <- digest::digest(list(data = data, columns = cols, meta = meta))
 
   # Serialize user-set args only to keep the widget HTML slim
   defaultArgs <- formals()
