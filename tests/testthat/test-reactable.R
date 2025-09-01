@@ -140,6 +140,13 @@ test_that("data with numeric NA, NaN, Inf, and -Inf are serialized correctly", {
   expect_equal(as.character(attribs$data), '{"n":[1,"NA","NaN","Inf","-Inf",0,-1]}')
 })
 
+test_that("data with string NA are serialized correctly as null", {
+  data <- data.frame(n = c("1", NA))
+  tbl <- reactable(data)
+  attribs <- getAttribs(tbl)
+  expect_equal(as.character(attribs$data), '{"n":["1",null]}')
+})
+
 test_that("data with dates/datetimes are serialized in ISO 8601", {
   data <- data.frame(x = as.POSIXct("2019-05-06 3:22:15", tz = "UTC"), y = as.Date("2010-12-30"))
   tbl <- reactable(data)
