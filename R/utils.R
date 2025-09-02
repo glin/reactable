@@ -3,6 +3,20 @@
 htmlwidgets::JS
 
 toJSON <- function(x, digits = getOption("reactable.json.digits", NA)) {
+  result <- yyjsonr::write_json_str(
+    x,
+    opts = yyjsonr::opts_write_json(
+      dataframe = "columns",
+      digits_signif = digits,
+      auto_unbox = TRUE,
+      num_specials = "string"
+    )
+  )
+  class(result) <- "json"
+  result
+}
+
+toJSON_old <- function(x, digits = getOption("reactable.json.digits", NA)) {
   jsonlite::toJSON(
     x,
     dataframe = "columns",
@@ -174,25 +188,29 @@ unnestTagList <- function(x) {
   # Preserve HTML dependencies of tag lists
   htmlDeps <- htmltools::htmlDependencies(x)
 
-  tags <- Reduce(function(a, b) {
-    if (is.null(b)) {
-      return(a)
-    }
-    if (isTagList(b)) {
-      # Preserve HTML dependencies of nested tag lists
-      deps <- htmltools::htmlDependencies(b)
-      if (!is.null(deps)) {
-        htmlDeps <<- c(htmlDeps, deps)
+  tags <- Reduce(
+    function(a, b) {
+      if (is.null(b)) {
+        return(a)
       }
-      b <- unnestTagList(b)
-    }
-    # Merge without losing attributes
-    if (isList(b)) {
-      c(a, b)
-    } else {
-      c(a, list(b))
-    }
-  }, x, list())
+      if (isTagList(b)) {
+        # Preserve HTML dependencies of nested tag lists
+        deps <- htmltools::htmlDependencies(b)
+        if (!is.null(deps)) {
+          htmlDeps <<- c(htmlDeps, deps)
+        }
+        b <- unnestTagList(b)
+      }
+      # Merge without losing attributes
+      if (isList(b)) {
+        c(a, b)
+      } else {
+        c(a, list(b))
+      }
+    },
+    x,
+    list()
+  )
 
   htmltools::attachDependencies(tags, htmlDeps)
 }
@@ -333,14 +351,18 @@ asReactStyle <- function(style) {
   }
   pairs <- strsplit(unlist(strsplit(style, ";")), ":")
   if (length(pairs) > 0) {
-    pairs <- Reduce(function(props, pair) {
-      if (length(pair) == 2) {
-        name <- trimws(pair[[1]])
-        value <- trimws(pair[[2]])
-        props[[name]] <- value
-      }
-      props
-    }, pairs, list())
+    pairs <- Reduce(
+      function(props, pair) {
+        if (length(pair) == 2) {
+          name <- trimws(pair[[1]])
+          value <- trimws(pair[[2]])
+          props[[name]] <- value
+        }
+        props
+      },
+      pairs,
+      list()
+    )
   }
   pairs
 }

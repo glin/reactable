@@ -40,7 +40,7 @@ test_that("reactable", {
   tbl <- reactable(data.frame(x = 1, y = "b", stringsAsFactors = TRUE))
   attribs <- getAttribs(tbl)
   data <- data.frame(x = 1, y = "b")
-  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+  data <- toJSON(data)
   columns <- list(
     list(id = "x", name = "x", type = "numeric"),
     list(id = "y", name = "y", type = "factor")
@@ -63,8 +63,8 @@ test_that("reactable", {
                    showSortable = TRUE, class = "tbl", style = list(color = "red"),
                    fullWidth = FALSE)
   attribs <- getAttribs(tbl)
-  data <- data.frame(.rownames = 1, x = "a")
-  data <- jsonlite::toJSON(data, dataframe = "columns", rownames = FALSE)
+  data <- data.frame(.rownames = 1L, x = "a")
+  data <- toJSON(data)
   columns <- list(
     list(id = ".rownames", name = "", type = "numeric",
          sortable = FALSE, filterable = FALSE, rowHeader = TRUE),
@@ -105,7 +105,7 @@ test_that("data can be a matrix", {
   data <- matrix(c(1, 2, 3, 4), nrow = 2)
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"V1":[1,2],"V2":[3,4]}')
+  expect_equal(as.character(attribs$data), '{"V1":[1.0,2.0],"V2":[3.0,4.0]}')
   expect_length(attribs$columns, 2)
 
   data <- matrix(c("a", "b", "c", "d"), nrow = 2, dimnames = list(NULL, c("x", "y")))
@@ -137,7 +137,7 @@ test_that("data with numeric NA, NaN, Inf, and -Inf are serialized correctly", {
   data <- data.frame(n = c(1, NA, NaN, Inf, -Inf, 0, -1))
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"n":[1,"NA","NaN","Inf","-Inf",0,-1]}')
+  expect_equal(as.character(attribs$data), '{"n":[1.0,"NA","NaN","Inf","-Inf",0.0,-1.0]}')
 })
 
 test_that("data with string NA are serialized correctly as null", {
@@ -188,7 +188,7 @@ test_that("data with list-columns are serialized correctly", {
   )
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null,null]}')
+  expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1.0,2.0,3.0],["a","b"],{"x":true},{"x":["y"]},null,null]}')
 })
 
 test_that("data supports Crosstalk", {
@@ -199,7 +199,7 @@ test_that("data supports Crosstalk", {
   )
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":[1,2],"y":["a","b"]}')
+  expect_equal(as.character(attribs$data), '{"x":[1.0,2.0],"y":["a","b"]}')
   expect_equal(attribs$crosstalkKey, list("a", "b"))
   expect_equal(attribs$crosstalkGroup, "group")
 
@@ -207,7 +207,7 @@ test_that("data supports Crosstalk", {
   data <- crosstalk::SharedData$new(data.frame(x = 1, y = "2"))
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":[1],"y":["2"]}')
+  expect_equal(as.character(attribs$data), '{"x":[1.0],"y":["2"]}')
   expect_equal(attribs$crosstalkKey, list("1"))
   expect_equal(attribs$crosstalkGroup, data$groupName())
 
@@ -215,7 +215,7 @@ test_that("data supports Crosstalk", {
   data <- crosstalk::SharedData$new(data.frame(x = I(list(list(1,2,3), list(x = 1)))), key = ~x)
   tbl <- reactable(data)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":[[1,2,3],{"x":1}]}')
+  expect_equal(as.character(attribs$data), '{"x":[[1.0,2.0,3.0],{"x":1.0}]}')
   expect_equal(attribs$crosstalkKey, I(list(list(1,2,3), list(x = 1))))
   expect_equal(attribs$crosstalkGroup, data$groupName())
 })
@@ -299,7 +299,7 @@ test_that("rownames", {
   # Integer row names
   tbl <- reactable(data.frame(x = c(1, 2, 3)), rownames = TRUE)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1,2,3]}')
+  expect_equal(as.character(attribs$data), '{".rownames":[1,2,3],"x":[1.0,2.0,3.0]}')
   expect_equal(attribs$columns[[1]], list(
     id = ".rownames", name = "",  type = "numeric",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
@@ -308,7 +308,7 @@ test_that("rownames", {
   # Character row names
   tbl <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")), rownames = TRUE)
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
+  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1.0,2.0,3.0]}')
   expect_equal(attribs$columns[[1]], list(
     id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
@@ -338,7 +338,7 @@ test_that("rownames", {
   # If row names present, should be shown by default
   tbl <- reactable(data.frame(x = c(1, 2, 3), row.names = c("a", "b", "c")))
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1,2,3]}')
+  expect_equal(as.character(attribs$data), '{".rownames":["a","b","c"],"x":[1.0,2.0,3.0]}')
   expect_equal(attribs$columns[[1]], list(
     id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
@@ -346,7 +346,7 @@ test_that("rownames", {
   # Handles matrices
   tbl <- reactable(matrix(c(1,2,3), dimnames = list(c(1, 2, 3), "x")))
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1,2,3]}')
+  expect_equal(as.character(attribs$data), '{".rownames":["1","2","3"],"x":[1.0,2.0,3.0]}')
   expect_equal(attribs$columns[[1]], list(
     id = ".rownames", name = "",  type = "character",
     sortable = FALSE, filterable = FALSE, rowHeader = TRUE
@@ -355,14 +355,14 @@ test_that("rownames", {
   # If no row names, should not be shown by default
   tbl <- reactable(data.frame(x = c(1, 2, 3)))
   attribs <- getAttribs(tbl)
-  expect_equal(as.character(attribs$data), '{"x":[1,2,3]}')
+  expect_equal(as.character(attribs$data), '{"x":[1.0,2.0,3.0]}')
   expect_equal(length(attribs$columns), 1)
 
   # Should work with grouped_df from dplyr. cbind.data.frame() uses stringsAsFactors, but
   # dplyr:::cbind.grouped_df() ignores it
   grouped_df <- dplyr::grouped_df(data.frame(x = c(1, 2)), "x")
   tbl <- reactable(grouped_df, rownames = TRUE)
-  expect_equal(as.character(getAttrib(tbl, "data")), '{".rownames":[1,2],"x":[1,2]}')
+  expect_equal(as.character(getAttrib(tbl, "data")), '{".rownames":[1,2],"x":[1.0,2.0]}')
 })
 
 test_that("groupBy", {

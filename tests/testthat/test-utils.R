@@ -38,7 +38,7 @@ test_that("filterNulls", {
 
 test_that("asJSONList", {
   expect_equal(as.character(toJSON(asJSONList("x"))), '["x"]')
-  expect_equal(as.character(toJSON(asJSONList(c(1, 2)))), '[1,2]')
+  expect_equal(as.character(toJSON(asJSONList(c(1, 2)))), '[1.0,2.0]')
   expect_equal(as.character(toJSON(asJSONList(c()))), 'null')
   expect_equal(asJSONList(NULL), NULL)
 })
