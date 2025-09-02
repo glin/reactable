@@ -2,7 +2,26 @@
 #' @export
 htmlwidgets::JS
 
-toJSON <- function(x, digits = getOption("reactable.json.digits", NA)) {
+#' Serialize JSON
+#'
+#' toJSON overrides the htmlwidgets default JSON serialization options for data:
+#'
+#' * Serialize numbers with max precision (typically 15 digits depending on the installed jsonlite version).
+#' * Preserve numeric NA, NaN, Inf, and -Inf as strings. String NAs are still serialized as `null`.
+#' * Serialize both datetimes and dates as ISO 8601 in UTC timezone.
+#'
+#' @param digits Max number of digits to use for numeric values. Defaults to the `reactable.json.digits` option, or otherwise the maximum number of digits in jsonlite. Internal, undocumented, and unused. Only present because jsonlite's digits handling has changed between versions (1.8.5, then reverted in 1.8.7).
+#' @param func Custom JSON serialization function. Experimental and for advanced use only. reactable may change how data is serialized between versions and does not guarantee stability of this feature.
+#' @keywords internal
+toJSON <- function(
+  x,
+  digits = getOption("reactable.json.digits", NA),
+  func = getOption("reactable.json.func")
+) {
+  if (is.function(func)) {
+    return(func(x))
+  }
+
   jsonlite::toJSON(
     x,
     dataframe = "columns",
@@ -41,7 +60,9 @@ filterNulls <- function(x) {
 
 # Ensures that length-1 vectors are always serialized to JSON as lists
 asJSONList <- function(x) {
-  if (is.null(x)) return(x)
+  if (is.null(x)) {
+    return(x)
+  }
   I(x)
 }
 
@@ -174,25 +195,29 @@ unnestTagList <- function(x) {
   # Preserve HTML dependencies of tag lists
   htmlDeps <- htmltools::htmlDependencies(x)
 
-  tags <- Reduce(function(a, b) {
-    if (is.null(b)) {
-      return(a)
-    }
-    if (isTagList(b)) {
-      # Preserve HTML dependencies of nested tag lists
-      deps <- htmltools::htmlDependencies(b)
-      if (!is.null(deps)) {
-        htmlDeps <<- c(htmlDeps, deps)
+  tags <- Reduce(
+    function(a, b) {
+      if (is.null(b)) {
+        return(a)
       }
-      b <- unnestTagList(b)
-    }
-    # Merge without losing attributes
-    if (isList(b)) {
-      c(a, b)
-    } else {
-      c(a, list(b))
-    }
-  }, x, list())
+      if (isTagList(b)) {
+        # Preserve HTML dependencies of nested tag lists
+        deps <- htmltools::htmlDependencies(b)
+        if (!is.null(deps)) {
+          htmlDeps <<- c(htmlDeps, deps)
+        }
+        b <- unnestTagList(b)
+      }
+      # Merge without losing attributes
+      if (isList(b)) {
+        c(a, b)
+      } else {
+        c(a, list(b))
+      }
+    },
+    x,
+    list()
+  )
 
   htmltools::attachDependencies(tags, htmlDeps)
 }
@@ -333,14 +358,18 @@ asReactStyle <- function(style) {
   }
   pairs <- strsplit(unlist(strsplit(style, ";")), ":")
   if (length(pairs) > 0) {
-    pairs <- Reduce(function(props, pair) {
-      if (length(pair) == 2) {
-        name <- trimws(pair[[1]])
-        value <- trimws(pair[[2]])
-        props[[name]] <- value
-      }
-      props
-    }, pairs, list())
+    pairs <- Reduce(
+      function(props, pair) {
+        if (length(pair) == 2) {
+          name <- trimws(pair[[1]])
+          value <- trimws(pair[[2]])
+          props[[name]] <- value
+        }
+        props
+      },
+      pairs,
+      list()
+    )
   }
   pairs
 }

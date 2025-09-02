@@ -1288,8 +1288,10 @@ test_that("meta", {
   tbl <- reactable(data)
   expect_equal(getAttrib(tbl, "meta"), NULL)
 
-  # Empty lists should be omitted, not serialized as an empty array through jsonlite
+  # Empty objects should be omitted, not serialized as an empty array through jsonlite
   tbl <- reactable(data, meta = list())
+  expect_equal(getAttrib(tbl, "meta"), NULL)
+  tbl <- reactable(data, meta = c())
   expect_equal(getAttrib(tbl, "meta"), NULL)
 
   meta <- list(
@@ -1300,6 +1302,7 @@ test_that("meta", {
     na = NA,
     naInteger = NA_integer_,
     null = NULL,
+    inf = Inf,
     date = as.POSIXct("2019-01-02 3:22:15"),
     array = c(2, 4, 6),
     arrayLength1 = 1,
@@ -1307,7 +1310,8 @@ test_that("meta", {
     emptyList = list()  # will be serialized as []
   )
   tbl <- reactable(data, meta = meta)
-  expect_equal(getAttrib(tbl, "meta"), meta)
+  expected <- '{"number":30,"str":"str","df":{"y":[2]},"func":"value => value > 30","na":null,"naInteger":"NA","null":null,"inf":"Inf","date":"2019-01-02T09:22:15Z","array":[2,4,6],"arrayLength1":1,"list":[1],"emptyList":[]}'
+  expect_equal(as.character(getAttrib(tbl, "meta")), expected)
 })
 
 test_that("elementId", {

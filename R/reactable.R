@@ -536,8 +536,19 @@ reactable <- function(
     stop("`language` must be a reactable language options object")
   }
 
-  if (!is.null(meta) && !isNamedList(meta)) {
-    stop("`meta` must be a named list")
+  if (!is.null(meta)) {
+    if (!isNamedList(meta)) {
+      stop("`meta` must be a named list")
+    }
+    # Omit empty lists and objects for consistency with htmltools tag behavior when supplying
+    # empty attributes.
+    if (length(meta) == 0) {
+      meta <- NULL
+    } else {
+      # Use the same JSON serialization as reactable, not htmlwidgets (which differs very slightly)
+      # for consistency, since meta can contain complex data types.
+      meta <- toJSON(meta)
+    }
   }
 
   if (!is.logical(static)) {
@@ -796,7 +807,7 @@ reactable <- function(
     elementId = elementId,
     preRenderHook = preRenderHook
   )
-}
+  }
 
 # Convert named list of column orders to { id, desc } definitions
 columnSortDefs <- function(defaultSorted) {
