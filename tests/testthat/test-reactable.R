@@ -1303,14 +1303,14 @@ test_that("meta", {
     naInteger = NA_integer_,
     null = NULL,
     inf = Inf,
-    date = as.POSIXct("2019-01-02 3:22:15"),
+    date = as.POSIXct("2019-01-02 3:22:15", tz = "UTC"),
     array = c(2, 4, 6),
     arrayLength1 = 1,
     list = list(1),
     emptyList = list()  # will be serialized as []
   )
-  tbl <- reactable(data, meta = meta)
-  expected <- '{"number":30,"str":"str","df":{"y":[2]},"func":"value => value > 30","na":null,"naInteger":"NA","null":null,"inf":"Inf","date":"2019-01-02T09:22:15Z","array":[2,4,6],"arrayLength1":1,"list":[1],"emptyList":[]}'
+  tbl <- reactable(data, meta = meta, rowStyle = JS("(rowInfo, state) => { console.log(state.meta) }"))
+  expected <- '{"number":30,"str":"str","df":{"y":[2]},"func":"value => value > 30","na":null,"naInteger":"NA","null":null,"inf":"Inf","date":"2019-01-02T03:22:15Z","array":[2,4,6],"arrayLength1":1,"list":[1],"emptyList":[]}'
   expect_equal(as.character(getAttrib(tbl, "meta")), expected)
 })
 
