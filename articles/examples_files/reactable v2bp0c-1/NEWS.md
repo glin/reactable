@@ -31,6 +31,25 @@
   and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
   methods in the JavaScript API to change the current page or set the current page size.
   ([#322](https://github.com/glin/reactable/issues/322))
+* JSON serialization of data can now be customized using the `reactable.json.func` option. This is an experimental feature for advanced use only, and intentionally undocumented outside of NEWS. reactable may change how data is serialized between versions and does not guarantee stability. See `reactable:::toJSON` as a reference for how data is currently serialized. (@khusmann, [#415](https://github.com/glin/reactable/issues/415))
+
+    Example usage:
+    ```r
+    # Use yyjsonr as a faster alternative for JSON serialization. Note that this is not 1:1 consistent with
+    # jsonlite, and several edge cases are not handled here, including data frames with 1 row, datetimes, and NULLs.
+    options(reactable.json.func = function(x, ...) {
+      result <- yyjsonr::write_json_str(
+        x,
+        opts = yyjsonr::opts_write_json(
+          dataframe = "columns",
+          auto_unbox = TRUE,
+          num_specials = "string"
+        )
+      )
+      class(result) <- "json"
+      result
+    })
+    ```
 
 ## Minor improvements and bug fixes
 
@@ -43,6 +62,7 @@
 
 * Internet Explorer 11 (IE 11) is no longer supported.
 * `core-js` is no longer included in the HTML dependencies. This was required to support IE 11 and old versions of the RStudio Viewer. ([#245](https://github.com/glin/reactable/issues/245))
+* `meta` is now converted to JavaScript in the same way as `data`, using reactable's internal JSON serialization function rather than htmlwidgets's JSON serialization function. This should only be a breaking change in rare cases, as the major difference is that numeric `NA`, `NaN`, `Inf`, and `-Inf` values are now serialized as strings and preserved, rather than always being converted to `null`. (@khusmann, [#415](https://github.com/glin/reactable/issues/415))
 
 # reactable 0.4.4
 
