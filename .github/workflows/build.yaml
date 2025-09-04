@@ -68,8 +68,7 @@ jobs:
         if: matrix.config.release
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # Pin pkgdown to 2.0.9 for bug with using image filenames with spaces, and Quarto needs to be set up as well
-          extra-packages: local::., pkgdown@2.0.9
+          extra-packages: local::.
 
       - name: Build pkgdown site
         if: matrix.config.release
