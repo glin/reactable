@@ -68,7 +68,7 @@ jobs:
         if: matrix.config.release
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: local::.
+          extra-packages: local::., pkgdown@2.1.3
 
       - name: Build pkgdown site
         if: matrix.config.release
