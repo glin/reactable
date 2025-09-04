@@ -1,13 +1,13 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   100k-rows: 100k-rows.html
   building-twitter-followers: building-twitter-followers.html
   conditional-styling: conditional-styling.html
-  cookbook-no-static: cookbook/cookbook-no-static.html
-  cookbook: cookbook/cookbook.html
-  cran-packages: cran-packages/cran-packages.html
+  cookbook/cookbook-no-static: cookbook/cookbook-no-static.html
+  cookbook/cookbook: cookbook/cookbook.html
+  cran-packages/cran-packages: cran-packages/cran-packages.html
   custom-filtering-extra: custom-filtering-extra.html
   custom-filtering: custom-filtering.html
   custom-rendering: custom-rendering.html
@@ -16,15 +16,13 @@ articles:
   examples: examples.html
   internationalization: internationalization.html
   javascript-api: javascript-api.html
-  nba-box-score: nba-box-score/nba-box-score.html
-  observable-reactable: quarto/observable-reactable.html
-  popular-movies: popular-movies/popular-movies.html
+  nba-box-score/nba-box-score: nba-box-score/nba-box-score.html
+  popular-movies/popular-movies: popular-movies/popular-movies.html
   shiny-demo: shiny-demo.html
-  spotify-charts: spotify-charts/spotify-charts.html
+  spotify-charts/spotify-charts: spotify-charts/spotify-charts.html
   static-rendering: static-rendering.html
   sticky-columns-selection: sticky-columns-selection.html
   sticky-columns: sticky-columns.html
-  twitter-followers: twitter-followers/twitter-followers.html
-  womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2025-09-04T06:16Z
-
+  twitter-followers/twitter-followers: twitter-followers/twitter-followers.html
+  womens-world-cup/womens-world-cup: womens-world-cup/womens-world-cup.html
+last_built: 2025-09-04T22:25Z
