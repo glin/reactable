@@ -7,7 +7,7 @@ home:
 navbar:
   structure:
     left: [reference, examples, demos, articles, tutorials]
-    right: [ai, news, github]
+    right: [search, ai, news, github]
   components:
     home: ~
     articles:

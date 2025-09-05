@@ -263,6 +263,18 @@ a[href='#main'] {
   }
 }
 
+// Navbar search no longer has .me-sm-2 class, so re-add spacing between it and other links
+#search-input {
+  margin-right: 0.5rem;
+}
+
+// Prevent navbar wrapping on lg screens because there are too many items
+@include media-breakpoint-only(lg) {
+  #search-input {
+    width: 8rem !important;
+  }
+}
+
 .reactable {
   font-size: 0.875rem;
 }
