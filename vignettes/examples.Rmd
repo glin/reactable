@@ -2265,7 +2265,7 @@ brew_sp <- SharedData$new(breweries91, group = "breweries")
 
 # A regular data frame (without coordinates) for the table.
 # Use the same group name as the map data.
-brew_data <- as_tibble(breweries91) %>%
+brew_data <- breweries91 %>%
   select(brewery, address, village, founded) %>%
   SharedData$new(group = "breweries")
 
