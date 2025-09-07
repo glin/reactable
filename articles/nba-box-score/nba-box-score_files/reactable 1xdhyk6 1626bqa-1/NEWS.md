@@ -33,23 +33,23 @@
   ([#322](https://github.com/glin/reactable/issues/322))
 * JSON serialization of data can now be customized using the `reactable.json.func` option. This is an experimental feature for advanced use only, and intentionally undocumented outside of NEWS. reactable may change how data is serialized between versions and does not guarantee stability. See `reactable:::toJSON` as a reference for how data is currently serialized. (@khusmann, [#415](https://github.com/glin/reactable/issues/415))
 
-    Example usage:
-    ```r
-    # Use yyjsonr as a faster alternative for JSON serialization. Note that this is not 1:1 consistent with
-    # jsonlite, and several edge cases are not handled here, including data frames with 1 row, datetimes, and NULLs.
-    options(reactable.json.func = function(x, ...) {
-      result <- yyjsonr::write_json_str(
-        x,
-        opts = yyjsonr::opts_write_json(
-          dataframe = "columns",
-          auto_unbox = TRUE,
-          num_specials = "string"
-        )
+  Example usage:
+  ```r
+  # Use yyjsonr as a faster alternative for JSON serialization. Note that this is not 1:1 consistent with
+  # jsonlite, and several edge cases are not handled here, including data frames with 1 row, datetimes, and NULLs.
+  options(reactable.json.func = function(x, ...) {
+    result <- yyjsonr::write_json_str(
+      x,
+      opts = yyjsonr::opts_write_json(
+        dataframe = "columns",
+        auto_unbox = TRUE,
+        num_specials = "string"
       )
-      class(result) <- "json"
-      result
-    })
-    ```
+    )
+    class(result) <- "json"
+    result
+  })
+  ```
 
 ## Minor improvements and bug fixes
 

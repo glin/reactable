@@ -92,7 +92,22 @@
 <li><p>New <a href="https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage" class="external-link"><code>Reactable.gotoPage()</code></a> and <a href="https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize" class="external-link"><code>Reactable.setPageSize()</code></a> methods in the JavaScript API to change the current page or set the current page size. (<a href="https://github.com/glin/reactable/issues/322" class="external-link">#322</a>)</p></li>
 <li>
 <p>JSON serialization of data can now be customized using the <code>reactable.json.func</code> option. This is an experimental feature for advanced use only, and intentionally undocumented outside of NEWS. reactable may change how data is serialized between versions and does not guarantee stability. See <code>reactable:::toJSON</code> as a reference for how data is currently serialized. (<a href="https://github.com/khusmann" class="external-link">@khusmann</a>, <a href="https://github.com/glin/reactable/issues/415" class="external-link">#415</a>)</p>
-<p>Example usage: <code>r   # Use yyjsonr as a faster alternative for JSON serialization. Note that this is not 1:1 consistent with   # jsonlite, and several edge cases are not handled here, including data frames with 1 row, datetimes, and NULLs.   options(reactable.json.func = function(x, ...) {     result &lt;- yyjsonr::write_json_str(       x,       opts = yyjsonr::opts_write_json(         dataframe = "columns",         auto_unbox = TRUE,         num_specials = "string"       )     )     class(result) &lt;- "json"     result   })</code></p>
+<p>Example usage:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use yyjsonr as a faster alternative for JSON serialization. Note that this is not 1:1 consistent with</span></span>
+<span><span class="co"># jsonlite, and several edge cases are not handled here, including data frames with 1 row, datetimes, and NULLs.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.json.func <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">yyjsonr</span><span class="fu">::</span><span class="fu">write_json_str</span><span class="op">(</span></span>
+<span>    <span class="va">x</span>,</span>
+<span>    opts <span class="op">=</span> <span class="fu">yyjsonr</span><span class="fu">::</span><span class="fu">opts_write_json</span><span class="op">(</span></span>
+<span>      dataframe <span class="op">=</span> <span class="st">"columns"</span>,</span>
+<span>      auto_unbox <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      num_specials <span class="op">=</span> <span class="st">"string"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"json"</span></span>
+<span>  <span class="va">result</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ul></div>
 <div class="section level3">
@@ -172,13 +187,13 @@
 <h3 id="breaking-changes-0-4-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
 <ul><li>
 <p>Numeric <code>NA</code> values are now represented as <code>null</code> in JavaScript instead of an <code>"NA"</code> string. Numeric <code>NaN</code>, <code>Inf</code>, and <code>-Inf</code> values are now represented as <code>NaN</code>, <code>Infinity</code>, and <code>-Infinity</code> in JavaScript instead of <code>"NaN"</code>, <code>"Inf"</code>, and <code>"-Inf"</code> strings. (<a href="https://github.com/daattali" class="external-link">@daattali</a>, <a href="https://github.com/glin/reactable/issues/261" class="external-link">#261</a>)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="co">// Old</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// "NA", "NaN", "Inf", "-Inf"</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="co">// New</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// null, NaN, Infinity, -Infinity</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="co">// Old</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// "NA", "NaN", "Inf", "-Inf"</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="co">// New</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// null, NaN, Infinity, -Infinity</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li><p>Support for Internet Explorer 11 (IE 11) is deprecated. Existing features will continue to work in IE 11, but new features may not support IE 11, and IE 11 is no longer tested.</p></li>
 <li><p>The documentation website no longer supports IE 11.</p></li>
@@ -239,68 +254,68 @@
 <p>Several properties and arguments have been renamed or moved for consistency with the rest of the API. These properties were not removed unless they were very rarely used, so most code should continue to work upon upgrading.</p>
 <ul><li>
 <p>The <code>rowInfo.row</code> property is now <strong>deprecated</strong>, and has been renamed to <code>rowInfo.values</code>. <code>rowInfo.row</code> remains supported, but replace usages with <code>rowInfo.values</code> when possible.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">// Old</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">row</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>}</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">// New</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">values</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">row</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>}</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="kw">function</span>(rowInfo) {</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">values</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>The <code>colInfo.column</code> and <code>colInfo.data</code> properties in header and cell render functions are now <strong>deprecated</strong>. The <code>colInfo</code> object now contains all of the same properties as <code>colInfo.column</code>, and is now referred to as <code>column</code> in the documentation. When possible, replace usages of <code>colInfo</code> with <code>column</code>, <code>colInfo.column</code> with <code>column</code>, and <code>colInfo.data</code> with <code>state.sortedData</code> (current rows after sorting and filtering) or <code>state.data</code> (the original data).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">// Old</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="kw">function</span>(colInfo) {</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">column</span><span class="op">.</span><span class="at">id</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">data</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>}</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">// New</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="kw">function</span>(column<span class="op">,</span> state) {</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  column<span class="op">.</span><span class="at">id</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  state<span class="op">.</span><span class="at">sortedData</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="kw">function</span>(colInfo) {</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">column</span><span class="op">.</span><span class="at">id</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  colInfo<span class="op">.</span><span class="at">data</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>}</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="kw">function</span>(column<span class="op">,</span> state) {</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  column<span class="op">.</span><span class="at">id</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  state<span class="op">.</span><span class="at">sortedData</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>The <code>state.expanded</code> property has been <strong>removed</strong>. To check whether a row is expanded, use <code>rowInfo.expanded</code> instead.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">// Old</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="cf">if</span> (state<span class="op">.</span><span class="at">expanded</span>[rowInfo<span class="op">.</span><span class="at">index</span>]) { <span class="co">// row is expanded ... }</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>}</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">// New</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="cf">if</span> (rowInfo<span class="op">.</span><span class="at">expanded</span>) { <span class="co">// row is expanded ... }</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>}</span></code></pre></div>
-</li>
-<li>
-<p>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been <strong>removed</strong>. To get the current page index of the table, use <code>state.page</code> instead.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">// Old</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">page</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="cf">if</span> (state<span class="op">.</span><span class="at">expanded</span>[rowInfo<span class="op">.</span><span class="at">index</span>]) { <span class="co">// row is expanded ... }</span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>}</span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">// New</span></span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  state<span class="op">.</span><span class="at">page</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="cf">if</span> (rowInfo<span class="op">.</span><span class="at">expanded</span>) { <span class="co">// row is expanded ... }</span></span>
 <span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>}</span></code></pre></div>
+</li>
+<li>
+<p>The <code>rowInfo.page</code> and <code>cellInfo.page</code> properties have been <strong>removed</strong>. To get the current page index of the table, use <code>state.page</code> instead.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">// Old</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  rowInfo<span class="op">.</span><span class="at">page</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>}</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">// New</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="kw">function</span>(rowInfo<span class="op">,</span> column<span class="op">,</span> state) {</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  state<span class="op">.</span><span class="at">page</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li>
 <p>When accessing row data in JavaScript render functions and style functions:</p>
 <ul><li>
 <p>Date and time values are now represented in UTC time (ISO 8601 format), rather than local time without a timezone.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="co">// Old</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="co">// New</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00Z</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="co">// With a UTC time, it's much easier to format dates in the user's local time</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Date</span>(cellInfo<span class="op">.</span><span class="at">value</span>)<span class="op">.</span><span class="fu">toLocaleString</span>()</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="kw">function</span>(cellInfo) {</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="co">// Old</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="co">// New</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  cellInfo<span class="op">.</span><span class="at">value</span> <span class="co">// 2022-05-22T19:30:00Z</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="co">// With a UTC time, it's much easier to format dates in the user's local time</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Date</span>(cellInfo<span class="op">.</span><span class="at">value</span>)<span class="op">.</span><span class="fu">toLocaleString</span>()</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>}</span></code></pre></div>
 </li>
 <li><p>Single values (length-1 vectors) in list-columns are no longer represented as arrays (i.e., data is now serialized using <code>jsonlite::toJSON(auto_unbox = TRUE)</code>). For example, <code>list(x = 1)</code> in R is now represented as <code>{x: 1}</code> in JavaScript instead of <code>{x: [1]}</code>.</p></li>
 </ul></li>
