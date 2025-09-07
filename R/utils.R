@@ -32,7 +32,9 @@ toJSON <- function(
     UTC = TRUE,
     force = TRUE,
     auto_unbox = TRUE,
-    null = "null"
+    null = "null",
+    # Match htmlwidgets behavior of not double-serializing JSON
+    json_verbatim = TRUE
   )
 }
 

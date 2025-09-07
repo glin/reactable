@@ -22,9 +22,6 @@ export function renderToHTML(inputJson) {
   const input = JSON.parse(inputJson)
 
   const props = input.props
-  // Table data comes through double-serialized, first with reactable's custom serialization
-  // options, and then with the htmlwidgets default serialization.
-  props.data = JSON.parse(props.data)
 
   // Resolve strings marked as JavaScript literals to objects
   if (input.evals) {

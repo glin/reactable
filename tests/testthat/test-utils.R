@@ -1,5 +1,11 @@
 library(htmltools)
 
+test_that("toJSON", {
+  # Should not double-serialize JSON to match htmlwidgets behavior
+  x <- list(x = 1, json = toJSON(list(y = "b")))
+  expect_equal(as.character(toJSON(x)), '{"x":1,"json":{"y":"b"}}')
+})
+
 test_that("mergeLists", {
   a <- list(a = 1, b = "b", c = 3)
   b <- list(a = 2, c = 4, d = "d")

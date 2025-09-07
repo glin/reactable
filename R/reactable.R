@@ -541,13 +541,10 @@ reactable <- function(
       stop("`meta` must be a named list")
     }
     # Omit empty lists and objects for consistency with htmltools tag behavior when supplying
-    # empty attributes.
+    # empty attributes. This was previously done implicitly in reactR::component(), but now done
+    # explicitly here.
     if (length(meta) == 0) {
       meta <- NULL
-    } else {
-      # Use the same JSON serialization as reactable, not htmlwidgets (which differs very slightly)
-      # for consistency, since meta can contain complex data types.
-      meta <- toJSON(meta)
     }
   }
 
@@ -718,11 +715,10 @@ reactable <- function(
     }
   }
 
-  # Override the htmlwidgets default JSON serialization options for data:
-  #
-  # * Serialize numbers with max precision
-  # * Preserve numeric NA, NaN, Inf, and -Inf as strings
-  # * Serialize both dates/datetimes as ISO 8601
+  # Pre-compute / pre-serialize data to JSON to optimize for large datasets that can take seconds to serialize.
+  # By pre-serializing, we only pay the serialization cost once at the start, rather than every time when
+  # rendering or printing the widget. This was originally done as a necessity to change the JSON serializer,
+  # but now kept as an intentional optimization.
   data <- toJSON(data)
 
   # Create a unique key for the data. The key is used to fully reset state when
@@ -791,9 +787,23 @@ reactable <- function(
   # Temporary workaround for JS() not working in htmlwidgets 1.6.3
   class(component) <- c(class(component), "list")
 
+  # Override the htmlwidgets default JSON serialization options for meta and other attributes:
+  #
+  # * Serialize numbers with max precision (typically 15 digits depending on the installed jsonlite version).
+  # * Preserve numeric NA, NaN, Inf, and -Inf as strings. String NAs are still serialized as `null`.
+  # * Serialize both datetimes and dates as ISO 8601 in UTC timezone.
+  #
+  # Use TOJSON_FUNC attribute, rather than serializing meta ourselves, because htmlwidgets
+  # will also process JS() evals. If meta is converted to JSON before reaching htmlwidgets,
+  # those JS evals will be lost.
+  #
+  # https://www.htmlwidgets.org/develop_advanced.html
+  markup <- reactR::reactMarkup(component)
+  attr(markup, "TOJSON_FUNC") <- toJSON
+
   htmlwidgets::createWidget(
     name = "reactable",
-    reactR::reactMarkup(component),
+    markup,
     width = width,
     height = height,
     sizingPolicy = htmlwidgets::sizingPolicy(
@@ -807,7 +817,7 @@ reactable <- function(
     elementId = elementId,
     preRenderHook = preRenderHook
   )
-  }
+}
 
 # Convert named list of column orders to { id, desc } definitions
 columnSortDefs <- function(defaultSorted) {

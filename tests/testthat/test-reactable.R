@@ -191,6 +191,11 @@ test_that("data with list-columns are serialized correctly", {
   expect_equal(as.character(attribs$data), '{"x":["x",["x"],["x"],[1,2,3],["a","b"],{"x":true},{"x":["y"]},null,null]}')
 })
 
+test_that("widget data is serialized using custom TOJSON_FUNC function", {
+  tbl <- reactable(data.frame(x = 1))
+  expect_equal(attr(tbl$x, "TOJSON_FUNC"), toJSON)
+})
+
 test_that("data supports Crosstalk", {
   data <- crosstalk::SharedData$new(
     data.frame(x = c(1, 2), y = c("a", "b"), stringsAsFactors = FALSE),
@@ -1310,8 +1315,10 @@ test_that("meta", {
     emptyList = list()  # will be serialized as []
   )
   tbl <- reactable(data, meta = meta, rowStyle = JS("(rowInfo, state) => { console.log(state.meta) }"))
+  # meta must not be pre-serialized or the JS() func will be lost
+  expect_equal(getAttrib(tbl, "meta"), meta)
   expected <- '{"number":30,"str":"str","df":{"y":[2]},"func":"value => value > 30","na":null,"naInteger":"NA","null":null,"inf":"Inf","date":"2019-01-02T03:22:15Z","array":[2,4,6],"arrayLength1":1,"list":[1],"emptyList":[]}'
-  expect_equal(as.character(getAttrib(tbl, "meta")), expected)
+  expect_equal(as.character(toJSON(getAttrib(tbl, "meta"))), expected)
 })
 
 test_that("elementId", {
