@@ -1,6 +1,7 @@
 ---
 title: "Women's World Cup Predictions"
 output: html_document
+toc: false
 resource_files:
   - '.'
 ---
