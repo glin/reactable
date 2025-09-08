@@ -1,6 +1,7 @@
 ---
 title: "Twitter Followers"
 output: html_document
+toc: false
 resource_files:
   - '.'
 ---
