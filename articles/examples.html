@@ -3440,16 +3440,80 @@ functions</li>
 <span>    <span class="va">tbl</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: Failed to render table to static HTML:</span></span>
-<span><span class="co">## TypeError: Cannot read properties of undefined (reading 'undefined')</span></span></code></pre>
 <label>
 Currency
 <select onchange="Reactable.setMeta('cars-currency-table', { currency: event.target.value })"><option>USD</option>
 <option>CAD</option>
 <option>JPY</option></select></label>
 <hr aria-hidden="true">
-<div class="reactable html-widget html-fill-item" id="cars-currency-table" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="cars-currency-table">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick"],"Model":["Integra","Legend","90","100","535i","Century"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30,15.7],"MPG.city":[25,18,20,19,22,22]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","cell":"function(cellInfo, state) {\n        const { currency, exchangeRates } = state.meta\n        const converted = cellInfo.value * exchangeRates[currency]\n        return converted.toLocaleString(undefined, { style: 'currency', currency: currency })\n      }"},{"id":"MPG.city","name":"MPG.city","type":"numeric"}],"meta":{"currency":"USD","exchangeRates":{"USD":1,"CAD":1.3,"JPY":137.56}},"elementId":"cars-currency-table","dataKey":"ccf2803ec63520b512e702d8e4af09ff"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.cell"],"jsHooks":[]}</script>
+<div class="reactable html-widget html-fill-item" data-react-ssr id="cars-currency-table" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
+<div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Manufacturer" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">Manufacturer</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+<div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Model" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">Model</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+<div class="rt-th rt-align-left" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Type" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<div class="rt-text-content">Type</div>
+<span class="rt-sort-right" aria-hidden="true"></span>
+</div></div></div>
+<div class="rt-th rt-align-right" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort Price" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<span class="rt-sort-left" aria-hidden="true"></span><div class="rt-text-content">Price</div>
+</div></div></div>
+<div class="rt-th rt-align-right" role="columnheader" style="position:relative;flex:100 0 auto;min-width:100px;width:100px" aria-label="Sort MPG.city" aria-sort="none" tabindex="0" data-sort-hint="ascending"><div class="rt-th-inner"><div class="rt-sort-header">
+<span class="rt-sort-left" aria-hidden="true"></span><div class="rt-text-content">MPG.city</div>
+</div></div></div>
+</div></div>
+<div class="rt-tbody" role="rowgroup" style="min-width:500px">
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Integra</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Small</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$15.90</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">25</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Legend</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$33.90</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">18</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Audi</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">90</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Compact</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$29.10</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">20</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Audi</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">100</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$37.70</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">19</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">BMW</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">535i</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$30.00</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">22</div></div>
+</div></div>
+<div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Buick</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Century</div></div>
+<div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">$15.70</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">22</div></div>
+</div></div>
+<div class="rt-no-data" aria-live="assertive"></div>
+</div>
+</div></div></div>
+<script type="application/json" data-for="cars-currency-table">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick"],"Model":["Integra","Legend","90","100","535i","Century"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30,15.7],"MPG.city":[25,18,20,19,22,22]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","cell":"function(cellInfo, state) {\n        const { currency, exchangeRates } = state.meta\n        const converted = cellInfo.value * exchangeRates[currency]\n        return converted.toLocaleString(undefined, { style: 'currency', currency: currency })\n      }"},{"id":"MPG.city","name":"MPG.city","type":"numeric"}],"meta":{"currency":"USD","exchangeRates":{"USD":1,"CAD":1.3,"JPY":137.56}},"elementId":"cars-currency-table","dataKey":"796f3a35f23b91320fcd7dfbf60e3519"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.3.cell"],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="section level2">
@@ -3463,7 +3527,7 @@ using custom render functions.</p>
 <div class="section level3">
 <h3 id="footers-r-render-function">R render function<a class="anchor" aria-label="anchor" href="#footers-r-render-function"></a>
 </h3>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
@@ -3553,7 +3617,7 @@ using custom render functions.</p>
 <div class="callout">
 <p>This example requires reactable v0.3.0 or above.</p>
 </div>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -3644,7 +3708,7 @@ using custom render functions.</p>
 <div class="section level3">
 <h3 id="embedding-html-widgets-footers">Embedding HTML widgets<a class="anchor" aria-label="anchor" href="#embedding-html-widgets-footers"></a>
 </h3>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">sparkline</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
@@ -3742,7 +3806,7 @@ using custom render functions.</p>
 <code>details</code>, which takes an R or JavaScript render function.
 See <a href="custom-rendering.html">Custom Rendering</a> for details on
 how to use render functions.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">div</a></span><span class="op">(</span></span>
 <span>    <span class="st">"Details for row: "</span>, <span class="va">index</span>,</span>
@@ -3821,7 +3885,7 @@ how to use render functions.</p>
 <script type="application/json" data-for="htmlwidget-4d3684310b36397c2b06">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":".details","name":"","type":null,"sortable":false,"resizable":false,"filterable":false,"searchable":false,"width":45,"align":"center","details":[{"name":"div","attribs":{},"children":["Details for row: ","1",{"name":"pre","attribs":{},"children":["  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n1          5.1         3.5          1.4         0.2  setosa"]}]},{"name":"div","attribs":{},"children":["Details for row: ","2",{"name":"pre","attribs":{},"children":["  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n2          4.9           3          1.4         0.2  setosa"]}]},{"name":"div","attribs":{},"children":["Details for row: ","3",{"name":"pre","attribs":{},"children":["  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n3          4.7         3.2          1.3         0.2  setosa"]}]},{"name":"div","attribs":{},"children":["Details for row: ","4",{"name":"pre","attribs":{},"children":["  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n4          4.6         3.1          1.5         0.2  setosa"]}]},{"name":"div","attribs":{},"children":["Details for row: ","5",{"name":"pre","attribs":{},"children":["  Sepal.Length Sepal.Width Petal.Length Petal.Width Species\n5            5         3.6          1.4         0.2  setosa"]}]}]},{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"dataKey":"1a09303051d4910e0d8d6a913f2b8bbe"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>The details column can be customized by providing a
 <code><a href="../reference/colDef.html">colDef()</a></code> instead. This can be used to add a column name,
 render HTML content, or change the column width:</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, details <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"More"</span>,</span>
 <span>  details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo) {</span></span>
@@ -3910,7 +3974,7 @@ render HTML content, or change the column width:</p>
 </h3>
 <p>With R render functions, you can render HTML tags, HTML widgets, and
 even nested tables:</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">CO2</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Plant"</span>, <span class="st">"Type"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span>, details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
@@ -4010,7 +4074,7 @@ even nested tables:</p>
 </h3>
 <p>R render functions support conditional rendering. If a render
 function returns <code>NULL</code>, the row won’t be expandable:</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">index</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>, fullWidth <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -4092,7 +4156,7 @@ function returns <code>NULL</code>, the row won’t be expandable:</p>
 </div>
 <p>You can add <code>details</code> to individual columns, and even show
 multiple details for a row:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,</span>
 <span>  details <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">index</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -4193,7 +4257,7 @@ multiple details for a row:</p>
 </h3>
 <p>You can expand all rows by default by setting
 <code>defaultExpanded</code> to <code>TRUE</code>:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span>, <span class="op">]</span>,</span>
 <span>  defaultPageSize <span class="op">=</span> <span class="fl">4</span>,</span>
@@ -4286,7 +4350,7 @@ of conditional styling.</p>
 <div class="section level4">
 <h4 id="r-style-function">R style function<a class="anchor" aria-label="anchor" href="#r-style-function"></a>
 </h4>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">sleep</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  extra <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>    style <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">value</span><span class="op">)</span> <span class="op">{</span></span>
@@ -4357,7 +4421,7 @@ of conditional styling.</p>
 <div class="callout">
 <p>This example requires reactable v0.3.0 or above.</p>
 </div>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">sleep</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  extra <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span></span>
 <span>    style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo) {</span></span>
@@ -4431,7 +4495,7 @@ of conditional styling.</p>
 <div class="section level4">
 <h4 id="r-style-function-1">R style function<a class="anchor" aria-label="anchor" href="#r-style-function-1"></a>
 </h4>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">sleep</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span>, </span>
 <span>  rowStyle <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">index</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">sleep</span><span class="op">[</span><span class="va">index</span>, <span class="st">"extra"</span><span class="op">]</span> <span class="op">&lt;</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
@@ -4444,9 +4508,9 @@ of conditional styling.</p>
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb57"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="fu">.bold</span> {</span>
-<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>  <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">bold</span><span class="op">;</span></span>
-<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="fu">.bold</span> {</span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>  <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">bold</span><span class="op">;</span></span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>}</span></code></pre></div>
 <style type="text/css">
 .bold {
   font-weight: bold;
@@ -4508,7 +4572,7 @@ of conditional styling.</p>
 <div class="callout">
 <p>This example requires reactable v0.3.0 or above.</p>
 </div>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">sleep</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span>,</span>
 <span>  rowStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo) {</span></span>
 <span><span class="st">    if (rowInfo.values['extra'] &lt; -1) {</span></span>
@@ -4593,7 +4657,7 @@ of the table</li>
 table</li>
 <li>Share JavaScript code or data between different style functions</li>
 </ul>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span>, <span class="st">"MPG.city"</span><span class="op">)</span><span class="op">]</span></span>
@@ -4672,47 +4736,47 @@ Show color scale
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Integra</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Small</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">15.9</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">25</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FF9F1A"><div class="rt-td-inner">25</div></div>
 </div></div>
 <div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Acura</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Legend</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">33.9</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">18</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FFE4CC"><div class="rt-td-inner">18</div></div>
 </div></div>
 <div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Audi</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">90</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Compact</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">29.1</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">20</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FFD099"><div class="rt-td-inner">20</div></div>
 </div></div>
 <div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Audi</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">100</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">37.7</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">19</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FFDAB2"><div class="rt-td-inner">19</div></div>
 </div></div>
 <div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">BMW</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">535i</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">30</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">22</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FFBC66"><div class="rt-td-inner">22</div></div>
 </div></div>
 <div class="rt-tr-group"><div class="rt-tr" role="row" style="flex:1 0 auto;min-width:500px">
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Buick</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Century</div></div>
 <div class="rt-td rt-align-left" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">Midsize</div></div>
 <div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">15.7</div></div>
-<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px"><div class="rt-td-inner">22</div></div>
+<div class="rt-td rt-align-right" role="cell" style="flex:100 0 auto;min-width:100px;width:100px;background-color:#FFBC66"><div class="rt-td-inner">22</div></div>
 </div></div>
 <div class="rt-no-data" aria-live="assertive"></div>
 </div>
 </div></div></div>
-<script type="application/json" data-for="cars-colors-table">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick"],"Model":["Integra","Legend","90","100","535i","Century"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30,15.7],"MPG.city":[25,18,20,19,22,22]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric","style":"function(rowInfo, column, state) {\n        const { showColors, mpgColors } = state.meta\n        if (showColors) {\n          return { backgroundColor: mpgColors[rowInfo.index] }\n        }\n      }"}],"meta":{"mpgColors":["#FF9F1A","#FFE4CC","#FFD099","#FFDAB2","#FFBC66","#FFBC66"],"showColors":true},"elementId":"cars-colors-table","dataKey":"00c7841db665ab794b50e9dd5fee19f8"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.4.style"],"jsHooks":[]}</script>
+<script type="application/json" data-for="cars-colors-table">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick"],"Model":["Integra","Legend","90","100","535i","Century"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30,15.7],"MPG.city":[25,18,20,19,22,22]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric","style":"function(rowInfo, column, state) {\n        const { showColors, mpgColors } = state.meta\n        if (showColors) {\n          return { backgroundColor: mpgColors[rowInfo.index] }\n        }\n      }"}],"meta":{"mpgColors":["#FF9F1A","#FFE4CC","#FFD099","#FFDAB2","#FFBC66","#FFBC66"],"showColors":true},"elementId":"cars-colors-table","dataKey":"0e3e76395dc17dc37b2bd76a649a10e1"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.4.style"],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="section level2">
@@ -4723,7 +4787,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="highlight-rows-on-hover">Highlight rows on hover<a class="anchor" aria-label="anchor" href="#highlight-rows-on-hover"></a>
 </h3>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, highlight <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-499317c7e49c4cbc563f" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -4788,7 +4852,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="bordered">Bordered<a class="anchor" aria-label="anchor" href="#bordered"></a>
 </h3>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, bordered <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-2a20118d1ddd28471251" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-bordered"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -4853,7 +4917,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="borderless">Borderless<a class="anchor" aria-label="anchor" href="#borderless"></a>
 </h3>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, borderless <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-1a934432a0806e52d8b3" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-borderless"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -4918,7 +4982,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="outlined">Outlined<a class="anchor" aria-label="anchor" href="#outlined"></a>
 </h3>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, outlined <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-62704077f3d58cad79c1" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-outlined"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -4983,7 +5047,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="striped">Striped<a class="anchor" aria-label="anchor" href="#striped"></a>
 </h3>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, striped <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-20fbc6dff3362be2d0d6" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -5048,7 +5112,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="bordered-striped-highlighting">Bordered + striped + highlighting<a class="anchor" aria-label="anchor" href="#bordered-striped-highlighting"></a>
 </h3>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, bordered <span class="op">=</span> <span class="cn">TRUE</span>, striped <span class="op">=</span> <span class="cn">TRUE</span>, highlight <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-129b2d2696068e8dde22" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-bordered"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -5113,7 +5177,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="outlined-borderless">Outlined + borderless<a class="anchor" aria-label="anchor" href="#outlined-borderless"></a>
 </h3>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, outlined <span class="op">=</span> <span class="cn">TRUE</span>, borderless <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-a115006b732663dd4aad" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-outlined rt-borderless"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -5178,7 +5242,7 @@ be combined:</p>
 <div class="section level3">
 <h3 id="compact">Compact<a class="anchor" aria-label="anchor" href="#compact"></a>
 </h3>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, compact <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-6f26f0ed0afa75893bea" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-compact"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:500px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:500px">
@@ -5245,7 +5309,7 @@ be combined:</p>
 </h3>
 <p>Long text is wrapped by default, but you can force text to fit on a
 single line by setting <code>wrap</code> to <code>FALSE</code>:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">.</span> <span class="op">~</span> <span class="va">Species</span>, <span class="va">iris</span>, <span class="va">toString</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
@@ -5329,7 +5393,7 @@ scrolling.</p>
 <p>Scrollable tables are automatically made focusable when navigating
 using a keyboard to ensure that they’re always accessible for keyboard
 users.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="op">]</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">270</span>,</span>
@@ -5474,7 +5538,7 @@ table’s width and not shrink below 100px.</p>
 <p>Another example: if a table consists of three columns having minimum
 widths of 200px, 100px, and 100px, the columns will take up 50%, 25%,
 and 25% of the table’s width respectively:</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Make"</span>, <span class="st">"Type"</span>, <span class="st">"Weight"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -5540,7 +5604,7 @@ and 25% of the table’s width respectively:</p>
 <p>Tables are full width by default, but you can shrink the table to fit
 its contents by setting <code>fullWidth</code> to
 <code>FALSE</code>:</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>,</span>
 <span>  fullWidth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -5611,7 +5675,7 @@ its contents by setting <code>fullWidth</code> to
 <script type="application/json" data-for="htmlwidget-25b9ef4348d2c6cf6bff">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW"],"Model":["Integra","Legend","90","100","535i"],"Type":["Small","Midsize","Compact","Midsize","Midsize"],"Min.Price":[12.9,29.2,25.9,30.8,23.7],"Price":[15.9,33.9,29.1,37.7,30]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","minWidth":120},{"id":"Model","name":"Model","type":"factor","minWidth":120},{"id":"Type","name":"Type","type":"factor","minWidth":120},{"id":"Min.Price","name":"Min.Price","type":"numeric","minWidth":120},{"id":"Price","name":"Price","type":"numeric","minWidth":120}],"bordered":true,"inline":true,"dataKey":"cabca30fb860d1e1028f806d9745a589"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p>You can also set a maximum or fixed width on the table:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>,</span>
 <span>  bordered <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -5695,7 +5759,7 @@ controls the alignment of data cells, while <code>headerVAlign</code>
 controls the alignment of header cells. Possible options are
 <code>"top"</code> (the default), <code>"center"</code>, and
 <code>"bottom"</code>.</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
@@ -5815,7 +5879,7 @@ controls the alignment of header cells. Possible options are
 </h3>
 <p>For more control over styling, you can add custom class names to the
 table and apply your own CSS:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">18</span>, <span class="op">]</span>,</span>
 <span>  defaultPageSize <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -5964,7 +6028,7 @@ default styles (e.g., row stripe color), or add your own custom CSS to
 specific elements of the table.</p>
 <p>To apply a theme, provide a <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code> to
 <code>theme</code>:</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>,</span>
 <span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -6086,7 +6150,7 @@ specific elements of the table.</p>
 </h3>
 <p>To set the default theme for all tables, use the global
 <code>reactable.theme</code> option:</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.theme <span class="op">=</span> <span class="fu"><a href="../reference/reactableTheme.html">reactableTheme</a></span><span class="op">(</span></span>
 <span>  color <span class="op">=</span> <span class="st">"hsl(233, 9%, 87%)"</span>,</span>
 <span>  backgroundColor <span class="op">=</span> <span class="st">"hsl(233, 9%, 19%)"</span>,</span>
@@ -6257,7 +6321,7 @@ child elements (just like in Sass). This is useful for adding
 pseudo-classes like <code>&amp;:hover</code>, or adding styles in a
 certain context like <code>.outer-container &amp;</code>.</p>
 <p>For example, to highlight headers when sorting:</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sepal.Length <span class="op">=</span> <span class="fu"><a href="../reference/colDef.html">colDef</a></span><span class="op">(</span>sortable <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -6328,7 +6392,7 @@ certain context like <code>.outer-container &amp;</code>.</p>
 </div></div></div>
 <script type="application/json" data-for="htmlwidget-609e86c7db527ade6c79">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6,5],"Sepal.Width":[3.5,3,3.2,3.1,3.6],"Petal.Length":[1.4,1.4,1.3,1.5,1.4],"Petal.Width":[0.2,0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa","setosa"]},"columns":[{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric","sortable":false},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"showSortable":true,"theme":{"headerStyle":{"&:hover[aria-sort]":{"background":"hsl(0, 0%, 96%)"},"&[aria-sort='ascending'], &[aria-sort='descending']":{"background":"hsl(0, 0%, 96%)"},"borderColor":"#555"}},"dataKey":"242df0e49cd29674d426a25f36098bcf"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>Or to apply a dark theme when a parent element has a certain class,
 like <code>.dark</code>:</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theme</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reactableTheme.html">reactableTheme</a></span><span class="op">(</span></span>
 <span>  style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">".dark &amp;"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#fff"</span>, background <span class="op">=</span> <span class="st">"#282a36"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  cellStyle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">".dark &amp;"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>borderColor <span class="op">=</span> <span class="st">"rgba(255, 255, 255, 0.15)"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -6432,7 +6496,7 @@ like <code>.dark</code>:</p>
 <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code> for context-specific styling.</p>
 <p>For example, to style tables in RStudio R Notebooks only when a dark
 editor theme is active:</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.theme <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">theme</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reactableTheme.html">reactableTheme</a></span><span class="op">(</span></span>
 <span>    color <span class="op">=</span> <span class="st">"hsl(233, 9%, 85%)"</span>,</span>
@@ -6459,7 +6523,7 @@ editor theme is active:</p>
 </h2>
 <p>You can create column groups by passing a list of
 <code><a href="../reference/colGroup.html">colGroup()</a></code> definitions to <code>columnGroups</code>:</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -6545,7 +6609,7 @@ editor theme is active:</p>
 </h2>
 <p>You can make columns resizable by setting <code>resizable</code> to
 <code>TRUE</code>:</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, resizable <span class="op">=</span> <span class="cn">TRUE</span>, wrap <span class="op">=</span> <span class="cn">FALSE</span>, bordered <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-3664c5ad8a3e86a93f32" style="width:auto;height:auto;"><div class="Reactable ReactTable rt-bordered rt-nowrap"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:2700px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:2700px">
@@ -6880,7 +6944,7 @@ editor theme is active:</p>
 <code><a href="../reference/colGroup.html">colGroup()</a></code>. Set <code>sticky</code> to either
 <code>"left"</code> or <code>"right"</code> to make the column stick to
 the left or right side.</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -7144,7 +7208,7 @@ the left or right side.</p>
 <script type="application/json" data-for="htmlwidget-b581a9bedb3bd9259db7">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW"],"Model":["Integra","Legend","90","100","535i"],"Type":["Small","Midsize","Compact","Midsize","Midsize"],"Min.Price":[12.9,29.2,25.9,30.8,23.7],"Price":[15.9,33.9,29.1,37.7,30],"Max.Price":[18.8,38.7,32.3,44.6,36.2],"MPG.city":[25,18,20,19,22],"MPG.highway":[31,25,26,26,30],"AirBags":["None","Driver & Passenger","Driver only","Driver & Passenger","Driver only"],"DriveTrain":["Front","Front","Front","Front","Rear"],"Cylinders":["4","6","6","6","4"],"EngineSize":[1.8,3.2,2.8,2.8,3.5],"Horsepower":[140,200,172,172,208],"RPM":[6300,5500,5500,5500,5700],"Rev.per.mile":[2890,2335,2280,2535,2545],"Man.trans.avail":["Yes","Yes","Yes","Yes","Yes"],"Fuel.tank.capacity":[13.2,18,16.9,21.1,21.1],"Passengers":[5,5,5,6,4],"Length":[177,195,180,193,186],"Wheelbase":[102,115,102,106,109],"Width":[68,71,67,70,69],"Turn.circle":[37,38,37,37,39],"Rear.seat.room":[26.5,30,28,31,27],"Luggage.room":[11,15,14,17,13],"Weight":[2705,3560,3375,3405,3640],"Origin":["non-USA","non-USA","non-USA","non-USA","non-USA"],"Make":["Acura Integra","Acura Legend","Audi 90","Audi 100","BMW 535i"]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","minWidth":150,"sticky":"left","style":{"borderRight":"1px solid #eee"},"headerStyle":{"borderRight":"1px solid #eee"}},{"id":"Model","name":"Model","type":"factor","minWidth":150},{"id":"Type","name":"Type","type":"factor","minWidth":150},{"id":"Min.Price","name":"Min.Price","type":"numeric","minWidth":150},{"id":"Price","name":"Price","type":"numeric","minWidth":150},{"id":"Max.Price","name":"Max.Price","type":"numeric","minWidth":150},{"id":"MPG.city","name":"MPG.city","type":"numeric","minWidth":150},{"id":"MPG.highway","name":"MPG.highway","type":"numeric","minWidth":150},{"id":"AirBags","name":"AirBags","type":"factor","minWidth":150},{"id":"DriveTrain","name":"DriveTrain","type":"factor","minWidth":150},{"id":"Cylinders","name":"Cylinders","type":"factor","minWidth":150},{"id":"EngineSize","name":"EngineSize","type":"numeric","minWidth":150},{"id":"Horsepower","name":"Horsepower","type":"numeric","minWidth":150},{"id":"RPM","name":"RPM","type":"numeric","minWidth":150},{"id":"Rev.per.mile","name":"Rev.per.mile","type":"numeric","minWidth":150},{"id":"Man.trans.avail","name":"Man.trans.avail","type":"factor","minWidth":150},{"id":"Fuel.tank.capacity","name":"Fuel.tank.capacity","type":"numeric","minWidth":150},{"id":"Passengers","name":"Passengers","type":"numeric","minWidth":150},{"id":"Length","name":"Length","type":"numeric","minWidth":150},{"id":"Wheelbase","name":"Wheelbase","type":"numeric","minWidth":150},{"id":"Width","name":"Width","type":"numeric","minWidth":150},{"id":"Turn.circle","name":"Turn.circle","type":"numeric","minWidth":150},{"id":"Rear.seat.room","name":"Rear.seat.room","type":"numeric","minWidth":150},{"id":"Luggage.room","name":"Luggage.room","type":"numeric","minWidth":150},{"id":"Weight","name":"Weight","type":"numeric","minWidth":150},{"id":"Origin","name":"Origin","type":"factor","minWidth":150},{"id":"Make","name":"Make","type":"factor","minWidth":150,"sticky":"right","style":{"borderLeft":"1px solid #eee"},"headerStyle":{"borderLeft":"1px solid #eee"}}],"dataKey":"d18733332d31cd6c4fb1f0fc96021241"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><div class="section level3">
 <h3 id="multiple-sticky-columns">Multiple sticky columns<a class="anchor" aria-label="anchor" href="#multiple-sticky-columns"></a>
 </h3>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Background style to visually distinguish sticky columns</span></span>
 <span><span class="va">sticky_style</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>backgroundColor <span class="op">=</span> <span class="st">"#f7f7f7"</span><span class="op">)</span></span>
 <span></span>
@@ -7501,7 +7565,7 @@ the left or right side.</p>
 </h3>
 <p>If a column group is sticky, all columns in the group will
 automatically be made sticky.</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>,</span>
 <span>  columnGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -7889,7 +7953,7 @@ automatically be made sticky.</p>
 <p>Row names are shown by default if present. You can customize the row
 names column by adding a column definition using
 <code>".rownames"</code> as the column name:</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">USPersonalExpenditure</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -7964,7 +8028,7 @@ names column by adding a column definition using
 </div></div></div>
 <script type="application/json" data-for="htmlwidget-3b4357ebbc0b96c60ac4">{"x":{"tag":{"name":"Reactable","attribs":{"data":{".rownames":["Food and Tobacco","Household Operation","Medical and Health","Personal Care","Private Education"],"1940":[22.2,10.5,3.53,1.04,0.341],"1945":[44.5,15.5,5.76,1.98,0.974],"1950":[59.6,29,9.71,2.45,1.8],"1955":[73.2,36.5,14,3.4,2.6],"1960":[86.8,46.2,21.1,5.4,3.64]},"columns":[{"id":".rownames","name":"Category","type":"character","sortable":true,"filterable":false,"rowHeader":true},{"id":"1940","name":"1940","type":"numeric"},{"id":"1945","name":"1945","type":"numeric"},{"id":"1950","name":"1950","type":"numeric"},{"id":"1955","name":"1955","type":"numeric"},{"id":"1960","name":"1960","type":"numeric"}],"dataKey":"82def95801d553dec6ca13bdc881116e"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>If row names haven’t been set explicitly, you can force them to show
 by setting <code>rownames</code> to <code>TRUE</code>:</p>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-966f3cc4ca6044e168e0" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:600px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:600px">
@@ -8044,7 +8108,7 @@ technologies will read them aloud while navigating through cells in the
 table.</p>
 <p>Cells in the row names column are automatically marked up as row
 headers.</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Make"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span>, <span class="st">"MPG.city"</span>, <span class="st">"AirBags"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
@@ -8133,7 +8197,7 @@ event to Shiny</li>
 <div class="section level3">
 <h3 id="expand-on-click">Expand on click<a class="anchor" aria-label="anchor" href="#expand-on-click"></a>
 </h3>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">48</span><span class="op">:</span><span class="fl">52</span>, <span class="op">]</span>,</span>
 <span>  groupBy <span class="op">=</span> <span class="st">"Species"</span>,</span>
@@ -8189,7 +8253,7 @@ event to Shiny</li>
 <div class="section level3">
 <h3 id="select-on-click">Select on click<a class="anchor" aria-label="anchor" href="#select-on-click"></a>
 </h3>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, selection <span class="op">=</span> <span class="st">"multiple"</span>, onClick <span class="op">=</span> <span class="st">"select"</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-ef4103a07a85da1dadd5" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:545px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:545px">
@@ -8271,7 +8335,7 @@ event to Shiny</li>
 </div>
 <p>This example uses a custom click action to create custom “show
 details” action buttons in each row of the table:</p>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  details <span class="op">=</span> <span class="cn">NA</span></span>
@@ -8376,7 +8440,7 @@ other means, such as a button in the example above.</p>
 </h2>
 <p>You can customize the language in the table by providing a set of
 <code><a href="../reference/reactableLang.html">reactableLang()</a></code> options to <code>language</code>:</p>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, <span class="op">]</span>,</span>
 <span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -8502,7 +8566,7 @@ other means, such as a button in the example above.</p>
 </h3>
 <p>To set the default language strings for all tables, use the global
 <code>reactable.language</code> option:</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>reactable.language <span class="op">=</span> <span class="fu"><a href="../reference/reactableLang.html">reactableLang</a></span><span class="op">(</span></span>
 <span>  pageSizeOptions <span class="op">=</span> <span class="st">"\u663e\u793a {rows}"</span>,</span>
 <span>  pageInfo <span class="op">=</span> <span class="st">"{rowStart} \u81f3 {rowEnd} \u9879\u7ed3\u679c,\u5171 {rows} \u9879"</span>,</span>
@@ -8585,7 +8649,7 @@ other means, such as a button in the example above.</p>
 </h2>
 <p>To use reactable in Shiny apps, use <code><a href="../reference/reactable-shiny.html">renderReactable()</a></code>
 and <code><a href="../reference/reactable-shiny.html">reactableOutput()</a></code>:</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span>
 <span></span>
@@ -8611,7 +8675,7 @@ for multiple selection.</p>
 <code><a href="../reference/getReactableState.html">getReactableState()</a></code>. The selected rows are given as a
 vector of row indices (e.g. <code>c(1, 6, 4)</code>) or
 <code>NULL</code> if no rows are selected.</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span>
 <span></span>
@@ -8643,7 +8707,7 @@ vector of row indices (e.g. <code>c(1, 6, 4)</code>) or
 </h4>
 <p>You can preselect rows by specifying a vector of row indices in
 <code>defaultSelected</code>:</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span>, selection <span class="op">=</span> <span class="st">"multiple"</span>, defaultSelected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" data-react-ssr id="htmlwidget-3814dc3fa30049588d43" style="width:auto;height:auto;"><div class="Reactable ReactTable"><div class="rt-table" role="table">
 <div class="rt-thead" role="rowgroup" style="min-width:545px"><div class="rt-tr rt-tr-header" role="row" style="flex:1 0 auto;min-width:545px">
@@ -8713,7 +8777,7 @@ vector of row indices (e.g. <code>c(1, 6, 4)</code>) or
 </h4>
 <p>You can style selected rows using <code>rowSelectedStyle</code> in
 <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span>,</span>
 <span>  selection <span class="op">=</span> <span class="st">"multiple"</span>,</span>
@@ -8787,7 +8851,7 @@ vector of row indices (e.g. <code>c(1, 6, 4)</code>) or
 </div></div></div>
 <script type="application/json" data-for="htmlwidget-d9080448559f478a0f97">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Sepal.Length":[5.1,4.9,4.7,4.6],"Sepal.Width":[3.5,3,3.2,3.1],"Petal.Length":[1.4,1.4,1.3,1.5],"Petal.Width":[0.2,0.2,0.2,0.2],"Species":["setosa","setosa","setosa","setosa"]},"columns":[{"id":".selection","name":"","type":null,"resizable":false,"width":45,"selectable":true},{"id":"Sepal.Length","name":"Sepal.Length","type":"numeric"},{"id":"Sepal.Width","name":"Sepal.Width","type":"numeric"},{"id":"Petal.Length","name":"Petal.Length","type":"numeric"},{"id":"Petal.Width","name":"Petal.Width","type":"numeric"},{"id":"Species","name":"Species","type":"factor"}],"selection":"multiple","defaultSelected":[0,2],"onClick":"select","borderless":true,"theme":{"rowSelectedStyle":{"backgroundColor":"#eee","boxShadow":"inset 2px 0 0 0 #ffa62d"}},"dataKey":"9724748bd1a2d78de4b47ca9f49dd541"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>Or using a <code>rowStyle</code> or <code>rowClass</code> JavaScript
 function:</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">22</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span>, <span class="st">"MPG.city"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  groupBy <span class="op">=</span> <span class="st">"Manufacturer"</span>,</span>
@@ -8875,7 +8939,7 @@ function:</p>
 </h4>
 <p>You can customize the selection column using
 <code>".selection"</code> as the column name:</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span></span>
 <span>  <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span>,</span>
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -9204,7 +9268,7 @@ function:</p>
 </h3>
 <p>You can update the selected rows, expanded rows, current page, or
 data using <code><a href="../reference/updateReactable.html">updateReactable()</a></code>:</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span>
 <span></span>
@@ -9295,7 +9359,7 @@ indices, or <code>NULL</code> if no rows are selected</li>
 <p>To only watch for changes on a specific value, you can use the
 optional <code>name</code> argument, like
 <code>getReactableState(outputId, "selected")</code>.</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
@@ -9362,7 +9426,7 @@ optional <code>name</code> argument, like
 Markdown document or Shiny app using <a href="https://rstudio.github.io/crosstalk" class="external-link">Crosstalk</a>. To get
 started, install the <code>crosstalk</code> package and wrap your data
 frame in a <code><a href="https://rdrr.io/pkg/crosstalk/man/SharedData.html" class="external-link">crosstalk::SharedData</a></code> object:</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"crosstalk"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/crosstalk/" class="external-link">crosstalk</a></span><span class="op">)</span></span>
@@ -9370,7 +9434,7 @@ frame in a <code><a href="https://rdrr.io/pkg/crosstalk/man/SharedData.html" cla
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va"><a href="https://rdrr.io/pkg/crosstalk/man/SharedData.html" class="external-link">SharedData</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></code></pre></div>
 <p>Then, pass the shared data to <code><a href="../reference/reactable.html">reactable()</a></code> and any other
 Crosstalk-compatible HTML widget or filter input:</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reactable.html">reactable</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/crosstalk/man/filter_slider.html" class="external-link">filter_slider</a></span><span class="op">(</span><span class="st">"sepal_length"</span>, <span class="st">"Sepal Length"</span>, <span class="va">data</span>, <span class="op">~</span><span class="va">Sepal.Length</span><span class="op">)</span></span></code></pre></div>
@@ -9384,7 +9448,7 @@ Crosstalk</a> in the Crosstalk package documentation.</p>
 API, such as Crosstalk’s <code><a href="https://rdrr.io/pkg/crosstalk/man/filter_select.html" class="external-link">filter_checkbox()</a></code>,
 <code><a href="https://rdrr.io/pkg/crosstalk/man/filter_slider.html" class="external-link">filter_slider()</a></code>, and <code><a href="https://rdrr.io/pkg/crosstalk/man/filter_select.html" class="external-link">filter_select()</a></code>
 inputs:</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/crosstalk/" class="external-link">crosstalk</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cars</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -9583,7 +9647,7 @@ compatible with Bootstrap 3. If you’re not using Bootstrap, here’s an
 alternative way to create a responsive grid using CSS grid.</p>
 <details><summary>
 Example: grid layout using CSS grid
-</summary><div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/crosstalk/" class="external-link">crosstalk</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cars</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -9611,7 +9675,7 @@ Example: grid layout using CSS grid
 Crosstalk’s linked selection (or linked brushing) API.</p>
 <p>In this example, you can select rows to highlight points on the map,
 or select areas on the map to highlight rows in the table.</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/crosstalk/" class="external-link">crosstalk</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/leaflet/" class="external-link">leaflet</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -9774,7 +9838,7 @@ downloads table data to a CSV file, including any filters that have been
 applied. See the JavaScript API guide for more details on usage,
 including how to customize the field separator, decimal separator,
 included columns, and more.</p>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/fontawesome" class="external-link">fontawesome</a></span><span class="op">)</span></span>
 <span></span>
@@ -9869,7 +9933,7 @@ Download as CSV
 JavaScript API, as <a href="./javascript-api.html#reactable-downloaddatacsv"><code>Reactable.downloadDataCSV()</code></a>
 automatically applies any client-side filtering that has been done to
 the table.</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glin.github.io/reactable/" class="external-link">reactable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
@@ -9900,7 +9964,7 @@ the table.</p>
 <div class="section level3">
 <h3 id="custom-column-filter">Custom column filter<a class="anchor" aria-label="anchor" href="#custom-column-filter"></a>
 </h3>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -9999,7 +10063,7 @@ the table.</p>
 <div class="section level3">
 <h3 id="custom-search-input">Custom search input<a class="anchor" aria-label="anchor" href="#custom-search-input"></a>
 </h3>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">15</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -10087,7 +10151,7 @@ the table.</p>
 <div class="section level3">
 <h3 id="column-grouping-select">Column grouping select<a class="anchor" aria-label="anchor" href="#column-grouping-select"></a>
 </h3>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
@@ -10194,7 +10258,7 @@ the table.</p>
 <div class="section level3">
 <h3 id="row-expansion-toggle-button">Row expansion toggle button<a class="anchor" aria-label="anchor" href="#row-expansion-toggle-button"></a>
 </h3>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -10266,7 +10330,7 @@ the table.</p>
 <div class="callout">
 <p>New in v0.4.0</p>
 </div>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span>,</span>
