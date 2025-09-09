@@ -114,11 +114,6 @@ main table {
   display: table;
 }
 
-// Make highlighted text legible for lighter text (e.g., dark background examples)
-::selection {
-  color: $body-color;
-}
-
 .navbar {
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.15);
 }
