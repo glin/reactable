@@ -41,6 +41,8 @@ jobs:
         run: |
           # Override PPM repo and do not autodetect the distro (setup-r action env var)
           echo "RSPM=https://p3m.dev/cran/__linux__/manylinux_2_28/latest" >> $GITHUB_ENV
+          # Configure pak to use the same PPM repo when checking for the latest packages
+          echo "PKG_CRAN_MIRROR=${RSPM}" >> $GITHUB_ENV
           # Disable automatic system requirements installation since it is unnecessary (pak env var)
           echo "PKG_SYSREQS=FALSE" >> $GITHUB_ENV
 
