@@ -290,10 +290,16 @@ reactable(iris[1:5, ], showPagination = TRUE)
 
 ### No pagination
 
-Tables are paginated by default, but you can disable pagination by setting `pagination` to `FALSE`:
+Tables are paginated by default, but you can disable pagination by setting `pagination = FALSE`:
 
 ```{r}
 reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
+```
+
+If you want to keep the row count and pagination controls visible even when pagination is disabled, set `showPagination = TRUE`:
+
+```r
+reactable(iris[1:20, ], pagination = FALSE, showPagination = TRUE, highlight = TRUE, height = 250)
 ```
 
 ::: {.callout-tip}
