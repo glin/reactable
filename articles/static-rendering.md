@@ -1,0 +1,280 @@
+# Static Rendering
+
+New in v0.4.0
+
+## Introduction
+
+Static rendering is an optional feature that allows you to render tables
+to static HTML in R.
+
+By default, tables are rendered completely in the user’s browser by
+JavaScript, and there’s no actual HTML being generated when you run
+[`reactable()`](../reference/reactable.md) in R.
+
+This means when you load a page, tables will be blank at first, and then
+appear a short time later as they get rendered. In extreme cases, it can
+take a noticeably long time for tables to appear, like with the heavy
+[Examples without static rendering](./examples-no-static.md) page.
+
+With static rendering, tables are pre-rendered to their initial HTML so
+they appear immediately without any flash of content. Tables are then
+made interactive and subsequently rendered by JavaScript as needed. You
+can try refreshing on the [Examples with static
+rendering](./examples.md) page for a comparison.
+
+**Advantages**:
+
+- Better user experience in many cases, as tables appear immediately and
+  don’t cause any layout shift on page load.
+- Better support for indexing of table content by search engines. Even
+  crawlers that support JavaScript like Googlebot may have a crawl
+  budget that limits crawling of JavaScript-heavy pages.
+- Non-interactive tables (without pagination, sorting, filtering) no
+  longer require JavaScript to view, which may be useful when JavaScript
+  is unavailable, like in emails.
+
+Static rendering uses the V8 JavaScript engine provided by the [V8
+package](https://github.com/jeroen/V8). V8 is not installed with
+reactable by default, so it must be installed before using static
+rendering.
+
+**Note:** Static rendering is currently experimental, and is not
+supported for tables rendered via
+[`reactableOutput()`](../reference/reactable-shiny.md) in Shiny. There
+are also other [limitations and tradeoffs](#limitations-and-tradeoffs)
+to consider, and static rendering may not make sense for every table.
+
+## Usage
+
+To use static rendering, ensure that the [V8
+package](https://github.com/jeroen/V8) is installed first. V8 is not
+installed with reactable by default.
+
+``` r
+install.packages("V8")
+```
+
+Then, use `reactable(static = TRUE)` to render a single table to static
+HTML:
+
+``` r
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+reactable(data, defaultPageSize = 5, static = TRUE)
+```
+
+Manufacturer
+
+Model
+
+Type
+
+Price
+
+Acura
+
+Integra
+
+Small
+
+15.9
+
+Acura
+
+Legend
+
+Midsize
+
+33.9
+
+Audi
+
+90
+
+Compact
+
+29.1
+
+Audi
+
+100
+
+Midsize
+
+37.7
+
+BMW
+
+535i
+
+Midsize
+
+30
+
+1–5 of 93 rows
+
+Previous
+
+1
+
+2
+
+3
+
+4
+
+5
+
+...
+
+19
+
+Next
+
+Or use `options(reactable.static = TRUE)` to enable static rendering for
+all tables:
+
+``` r
+options(reactable.static = TRUE)
+
+reactable(data, defaultPageSize = 5)
+```
+
+Manufacturer
+
+Model
+
+Type
+
+Price
+
+Acura
+
+Integra
+
+Small
+
+15.9
+
+Acura
+
+Legend
+
+Midsize
+
+33.9
+
+Audi
+
+90
+
+Compact
+
+29.1
+
+Audi
+
+100
+
+Midsize
+
+37.7
+
+BMW
+
+535i
+
+Midsize
+
+30
+
+1–5 of 93 rows
+
+Previous
+
+1
+
+2
+
+3
+
+4
+
+5
+
+...
+
+19
+
+Next
+
+## Examples
+
+The reactable package documentation uses static rendering in several
+articles, and provides alternate versions of these pages without static
+rendering for comparison:
+
+- [Examples with static rendering](./examples.md) vs. [Examples without
+  static rendering](./examples-no-static.md)
+- [Demo Cookbook with static rendering](./cookbook/cookbook.md)
+  vs. [Demo Cookbook without static
+  rendering](./cookbook/cookbook-no-static.md)
+
+## Limitations and Tradeoffs
+
+Although static rendering might seem useful to enable for all tables,
+there are some limitations and tradeoffs to consider, and it may not
+make sense to use for every table.
+
+- Static rendering isn’t supported for tables rendered via
+  [`reactableOutput()`](../reference/reactable-shiny.md) in Shiny. It is
+  still supported for [`reactable()`](../reference/reactable.md) tables
+  specified in a Shiny app’s `ui` definition, however.
+
+- Some features in reactable do not fully support static rendering yet:
+
+  - [`colFormat()`](../reference/colFormat.md) only supports `en`
+    locales. Formatting with other locales will still work in the
+    browser, but tables may initially show data formatted in an `en`
+    locale.
+  - Default expanded rows and row details with
+    `reactable(defaultExpanded = TRUE)` are not statically rendered.
+
+- There may be a noticeable period where tables are visible but not yet
+  interactable, as the client-side JavaScript that makes tables
+  interactive is still running. In these cases, the user experience may
+  be better with fully client-side rendered tables.
+
+- HTML documents will be larger, which could affect users with slower
+  download speeds. Static rendering is especially not recommended for
+  unpaginated tables with a large number of rows.
+
+- Custom JavaScript render functions and style functions won’t have
+  access to the DOM, as they won’t be run in a browser environment. If
+  your custom JavaScript functions require the DOM (e.g., `window` or
+  `document`), you can defer rendering until the DOM is available to
+  prevent rendering failures:
+
+  ``` r
+  colDef(
+    cell = JS("
+      function(cellInfo) {
+        if (typeof document !== 'undefined') {
+          // Not in a browser environment, defer rendering until running in a browser
+          return null
+        }
+      }
+    ")
+  )
+  ```
+
+- Custom JavaScript render functions and style functions won’t have
+  access to external JavaScript code. Any external JavaScript has to be
+  included inline for now, but this may change in the future.
+
+- Tables using [`reactableTheme()`](../reference/reactableTheme.md) may
+  initially appear unstyled when rendered in pkgdown websites.
+  Statically rendered theme styles are usually placed in the document
+  `<head>` to prevent problem, but pkgdown renders all user-specified
+  `<head>` content into the document body, which means tables will
+  appear before browsers process the theme styles.

@@ -1,0 +1,474 @@
+# Building the Twitter Followers Demo
+
+## Candidates whose followers are loyal only to them
+
+Share of each 2020 candidate's followers who don't follow any other
+candidates
+
+Show more
+
+------------------------------------------------------------------------
+
+The [Twitter Followers](twitter-followers/twitter-followers.md) demo is
+a re-creation of the table from the FiveThirtyEight article, [Which 2020
+Candidates Have The Most In Common … On
+Twitter?](https://fivethirtyeight.com/features/which-2020-candidates-have-the-most-in-common-on-twitter/)
+
+It’s an interactive HTML table with sorting, data formatting, embedded
+bar charts, and custom styling. In this article, we’ll walk through how
+we made this table using reactable, and show a typical workflow for
+building tables.
+
+## Get the data
+
+FiveThirtyEight shares the data for many of their articles online at
+<https://data.fivethirtyeight.com>, licensed under [CC by
+4.0](https://github.com/fivethirtyeight/data/blob/master/LICENSE).
+
+You can download the [raw
+data](https://github.com/fivethirtyeight/twitter-overlap) for this
+article, but we’ll conveniently begin working with a cleaned CSV file:
+[`twitter_followers.csv`](https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv).
+
+``` r
+data <- read.csv("https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv",
+                 stringsAsFactors = FALSE)
+
+dplyr::glimpse(data)
+```
+
+    ## Rows: 20
+    ## Columns: 3
+    ## $ account                 <chr> "marwilliamson", "BernieSanders", "Hickenloope…
+    ## $ followers               <int> 2610335, 9254423, 144816, 4246252, 3558333, 26…
+    ## $ exclusive_followers_pct <dbl> 0.748, 0.632, 0.563, 0.525, 0.438, 0.434, 0.34…
+
+## Create a basic table
+
+The first thing we’ll do is create a basic table using
+[`reactable()`](../reference/reactable.md):
+
+``` r
+library(reactable)
+
+reactable(data)
+```
+
+You can already sort the table, but there’s no default sorting on the
+“exclusive followers” column. The numeric columns are still unformatted
+and sort in ascending order (smallest to largest) by default.
+
+Let’s customize the default sorting, add proper column names, and format
+the data.
+
+We’ll use reactable’s [built-in column
+formatters](examples.html#column-formatting) to add an @ symbol to the
+Twitter handles, add thousands separators to the follower counts, and
+format the percentages with 1 decimal place.
+
+``` r
+reactable(
+  data,
+  defaultSorted = "exclusive_followers_pct",
+  columns = list(
+    account = colDef(
+      name = "Account",
+      format = colFormat(prefix = "@")
+    ),
+    followers = colDef(
+      name = "Followers",
+      defaultSortOrder = "desc",
+      format = colFormat(separators = TRUE)
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      format = colFormat(percent = TRUE, digits = 1)
+    )
+  )
+)
+```
+
+## Add bar charts
+
+Next, we’ll add bar charts to the numeric and percentage columns. The
+FiveThirtyEight table uses pure HTML and CSS to create these bar charts,
+so we’ll do something similar using a method based on CSS flexbox (and
+also shown in the [Demo Cookbook](cookbook/cookbook.html#bar-charts)).
+
+We’ll generate the bar chart HTML with help from the `htmltools`
+package, and render them in the cells via [custom render
+functions](examples.html#custom-rendering).
+
+Since we’re taking over cell rendering with custom render functions,
+we’ll also have to manually format the numbers and percentages now.
+Custom cell renderers override column formatters, but this may change in
+the future.
+
+**Tip:** If you’re ever curious to see how an HTML table was made, you
+can open your [browser’s developer
+tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+and inspect the HTML and CSS behind the table. This is how we figured
+out how the bar charts were made, which colors and fonts were used, and
+so on.
+
+``` r
+library(htmltools)
+
+# Render a bar chart with a label on the left
+bar_chart <- function(label, width = "100%", height = "0.875rem", fill = "#00bfc4", background = NULL) {
+  bar <- div(style = list(background = fill, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, marginLeft = "0.375rem", background = background), bar)
+  div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+reactable(
+  data,
+  defaultSorted = "exclusive_followers_pct",
+  columns = list(
+    account = colDef(
+      name = "Account",
+      format = colFormat(prefix = "@")
+    ),
+    followers = colDef(
+      name = "Followers",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value * 100, nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    )
+  )
+)
+```
+
+The bar charts look good, but they aren’t aligned because the numbers
+have different widths. Let’s fix this by giving each numeric label the
+same width. One way to do this would be to format the labels as
+fixed-width strings, and use a monospaced font so that each character
+takes up the same width. (An alternate method is shown in the [Demo
+Cookbook](cookbook/cookbook.html#units-on-first-row-only).)
+
+**Note:** Some fonts have numerals that are all equal in width, but
+others do not. In tables with numeric columns, using a font with tabular
+or monospaced figures can make the numbers easier to align and read. You
+can learn more about the different types of fonts in this article,
+[Proportional vs. Tabular
+Figures](https://www.fonts.com/content/learning/fontology/level-3/numbers/proportional-vs-tabular-figures).
+
+``` r
+reactable(
+  data,
+  defaultSorted = "exclusive_followers_pct",
+  columns = list(
+    account = colDef(
+      name = "Account",
+      format = colFormat(prefix = "@")
+    ),
+    followers = colDef(
+      name = "Followers",
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        value <- format(value, big.mark = ",")
+        # Fix each label using the width of the widest number (incl. thousands separators)
+        value <- format(value, width = 9, justify = "right")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      align = "left",
+      # Use the operating system's default monospace font, and
+      # preserve white space to prevent it from being collapsed by default
+      style = list(fontFamily = "monospace", whiteSpace = "pre")
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        value <- paste0(format(value * 100, nsmall = 1), "%")
+        # Fix width here to align single and double-digit percentages
+        value <- format(value, width = 5, justify = "right")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      align = "left",
+      style = list(fontFamily = "monospace", whiteSpace = "pre")
+    )
+  )
+)
+```
+
+## Dynamic formatting
+
+The FiveThirtyEight table has a nifty little detail of only showing the
+percent sign in first row of the “exclusive followers” column to reduce
+repetition. If you sort the table, you’ll notice that the percent always
+appears in the first row regardless of row order.
+
+To achieve dynamic behavior like this, we’ll have to write some
+JavaScript. We need access to the client-side (browser) state of the
+table to know which row is first after sorting. This isn’t possible to
+do with R (at least without Shiny), so we’ll render the cells using a
+custom JavaScript render function as shown in the [Demo
+Cookbook](cookbook/cookbook.html#units-on-first-row-only).
+
+Since we’re switching to a JavaScript render function, we’ll
+unfortunately have to reformat the data and recreate the bar chart in
+JavaScript. We’ll generate the same bar chart HTML by concatenating
+strings, and it’ll be kind of ugly written as a character string in R.
+
+``` r
+reactable(
+  data,
+  defaultSorted = "exclusive_followers_pct",
+  columns = list(
+    account = colDef(
+      name = "Account",
+      format = colFormat(prefix = "@")
+    ),
+    followers = colDef(
+      name = "Followers",
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        value <- format(value, big.mark = ",")
+        value <- format(value, width = 9, justify = "right")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      align = "left",
+      style = list(fontFamily = "monospace", whiteSpace = "pre")
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      # Format and render the cell with a JavaScript render function
+      cell = JS('function(cellInfo) {
+        // Format as a percentage with 1 decimal place
+        const pct = (cellInfo.value * 100).toFixed(1) + "%"
+        // Fix width of numeric labels
+        let value = pct.padStart(5)
+        // Show percent sign on first row only
+        if (cellInfo.viewIndex > 0) {
+          value = value.replace("%", " ")
+        }
+        // Render bar chart
+        return `
+          <div style="display: flex; align-items: center;">
+            <span style="font-family: monospace; white-space: pre;">${value}</span>
+            <div style="flex-grow: 1; margin-left: 0.375rem; height: 0.875rem; background-color: #e1e1e1">
+              <div style="height: 100%; width: ${pct}; background-color: #fc5185"></div>
+            </div>
+          </div>
+        `
+      }'),
+      # Render this column as HTML
+      html = TRUE,
+      align = "left"
+    )
+  )
+)
+```
+
+## Finishing touches
+
+Finally, we’ll style the table and add some extra niceties.
+
+We’ll display everything on one page using `pagination = FALSE` and
+reduce the white space in the table with `compact = TRUE`. We’ll apply
+custom styling by adding our own CSS classes to the table and column
+headers. This will be used to fix the table width, highlight column
+headers on hover, and change the font of the table.
+
+FiveThirtyEight uses two commercial fonts for their table: Atlas Grotesk
+for text, and Decima Mono for numbers. We’ll use similar-looking free
+fonts from Google Fonts instead:
+[Karla](https://fonts.google.com/specimen/Karla) for text, and [Fira
+Mono](https://fonts.google.com/specimen/Fira+Mono) for numbers.
+
+We’ll also insert links to Twitter accounts using custom cell renderers
+and move the bar chart styles to CSS for better organization.
+
+While we won’t go into detail here, you can check out the Examples and
+Demo Cookbook to learn more about:
+
+- [Adding custom CSS to a table](examples.html#custom-css)
+- [Adding custom web fonts to an R Markdown
+  document](cookbook/cookbook.html#custom-fonts)
+- [Highlighting column headers on
+  hover](cookbook/cookbook.html#highlight-sorted-headers)
+- [Inserting links in a table](cookbook/cookbook.html#insert-links)
+
+The final table and code is shown below. You can also find the source
+code for the demo at
+[`vignettes/twitter-followers/twitter-followers.Rmd`](https://github.com/glin/reactable/blob/main/vignettes/twitter-followers/twitter-followers.Rmd).
+
+------------------------------------------------------------------------
+
+### Candidates whose followers are loyal only to them
+
+Share of each 2020 candidate's followers who don't follow any other
+candidates
+
+``` r
+tbl <- reactable(
+  data,
+  pagination = FALSE,
+  defaultSorted = "exclusive_followers_pct",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    account = colDef(
+      cell = function(value) {
+        url <- paste0("https://twitter.com/", value)
+        tags$a(href = url, target = "_blank", paste0("@", value))
+      },
+      width = 150
+    ),
+    followers = colDef(
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        width <- paste0(value * 100 / max(data$followers), "%")
+        value <- format(value, big.mark = ",")
+        value <- format(value, width = 9, justify = "right")
+        bar <- div(
+          class = "bar-chart",
+          style = list(marginRight = "0.375rem"),
+          div(class = "bar", style = list(width = width, backgroundColor = "#3fc1c9"))
+        )
+        div(class = "bar-cell", span(class = "number", value), bar)
+      }
+    ),
+    exclusive_followers_pct = colDef(
+      name = "Exclusive Followers",
+      defaultSortOrder = "desc",
+      cell = JS('function(cellInfo) {
+        // Format as percentage
+        const pct = (cellInfo.value * 100).toFixed(1) + "%"
+        // Pad single-digit numbers
+        let value = pct.padStart(5)
+        // Show % on first row only
+        if (cellInfo.viewIndex > 0) {
+          value = value.replace("%", " ")
+        }
+        // Render bar chart
+        return `
+          <div class="bar-cell">
+            <span class="number">${value}</span>
+            <div class="bar-chart" style="background-color: #e1e1e1">
+              <div class="bar" style="width: ${pct}; background-color: #fc5185"></div>
+            </div>
+          </div>
+        `
+      }'),
+      html = TRUE
+    )
+  ),
+  compact = TRUE,
+  class = "followers-tbl"
+)
+```
+
+``` r
+# Add the title and subtitle
+div(class = "twitter-followers",
+    div(class = "followers-header",
+        h3(class = "followers-title", "Candidates whose followers are loyal only to them"),
+        "Share of each 2020 candidate's followers who don't follow any other candidates"
+    ),
+    tbl
+)
+```
+
+``` r
+# Add Google Fonts to the page
+tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
+          rel = "stylesheet")
+```
+
+``` css
+/* CSS for the R Markdown document, inserted through a ```{css} code chunk */
+
+/* Styles for the table container, title, and subtitle */
+.twitter-followers {
+  /* Center the table */
+  margin: 0 auto;
+  /* Reduce the table width */
+  width: 575px;
+  font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.followers-header {
+  margin: 1.125rem 0;
+  font-size: 1rem;
+}
+
+.followers-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Styles for the table */
+.followers-tbl {
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+}
+
+.followers-tbl a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.followers-tbl a:hover,
+.followers-tbl a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
+}
+
+/* Styles for the column headers */
+.header {
+  border-bottom: 2px solid #555;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.header:hover {
+  background-color: #eee;
+}
+
+/* Styles for the bar charts */
+.bar-cell {
+  display: flex;
+  align-items: center;
+}
+
+.number {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  font-size: 0.84375rem;
+  white-space: pre;
+}
+
+.bar-chart {
+  flex-grow: 1;
+  margin-left: 0.375rem;
+  height: 0.875rem;
+}
+
+.bar {
+  height: 100%;
+}
+```

@@ -1,0 +1,180 @@
+# CRAN Packages
+
+## Top CRAN Packages of 2019
+
+------------------------------------------------------------------------
+
+Source: [crandb](https://github.com/r-hub/crandb),
+[cranlogs](https://github.com/r-hub/cranlogs)
+
+## Source Code
+
+``` r
+library(reactable)
+library(htmltools)
+
+pkgs <- read.csv("cran_pkgs.csv", stringsAsFactors = FALSE)
+versions <- jsonlite::read_json("versions.json", simplifyDataFrame = TRUE)
+
+row_details <- function(index) {
+  pkg <- pkgs[index, ]
+  urls <- unlist(strsplit(gsub(",", " , ", pkg$URL, perl = TRUE), "[ \n]"))
+
+  pkg_field <- function(name, ...) {
+    if (any(is.na(...))) NULL
+    else tagList(div(class = "detail-label", name), ...)
+  }
+
+  detail <- div(
+    class = "package-detail",
+    div(class = "detail-header", pkg$Package, span(class = "detail-title", pkg$Title)),
+    div(class = "detail-description", pkg$Description),
+    pkg_field("Version", pkg$Version),
+    pkg_field("Depends", pkg$Depends),
+    pkg_field("Imports", pkg$Imports),
+    pkg_field("Suggests", pkg$Suggests),
+    pkg_field("Author", pkg$Author),
+    pkg_field("License", pkg$License),
+    pkg_field("URL", lapply(urls, function(url) {
+      if (grepl("https?://", url)) tags$a(href = url, url)
+      else if (identical(url, ",")) ", "
+      else url
+    })),
+    pkg_field("System Requirements", pkg$SystemRequirements)
+  )
+
+  if (length(versions[[pkg$Package]]) > 0) {
+    archived <- pkg_field(
+      "Archived Versions",
+      reactable(
+        versions[[pkg$Package]],
+        pagination = FALSE,
+        defaultColDef = colDef(headerClass = "header"),
+        columns = list(
+          Date = colDef(name = "Published", align = "right", cell = function(value) {
+            strftime(value, format = "%b %d, %Y")
+          })
+        ),
+        class = "archived-table",
+        theme = reactableTheme(cellPadding = "8px 12px")
+      )
+    )
+    detail <- tagAppendChild(detail, archived)
+  }
+
+  detail
+}
+
+tbl <- reactable(
+  pkgs[, c("Package", "Version", "Title", "Date", "Downloads")],
+  defaultSorted = "Downloads",
+  defaultPageSize = 20,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(10, 20, 50, 100),
+  onClick = "expand",
+  resizable = TRUE,
+  defaultColDef = colDef(headerClass = "header"),
+  columns = list(
+    Title = colDef(minWidth = 250, class = "package-title", cell = function(value) {
+      span(title = value, value)
+    }),
+    Date = colDef(name = "Published", align = "right", cell = function(value) {
+      strftime(value, format = "%b %d, %Y")
+    }),
+    Downloads = colDef(defaultSortOrder = "desc", cell = function(value) {
+      value <- format(round(value / 1e6, 1), nsmall = 1)
+      tagList(value, span(class = "units", "M"))
+    })
+  ),
+  details = row_details,
+  wrap = FALSE,
+  class = "packages-table",
+  rowStyle = list(cursor = "pointer"),
+  theme = reactableTheme(cellPadding = "8px 12px")
+)
+
+div(class = "cran-packages",
+  h2(class = "title", "Top CRAN Packages of 2019"),
+  tbl
+)
+```
+
+``` r
+tags$link(href = "https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=fallback", rel = "stylesheet")
+```
+
+``` css
+.cran-packages {
+  font-family: Nunito, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.packages-table {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  border: 1px solid hsl(213, 33%, 93%);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  background-color: hsl(213, 45%, 97%);
+  border-bottom-color: hsl(213, 33%, 93%);
+  border-bottom-width: 1px;
+  color: hsl(213, 13%, 33%);
+}
+
+.header[aria-sort]:hover,
+.header[aria-sort]:focus {
+  color: hsl(213, 55%, 50%);
+}
+
+.units {
+  margin-left: 0.15em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.package-title {
+  font-size: 0.875rem;
+}
+
+.package-detail {
+  padding: 24px;
+  box-shadow: inset 0 1px 3px #dbdbdb;
+  background: hsl(213, 20%, 99%);
+}
+
+.detail-label {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.detail-header {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.detail-title {
+  margin-left: 1rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.detail-description {
+  font-size: 0.875rem;
+}
+
+.archived-table {
+  max-width: 15rem;
+  border: 1px solid hsl(213, 33%, 93%);
+  border-radius: 4px;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.05);
+  font-size: 0.875rem;
+}
+```

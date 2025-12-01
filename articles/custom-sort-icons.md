@@ -1,0 +1,66 @@
+# Custom Sort Icons
+
+### Custom sort icons using CSS pseudo-elements
+
+``` r
+library(reactable)
+library(htmltools)
+
+reactable(
+  MASS::Cars93[, 1:5],
+  defaultSorted = "Min.Price",
+  defaultColDef = colDef(
+    header = function(value) {
+      # Add custom sort icons to the right of each column header.
+      # They don't have any content by themselves, but we'll insert
+      # text content (arrow symbols) in them using CSS.
+      # Also, ensure these are hidden from screen readers using aria-hidden="true".
+      sort_icon <- span(class = "my-sort-icon", "aria-hidden" = TRUE)
+      tagList(value, sort_icon)
+    }
+  ),
+  # Hide the built-in sort icon
+  showSortIcon = FALSE
+)
+```
+
+Sortable column headers will have an
+[`aria-sort`](https://www.digitala11y.com/aria-sort-properties/)
+attribute set to either `none` (unsorted), `ascending` (ascending sort),
+or `descending` (descending sort).
+
+You can use the `aria-sort` state, along with CSS
+[pseudo-elements](https://developer.mozilla.org/en-US/docs/Web/CSS/::after),
+to insert custom arrow arrow symbols (or any other symbol, emoji, text)
+for each sorting state.
+
+``` css
+/* Styling for all sort icons */
+[aria-sort] .my-sort-icon {
+  margin-left: 5px;
+  color: #3f51b5;
+}
+
+/* Styling for ascending sort icon */
+[aria-sort='ascending'] .my-sort-icon::after {
+  /* Up arrow (Unicode) */
+  content: '\2bc5';
+}
+
+/* Styling for descending sort icon */
+[aria-sort='descending'] .my-sort-icon::after {
+  /* Down arrow (Unicode) */
+  content: '\2bc6';
+}
+
+/* Styling for unsorted sort icon */
+[aria-sort='none'] .my-sort-icon::after {
+  /* Up-and-down arrow (Unicode) */
+  content: '\2195';
+  opacity: 0.8;
+}
+```
+
+To find other Unicode arrows and symbols, see
+<https://en.wikipedia.org/wiki/Arrow_(symbol)#Arrows_in_Unicode> or
+<https://www.fileformat.info/info/unicode/block/geometric_shapes/list.htm>.

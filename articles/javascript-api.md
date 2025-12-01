@@ -1,0 +1,696 @@
+# JavaScript API
+
+## Introduction
+
+The JavaScript API lets you manipulate and access tables from
+JavaScript. You can use this to create custom interactive controls for
+your table without the use of Shiny, or add cross-widget interactions
+beyond what Crosstalk provides.
+
+Common use cases for the JavaScript API include:
+
+- Export buttons to download table data to a CSV file
+- Custom filter inputs located outside of the table
+- Toggle buttons for row grouping or row expansion
+
+#### Example: CSV download button
+
+``` r
+library(htmltools)
+
+htmltools::browsable(
+  tagList(
+    tags$button("Download as CSV", onclick = "Reactable.downloadDataCSV('cars-table')"),
+
+    reactable(
+      MASS::Cars93[, 1:5],
+      defaultPageSize = 5,
+      elementId = "cars-table"
+    )
+  )
+)
+```
+
+Download as CSV
+
+## Using the JavaScript API
+
+To use the JavaScript API, your table must first have a unique ID that
+distinguishes it from other tables:
+
+- For tables in static documents (e.g., R Markdown), add an ID through
+  the `elementId` argument in
+  [`reactable()`](../reference/reactable.md):
+
+  ``` r
+  reactable(MASS::Cars93, elementId = "cars-table")
+  ```
+
+- For tables in Shiny apps, the ID will be the Shiny output ID specified
+  in [`reactableOutput()`](../reference/reactable-shiny.md). For
+  example, the table in this app uses `cars_table` as its ID:
+
+  ``` r
+  library(shiny)
+
+  ui <- fluidPage(
+    reactableOutput("cars_table")
+  )
+
+  server <- function(input, output) {
+    output$cars_table <- renderReactable({
+      reactable(MASS::Cars93)
+    })
+  }
+
+  shinyApp(ui, server)
+  ```
+
+Once your table has an ID, you can use any of the `Reactable` JavaScript
+functions with that table ID. For example, to download data from the
+`cars-table` table to a CSV file, the JavaScript code would look like
+this:
+
+``` js
+// Download the "cars-table" data to a CSV file named 'cars.csv'
+Reactable.downloadDataCSV('cars-table', 'cars.csv')
+```
+
+To try this out interactively, you can open your [browser’s developer
+tools](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools)
+and run this function in the [JavaScript
+console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#the_javascript_console).
+
+### Creating custom interactive controls
+
+Most users will likely want to use the JavaScript API through an
+interactive control, such as a button, so they could decide when to
+download the table data. Using HTML, you can create a `<button>` element
+with an `onclick` action that calls the `Reactable` JavaScript function.
+
+This example uses the `htmltools` package to render a CSV download
+button. You can copy this code into an R console to view the output:
+
+``` r
+library(htmltools)
+
+htmltools::browsable(
+  tagList(
+    tags$button("Download as CSV", onclick = "Reactable.downloadDataCSV('cars-table', 'cars.csv')"),
+
+    reactable(MASS::Cars93[, 1:5], elementId = "cars-table")
+  )
+)
+```
+
+**Note:**
+[`htmltools::browsable()`](https://rstudio.github.io/htmltools/reference/browsable.html)
+is a convenient way to view the rendered HTML when copying code into the
+console. It isn’t required to render HTML in R Markdown documents or
+Shiny apps.
+
+To reuse this button in other tables, you can also convert it into a
+function that generates download buttons:
+
+``` r
+library(htmltools)
+
+csvDownloadButton <- function(tableId, label = "Download as CSV", filename = "data.csv") {
+  htmltools::tags$button(
+    label,
+    onclick = sprintf("Reactable.downloadDataCSV('%s', '%s')", tableId, filename)
+  )
+}
+
+htmltools::browsable(
+  tagList(
+    csvDownloadButton("cars-table", "Download as CSV", filename = "cars.csv"),
+
+    reactable(MASS::Cars93[, 1:5], elementId = "cars-table")
+  )
+)
+```
+
+For more examples of custom controls that use the JavaScript API, check
+out the [JavaScript API examples](examples.html#javascript-api).
+
+## JavaScript API Reference
+
+### `Reactable.downloadDataCSV()`
+
+Downloads the table data to a CSV file. The downloaded file will be
+named `data.csv` by default, but you can customize this using the
+optional `filename` argument.
+
+The downloaded data will include any filters that have been applied, and
+exclude any sorting or grouping. Hidden columns will also be included,
+but this may be customizable in the future.
+
+For further customization, you can use the `options` argument to only
+include specific columns, exclude column headers, change the field
+separator, or change the decimal separator (new in v0.4.0).
+
+``` ts
+Reactable.downloadDataCSV(
+  tableId: string,
+  filename = "data.csv",
+  // New in v0.4.0
+  options?: {
+    columnIds: string[],
+    headers: true,
+    sep: ',',
+    dec: '.'
+  }
+)
+```
+
+#### Examples
+
+``` js
+// Download table data to a file named data.csv
+Reactable.downloadDataCSV('cars-table')
+
+// Download table data to a file named cars93.csv
+Reactable.downloadDataCSV('cars-table', 'cars93.csv')
+
+// Download table data to a tab-separated values file
+Reactable.downloadDataCSV('cars-table', 'cars93.tsv', { sep: '\t' })
+
+// Download table data with custom columns and headers excluded
+Reactable.downloadDataCSV('cars-table', 'cars93.csv', {
+  columnIds: ['Model', 'Type'],
+  headers: false
+})
+```
+
+### `Reactable.getDataCSV()`
+
+New in v0.4.0
+
+Gets the table data as a CSV string. Same as
+[`Reactable.downloadDataCSV()`](#reactable-downloaddatacsv) but does not
+download the data.
+
+``` ts
+Reactable.getDataCSV(
+  tableId: string,
+  options?: {
+    columnIds: string[],
+    headers: true,
+    sep: ',',
+    dec: '.'
+  }
+)
+```
+
+#### Value
+
+A string with the table data in CSV format.
+
+#### Examples
+
+``` js
+// Get table data as a CSV string
+const csv = Reactable.getDataCSV('cars-table')
+console.log(csv)
+
+// Get table data as a tab-separated values string
+const tsv = Reactable.getDataCSV('cars-table', { sep: '\t' })
+console.log(tsv)
+```
+
+### `Reactable.setSearch()`
+
+Sets the search value of a table. To clear the search, set the value to
+`undefined`.
+
+``` ts
+Reactable.setSearch(
+  tableId: string,
+  value: any
+)
+```
+
+#### Examples
+
+``` js
+// Set the search value to "midsize"
+Reactable.setSearch('cars-table', 'midsize')
+
+// Clear the search value
+Reactable.setSearch('cars-table', undefined)
+```
+
+### `Reactable.setFilter()`
+
+Sets the filter value of a column. To clear the column filter, set the
+value to `undefined`.
+
+``` ts
+Reactable.setFilter(
+  tableId: string,
+  columnId: string,
+  value: any
+)
+```
+
+#### Examples
+
+``` js
+// Set the filter value of the "Type" column to "midsize"
+Reactable.setFilter('cars-table', 'Type', 'midsize')
+
+// Clear the filter value of the "Type" column
+Reactable.setFilter('cars-table', 'Type', undefined)
+```
+
+### `Reactable.setAllFilters()`
+
+Sets all column filter values in the table. To clear the column filters,
+set `filters` to an empty array, `[]`.
+
+``` ts
+Reactable.setAllFilters(
+  tableId: string,
+  filters: Array<{ id: string, value: any }>
+)
+```
+
+#### Examples
+
+``` js
+// Set the column filters for the "Type" column
+Reactable.setAllFilters('cars-table', [{ id: 'Type', value: 'midsize' }])
+
+// Set the column filters for the "Type" and "Model" columns
+Reactable.setAllFilters('cars-table', [
+  { id: 'Type', value: 'midsize' },
+  { id: 'Model', value: 'legend' }
+])
+
+// Clear all column filters
+Reactable.setAllFilters([])
+```
+
+### `Reactable.toggleGroupBy()`
+
+Toggles the `groupBy` state for a column between grouped and ungrouped.
+To enable or disable grouping explicitly, set the optional `isGrouped`
+argument to `true` or `false`.
+
+``` ts
+Reactable.toggleGroupBy(
+  tableId: string,
+  columnId: string,
+  isGrouped?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle groupBy state for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type')
+
+// Enable grouping for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type', true)
+
+// Disable grouping for the "Type" column
+Reactable.toggleGroupBy('cars-table', 'Type', false)
+```
+
+### `Reactable.setGroupBy()`
+
+Sets the `groupBy` columns for the table. To clear the `groupBy`
+columns, set `columnIds` to an empty array, `[]`.
+
+``` ts
+Reactable.setGroupBy(
+  tableId: string,
+  columnIds: string[]
+)
+```
+
+#### Examples
+
+``` js
+// Set the groupBy columns to "Type" and "Manufacturer"
+Reactable.setGroupBy('cars-table', ['Type', 'Manufacturer'])
+
+// Clear the groupBy columns
+Reactable.setGroupBy('cars-table', [])
+```
+
+### `Reactable.toggleAllRowsExpanded()`
+
+Toggles the expanded state of all rows in the table between expanded and
+collapsed. To expand or collapse rows explicitly, set the optional
+`isExpanded` argument to `true` or `false`.
+
+``` ts
+Reactable.toggleAllRowsExpanded(
+  tableId: string,
+  isExpanded?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle expanded state for all rows
+Reactable.toggleAllRowsExpanded('cars-table')
+
+// Expand all rows
+Reactable.toggleAllRowsExpanded('cars-table', true)
+
+// Collapse all rows
+Reactable.toggleAllRowsExpanded('cars-table', false)
+```
+
+### `Reactable.setMeta()`
+
+New in v0.4.0
+
+Sets the custom metadata for the table. `meta` can either be an object
+with new values, or a function that takes the previous metadata object
+and returns new values.
+
+New values are merged into the current metadata, so only the values
+specified in `meta` will be updated. To clear all metadata, set `meta`
+to `undefined`.
+
+``` ts
+Reactable.setMeta(
+  tableId: string,
+  meta?: object | Function
+)
+```
+
+#### Examples
+
+``` js
+// Set metadata, updating the values for the `count`, `enabled`, and `formatter` properties
+Reactable.setMeta('cars-table', { count: 123, enabled: true, formatter: value => '$' + value })
+
+// Set metadata using a function that increments `count` and toggles an `enabled` boolean
+Reactable.setMeta('cars-table', prevMeta => {
+  return { count: prevMeta.count + 1, enabled: !prevMeta.enabled }
+})
+
+// Clear metadata
+Reactable.setMeta('cars-table', undefined)
+```
+
+### `Reactable.toggleHideColumn()`
+
+New in v0.4.0
+
+Toggles the hidden state for a column between hidden and shown. To hide
+or show a column explicitly, set the optional `isHidden` argument to
+`true` or `false`.
+
+``` ts
+Reactable.toggleHideColumn(
+  tableId: string,
+  columnId: string,
+  isHidden?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle hidden state for the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type')
+
+// Hide the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type', true)
+
+// Show the "Type" column
+Reactable.toggleHideColumn('cars-table', 'Type', false)
+```
+
+### `Reactable.setHiddenColumns()`
+
+New in v0.4.0
+
+Sets the hidden columns for the table. `columnIds` can either be an
+array of column IDs, or a function that takes the previous hidden column
+IDs and returns new column IDs.
+
+To clear the hidden columns, set `columnIds` to an empty array, `[]`.
+
+``` ts
+Reactable.setHiddenColumns(
+  tableId: string,
+  columnIds: string[] | Function
+)
+```
+
+#### Examples
+
+``` js
+// Set the hidden columns to "Type" and "Manufacturer"
+Reactable.setHiddenColumns('cars-table', ['Type', 'Manufacturer'])
+
+// Set hidden columns using a function that adds "Type" to the existing hidden columns
+Reactable.setHiddenColumns('cars-table', prevHiddenColumns => {
+  return prevHiddenColumns.concat('Type')
+})
+
+// Clear the hidden columns
+Reactable.setHiddenColumns('cars-table', [])
+```
+
+### `Reactable.setData()`
+
+New in v0.4.0
+
+Updates the table data. `data` can either be in row or column format. In
+row format, `data` is an array of row objects. In column format, `data`
+is an object containing arrays of column values. `data` should have all
+the same columns as the original table data.
+
+When updating data, the selected rows and current page will reset by
+default. All other state will persist, including sorting, filtering, and
+grouping state.
+
+``` ts
+Reactable.setData(
+  tableId: string,
+  data: Array<object> | object
+)
+```
+
+#### Examples
+
+``` js
+// Update data in row format
+Reactable.setData('cars-table', [
+  { Model: 'Legend', Type: 'Midsize' },
+  { Model: 'Integra', Type: 'Small' }
+])
+
+// Update data in column format
+Reactable.setData('cars-table', {
+  Model: ['Legend', 'Integra'],
+  Type: ['Midsize', 'Small']
+})
+```
+
+### `Reactable.getState()`
+
+Gets the current state of a table.
+
+``` ts
+Reactable.getState(tableId: string)
+```
+
+#### Value
+
+An object with the following properties:
+
+| Property        | Example                                           | Description                                                                           |
+|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
+| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
+| `page`          | `2`                                               | page index (zero-based)                                                               |
+| `pageSize`      | `10`                                              | page size                                                                             |
+| `pages`         | `5`                                               | number of pages                                                                       |
+| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
+| `searchValue`   | `"petal"`                                         | table search value                                                                    |
+| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
+| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
+| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
+| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
+| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+
+#### Examples
+
+``` js
+Reactable.getState('cars-table')
+// { page: 2, searchValue: 'petal', ... }
+```
+
+### `Reactable.onStateChange()`
+
+New in v0.4.0
+
+Sets up a function that will be called whenever the table state changes.
+
+`listenerFn` should be a function that takes the current table state, an
+object with properties described at [state
+properties](#state-properties).
+
+`Reactable.onStateChange()` can only be run when the table has finished
+rendering, which isn’t guaranteed to happen at page load time. To ensure
+that the table is ready before running `Reactable.onStateChange()`, you
+can either use
+[`htmlwidgets::onRender()`](https://rdrr.io/pkg/htmlwidgets/man/onRender.html)
+for static widgets and Shiny outputs, or
+[`htmlwidgets::onStaticRenderComplete()`](https://rdrr.io/pkg/htmlwidgets/man/onStaticRenderComplete.html)
+for static widgets only.
+
+``` ts
+Reactable.onStateChange(
+  tableId: string,
+  listenerFn: Function
+)
+```
+
+#### Value
+
+`Reactable.onStateChange` returns a function that can be called to
+cancel the listener function.
+
+#### Examples
+
+``` js
+Reactable.onStateChange('cars-table', state => {
+  console.log('selected rows:', state.selected)
+})
+
+// Cancel the listener function
+const cancel = Reactable.onStateChange('cars-table', listenerFn)
+cancel()
+```
+
+##### Static widgets
+
+``` r
+library(htmltools)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+browsable(
+  tagList(
+    "Table state:",
+    tags$pre(id = "tbl-state", "{}"),
+    reactable(
+      data,
+      searchable = TRUE,
+      selection = "multiple",
+      onClick = "select",
+      elementId = "tbl"
+    ),
+    htmlwidgets::onStaticRenderComplete("
+      Reactable.onStateChange('tbl', state => {
+        const { selected, sorted, searchValue, pageIndex } = state
+        document.getElementById('tbl-state').textContent = JSON.stringify({
+          selected,
+          sorted,
+          searchValue,
+          pageIndex
+        })
+      })
+    ")
+  )
+)
+```
+
+##### Shiny outputs
+
+``` r
+library(shiny)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
+
+ui <- fluidPage(
+  reactableOutput("tbl"),
+  verbatimTextOutput("tbl_state")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    tbl <- reactable(data, searchable = TRUE)
+
+    htmlwidgets::onRender(tbl, "() => {
+      Reactable.onStateChange('tbl', state => {
+        const { sorted, searchValue } = state
+        Shiny.setInputValue('tbl_state', { sorted, searchValue })
+      })
+    }")
+  })
+
+  output$tbl_state <- renderPrint({
+    writeLines("Table state:\n")
+    print(input$tbl_state)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### `Reactable.gotoPage()`
+
+New in v0.4.4.9000
+
+Changes the current page. `pageIndex` can either be a number or a
+function that takes the previous `pageIndex` and returns the new value.
+
+`pageIndex` is zero-based, so the first page would have a `pageIndex` of
+`0`. If `pageIndex` is outside the valid `pageIndex` range,
+`Reactable.gotoPage()` will do nothing.
+
+``` ts
+Reactable.gotoPage(
+  tableId: string,
+  pageIndex?: number | Function
+)
+```
+
+#### Examples
+
+``` js
+// Go to page index 0 (the first page)
+Reactable.gotoPage('cars-table', 0)
+
+// Go to page index 2 (the third page)
+Reactable.gotoPage('cars-table', 2)
+
+// Go to the next page
+Reactable.gotoPage('cars-table', prevPage => prevPage + 1)
+
+// Go to the previous page
+Reactable.gotoPage('cars-table', prevPage => prevPage - 1)
+```
+
+### `Reactable.setPageSize()`
+
+New in v0.4.4.9000
+
+Sets the current page size.
+
+``` ts
+Reactable.gotoPage(
+  tableId: string,
+  pageSize?: number
+)
+```
+
+#### Examples
+
+``` js
+// Set the page size to 10
+Reactable.setPageSize('cars-table', 10)
+```

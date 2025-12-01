@@ -1,0 +1,1078 @@
+# Demo Cookbook
+
+A collection of recipes used to create the reactable demos.
+
+## Insert links
+
+``` r
+data <- data.frame(
+  Address = c("https://google.com", "https://yahoo.com", "https://duckduckgo.com"),
+  Site = c("Google", "Yahoo", "DuckDuckGo")
+)
+
+reactable(
+  data,
+  columns = list(
+    # Using htmltools to render a link
+    Address = colDef(cell = function(value) {
+      htmltools::tags$a(href = value, target = "_blank", value)
+    }),
+    # Or using raw HTML
+    Site = colDef(html = TRUE, cell = function(value, index) {
+      sprintf('<a href="%s" target="_blank">%s</a>', data$Address[index], value)
+    })
+  )
+)
+```
+
+## Conditional formatting
+
+### Color scales
+
+To add color scales, you can use [R’s built-in color
+utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color-utilities-in-r)
+(or other color manipulation package):
+
+``` r
+data <- iris[10:29, ]
+orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
+
+reactable(
+  data,
+  columns = list(
+    Petal.Length = colDef(style = function(value) {
+      normalized <- (value - min(data$Petal.Length)) / (max(data$Petal.Length) - min(data$Petal.Length))
+      color <- orange_pal(normalized)
+      list(background = color)
+    })
+  )
+)
+```
+
+``` r
+dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
+temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
+
+# ColorBrewer-inspired 3-color scale
+BuYlRd <- function(x) rgb(colorRamp(c("#7fb7d7", "#ffffbf", "#fc8d59"))(x), maxColorValue = 255)
+
+reactable(
+  temps,
+  defaultColDef = colDef(
+    style = function(value) {
+      if (!is.numeric(value)) return()
+      normalized <- (value - min(nottem)) / (max(nottem) - min(nottem))
+      color <- BuYlRd(normalized)
+      list(background = color)
+    },
+    format = colFormat(digits = 1),
+    minWidth = 50
+  ),
+  columns = list(
+    .rownames = colDef(name = "Year", sortable = TRUE, align = "left")
+  ),
+  bordered = TRUE
+)
+```
+
+### Formatting changes
+
+``` r
+stocks <- data.frame(
+  Symbol = c("GOOG", "FB", "AMZN", "NFLX", "TSLA"),
+  Price = c(1265.13, 187.89, 1761.33, 276.82, 328.13),
+  Change = c(4.14, 1.51, -19.45, 5.32, -12.45)
+)
+
+reactable(
+  stocks,
+  columns = list(
+    Change = colDef(
+      cell = function(value) {
+        if (value >= 0) paste0("+", value) else value
+      },
+      style = function(value) {
+        color <- if (value > 0) {
+          "#008000"
+        } else if (value < 0) {
+          "#e00000"
+        }
+        list(fontWeight = 600, color = color)
+      }
+    )
+  )
+)
+```
+
+### Tags and badges
+
+``` r
+library(htmltools)
+
+orders <- data.frame(
+  Order = 2300:2304,
+  Created = seq(as.Date("2019-04-01"), by = "day", length.out = 5),
+  Customer = sample(rownames(MASS::painters), 5),
+  Status = sample(c("Pending", "Paid", "Canceled"), 5, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  orders,
+  columns = list(
+    Status = colDef(cell = function(value) {
+      class <- paste0("tag status-", tolower(value))
+      div(class = class, value)
+    })
+  )
+)
+```
+
+``` css
+.tag {
+  display: inline-block;
+  padding: 0.125rem 0.75rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-paid {
+  background: hsl(116, 60%, 90%);
+  color: hsl(116, 30%, 25%);
+}
+
+.status-pending {
+  background: hsl(230, 70%, 90%);
+  color: hsl(230, 45%, 30%);
+}
+
+.status-canceled {
+  background: hsl(350, 70%, 90%);
+  color: hsl(350, 45%, 30%);
+}
+```
+
+``` r
+library(htmltools)
+
+status_badge <- function(color = "#aaa", width = "0.55rem", height = width) {
+  span(style = list(
+    display = "inline-block",
+    marginRight = "0.5rem",
+    width = width,
+    height = height,
+    backgroundColor = color,
+    borderRadius = "50%"
+  ))
+}
+
+reactable(
+  orders,
+  columns = list(
+    Status = colDef(cell = function(value) {
+      color <- switch(
+        value,
+        Paid = "hsl(214, 45%, 50%)",
+        Pending = "hsl(30, 97%, 70%)",
+        Canceled = "hsl(3, 69%, 50%)"
+      )
+      badge <- status_badge(color = color)
+      tagList(badge, value)
+    })
+  )
+)
+```
+
+## Bar charts
+
+There are many ways to create bar charts using HTML and CSS, but here’s
+one way inspired by [Making Charts with
+CSS](https://css-tricks.com/making-charts-with-css/).
+
+``` r
+library(htmltools)
+
+# Render a bar chart with a label on the left
+bar_chart <- function(label, width = "100%", height = "1rem", fill = "#00bfc4", background = NULL) {
+  bar <- div(style = list(background = fill, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, marginLeft = "0.5rem", background = background), bar)
+  div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+data <- MASS::Cars93[20:49, c("Make", "MPG.city", "MPG.highway")]
+
+reactable(
+  data,
+  columns = list(
+    MPG.city = colDef(name = "MPG (city)", align = "left", cell = function(value) {
+      width <- paste0(value / max(data$MPG.city) * 100, "%")
+      bar_chart(value, width = width)
+    }),
+    MPG.highway = colDef(name = "MPG (highway)", align = "left", cell = function(value) {
+      width <- paste0(value / max(data$MPG.highway) * 100, "%")
+      bar_chart(value, width = width, fill = "#fc5185", background = "#e1e1e1")
+    })
+  )
+)
+```
+
+### Positive and negative values
+
+``` r
+library(htmltools)
+
+# Render a bar chart with positive and negative values
+bar_chart_pos_neg <- function(label, value, max_value = 1, height = "1rem",
+                              pos_fill = "#005ab5", neg_fill = "#dc3220") {
+  neg_chart <- div(style = list(flex = "1 1 0"))
+  pos_chart <- div(style = list(flex = "1 1 0"))
+  width <- paste0(abs(value / max_value) * 100, "%")
+
+  if (value < 0) {
+    bar <- div(style = list(marginLeft = "0.5rem", background = neg_fill, width = width, height = height))
+    chart <- div(
+      style = list(display = "flex", alignItems = "center", justifyContent = "flex-end"),
+      label,
+      bar
+    )
+    neg_chart <- tagAppendChild(neg_chart, chart)
+  } else {
+    bar <- div(style = list(marginRight = "0.5rem", background = pos_fill, width = width, height = height))
+    chart <- div(style = list(display = "flex", alignItems = "center"), bar, label)
+    pos_chart <- tagAppendChild(pos_chart, chart)
+  }
+
+  div(style = list(display = "flex"), neg_chart, pos_chart)
+}
+
+data <- data.frame(
+  company = sprintf("Company%02d", 1:10),
+  profit_chg = c(0.2, 0.685, 0.917, 0.284, 0.105, -0.701, -0.528, -0.808, -0.957, -0.11)
+)
+
+reactable(
+  data,
+  bordered = TRUE,
+  columns = list(
+    company = colDef(name = "Company", minWidth = 100),
+    profit_chg = colDef(
+      name = "Change in Profit",
+      defaultSortOrder = "desc",
+      cell = function(value) {
+        label <- paste0(round(value * 100), "%")
+        bar_chart_pos_neg(label, value)
+      },
+      align = "center",
+      minWidth = 400
+    )
+  )
+)
+```
+
+### Background bar charts
+
+Another way to create bar charts is to render them as background images.
+This example creates bar images using the [`linear-gradient()` CSS
+function](https://developer.mozilla.org/en-US/docs/Web/CSS/linear-gradient()),
+inspired by an [example from the DT
+package](https://rstudio.github.io/DT/010-style.html).
+
+``` r
+# Render a bar chart in the background of the cell
+bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%",
+                      align = c("left", "right"), color = NULL) {
+  align <- match.arg(align)
+  if (align == "left") {
+    position <- paste0(width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, %1$s %2$s, transparent %2$s)", fill, position)
+  } else {
+    position <- paste0(100 - width * 100, "%")
+    image <- sprintf("linear-gradient(90deg, transparent %1$s, %2$s %1$s)", position, fill)
+  }
+  list(
+    backgroundImage = image,
+    backgroundSize = paste("100%", height),
+    backgroundRepeat = "no-repeat",
+    backgroundPosition = "center",
+    color = color
+  )
+}
+
+data <- mtcars[, 1:4]
+
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$mpg), fill = "#2c5e77", color = "#fff")
+      },
+      align = "left",
+      format = colFormat(digits = 1)
+    ),
+    disp = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$disp), fill = "hsl(208, 70%, 90%)")
+      }
+    ),
+    hp = colDef(
+      style = function(value) {
+        bar_style(width = value / max(data$hp), height = "90%", align = "right")
+      }
+    )
+  ),
+  bordered = TRUE
+)
+```
+
+## Embed images
+
+To embed an image, render an [`<img>`
+element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img)
+into the table. Be sure to add [`alt`
+text](https://webaim.org/techniques/alttext/) for accessibility, even if
+the image is purely decorative (use a null `alt=""` attribute in this
+case).
+
+### External image files
+
+``` r
+library(htmltools)
+
+data <- data.frame(
+  Animal = c("beaver", "cow", "wolf", "goat"),
+  Body = c(1.35, 465, 36.33, 27.66),
+  Brain = c(8.1, 423, 119.5, 115)
+)
+
+reactable(
+  data,
+  columns = list(
+    Animal = colDef(cell = function(value) {
+      image <- img(src = sprintf("images/%s.png", value), style = "height: 24px;", alt = value)
+      tagList(
+        div(style = "display: inline-block; width: 45px;", image),
+        value
+      )
+    }),
+    Body = colDef(name = "Body (kg)"),
+    Brain = colDef(name = "Brain (g)")
+  )
+)
+```
+
+If the image file is local, ensure the image can be found from the
+rendered document:
+
+- In pkgdown, you can include local images in your document using the
+  `resource_files` YAML field. See [External files in
+  pkgdown](https://pkgdown.r-lib.org/reference/build_articles.html#external-files)
+  for details.
+- In Shiny, you can include local images in your app using either the
+  `www/` directory or
+  [`shiny::addResourcePath()`](https://rdrr.io/pkg/shiny/man/resourcePaths.html)
+  function. See [Resource Publishing in
+  Shiny](https://shiny.rstudio.com/reference/shiny/latest/resourcePaths.html)
+  for details.
+
+### Inline embedded images
+
+Images can also be embedded into documents as a [base64-encoded data
+URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs)
+using
+[`knitr::image_uri()`](https://rdrr.io/pkg/knitr/man/image_uri.html).
+This can be more portable, but is usually only recommended for small
+image files.
+
+``` r
+library(htmltools)
+
+data <- data.frame(
+  Animal = c("beaver", "cow", "wolf", "goat"),
+  Body = c(1.35, 465, 36.33, 27.66),
+  Brain = c(8.1, 423, 119.5, 115)
+)
+
+reactable(
+  data,
+  columns = list(
+    Animal = colDef(cell = function(value) {
+      img_src <- knitr::image_uri(sprintf("images/%s.png", value))
+      image <- img(src = img_src, style = "height: 24px;", alt = value)
+      tagList(
+        div(style = "display: inline-block; width: 45px", image),
+        value
+      )
+    })
+  )
+)
+```
+
+## Rating stars
+
+This example uses [Font Awesome icons (via
+Shiny)](https://shiny.rstudio.com/reference/shiny/latest/icon.html) to
+render rating stars in a table.
+
+To make the rating star icons accessible to users of assistive
+technology, the icons are marked up as an image using the [ARIA `img`
+role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Role_Img),
+and alternative text is added using an `aria-label` or `title`
+attribute.
+
+``` r
+library(htmltools)
+
+rating_stars <- function(rating, max_rating = 5) {
+  star_icon <- function(empty = FALSE) {
+    tagAppendAttributes(shiny::icon("star"),
+      style = paste("color:", if (empty) "#edf0f2" else "orange"),
+      "aria-hidden" = "true"
+    )
+  }
+  rounded_rating <- floor(rating + 0.5)  # always round up
+  stars <- lapply(seq_len(max_rating), function(i) {
+    if (i <= rounded_rating) star_icon() else star_icon(empty = TRUE)
+  })
+  label <- sprintf("%s out of %s stars", rating, max_rating)
+  div(title = label, role = "img", stars)
+}
+
+ratings <- data.frame(
+  Movie = c("Silent Serpent", "Nowhere to Hyde", "The Ape-Man Goes to Mars", "A Menace in Venice"),
+  Rating = c(3.65, 2.35, 4.5, 1.4),
+  Votes = c(115, 37, 60, 99)
+)
+
+reactable(ratings, columns = list(
+  Rating = colDef(cell = function(value) rating_stars(value))
+))
+```
+
+## Show data from other columns
+
+This example requires reactable v0.3.0 or above.
+
+To access data from another column, get the current row data using the
+row index argument in an R render function, or `cellInfo.row` in a
+JavaScript render function. This example shows both ways.
+
+``` r
+library(dplyr)
+library(htmltools)
+
+data <- starwars %>%
+  select(character = name, height, mass, gender, homeworld, species)
+```
+
+### R render function
+
+``` r
+reactable(
+  data,
+  columns = list(
+    character = colDef(
+      # Show species under character names
+      cell = function(value, index) {
+        species <- data$species[index]
+        species <- if (!is.na(species)) species else "Unknown"
+        div(
+          div(style = "font-weight: 600", value),
+          div(style = "font-size: 0.75rem", species)
+        )
+      }
+    ),
+    species = colDef(show = FALSE)
+  ),
+  # Vertically center cells
+  defaultColDef = colDef(vAlign = "center"),
+  defaultPageSize = 6
+)
+```
+
+### JavaScript render function
+
+``` r
+reactable(
+  data,
+  columns = list(
+    character = colDef(
+      # Show species under character names
+      cell = JS('function(cellInfo) {
+        const species = cellInfo.row["species"] || "Unknown"
+        return `
+          <div>
+            <div style="font-weight: 600">${cellInfo.value}</div>
+            <div style="font-size: 0.75rem">${species}</div>
+          </div>
+        `
+      }'),
+      html = TRUE
+    ),
+    species = colDef(show = FALSE)
+  ),
+  # Vertically center cells
+  defaultColDef = colDef(vAlign = "center"),
+  defaultPageSize = 6
+)
+```
+
+## Total rows
+
+``` r
+library(dplyr)
+library(htmltools)
+
+data <- MASS::Cars93[18:47, ] %>%
+  select(Manufacturer, Model, Type, Sales = Price)
+
+reactable(
+  data,
+  defaultPageSize = 5,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(footer = sprintf("$%.2f", sum(data$Sales)))
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+### Dynamic totals
+
+This example requires reactable v0.3.0 or above.
+
+To update the total when filtering the table, calculate the total in a
+JavaScript render function:
+
+``` r
+reactable(
+  data,
+  searchable = TRUE,
+  defaultPageSize = 5,
+  minRows = 5,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(
+      footer = JS("function(column, state) {
+        let total = 0
+        state.sortedData.forEach(function(row) {
+          total += row[column.id]
+        })
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+      }")
+    )
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+#### Totals with aggregated rows
+
+``` r
+reactable(
+  data,
+  groupBy = "Manufacturer",
+  searchable = TRUE,
+  columns = list(
+    Manufacturer = colDef(footer = "Total"),
+    Sales = colDef(
+      aggregate = "sum",
+      format = colFormat(currency = "USD"),
+      footer = JS("function(column, state) {
+        let total = 0
+        state.sortedData.forEach(function(row) {
+          total += row[column.id]
+        })
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+      }")
+    )
+  ),
+  defaultColDef = colDef(footerStyle = list(fontWeight = "bold"))
+)
+```
+
+## Nested tables
+
+To create nested tables, use
+[`reactable()`](../../reference/reactable.md) in a row details renderer:
+
+``` r
+library(dplyr)
+
+data <- MASS::Cars93[18:47, ] %>%
+  mutate(ID = as.character(18:47), Date = seq(as.Date("2019-01-01"), by = "day", length.out = 30)) %>%
+  select(ID, Date, Manufacturer, Model, Type, Price)
+
+sales_by_mfr <- group_by(data, Manufacturer) %>%
+  summarize(Quantity = n(), Sales = sum(Price))
+
+reactable(
+  sales_by_mfr,
+  details = function(index) {
+    sales <- filter(data, Manufacturer == sales_by_mfr$Manufacturer[index]) %>% select(-Manufacturer)
+    tbl <- reactable(sales, outlined = TRUE, highlight = TRUE, fullWidth = FALSE)
+    htmltools::div(style = list(margin = "12px 45px"), tbl)
+  },
+  onClick = "expand",
+  rowStyle = list(cursor = "pointer")
+)
+```
+
+## Units on first row only
+
+To display a label on the first row only (even when sorting), use a
+JavaScript render function to add the label when the [cell’s `viewIndex`
+property](../custom-rendering.html#cellinfo-properties) is `0`.
+
+If the label breaks the alignment of values in the column, realign the
+values by adding white space to the cells without units. Two ways to do
+this are shown below.
+
+``` r
+data <- MASS::Cars93[40:44, c("Make", "Length", "Luggage.room")]
+
+reactable(
+  data,
+  class = "car-specs",
+  columns = list(
+    # Align values using white space (and a monospaced font)
+    Length = colDef(
+      cell = JS("function(cellInfo) {
+        const units = cellInfo.viewIndex === 0 ? '\u2033' : ' '
+        return cellInfo.value + units
+      }"),
+      class = "number"
+    ),
+    # Align values using a fixed-width container for units
+    Luggage.room = colDef(
+      name = "Luggage Room",
+      cell = JS('function(cellInfo) {
+        const units = cellInfo.viewIndex === 0 ? " ft³" : ""
+        return cellInfo.value + `<div class="units">${units}</div>`
+      }'),
+      html = TRUE
+    )
+  )
+)
+```
+
+``` css
+.car-specs .number {
+  font-family: "Courier New", Courier, monospace;
+  white-space: pre;
+}
+
+.car-specs .units {
+  display: inline-block;
+  width: 1.125rem;
+}
+```
+
+## Tooltips
+
+To add tooltips to a column header, you can render the header as an
+[`<abbr>`
+element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr)
+with a `title` attribute:
+
+``` r
+library(htmltools)
+library(dplyr)
+
+data <- as_tibble(mtcars[1:6, ], rownames = "car") %>%
+  select(car:hp)
+
+with_tooltip <- function(value, tooltip) {
+  tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+            title = tooltip, value)
+}
+
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(header = with_tooltip("mpg", "Miles per US gallon")),
+    cyl = colDef(header = with_tooltip("cyl", "Number of cylinders")),
+    disp = colDef(header = with_tooltip("disp", "Displacement (cubic inches)")),
+    hp = colDef(header = with_tooltip("hp", "Gross horsepower"))
+  )
+)
+```
+
+The [`title` attribute is
+inaccessible](https://developer.paciellogroup.com/blog/2013/01/using-the-html-title-attribute-updated/)
+to most keyboard, mobile, and screen reader users, however, so creating
+tooltips like this is generally discouraged.
+
+An alternate method would be to use the [tippy
+package](https://tippy.john-coene.com/), which provides a
+JavaScript-based tooltip that supports keyboard, touch, and screen
+reader use.
+
+``` r
+library(htmltools)
+library(dplyr)
+library(tippy)
+
+data <- as_tibble(mtcars[1:6, ], rownames = "car") %>%
+  select(car:hp)
+
+# See the ?tippy documentation to learn how to customize tooltips
+with_tooltip <- function(value, tooltip, ...) {
+  div(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
+      tippy(value, tooltip, ...))
+}
+
+reactable(
+  data,
+  columns = list(
+    mpg = colDef(header = with_tooltip("mpg", "Miles per US gallon")),
+    cyl = colDef(header = with_tooltip("cyl", "Number of cylinders"))
+  )
+)
+```
+
+## Highlight cells
+
+``` r
+data <- MASS::road[11:17, ]
+
+reactable(
+  data,
+  defaultColDef = colDef(
+    style = function(value, index, name) {
+      if (is.numeric(value) && value == max(data[[name]])) {
+        list(fontWeight = "bold")
+      }
+    }
+  )
+)
+```
+
+## Highlight columns
+
+``` r
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Petal.Length = colDef(style = list(background = "rgba(0, 0, 0, 0.03)"))
+  )
+)
+```
+
+## Highlight rows
+
+``` r
+reactable(
+  iris[1:5, ],
+  rowStyle = function(index) {
+    if (index == 2) list(fontWeight = "bold")
+    else if (iris[index, "Petal.Length"] >= 1.5) list(background = "rgba(0, 0, 0, 0.05)")
+  }
+)
+```
+
+## Highlight sorted headers
+
+To style sortable headers on hover, select headers with an `aria-sort`
+attribute and `:hover` pseudo-class in CSS:
+
+``` r
+reactable(iris[1:5, ], defaultColDef = colDef(headerClass = "sort-header"))
+```
+
+``` css
+.sort-header[aria-sort]:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+```
+
+To style sorted headers, select headers with either an
+`aria-sort="ascending"` or `aria-sort="descending"` attribute:
+
+``` css
+.sort-header[aria-sort="ascending"],
+.sort-header[aria-sort="descending"] {
+  background: rgba(0, 0, 0, 0.03);
+}
+```
+
+## Highlight sorted columns
+
+To style sorted columns, use a JavaScript function to style columns
+based on the table’s sorted state:
+
+``` r
+reactable(
+  iris[1:5, ],
+  defaultSorted = "Sepal.Width",
+  defaultColDef = colDef(
+    style = JS("function(rowInfo, column, state) {
+      // Highlight sorted columns
+      for (let i = 0; i < state.sorted.length; i++) {
+        if (state.sorted[i].id === column.id) {
+          return { background: 'rgba(0, 0, 0, 0.03)' }
+        }
+      }
+    }")
+  )
+)
+```
+
+## Borders between groups of data
+
+This example requires reactable v0.3.0 or above.
+
+To add borders between groups, use an R or JavaScript function to style
+rows based on the previous or next row’s data. If the table can be
+sorted, use a JavaScript function to style rows only when the groups are
+sorted.
+
+``` r
+library(dplyr)
+
+data <- as_tibble(MASS::painters, rownames = "Painter") %>%
+  filter(School %in% c("A", "B", "C")) %>%
+  mutate(School = recode(School, A = "Renaissance", B = "Mannerist", C = "Seicento")) %>%
+  select(Painter, School, everything()) %>%
+  group_by(School) %>%
+  slice(1:3)
+
+reactable(
+  data,
+  defaultSorted = list(School = "asc", Drawing = "desc"),
+  borderless = TRUE,
+  rowStyle = JS("
+    function(rowInfo, state) {
+      // Ignore padding rows
+      if (!rowInfo) return
+
+      // Add horizontal separators between groups when sorting by school
+      const firstSorted = state.sorted[0]
+      if (firstSorted && firstSorted.id === 'School') {
+        const nextRow = state.pageRows[rowInfo.viewIndex + 1]
+        if (nextRow && rowInfo.values['School'] !== nextRow['School']) {
+          // Use box-shadow to add a 2px border without taking extra space
+          return { boxShadow: 'inset 0 -2px 0 rgba(0, 0, 0, 0.1)' }
+        }
+      }
+    }
+  ")
+)
+```
+
+## Merge cells
+
+This example requires reactable v0.3.0 or above.
+
+You can give the appearance of merged cells by hiding cells based on the
+previous row’s data. Just like with the example above, you’ll need a
+JavaScript style function for grouping to work with sorting, filtering,
+and pagination.
+
+``` r
+library(dplyr)
+
+data <- as_tibble(MASS::painters, rownames = "Painter") %>%
+  filter(School %in% c("A", "B", "C")) %>%
+  mutate(School = recode(School, A = "Renaissance", B = "Mannerist", C = "Seicento")) %>%
+  select(School, Painter, everything()) %>%
+  group_by(School) %>%
+  slice(1:3)
+
+reactable(
+  data,
+  columns = list(
+    School = colDef(
+      style = JS("function(rowInfo, column, state) {
+        const firstSorted = state.sorted[0]
+        // Merge cells if unsorted or sorting by school
+        if (!firstSorted || firstSorted.id === 'School') {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+          if (prevRow && rowInfo.values['School'] === prevRow['School']) {
+            return { visibility: 'hidden' }
+          }
+        }
+      }")
+    )
+  ),
+  outlined = TRUE
+)
+```
+
+## Borders between columns
+
+``` r
+reactable(
+  iris[1:5, ],
+  columns = list(
+    Sepal.Width = colDef(style = list(borderRight = "1px solid rgba(0, 0, 0, 0.1)")),
+    Petal.Width = colDef(style = list(borderRight = "1px solid rgba(0, 0, 0, 0.1)"))
+  ),
+  borderless = TRUE
+)
+```
+
+## Style nested rows
+
+To style nested rows, use a JavaScript function to style rows based on
+their [nesting `level`
+property](../conditional-styling.html#rowinfo-properties):
+
+``` r
+data <- MASS::Cars93[4:8, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
+
+reactable(
+  data,
+  groupBy = "Type",
+  columns = list(
+    Price = colDef(aggregate = "max"),
+    MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    DriveTrain = colDef(aggregate = "unique"),
+    Man.trans.avail = colDef(aggregate = "frequency")
+  ),
+  rowStyle = JS("function(rowInfo) {
+    if (rowInfo.level > 0) {
+      return { background: '#eee', borderLeft: '2px solid #ffa62d' }
+    } else {
+      return { borderLeft: '2px solid transparent' }
+    }
+  }"),
+  defaultExpanded = TRUE
+)
+```
+
+## Custom fonts
+
+Tables don’t have a default font, and just inherit the font properties
+from their parent elements. (This may explain why tables look different
+in R Markdown documents or Shiny apps vs. standalone pages).
+
+To customize the table font, you can set a font on the page, or on the
+table itself:
+
+``` r
+reactable(
+  iris[1:5, ],
+  style = list(fontFamily = "Work Sans, sans-serif", fontSize = "0.875rem"),
+  defaultSorted = "Species"
+)
+```
+
+To use a custom font that’s not installed on your users’ systems by
+default, use the
+[`@font-face`](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face)
+CSS rule to add the font and specify where to download it from.
+
+Online font services such as [Google Fonts](https://fonts.google.com/)
+can make this easier by hosting custom fonts and providing 1-2 lines of
+HTML to copy into your document to use those fonts.
+
+For example, to include a font from Google Fonts in an R Markdown
+document, add a `<link>` tag pointing to the font stylesheet somewhere:
+
+```` markdown
+```{r, echo=FALSE}
+# Add a custom font from Google Fonts
+htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+                     rel = "stylesheet")
+```
+````
+
+Or in Shiny apps, the `<link>` tag can be included in the `<head>` of
+the page via `ui`:
+
+``` r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  tags$head(
+    tags$link(
+      href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700&display=fallback",
+      rel = "stylesheet"
+    ),
+    tags$style("
+      body {
+        font-family: Work Sans, sans-serif;
+      }
+    ")
+  ),
+  reactable(
+    MASS::Cars93[, 1:5],
+    defaultSorted = "Price"
+  )
+)
+
+server <- function(input, output) {}
+
+shinyApp(ui, server)
+```
+
+For an example of using self-hosted custom fonts, see the [Popular
+Movies](../popular-movies/popular-movies.md) demo.
+
+**Tip:** The reactable package documentation uses the default system
+fonts installed on your operating system (also known as a [system font
+stack](https://css-tricks.com/snippets/css/system-font-stack)), which
+load fast and look familiar:
+
+``` css
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+```
+
+[Bootstrap 5 also uses a system font
+stack](https://getbootstrap.com/docs/5.0/content/reboot/#native-font-stack)
+by default.
+
+## Custom sort indicators
+
+To use a custom sort indicator, you can hide the default sort icon using
+`reactable(showSortIcon = FALSE)` and add your own sort indicator.
+
+This also hides the sort icon when a header is focused, so be sure to
+add a visual focus indicator to ensure your table is accessible to
+keyboard users (to test this, click the first table header then press
+the Tab key to navigate to other headers).
+
+Here’s an example that changes the sort indicator to a bar on the top or
+bottom of the header (indicating an ascending or descending sort), and
+adds a light background to headers when hovered or focused.
+
+This example adds sort indicators using only CSS, and takes advantage of
+the
+[`aria-sort`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-sort)
+attribute on table headers to style based on whether the column is
+sorted in ascending or descending order.
+
+``` r
+reactable(
+  MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Min.Price", "Price")],
+  showSortIcon = FALSE,
+  bordered = TRUE,
+  defaultSorted = "Type",
+  defaultColDef = colDef(headerClass = "bar-sort-header")
+)
+```
+
+``` css
+.bar-sort-header:hover,
+.bar-sort-header:focus {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* Add a top bar on ascending sort */
+.bar-sort-header[aria-sort="ascending"] {
+  box-shadow: inset 0 3px 0 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Add a bottom bar on descending sort */
+.bar-sort-header[aria-sort="descending"] {
+  box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Add an animation when toggling between ascending and descending sort */
+.bar-sort-header {
+  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+```

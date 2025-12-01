@@ -1,0 +1,161 @@
+# Sticky Columns (Old Method)
+
+**Note:** Sticky columns are now supported using a `sticky` argument in
+[`colDef()`](../reference/colDef.md) and
+[`colGroup()`](../reference/colGroup.md), so use that if possible. See
+[Sticky Columns](./examples.html#sticky-columns) for examples.
+
+### Basic sticky columns
+
+You can make a single left or right column sticky using the
+[`position: sticky`](https://developer.mozilla.org/en-US/docs/Web/CSS/position)
+CSS property.
+
+Note that `position: sticky` is supported by Chrome, Firefox, Safari,
+and Edge, but **not** IE11. IE11 does fail gracefully though – the
+columns just don’t stick.
+
+`background: #fff` and `z-index: 1` are added to properly hide scrolling
+content.
+
+``` r
+reactable(
+  MASS::Cars93,
+  columns = list(
+    Manufacturer = colDef(
+      style = list(position = "sticky", left = 0, background = "#fff", zIndex = 1),
+      headerStyle = list(position = "sticky", left = 0, background = "#fff", zIndex = 1)
+    ),
+    Make = colDef(
+      style = list(position = "sticky", right = 0, background = "#fff", zIndex = 1),
+      headerStyle = list(position = "sticky", right = 0, background = "#fff", zIndex = 1)
+    )
+  ),
+  defaultColDef = colDef(minWidth = 150)
+)
+```
+
+Adding a border style and reducing some of the repetition:
+
+``` r
+sticky_style <- function(left = TRUE) {
+  style <- list(position = "sticky", background = "#fff", zIndex = 1)
+  if (left) {
+    style <- c(style, list(left = 0, borderRight = "1px solid #eee"))
+  } else {
+    style <- c(style, list(right = 0, borderLeft = "1px solid #eee"))
+  }
+  style
+}
+
+reactable(
+  MASS::Cars93,
+  columns = list(
+    Manufacturer = colDef(
+      style = sticky_style(),
+      headerStyle = sticky_style()
+    ),
+    Make = colDef(
+      style = sticky_style(left = FALSE),
+      headerStyle = sticky_style(left = FALSE)
+    )
+  ),
+  defaultColDef = colDef(minWidth = 150)
+)
+```
+
+### Multiple sticky columns
+
+To make multiple columns sticky, you have to set the
+[`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left) or
+`right` positions of the columns to where they’ll stick. In this case,
+you’ll need to know the column widths – columns are `100px` wide by
+default, so the 2nd column from left needs `left: 100px;`, the 3rd
+column from left needs `left: 200px;`, etc.
+
+``` r
+reactable(
+  MASS::Cars93,
+  columns = list(
+    Manufacturer = colDef(
+      class = "sticky left-col-1",
+      headerClass = "sticky left-col-1"
+    ),
+    Model = colDef(
+      class = "sticky left-col-2",
+      headerClass = "sticky left-col-2"
+    ),
+    Type = colDef(
+      class = "sticky left-col-3",
+      headerClass = "sticky left-col-3"
+    ),
+    Make = colDef(
+      class = "sticky right-col-1",
+      headerClass = "sticky right-col-1"
+    )
+  ),
+  wrap = FALSE
+)
+```
+
+``` css
+.sticky {
+  position: sticky !important;
+  background: #fff;
+  z-index: 1;
+}
+
+.left-col-1 {
+  left: 0;
+}
+
+.left-col-2 {
+  left: 100px;
+}
+
+.left-col-3 {
+  left: 200px;
+  border-right: 1px solid #eee !important;
+}
+
+.right-col-1 {
+  right: 0;
+  border-left: 1px solid #eee !important;
+}
+```
+
+### Sticky headers and footers
+
+Sticky columns should work fine with sticky headers and footers:
+
+``` r
+reactable(
+  MASS::Cars93[1:20, ],
+  pagination = FALSE,
+  height = 400,
+  wrap = FALSE,
+  columns = list(
+    Manufacturer = colDef(
+      class = "sticky left-col-1",
+      headerClass = "sticky left-col-1",
+      footerClass = "sticky left-col-1"
+    ),
+    Model = colDef(
+      class = "sticky left-col-2",
+      headerClass = "sticky left-col-2",
+      footerClass = "sticky left-col-2"
+    ),
+    Type = colDef(
+      class = "sticky left-col-3",
+      headerClass = "sticky left-col-3",
+      footerClass = "sticky left-col-3"
+    ),
+    Make = colDef(
+      class = "sticky right-col-1",
+      headerClass = "sticky right-col-1",
+      footerClass = "sticky right-col-1"
+    )
+  ),
+  defaultColDef = colDef(footer = "Footer")
+)
+```

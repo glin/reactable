@@ -1,0 +1,517 @@
+# Popular Movies
+
+Search titles
+
+Genre All Action Adventure Animation Comedy Crime Drama Family Fantasy
+History Horror Music Mystery Romance Science Fiction Thriller TV Movie
+War Western
+
+Year All 2021 2020 2019 2018 2017 2016 2015 2014 2013 2012 2011 2010
+2009 2008 2007 2006 2005 2004 2003 2002 2001 2000 1999 1998 1997 1996
+1995 1994 1993 1992 1991 1990 1989 1988 1987 1986 1985 1984 1983 1982
+1981 1980 1979 1978 1977 1976 1975 1974 1973 1972 1971 1970 1969 1968
+1967 1966 1965 1964 1963 1962 1961 1960 1959 1958 1957 1956 1955 1954
+1953 1952 1951 1950 1949 1948 1947 1946 1945 1944 1943 1942 1941 1940
+1939 1938 1937 1936 1935 1934 1933 1932 1931 1930 1929 1928 1927 1926
+1925 1924 1923 1922 1921 1920 1902
+
+Language All Arabic Bengali Bosnian Cantonese Czech Danish Dutch English
+Estonian French German Greek Hindi Hungarian Indonesian Italian Japanese
+Korean Mandarin Norwegian Persian Polish Portuguese Romanian Russian
+Serbian Serbo-Croatian Spanish Swedish Telugu Thai Turkish
+
+Rating All G PG PG-13 R NC-17 NR
+
+Min Score
+
+72%
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+Source: [The Movie Database (TMDb)](https://www.themoviedb.org/) and the
+[TMDb API](https://developers.themoviedb.org/3/)
+
+Raw data: [`tmdb_movies.json`](tmdb_movies.json)
+
+This product uses the TMDb API but is not endorsed or certified by TMDb.
+
+## Source Code
+
+``` r
+library(reactable)
+library(jsonlite)
+library(dplyr)
+library(crosstalk)
+library(htmltools)
+
+# tmdb_movies.json is a JSON dataset with 2000 rows and 22 columns.
+# Some of these columns contain nested lists (e.g., multiple genres per movie).
+movies <- fromJSON("tmdb_movies.json") %>%
+  mutate(
+    genres = lapply(genres, as.list),
+    popularity_rank = rank(-popularity, ties.method = "first"),
+    year = substr(release_date, 1, 4),
+    score = vote_average * 10
+  ) %>%
+  arrange(popularity_rank)
+
+tbl_data <- movies %>%
+  select(popularity_rank, title, release_date, score, id, poster_path, certification, genres, runtime)
+
+# Precalculate user score colors to be used for custom cell rendering
+get_score_color <- function(score) {
+  blue_pal <- function(x) rgb(colorRamp(c("#9fc7df", "#416ea4"))(x), maxColorValue = 255)
+  normalized <- (score - min(score)) / (max(score) - min(score))
+  blue_pal(normalized)
+}
+tbl_data <- mutate(tbl_data, score_color = get_score_color(score))
+
+# Shared data for the table
+shared_data <- SharedData$new(tbl_data)
+
+# Shared data for the Crosstalk filters. This is a separate shared data object
+# so we can filter on columns that aren't in the table. The same group is used
+# to link the two datasets together.
+shared_movies <- SharedData$new(movies, group = shared_data$groupName())
+
+tbl <- reactable(
+  shared_data,
+  defaultColDef = colDef(vAlign = "center", headerClass = "header"),
+  columns = list(
+    popularity_rank = colDef(
+      name = "Rank",
+      align = "center",
+      minWidth = 70,
+      maxWidth = 90
+    ),
+    title = colDef(
+      name = "Movie",
+      # Since there are so many rows, we use a JS render function to keep the
+      # page size down. This would be much easier to code in R, but that would
+      # significantly increase the file size.
+      cell = JS("renderMovie"),
+      html = TRUE,
+      minWidth = 250
+    ),
+    release_date = colDef(
+      name = "Year",
+      defaultSortOrder = "desc",
+      cell = JS("cellInfo => cellInfo.value.slice(0, 4)"),
+      minWidth = 70,
+      maxWidth = 90
+    ),
+    score = colDef(
+      name = "User Score",
+      defaultSortOrder = "desc",
+      # Show the user score in a donut chart like TMDb does. Since donut charts
+      # are hard to compare, apply a color scale as well.
+      cell = JS("renderUserScore"),
+      html = TRUE,
+      align = "center",
+      width = 140,
+      class = "user-score"
+    ),
+    id = colDef(show = FALSE),
+    poster_path = colDef(show = FALSE),
+    certification = colDef(show = FALSE),
+    genres = colDef(show = FALSE),
+    runtime = colDef(show = FALSE),
+    score_color = colDef(show = FALSE)
+  ),
+  highlight = TRUE,
+  language = reactableLang(
+    noData = "No movies found",
+    pageInfo = "{rowStart}\u2013{rowEnd} of {rows} movies"
+  ),
+  theme = reactableTheme(
+    highlightColor = "#f3fafb",
+    borderColor = "hsl(0, 0%, 93%)",
+    headerStyle = list(borderColor = "hsl(0, 0%, 90%)")
+  ),
+  class = "movies-tbl"
+)
+```
+
+``` js
+// Custom JavaScript cell renderer for the Movie column
+function renderMovie(cellInfo) {
+  const url = 'https://www.themoviedb.org/movie/' + cellInfo.row['id']
+  const imageSrc = 'https://www.themoviedb.org/t/p/w45' + cellInfo.row['poster_path']
+  const altText = cellInfo.value + ' movie poster'
+  const poster = `<a href="${url}"><img src="${imageSrc}" class="movie-poster" alt="${altText}"></a>`
+
+  const title = `<a href="${url}">${cellInfo.value}</a>`
+
+  let rating = cellInfo.row['certification']
+  if (rating) {
+    rating = `<span class="movie-rating">${rating}</span>`
+  } else {
+    rating = ''
+  }
+
+  const genres = ' ' + cellInfo.row['genres'].join(', ')
+
+  let runtime = cellInfo.row['runtime']
+  if (runtime != null) {
+    const hours = Math.floor(runtime / 60)
+    const mins = runtime % 60
+    runtime = [hours > 0 ? hours + 'h' : '', mins > 0 ? mins + 'm' : ''].join(' ')
+    runtime = `<span aria-hidden="true"> • </span>` +
+      `<div class="movie-runtime">${runtime}</div>`
+  } else {
+    runtime = ''
+  }
+
+  const details = `<div class="movie-info-details">${rating}${genres}${runtime}</div>`
+  const text = `<div class="movie-info-text">${title}${details}</div>`
+  return `<div class="movie-info">${poster}${text}</div>`
+}
+
+// Custom JavaScript cell renderer for the User Score column
+function renderUserScore(cellInfo) {
+  return donutChart(cellInfo.value, cellInfo.row['score_color'])
+}
+
+// Generates HTML for a donut chart given a percentage value (out of 100) and color
+function donutChart(value, color) {
+  // All units are in rem for relative scaling
+  const radius = 1.5
+  const diameter = 3.75
+  const center = diameter / 2
+  const width = 0.25
+  const sliceLength = 2 * Math.PI * radius
+  const sliceOffset = sliceLength * (1 - value / 100)
+  const donutChart = `
+    <svg width="${diameter}rem" height="${diameter}rem" style="transform: rotate(-90deg)" focusable="false">
+      <circle cx="${center}rem" cy="${center}rem" r="${radius}rem" fill="none" stroke-width="${width}rem" stroke="rgba(0,0,0,0.1)"></circle>
+      <circle cx="${center}rem" cy="${center}rem" r="${radius}rem" fill="none" stroke-width="${width}rem" stroke="${color}"
+       stroke-dasharray="${sliceLength}rem" stroke-dashoffset="${sliceOffset}rem"></circle>
+    </svg>
+  `
+  const label = `
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">
+      ${value}%
+    </div>
+  `
+  return `
+    <div style="display: inline-flex; position: relative">
+      ${donutChart}
+      ${label}
+    </div>
+  `
+}
+```
+
+``` r
+# Custom Crosstalk select filter. This is a single-select input that works
+# on columns containing multiple values per row (list columns).
+select_filter <- function(id, label, shared_data, group, choices = NULL,
+                          width = "100%", class = "filter-input") {
+  values <- shared_data$data()[[group]]
+  keys <- shared_data$key()
+  if (is.list(values)) {
+    # Multiple values per row
+    flat_keys <- unlist(mapply(rep, keys, sapply(values, length)))
+    keys_by_value <- split(flat_keys, unlist(values), drop = TRUE)
+    choices <- if (is.null(choices)) sort(unique(unlist(values))) else choices
+  } else {
+    # Single value per row
+    keys_by_value <- split(seq_along(keys), values, drop = TRUE)
+    choices <- if (is.null(choices)) sort(unique(values)) else choices
+  }
+
+  script <- sprintf("
+    window['__ct__%s'] = (function() {
+      const handle = new window.crosstalk.FilterHandle('%s')
+      const keys = %s
+      return {
+        filter: function(value) {
+          if (!value) {
+            handle.clear()
+          } else {
+            handle.set(keys[value])
+          }
+        }
+      }
+    })()
+  ", id, shared_data$groupName(), toJSON(keys_by_value))
+
+  div(
+    class = class,
+    tags$label(`for` = id, label),
+    tags$select(
+      id = id,
+      onchange = sprintf("window['__ct__%s'].filter(this.value)", id),
+      style = sprintf("width: %s", validateCssUnit(width)),
+      tags$option(value = "", "All"),
+      lapply(choices, function(value) tags$option(value = value, value))
+    ),
+    tags$script(HTML(script))
+  )
+}
+
+# Custom Crosstalk search filter. This is a free-form text field that does
+# case-insensitive text searching on a single column.
+search_filter <- function(id, label, shared_data, group, width = "100%", class = "filter-input") {
+  values <- as.list(shared_data$data()[[group]])
+  values_by_key <- setNames(values, shared_data$key())
+  
+  script <- sprintf("
+    window['__ct__%s'] = (function() {
+      const handle = new window.crosstalk.FilterHandle('%s')
+      const valuesByKey = %s
+      return {
+        filter: function(value) {
+          if (!value) {
+            handle.clear()
+          } else {
+            // Escape special characters in the search value for regex matching
+            value = value.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')
+            const regex = new RegExp(value, 'i')
+            const filtered = Object.keys(valuesByKey).filter(function(key) {
+              const value = valuesByKey[key]
+              if (Array.isArray(value)) {
+                for (let i = 0; i < value.length; i++) {
+                  if (regex.test(value[i])) {
+                    return true
+                  }
+                }
+              } else {
+                return regex.test(value)
+              }
+            })
+            handle.set(filtered)
+          }
+        }
+      }
+    })()
+  ", id, shared_data$groupName(), toJSON(values_by_key))
+  
+  div(
+    class = class,
+    tags$label(`for` = id, label),
+    tags$input(
+      id = id,
+      type = "search",
+      oninput = sprintf("window['__ct__%s'].filter(this.value)", id),
+      style = sprintf("width: %s", validateCssUnit(width))
+    ),
+    tags$script(HTML(script))
+  )
+}
+
+# Custom Crosstalk range filter. This is a simple range input that only filters
+# minimum values of a column.
+range_filter <- function(id, label, shared_data, group, min = NULL, max = NULL,
+                         step = NULL, suffix = "", width = "100%", class = "filter-input") {
+  values <- shared_data$data()[[group]]
+  values_by_key <- setNames(as.list(values), shared_data$key())
+
+  script <- sprintf("
+    window['__ct__%s'] = (function() {
+      const handle = new window.crosstalk.FilterHandle('%s')
+      const valuesByKey = %s
+      return {
+        filter: function(value) {
+          const filtered = Object.keys(valuesByKey).filter(function(key) {
+            return valuesByKey[key] >= value
+          })
+          handle.set(filtered)
+        }
+      }
+    })()
+  ", id, shared_data$groupName(), toJSON(values_by_key))
+
+  min <- if (!is.null(min)) min else min(values)
+  max <- if (!is.null(max)) max else max(values)
+  value <- min
+
+  oninput <- paste(
+    sprintf("document.getElementById('%s__value').textContent = this.value + '%s';", id, suffix),
+    sprintf("window['__ct__%s'].filter(this.value)", id)
+  )
+
+  div(
+    class = class,
+    tags$label(`for` = id, label),
+    div(
+      tags$input(
+        id = id,
+        type = "range",
+        min = min,
+        max = max,
+        step = step,
+        value = value,
+        oninput = oninput,
+        onchange = oninput, # For IE11 support
+        style = sprintf("width: %s", validateCssUnit(width))
+      )
+    ),
+    span(id = paste0(id, "__value"), paste0(value, suffix)),
+    tags$script(HTML(script))
+  )
+}
+```
+
+``` r
+div(
+  class = "movies",
+  div(
+    class = "filters",
+    search_filter("filter_title", "Search titles", shared_movies, "title"),
+    select_filter("filter_genres", "Genre", shared_movies, "genres"),
+    select_filter("filter_year", "Year", shared_movies, "year",
+                  choices = sort(unique(movies$year), decreasing = TRUE)),
+    select_filter("filter_language", "Language", shared_movies, "original_language"),
+    select_filter("filter_rating", "Rating", shared_movies, "certification",
+                  choices = c("G", "PG", "PG-13", "R", "NC-17", "NR")),
+    range_filter("filter_score", "Min Score", shared_movies, "score", suffix = "%")
+  ),
+  tags$hr(),
+  tbl
+)
+```
+
+``` css
+/* Font from https://fontsarena.com/hanken-grotesk-by-hanken-design-co/ */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/HKGrotesk-Regular.woff2") format("woff2"),
+       url("fonts/HKGrotesk-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  src: url("fonts/HKGrotesk-SemiBold.woff2") format("woff2"),
+       url("fonts/HKGrotesk-SemiBold.woff") format("woff");
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  src: url("fonts/HKGrotesk-Bold.woff2") format("woff2"),
+       url("fonts/HKGrotesk-Bold.woff") format("woff");
+}
+
+.movies {
+  font-family: 'Hanken Grotesk', Helvetica, Arial, sans-serif;
+}
+
+.movies h2 {
+  font-weight: 600;
+}
+
+.movies a {
+  color: #007899;
+  text-decoration: none;
+}
+
+.movies a:hover,
+.movies a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
+}
+
+.movies-tbl {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.header {
+  color: hsl(0, 0%, 45%);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.header:hover[aria-sort],
+.header[aria-sort='ascending'],
+.header[aria-sort='descending'] {
+  color: hsl(0, 0%, 5%);
+}
+
+.movie-info {
+  display: flex;
+  align-items: center;
+}
+
+.movie-info-text {
+  margin-left: 0.75rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-info-details {
+  margin-top: 0.125rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: hsl(0, 0%, 40%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-poster {
+  width: 45px;
+  height: 68px;
+  box-shadow: 0 0 0 1px hsl(0, 0%, 95%);
+}
+
+.movie-runtime {
+  display: inline-block;
+}
+
+.movie-rating {
+  margin-right: 0.25rem;
+  padding: 0 0.25rem;
+  border: 1px solid hsl(0, 0%, 75%);
+  border-radius: 2px;
+}
+
+.user-score {
+  font-weight: 600;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  margin-left: -32px;
+}
+
+.filter-input {
+  margin-top: 0.5rem;
+  margin-left: 32px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-input label {
+  color: hsl(0, 0%, 45%);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.filter-input select,
+.filter-input input[type="search"] {
+  padding: 0 0.375rem;
+  height: 2rem;
+}
+
+.filter-input input[type="search"] {
+  /* Revert Bootstrap 5's Reboot styles, which change native search input styling */
+  -webkit-appearance: searchfield;
+  outline-offset: revert;
+  border-color: revert;
+}
+```
