@@ -66,19 +66,13 @@
 
 # reactable 0.4.4
 
-[Documentation - reactable 0.4.4](https://v0-4-4--reactable-docs.netlify.app/)
-
 * Fixed a failing CRAN check.
 
 # reactable 0.4.3
 
-[Documentation - reactable 0.4.3](https://v0-4-3--reactable-docs.netlify.app/)
-
 * Fixed a failing CRAN check on the `r-devel-linux-x86_64-fedora-clang` platform. ([#308](https://github.com/glin/reactable/issues/308))
 
 # reactable 0.4.2
-
-[Documentation - reactable 0.4.2](https://v0-4-2--reactable-docs.netlify.app/)
 
 ## Minor improvements and bug fixes
 
@@ -87,13 +81,9 @@
 
 # reactable 0.4.1
 
-[Documentation - reactable 0.4.1](https://v0-4-1--reactable-docs.netlify.app/)
-
 * Fixed a failing test on Fedora 36 and earlier.
 
 # reactable 0.4.0
-
-[Documentation - reactable 0.4.0](https://v0-4-0--reactable-docs.netlify.app/)
 
 ## New features
 
@@ -174,8 +164,6 @@
 * The documentation website no longer supports IE 11.
 
 # reactable 0.3.0
-
-[Documentation - reactable 0.3.0](https://v0-3-0--reactable-docs.netlify.app/)
 
 This release upgrades to a new major version of React Table
 ([#35](https://github.com/glin/reactable/issues/35)), which brings many
