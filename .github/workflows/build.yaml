@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 name: build
 
@@ -20,21 +20,32 @@ jobs:
           - { os: macOS-latest, r: 'release' }
           - { os: windows-latest, r: 'release' }
           - { os: windows-latest, r: 'oldrel' }
-          - { os: ubuntu-20.04, r: 'devel', http-user-agent: 'release' }
-          - { os: ubuntu-20.04, r: 'release', release: true }
-          - { os: ubuntu-20.04, r: 'oldrel-1' }
-          - { os: ubuntu-20.04, r: 'oldrel-2' }
-          - { os: ubuntu-20.04, r: 'oldrel-3' }
-          - { os: ubuntu-20.04, r: 'oldrel-4' }
+          - { os: ubuntu-22.04, r: 'devel', http-user-agent: 'release' }
+          - { os: ubuntu-22.04, r: 'release', release: true }
+          - { os: ubuntu-22.04, r: 'oldrel-1' }
+          - { os: ubuntu-22.04, r: 'oldrel-2' }
+          - { os: ubuntu-22.04, r: 'oldrel-3' }
+          - { os: ubuntu-22.04, r: 'oldrel-4' }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Configure pak and setup-r action to use manylinux_2_28
+        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.r != 'devel'
+        run: |
+          # Override PPM repo and do not autodetect the distro (setup-r action env var)
+          echo "RSPM=https://p3m.dev/cran/__linux__/manylinux_2_28/latest" >> $GITHUB_ENV
+          # Configure pak to use the same PPM repo when checking for the latest packages
+          echo "PKG_CRAN_MIRROR=${RSPM}" >> $GITHUB_ENV
+          # Disable automatic system requirements installation since it is unnecessary (pak env var)
+          # Temporarily reenabled to build terra from source
+          # echo "PKG_SYSREQS=FALSE" >> $GITHUB_ENV
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -44,10 +55,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # Temporarily install htmlwidgets >= 1.6.0 for tests
+          # leaflet needs terra, which does not support R <= 4.0
           extra-packages: |
             any::rcmdcheck
-            htmlwidgets?source
+            leaflet=?ignore-before-r=4.1.0
 
       - uses: r-lib/actions/check-r-package@v2
 
@@ -60,7 +71,7 @@ jobs:
         if: matrix.config.release
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: local::., pkgdown@2.1.3
 
       - name: Build pkgdown site
         if: matrix.config.release
@@ -79,9 +90,20 @@ jobs:
             echo "NETLIFY_ALIAS=${version_alias}-${github_sha_short}" >> $GITHUB_ENV
           fi
 
+      - name: Rebuild pkgdown site search index for GitHub Pages
+        if: matrix.config.release && github.ref == 'refs/heads/main'
+        run: Rscript pkgdown/build-search-gh.R
+
+      - name: Deploy pkgdown site to GitHub Pages
+        if: matrix.config.release && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+          branch: gh-pages
+          folder: docs
+
       - name: Deploy pkgdown site to Netlify
         if: matrix.config.release
-        uses: nwtgck/actions-netlify@v1.2
+        uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './docs'
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -92,14 +114,9 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
-
-      - name: Deploy pkgdown site to GitHub Pages
-        if: matrix.config.release && github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
-        with:
-          branch: gh-pages
-          folder: docs
+        timeout-minutes: 5
+        # Work around Netlify error of "Error: Unprocessable Entity" even though the deployment succeeds
+        continue-on-error: true
 
   build-node:
     runs-on: ubuntu-latest
@@ -107,11 +124,11 @@ jobs:
     name: Node.js
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -124,4 +141,4 @@ jobs:
         run: npm run lint
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
