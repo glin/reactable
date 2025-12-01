@@ -12,8 +12,6 @@
 
 # reactable 0.4.2
 
-[Documentation - reactable 0.4.2](https://v0-4-2--reactable-docs.netlify.app/)
-
 ## Minor improvements and bug fixes
 
 * Fixed rendering of embedded HTML widgets when `htmlwidgets` 1.6.0 or later is installed.
@@ -21,13 +19,9 @@
 
 # reactable 0.4.1
 
-[Documentation - reactable 0.4.1](https://v0-4-1--reactable-docs.netlify.app/)
-
 * Fixed a failing test on Fedora 36 and earlier.
 
 # reactable 0.4.0
-
-[Documentation - reactable 0.4.0](https://v0-4-0--reactable-docs.netlify.app/)
 
 ## New features
 
@@ -108,8 +102,6 @@
 * The documentation website no longer supports IE 11.
 
 # reactable 0.3.0
-
-[Documentation - reactable 0.3.0](https://v0-3-0--reactable-docs.netlify.app/)
 
 This release upgrades to a new major version of React Table
 ([#35](https://github.com/glin/reactable/issues/35)), which brings many
