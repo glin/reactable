@@ -1409,6 +1409,16 @@ skip_if_v8_fails <- function() {
 test_that("static rendering", {
   skip_if_v8_fails()
 
+  # Some distros like Debian build V8 with full ICU / i18n support, rather than the typical minimal ICU that includes
+  # the en locale only. In this case, Intl will exist and locales besides en will be supported. We need to know whether
+  # full ICU support is available for testing on platforms like CRAN's Debian machines.
+  v8_has_full_icu_support <- tryCatch({
+    V8::new_context()$eval("Intl")
+    TRUE
+  }, error = function(e) {
+    FALSE
+  })
+
   data <- data.frame(
     x = c(1, 2),
     y = c("a", "column-y-cell"),
@@ -1546,7 +1556,7 @@ test_that("static rendering", {
       date = colDef(format = colFormat(datetime = TRUE, prefix = "_date_", suffix = "_date_")),
       time = colDef(format = colFormat(time = TRUE, prefix = "_time_", suffix = "_time_")),
       num = colDef(format = colFormat(digits = 1, separators = TRUE)),
-      # Current limitation: locales other than "en" aren't supported for now
+      # Current limitation: in most V8 builds, locales other than "en" aren't supported for now
       locale_hi_IN = colDef(format = colFormat(locales = "hi-IN", currency = "INR", separators = TRUE))
     ),
     static = TRUE,
@@ -1561,7 +1571,14 @@ test_that("static rendering", {
   expect_match(html, ">$10.00<", fixed = TRUE)
   expect_match(html, ">€11.12<", fixed = TRUE)
   expect_match(html, ">1,234.1<", fixed = TRUE)
-  expect_match(html, ">₹1,234,567.40<", fixed = TRUE)
+  if (v8_has_full_icu_support) {
+    expect_match(html, ">₹12,34,567.40<", fixed = TRUE)
+    html <- sub(">₹12,34,567.40<", ">replaced<", html)
+  } else {
+    # en locale fallback
+    expect_match(html, ">₹1,234,567.40<", fixed = TRUE)
+    html <- sub(">₹1,234,567.40<", ">replaced<", html)
+  }
   # Date/time formatting depends on the local timezone, which can't easily be controlled in tests
   expect_no_match(html, "_date_2019-05-06T03:22:15Z_date_", fixed = TRUE)
   html <- sub(">_date_.+_date_<", ">_date_replaced_date_<", html)
