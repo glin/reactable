@@ -1,3 +1,7 @@
+# reactable 0.4.5
+
+* Fixed a failing CRAN check.
+
 # reactable 0.4.4
 
 * Fixed a failing CRAN check.
