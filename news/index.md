@@ -1,6 +1,6 @@
 # Changelog
 
-## reactable 0.4.4.9000 (Unreleased)
+## reactable 0.4.5.9000 (Unreleased)
 
 ### New features
 
@@ -99,12 +99,15 @@
   ([@khusmann](https://github.com/khusmann),
   [\#415](https://github.com/glin/reactable/issues/415))
 
+## reactable 0.4.5
+
+CRAN release: 2025-12-01
+
+- Fixed a failing CRAN check.
+
 ## reactable 0.4.4
 
 CRAN release: 2023-03-12
-
-[Documentation - reactable
-0.4.4](https://v0-4-4--reactable-docs.netlify.app/)
 
 - Fixed a failing CRAN check.
 
@@ -112,18 +115,12 @@ CRAN release: 2023-03-12
 
 CRAN release: 2023-01-07
 
-[Documentation - reactable
-0.4.3](https://v0-4-3--reactable-docs.netlify.app/)
-
 - Fixed a failing CRAN check on the `r-devel-linux-x86_64-fedora-clang`
   platform. ([\#308](https://github.com/glin/reactable/issues/308))
 
 ## reactable 0.4.2
 
 CRAN release: 2023-01-05
-
-[Documentation - reactable
-0.4.2](https://v0-4-2--reactable-docs.netlify.app/)
 
 ### Minor improvements and bug fixes
 
@@ -136,17 +133,11 @@ CRAN release: 2023-01-05
 
 CRAN release: 2022-12-08
 
-[Documentation - reactable
-0.4.1](https://v0-4-1--reactable-docs.netlify.app/)
-
 - Fixed a failing test on Fedora 36 and earlier.
 
 ## reactable 0.4.0
 
 CRAN release: 2022-12-04
-
-[Documentation - reactable
-0.4.0](https://v0-4-0--reactable-docs.netlify.app/)
 
 ### New features
 
@@ -274,9 +265,6 @@ CRAN release: 2022-12-04
 ## reactable 0.3.0
 
 CRAN release: 2022-05-26
-
-[Documentation - reactable
-0.3.0](https://v0-3-0--reactable-docs.netlify.app/)
 
 This release upgrades to a new major version of React Table
 ([\#35](https://github.com/glin/reactable/issues/35)), which brings many
