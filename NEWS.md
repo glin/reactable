@@ -1,4 +1,4 @@
-# reactable 0.4.4.9000 (Unreleased)
+# reactable 0.4.5.9000 (Unreleased)
 
 ## New features
 
@@ -63,6 +63,10 @@
 * Internet Explorer 11 (IE 11) is no longer supported.
 * `core-js` is no longer included in the HTML dependencies. This was required to support IE 11 and old versions of the RStudio Viewer. ([#245](https://github.com/glin/reactable/issues/245))
 * `meta` is now converted to JavaScript in the same way as `data`, using reactable's internal JSON serialization function rather than htmlwidgets's JSON serialization function. This should only be a breaking change in rare cases, as the major difference is that numeric `NA`, `NaN`, `Inf`, and `-Inf` values are now serialized as strings and preserved, rather than always being converted to `null`. (@khusmann, [#415](https://github.com/glin/reactable/issues/415))
+
+# reactable 0.4.5
+
+* Fixed a failing CRAN check.
 
 # reactable 0.4.4
 
