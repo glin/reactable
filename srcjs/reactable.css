@@ -509,6 +509,17 @@ input[type='radio'].rt-select-input {
   z-index: 1;
 }
 
+/* Virtual scrolling */
+.rt-tbody-virtual {
+  overflow: hidden !important;
+}
+
+.rt-tbody-virtual .rt-tr-group {
+  /* Rows are absolutely positioned by react-window */
+  display: flex;
+  flex-direction: column;
+}
+
 /* Search */
 .rt-search {
   display: block;

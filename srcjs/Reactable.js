@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import { FixedSizeList } from 'react-window'
 import {
   safeUseLayoutEffect,
   useExpanded,
@@ -775,6 +776,7 @@ function Table({
   inline,
   width,
   height,
+  virtual,
   theme,
   language,
   meta: initialMeta,
@@ -1434,7 +1436,11 @@ function Table({
     let rowHighlightClass = hasStickyColumns ? 'rt-tr-highlight-sticky' : 'rt-tr-highlight'
     let rowStripedClass = hasStickyColumns ? 'rt-tr-striped-sticky' : 'rt-tr-striped'
 
-    const rows = instance.page.map((row, viewIndex) => {
+    // Row height for virtual scrolling
+    const rowHeight = compact ? 30 : 36
+
+    // Render a single row - extracted for reuse in virtual mode
+    const renderRow = (row, viewIndex, virtualStyle = null) => {
       instance.prepareRow(row)
 
       // toggleRowSelected that supports single selection
@@ -1505,10 +1511,16 @@ function Table({
       }
 
       const resolvedRowProps = row.getRowProps(rowProps)
+      // Merge virtual style for absolute positioning in virtual mode
+      const trGroupStyle = virtualStyle ? { ...virtualStyle } : undefined
       return (
         // Use relative row index for key (like in v6) rather than row index (v7)
         // for better rerender performance, especially with a large number of rows.
-        <TrGroupComponent key={`${row.depth}_${viewIndex}`} className={css(theme.rowGroupStyle)}>
+        <TrGroupComponent
+          key={`${row.depth}_${viewIndex}`}
+          className={css(theme.rowGroupStyle)}
+          style={trGroupStyle}
+        >
           <TrComponent {...resolvedRowProps} key={undefined}>
             {row.cells.map((cell, colIndex) => {
               const { column } = cell
@@ -1649,7 +1661,48 @@ function Table({
           {rowDetails}
         </TrGroupComponent>
       )
-    })
+    }
+
+    // For virtual mode, use all rows; for paginated mode, use current page
+    const rowsToRender = virtual ? instance.rows : instance.page
+
+    // Virtual rendering using react-window
+    if (virtual) {
+      let className = css(theme.tableBodyStyle)
+      let noData
+      if (instance.rows.length === 0) {
+        noData = <NoDataComponent>{language.noData}</NoDataComponent>
+        className = classNames('rt-tbody-no-data', className)
+      } else {
+        noData = <NoDataComponent />
+      }
+      const tbodyProps = instance.getTableBodyProps({ className: classNames(className, 'rt-tbody-virtual') })
+
+      // Parse height value for FixedSizeList
+      const listHeight = typeof height === 'number' ? height : parseInt(height, 10) || 400
+
+      const VirtualRow = ({ index, style }) => {
+        return renderRow(rowsToRender[index], index, style)
+      }
+
+      return (
+        <TbodyComponent {...tbodyProps}>
+          <FixedSizeList
+            height={listHeight}
+            itemCount={rowsToRender.length}
+            itemSize={rowHeight}
+            width="100%"
+            overscanCount={5}
+          >
+            {VirtualRow}
+          </FixedSizeList>
+          {noData}
+        </TbodyComponent>
+      )
+    }
+
+    // Non-virtual rendering (existing logic)
+    const rows = rowsToRender.map((row, viewIndex) => renderRow(row, viewIndex))
 
     let padRows
     // Leave at least one row to show the no data message properly
@@ -2288,6 +2341,7 @@ Reactable.propTypes = {
   inline: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  virtual: PropTypes.bool,
   theme: PropTypes.object,
   language: PropTypes.object,
   meta: PropTypes.object,

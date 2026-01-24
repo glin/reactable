@@ -102,6 +102,11 @@
 #'
 #'   To set the width of a column, see [colDef()].
 #' @param height Height of the table in pixels. Defaults to `"auto"` for automatic sizing.
+#'
+#'   Required when `virtual = TRUE`.
+#' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
+#'   rendered for improved performance with large datasets. Requires `height` to
+#'   be specified. Cannot be used with `pagination`, `groupBy`, or `details`.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -225,6 +230,7 @@ reactable <- function(
   fullWidth = TRUE,
   width = NULL,
   height = NULL,
+  virtual = FALSE,
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
   meta = NULL,
@@ -523,6 +529,24 @@ reactable <- function(
   width <- htmltools::validateCssUnit(width)
   height <- htmltools::validateCssUnit(height)
 
+  if (!is.logical(virtual)) {
+    stop("`virtual` must be TRUE or FALSE")
+  }
+  if (virtual) {
+    if (is.null(height)) {
+      stop("`height` must be specified when `virtual = TRUE`")
+    }
+    if (pagination) {
+      stop("`virtual` and `pagination` cannot both be TRUE")
+    }
+    if (!is.null(groupBy)) {
+      stop("`virtual` cannot be used with `groupBy`")
+    }
+    if (!is.null(details) && !is.colDef(details)) {
+      stop("`virtual` cannot be used with `details`")
+    }
+  }
+
   if (!is.null(theme)) {
     if (is.function(theme)) {
       theme <- callFunc(theme)
@@ -772,6 +796,7 @@ reactable <- function(
     inline = if (!fullWidth) TRUE,
     width = width,
     height = height,
+    virtual = if (virtual) TRUE,
     theme = theme,
     language = language,
     meta = meta,
