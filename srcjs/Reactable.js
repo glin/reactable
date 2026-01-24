@@ -1719,8 +1719,8 @@ function Table({
       )
     }
 
-    // For virtual mode, use all rows; for paginated mode, use current page
-    const rowsToRender = virtual ? instance.rows : instance.page
+    // Use instance.page which contains current page rows (or all rows when pagination is disabled)
+    const rowsToRender = instance.page
 
     // Virtual rendering using @tanstack/react-virtual
     if (virtual) {

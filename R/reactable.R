@@ -106,7 +106,8 @@
 #'   Required when `virtual = TRUE`.
 #' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
 #'   rendered for improved performance with large datasets. Requires `height` to
-#'   be specified. Cannot be used with `pagination`, `groupBy`, or `details`.
+#'   be specified. Cannot be used with `groupBy` or `details`. Can be combined
+#'   with `pagination` to virtualize rows on each page.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -535,9 +536,6 @@ reactable <- function(
   if (virtual) {
     if (is.null(height)) {
       stop("`height` must be specified when `virtual = TRUE`")
-    }
-    if (pagination) {
-      stop("`virtual` and `pagination` cannot both be TRUE")
     }
     if (!is.null(groupBy)) {
       stop("`virtual` cannot be used with `groupBy`")

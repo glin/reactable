@@ -91,9 +91,10 @@ Added:
 ## Limitations
 
 Virtual scrolling cannot be used with:
-- **Pagination** - virtualization replaces pagination for navigating large datasets
 - **Grouped tables** (`groupBy`) - group headers and expansion would require variable row heights
 - **Row details** (`details`) - expandable content would require variable row heights
+
+Note: Virtual scrolling **can** be combined with pagination. When both are enabled, only the visible rows on the current page are rendered.
 
 ## Performance
 
@@ -131,7 +132,7 @@ tbl <- reactable(
 |------|-------|-----------------|
 | Renders with virtual=TRUE | Create table with `virtual=TRUE, height=500` | Table renders, only ~15-20 rows in DOM |
 | Requires height | Create table with `virtual=TRUE` without height | Error: "height must be specified when virtual = TRUE" |
-| Mutually exclusive with pagination | Create table with `virtual=TRUE, pagination=TRUE` | Error: "virtual and pagination cannot both be TRUE" |
+| Works with pagination | Create table with `virtual=TRUE, pagination=TRUE, height=500` | Table renders with pagination controls, current page rows are virtualized |
 | Incompatible with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Error about groupBy incompatibility |
 | Incompatible with details | Create table with `virtual=TRUE, details=...` | Error about details incompatibility |
 
@@ -163,6 +164,15 @@ tbl <- reactable(
 | Sorting | Click column header to sort | Data re-sorts, scroll position resets, virtualization works |
 | Filtering | Add column filter | Filtered rows display correctly, row count updates |
 | Global search | Use search box | Matching rows display correctly with virtualization |
+
+### Pagination with Virtual
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Page navigation | `virtual=TRUE, pagination=TRUE, defaultPageSize=1000`, navigate pages | Each page virtualizes correctly, page controls work |
+| Page size change | Change page size dropdown | New page size applies, virtualization continues working |
+| Scroll within page | Scroll within a page of 1000 rows | Only visible rows rendered, smooth scrolling |
+| Page change resets scroll | Scroll down on page 1, then go to page 2 | Scroll position resets to top of page 2 |
 
 ### Row Selection
 
