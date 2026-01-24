@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { FixedSizeList } from 'react-window'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   safeUseLayoutEffect,
   useExpanded,
@@ -539,6 +539,68 @@ SelectInputComponent.propTypes = {
   checked: PropTypes.bool,
   onChange: PropTypes.func,
   'aria-label': PropTypes.string
+}
+
+// Virtual scrolling tbody component using @tanstack/react-virtual
+function VirtualTbody({
+  tbodyProps,
+  TbodyComponent,
+  rowsToRender,
+  renderRow,
+  rowHeight,
+  listHeight,
+  noData
+}) {
+  const parentRef = React.useRef(null)
+
+  const virtualizer = useVirtualizer({
+    count: rowsToRender.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 5
+  })
+
+  const virtualItems = virtualizer.getVirtualItems()
+
+  // Use an inner div as scroll container since TbodyComponent doesn't forward refs
+  return (
+    <TbodyComponent {...tbodyProps}>
+      <div
+        ref={parentRef}
+        style={{ height: listHeight, overflow: 'auto', width: '100%' }}
+      >
+        <div
+          style={{
+            height: virtualizer.getTotalSize(),
+            width: '100%',
+            position: 'relative'
+          }}
+        >
+          {virtualItems.map(virtualRow => {
+            const style = {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${virtualRow.start}px)`
+            }
+            return renderRow(rowsToRender[virtualRow.index], virtualRow.index, style)
+          })}
+        </div>
+      </div>
+      {noData}
+    </TbodyComponent>
+  )
+}
+
+VirtualTbody.propTypes = {
+  tbodyProps: PropTypes.object,
+  TbodyComponent: PropTypes.elementType.isRequired,
+  rowsToRender: PropTypes.array.isRequired,
+  renderRow: PropTypes.func.isRequired,
+  rowHeight: PropTypes.number.isRequired,
+  listHeight: PropTypes.number.isRequired,
+  noData: PropTypes.node
 }
 
 function TableData({
@@ -1666,7 +1728,7 @@ function Table({
     // For virtual mode, use all rows; for paginated mode, use current page
     const rowsToRender = virtual ? instance.rows : instance.page
 
-    // Virtual rendering using react-window
+    // Virtual rendering using @tanstack/react-virtual
     if (virtual) {
       let className = css(theme.tableBodyStyle)
       let noData
@@ -1678,26 +1740,19 @@ function Table({
       }
       const tbodyProps = instance.getTableBodyProps({ className: classNames(className, 'rt-tbody-virtual') })
 
-      // Parse height value for FixedSizeList
+      // Parse height value for virtualizer
       const listHeight = typeof height === 'number' ? height : parseInt(height, 10) || 400
 
-      const VirtualRow = ({ index, style }) => {
-        return renderRow(rowsToRender[index], index, style)
-      }
-
       return (
-        <TbodyComponent {...tbodyProps}>
-          <FixedSizeList
-            height={listHeight}
-            itemCount={rowsToRender.length}
-            itemSize={rowHeight}
-            width="100%"
-            overscanCount={5}
-          >
-            {VirtualRow}
-          </FixedSizeList>
-          {noData}
-        </TbodyComponent>
+        <VirtualTbody
+          tbodyProps={tbodyProps}
+          TbodyComponent={TbodyComponent}
+          rowsToRender={rowsToRender}
+          renderRow={renderRow}
+          rowHeight={rowHeight}
+          listHeight={listHeight}
+          noData={noData}
+        />
       )
     }
 
