@@ -548,45 +548,39 @@ function VirtualTbody({
   rowsToRender,
   renderRow,
   rowHeight,
-  listHeight,
+  scrollElementRef,
   noData
 }) {
-  const parentRef = React.useRef(null)
-
   const virtualizer = useVirtualizer({
     count: rowsToRender.length,
-    getScrollElement: () => parentRef.current,
+    getScrollElement: () => scrollElementRef.current,
     estimateSize: () => rowHeight,
     overscan: 5
   })
 
   const virtualItems = virtualizer.getVirtualItems()
 
-  // Use an inner div as scroll container since TbodyComponent doesn't forward refs
+  // Use the table element (.rt-table) as scroll container
+  // tbody contains a spacer div with total height and absolutely positioned rows
   return (
     <TbodyComponent {...tbodyProps}>
       <div
-        ref={parentRef}
-        style={{ height: listHeight, overflow: 'auto', width: '100%' }}
+        style={{
+          height: virtualizer.getTotalSize(),
+          width: '100%',
+          position: 'relative'
+        }}
       >
-        <div
-          style={{
-            height: virtualizer.getTotalSize(),
+        {virtualItems.map(virtualRow => {
+          const style = {
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
-            position: 'relative'
-          }}
-        >
-          {virtualItems.map(virtualRow => {
-            const style = {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              transform: `translateY(${virtualRow.start}px)`
-            }
-            return renderRow(rowsToRender[virtualRow.index], virtualRow.index, style)
-          })}
-        </div>
+            transform: `translateY(${virtualRow.start}px)`
+          }
+          return renderRow(rowsToRender[virtualRow.index], virtualRow.index, style)
+        })}
       </div>
       {noData}
     </TbodyComponent>
@@ -599,7 +593,7 @@ VirtualTbody.propTypes = {
   rowsToRender: PropTypes.array.isRequired,
   renderRow: PropTypes.func.isRequired,
   rowHeight: PropTypes.number.isRequired,
-  listHeight: PropTypes.number.isRequired,
+  scrollElementRef: PropTypes.object.isRequired,
   noData: PropTypes.node
 }
 
@@ -1740,9 +1734,6 @@ function Table({
       }
       const tbodyProps = instance.getTableBodyProps({ className: classNames(className, 'rt-tbody-virtual') })
 
-      // Parse height value for virtualizer
-      const listHeight = typeof height === 'number' ? height : parseInt(height, 10) || 400
-
       return (
         <VirtualTbody
           tbodyProps={tbodyProps}
@@ -1750,7 +1741,7 @@ function Table({
           rowsToRender={rowsToRender}
           renderRow={renderRow}
           rowHeight={rowHeight}
-          listHeight={listHeight}
+          scrollElementRef={tableElement}
           noData={noData}
         />
       )
