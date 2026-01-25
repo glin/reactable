@@ -161,8 +161,7 @@ server <- function(input, output) {
   })
 }
 
-# Uncomment to run:
-# shinyApp(ui, server)
+shinyApp(ui, server)
 
 # =============================================================================
 # Future Enhancements

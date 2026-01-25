@@ -144,6 +144,20 @@ Virtual scrolling has no hard restrictions. It can be combined with:
 
 **Browser find-in-page (Ctrl+F) does not work** with virtualized tables. Since only visible rows exist in the DOM, the browser's built-in search cannot find text in off-screen rows. This is inherent to how virtual scrolling works. Users should use the table's search/filter functionality instead.
 
+### Accessibility Considerations
+
+Virtual scrolling introduces accessibility challenges:
+
+**Keyboard navigation** is essential for accessibility. `@tanstack/react-virtual` works with the native scroll container, so standard keyboard navigation (arrow keys, Page Up/Down, Home/End) works as expected. Note that some virtualization libraries like `react-window` do not handle keyboard navigation out of the box and require custom implementation (see [react-window#46](https://github.com/bvaughn/react-window/issues/46)).
+
+**ARIA attributes** needed for screen readers:
+- `aria-rowindex` on each row to indicate its position in the full dataset
+- `aria-rowcount` on the table to indicate total row count
+
+These attributes help screen readers understand that there are off-screen rows. Support varies across browser/screen reader combinations and requires testing.
+
+**Other accessibility issues** are documented at the [WICG virtual-scroller proposal](https://github.com/WICG/virtual-scroller), which discusses general challenges with making virtualized scrolling accessible.
+
 ## Performance
 
 For a table with 100,000 rows:
