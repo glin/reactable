@@ -2,7 +2,7 @@
 
 ## Overview
 
-Virtual scrolling (aka row virtualization) renders only the visible rows in the DOM, significantly improving performance for large datasets. Instead of paginating through data, users can smoothly scroll through thousands of rows while the table dynamically renders only what's on screen (plus a small buffer for smooth scrolling).
+Virtual scrolling (aka row virtualization or virtualized tables) renders only the visible rows in the DOM, significantly improving performance for large datasets. Instead of paginating through data, users can smoothly scroll through thousands of rows while the table dynamically renders only what's on screen (plus a small buffer for smooth scrolling).
 
 ## Usage
 
