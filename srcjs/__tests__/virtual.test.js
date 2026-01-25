@@ -270,7 +270,7 @@ describe('virtual scrolling', () => {
         data: { a: [1, 2, 3] },
         columns: [{ name: 'a', id: 'a' }],
         virtual: true,
-        rowClassName: (rowInfo, state) => {
+        rowClassName: rowInfo => {
           if (rowInfo && rowInfo.index === 0) return 'first-row'
           return 'other-row'
         },

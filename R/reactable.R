@@ -57,6 +57,9 @@
 #' @param showPageInfo Show page info? Defaults to `TRUE`.
 #' @param minRows Minimum number of rows to show per page. Defaults to 1.
 #' @param paginateSubRows When rows are grouped, paginate sub rows? Defaults to `FALSE`.
+#' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
+#'   rendered for improved performance with large datasets. Can be combined with
+#'   `pagination`, `details` (expandable rows), and `groupBy`.
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes the row index and column name as arguments, or a [JS()] function
 #'   that takes a row info object as an argument. Can also be a [colDef()] to
@@ -102,9 +105,6 @@
 #'
 #'   To set the width of a column, see [colDef()].
 #' @param height Height of the table in pixels. Defaults to `"auto"` for automatic sizing.
-#' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
-#'   rendered for improved performance with large datasets. Can be combined with
-#'   `pagination`, `details` (expandable rows), and `groupBy`.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -207,6 +207,7 @@ reactable <- function(
   showPageInfo = TRUE,
   minRows = 1,
   paginateSubRows = FALSE,
+  virtual = FALSE,
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
@@ -228,7 +229,6 @@ reactable <- function(
   fullWidth = TRUE,
   width = NULL,
   height = NULL,
-  virtual = FALSE,
   theme = getOption("reactable.theme"),
   language = getOption("reactable.language"),
   meta = NULL,
@@ -441,6 +441,9 @@ reactable <- function(
   if (!is.logical(paginateSubRows)) {
     stop("`paginateSubRows` must be TRUE or FALSE")
   }
+  if (!is.logical(virtual)) {
+    stop("`virtual` must be TRUE or FALSE")
+  }
   if (!is.logical(defaultExpanded)) {
     stop("`defaultExpanded` must be TRUE or FALSE")
   }
@@ -526,10 +529,6 @@ reactable <- function(
   }
   width <- htmltools::validateCssUnit(width)
   height <- htmltools::validateCssUnit(height)
-
-  if (!is.logical(virtual)) {
-    stop("`virtual` must be TRUE or FALSE")
-  }
 
   if (!is.null(theme)) {
     if (is.function(theme)) {
