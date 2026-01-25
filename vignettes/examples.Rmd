@@ -308,6 +308,55 @@ interactive elements (such as links, expand buttons, or selection checkboxes),
 as that can make it difficult for keyboard users to navigate the page.
 :::
 
+## Virtual Scrolling
+
+You can enable virtual scrolling by setting `virtual = TRUE`. Virtual scrolling renders only the visible rows, improving performance for large datasets. You should set a fixed `height` when using virtual scrolling so the table has a scroll container.
+
+```{r}
+# Create a large dataset
+data <- data.frame(
+  row = 1:10000,
+  x = round(rnorm(10000), 4),
+  y = round(runif(10000), 4)
+)
+
+reactable(data, pagination = FALSE, virtual = TRUE, height = 500)
+```
+
+Virtual scrolling can be combined with pagination. When both are enabled, only visible rows within the current page are rendered:
+
+```{r}
+reactable(
+  data,
+  virtual = TRUE,
+  height = 500,
+  defaultPageSize = 1000,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(100, 500, 1000)
+)
+```
+
+Virtual scrolling also works with grouped tables and expandable row details:
+
+```{r}
+data <- MASS::Cars93[, c("Type", "Manufacturer", "Model", "Price", "MPG.city")]
+
+reactable(
+  data,
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 500,
+  groupBy = "Type",
+  columns = list(
+    Price = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1))
+  ),
+  details = function(index) {
+    paste("Details for row", index, "- Model:", data$Model[index])
+  }
+)
+```
+
 ## Grouping and Aggregation
 
 You can group rows in a table by specifying one or more columns in `groupBy`:
