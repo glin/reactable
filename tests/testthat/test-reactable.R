@@ -1719,25 +1719,19 @@ test_that("virtual", {
     "`virtual` cannot be used with `groupBy`"
   )
 
-  # Error: virtual cannot be used with details (function)
-  expect_error(
-    reactable(data, virtual = TRUE, details = function(i) paste("Row", i)),
-    "`virtual` cannot be used with `details`"
-  )
+  # virtual works with details (function)
+  tbl <- reactable(data, virtual = TRUE, details = function(i) paste("Row", i))
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
 
-  # Error: virtual cannot be used with details (JS function)
-  expect_error(
-    reactable(data, virtual = TRUE, details = JS("function(rowInfo) { return 'test' }")),
-    "`virtual` cannot be used with `details`"
-  )
+  # virtual works with details (JS function)
+  tbl <- reactable(data, virtual = TRUE, details = JS("function(rowInfo) { return 'test' }"))
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
 
-  # Error: virtual cannot be used with details (list)
-  expect_error(
-    reactable(data, virtual = TRUE, details = list("a", "b", "c")),
-    "`virtual` cannot be used with `details`"
-  )
+  # virtual works with details (list)
+  tbl <- reactable(data, virtual = TRUE, details = list("a", "b", "c"))
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
 
-  # virtual works with details as colDef (column-level details are allowed)
+  # virtual works with details in colDef
   tbl <- reactable(
     data,
     virtual = TRUE,

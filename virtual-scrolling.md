@@ -24,7 +24,6 @@ Note: `height` is optional. Without an explicit height, the table will use its c
 - Added validation:
   - `virtual` must be logical
   - Not compatible with `groupBy` (grouped tables)
-  - Not compatible with `details` (expandable row details)
 - Passes `virtual` prop to JavaScript widget
 
 ### JavaScript (`srcjs/Reactable.js`)
@@ -101,10 +100,11 @@ The virtualizer measures actual rendered row heights and adjusts scroll position
 ## Limitations
 
 Virtual scrolling cannot be used with:
-- **Grouped tables** (`groupBy`) - group headers and expansion would require variable row heights
-- **Row details** (`details`) - expandable content would require variable row heights
+- **Grouped tables** (`groupBy`) - group headers and nested row expansion would require complex variable height handling
 
-Note: Virtual scrolling **can** be combined with pagination. When both are enabled, only the visible rows on the current page are rendered.
+Virtual scrolling **can** be combined with:
+- **Pagination** - only visible rows on the current page are rendered
+- **Row details** (`details`) - expandable rows are dynamically measured via ResizeObserver. Note: expanding rows outside the visible area may cause scroll position shifts.
 
 ## Performance
 
@@ -144,7 +144,7 @@ tbl <- reactable(
 | Works without explicit height | Create table with `virtual=TRUE` in a sized container | Table uses container height, virtualization works |
 | Works with pagination | Create table with `virtual=TRUE, pagination=TRUE, height=500` | Table renders with pagination controls, current page rows are virtualized |
 | Incompatible with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Error about groupBy incompatibility |
-| Incompatible with details | Create table with `virtual=TRUE, details=...` | Error about details incompatibility |
+| Works with details | Create table with `virtual=TRUE, details=...` | Expandable rows work, height adjusts dynamically |
 
 ### Scrolling
 
@@ -192,6 +192,17 @@ tbl <- reactable(
 | Multiple selection | `selection="multiple"`, select multiple rows | Selections persist when scrolling away and back |
 | Select after scroll | Scroll to row 50,000, select it | Selection works on virtualized rows |
 
+### Row Details (Expandable Rows)
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Expand visible row | Click expander on visible row | Row expands, details visible, other rows shift down |
+| Collapse row | Click expander on expanded row | Row collapses, details hidden, rows shift back |
+| Expand then scroll | Expand row, scroll away, scroll back | Expanded state preserved, details still visible |
+| Multiple expanded | Expand several rows | All expanded rows show details correctly |
+| Scroll with expanded | Scroll through table with some rows expanded | Variable heights handled smoothly |
+| Expand row above viewport | Scroll down, expand row above visible area | Content may shift (expected behavior) |
+
 ### Styling
 
 | Test | Steps | Expected Result |
@@ -224,5 +235,4 @@ tbl <- reactable(
 
 Potential improvements for future versions:
 - Integration with grouped tables
-- Integration with expandable row details
 - Horizontal virtualization for tables with many columns

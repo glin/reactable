@@ -39,6 +39,24 @@ htmltools::browsable(
 # Styling
 reactable(data, virtual = T, pagination = F, height = 500, searchable = T, theme = reactableTheme(tableStyle = list(fontSize = "36px")))
 
+# Row details
+reactable(
+  data.frame(x = 1:1000, y = rnorm(1000)),
+  virtual = TRUE,
+  height = 500,
+  details = function(index) paste("Details for row", index),
+  pagination = FALSE
+)
+
+reactable(
+  data.frame(x = 1:1000, y = rnorm(1000)),
+  virtual = TRUE,
+  height = 500,
+  details = function(index) paste("Details for row", index),
+  pagination = FALSE,
+  defaultExpanded = TRUE
+)
+
 # Error cases
 reactable(data, virtual = T, pagination = F, height = 500, searchable = T, groupBy = "city")
-reactable(data, virtual = T, pagination = F, height = 500, searchable = T, details = function() "details")
+# reactable(data, virtual = T, pagination = F, height = 500, searchable = T, details = function() "details")
