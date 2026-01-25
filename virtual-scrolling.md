@@ -31,9 +31,7 @@ The parameter is named `virtual` to match reactable's existing concise naming st
 ### R Package (`R/reactable.R`)
 
 - Added `virtual` parameter to `reactable()` function (default: `FALSE`)
-- Added validation:
-  - `virtual` must be logical
-  - Not compatible with `groupBy` (grouped tables)
+- Added validation: `virtual` must be logical
 - Passes `virtual` prop to JavaScript widget
 
 ### JavaScript (`srcjs/Reactable.js`)
@@ -109,12 +107,15 @@ The virtualizer measures actual rendered row heights and adjusts scroll position
 
 ## Limitations
 
-Virtual scrolling cannot be used with:
-- **Grouped tables** (`groupBy`) - group headers and nested row expansion would require complex variable height handling
-
-Virtual scrolling **can** be combined with:
+Virtual scrolling has no hard restrictions. It can be combined with:
 - **Pagination** - only visible rows on the current page are rendered
-- **Row details** (`details`) - expandable rows are dynamically measured via ResizeObserver. Note: expanding rows outside the visible area may cause scroll position shifts.
+- **Row details** (`details`) - expandable rows are dynamically measured via ResizeObserver
+- **Grouped tables** (`groupBy`) - group headers and sub-rows are virtualized together
+
+**Notes on grouped tables:**
+- When `paginateSubRows = FALSE` (default): sub-rows add to the row count, ignoring page size. All visible rows (group headers + expanded sub-rows) are virtualized.
+- When `paginateSubRows = TRUE`: sub-rows count toward the page size. Pagination and virtualization work together.
+- Expanding/collapsing groups outside the visible area may cause scroll position shifts.
 
 ## Performance
 
@@ -153,7 +154,7 @@ tbl <- reactable(
 | Renders with virtual=TRUE | Create table with `virtual=TRUE, height=500` | Table renders, only ~15-20 rows in DOM |
 | Works without explicit height | Create table with `virtual=TRUE` in a sized container | Table uses container height, virtualization works |
 | Works with pagination | Create table with `virtual=TRUE, pagination=TRUE, height=500` | Table renders with pagination controls, current page rows are virtualized |
-| Incompatible with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Error about groupBy incompatibility |
+| Works with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Grouped table renders, groups expandable |
 | Works with details | Create table with `virtual=TRUE, details=...` | Expandable rows work, height adjusts dynamically |
 
 ### Scrolling
@@ -213,6 +214,19 @@ tbl <- reactable(
 | Scroll with expanded | Scroll through table with some rows expanded | Variable heights handled smoothly |
 | Expand row above viewport | Scroll down, expand row above visible area | Content may shift (expected behavior) |
 
+### Grouped Tables
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Basic groupBy | `virtual=TRUE, groupBy="category"` | Group headers render, expandable |
+| Expand group | Click group header to expand | Sub-rows appear, virtualization continues |
+| Collapse group | Click expanded group header | Sub-rows hidden, row count updates |
+| Nested groupBy | `groupBy=c("category", "subcategory")` | Multiple grouping levels work |
+| paginateSubRows=FALSE | Default behavior, expand large group | Sub-rows add to visible rows, may exceed page size |
+| paginateSubRows=TRUE | `paginateSubRows=TRUE`, expand group | Sub-rows count toward page size |
+| Aggregated values | Group with aggregated columns | Aggregated values display correctly in group headers |
+| Scroll through groups | Many groups, scroll through | Group headers and sub-rows render correctly |
+
 ### Styling
 
 | Test | Steps | Expected Result |
@@ -244,5 +258,4 @@ tbl <- reactable(
 ## Future Enhancements
 
 Potential improvements for future versions:
-- Integration with grouped tables
 - Horizontal virtualization for tables with many columns

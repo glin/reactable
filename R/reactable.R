@@ -103,8 +103,8 @@
 #'   To set the width of a column, see [colDef()].
 #' @param height Height of the table in pixels. Defaults to `"auto"` for automatic sizing.
 #' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
-#'   rendered for improved performance with large datasets. Cannot be used with
-#'   `groupBy`. Can be combined with `pagination` and `details` (expandable rows).
+#'   rendered for improved performance with large datasets. Can be combined with
+#'   `pagination`, `details` (expandable rows), and `groupBy`.
 #' @param theme Theme options for the table, specified by
 #'   [reactableTheme()]. Defaults to the global `reactable.theme` option.
 #'   Can also be a function that returns a [reactableTheme()] or `NULL`.
@@ -529,11 +529,6 @@ reactable <- function(
 
   if (!is.logical(virtual)) {
     stop("`virtual` must be TRUE or FALSE")
-  }
-  if (virtual) {
-    if (!is.null(groupBy)) {
-      stop("`virtual` cannot be used with `groupBy`")
-    }
   }
 
   if (!is.null(theme)) {

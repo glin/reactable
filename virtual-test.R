@@ -57,6 +57,10 @@ reactable(
   defaultExpanded = TRUE
 )
 
-# Error cases
+# Grouped rows
 reactable(data, virtual = T, pagination = F, height = 500, searchable = T, groupBy = "city")
+reactable(data, virtual = T, height = 500, searchable = T, groupBy = "city", paginateSubRows = TRUE, defaultPageSize = 100)
+
+# Error cases
+# reactable(data, virtual = T, pagination = F, height = 500, searchable = T, groupBy = "city")
 # reactable(data, virtual = T, pagination = F, height = 500, searchable = T, details = function() "details")

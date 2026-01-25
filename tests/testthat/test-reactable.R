@@ -1713,11 +1713,13 @@ test_that("virtual", {
   expect_error(reactable(data, virtual = NULL), "`virtual` must be TRUE or FALSE")
   expect_error(reactable(data, virtual = 1), "`virtual` must be TRUE or FALSE")
 
-  # Error: virtual cannot be used with groupBy
-  expect_error(
-    reactable(data, virtual = TRUE, groupBy = "y"),
-    "`virtual` cannot be used with `groupBy`"
-  )
+  # virtual works with groupBy
+  tbl <- reactable(data, virtual = TRUE, groupBy = "y")
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
+
+  # virtual works with groupBy and paginateSubRows
+  tbl <- reactable(data, virtual = TRUE, groupBy = "y", paginateSubRows = TRUE)
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
 
   # virtual works with details (function)
   tbl <- reactable(data, virtual = TRUE, details = function(i) paste("Row", i))

@@ -550,4 +550,155 @@ describe('virtual scrolling', () => {
       expect(spacerDiv).toHaveStyle(`height: ${expectedHeight}px`)
     })
   })
+
+  describe('groupBy with virtual', () => {
+    it('renders grouped table with virtual scrolling', () => {
+      const props = {
+        data: {
+          category: ['A', 'A', 'B', 'B', 'C'],
+          value: [1, 2, 3, 4, 5]
+        },
+        columns: [
+          { name: 'category', id: 'category' },
+          { name: 'value', id: 'value' }
+        ],
+        groupBy: ['category'],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const tbody = getTbody(container)
+      expect(tbody).toHaveClass('rt-tbody-virtual')
+
+      // Should render group headers (collapsed by default)
+      const rowGroups = getRowGroups(container)
+      expect(rowGroups.length).toBeGreaterThan(0)
+    })
+
+    it('renders expanded groups with virtual scrolling', () => {
+      const props = {
+        data: {
+          category: ['A', 'A', 'B', 'B', 'C'],
+          value: [1, 2, 3, 4, 5]
+        },
+        columns: [
+          { name: 'category', id: 'category' },
+          { name: 'value', id: 'value' }
+        ],
+        groupBy: ['category'],
+        defaultExpanded: true,
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const tbody = getTbody(container)
+      expect(tbody).toHaveClass('rt-tbody-virtual')
+
+      // With defaultExpanded, should show group headers + sub-rows
+      const rowGroups = getRowGroups(container)
+      // 3 groups + 5 sub-rows = 8 total rows (all visible with small dataset)
+      expect(rowGroups.length).toBeGreaterThan(3)
+    })
+
+    it('works with paginateSubRows', () => {
+      const props = {
+        data: {
+          category: ['A', 'A', 'A', 'B', 'B', 'B'],
+          value: [1, 2, 3, 4, 5, 6]
+        },
+        columns: [
+          { name: 'category', id: 'category' },
+          { name: 'value', id: 'value' }
+        ],
+        groupBy: ['category'],
+        paginateSubRows: true,
+        defaultExpanded: true,
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const tbody = getTbody(container)
+      expect(tbody).toHaveClass('rt-tbody-virtual')
+    })
+  })
+
+  describe('details with virtual', () => {
+    it('renders table with row details and virtual scrolling', () => {
+      const props = {
+        data: { a: [1, 2, 3, 4, 5] },
+        columns: [
+          {
+            name: 'a',
+            id: 'a',
+            details: ['Detail 1', 'Detail 2', 'Detail 3', 'Detail 4', 'Detail 5']
+          }
+        ],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const tbody = getTbody(container)
+      expect(tbody).toHaveClass('rt-tbody-virtual')
+
+      // Should render rows with expanders
+      const expanders = container.querySelectorAll('.rt-expander')
+      expect(expanders.length).toBeGreaterThan(0)
+    })
+
+    it('renders expanded row details', () => {
+      const props = {
+        data: { a: [1, 2, 3] },
+        columns: [
+          {
+            name: 'a',
+            id: 'a',
+            details: ['Detail 1', 'Detail 2', 'Detail 3']
+          }
+        ],
+        defaultExpanded: true,
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const tbody = getTbody(container)
+      expect(tbody).toHaveClass('rt-tbody-virtual')
+
+      // With defaultExpanded, details should be visible
+      const details = container.querySelectorAll('.rt-tr-details')
+      expect(details.length).toBeGreaterThan(0)
+    })
+
+    it('expands row details on click', () => {
+      const props = {
+        data: { a: [1, 2, 3] },
+        columns: [
+          {
+            name: 'a',
+            id: 'a',
+            details: ['Detail 1', 'Detail 2', 'Detail 3']
+          }
+        ],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      // Initially no details visible
+      let details = container.querySelectorAll('.rt-tr-details')
+      expect(details).toHaveLength(0)
+
+      // Click first expander
+      const expander = container.querySelector('.rt-expander')
+      fireEvent.click(expander)
+
+      // Now details should be visible
+      details = container.querySelectorAll('.rt-tr-details')
+      expect(details).toHaveLength(1)
+    })
+  })
 })
