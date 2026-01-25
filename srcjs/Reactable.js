@@ -259,9 +259,9 @@ function TfootComponent({ className, ...rest }) {
   return <div className={classNames('rt-tfoot', className)} role="rowgroup" {...rest} />
 }
 
-function TrGroupComponent({ className, ...rest }) {
-  return <div className={classNames('rt-tr-group', className)} {...rest} />
-}
+const TrGroupComponent = React.forwardRef(function TrGroupComponent({ className, ...rest }, ref) {
+  return <div ref={ref} className={classNames('rt-tr-group', className)} {...rest} />
+})
 
 function TrComponent({ className, ...rest }) {
   return <div className={classNames('rt-tr', className)} role="row" {...rest} />
@@ -547,15 +547,28 @@ function VirtualTbody({
   TbodyComponent,
   rowsToRender,
   renderRow,
-  rowHeight,
+  compact,
   scrollElementRef,
   noData
 }) {
+  // Estimated row height for initial render before dynamic measurement.
+  // These values are derived from reactable.css default styles:
+  //   Default:  7px padding-top + 7px padding-bottom + ~20px line-height + 1px border = ~36px
+  //   Compact:  4px padding-top + 4px padding-bottom + ~20px line-height + 1px border = ~30px
+  // See .rt-td-inner and .rt-compact .rt-td-inner padding rules in reactable.css.
+  // Actual row heights are measured dynamically after render to handle custom font sizes/styles.
+  const estimatedRowHeight = compact ? 30 : 36
+
   const virtualizer = useVirtualizer({
     count: rowsToRender.length,
     getScrollElement: () => scrollElementRef.current,
-    estimateSize: () => rowHeight,
-    overscan: 5
+    estimateSize: () => estimatedRowHeight,
+    overscan: 5,
+    // Enable dynamic row height measurement for custom font sizes/styles
+    measureElement: element => {
+      if (!element) return estimatedRowHeight
+      return element.getBoundingClientRect().height
+    }
   })
 
   const virtualItems = virtualizer.getVirtualItems()
@@ -579,7 +592,13 @@ function VirtualTbody({
             width: '100%',
             transform: `translateY(${virtualRow.start}px)`
           }
-          return renderRow(rowsToRender[virtualRow.index], virtualRow.index, style)
+          return renderRow(
+            rowsToRender[virtualRow.index],
+            virtualRow.index,
+            style,
+            virtualizer.measureElement,
+            virtualRow.index
+          )
         })}
       </div>
       {noData}
@@ -592,7 +611,7 @@ VirtualTbody.propTypes = {
   TbodyComponent: PropTypes.elementType.isRequired,
   rowsToRender: PropTypes.array.isRequired,
   renderRow: PropTypes.func.isRequired,
-  rowHeight: PropTypes.number.isRequired,
+  compact: PropTypes.bool,
   scrollElementRef: PropTypes.object.isRequired,
   noData: PropTypes.node
 }
@@ -1492,11 +1511,9 @@ function Table({
     let rowHighlightClass = hasStickyColumns ? 'rt-tr-highlight-sticky' : 'rt-tr-highlight'
     let rowStripedClass = hasStickyColumns ? 'rt-tr-striped-sticky' : 'rt-tr-striped'
 
-    // Row height for virtual scrolling
-    const rowHeight = compact ? 30 : 36
-
     // Render a single row - extracted for reuse in virtual mode
-    const renderRow = (row, viewIndex, virtualStyle = null) => {
+    // measureRef and dataIndex are used for dynamic row height measurement in virtual mode
+    const renderRow = (row, viewIndex, virtualStyle = null, measureRef = null, dataIndex = null) => {
       instance.prepareRow(row)
 
       // toggleRowSelected that supports single selection
@@ -1569,14 +1586,20 @@ function Table({
       const resolvedRowProps = row.getRowProps(rowProps)
       // Merge virtual style for absolute positioning in virtual mode
       const trGroupStyle = virtualStyle ? { ...virtualStyle } : undefined
+      // For virtual mode: ref for measuring, data-index for virtualizer tracking
+      const trGroupProps = {
+        key: `${row.depth}_${viewIndex}`,
+        className: css(theme.rowGroupStyle),
+        style: trGroupStyle
+      }
+      if (measureRef != null) {
+        trGroupProps.ref = measureRef
+        trGroupProps['data-index'] = dataIndex
+      }
       return (
         // Use relative row index for key (like in v6) rather than row index (v7)
         // for better rerender performance, especially with a large number of rows.
-        <TrGroupComponent
-          key={`${row.depth}_${viewIndex}`}
-          className={css(theme.rowGroupStyle)}
-          style={trGroupStyle}
-        >
+        <TrGroupComponent {...trGroupProps}>
           <TrComponent {...resolvedRowProps} key={undefined}>
             {row.cells.map((cell, colIndex) => {
               const { column } = cell
@@ -1740,7 +1763,7 @@ function Table({
           TbodyComponent={TbodyComponent}
           rowsToRender={rowsToRender}
           renderRow={renderRow}
-          rowHeight={rowHeight}
+          compact={compact}
           scrollElementRef={tableElement}
           noData={noData}
         />

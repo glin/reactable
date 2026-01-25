@@ -85,8 +85,18 @@ Added:
 
 ### Row Height
 
-- Default: 36px
-- Compact mode: 30px
+Row heights are dynamically measured at runtime, allowing the virtualizer to adapt to:
+- Custom font sizes via `theme` or CSS
+- Different content heights
+- Any styling that affects row dimensions
+
+Initial estimates used before measurement:
+- Default: 36px (7px top padding + 7px bottom padding + ~20px line-height + 1px border)
+- Compact mode: 30px (4px top padding + 4px bottom padding + ~20px line-height + 1px border)
+
+These values are derived from the default `.rt-td-inner` padding styles in `reactable.css`.
+
+The virtualizer measures actual rendered row heights and adjusts scroll positioning accordingly.
 
 ## Limitations
 
@@ -190,6 +200,7 @@ tbl <- reactable(
 | Highlighted rows | `highlight=TRUE` | Hover highlighting works on virtualized rows |
 | Compact mode | `compact=TRUE` | Row height is 30px instead of 36px |
 | Custom row styles | Use `rowClassName` or `rowStyle` | Styles apply correctly to virtualized rows |
+| Custom font size | `theme=reactableTheme(tableStyle=list(fontSize="24px"))` | Row heights adapt dynamically, no gaps or overlaps |
 
 ### Edge Cases
 
@@ -212,7 +223,6 @@ tbl <- reactable(
 ## Future Enhancements
 
 Potential improvements for future versions:
-- Support for variable row heights (would require `useVirtualizer` with dynamic `estimateSize`)
 - Integration with grouped tables
 - Integration with expandable row details
 - Horizontal virtualization for tables with many columns

@@ -36,6 +36,9 @@ htmltools::browsable(
   )
 )
 
+# Styling
+reactable(data, virtual = T, pagination = F, height = 500, searchable = T, theme = reactableTheme(tableStyle = list(fontSize = "36px")))
+
 # Error cases
 reactable(data, virtual = T, pagination = F, height = 500, searchable = T, groupBy = "city")
 reactable(data, virtual = T, pagination = F, height = 500, searchable = T, details = function() "details")

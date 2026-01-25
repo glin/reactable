@@ -23,15 +23,32 @@ const getSelectRowRadios = container => container.querySelectorAll('.rt-select-i
 
 // Mock scroll element for virtualizer - provide dimensions
 beforeAll(() => {
-  // Mock getBoundingClientRect for the table element
-  Element.prototype.getBoundingClientRect = jest.fn(() => ({
-    width: 500,
-    height: 400,
-    top: 0,
-    left: 0,
-    bottom: 400,
-    right: 500
-  }))
+  // Mock getBoundingClientRect - return appropriate height based on element type
+  Element.prototype.getBoundingClientRect = jest.fn(function () {
+    // Row groups should return row height (36px default, 30px compact)
+    if (this.classList && this.classList.contains('rt-tr-group')) {
+      // Check if compact mode by looking for rt-compact class on ancestor
+      const isCompact = this.closest && this.closest('.rt-compact')
+      const rowHeight = isCompact ? 30 : 36
+      return {
+        width: 500,
+        height: rowHeight,
+        top: 0,
+        left: 0,
+        bottom: rowHeight,
+        right: 500
+      }
+    }
+    // Table container
+    return {
+      width: 500,
+      height: 400,
+      top: 0,
+      left: 0,
+      bottom: 400,
+      right: 500
+    }
+  })
 
   // Mock offsetHeight and scrollHeight for scroll calculations
   Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
