@@ -1268,8 +1268,10 @@ function Table({
       const { key: headerGroupKey, ...headerGroupProps } = headerGroup.getHeaderGroupProps({
         className: isGroupHeader ? 'rt-tr-group-header' : 'rt-tr-header'
       })
+      // aria-rowindex is 1-based, header rows come first
+      const ariaRowIndex = virtual ? i + 1 : null
       return (
-        <TrComponent key={headerGroupKey} {...headerGroupProps}>
+        <TrComponent key={headerGroupKey} {...headerGroupProps} aria-rowindex={ariaRowIndex}>
           {headerGroup.headers.map(column => {
             column = {
               ...column,
@@ -1596,11 +1598,13 @@ function Table({
         trGroupProps.ref = measureRef
         trGroupProps['data-index'] = dataIndex
       }
+      // aria-rowindex is 1-based, data rows come after header rows
+      const ariaRowIndex = virtual ? row.index + 1 + instance.headerGroups.length : null
       return (
         // Use relative row index for key (like in v6) rather than row index (v7)
         // for better rerender performance, especially with a large number of rows.
         <TrGroupComponent {...trGroupProps}>
-          <TrComponent {...resolvedRowProps} key={undefined}>
+          <TrComponent {...resolvedRowProps} key={undefined} aria-rowindex={ariaRowIndex}>
             {row.cells.map((cell, colIndex) => {
               const { column } = cell
               let cellProps = column.getProps ? column.getProps(rowInfo, column, stateInfo) : {}
@@ -2358,6 +2362,7 @@ function Table({
         ref={tableElement}
         tabIndex={tableHasScrollbar ? 0 : null}
         className={tableClassName}
+        aria-rowcount={virtual ? instance.rows.length + instance.headerGroups.length : null}
       >
         {makeThead()}
         {makeTbody()}

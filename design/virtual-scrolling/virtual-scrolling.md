@@ -150,11 +150,11 @@ Virtual scrolling introduces accessibility challenges:
 
 **Keyboard navigation** is essential for accessibility. `@tanstack/react-virtual` works with the native scroll container, so standard keyboard navigation (arrow keys, Page Up/Down, Home/End) works as expected. Note that some virtualization libraries like `react-window` do not handle keyboard navigation out of the box and require custom implementation (see [react-window#46](https://github.com/bvaughn/react-window/issues/46)).
 
-**ARIA attributes** needed for screen readers:
-- `aria-rowindex` on each row to indicate its position in the full dataset
-- `aria-rowcount` on the table to indicate total row count
+**ARIA attributes** are implemented to help screen readers understand off-screen rows:
+- `aria-rowcount` on the table indicates the total number of rows (data rows + header rows)
+- `aria-rowindex` on each row indicates its 1-based position in the full table (header rows first, then data rows)
 
-These attributes help screen readers understand that there are off-screen rows. Support varies across browser/screen reader combinations and requires testing.
+These attributes are only added when `virtual = TRUE`. Support varies across browser/screen reader combinations. See [W3C ARIA Grid and Table Properties](https://www.w3.org/WAI/ARIA/apg/practices/grid-and-table-properties/) for guidance on using these attributes.
 
 **Other accessibility issues** are documented at the [WICG virtual-scroller proposal](https://github.com/WICG/virtual-scroller), which discusses general challenges with making virtualized scrolling accessible.
 
@@ -208,7 +208,7 @@ tbl <- reactable(
 | Scroll to top | Scroll back to top | First rows (1-15) visible |
 | Single scrollbar | Inspect DOM | Only one scrollbar on `.rt-table`, none inside tbody |
 
-### Keyboard Navigation
+### Keyboard Navigation and Accessibility
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
@@ -218,6 +218,11 @@ tbl <- reactable(
 | Page Up | From middle, press Page Up | Scrolls up by one viewport height (~14 rows) |
 | Arrow Down | Press Down Arrow repeatedly | Scrolls down incrementally |
 | Arrow Up | Press Up Arrow repeatedly | Scrolls up incrementally |
+| aria-rowcount | Inspect table element | `aria-rowcount` equals total rows + header rows |
+| aria-rowindex on headers | Inspect header row(s) | Header rows have `aria-rowindex` starting at 1 |
+| aria-rowindex on data rows | Inspect data rows | Data rows have `aria-rowindex` = row index + header count + 1 |
+| ARIA with column groups | Table with column groups | `aria-rowcount` and `aria-rowindex` account for multiple header rows |
+| No ARIA in non-virtual | `virtual = FALSE` | No `aria-rowcount` or `aria-rowindex` attributes |
 
 ### Data Operations
 

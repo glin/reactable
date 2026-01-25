@@ -162,6 +162,92 @@ describe('virtual scrolling', () => {
     })
   })
 
+  describe('ARIA attributes', () => {
+    it('adds aria-rowcount to table in virtual mode', () => {
+      const props = {
+        data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const table = getTable(container)
+      // aria-rowcount = 100 data rows + 1 header row
+      expect(table).toHaveAttribute('aria-rowcount', '101')
+    })
+
+    it('adds aria-rowindex to header rows in virtual mode', () => {
+      const props = {
+        data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const headerRow = container.querySelector('.rt-thead .rt-tr')
+      expect(headerRow).toHaveAttribute('aria-rowindex', '1')
+    })
+
+    it('adds aria-rowindex to data rows in virtual mode', () => {
+      const props = {
+        data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr')
+      // First data row should have aria-rowindex = 2 (after header row)
+      expect(dataRows[0]).toHaveAttribute('aria-rowindex', '2')
+    })
+
+    it('does not add ARIA attributes in non-virtual mode', () => {
+      const props = {
+        data: { a: [1, 2, 3] },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: false
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const table = getTable(container)
+      expect(table).not.toHaveAttribute('aria-rowcount')
+
+      const headerRow = container.querySelector('.rt-thead .rt-tr')
+      expect(headerRow).not.toHaveAttribute('aria-rowindex')
+
+      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
+      dataRows.forEach(row => {
+        expect(row).not.toHaveAttribute('aria-rowindex')
+      })
+    })
+
+    it('handles aria-rowcount with column groups (multiple header rows)', () => {
+      const props = {
+        data: { a: Array.from({ length: 50 }, (_, i) => i + 1), b: Array.from({ length: 50 }, (_, i) => i + 1) },
+        columns: [{ name: 'a', id: 'a' }, { name: 'b', id: 'b' }],
+        columnGroups: [{ name: 'Group', columns: ['a', 'b'] }],
+        virtual: true,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const table = getTable(container)
+      // aria-rowcount = 50 data rows + 2 header rows (group header + column header)
+      expect(table).toHaveAttribute('aria-rowcount', '52')
+
+      const headerRows = container.querySelectorAll('.rt-thead .rt-tr')
+      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1')
+      expect(headerRows[1]).toHaveAttribute('aria-rowindex', '2')
+
+      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr')
+      // First data row should have aria-rowindex = 3 (after 2 header rows)
+      expect(dataRows[0]).toHaveAttribute('aria-rowindex', '3')
+    })
+  })
+
   describe('pagination with virtual', () => {
     it('works with pagination enabled', () => {
       const props = {
