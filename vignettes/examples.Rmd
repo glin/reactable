@@ -357,6 +357,10 @@ reactable(
 )
 ```
 
+::: {.callout-note}
+**Note:** Browser find-in-page (Ctrl+F / Cmd+F) does not work with virtualized tables since only visible rows exist in the DOM. Use the table's built-in search or filtering instead.
+:::
+
 ## Grouping and Aggregation
 
 You can group rows in a table by specifying one or more columns in `groupBy`:
