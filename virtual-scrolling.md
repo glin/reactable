@@ -16,6 +16,16 @@ reactable(
 
 Note: `height` is optional. Without an explicit height, the table will use its container's height (e.g., `height: 100%` in a Shiny app with a sized container).
 
+### API Design: Why `virtual`?
+
+The parameter is named `virtual` to match reactable's existing concise naming style (`striped`, `compact`, `bordered`, `highlight`). Other libraries use various names:
+
+- TanStack Table: `enableRowVirtualization`
+- Vuetify: `virtual`
+- AG Grid: `suppressRowVirtualisation`
+
+`virtual` was chosen because it's short, commonly used (Vuetify), and consistent with reactable's API conventions.
+
 ## Changes Made
 
 ### R Package (`R/reactable.R`)
