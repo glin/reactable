@@ -8,6 +8,7 @@
 ^babel\.config\.json$
 ^CLAUDE\.md$
 ^coverage$
+^design$
 ^docs$
 ^jest.config\.js$
 ^node_modules$

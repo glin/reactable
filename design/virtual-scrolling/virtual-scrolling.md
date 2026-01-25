@@ -1,16 +1,17 @@
-# Virtual Scrolling Implementation
+# Virtual Scrolling
 
 ## Overview
 
-Added row virtualization to reactable as an alternative to pagination. When enabled, only visible rows are rendered in the DOM, significantly improving performance for large datasets.
+Virtual scrolling (aka row virtualization) renders only the visible rows in the DOM, significantly improving performance for large datasets. Instead of paginating through data, users can smoothly scroll through thousands of rows while the table dynamically renders only what's on screen (plus a small buffer for smooth scrolling).
 
 ## Usage
 
 ```r
 reactable(
   data,
+  pagination = FALSE,
   virtual = TRUE,
-  height = 500  # Recommended for best results
+  height = 500
 )
 ```
 
@@ -18,13 +19,24 @@ Note: `height` is optional. Without an explicit height, the table will use its c
 
 ### API Design: Why `virtual`?
 
-The parameter is named `virtual` to match reactable's existing concise naming style (`striped`, `compact`, `bordered`, `highlight`). Other libraries use various names:
+The parameter is named `virtual` rather than `virtualScroll` or `virtualScrolling` to match reactable's existing concise naming style. Reactable uses short, adjective-like parameter names:
 
+- `striped` (not `stripedRows`)
+- `compact` (not `compactMode`)
+- `bordered` (not `borderedCells`)
+- `highlight` (not `highlightOnHover`)
+- `filterable` (not `filterableColumns`)
+- `searchable` (not `searchableTable`)
+
+Following this pattern, `virtual` is preferred over longer alternatives.
+
+Other table libraries use various names:
 - TanStack Table: `enableRowVirtualization`
 - Vuetify: `virtual`
 - AG Grid: `suppressRowVirtualisation`
+- Material UI: `virtualize`
 
-`virtual` was chosen because it's short, commonly used (Vuetify), and consistent with reactable's API conventions.
+`virtual` was chosen because it's concise, commonly used (Vuetify, similar to Material UI), and consistent with reactable's API conventions.
 
 ## Changes Made
 
@@ -67,6 +79,19 @@ Added:
 ```json
 "@tanstack/react-virtual": "^3.13.0"
 ```
+
+### Bundle Size Impact
+
+| Metric | Before | After | Increase |
+|--------|--------|-------|----------|
+| Uncompressed | 168.6 KB | 184.7 KB | +16.1 KB (+9.6%) |
+| Gzipped | 39.7 KB | 44.6 KB | +4.9 KB (+12.4%) |
+
+The `@tanstack/react-virtual` library adds ~16 KB uncompressed (~5 KB gzipped) to the bundle. This is a modest increase for significant performance gains with large datasets.
+
+For comparison:
+- `@tanstack/react-virtual`: ~8 KB minified
+- `@tanstack/virtual-core` (peer dependency): ~12 KB minified
 
 ## Architecture
 
@@ -117,6 +142,8 @@ Virtual scrolling has no hard restrictions. It can be combined with:
 - When `paginateSubRows = TRUE`: sub-rows count toward the page size. Pagination and virtualization work together.
 - Expanding/collapsing groups outside the visible area may cause scroll position shifts.
 
+**Browser find-in-page (Ctrl+F) does not work** with virtualized tables. Since only visible rows exist in the DOM, the browser's built-in search cannot find text in off-screen rows. This is inherent to how virtual scrolling works. Users should use the table's search/filter functionality instead.
+
 ## Performance
 
 For a table with 100,000 rows:
@@ -151,11 +178,11 @@ tbl <- reactable(
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Renders with virtual=TRUE | Create table with `virtual=TRUE, height=500` | Table renders, only ~15-20 rows in DOM |
-| Works without explicit height | Create table with `virtual=TRUE` in a sized container | Table uses container height, virtualization works |
-| Works with pagination | Create table with `virtual=TRUE, pagination=TRUE, height=500` | Table renders with pagination controls, current page rows are virtualized |
-| Works with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Grouped table renders, groups expandable |
-| Works with details | Create table with `virtual=TRUE, details=...` | Expandable rows work, height adjusts dynamically |
+| Renders with virtual = TRUE | Create table with `virtual = TRUE, height = 500` | Table renders, only ~15-20 rows in DOM |
+| Works without explicit height | Create table with `virtual = TRUE` in a sized container | Table uses container height, virtualization works |
+| Works with pagination | Create table with `virtual = TRUE, pagination = TRUE, height = 500` | Table renders with pagination controls, current page rows are virtualized |
+| Works with groupBy | Create table with `virtual = TRUE, groupBy = "category"` | Grouped table renders, groups expandable |
+| Works with details | Create table with `virtual = TRUE, details = ...` | Expandable rows work, height adjusts dynamically |
 
 ### Scrolling
 
@@ -190,7 +217,7 @@ tbl <- reactable(
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Page navigation | `virtual=TRUE, pagination=TRUE, defaultPageSize=1000`, navigate pages | Each page virtualizes correctly, page controls work |
+| Page navigation | `virtual = TRUE, pagination = TRUE, defaultPageSize = 1000`, navigate pages | Each page virtualizes correctly, page controls work |
 | Page size change | Change page size dropdown | New page size applies, virtualization continues working |
 | Scroll within page | Scroll within a page of 1000 rows | Only visible rows rendered, smooth scrolling |
 | Page change resets scroll | Scroll down on page 1, then go to page 2 | Scroll position resets to top of page 2 |
@@ -199,8 +226,8 @@ tbl <- reactable(
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Single selection | `selection="single"`, click row | Row selects, selection persists during scroll |
-| Multiple selection | `selection="multiple"`, select multiple rows | Selections persist when scrolling away and back |
+| Single selection | `selection = "single"`, click row | Row selects, selection persists during scroll |
+| Multiple selection | `selection = "multiple"`, select multiple rows | Selections persist when scrolling away and back |
 | Select after scroll | Scroll to row 50,000, select it | Selection works on virtualized rows |
 
 ### Row Details (Expandable Rows)
@@ -218,12 +245,12 @@ tbl <- reactable(
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Basic groupBy | `virtual=TRUE, groupBy="category"` | Group headers render, expandable |
+| Basic groupBy | `virtual = TRUE, groupBy = "category"` | Group headers render, expandable |
 | Expand group | Click group header to expand | Sub-rows appear, virtualization continues |
 | Collapse group | Click expanded group header | Sub-rows hidden, row count updates |
-| Nested groupBy | `groupBy=c("category", "subcategory")` | Multiple grouping levels work |
-| paginateSubRows=FALSE | Default behavior, expand large group | Sub-rows add to visible rows, may exceed page size |
-| paginateSubRows=TRUE | `paginateSubRows=TRUE`, expand group | Sub-rows count toward page size |
+| Nested groupBy | `groupBy = c("category", "subcategory")` | Multiple grouping levels work |
+| paginateSubRows = FALSE | Default behavior, expand large group | Sub-rows add to visible rows, may exceed page size |
+| paginateSubRows = TRUE | `paginateSubRows = TRUE`, expand group | Sub-rows count toward page size |
 | Aggregated values | Group with aggregated columns | Aggregated values display correctly in group headers |
 | Scroll through groups | Many groups, scroll through | Group headers and sub-rows render correctly |
 
@@ -231,18 +258,18 @@ tbl <- reactable(
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Striped rows | `striped=TRUE` | Alternating row colors work correctly |
-| Highlighted rows | `highlight=TRUE` | Hover highlighting works on virtualized rows |
-| Compact mode | `compact=TRUE` | Row height is 30px instead of 36px |
+| Striped rows | `striped = TRUE` | Alternating row colors work correctly |
+| Highlighted rows | `highlight = TRUE` | Hover highlighting works on virtualized rows |
+| Compact mode | `compact = TRUE` | Row height is 30px instead of 36px |
 | Custom row styles | Use `rowClassName` or `rowStyle` | Styles apply correctly to virtualized rows |
-| Custom font size | `theme=reactableTheme(tableStyle=list(fontSize="24px"))` | Row heights adapt dynamically, no gaps or overlaps |
+| Custom font size | `theme = reactableTheme(tableStyle = list(fontSize = "24px"))` | Row heights adapt dynamically, no gaps or overlaps |
 
 ### Edge Cases
 
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
-| Empty data | `virtual=TRUE` with 0 rows | Shows "No rows found" message |
-| Small dataset | `virtual=TRUE` with 5 rows | Works correctly even when all rows fit |
+| Empty data | `virtual = TRUE` with 0 rows | Shows "No rows found" message |
+| Small dataset | `virtual = TRUE` with 5 rows | Works correctly even when all rows fit |
 | Resize window | Resize browser window | Virtualization adapts to new container size |
 | Rapid scrolling | Scroll very fast | No blank rows, smooth rendering |
 
@@ -259,3 +286,8 @@ tbl <- reactable(
 
 Potential improvements for future versions:
 - Horizontal virtualization for tables with many columns
+- Scroll-based server-side data fetching (windowed/infinite scroll): Instead of page-based fetching, the server would send only the visible rows based on scroll position. This would allow seamless scrolling through millions of rows without pagination controls. Requirements:
+  - Virtualizer notifies server when visible row range changes
+  - Server fetches only that range from database
+  - Client-side caching to avoid re-fetching already-loaded rows
+  - Handling sort/filter with partial data
