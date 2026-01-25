@@ -35,3 +35,7 @@ htmltools::browsable(
     reactable(data, virtual = T, pagination = F, searchable = T, height = "100%")
   )
 )
+
+# Error cases
+reactable(data, virtual = T, pagination = F, height = 500, searchable = T, groupBy = "city")
+reactable(data, virtual = T, pagination = F, height = 500, searchable = T, details = function() "details")
