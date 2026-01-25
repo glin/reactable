@@ -225,8 +225,14 @@ describe('virtual scrolling', () => {
 
     it('handles aria-rowcount with column groups (multiple header rows)', () => {
       const props = {
-        data: { a: Array.from({ length: 50 }, (_, i) => i + 1), b: Array.from({ length: 50 }, (_, i) => i + 1) },
-        columns: [{ name: 'a', id: 'a' }, { name: 'b', id: 'b' }],
+        data: {
+          a: Array.from({ length: 50 }, (_, i) => i + 1),
+          b: Array.from({ length: 50 }, (_, i) => i + 1)
+        },
+        columns: [
+          { name: 'a', id: 'a' },
+          { name: 'b', id: 'b' }
+        ],
         columnGroups: [{ name: 'Group', columns: ['a', 'b'] }],
         virtual: true,
         height: 400

@@ -14,14 +14,16 @@ export const getFooterRow = container => container.querySelector('.rt-tfoot .rt-
 export const getRowGroups = container => container.querySelectorAll('.rt-tbody .rt-tr-group')
 export const getRows = (container, selectors = '') =>
   container.querySelectorAll('.rt-tbody .rt-tr' + selectors)
-export const getDataRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
+export const getDataRows = container =>
+  container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
 export const getPadRows = container => container.querySelectorAll('.rt-tbody .rt-tr-pad')
 
 // Headers
 export const getGroupHeaders = (container, selectors = '') =>
   container.querySelectorAll('.rt-th-group' + selectors)
 export const getUngroupedHeaders = container => container.querySelectorAll('.rt-th-group-none')
-export const getHeaders = (container, selectors = '') => container.querySelectorAll('.rt-th' + selectors)
+export const getHeaders = (container, selectors = '') =>
+  container.querySelectorAll('.rt-th' + selectors)
 export const getColumnHeaders = container => container.querySelectorAll('.rt-tr-header .rt-th')
 export const getSortableHeaders = container => container.querySelectorAll('.rt-th[aria-sort]')
 export const getResizableHeaders = container => container.querySelectorAll('.rt-th-resizable')
@@ -55,7 +57,8 @@ export const getRowDetails = container => container.querySelectorAll('.rt-tr-det
 
 // Row selection
 export const getSelectRowCells = container => container.querySelectorAll('.rt-td-select')
-export const getSelectRowRadios = container => container.querySelectorAll('.rt-select-input[type="radio"]')
+export const getSelectRowRadios = container =>
+  container.querySelectorAll('.rt-select-input[type="radio"]')
 export const getSelectRowCheckboxes = container =>
   container.querySelectorAll('.rt-select-input[type="checkbox"]')
 

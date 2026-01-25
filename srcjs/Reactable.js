@@ -1515,7 +1515,13 @@ function Table({
 
     // Render a single row - extracted for reuse in virtual mode
     // measureRef and dataIndex are used for dynamic row height measurement in virtual mode
-    const renderRow = (row, viewIndex, virtualStyle = null, measureRef = null, dataIndex = null) => {
+    const renderRow = (
+      row,
+      viewIndex,
+      virtualStyle = null,
+      measureRef = null,
+      dataIndex = null
+    ) => {
       instance.prepareRow(row)
 
       // toggleRowSelected that supports single selection
@@ -1759,7 +1765,9 @@ function Table({
       } else {
         noData = <NoDataComponent />
       }
-      const tbodyProps = instance.getTableBodyProps({ className: classNames(className, 'rt-tbody-virtual') })
+      const tbodyProps = instance.getTableBodyProps({
+        className: classNames(className, 'rt-tbody-virtual')
+      })
 
       return (
         <VirtualTbody
