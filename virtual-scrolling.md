@@ -10,9 +10,11 @@ Added row virtualization to reactable as an alternative to pagination. When enab
 reactable(
   data,
   virtual = TRUE,
-  height = 500  # Required - container height in pixels
+  height = 500  # Recommended for best results
 )
 ```
+
+Note: `height` is optional. Without an explicit height, the table will use its container's height (e.g., `height: 100%` in a Shiny app with a sized container).
 
 ## Changes Made
 
@@ -21,8 +23,6 @@ reactable(
 - Added `virtual` parameter to `reactable()` function (default: `FALSE`)
 - Added validation:
   - `virtual` must be logical
-  - Requires `height` to be specified
-  - Mutually exclusive with `pagination = TRUE`
   - Not compatible with `groupBy` (grouped tables)
   - Not compatible with `details` (expandable row details)
 - Passes `virtual` prop to JavaScript widget
@@ -131,7 +131,7 @@ tbl <- reactable(
 | Test | Steps | Expected Result |
 |------|-------|-----------------|
 | Renders with virtual=TRUE | Create table with `virtual=TRUE, height=500` | Table renders, only ~15-20 rows in DOM |
-| Requires height | Create table with `virtual=TRUE` without height | Error: "height must be specified when virtual = TRUE" |
+| Works without explicit height | Create table with `virtual=TRUE` in a sized container | Table uses container height, virtualization works |
 | Works with pagination | Create table with `virtual=TRUE, pagination=TRUE, height=500` | Table renders with pagination controls, current page rows are virtualized |
 | Incompatible with groupBy | Create table with `virtual=TRUE, groupBy="category"` | Error about groupBy incompatibility |
 | Incompatible with details | Create table with `virtual=TRUE, details=...` | Error about details incompatibility |
