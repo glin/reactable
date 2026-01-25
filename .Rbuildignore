@@ -6,6 +6,7 @@
 ^\.github$
 ^\.prettierrc\.json$
 ^babel\.config\.json$
+^CLAUDE\.md$
 ^coverage$
 ^docs$
 ^jest.config\.js$
