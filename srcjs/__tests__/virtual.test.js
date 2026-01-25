@@ -4,22 +4,21 @@ import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 import { Reactable } from '../Reactable'
+import {
+  getRoot,
+  getTable,
+  getTbody,
+  getRows,
+  getDataRows,
+  getRowGroups,
+  getNoData,
+  getPagination,
+  getSelectRowCheckboxes,
+  getSelectRowRadios
+} from './utils/test-utils'
 
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
-
-// Helper functions
-const getRoot = container => container.querySelector('.Reactable.ReactTable')
-const getTable = container => container.querySelector('.rt-table')
-const getTbody = container => container.querySelector('.rt-tbody')
-const getRows = container => container.querySelectorAll('.rt-tbody .rt-tr')
-const getDataRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
-const getRowGroups = container => container.querySelectorAll('.rt-tbody .rt-tr-group')
-const getNoData = container => container.querySelector('.rt-no-data')
-const getPagination = container => container.querySelector('.rt-pagination')
-const getSelectRowCheckboxes = container =>
-  container.querySelectorAll('.rt-select-input[type="checkbox"]')
-const getSelectRowRadios = container => container.querySelectorAll('.rt-select-input[type="radio"]')
 
 // Mock scroll element for virtualizer - provide dimensions
 beforeAll(() => {

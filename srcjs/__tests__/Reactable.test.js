@@ -14,6 +14,52 @@ jest.mock('../utils', () => ({
   downloadCSV: jest.fn()
 }))
 
+import {
+  getRoot,
+  getTable,
+  getThead,
+  getTbody,
+  getTfoot,
+  getHeaderRows,
+  getFooterRow,
+  getRowGroups,
+  getRows,
+  getDataRows,
+  getPadRows,
+  getGroupHeaders,
+  getUngroupedHeaders,
+  getHeaders,
+  getColumnHeaders,
+  getSortableHeaders,
+  getResizableHeaders,
+  getResizers,
+  getCells,
+  getDataCells,
+  getCellsText,
+  getFooters,
+  getFilterRow,
+  getFilterCells,
+  getFilters,
+  getSearchInput,
+  getNoData,
+  getExpandableCells,
+  getExpanders,
+  getExpanderIcons,
+  getRowDetails,
+  getSelectRowCells,
+  getSelectRowRadios,
+  getSelectRowCheckboxes,
+  getPagination,
+  getPageInfo,
+  getPageSizeOptions,
+  getPageSizeSelect,
+  getPrevButton,
+  getNextButton,
+  getPageNumbers,
+  getPageButtons,
+  getPageJump
+} from './utils/test-utils'
+
 jest.mock('reactR')
 reactR.hydrate = (components, tag) => tag
 
@@ -33,60 +79,6 @@ const expectToThrow = func => {
 
   console.error.mockRestore()
 }
-
-const getRoot = container => container.querySelector('.Reactable.ReactTable')
-const getTable = container => container.querySelector('.rt-table')
-const getThead = container => container.querySelector('.rt-thead')
-const getTbody = container => container.querySelector('.rt-tbody')
-const getTfoot = container => container.querySelector('.rt-tfoot')
-const getHeaderRows = container =>
-  container.querySelectorAll('.rt-thead .rt-tr:not(.rt-tr-filters)')
-const getFooterRow = container => container.querySelector('.rt-tfoot .rt-tr')
-const getRowGroups = container => container.querySelectorAll('.rt-tbody .rt-tr-group')
-const getRows = (container, selectors = '') =>
-  container.querySelectorAll('.rt-tbody .rt-tr' + selectors)
-const getDataRows = container => container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
-const getPadRows = container => container.querySelectorAll('.rt-tbody .rt-tr-pad')
-const getGroupHeaders = (container, selectors = '') =>
-  container.querySelectorAll('.rt-th-group' + selectors)
-const getUngroupedHeaders = container => container.querySelectorAll('.rt-th-group-none')
-const getHeaders = (container, selectors = '') => container.querySelectorAll('.rt-th' + selectors)
-const getColumnHeaders = container => container.querySelectorAll('.rt-tr-header .rt-th')
-const getSortableHeaders = container => container.querySelectorAll('.rt-th[aria-sort]')
-const getResizableHeaders = container => container.querySelectorAll('.rt-th-resizable')
-const getResizers = container => container.querySelectorAll('.rt-resizer')
-const getCells = (container, selectors = '') =>
-  container.querySelectorAll('.rt-tbody .rt-td' + selectors)
-const getDataCells = (container, selectors = '') =>
-  container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad) .rt-td' + selectors)
-const getCellsText = (container, selectors) => {
-  return [...getCells(container, selectors)].map(cell => cell.textContent)
-}
-const getFooters = (container, selectors = '') =>
-  container.querySelectorAll('.rt-td.rt-td-footer' + selectors)
-const getFilterRow = container => container.querySelector('.rt-thead .rt-tr.rt-tr-filters')
-const getFilterCells = container => container.querySelectorAll('.rt-td-filter')
-const getFilters = container => container.querySelectorAll('.rt-filter')
-const getSearchInput = container => container.querySelector('.rt-search')
-const getNoData = container => container.querySelector('.rt-no-data')
-const getExpandableCells = container => container.querySelectorAll('.rt-td-expandable')
-const getExpanders = container => container.querySelectorAll('.rt-expander-button')
-const getExpanderIcons = container => container.querySelectorAll('.rt-expander')
-const getRowDetails = container => container.querySelectorAll('.rt-tr-details')
-const getSelectRowCells = container => container.querySelectorAll('.rt-td-select')
-const getSelectRowRadios = container => container.querySelectorAll('.rt-select-input[type="radio"]')
-const getSelectRowCheckboxes = container =>
-  container.querySelectorAll('.rt-select-input[type="checkbox"]')
-// Pagination
-const getPagination = container => container.querySelector('.rt-pagination')
-const getPageInfo = container => container.querySelector('.rt-page-info')
-const getPageSizeOptions = container => container.querySelector('.rt-page-size')
-const getPageSizeSelect = container => container.querySelector('.rt-page-size-select')
-const getPrevButton = container => container.querySelector('.rt-prev-button')
-const getNextButton = container => container.querySelector('.rt-next-button')
-const getPageNumbers = container => container.querySelector('.rt-page-numbers')
-const getPageButtons = container => container.querySelectorAll('.rt-page-button')
-const getPageJump = container => container.querySelector('.rt-page-jump')
 
 describe('tables', () => {
   it('renders tables', () => {
