@@ -1760,18 +1760,22 @@ function Table({
     // Use instance.page which contains current page rows (or all rows when pagination is disabled)
     const rowsToRender = instance.page
 
-    // Virtual rendering using @tanstack/react-virtual
+    // Prepare noData element and tbody className (shared by virtual and non-virtual rendering)
+    let tbodyClassName = css(theme.tableBodyStyle)
+    let noData
+    if (instance.rows.length === 0) {
+      noData = <NoDataComponent>{language.noData}</NoDataComponent>
+      // Hide cell borders when table has no data
+      tbodyClassName = classNames('rt-tbody-no-data', tbodyClassName)
+    } else {
+      // Must be on the page for the ARIA live region to be announced
+      noData = <NoDataComponent />
+    }
+
+    // Virtual rendering
     if (virtual) {
-      let className = css(theme.tableBodyStyle)
-      let noData
-      if (instance.rows.length === 0) {
-        noData = <NoDataComponent>{language.noData}</NoDataComponent>
-        className = classNames('rt-tbody-no-data', className)
-      } else {
-        noData = <NoDataComponent />
-      }
       const tbodyProps = instance.getTableBodyProps({
-        className
+        className: tbodyClassName
       })
 
       return (
@@ -1787,7 +1791,7 @@ function Table({
       )
     }
 
-    // Non-virtual rendering (existing logic)
+    // Non-virtual rendering
     const rows = rowsToRender.map((row, viewIndex) => renderRow(row, viewIndex))
 
     let padRows
@@ -1847,17 +1851,7 @@ function Table({
       })
     }
 
-    let className = css(theme.tableBodyStyle)
-    let noData
-    if (instance.rows.length === 0) {
-      noData = <NoDataComponent>{language.noData}</NoDataComponent>
-      // Hide cell borders when table has no data
-      className = classNames('rt-tbody-no-data', className)
-    } else {
-      // Must be on the page for the ARIA live region to be announced
-      noData = <NoDataComponent />
-    }
-    const tbodyProps = instance.getTableBodyProps({ className })
+    const tbodyProps = instance.getTableBodyProps({ className: tbodyClassName })
 
     return (
       <TbodyComponent {...tbodyProps}>
