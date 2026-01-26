@@ -84,14 +84,12 @@ Added:
 
 | Metric | Before | After | Increase |
 |--------|--------|-------|----------|
-| Uncompressed | 168.6 KB | 184.7 KB | +16.1 KB (+9.6%) |
-| Gzipped | 39.7 KB | 44.6 KB | +4.9 KB (+12.4%) |
+| reactable.js | 172 KB | 188 KB | +16 KB (+9.3%) |
+| reactable.js (gzipped) | ~52 KB | ~56 KB | +4 KB (+7.7%) |
+| reactable.server.js | 708 KB | 724 KB | +16 KB (+2.3%) |
+| reactable.server.js (gzipped) | ~188 KB | ~192 KB | +4 KB (+2.1%) |
 
-The `@tanstack/react-virtual` library adds ~16 KB uncompressed (~5 KB gzipped) to the bundle. This is a modest increase for significant performance gains with large datasets.
-
-For comparison:
-- `@tanstack/react-virtual`: ~8 KB minified
-- `@tanstack/virtual-core` (peer dependency): ~12 KB minified
+The `@tanstack/react-virtual` library adds ~16 KB uncompressed (~4 KB gzipped) to the bundle. This is a modest increase for significant performance gains with large datasets.
 
 ## Architecture
 
