@@ -1,5 +1,5 @@
 ---
-title: "100k Rows"
+title: "100k Rows (Virtualized)"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ set.seed(5)
 options(reactable.static = TRUE)
 ```
 
-This example demonstrates a paginated table with 100,000 rows. For an alternative using virtual scrolling instead of pagination, see [100k Rows (Virtualized)](100k-rows-virtual.html).
+This example demonstrates virtual scrolling with 100,000 rows. Virtual scrolling renders only the visible rows on screen, allowing you to scroll through large tables without performance issues. For an alternative using pagination instead of virtual scrolling, see [100k Rows](100k-rows.html).
 
 ```{r}
 library(reactable)
@@ -29,10 +29,13 @@ data <- data.frame(
 
 reactable(
   data,
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 600,
   filterable = TRUE,
   searchable = TRUE,
-  minRows = 10,
   highlight = TRUE,
+  showPagination = TRUE,
   columns = list(
     state = colDef(
       html = TRUE,

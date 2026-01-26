@@ -45,6 +45,8 @@ navbar:
         href: articles/cookbook/cookbook.html
       - text: 100k Rows
         href: articles/100k-rows.html
+      - text: 100k Rows (Virtualized)
+        href: articles/100k-rows-virtual.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
       - text: Quarto and Observable
