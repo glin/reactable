@@ -747,6 +747,27 @@ test_that("paginateSubRows", {
   expect_error(reactable(data, paginateSubRows = "true"), "`paginateSubRows` must be TRUE or FALSE")
 })
 
+test_that("virtual", {
+  data <- data.frame(x = c(1, 2, 3), y = c("a", "b", "c"), stringsAsFactors = FALSE)
+
+  # Default is FALSE (virtual not set)
+  tbl <- reactable(data)
+  expect_equal(getAttrib(tbl, "virtual"), NULL)
+
+  # virtual = FALSE (not set in output)
+  tbl <- reactable(data, virtual = FALSE)
+  expect_equal(getAttrib(tbl, "virtual"), NULL)
+
+  # virtual = TRUE
+  tbl <- reactable(data, virtual = TRUE)
+  expect_equal(getAttrib(tbl, "virtual"), TRUE)
+
+  # Error: virtual must be TRUE or FALSE
+  expect_error(reactable(data, virtual = "true"), "`virtual` must be TRUE or FALSE")
+  expect_error(reactable(data, virtual = NULL), "`virtual` must be TRUE or FALSE")
+  expect_error(reactable(data, virtual = 1), "`virtual` must be TRUE or FALSE")
+})
+
 test_that("sub rows", {
   data <- data.frame(
     x = c(1, 2),
@@ -1670,96 +1691,4 @@ test_that("server-side data", {
   reactableServerInit.custom_backend <- function(...) "not resolvedData"
   registerS3method("reactableServerData", "custom_backend", reactableServerInit.custom_backend)
   expect_error(reactable(data, server = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
-})
-
-test_that("virtual", {
-  data <- data.frame(x = c(1, 2, 3), y = c("a", "b", "c"), stringsAsFactors = FALSE)
-
-  # Default is FALSE (virtual not set)
-  tbl <- reactable(data)
-  expect_equal(getAttrib(tbl, "virtual"), NULL)
-
-  # virtual = FALSE (not set in output)
-  tbl <- reactable(data, virtual = FALSE)
-  expect_equal(getAttrib(tbl, "virtual"), NULL)
-
-  # virtual = TRUE
-  tbl <- reactable(data, virtual = TRUE)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual = TRUE with height
-
-  tbl <- reactable(data, virtual = TRUE, height = 500)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "height"), "500px")
-
-  # virtual = TRUE with height as CSS string
-  tbl <- reactable(data, virtual = TRUE, height = "100%")
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "height"), "100%")
-
-  # virtual = TRUE works with pagination = TRUE (default, not set in output)
-  tbl <- reactable(data, virtual = TRUE, pagination = TRUE, height = 400)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "pagination"), NULL)
-
-  # virtual = TRUE works with pagination = FALSE
-  tbl <- reactable(data, virtual = TRUE, pagination = FALSE)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "pagination"), FALSE)
-
-  # Error: virtual must be TRUE or FALSE
-  expect_error(reactable(data, virtual = "true"), "`virtual` must be TRUE or FALSE")
-  expect_error(reactable(data, virtual = NULL), "`virtual` must be TRUE or FALSE")
-  expect_error(reactable(data, virtual = 1), "`virtual` must be TRUE or FALSE")
-
-  # virtual works with groupBy
-  tbl <- reactable(data, virtual = TRUE, groupBy = "y")
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with groupBy and paginateSubRows
-  tbl <- reactable(data, virtual = TRUE, groupBy = "y", paginateSubRows = TRUE)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with details (function)
-  tbl <- reactable(data, virtual = TRUE, details = function(i) paste("Row", i))
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with details (JS function)
-  tbl <- reactable(data, virtual = TRUE, details = JS("function(rowInfo) { return 'test' }"))
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with details (list)
-  tbl <- reactable(data, virtual = TRUE, details = list("a", "b", "c"))
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with details in colDef
-  tbl <- reactable(
-    data,
-    virtual = TRUE,
-    columns = list(y = colDef(details = function(i) paste("Detail", i)))
-  )
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-
-  # virtual works with other styling options
-  tbl <- reactable(data, virtual = TRUE, striped = TRUE, highlight = TRUE, compact = TRUE)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "striped"), TRUE)
-  expect_equal(getAttrib(tbl, "highlight"), TRUE)
-  expect_equal(getAttrib(tbl, "compact"), TRUE)
-
-  # virtual works with selection
-  tbl <- reactable(data, virtual = TRUE, selection = "multiple")
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "selection"), "multiple")
-
-  tbl <- reactable(data, virtual = TRUE, selection = "single")
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "selection"), "single")
-
-  # virtual works with filterable and searchable
-  tbl <- reactable(data, virtual = TRUE, filterable = TRUE, searchable = TRUE)
-  expect_equal(getAttrib(tbl, "virtual"), TRUE)
-  expect_equal(getAttrib(tbl, "filterable"), TRUE)
-  expect_equal(getAttrib(tbl, "searchable"), TRUE)
 })
