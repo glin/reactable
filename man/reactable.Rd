@@ -28,6 +28,7 @@ reactable(
   showPageInfo = TRUE,
   minRows = 1,
   paginateSubRows = FALSE,
+  virtual = FALSE,
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
@@ -123,6 +124,10 @@ than one page.}
 \item{minRows}{Minimum number of rows to show per page. Defaults to 1.}
 
 \item{paginateSubRows}{When rows are grouped, paginate sub rows? Defaults to \code{FALSE}.}
+
+\item{virtual}{Enable virtual scrolling? When \code{TRUE}, only visible rows are
+rendered for improved performance with large datasets. Can be combined with
+\code{pagination}, \code{details} (expandable rows), and \code{groupBy}.}
 
 \item{details}{Additional content to display when expanding a row. An R function
 that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function
