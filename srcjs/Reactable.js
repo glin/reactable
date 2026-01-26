@@ -573,8 +573,8 @@ function VirtualTbody({
 
   const virtualItems = virtualizer.getVirtualItems()
 
-  // Use the table element (.rt-table) as scroll container
-  // tbody contains a spacer div with total height and absolutely positioned rows
+  // Note: The table element (TableComponent) is the scroll container, not tbody.
+  // tbody contains a spacer div with total height and absolutely positioned rows.
   return (
     <TbodyComponent {...tbodyProps}>
       <div
@@ -833,6 +833,7 @@ function Table({
   pageSizeOptions,
   minRows,
   paginateSubRows,
+  virtual,
   defaultExpanded,
   selection,
   defaultSelected,
@@ -852,7 +853,6 @@ function Table({
   inline,
   width,
   height,
-  virtual,
   theme,
   language,
   meta: initialMeta,
@@ -1593,22 +1593,27 @@ function Table({
       }
 
       const resolvedRowProps = row.getRowProps(rowProps)
-      // For virtual mode: style for absolute positioning, ref for measuring, data-index for virtualizer tracking
+      // virtualStyle contains absolute positioning for virtual scrolling (top offset, height).
+      // It comes from VirtualTbody and is undefined for non-virtual tables.
       const trGroupStyle = virtualStyle
       const trGroupProps = {
+        // Use relative row index for key (like in v6) rather than row index (v7)
+        // for better rerender performance, especially with a large number of rows.
         key: `${row.depth}_${viewIndex}`,
         className: css(theme.rowGroupStyle),
         style: trGroupStyle
       }
       if (measureRef != null) {
+        // measureRef is a callback ref from @tanstack/react-virtual's virtualizer.measureElement.
+        // It measures dynamic row heights after render to update the virtualizer's size cache.
         trGroupProps.ref = measureRef
+        // data-index is required by @tanstack/react-virtual's measureElement to identify
+        // which row is being measured. It comes from virtualRow.index in VirtualTbody.
         trGroupProps['data-index'] = dataIndex
       }
       // aria-rowindex is 1-based, data rows come after header rows
       const ariaRowIndex = virtual ? row.index + 1 + instance.headerGroups.length : null
       return (
-        // Use relative row index for key (like in v6) rather than row index (v7)
-        // for better rerender performance, especially with a large number of rows.
         <TrGroupComponent {...trGroupProps}>
           <TrComponent {...resolvedRowProps} key={undefined} aria-rowindex={ariaRowIndex}>
             {row.cells.map((cell, colIndex) => {
