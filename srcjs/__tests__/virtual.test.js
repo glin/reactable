@@ -84,10 +84,9 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // Should have a spacer div inside tbody
-      const spacerDiv = tbody.querySelector(':scope > div')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
       expect(spacerDiv).toBeInTheDocument()
       expect(spacerDiv).toHaveStyle('position: relative')
       expect(spacerDiv).toHaveStyle('width: 100%')
@@ -121,8 +120,10 @@ describe('virtual scrolling', () => {
       }
       const { container } = render(<Reactable {...props} />)
 
+      // Virtual mode should still have the spacer div even without explicit height
       const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      expect(spacerDiv).toHaveStyle('position: relative')
     })
 
     it('renders all rows when dataset is small', () => {
@@ -133,9 +134,6 @@ describe('virtual scrolling', () => {
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // With only 5 rows, all should be rendered
       const rowGroups = getRowGroups(container)
@@ -152,7 +150,6 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
       expect(tbody).toHaveClass('rt-tbody-no-data')
 
       const noData = getNoData(container)
@@ -265,9 +262,6 @@ describe('virtual scrolling', () => {
       }
       const { container } = render(<Reactable {...props} />)
 
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
-
       // Pagination should be present
       const pagination = getPagination(container)
       expect(pagination).toBeInTheDocument()
@@ -283,9 +277,6 @@ describe('virtual scrolling', () => {
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // Should not render all 100 rows on the page - only visible + overscan
       const rowGroups = getRowGroups(container)
@@ -337,9 +328,6 @@ describe('virtual scrolling', () => {
 
       const root = getRoot(container)
       expect(root).toHaveClass('rt-compact')
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
     })
 
     it('applies custom row className', () => {
@@ -541,7 +529,7 @@ describe('virtual scrolling', () => {
   })
 
   describe('non-virtual mode', () => {
-    it('does not apply virtual class when virtual=false', () => {
+    it('does not virtualize when virtual=false', () => {
       const props = {
         data: { a: [1, 2, 3, 4, 5] },
         columns: [{ name: 'a', id: 'a' }],
@@ -551,10 +539,12 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      expect(tbody).not.toHaveClass('rt-tbody-virtual')
+      // Non-virtual tbody should not have the spacer div with position: relative
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      expect(spacerDiv).not.toBeInTheDocument()
     })
 
-    it('does not apply virtual class by default', () => {
+    it('does not virtualize by default', () => {
       const props = {
         data: { a: [1, 2, 3, 4, 5] },
         columns: [{ name: 'a', id: 'a' }],
@@ -563,7 +553,9 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      expect(tbody).not.toHaveClass('rt-tbody-virtual')
+      // Non-virtual tbody should not have the spacer div with position: relative
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      expect(spacerDiv).not.toBeInTheDocument()
     })
   })
 
@@ -585,13 +577,12 @@ describe('virtual scrolling', () => {
       const table = getTable(container)
       expect(table).toBeInTheDocument()
 
-      // Tbody with virtual class
+      // Tbody
       const tbody = getTbody(container)
       expect(tbody).toHaveClass('rt-tbody')
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // Spacer div inside tbody
-      const spacerDiv = tbody.querySelector(':scope > div')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
       expect(spacerDiv).toBeInTheDocument()
       expect(spacerDiv).toHaveStyle('position: relative')
 
@@ -613,7 +604,7 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector(':scope > div')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
 
       // Total height should be rowCount * rowHeight
       const expectedHeight = rowCount * rowHeight
@@ -634,7 +625,7 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector(':scope > div')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
 
       // Total height should be rowCount * compact rowHeight
       const expectedHeight = rowCount * rowHeight
@@ -659,9 +650,6 @@ describe('virtual scrolling', () => {
       }
       const { container } = render(<Reactable {...props} />)
 
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
-
       // Should render group headers (collapsed by default)
       const rowGroups = getRowGroups(container)
       expect(rowGroups.length).toBeGreaterThan(0)
@@ -683,9 +671,6 @@ describe('virtual scrolling', () => {
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // With defaultExpanded, should show group headers + sub-rows
       const rowGroups = getRowGroups(container)
@@ -711,8 +696,10 @@ describe('virtual scrolling', () => {
       }
       const { container } = render(<Reactable {...props} />)
 
+      // Virtual mode should have the spacer div
       const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
+      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      expect(spacerDiv).toHaveStyle('position: relative')
     })
   })
 
@@ -731,9 +718,6 @@ describe('virtual scrolling', () => {
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // Should render rows with expanders
       const expanders = container.querySelectorAll('.rt-expander')
@@ -755,9 +739,6 @@ describe('virtual scrolling', () => {
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody-virtual')
 
       // With defaultExpanded, details should be visible
       const details = container.querySelectorAll('.rt-tr-details')

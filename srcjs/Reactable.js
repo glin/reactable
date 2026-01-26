@@ -578,6 +578,7 @@ function VirtualTbody({
   return (
     <TbodyComponent {...tbodyProps}>
       <div
+        className="rt-virtual-spacer"
         style={{
           height: virtualizer.getTotalSize(),
           width: '100%',
@@ -1766,7 +1767,7 @@ function Table({
         noData = <NoDataComponent />
       }
       const tbodyProps = instance.getTableBodyProps({
-        className: classNames(className, 'rt-tbody-virtual')
+        className
       })
 
       return (

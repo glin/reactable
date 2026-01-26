@@ -61,17 +61,18 @@ Other table libraries use various names:
 
 ### CSS (`srcjs/reactable.css`)
 
-Added styles for virtual scrolling:
-```css
-.rt-tbody-virtual {
-  overflow: hidden !important;
-}
+No CSS changes required. The existing styles in `react-table.css` already provide the necessary layout:
 
-.rt-tbody-virtual .rt-tr-group {
+```css
+.Reactable .rt-tr-group {
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
 }
 ```
+
+This flex column layout ensures row content and expandable details stack correctly within absolutely positioned row containers.
 
 ### Dependencies (`package.json`)
 
@@ -98,9 +99,9 @@ The `@tanstack/react-virtual` library adds ~16 KB uncompressed (~4 KB gzipped) t
 ```
 .rt-table (scroll container with overflow: auto and fixed height)
   .rt-thead
-  .rt-tbody.rt-tbody-virtual
-    <div> (spacer - height equals total content height)
-      <div.rt-tr-group> (absolutely positioned visible rows)
+  .rt-tbody
+    .rt-virtual-spacer (height equals total content height)
+      .rt-tr-group (absolutely positioned visible rows)
       ...
   .rt-tfoot
 ```
