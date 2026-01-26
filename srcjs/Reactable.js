@@ -1593,9 +1593,8 @@ function Table({
       }
 
       const resolvedRowProps = row.getRowProps(rowProps)
-      // Merge virtual style for absolute positioning in virtual mode
-      const trGroupStyle = virtualStyle ? { ...virtualStyle } : undefined
-      // For virtual mode: ref for measuring, data-index for virtualizer tracking
+      // For virtual mode: style for absolute positioning, ref for measuring, data-index for virtualizer tracking
+      const trGroupStyle = virtualStyle
       const trGroupProps = {
         key: `${row.depth}_${viewIndex}`,
         className: css(theme.rowGroupStyle),
