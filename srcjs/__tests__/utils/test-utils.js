@@ -49,6 +49,9 @@ export const getSearchInput = container => container.querySelector('.rt-search')
 // No data
 export const getNoData = container => container.querySelector('.rt-no-data')
 
+// Virtual scrolling
+export const getVirtualSpacer = container => container.querySelector('.rt-virtual-spacer')
+
 // Expandable rows
 export const getExpandableCells = container => container.querySelectorAll('.rt-td-expandable')
 export const getExpanders = container => container.querySelectorAll('.rt-expander-button')

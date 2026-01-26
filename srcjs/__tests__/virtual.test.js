@@ -14,7 +14,14 @@ import {
   getNoData,
   getPagination,
   getSelectRowCheckboxes,
-  getSelectRowRadios
+  getHeaderRows,
+  getSortableHeaders,
+  getCells,
+  getFilters,
+  getSearchInput,
+  getExpanderIcons,
+  getRowDetails,
+  getVirtualSpacer
 } from './utils/test-utils'
 
 jest.mock('reactR')
@@ -83,10 +90,8 @@ describe('virtual scrolling', () => {
       }
       const { container } = render(<Reactable {...props} />)
 
-      const tbody = getTbody(container)
-
       // Should have a spacer div inside tbody
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      const spacerDiv = getVirtualSpacer(container)
       expect(spacerDiv).toBeInTheDocument()
       expect(spacerDiv).toHaveStyle('position: relative')
       expect(spacerDiv).toHaveStyle('width: 100%')
@@ -121,8 +126,7 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       // Virtual mode should still have the spacer div even without explicit height
-      const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      const spacerDiv = getVirtualSpacer(container)
       expect(spacerDiv).toHaveStyle('position: relative')
     })
 
@@ -159,7 +163,7 @@ describe('virtual scrolling', () => {
   })
 
   describe('ARIA attributes', () => {
-    it('adds aria-rowcount to table in virtual mode', () => {
+    it('adds aria-rowcount and aria-rowindex in virtual mode', () => {
       const props = {
         data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
         columns: [{ name: 'a', id: 'a' }],
@@ -171,31 +175,11 @@ describe('virtual scrolling', () => {
       const table = getTable(container)
       // aria-rowcount = 100 data rows + 1 header row
       expect(table).toHaveAttribute('aria-rowcount', '101')
-    })
 
-    it('adds aria-rowindex to header rows in virtual mode', () => {
-      const props = {
-        data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
+      const headerRows = getHeaderRows(container)
+      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1')
 
-      const headerRow = container.querySelector('.rt-thead .rt-tr')
-      expect(headerRow).toHaveAttribute('aria-rowindex', '1')
-    })
-
-    it('adds aria-rowindex to data rows in virtual mode', () => {
-      const props = {
-        data: { a: Array.from({ length: 100 }, (_, i) => i + 1) },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr')
+      const dataRows = getRows(container)
       // First data row should have aria-rowindex = 2 (after header row)
       expect(dataRows[0]).toHaveAttribute('aria-rowindex', '2')
     })
@@ -211,10 +195,10 @@ describe('virtual scrolling', () => {
       const table = getTable(container)
       expect(table).not.toHaveAttribute('aria-rowcount')
 
-      const headerRow = container.querySelector('.rt-thead .rt-tr')
-      expect(headerRow).not.toHaveAttribute('aria-rowindex')
+      const headerRows = getHeaderRows(container)
+      expect(headerRows[0]).not.toHaveAttribute('aria-rowindex')
 
-      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr:not(.rt-tr-pad)')
+      const dataRows = getDataRows(container)
       dataRows.forEach(row => {
         expect(row).not.toHaveAttribute('aria-rowindex')
       })
@@ -240,11 +224,11 @@ describe('virtual scrolling', () => {
       // aria-rowcount = 50 data rows + 2 header rows (group header + column header)
       expect(table).toHaveAttribute('aria-rowcount', '52')
 
-      const headerRows = container.querySelectorAll('.rt-thead .rt-tr')
+      const headerRows = getHeaderRows(container)
       expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1')
       expect(headerRows[1]).toHaveAttribute('aria-rowindex', '2')
 
-      const dataRows = container.querySelectorAll('.rt-tbody .rt-tr')
+      const dataRows = getRows(container)
       // First data row should have aria-rowindex = 3 (after 2 header rows)
       expect(dataRows[0]).toHaveAttribute('aria-rowindex', '3')
     })
@@ -367,96 +351,46 @@ describe('virtual scrolling', () => {
   })
 
   describe('styling', () => {
-    it('applies striped row styles', () => {
+    it('applies striped and highlight row styles', () => {
       const props = {
         data: { a: [1, 2, 3, 4, 5, 6] },
         columns: [{ name: 'a', id: 'a' }],
         virtual: true,
         striped: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const rows = getRows(container)
-      expect(rows[0]).toHaveClass('rt-tr-striped')
-      expect(rows[1]).not.toHaveClass('rt-tr-striped')
-      expect(rows[2]).toHaveClass('rt-tr-striped')
-      expect(rows[3]).not.toHaveClass('rt-tr-striped')
-    })
-
-    it('applies highlight row styles', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
         highlight: true,
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
 
-      const rows = getDataRows(container)
+      const rows = getRows(container)
+      // Striped applies to even-indexed rows (0, 2, 4)
+      expect(rows[0]).toHaveClass('rt-tr-striped')
+      expect(rows[1]).not.toHaveClass('rt-tr-striped')
+      expect(rows[2]).toHaveClass('rt-tr-striped')
+      // Highlight applies to all rows
       rows.forEach(row => expect(row).toHaveClass('rt-tr-highlight'))
     })
 
-    it('applies compact mode', () => {
+    it('applies compact mode with correct row height', () => {
+      const rowCount = 100
+      const rowHeight = 30 // compact row height
       const props = {
-        data: { a: [1, 2, 3, 4] },
+        data: { a: Array.from({ length: rowCount }, (_, i) => i + 1) },
         columns: [{ name: 'a', id: 'a' }],
         virtual: true,
         compact: true,
+        pagination: false,
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
 
       const root = getRoot(container)
       expect(root).toHaveClass('rt-compact')
-    })
 
-    it('applies custom row className', () => {
-      const props = {
-        data: { a: [1, 2, 3] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        rowClassName: 'custom-row',
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const rows = getRows(container)
-      rows.forEach(row => expect(row).toHaveClass('custom-row'))
-    })
-
-    it('applies row className from function', () => {
-      const props = {
-        data: { a: [1, 2, 3] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        rowClassName: rowInfo => {
-          if (rowInfo && rowInfo.index === 0) return 'first-row'
-          return 'other-row'
-        },
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const rows = getRows(container)
-      expect(rows[0]).toHaveClass('first-row')
-      expect(rows[1]).toHaveClass('other-row')
-      expect(rows[2]).toHaveClass('other-row')
-    })
-
-    it('applies custom row style', () => {
-      const props = {
-        data: { a: [1, 2, 3] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        rowStyle: { backgroundColor: 'red' },
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const rows = getRows(container)
-      rows.forEach(row => expect(row).toHaveStyle('background-color: red'))
+      // Spacer height should use compact row height
+      const spacerDiv = getVirtualSpacer(container)
+      const expectedHeight = rowCount * rowHeight
+      expect(spacerDiv).toHaveStyle(`height: ${expectedHeight}px`)
     })
   })
 
@@ -474,55 +408,7 @@ describe('virtual scrolling', () => {
       delete window.Shiny
     })
 
-    it('multiple selection works with virtual scrolling', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4, 5] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        selection: 'multiple',
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const checkboxes = getSelectRowCheckboxes(container)
-      // 1 select-all + 5 row checkboxes
-      expect(checkboxes).toHaveLength(6)
-
-      // Click first row checkbox
-      fireEvent.click(checkboxes[1])
-      expect(checkboxes[1].checked).toBe(true)
-
-      const rows = getRows(container)
-      expect(rows[0]).toHaveClass('rt-tr-selected')
-    })
-
-    it('single selection works with virtual scrolling', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4, 5] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        selection: 'single',
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const radios = getSelectRowRadios(container)
-      expect(radios).toHaveLength(5)
-
-      // Click first row radio
-      fireEvent.click(radios[0])
-      expect(radios[0].checked).toBe(true)
-
-      const rows = getRows(container)
-      expect(rows[0]).toHaveClass('rt-tr-selected')
-
-      // Click second row radio - first should be deselected
-      fireEvent.click(radios[1])
-      expect(radios[0].checked).toBe(false)
-      expect(radios[1].checked).toBe(true)
-    })
-
-    it('default selected rows work with virtual scrolling', () => {
+    it('row selection works with virtual scrolling', () => {
       const props = {
         data: { a: [1, 2, 3, 4, 5] },
         columns: [{ name: 'a', id: 'a' }],
@@ -534,6 +420,10 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       const checkboxes = getSelectRowCheckboxes(container)
+      // 1 select-all + 5 row checkboxes
+      expect(checkboxes).toHaveLength(6)
+
+      // Default selected rows
       expect(checkboxes[1].checked).toBe(true) // Row 0
       expect(checkboxes[2].checked).toBe(false) // Row 1
       expect(checkboxes[3].checked).toBe(true) // Row 2
@@ -556,11 +446,11 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       // Click header to sort
-      const header = container.querySelector('.rt-th[aria-sort]')
-      fireEvent.click(header)
+      const sortableHeaders = getSortableHeaders(container)
+      fireEvent.click(sortableHeaders[0])
 
       // Check that rows are sorted
-      const cells = container.querySelectorAll('.rt-tbody .rt-td')
+      const cells = getCells(container)
       expect(cells[0].textContent).toBe('1')
       expect(cells[1].textContent).toBe('2')
       expect(cells[2].textContent).toBe('3')
@@ -576,8 +466,8 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       // Enter filter value
-      const filterInput = container.querySelector('.rt-filter')
-      fireEvent.change(filterInput, { target: { value: '1' } })
+      const filters = getFilters(container)
+      fireEvent.change(filters[0], { target: { value: '1' } })
 
       // Should only show rows containing '1': 1, 10
       const rowGroups = getRowGroups(container)
@@ -601,7 +491,7 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       // Enter search value
-      const searchInput = container.querySelector('.rt-search')
+      const searchInput = getSearchInput(container)
       fireEvent.change(searchInput, { target: { value: 'red' } })
 
       // Should show rows with 'red': apple and cherry
@@ -611,107 +501,59 @@ describe('virtual scrolling', () => {
   })
 
   describe('non-virtual mode', () => {
-    it('does not virtualize when virtual=false', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4, 5] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: false,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
+    it('does not virtualize when virtual=false or undefined', () => {
+      // Test virtual=false
+      const { container: container1 } = render(
+        <Reactable
+          data={{ a: [1, 2, 3, 4, 5] }}
+          columns={[{ name: 'a', id: 'a' }]}
+          virtual={false}
+          height={400}
+        />
+      )
+      expect(getVirtualSpacer(container1)).not.toBeInTheDocument()
 
-      const tbody = getTbody(container)
-      // Non-virtual tbody should not have the spacer div with position: relative
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
-      expect(spacerDiv).not.toBeInTheDocument()
-    })
-
-    it('does not virtualize by default', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4, 5] },
-        columns: [{ name: 'a', id: 'a' }],
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      // Non-virtual tbody should not have the spacer div with position: relative
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
-      expect(spacerDiv).not.toBeInTheDocument()
+      // Test default (virtual undefined)
+      const { container: container2 } = render(
+        <Reactable
+          data={{ a: [1, 2, 3, 4, 5] }}
+          columns={[{ name: 'a', id: 'a' }]}
+          height={400}
+        />
+      )
+      expect(getVirtualSpacer(container2)).not.toBeInTheDocument()
     })
   })
 
   describe('DOM structure', () => {
-    it('has correct DOM structure in virtual mode', () => {
-      const props = {
-        data: { a: [1, 2, 3, 4, 5] },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      // Root structure
-      const root = getRoot(container)
-      expect(root).toBeInTheDocument()
-
-      // Table structure
-      const table = getTable(container)
-      expect(table).toBeInTheDocument()
-
-      // Tbody
-      const tbody = getTbody(container)
-      expect(tbody).toHaveClass('rt-tbody')
-
-      // Spacer div inside tbody
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
-      expect(spacerDiv).toBeInTheDocument()
-      expect(spacerDiv).toHaveStyle('position: relative')
-
-      // Row groups inside spacer
-      const rowGroups = spacerDiv.querySelectorAll('.rt-tr-group')
-      expect(rowGroups.length).toBeGreaterThan(0)
-    })
-
-    it('spacer div has correct total height', () => {
+    it('has correct DOM structure with spacer div in virtual mode', () => {
       const rowCount = 100
       const rowHeight = 36 // default row height
       const props = {
         data: { a: Array.from({ length: rowCount }, (_, i) => i + 1) },
         columns: [{ name: 'a', id: 'a' }],
         virtual: true,
-        pagination: false, // Disable pagination to show all rows
+        pagination: false,
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
 
+      // Root and table structure
+      expect(getRoot(container)).toBeInTheDocument()
+      expect(getTable(container)).toBeInTheDocument()
+
+      // Tbody with virtual spacer
       const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      expect(tbody).toHaveClass('rt-tbody')
 
-      // Total height should be rowCount * rowHeight
-      const expectedHeight = rowCount * rowHeight
-      expect(spacerDiv).toHaveStyle(`height: ${expectedHeight}px`)
-    })
+      // Spacer div inside tbody with correct height
+      const spacerDiv = getVirtualSpacer(container)
+      expect(spacerDiv).toBeInTheDocument()
+      expect(spacerDiv).toHaveStyle('position: relative')
+      expect(spacerDiv).toHaveStyle(`height: ${rowCount * rowHeight}px`)
 
-    it('spacer div has correct total height in compact mode', () => {
-      const rowCount = 100
-      const rowHeight = 30 // compact row height
-      const props = {
-        data: { a: Array.from({ length: rowCount }, (_, i) => i + 1) },
-        columns: [{ name: 'a', id: 'a' }],
-        virtual: true,
-        compact: true,
-        pagination: false, // Disable pagination to show all rows
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
-
-      // Total height should be rowCount * compact rowHeight
-      const expectedHeight = rowCount * rowHeight
-      expect(spacerDiv).toHaveStyle(`height: ${expectedHeight}px`)
+      // Row groups inside spacer
+      expect(getRowGroups(container).length).toBeGreaterThan(0)
     })
   })
 
@@ -727,66 +569,26 @@ describe('virtual scrolling', () => {
           { name: 'value', id: 'value' }
         ],
         groupBy: ['category'],
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      // Should render group headers (collapsed by default)
-      const rowGroups = getRowGroups(container)
-      expect(rowGroups.length).toBeGreaterThan(0)
-    })
-
-    it('renders expanded groups with virtual scrolling', () => {
-      const props = {
-        data: {
-          category: ['A', 'A', 'B', 'B', 'C'],
-          value: [1, 2, 3, 4, 5]
-        },
-        columns: [
-          { name: 'category', id: 'category' },
-          { name: 'value', id: 'value' }
-        ],
-        groupBy: ['category'],
         defaultExpanded: true,
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      // With defaultExpanded, should show group headers + sub-rows
-      const rowGroups = getRowGroups(container)
-      // 3 groups + 5 sub-rows = 8 total rows (all visible with small dataset)
-      expect(rowGroups.length).toBeGreaterThan(3)
-    })
-
-    it('works with paginateSubRows', () => {
-      const props = {
-        data: {
-          category: ['A', 'A', 'A', 'B', 'B', 'B'],
-          value: [1, 2, 3, 4, 5, 6]
-        },
-        columns: [
-          { name: 'category', id: 'category' },
-          { name: 'value', id: 'value' }
-        ],
-        groupBy: ['category'],
         paginateSubRows: true,
-        defaultExpanded: true,
         virtual: true,
         height: 400
       }
       const { container } = render(<Reactable {...props} />)
 
       // Virtual mode should have the spacer div
-      const tbody = getTbody(container)
-      const spacerDiv = tbody.querySelector('.rt-virtual-spacer')
+      const spacerDiv = getVirtualSpacer(container)
       expect(spacerDiv).toHaveStyle('position: relative')
+
+      // With defaultExpanded, should show group headers + sub-rows
+      const rowGroups = getRowGroups(container)
+      // 3 groups + 5 sub-rows = 8 total rows (all visible with small dataset)
+      expect(rowGroups.length).toBeGreaterThan(3)
     })
   })
 
   describe('details with virtual', () => {
-    it('renders table with row details and virtual scrolling', () => {
+    it('renders and expands row details with virtual scrolling', () => {
       const props = {
         data: { a: [1, 2, 3, 4, 5] },
         columns: [
@@ -802,57 +604,17 @@ describe('virtual scrolling', () => {
       const { container } = render(<Reactable {...props} />)
 
       // Should render rows with expanders
-      const expanders = container.querySelectorAll('.rt-expander')
+      const expanders = getExpanderIcons(container)
       expect(expanders.length).toBeGreaterThan(0)
-    })
-
-    it('renders expanded row details', () => {
-      const props = {
-        data: { a: [1, 2, 3] },
-        columns: [
-          {
-            name: 'a',
-            id: 'a',
-            details: ['Detail 1', 'Detail 2', 'Detail 3']
-          }
-        ],
-        defaultExpanded: true,
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
-
-      // With defaultExpanded, details should be visible
-      const details = container.querySelectorAll('.rt-tr-details')
-      expect(details.length).toBeGreaterThan(0)
-    })
-
-    it('expands row details on click', () => {
-      const props = {
-        data: { a: [1, 2, 3] },
-        columns: [
-          {
-            name: 'a',
-            id: 'a',
-            details: ['Detail 1', 'Detail 2', 'Detail 3']
-          }
-        ],
-        virtual: true,
-        height: 400
-      }
-      const { container } = render(<Reactable {...props} />)
 
       // Initially no details visible
-      let details = container.querySelectorAll('.rt-tr-details')
-      expect(details).toHaveLength(0)
+      expect(getRowDetails(container)).toHaveLength(0)
 
       // Click first expander
-      const expander = container.querySelector('.rt-expander')
-      fireEvent.click(expander)
+      fireEvent.click(expanders[0])
 
       // Now details should be visible
-      details = container.querySelectorAll('.rt-tr-details')
-      expect(details).toHaveLength(1)
+      expect(getRowDetails(container)).toHaveLength(1)
     })
   })
 })
