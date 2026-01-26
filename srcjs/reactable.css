@@ -509,13 +509,19 @@ input[type='radio'].rt-select-input {
   z-index: 1;
 }
 
-/* Virtual scrolling */
+/* Virtual scrolling
+ * Uses @tanstack/react-virtual to render only visible rows.
+ * The table (.rt-table) is the scroll container. Tbody contains a spacer div
+ * with the total height of all rows, and rows are absolutely positioned within it.
+ */
 .rt-tbody-virtual {
+  /* Prevent duplicate scrollbars - the table element handles scrolling, not tbody */
   overflow: hidden !important;
 }
 
 .rt-tbody-virtual .rt-tr-group {
-  /* Rows are absolutely positioned by react-window */
+  /* Rows are absolutely positioned with CSS transforms by the virtualizer.
+   * Flex column layout ensures row content and details stack vertically. */
   display: flex;
   flex-direction: column;
 }
