@@ -310,55 +310,32 @@ as that can make it difficult for keyboard users to navigate the page.
 
 ## Virtual Scrolling
 
-You can enable virtual scrolling by setting `virtual = TRUE`. Virtual scrolling renders only the visible rows, improving performance for large datasets. You should set a fixed `height` when using virtual scrolling so the table has a scroll container.
+Virtual scrolling renders only the visible rows on screen, allowing you to scroll through large tables without performance issues. To enable it, set `virtual = TRUE` with a fixed height (using the `height` argument or a sized parent container).
+
+Virtual scrolling works with or without pagination, but is most useful when pagination is disabled. It can also be combined with expandable row details and grouped rows.
 
 ```{r}
-# Create a large dataset
+set.seed(10)
+
+rows <- 1000
+dates <- seq.Date(as.Date("2026-01-01"), as.Date("2026-12-01"), "day")
 data <- data.frame(
-  row = 1:10000,
-  x = round(rnorm(10000), 4),
-  y = round(runif(10000), 4)
+  index = seq_len(rows),
+  date = sample(dates, rows, replace = TRUE),
+  city = sample(names(precip), rows, replace = TRUE)
 )
-
-reactable(data, pagination = FALSE, virtual = TRUE, height = 500)
-```
-
-Virtual scrolling can be combined with pagination. When both are enabled, only visible rows within the current page are rendered:
-
-```{r}
-reactable(
-  data,
-  virtual = TRUE,
-  height = 500,
-  defaultPageSize = 1000,
-  showPageSizeOptions = TRUE,
-  pageSizeOptions = c(100, 500, 1000)
-)
-```
-
-Virtual scrolling also works with grouped tables and expandable row details:
-
-```{r}
-data <- MASS::Cars93[, c("Type", "Manufacturer", "Model", "Price", "MPG.city")]
 
 reactable(
   data,
   pagination = FALSE,
   virtual = TRUE,
   height = 500,
-  groupBy = "Type",
-  columns = list(
-    Price = colDef(aggregate = "mean", format = colFormat(digits = 1)),
-    MPG.city = colDef(aggregate = "mean", format = colFormat(digits = 1))
-  ),
-  details = function(index) {
-    paste("Details for row", index, "- Model:", data$Model[index])
-  }
+  showPagination = TRUE
 )
 ```
 
 ::: {.callout-note}
-**Note:** Browser find-in-page (Ctrl+F / Cmd+F) does not work with virtualized tables since only visible rows exist in the DOM. Use the table's built-in search or filtering instead.
+**Note:** Browser find-in-page (`Ctrl+F` / `Cmd+F`) does not work with virtualized tables since only visible rows exist in the page. Use the table's built-in search or filtering instead.
 :::
 
 ## Grouping and Aggregation

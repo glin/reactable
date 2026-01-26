@@ -38,13 +38,17 @@ data_1k <- data.frame(
 # Expected: Smooth scrolling through 100k rows, only ~15-20 DOM elements
 reactable(data, virtual = TRUE, pagination = FALSE, height = 500, searchable = TRUE)
 
+# Virtual scrolling with pagination controls visible
+# Expected: Pagination controls visible, current page rows virtualized
+reactable(data, virtual = TRUE, pagination = FALSE, showPagination = TRUE, height = 500, searchable = TRUE)
+
 # Virtual scrolling with pagination (1000 rows per page)
 # Expected: Pagination controls visible, current page rows virtualized
 reactable(data, virtual = TRUE, defaultPageSize = 1000, height = 500, searchable = TRUE)
 
 # Virtual scrolling without explicit height (not recommended - may not scroll)
 # Expected: Table may expand to fit content, virtualization less effective
-reactable(data, virtual = TRUE, pagination = FALSE, searchable = TRUE)
+reactable(data_1k, virtual = TRUE, pagination = FALSE, searchable = TRUE)
 
 # =============================================================================
 # Container Height

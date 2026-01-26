@@ -125,9 +125,13 @@ than one page.}
 
 \item{paginateSubRows}{When rows are grouped, paginate sub rows? Defaults to \code{FALSE}.}
 
-\item{virtual}{Enable virtual scrolling? When \code{TRUE}, only visible rows are
-rendered for improved performance with large datasets. Can be combined with
-\code{pagination}, \code{details} (expandable rows), and \code{groupBy}.}
+\item{virtual}{Enable virtual scrolling? Virtual scrolling renders only the
+visible rows on screen, allowing you to scroll through large tables without
+performance issues. To enable, set \code{virtual = TRUE} with a fixed height
+(using the \code{height} argument or a sized parent container). Works with or
+without pagination, but is most useful when pagination is disabled. Can
+also be combined with expandable row details (\code{details}) and grouped rows
+(\code{groupBy}).}
 
 \item{details}{Additional content to display when expanding a row. An R function
 that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function

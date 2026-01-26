@@ -57,9 +57,13 @@
 #' @param showPageInfo Show page info? Defaults to `TRUE`.
 #' @param minRows Minimum number of rows to show per page. Defaults to 1.
 #' @param paginateSubRows When rows are grouped, paginate sub rows? Defaults to `FALSE`.
-#' @param virtual Enable virtual scrolling? When `TRUE`, only visible rows are
-#'   rendered for improved performance with large datasets. Can be combined with
-#'   `pagination`, `details` (expandable rows), and `groupBy`.
+#' @param virtual Enable virtual scrolling? Virtual scrolling renders only the
+#'   visible rows on screen, allowing you to scroll through large tables without
+#'   performance issues. To enable, set `virtual = TRUE` with a fixed height
+#'   (using the `height` argument or a sized parent container). Works with or
+#'   without pagination, but is most useful when pagination is disabled. Can
+#'   also be combined with expandable row details (`details`) and grouped rows
+#'   (`groupBy`).
 #' @param details Additional content to display when expanding a row. An R function
 #'   that takes the row index and column name as arguments, or a [JS()] function
 #'   that takes a row info object as an argument. Can also be a [colDef()] to
