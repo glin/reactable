@@ -547,9 +547,11 @@ function VirtualTbody({
   TbodyComponent,
   rowsToRender,
   renderRow,
+  renderPadRow,
   compact,
   scrollElementRef,
-  noData
+  noData,
+  minRows
 }) {
   // Estimated row height for initial render before dynamic measurement.
   // These values are derived from reactable.css default styles:
@@ -573,6 +575,15 @@ function VirtualTbody({
 
   const virtualItems = virtualizer.getVirtualItems()
 
+  // Leave at least one row to show the no data message properly
+  const minRowCount = minRows ? Math.max(minRows, 1) : 1
+  const padRowCount = Math.max(minRowCount - rowsToRender.length, 0)
+
+  // Total height includes real rows plus pad rows
+  const totalRowsHeight = virtualizer.getTotalSize()
+  const padRowsHeight = padRowCount * estimatedRowHeight
+  const spacerHeight = totalRowsHeight + padRowsHeight
+
   // Note: The table element (TableComponent) is the scroll container, not tbody.
   // tbody contains a spacer div with total height and absolutely positioned rows.
   return (
@@ -580,7 +591,7 @@ function VirtualTbody({
       <div
         className="rt-virtual-spacer"
         style={{
-          height: virtualizer.getTotalSize(),
+          height: spacerHeight,
           width: '100%',
           position: 'relative'
         }}
@@ -601,6 +612,19 @@ function VirtualTbody({
             virtualRow.index
           )
         })}
+        {padRowCount > 0 &&
+          [...Array(padRowCount)].map((_, i) => {
+            // Position pad rows after the real rows
+            const style = {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: estimatedRowHeight,
+              transform: `translateY(${totalRowsHeight + i * estimatedRowHeight}px)`
+            }
+            return renderPadRow(i, style)
+          })}
       </div>
       {noData}
     </TbodyComponent>
@@ -612,9 +636,11 @@ VirtualTbody.propTypes = {
   TbodyComponent: PropTypes.elementType.isRequired,
   rowsToRender: PropTypes.array.isRequired,
   renderRow: PropTypes.func.isRequired,
+  renderPadRow: PropTypes.func.isRequired,
   compact: PropTypes.bool,
   scrollElementRef: PropTypes.object.isRequired,
-  noData: PropTypes.node
+  noData: PropTypes.node,
+  minRows: PropTypes.number
 }
 
 function TableData({
@@ -1757,10 +1783,66 @@ function Table({
       )
     }
 
+    // Render a pad row (used to fill space when table has fewer rows than minRows)
+    const renderPadRow = (viewIndex, style = null) => {
+      const rowProps = {
+        className: classNames('rt-tr-pad', css(theme.rowStyle))
+      }
+      if (rowClassName) {
+        let rowCls
+        if (typeof rowClassName === 'function') {
+          rowCls = rowClassName(undefined, stateInfo)
+        } else if (Array.isArray(rowClassName)) {
+          // rowClassName not used for pad rows
+        } else {
+          rowCls = rowClassName
+        }
+        rowProps.className = classNames(rowProps.className, rowCls)
+      }
+      if (rowStyle) {
+        if (typeof rowStyle === 'function') {
+          rowProps.style = rowStyle(undefined, stateInfo)
+        } else if (Array.isArray(rowStyle)) {
+          // rowStyle not used for pad rows
+        } else {
+          rowProps.style = rowStyle
+        }
+      }
+      return (
+        <TrGroupComponent
+          key={`pad_${viewIndex}`}
+          className={css(theme.rowGroupStyle)}
+          style={style}
+          aria-hidden
+        >
+          <TrComponent {...rowProps}>
+            {instance.visibleColumns.map(column => {
+              const { className: themeClass, innerClassName } = getCellTheme(theme.cellStyle)
+              const cellProps = {
+                className: themeClass
+              }
+              // Get layout styles (flex, sticky) from footer props. useFlexLayout
+              // doesn't have built-in support for pad cells.
+              const { className, style } = column.getFooterProps(cellProps)
+              return (
+                <TdComponent
+                  key={`pad_${viewIndex}_${column.id}`}
+                  className={className}
+                  innerClassName={innerClassName}
+                  style={style}
+                >
+                  &nbsp;
+                </TdComponent>
+              )
+            })}
+          </TrComponent>
+        </TrGroupComponent>
+      )
+    }
+
     // Use instance.page which contains current page rows (or all rows when pagination is disabled)
     const rowsToRender = instance.page
 
-    // Prepare noData element and tbody className (shared by virtual and non-virtual rendering)
     let tbodyClassName = css(theme.tableBodyStyle)
     let noData
     if (instance.rows.length === 0) {
@@ -1772,21 +1854,21 @@ function Table({
       noData = <NoDataComponent />
     }
 
+    const tbodyProps = instance.getTableBodyProps({ className: tbodyClassName })
+
     // Virtual rendering
     if (virtual) {
-      const tbodyProps = instance.getTableBodyProps({
-        className: tbodyClassName
-      })
-
       return (
         <VirtualTbody
           tbodyProps={tbodyProps}
           TbodyComponent={TbodyComponent}
           rowsToRender={rowsToRender}
           renderRow={renderRow}
+          renderPadRow={renderPadRow}
           compact={compact}
           scrollElementRef={tableElement}
           noData={noData}
+          minRows={minRows}
         />
       )
     }
@@ -1796,62 +1878,11 @@ function Table({
 
     let padRows
     // Leave at least one row to show the no data message properly
-    minRows = minRows ? Math.max(minRows, 1) : 1
-    const padRowCount = Math.max(minRows - instance.page.length, 0)
+    const minRowCount = minRows ? Math.max(minRows, 1) : 1
+    const padRowCount = Math.max(minRowCount - instance.page.length, 0)
     if (padRowCount > 0) {
-      padRows = [...Array(padRowCount)].map((_, viewIndex) => {
-        const rowProps = {
-          className: classNames('rt-tr-pad', css(theme.rowStyle))
-        }
-        if (rowClassName) {
-          let rowCls
-          if (typeof rowClassName === 'function') {
-            rowCls = rowClassName(undefined, stateInfo)
-          } else if (Array.isArray(rowClassName)) {
-            // rowClassName not used for pad rows
-          } else {
-            rowCls = rowClassName
-          }
-          rowProps.className = classNames(rowProps.className, rowCls)
-        }
-        if (rowStyle) {
-          if (typeof rowStyle === 'function') {
-            rowProps.style = rowStyle(undefined, stateInfo)
-          } else if (Array.isArray(rowStyle)) {
-            // rowStyle not used for pad rows
-          } else {
-            rowProps.style = rowStyle
-          }
-        }
-        return (
-          <TrGroupComponent key={viewIndex} className={css(theme.rowGroupStyle)} aria-hidden>
-            <TrComponent {...rowProps}>
-              {instance.visibleColumns.map(column => {
-                const { className: themeClass, innerClassName } = getCellTheme(theme.cellStyle)
-                const cellProps = {
-                  className: themeClass
-                }
-                // Get layout styles (flex, sticky) from footer props. useFlexLayout
-                // doesn't have built-in support for pad cells.
-                const { className, style } = column.getFooterProps(cellProps)
-                return (
-                  <TdComponent
-                    key={`${viewIndex}_${column.id}`}
-                    className={className}
-                    innerClassName={innerClassName}
-                    style={style}
-                  >
-                    &nbsp;
-                  </TdComponent>
-                )
-              })}
-            </TrComponent>
-          </TrGroupComponent>
-        )
-      })
+      padRows = [...Array(padRowCount)].map((_, viewIndex) => renderPadRow(viewIndex))
     }
-
-    const tbodyProps = instance.getTableBodyProps({ className: tbodyClassName })
 
     return (
       <TbodyComponent {...tbodyProps}>

@@ -75,7 +75,24 @@ reactable(
   pagination = FALSE,
   height = 500,
   searchable = TRUE,
+  highlight = TRUE,
+  striped = TRUE,
   theme = reactableTheme(tableStyle = list(fontSize = "36px"))
+)
+
+# =============================================================================
+# Row Selection
+# =============================================================================
+
+# Virtual scrolling with multiple row selection and highlight
+# Expected: Selected rows are still selected when the row scrolls out of view and back into view
+reactable(
+  data_1k,
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  selection = "multiple",
+  highlight = TRUE
 )
 
 # =============================================================================

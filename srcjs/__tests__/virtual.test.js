@@ -248,6 +248,37 @@ describe('virtual scrolling', () => {
       // First data row should have aria-rowindex = 3 (after 2 header rows)
       expect(dataRows[0]).toHaveAttribute('aria-rowindex', '3')
     })
+
+    it('aria-rowcount excludes pad rows', () => {
+      const props = {
+        data: { a: [1, 2, 3, 4, 5] },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        pagination: true,
+        defaultPageSize: 5,
+        minRows: 10,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const table = getTable(container)
+      // aria-rowcount should only count data rows + header rows, not pad rows
+      // aria-rowcount = 5 data rows + 1 header row = 6
+      expect(table).toHaveAttribute('aria-rowcount', '6')
+
+      // Verify pad rows exist but don't have aria-rowindex
+      const rowGroups = getRowGroups(container)
+      expect(rowGroups).toHaveLength(10) // 5 data + 5 pad
+
+      const padRows = Array.from(rowGroups).filter(rg => rg.hasAttribute('aria-hidden'))
+      expect(padRows).toHaveLength(5)
+
+      // Pad rows should not have aria-rowindex on their tr elements
+      padRows.forEach(padRow => {
+        const tr = padRow.querySelector('.rt-tr')
+        expect(tr).not.toHaveAttribute('aria-rowindex')
+      })
+    })
   })
 
   describe('pagination with virtual', () => {
@@ -281,6 +312,57 @@ describe('virtual scrolling', () => {
       // Should not render all 100 rows on the page - only visible + overscan
       const rowGroups = getRowGroups(container)
       expect(rowGroups.length).toBeLessThan(100)
+    })
+
+    it('renders pad rows when minRows exceeds page size', () => {
+      const props = {
+        data: { a: [1, 2, 3, 4, 5] },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        pagination: true,
+        defaultPageSize: 5,
+        minRows: 10,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const rowGroups = getRowGroups(container)
+      // Should have 5 data rows + 5 pad rows = 10 total
+      expect(rowGroups).toHaveLength(10)
+
+      // All rows (data + pad) should be absolutely positioned
+      rowGroups.forEach(rowGroup => {
+        expect(rowGroup.style.position).toBe('absolute')
+        expect(rowGroup.style.transform).toMatch(/translateY\(\d+px\)/)
+      })
+
+      // Pad rows should have aria-hidden
+      const padRows = Array.from(rowGroups).filter(rg => rg.hasAttribute('aria-hidden'))
+      expect(padRows).toHaveLength(5)
+
+      // Pad rows should contain rt-tr-pad class
+      padRows.forEach(padRow => {
+        const tr = padRow.querySelector('.rt-tr')
+        expect(tr).toHaveClass('rt-tr-pad')
+      })
+    })
+
+    it('does not render pad rows when data rows exceed minRows', () => {
+      const props = {
+        data: { a: Array.from({ length: 20 }, (_, i) => i + 1) },
+        columns: [{ name: 'a', id: 'a' }],
+        virtual: true,
+        pagination: true,
+        defaultPageSize: 20,
+        minRows: 5,
+        height: 400
+      }
+      const { container } = render(<Reactable {...props} />)
+
+      const rowGroups = getRowGroups(container)
+      // No pad rows should be present
+      const padRows = Array.from(rowGroups).filter(rg => rg.hasAttribute('aria-hidden'))
+      expect(padRows).toHaveLength(0)
     })
   })
 

@@ -239,6 +239,7 @@ tbl <- reactable(
 | Page size change | Change page size dropdown | New page size applies, virtualization continues working |
 | Scroll within page | Scroll within a page of 1000 rows | Only visible rows rendered, smooth scrolling |
 | Page change resets scroll | Scroll down on page 1, then go to page 2 | Scroll position resets to top of page 2 |
+| Pad rows with `minRows` | `virtual = TRUE, pagination = TRUE, defaultPageSize = 5, minRows = 20, height = 400`, go to last page | Table maintains fixed height with pad rows filling space after data rows |
 
 ### Row Selection
 
