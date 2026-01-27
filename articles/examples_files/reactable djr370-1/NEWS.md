@@ -27,6 +27,15 @@
 
   shinyApp(ui, server)
   ```
+* `reactable()` gains a [`virtual`](https://glin.github.io/reactable/articles/examples.html#virtual-scrolling) argument to enable virtual scrolling. Virtual scrolling renders only the visible rows on screen, allowing you to scroll through large tables without performance issues. ([#203](https://github.com/glin/reactable/issues/203))
+  ```r
+  reactable(
+    data.frame(x = 1:100000, y = rnorm(100000)),
+    pagination = FALSE,
+    virtual = TRUE,
+    height = 500
+  )
+  ```
 * New [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
   and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
   methods in the JavaScript API to change the current page or set the current page size.
@@ -57,6 +66,7 @@
 * In `reactableTheme()`, `stripedColor` and `highlightColor` now work when using sticky columns. (@grcatlin, [#401](https://github.com/glin/reactable/issues/401))
 * In Crosstalk tables, pagination no longer resets when selecting a row on a page greater than 1. (@msaltieri, [#349](https://github.com/glin/reactable/issues/349))
 * In Shiny apps, tables now update correctly when reactive `meta` values change. (@khusmann, [#416](https://github.com/glin/reactable/issues/416))
+* Fixed pagination showing incorrect page buttons (e.g., "1 2 3 4 5 NaN") when using `pagination = FALSE` with `showPagination = TRUE` and filtering out all rows.
 
 ## Breaking changes
 

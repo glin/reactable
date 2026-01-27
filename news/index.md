@@ -32,6 +32,22 @@
   shinyApp(ui, server)
   ```
 
+- [`reactable()`](../reference/reactable.md) gains a
+  [`virtual`](https://glin.github.io/reactable/articles/examples.html#virtual-scrolling)
+  argument to enable virtual scrolling. Virtual scrolling renders only
+  the visible rows on screen, allowing you to scroll through large
+  tables without performance issues.
+  ([\#203](https://github.com/glin/reactable/issues/203))
+
+  ``` r
+  reactable(
+    data.frame(x = 1:100000, y = rnorm(100000)),
+    pagination = FALSE,
+    virtual = TRUE,
+    height = 500
+  )
+  ```
+
 - New
   [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
   and
@@ -83,6 +99,9 @@
 - In Shiny apps, tables now update correctly when reactive `meta` values
   change. ([@khusmann](https://github.com/khusmann),
   [\#416](https://github.com/glin/reactable/issues/416))
+- Fixed pagination showing incorrect page buttons (e.g., “1 2 3 4 5
+  NaN”) when using `pagination = FALSE` with `showPagination = TRUE` and
+  filtering out all rows.
 
 ### Breaking changes
 

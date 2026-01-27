@@ -17,5 +17,6 @@ reactableTheme	reactableTheme
 reexports	reexports
 renderReactable	reactable-shiny
 resolvedData	resolvedData
+toJSON	toJSON
 updateReactable	updateReactable
 widget_html.reactable	widget_html.reactable

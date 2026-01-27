@@ -36,6 +36,7 @@ R console."><!-- dependencies from examples --><script src="libs/react-18.2.0/re
     <li><a class="dropdown-item" href="../articles/popular-movies/popular-movies.html">Popular Movies</a></li>
     <li><a class="dropdown-item" href="../articles/cookbook/cookbook.html">Demo Cookbook</a></li>
     <li><a class="dropdown-item" href="../articles/100k-rows.html">100k Rows</a></li>
+    <li><a class="dropdown-item" href="../articles/100k-rows-virtual.html">100k Rows (Virtualized)</a></li>
     <li><a class="dropdown-item" href="../articles/shiny-demo.html">Shiny Demo</a></li>
     <li><a class="external-link dropdown-item" href="https://glin.quarto.pub/observable-reactable/">Quarto and Observable</a></li>
   </ul></li>
@@ -102,6 +103,7 @@ R console.</p>
 <span>  showPageInfo <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  minRows <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  paginateSubRows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  virtual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  details <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  defaultExpanded <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  selection <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -242,6 +244,16 @@ than one page.</p></dd>
 
 <dt id="arg-paginatesubrows">paginateSubRows<a class="anchor" aria-label="anchor" href="#arg-paginatesubrows"></a></dt>
 <dd><p>When rows are grouped, paginate sub rows? Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-virtual">virtual<a class="anchor" aria-label="anchor" href="#arg-virtual"></a></dt>
+<dd><p>Enable virtual scrolling? Virtual scrolling renders only the
+visible rows on screen, allowing you to scroll through large tables without
+performance issues. To enable, set <code>virtual = TRUE</code> with a fixed height
+(using the <code>height</code> argument or a sized parent container). Works with or
+without pagination, but is most useful when pagination is disabled. Can
+also be combined with expandable row details (<code>details</code>) and grouped rows
+(<code>groupBy</code>).</p></dd>
 
 
 <dt id="arg-details">details<a class="anchor" aria-label="anchor" href="#arg-details"></a></dt>

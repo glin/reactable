@@ -3,6 +3,7 @@
 <url><loc>/CLAUDE.html</loc></url>
 <url><loc>/CONTRIBUTING.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/100k-rows-virtual.html</loc></url>
 <url><loc>/articles/100k-rows.html</loc></url>
 <url><loc>/articles/building-twitter-followers.html</loc></url>
 <url><loc>/articles/conditional-styling.html</loc></url>
@@ -52,6 +53,7 @@
 <url><loc>/reference/reactableTheme.html</loc></url>
 <url><loc>/reference/reexports.html</loc></url>
 <url><loc>/reference/resolvedData.html</loc></url>
+<url><loc>/reference/toJSON.html</loc></url>
 <url><loc>/reference/updateReactable.html</loc></url>
 <url><loc>/reference/widget_html.reactable.html</loc></url>
 </urlset>

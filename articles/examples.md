@@ -1983,6 +1983,56 @@ many interactive elements (such as links, expand buttons, or selection
 checkboxes), as that can make it difficult for keyboard users to
 navigate the page.
 
+## Virtual Scrolling
+
+Virtual scrolling renders only the visible rows on screen, allowing you
+to scroll through large tables without performance issues. To enable it,
+set `virtual = TRUE` with a fixed height (using the `height` argument or
+a sized parent container).
+
+Virtual scrolling works with or without pagination, but is most useful
+when pagination is disabled. It can also be combined with expandable row
+details and grouped rows.
+
+``` r
+set.seed(10)
+
+rows <- 1000
+dates <- seq.Date(as.Date("2026-01-01"), as.Date("2026-12-01"), "day")
+data <- data.frame(
+  index = seq_len(rows),
+  date = sample(dates, rows, replace = TRUE),
+  city = sample(names(precip), rows, replace = TRUE)
+)
+
+reactable(
+  data,
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 500,
+  showPagination = TRUE,
+  searchable = TRUE
+)
+```
+
+index
+
+date
+
+city
+
+1–1000 of 1000 rows
+
+Previous
+
+1
+
+Next
+
+**Note:** Browser find-in-page (`Ctrl+F` / `Cmd+F`) does not work with
+virtualized tables since only visible rows exist in the page. Use the
+table’s built-in search or filtering instead.
+
 ## Grouping and Aggregation
 
 You can group rows in a table by specifying one or more columns in

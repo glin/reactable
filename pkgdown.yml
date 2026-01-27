@@ -2,6 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  100k-rows-virtual: 100k-rows-virtual.html
   100k-rows: 100k-rows.html
   building-twitter-followers: building-twitter-followers.html
   conditional-styling: conditional-styling.html
@@ -25,4 +26,4 @@ articles:
   sticky-columns: sticky-columns.html
   twitter-followers/twitter-followers: twitter-followers/twitter-followers.html
   womens-world-cup/womens-world-cup: womens-world-cup/womens-world-cup.html
-last_built: 2026-01-27T03:15Z
+last_built: 2026-01-27T06:13Z

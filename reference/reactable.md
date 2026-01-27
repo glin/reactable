@@ -32,6 +32,7 @@ reactable(
   showPageInfo = TRUE,
   minRows = 1,
   paginateSubRows = FALSE,
+  virtual = FALSE,
   details = NULL,
   defaultExpanded = FALSE,
   selection = NULL,
@@ -179,6 +180,16 @@ reactable(
 - paginateSubRows:
 
   When rows are grouped, paginate sub rows? Defaults to `FALSE`.
+
+- virtual:
+
+  Enable virtual scrolling? Virtual scrolling renders only the visible
+  rows on screen, allowing you to scroll through large tables without
+  performance issues. To enable, set `virtual = TRUE` with a fixed
+  height (using the `height` argument or a sized parent container).
+  Works with or without pagination, but is most useful when pagination
+  is disabled. Can also be combined with expandable row details
+  (`details`) and grouped rows (`groupBy`).
 
 - details:
 

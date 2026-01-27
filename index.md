@@ -20,6 +20,7 @@ Table](https://github.com/tanstack/table/tree/v7) library and made with
   widgets in tables
 - Expandable rows and nested tables
 - Conditional styling
+- Virtual scrolling for large tables
 - Works seamlessly within R Markdown documents and Shiny apps
 
 ## Demos
@@ -108,6 +109,8 @@ To learn more about using reactable, check out the examples below.
 - [Filtering](https://glin.github.io/reactable/articles/examples.html#filtering)
 - [Searching](https://glin.github.io/reactable/articles/examples.html#searching)
 - [Pagination](https://glin.github.io/reactable/articles/examples.html#pagination)
+- [Virtual
+  Scrolling](https://glin.github.io/reactable/articles/examples.html#virtual-scrolling)
 - [Grouping and
   Aggregation](https://glin.github.io/reactable/articles/examples.html#grouping-and-aggregation)
 - [Column

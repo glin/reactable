@@ -2,6 +2,7 @@
 
 ### All vignettes
 
+- [100k Rows (Virtualized)](100k-rows-virtual.md):
 - [100k Rows](100k-rows.md):
 - [Building the Twitter Followers Demo](building-twitter-followers.md):
 - [Conditional Styling](conditional-styling.md):

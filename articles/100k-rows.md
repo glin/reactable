@@ -1,5 +1,9 @@
 # 100k Rows
 
+This example demonstrates a paginated table with 100,000 rows. For an
+alternative using virtual scrolling instead of pagination, see [100k
+Rows (Virtualized)](100k-rows-virtual.md).
+
 ``` r
 library(reactable)
 
