@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
+<url><loc>/CLAUDE.html</loc></url>
 <url><loc>/CONTRIBUTING.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
 <url><loc>/articles/100k-rows.html</loc></url>
@@ -33,6 +34,7 @@
 <url><loc>/articles/twitter-followers/twitter-followers.html</loc></url>
 <url><loc>/articles/womens-world-cup/womens-world-cup.html</loc></url>
 <url><loc>/authors.html</loc></url>
+<url><loc>/copilot-instructions.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/as.tags.reactable.html</loc></url>

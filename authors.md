@@ -53,13 +53,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/glin/reactable/blob/main/DESCRIPTION)
 
-Lin G (2025). *reactable: Interactive Data Tables for R*. R package
+Lin G (2026). *reactable: Interactive Data Tables for R*. R package
 version 0.4.5.9000, <https://glin.github.io/reactable/>.
 
     @Manual{,
       title = {reactable: Interactive Data Tables for R},
       author = {Greg Lin},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.4.5.9000},
       url = {https://glin.github.io/reactable/},
     }
