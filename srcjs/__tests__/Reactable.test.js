@@ -8225,6 +8225,38 @@ describe('pagination', () => {
     expect(getPageInfo(container).textContent).toEqual('1–5 of 5 rows')
   })
 
+  it('disabling pagination works when all rows are filtered out (showPagination)', () => {
+    const props = {
+      data: { a: [1, 2, 3], b: ['a', 'b', 'c'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      pagination: false,
+      showPagination: true,
+      searchable: true
+    }
+
+    const { container } = render(<Reactable {...props} />)
+    expect(getDataRows(container)).toHaveLength(3)
+    expect(getPagination(container)).toBeVisible()
+    expect(getPageInfo(container).textContent).toEqual('1–3 of 3 rows')
+    // With data, should show prev + page 1 + next
+    let pageButtons = [...getPageButtons(container)]
+    let pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
+    expect(pageNumberBtns).toHaveLength(1)
+
+    // Filter out all rows
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'nonexistent' } })
+    expect(getDataRows(container)).toHaveLength(0)
+    expect(getPageInfo(container).textContent).toEqual('0–0 of 0 rows')
+    // Should show no page number buttons, only prev + next
+    pageButtons = [...getPageButtons(container)]
+    pageNumberBtns = pageButtons.slice(1, pageButtons.length - 1)
+    expect(pageNumberBtns).toHaveLength(0)
+  })
+
   it('current page state resets when data changes (also on sorting, filtering, searching)', () => {
     const props = {
       data: { a: ['aa', 'aa', 'bb', 'cc', 'cc', 'cc', 'cc'] },

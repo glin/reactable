@@ -66,6 +66,7 @@
 * In `reactableTheme()`, `stripedColor` and `highlightColor` now work when using sticky columns. (@grcatlin, [#401](https://github.com/glin/reactable/issues/401))
 * In Crosstalk tables, pagination no longer resets when selecting a row on a page greater than 1. (@msaltieri, [#349](https://github.com/glin/reactable/issues/349))
 * In Shiny apps, tables now update correctly when reactive `meta` values change. (@khusmann, [#416](https://github.com/glin/reactable/issues/416))
+* Fixed pagination showing incorrect page buttons (e.g., "1 2 3 4 5 NaN") when using `pagination = FALSE` with `showPagination = TRUE` and filtering out all rows.
 
 ## Breaking changes
 

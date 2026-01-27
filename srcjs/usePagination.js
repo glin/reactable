@@ -128,6 +128,10 @@ function useInstance(instance) {
     // is unnecessary when it can be derived from row count and page size.
     pageCount =
       userRowCount != null && userRowCount >= 0 ? Math.ceil(userRowCount / pageSize) : userPageCount
+  } else if (pageSize === 0) {
+    // When pagination is disabled and there are no rows (e.g., all rows filtered out),
+    // pageSize is 0 and dividing by 0 would result in NaN.
+    pageCount = 0
   } else {
     pageCount = Math.ceil(rows.length / pageSize)
   }
