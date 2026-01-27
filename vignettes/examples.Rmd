@@ -330,7 +330,8 @@ reactable(
   pagination = FALSE,
   virtual = TRUE,
   height = 500,
-  showPagination = TRUE
+  showPagination = TRUE,
+  searchable = TRUE
 )
 ```
 
