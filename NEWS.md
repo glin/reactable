@@ -36,10 +36,8 @@
     height = 500
   )
   ```
-* New [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
-  and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
-  methods in the JavaScript API to change the current page or set the current page size.
-  ([#322](https://github.com/glin/reactable/issues/322))
+* New [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage) and [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize) methods in the JavaScript API to change the current page or page size. ([#322](https://github.com/glin/reactable/issues/322))
+* New [`Reactable.toggleRowSelected()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-togglerowselected), [`Reactable.setRowsSelected()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setrowsselected), and [`Reactable.toggleAllRowsSelected()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-toggleallrowsselected) methods in the JavaScript API to programmatically control row selection. Additionally, `rowInfo.toggleRowSelected()` and `cellInfo.toggleRowSelected()` are now available in JavaScript render and style functions. ([#322](https://github.com/glin/reactable/issues/322), [#394](https://github.com/glin/reactable/issues/394), [#412](https://github.com/glin/reactable/issues/412))
 * JSON serialization of data can now be customized using the `reactable.json.func` option. This is an experimental feature for advanced use only, and intentionally undocumented outside of NEWS. reactable may change how data is serialized between versions and does not guarantee stability. See `reactable:::toJSON` as a reference for how data is currently serialized. (@khusmann, [#415](https://github.com/glin/reactable/issues/415))
 
   Example usage:

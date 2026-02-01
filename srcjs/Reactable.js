@@ -123,6 +123,51 @@ export function setPageSize(tableId, pageSize) {
   getInstance(tableId).setPageSize(pageSize)
 }
 
+// Helper to find a row by its original data index.
+// Only works for leaf (non-aggregated) rows, since aggregated rows have no `index`.
+// Row IDs:
+//   - Flat tables: "0", "1", "2", etc.
+//   - Grouped tables (leaf rows): "0", "1", "2", etc. (original data index)
+//   - Grouped tables (aggregated rows): "colName:value" (e.g., "cyl:4")
+//   - Multi-level grouped (nested aggregated): "col1:val1>col2:val2" (e.g., "cyl:6>vs:0")
+function getRowByIndex(instance, index) {
+  return instance.rowsById[String(index)] || null
+}
+
+export function toggleRowSelected(tableId, rowIndex, isSelected) {
+  const instance = getInstance(tableId)
+  const row = getRowByIndex(instance, rowIndex)
+  if (row) {
+    // Handle single selection mode - clear other selections first
+    if (instance.selection === 'single') {
+      if (isSelected == null) {
+        isSelected = !row.isSelected
+      }
+      if (isSelected) {
+        instance.setRowsSelected([])
+      }
+    }
+    instance.toggleRowSelected(row.id, isSelected)
+  }
+}
+
+export function setRowsSelected(tableId, rowIndices) {
+  const instance = getInstance(tableId)
+  // Handle single selection mode - only keep the last row
+  if (instance.selection === 'single' && rowIndices.length > 1) {
+    rowIndices = [rowIndices[rowIndices.length - 1]]
+  }
+  const rowIds = rowIndices.map(index => {
+    const row = getRowByIndex(instance, index)
+    return row ? row.id : String(index)
+  })
+  instance.setRowsSelected(rowIds)
+}
+
+export function toggleAllRowsSelected(tableId, isSelected) {
+  getInstance(tableId).toggleAllRowsSelected(isSelected)
+}
+
 export function Reactable({
   data,
   columns,
@@ -2292,6 +2337,7 @@ function Table({
 
   // Expose a limited JavaScript API to the table instance
   instance.state = stateInfo
+  instance.selection = selection
   instance.downloadDataCSV = (filename, options = {}) => {
     filename = filename || 'data.csv'
     const csv = instance.getDataCSV(options)

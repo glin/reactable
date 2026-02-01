@@ -1,0 +1,677 @@
+---
+title: "Row Selection API Test"
+output:
+  html_document:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+library(htmltools)
+```
+
+## Test Data
+
+```{r}
+# Small dataset for basic testing
+data_small <- mtcars[1:10, ]
+
+# Full mtcars for grouped testing (32 rows)
+data_medium <- mtcars
+
+# Nested/hierarchical data for grouped testing
+data_grouped <- data.frame(
+  Category = rep(c("A", "B", "C"), each = 10),
+  Subcategory = rep(c("X", "Y"), 15),
+  Value = round(runif(30, 1, 100)),
+  stringsAsFactors = FALSE
+)
+```
+
+## Reactable.toggleRowSelected()
+
+### Toggle unselected row
+
+Expected: Click "Select Row 2" button, row at index 2 becomes selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 2",
+    onclick = "Reactable.toggleRowSelected('toggle-unselected', 2)"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-unselected'))"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "toggle-unselected"
+  )
+)
+```
+
+### Toggle selected row (deselect)
+
+Expected: Row 0 is pre-selected. Click "Toggle Row 0" to deselect it.
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle Row 0",
+    onclick = "Reactable.toggleRowSelected('toggle-selected', 0)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = 1,  # 1-based in R
+    elementId = "toggle-selected"
+  )
+)
+```
+
+### Select with explicit true
+
+Expected: Click "Select Row 3" to select row 3, clicking again keeps it selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 3 (explicit true)",
+    onclick = "Reactable.toggleRowSelected('explicit-true', 3, true)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "explicit-true"
+  )
+)
+```
+
+### Deselect with explicit false
+
+Expected: Rows 0 and 1 pre-selected. Click "Deselect Row 0" to deselect only row 0.
+
+```{r}
+tagList(
+  tags$button(
+    "Deselect Row 0 (explicit false)",
+    onclick = "Reactable.toggleRowSelected('explicit-false', 0, false)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = c(1, 2),  # 1-based in R
+    elementId = "explicit-false"
+  )
+)
+```
+
+### Single selection mode
+
+Expected: Row 0 pre-selected. Click "Select Row 2" - row 2 selected, row 0 automatically deselected.
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 2",
+    onclick = "Reactable.toggleRowSelected('single-select', 2)"
+  ),
+  reactable(
+    data_small,
+    selection = "single",
+    defaultSelected = 1,  # 1-based in R
+    elementId = "single-select"
+  )
+)
+```
+
+### Invalid index (no error)
+
+Expected: Click "Toggle Invalid Row" - no error, no change to selection state
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle Invalid Row (index 999)",
+    onclick = "Reactable.toggleRowSelected('invalid-index', 999)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "invalid-index"
+  )
+)
+```
+
+## Reactable.setRowsSelected()
+
+### Select multiple rows
+
+Expected: Click "Select Rows 0, 2, 4" - those three rows become selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select Rows 0, 2, 4",
+    onclick = "Reactable.setRowsSelected('select-multiple', [0, 2, 4])"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('select-multiple'))"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "select-multiple"
+  )
+)
+```
+
+### Clear all selections
+
+Expected: Rows 0, 1, 2 pre-selected. Click "Clear Selection" - all rows deselected.
+
+```{r}
+tagList(
+  tags$button(
+    "Clear Selection",
+    onclick = "Reactable.setRowsSelected('clear-selection', [])"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = c(1, 2, 3),  # 1-based in R
+    elementId = "clear-selection"
+  )
+)
+```
+
+### Replace selection
+
+Expected: Rows 0, 1 pre-selected. Click "Replace with 2, 3" - only rows 2 and 3 selected.
+
+```{r}
+tagList(
+  tags$button(
+    "Replace with Rows 2, 3",
+    onclick = "Reactable.setRowsSelected('replace-selection', [2, 3])"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = c(1, 2),  # 1-based in R
+    elementId = "replace-selection"
+  )
+)
+```
+
+### Single selection mode with multiple indices
+
+Expected: Click "Select Rows 0, 2" - only row 2 selected (last one wins in single mode)
+
+```{r}
+tagList(
+  tags$button(
+    "Select Rows 0, 2",
+    onclick = "Reactable.setRowsSelected('single-set-multiple', [0, 2])"
+  ),
+  reactable(
+    data_small,
+    selection = "single",
+    elementId = "single-set-multiple"
+  )
+)
+```
+
+## Reactable.toggleAllRowsSelected()
+
+### Toggle all rows (select all)
+
+Expected: Click "Toggle All" with none selected - all rows become selected
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle All",
+    onclick = "Reactable.toggleAllRowsSelected('toggle-all')"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-all'))"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "toggle-all"
+  )
+)
+```
+
+### Toggle all rows (deselect all)
+
+Expected: All rows pre-selected. Click "Toggle All" - all rows become deselected.
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle All",
+    onclick = "Reactable.toggleAllRowsSelected('toggle-all-deselect')"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = 1:10,  # 1-based in R
+    elementId = "toggle-all-deselect"
+  )
+)
+```
+
+### Explicit select all
+
+Expected: Click "Select All (explicit)" - all rows selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select All (explicit true)",
+    onclick = "Reactable.toggleAllRowsSelected('select-all-explicit', true)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "select-all-explicit"
+  )
+)
+```
+
+### Explicit deselect all
+
+Expected: Some rows pre-selected. Click "Deselect All" - all rows deselected.
+
+```{r}
+tagList(
+  tags$button(
+    "Deselect All (explicit false)",
+    onclick = "Reactable.toggleAllRowsSelected('deselect-all-explicit', false)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    defaultSelected = c(1, 3, 5),  # 1-based in R
+    elementId = "deselect-all-explicit"
+  )
+)
+```
+
+## rowInfo.toggleRowSelected() in onClick
+
+### Basic onClick handler
+
+Expected: Clicking any row toggles its selection state
+
+```{r}
+reactable(
+  data_small,
+  selection = "multiple",
+  onClick = JS("function(rowInfo, column) {
+    rowInfo.toggleRowSelected()
+  }"),
+  elementId = "onclick-toggle"
+)
+```
+
+### onClick with single selection
+
+Expected: Clicking a row selects it and deselects any previously selected row
+
+```{r}
+reactable(
+  data_small,
+  selection = "single",
+  onClick = JS("function(rowInfo, column) {
+    rowInfo.toggleRowSelected()
+  }"),
+  elementId = "onclick-single"
+)
+```
+
+### onClick with explicit select (always select, never deselect)
+
+Expected: Clicking a row always selects it (clicking again doesn't deselect)
+
+```{r}
+reactable(
+  data_small,
+  selection = "multiple",
+  onClick = JS("function(rowInfo, column) {
+    rowInfo.toggleRowSelected(true)
+  }"),
+  elementId = "onclick-explicit-select"
+)
+```
+
+## cellInfo.toggleRowSelected() in Cell Renderer
+
+### Button in cell to toggle selection
+
+Expected: Clicking the "Toggle" button in any row toggles that row's selection
+
+```{r}
+reactable(
+  data_small,
+  selection = "multiple",
+  columns = list(
+    mpg = colDef(
+      cell = JS("function(cellInfo) {
+        return React.createElement('button', {
+          onClick: function(e) {
+            e.stopPropagation()
+            cellInfo.toggleRowSelected()
+          }
+        }, 'Toggle')
+      }")
+    )
+  ),
+  elementId = "cell-toggle"
+)
+```
+
+### Conditional button based on selection state
+
+Expected: Button shows "Select" or "Deselect" based on current row selection state
+
+```{r}
+reactable(
+  data_small,
+  selection = "multiple",
+  columns = list(
+    mpg = colDef(
+      cell = JS("function(cellInfo) {
+        const label = cellInfo.selected ? 'Deselect' : 'Select'
+        return React.createElement('button', {
+          onClick: function(e) {
+            e.stopPropagation()
+            cellInfo.toggleRowSelected()
+          }
+        }, label)
+      }")
+    )
+  ),
+  elementId = "cell-conditional"
+)
+```
+
+## Grouped Tables
+
+### Grouped table - toggle leaf row by index
+
+Expected: Click "Select Row 0" - the first leaf row (first 4-cyl car) becomes selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 0",
+    onclick = "Reactable.toggleRowSelected('grouped-toggle', 0)"
+  ),
+  tags$button(
+    "Select Row 10",
+    onclick = "Reactable.toggleRowSelected('grouped-toggle', 10)"
+  ),
+  tags$button(
+    "Select Row 20",
+    onclick = "Reactable.toggleRowSelected('grouped-toggle', 20)"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('grouped-toggle'))"
+  ),
+  reactable(
+    data_medium,
+    groupBy = "cyl",
+    selection = "multiple",
+    elementId = "grouped-toggle"
+  )
+)
+```
+
+### Grouped table - setRowsSelected with indices
+
+Expected: Click button - leaf rows at indices 0, 10, 20 become selected
+
+```{r}
+tagList(
+  tags$button(
+    "Select Rows 0, 10, 20",
+    onclick = "Reactable.setRowsSelected('grouped-set', [0, 10, 20])"
+  ),
+  tags$button(
+    "Clear Selection",
+    onclick = "Reactable.setRowsSelected('grouped-set', [])"
+  ),
+  reactable(
+    data_medium,
+    groupBy = "cyl",
+    selection = "multiple",
+    elementId = "grouped-set"
+  )
+)
+```
+
+### Grouped table - toggleAllRowsSelected
+
+Expected: Click "Select All" - all leaf rows become selected (not aggregated rows)
+
+```{r}
+tagList(
+  tags$button(
+    "Select All",
+    onclick = "Reactable.toggleAllRowsSelected('grouped-all', true)"
+  ),
+  tags$button(
+    "Deselect All",
+    onclick = "Reactable.toggleAllRowsSelected('grouped-all', false)"
+  ),
+  reactable(
+    data_medium,
+    groupBy = "cyl",
+    selection = "multiple",
+    elementId = "grouped-all"
+  )
+)
+```
+
+### Grouped table - onClick on leaf row
+
+Expected: Clicking a leaf row (not group header) toggles its selection
+
+```{r}
+reactable(
+  data_medium,
+  groupBy = "cyl",
+  selection = "multiple",
+  onClick = JS("function(rowInfo, column) {
+    // Only toggle for non-aggregated rows
+    if (!rowInfo.aggregated) {
+      rowInfo.toggleRowSelected()
+    }
+  }"),
+  elementId = "grouped-onclick"
+)
+```
+
+## Grouped Tables with paginateSubRows
+
+### paginateSubRows = FALSE (default)
+
+Expected: Sub-rows don't count toward page size. Toggle works with original data indices.
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 0",
+    onclick = "Reactable.toggleRowSelected('paginate-false', 0)"
+  ),
+  tags$button(
+    "Select Row 10",
+    onclick = "Reactable.toggleRowSelected('paginate-false', 10)"
+  ),
+  reactable(
+    data_grouped,
+    groupBy = "Category",
+    selection = "multiple",
+    paginateSubRows = FALSE,
+    elementId = "paginate-false"
+  )
+)
+```
+
+### paginateSubRows = TRUE
+
+Expected: Sub-rows count toward page size. Toggle works with original data indices.
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 0",
+    onclick = "Reactable.toggleRowSelected('paginate-true', 0)"
+  ),
+  tags$button(
+    "Select Row 10",
+    onclick = "Reactable.toggleRowSelected('paginate-true', 10)"
+  ),
+  reactable(
+    data_grouped,
+    groupBy = "Category",
+    selection = "multiple",
+    paginateSubRows = TRUE,
+    defaultPageSize = 15,
+    elementId = "paginate-true"
+  )
+)
+```
+
+## State Consistency
+
+### Verify getState returns correct selected indices
+
+Expected: After toggling rows, `Reactable.getState()` returns correct `selected` array
+
+```{r}
+tagList(
+  tags$button(
+    "Select Rows 1, 3, 5",
+    onclick = "Reactable.setRowsSelected('state-check', [1, 3, 5])"
+  ),
+  tags$button(
+    "Log State",
+    onclick = "console.log('Selected:', Reactable.getState('state-check').selected)"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "state-check"
+  )
+)
+```
+
+### State subscription for selection changes
+
+Expected: Console logs selection changes whenever rows are selected/deselected
+
+```{r}
+tagList(
+  tags$script(HTML("
+    document.addEventListener('DOMContentLoaded', function() {
+      Reactable.onStateChange('state-subscribe', function(state) {
+        console.log('Selection changed:', state.selected)
+      })
+    })
+  ")),
+  tags$button(
+    "Toggle Row 0",
+    onclick = "Reactable.toggleRowSelected('state-subscribe', 0)"
+  ),
+  tags$button(
+    "Set Rows 2, 4",
+    onclick = "Reactable.setRowsSelected('state-subscribe', [2, 4])"
+  ),
+  reactable(
+    data_small,
+    selection = "multiple",
+    elementId = "state-subscribe"
+  )
+)
+```
+
+## Edge Cases
+
+### Empty table
+
+Expected: No errors when calling selection methods on empty table
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle Row 0",
+    onclick = "Reactable.toggleRowSelected('empty-table', 0)"
+  ),
+  tags$button(
+    "Select All",
+    onclick = "Reactable.toggleAllRowsSelected('empty-table', true)"
+  ),
+  reactable(
+    data_small[0, ],
+    selection = "multiple",
+    elementId = "empty-table"
+  )
+)
+```
+
+### Table without selection enabled
+
+Expected: Calling selection methods has no effect (no error, but no selection either)
+
+```{r}
+tagList(
+  tags$button(
+    "Toggle Row 0 (no effect)",
+    onclick = "Reactable.toggleRowSelected('no-selection', 0)"
+  ),
+  reactable(
+    data_small,
+    # selection not enabled
+    elementId = "no-selection"
+  )
+)
+```
+
+### Filtered table
+
+Expected: Selection by index refers to original data indices, works even when rows are filtered out. Try filtering by cyl, then selecting rows.
+
+```{r}
+tagList(
+  tags$button(
+    "Select Row 0",
+    onclick = "Reactable.toggleRowSelected('filtered-table', 0)"
+  ),
+  tags$button(
+    "Select Row 15",
+    onclick = "Reactable.toggleRowSelected('filtered-table', 15)"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('filtered-table'))"
+  ),
+  reactable(
+    data_medium,
+    selection = "multiple",
+    filterable = TRUE,
+    elementId = "filtered-table"
+  )
+)
+```

@@ -228,7 +228,8 @@ rowInfoProps <- dplyr::tribble(
   "expanded", "true", "whether the row is expanded",
   "subRows", '[{ Petal.Length: 1.7, Species: "setosa" }, ...]', "sub rows data (aggregated rows only)",
   "level", "0", "row nesting depth (zero-based)",
-  "selected", "true", "whether the row is selected"
+  "selected", "true", "whether the row is selected",
+  "toggleRowSelected", "function (isSelected?: boolean)", tagList("function to toggle the row's selection. Optionally pass ", tags$code("true"), " to select or ", tags$code("false"), " to deselect. (new in v0.4.5.9000)")
 )
 
 propsTable(rowInfoProps)
@@ -242,7 +243,7 @@ columnProps <- dplyr::tribble(
   "id", '"Petal.Length"', "column ID",
   "name", '"Petal Length"', "column display name",
   "filterValue", '"petal"', "column filter value ",
-  "setFilter", 'function setFilter(value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter)")
+  "setFilter", 'function (value: any)', tagList("function to set the column filter value",  "(set to ", tags$code("undefined"), " to clear the filter)")
 )
 
 propsTable(columnProps)

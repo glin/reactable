@@ -5385,6 +5385,214 @@ describe('row selection', () => {
     expect(getByText('row 1 selected? no. selected: [0]')).toBeVisible()
   })
 
+  it('toggleRowSelected should be available in cellInfo for cell renderers', () => {
+    const props = {
+      data: { a: [1, 2, 3] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          cell: cellInfo => (
+            <button
+              className={`btn-row-${cellInfo.index}`}
+              onClick={() => cellInfo.toggleRowSelected()}
+            >
+              {cellInfo.selected ? 'Selected' : 'Not Selected'}
+            </button>
+          ),
+          className: 'col-a'
+        }
+      ],
+      selection: 'multiple'
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+
+    // Initial state - no rows selected
+    const btn0 = container.querySelector('.btn-row-0')
+    const btn1 = container.querySelector('.btn-row-1')
+    expect(btn0.textContent).toEqual('Not Selected')
+    expect(btn1.textContent).toEqual('Not Selected')
+
+    // Toggle row 0 selection via cellInfo.toggleRowSelected
+    fireEvent.click(btn0)
+    expect(container.querySelector('.btn-row-0').textContent).toEqual('Selected')
+    expect(container.querySelector('.btn-row-1').textContent).toEqual('Not Selected')
+
+    // Verify checkboxes reflect the state
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    expect(selectRowCheckboxes[0].checked).toEqual(true)
+    expect(selectRowCheckboxes[1].checked).toEqual(false)
+
+    // Toggle row 0 off via cellInfo.toggleRowSelected
+    fireEvent.click(container.querySelector('.btn-row-0'))
+    expect(container.querySelector('.btn-row-0').textContent).toEqual('Not Selected')
+    expect(selectRowCheckboxes[0].checked).toEqual(false)
+  })
+
+  it('toggleRowSelected should work with explicit isSelected parameter', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          cell: cellInfo => (
+            <div>
+              <button
+                className={`select-btn-${cellInfo.index}`}
+                onClick={() => cellInfo.toggleRowSelected(true)}
+              >
+                Select
+              </button>
+              <button
+                className={`deselect-btn-${cellInfo.index}`}
+                onClick={() => cellInfo.toggleRowSelected(false)}
+              >
+                Deselect
+              </button>
+              <span className={`status-${cellInfo.index}`}>{cellInfo.selected ? 'Y' : 'N'}</span>
+            </div>
+          ),
+          className: 'col-a'
+        }
+      ],
+      selection: 'multiple'
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+
+    expect(container.querySelector('.status-0').textContent).toEqual('N')
+    expect(container.querySelector('.status-1').textContent).toEqual('N')
+
+    // Select row 0 explicitly
+    fireEvent.click(container.querySelector('.select-btn-0'))
+    expect(container.querySelector('.status-0').textContent).toEqual('Y')
+    expect(getAllByLabelText('Select row')[0].checked).toEqual(true)
+
+    // Calling toggleRowSelected(true) again should keep it selected
+    fireEvent.click(container.querySelector('.select-btn-0'))
+    expect(container.querySelector('.status-0').textContent).toEqual('Y')
+
+    // Deselect row 0 explicitly
+    fireEvent.click(container.querySelector('.deselect-btn-0'))
+    expect(container.querySelector('.status-0').textContent).toEqual('N')
+    expect(getAllByLabelText('Select row')[0].checked).toEqual(false)
+  })
+
+  it('toggleRowSelected in single selection mode should deselect other rows', () => {
+    const props = {
+      data: { a: [1, 2, 3] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          cell: cellInfo => (
+            <button
+              className={`btn-row-${cellInfo.index}`}
+              onClick={() => cellInfo.toggleRowSelected()}
+            >
+              {cellInfo.selected ? 'Selected' : 'Not Selected'}
+            </button>
+          )
+        }
+      ],
+      selection: 'single'
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+
+    // Select row 0
+    fireEvent.click(container.querySelector('.btn-row-0'))
+    expect(container.querySelector('.btn-row-0').textContent).toEqual('Selected')
+    expect(container.querySelector('.btn-row-1').textContent).toEqual('Not Selected')
+    expect(container.querySelector('.btn-row-2').textContent).toEqual('Not Selected')
+
+    // Select row 1 - should deselect row 0 automatically
+    fireEvent.click(container.querySelector('.btn-row-1'))
+    expect(container.querySelector('.btn-row-0').textContent).toEqual('Not Selected')
+    expect(container.querySelector('.btn-row-1').textContent).toEqual('Selected')
+    expect(container.querySelector('.btn-row-2').textContent).toEqual('Not Selected')
+
+    // Verify radio buttons reflect state
+    const selectRowRadios = getAllByLabelText('Select row')
+    expect(selectRowRadios[0].checked).toEqual(false)
+    expect(selectRowRadios[1].checked).toEqual(true)
+    expect(selectRowRadios[2].checked).toEqual(false)
+  })
+
+  it('toggleRowSelected should be available in rowInfo for rowStyle/rowClassName', () => {
+    let capturedToggleRowSelected = null
+    const props = {
+      data: { a: [1, 2] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'multiple',
+      rowClassName: rowInfo => {
+        // Capture the toggleRowSelected function for testing
+        if (rowInfo && rowInfo.index === 0 && !capturedToggleRowSelected) {
+          capturedToggleRowSelected = rowInfo.toggleRowSelected
+        }
+        return rowInfo && rowInfo.selected ? 'row-selected' : null
+      }
+    }
+    const { container, getAllByLabelText, rerender } = render(<Reactable {...props} />)
+
+    // Initial state
+    const rows = getRows(container)
+    expect(rows[0]).not.toHaveClass('row-selected')
+    expect(rows[1]).not.toHaveClass('row-selected')
+
+    // Verify toggleRowSelected was captured
+    expect(typeof capturedToggleRowSelected).toEqual('function')
+
+    // Use Act to wrap state updates from captured function
+    act(() => {
+      capturedToggleRowSelected(true)
+    })
+
+    // Re-render with same props to update the UI
+    rerender(<Reactable {...props} />)
+
+    // Verify row 0 is now selected
+    const selectRowCheckboxes = getAllByLabelText('Select row')
+    expect(selectRowCheckboxes[0].checked).toEqual(true)
+    expect(getRows(container)[0]).toHaveClass('row-selected')
+  })
+
+  it('toggleRowSelected should be available in rowInfo for details renderer', () => {
+    const props = {
+      data: { a: [1, 2] },
+      columns: [
+        {
+          name: 'a',
+          id: 'a',
+          details: rowInfo => (
+            <button
+              className={`details-btn-${rowInfo.index}`}
+              onClick={() => rowInfo.toggleRowSelected()}
+            >
+              {rowInfo.selected ? 'Selected' : 'Not Selected'}
+            </button>
+          )
+        }
+      ],
+      selection: 'multiple',
+      defaultExpanded: true
+    }
+    const { container, getAllByLabelText } = render(<Reactable {...props} />)
+
+    // Initial state
+    const btn0 = container.querySelector('.details-btn-0')
+    expect(btn0.textContent).toEqual('Not Selected')
+
+    // Toggle selection via details renderer
+    fireEvent.click(btn0)
+    expect(container.querySelector('.details-btn-0').textContent).toEqual('Selected')
+    expect(getAllByLabelText('Select row')[0].checked).toEqual(true)
+
+    // Toggle off
+    fireEvent.click(container.querySelector('.details-btn-0'))
+    expect(container.querySelector('.details-btn-0').textContent).toEqual('Not Selected')
+    expect(getAllByLabelText('Select row')[0].checked).toEqual(false)
+  })
+
   it('selection column can be customized', () => {
     const props = {
       data: { a: [1, 2] },
@@ -9743,6 +9951,178 @@ describe('reactable JavaScript API', () => {
 
     act(() => reactable.toggleAllRowsExpanded('my-tbl', false))
     expect(queryAllByText('detail')).toHaveLength(0)
+  })
+
+  it('Reactable.toggleRowSelected', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3'] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+
+    // Toggle unselected row
+    act(() => reactable.toggleRowSelected('my-tbl', 1))
+    expect(reactable.getState('my-tbl').selected).toEqual([1])
+
+    // Toggle selected row (deselect)
+    act(() => reactable.toggleRowSelected('my-tbl', 1))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+
+    // Select with explicit true
+    act(() => reactable.toggleRowSelected('my-tbl', 0, true))
+    expect(reactable.getState('my-tbl').selected).toEqual([0])
+
+    // Already selected + true (no change)
+    act(() => reactable.toggleRowSelected('my-tbl', 0, true))
+    expect(reactable.getState('my-tbl').selected).toEqual([0])
+
+    // Deselect with explicit false
+    act(() => reactable.toggleRowSelected('my-tbl', 0, false))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+
+    // Invalid index should not error
+    act(() => reactable.toggleRowSelected('my-tbl', 999))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+  })
+
+  it('Reactable.toggleRowSelected with single selection', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3'] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'single',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    act(() => reactable.toggleRowSelected('my-tbl', 0))
+    expect(reactable.getState('my-tbl').selected).toEqual([0])
+
+    // Selecting another row should deselect the first
+    act(() => reactable.toggleRowSelected('my-tbl', 2))
+    expect(reactable.getState('my-tbl').selected).toEqual([2])
+  })
+
+  it('Reactable.toggleRowSelected with grouped data', () => {
+    const props = {
+      data: { a: ['x', 'x', 'y', 'y'], b: [1, 2, 3, 4] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      groupBy: ['a'],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // Select by original data index (not visual position)
+    act(() => reactable.toggleRowSelected('my-tbl', 0))
+    expect(reactable.getState('my-tbl').selected).toEqual([0])
+
+    act(() => reactable.toggleRowSelected('my-tbl', 2))
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 2])
+  })
+
+  it('Reactable.setRowsSelected', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3', 'a4', 'a5'] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // Select multiple
+    act(() => reactable.setRowsSelected('my-tbl', [0, 2, 4]))
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 2, 4])
+
+    // Replace selection
+    act(() => reactable.setRowsSelected('my-tbl', [1, 3]))
+    expect(reactable.getState('my-tbl').selected).toEqual([1, 3])
+
+    // Clear selection
+    act(() => reactable.setRowsSelected('my-tbl', []))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+  })
+
+  it('Reactable.setRowsSelected with single selection', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3'] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'single',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // Only last row should be selected in single mode
+    act(() => reactable.setRowsSelected('my-tbl', [0, 2]))
+    expect(reactable.getState('my-tbl').selected).toEqual([2])
+  })
+
+  it('Reactable.setRowsSelected with grouped data', () => {
+    const props = {
+      data: { a: ['x', 'x', 'y', 'y'], b: [1, 2, 3, 4] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      groupBy: ['a'],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // Select by original data indices
+    act(() => reactable.setRowsSelected('my-tbl', [0, 3]))
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 3])
+  })
+
+  it('Reactable.toggleAllRowsSelected', () => {
+    const props = {
+      data: { a: ['a1', 'a2', 'a3'] },
+      columns: [{ name: 'a', id: 'a' }],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+
+    // Toggle all (select)
+    act(() => reactable.toggleAllRowsSelected('my-tbl'))
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 1, 2])
+
+    // Toggle all (deselect)
+    act(() => reactable.toggleAllRowsSelected('my-tbl'))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+
+    // Explicit select all
+    act(() => reactable.toggleAllRowsSelected('my-tbl', true))
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 1, 2])
+
+    // Explicit deselect all
+    act(() => reactable.toggleAllRowsSelected('my-tbl', false))
+    expect(reactable.getState('my-tbl').selected).toEqual([])
+  })
+
+  it('Reactable.toggleAllRowsSelected with grouped data', () => {
+    const props = {
+      data: { a: ['x', 'x', 'y'], b: [1, 2, 3] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      groupBy: ['a'],
+      selection: 'multiple',
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    act(() => reactable.toggleAllRowsSelected('my-tbl', true))
+    // Should select all leaf rows (not aggregated rows)
+    expect(reactable.getState('my-tbl').selected).toEqual([0, 1, 2])
   })
 
   it('Reactable.downloadDataCSV and Reactable.getDataCSV', () => {
