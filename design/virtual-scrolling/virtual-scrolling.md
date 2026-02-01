@@ -223,6 +223,103 @@ tbl <- reactable(
 | ARIA with column groups | Table with column groups | `aria-rowcount` and `aria-rowindex` account for multiple header rows |
 | No ARIA in non-virtual | `virtual = FALSE` | No `aria-rowcount` or `aria-rowindex` attributes |
 
+### Screen Reader Testing (Manual)
+
+Cross-platform screen reader testing to verify virtual scrolling accessibility. Test with a 100,000 row table using `virtual = TRUE`.
+
+#### NVDA on Windows 11 + Chrome (latest)
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with NVDA | NVDA announces table with correct row count (100,001 rows including header) |
+| Header announcement | Navigate to first data row | Column headers are announced when entering cells |
+| Row position | Navigate to row 5 | NVDA announces "row 5 of 100,001" or similar position info |
+| Scroll and navigate | Scroll to row 50,000, navigate cells | Row position updates correctly (e.g., "row 50,000 of 100,001") |
+| Virtual row navigation | Use NVDA table navigation (Ctrl+Alt+Arrow) | Can navigate between rows, correct row announced even for virtualized rows |
+| Cell content | Navigate to cells in virtualized rows | Cell content is read correctly |
+| Sort column | Sort a column, navigate | NVDA announces sort state, row positions update correctly |
+| Expanded row details | Expand a row with details | NVDA announces expanded state, details content is readable |
+
+#### NVDA on Windows 11 + Firefox (latest)
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with NVDA | NVDA announces table with correct row count |
+| Header announcement | Navigate to first data row | Column headers are announced when entering cells |
+| Row position | Navigate to row 5 | NVDA announces row position information |
+| Scroll and navigate | Scroll to row 50,000, navigate cells | Row position updates correctly for virtualized rows |
+| Virtual row navigation | Use NVDA table navigation (Ctrl+Alt+Arrow) | Can navigate between rows, correct row announced |
+| Cell content | Navigate to cells in virtualized rows | Cell content is read correctly |
+| Sort column | Sort a column, navigate | NVDA announces sort state, row positions update |
+| Expanded row details | Expand a row with details | NVDA announces expanded state, details content readable |
+
+#### JAWS on Windows 11 + Chrome (latest)
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with JAWS | JAWS announces table with row/column count |
+| Header announcement | Navigate to first data row | Column headers announced when entering cells |
+| Row position | Navigate to row 5 | JAWS announces row position (e.g., "row 5") |
+| Scroll and navigate | Scroll to row 50,000, use JAWS table navigation | Row position reflects actual position in data, not DOM position |
+| Virtual row navigation | Use JAWS table commands (Ctrl+Alt+Arrow) | Navigation works correctly with virtualized rows |
+| Table layer mode | Enter JAWS table layer (Insert+Space then T) | Table navigation commands work as expected |
+| Cell content | Navigate to cells throughout table | Cell content read correctly regardless of scroll position |
+| Sort column | Sort a column, navigate | JAWS announces sort state changes |
+| Expanded row details | Expand a row with details | JAWS announces expansion, details are accessible |
+
+#### VoiceOver on macOS (latest) + Safari
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with VoiceOver (VO+Arrow) | VoiceOver announces table with row count |
+| Header announcement | Navigate to first data cell | Column header announced with cell content |
+| Row position | Navigate to row 5 | VoiceOver announces row position information |
+| Scroll and navigate | Scroll to row 50,000, navigate | Row position updates correctly for virtualized rows |
+| Virtual row navigation | Use VO+Arrow keys in table | Can navigate between rows, correct row announced |
+| Interact mode | Press VO+Shift+Down to interact with table | Table navigation works within virtualized content |
+| Cell content | Navigate to cells in virtualized rows | Cell content is read correctly |
+| Sort column | Sort a column, navigate | VoiceOver announces sort state, positions update |
+| Expanded row details | Expand a row with details | VoiceOver announces expanded state and details |
+
+#### VoiceOver on macOS (latest) + Chrome
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with VoiceOver | VoiceOver announces table with row count |
+| Header announcement | Navigate to first data cell | Column header announced with cell content |
+| Row position | Navigate rows | Row position information is announced |
+| Scroll and navigate | Scroll to middle of table, navigate | Virtualized row positions announced correctly |
+| Cell content | Navigate to cells throughout table | Cell content read correctly |
+| Sort column | Sort a column, navigate | VoiceOver announces sort state changes |
+
+#### Orca on Linux + Chrome (latest)
+
+| Test | Steps | Expected Result |
+|------|-------|-----------------|
+| Table identification | Navigate to table with Orca | Orca announces table with row count |
+| Header announcement | Navigate to first data cell | Column header announced with cell content |
+| Row position | Navigate to row 5 | Orca announces row position information |
+| Scroll and navigate | Scroll to row 50,000, navigate | Row position updates correctly for virtualized rows |
+| Virtual row navigation | Use Orca table navigation (Alt+Shift+Arrow) | Can navigate between rows, correct row announced |
+| Cell content | Navigate to cells in virtualized rows | Cell content is read correctly |
+| Sort column | Sort a column, navigate | Orca announces sort state changes |
+| Expanded row details | Expand a row with details | Orca announces expanded state and details |
+
+#### Known Issues and Limitations
+
+Document any discovered issues during testing:
+
+| Platform | Issue | Severity | Notes |
+|----------|-------|----------|-------|
+| (To be filled during testing) | | | |
+
+#### Testing Notes
+
+- **Row count announcement**: Screen readers should announce the total row count from `aria-rowcount`, not the number of DOM elements
+- **Row position**: The `aria-rowindex` attribute should ensure correct row position is announced even when rows are virtualized
+- **Performance**: Verify that screen reader navigation doesn't cause excessive lag with virtualized rows
+- **Focus management**: Ensure focus is not lost when rows are recycled during scrolling
+
 ### Data Operations
 
 | Test | Steps | Expected Result |
