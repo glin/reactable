@@ -4,12 +4,12 @@ When updating `NEWS.md`, do not use line breaks for long sentences. Keep each bu
 
 ## Development Workflow
 
-1. **Update design docs**: When using Plan Mode or for major features, write planning and design docs into the `design/` directory. Use `design/virtual-scrolling/` as a model. Ensure that features consider accessibility and include a test plan.
+1. **Update design docs**: When using Plan Mode or for major features, write planning and design docs into the `design/` directory. Use `design/virtual-scrolling/` as a model. Ensure that features consider accessibility and include a test plan. Also create an Rmd file with examples of different test cases. Use mtcars dataset for examples unless another dataset is more appropriate.
 2. **Make changes**
 3. **Document R API**: Run `devtools::document()` in R when making any changes to the R API (roxygen comments).
 4. **Format**: Format JavaScript code using `prettier`.
 5. **Lint**: Lint JavaScript code using `eslint`.
-6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`.
+6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
 
 ## Adding New Files
 
