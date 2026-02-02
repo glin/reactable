@@ -1,5 +1,93 @@
 # Shiny Demo
 
-### Please Wait
+# reactable demo
 
-![loading](/__static__/frontend/images/spinner.gif?v=ce6bcde20b2f6c562913c06be83f9e7c8a19b008017407a3094b76fa82bbd6b7f4048e032e07e534d4ab5442b9105294d612863735077ab13a47653a14c5866e)
+Table Options
+
+Column groups
+
+Footer
+
+Filterable
+
+Searchable
+
+Sortable
+
+Resizable
+
+Default sorted
+
+Show sortable
+
+Outlined
+
+Bordered
+
+Borderless
+
+Striped
+
+Highlight
+
+Compact
+
+Full width
+
+Theme
+
+Default Light 1 Dark 1 Dark 2 Dark 3
+
+Pagination
+
+Enable pagination
+
+Show page size options
+
+Show page info
+
+Pagination type
+
+page numbers
+
+page jump
+
+simple
+
+Group By
+
+Species
+
+Petal.Width
+
+Row Details
+
+Show row details
+
+Multiple row details
+
+Column header
+
+Row Selection
+
+None
+
+Single
+
+Multiple
+
+Column Options
+
+Formatting
+
+Custom cell renderer
+
+- [Table](_w_0e5438f253614ef083a1b0b833a28dcf/#tab-6402-1)
+- [Code](_w_0e5438f253614ef083a1b0b833a28dcf/#tab-6402-2)
+
+------------------------------------------------------------------------
+
+Selected rows:
+
+``` shiny-text-output
+```
