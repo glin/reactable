@@ -76,7 +76,7 @@ New in v0.4.5.9000
 <div class="section level2">
 <h2 id="development-workflow">Development Workflow<a class="anchor" aria-label="anchor" href="#development-workflow"></a></h2>
 <ol style="list-style-type: decimal"><li>
-<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use mtcars dataset for examples unless another dataset is more appropriate.</li>
+<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use MASS::Cars93 or mtcars datasets for examples unless another built-in R dataset is more appropriate.</li>
 <li><strong>Make changes</strong></li>
 <li>
 <strong>Document R API</strong>: Run <code>devtools::document()</code> in R when making any changes to the R API (roxygen comments).</li>

@@ -22,8 +22,8 @@ version from the `DESCRIPTION` file. For example:
     `design/virtual-scrolling/` as a model. Ensure that features
     consider accessibility (targeting WCAG 2.2 at a minimum) and include
     a test plan. Also create an Rmd file with examples of different test
-    cases. Use mtcars dataset for examples unless another dataset is
-    more appropriate.
+    cases. Use MASS::Cars93 or mtcars datasets for examples unless
+    another built-in R dataset is more appropriate.
 2.  **Make changes**
 3.  **Document R API**: Run `devtools::document()` in R when making any
     changes to the R API (roxygen comments).
