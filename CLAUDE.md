@@ -21,6 +21,10 @@ New in v0.4.5.9000
 5. **Lint**: Lint JavaScript code using `eslint`.
 6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
 
+## JavaScript Tests
+
+When adding JavaScript tests, use JSX syntax.
+
 ## Bumping Package Version
 
 When bumping the package version and the previous version is a development version (4th version component is 9000 or above, e.g., `0.4.5.9000`), search for all version callouts in the docs (e.g., "New in v0.4.5.9000") and update them to the new package version. Search in `vignettes/` for callouts like `::: {.callout}` followed by version strings.
