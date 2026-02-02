@@ -1,5 +1,7 @@
 ## Public Documentation
 
+When writing documentation, wrap lines at 120 characters for prose.
+
 When updating `NEWS.md`, do not use line breaks for long sentences. Keep each bullet point or paragraph on a single line regardless of length.
 
 When documenting new features in vignettes, add a version callout to indicate when the feature was introduced. Use the current package version from the `DESCRIPTION` file. For example:
