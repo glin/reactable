@@ -675,3 +675,67 @@ tagList(
   )
 )
 ```
+
+### Single selection with custom checkboxes
+
+Expected: Checkboxes work with single selection mode. Clicking a row selects it and deselects any previously selected row.
+
+This doesn't actually need to use the JavaScript API.
+
+```{r}
+data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price")]
+data$Select <- NA
+
+reactable(
+  data[, c("Select", "Manufacturer", "Model", "Type", "Price")],
+  selection = "single",
+  onClick = "select",
+  columns = list(
+    # Hide the default selection column
+    .selection = colDef(show = FALSE),
+    # Add a custom checkbox column
+    Select = colDef(
+      name = "",
+      width = 45,
+      html = TRUE,
+      cell = JS("function(cellInfo) {
+        const checked = cellInfo.selected ? 'checked' : ''
+        return `<input type=\"checkbox\" ${checked} aria-label=\"Select/unselect row\">`
+      }")
+    )
+  ),
+  elementId = "checkbox-single"
+)
+```
+
+### Single selection with custom checkboxes (using JavaScript API)
+
+Expected: Checkboxes work with single selection mode. Clicking the checkbox toggles selection using the JavaScript API.
+
+```{r}
+data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price")]
+data$Select <- NA
+
+reactable(
+  data[, c("Select", "Manufacturer", "Model", "Type", "Price")],
+  selection = "single",
+  columns = list(
+    .selection = colDef(show = FALSE),
+    Select = colDef(
+      name = "",
+      width = 45,
+      cell = JS("function(cellInfo) {
+        return React.createElement('input', {
+          type: 'checkbox',
+          checked: cellInfo.selected,
+          'aria-label': 'Select/unselect row',
+          onChange: function() {
+            Reactable.toggleRowSelected('checkbox-single-api', cellInfo.index)
+          }
+        })
+      }")
+    )
+  ),
+  elementId = "checkbox-single-api"
+)
+```
