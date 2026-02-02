@@ -8402,6 +8402,21 @@ event to Shiny</li>
 <div class="callout">
 <p>This example requires reactable v0.3.0 or above.</p>
 </div>
+<p>Custom click actions are JavaScript functions that receive three
+arguments:</p>
+<ul>
+<li>
+<code>rowInfo</code>, an object containing row information</li>
+<li>
+<code>column</code>, an object containing column information</li>
+<li>
+<code>state</code>, an object containing the current table
+state</li>
+</ul>
+<p>Some common properties include <code>rowInfo.index</code> (zero-based
+row index), <code>rowInfo.values</code> (row data values),
+<code>column.id</code> (column ID), and <code>state.selected</code>
+(selected row indices). For the full list of properties, see the <a href="custom-rendering.html">Custom Rendering</a> guide.</p>
 <p>This example uses a custom click action to create custom “show
 details” action buttons in each row of the table:</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
@@ -8422,7 +8437,7 @@ details” action buttons in each row of the table:</p>
 <span>      cell <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="va"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">tags</a></span><span class="op">$</span><span class="fu">button</span><span class="op">(</span><span class="st">"Show details"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  onClick <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo, column) {</span></span>
+<span>  onClick <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS</a></span><span class="op">(</span><span class="st">"function(rowInfo, column, state) {</span></span>
 <span><span class="st">    // Only handle click events on the 'details' column</span></span>
 <span><span class="st">    if (column.id !== 'details') {</span></span>
 <span><span class="st">      return</span></span>
@@ -8496,7 +8511,7 @@ details” action buttons in each row of the table:</p>
 <div class="rt-no-data" aria-live="assertive"></div>
 </div>
 </div></div></div>
-<script type="application/json" data-for="htmlwidget-798e2bad2029a2b4f4cc">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW"],"Model":["Integra","Legend","90","100","535i"],"Type":["Small","Midsize","Compact","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30],"details":[null,null,null,null,null]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"details","name":"","type":"logical","sortable":false,"cell":[{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]}]}],"onClick":"function(rowInfo, column) {\n    // Only handle click events on the 'details' column\n    if (column.id !== 'details') {\n      return\n    }\n\n    // Display an alert dialog with details for the row\n    window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.values, null, 2))\n\n    // Send the click event to Shiny, which will be available in input$show_details\n    // Note that the row index starts at 0 in JavaScript, so we add 1\n    if (window.Shiny) {\n      Shiny.setInputValue('show_details', { index: rowInfo.index + 1 }, { priority: 'event' })\n    }\n  }","dataKey":"e63211bbf45995fc915a28d005b444af"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.onClick"],"jsHooks":[]}</script><div class="callout-warning">
+<script type="application/json" data-for="htmlwidget-798e2bad2029a2b4f4cc">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW"],"Model":["Integra","Legend","90","100","535i"],"Type":["Small","Midsize","Compact","Midsize","Midsize"],"Price":[15.9,33.9,29.1,37.7,30],"details":[null,null,null,null,null]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"details","name":"","type":"logical","sortable":false,"cell":[{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]},{"name":"button","attribs":{},"children":["Show details"]}]}],"onClick":"function(rowInfo, column, state) {\n    // Only handle click events on the 'details' column\n    if (column.id !== 'details') {\n      return\n    }\n\n    // Display an alert dialog with details for the row\n    window.alert('Details for row ' + rowInfo.index + ':\\n' + JSON.stringify(rowInfo.values, null, 2))\n\n    // Send the click event to Shiny, which will be available in input$show_details\n    // Note that the row index starts at 0 in JavaScript, so we add 1\n    if (window.Shiny) {\n      Shiny.setInputValue('show_details', { index: rowInfo.index + 1 }, { priority: 'event' })\n    }\n  }","dataKey":"e63211bbf45995fc915a28d005b444af"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.onClick"],"jsHooks":[]}</script><div class="callout-warning">
 <p><strong>Warning:</strong> Custom click actions are currently not
 accessible to keyboard users, and are generally not recommended. If they
 must be used, ensure that they can be triggered by a keyboard through

@@ -367,6 +367,94 @@ Reactable.toggleAllRowsExpanded('cars-table', true)
 Reactable.toggleAllRowsExpanded('cars-table', false)
 ```
 
+### `Reactable.toggleRowSelected()`
+
+New in v0.4.5.9000
+
+Toggles the selection state of a row. To select or deselect a row
+explicitly, set the optional `isSelected` argument to `true` or `false`.
+
+The `rowIndex` is the zero-based index of the row in the original data
+(matching `rowInfo.index` in JavaScript render functions and the indices
+returned by `Reactable.getState().selected`).
+
+For grouped tables, aggregated (group header) rows cannot be selected by
+index. Use `rowInfo.toggleRowSelected()` in a custom render function or
+style function instead.
+
+``` ts
+Reactable.toggleRowSelected(
+  tableId: string,
+  rowIndex: number,
+  isSelected?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle selection for row at index 2
+Reactable.toggleRowSelected('cars-table', 2)
+
+// Select the row at index 0
+Reactable.toggleRowSelected('cars-table', 0, true)
+
+// Deselect the row at index 0
+Reactable.toggleRowSelected('cars-table', 0, false)
+```
+
+### `Reactable.setRowsSelected()`
+
+New in v0.4.5.9000
+
+Sets which rows are selected in the table. Takes an array of zero-based
+row indices. Use an empty array `[]` to clear all selections.
+
+``` ts
+Reactable.setRowsSelected(
+  tableId: string,
+  rowIndices: number[]
+)
+```
+
+#### Examples
+
+``` js
+// Select rows at indices 0, 2, and 5
+Reactable.setRowsSelected('cars-table', [0, 2, 5])
+
+// Clear all selections
+Reactable.setRowsSelected('cars-table', [])
+```
+
+### `Reactable.toggleAllRowsSelected()`
+
+New in v0.4.5.9000
+
+Toggles the selection state of all rows in the table between selected
+and deselected. To select or deselect all rows explicitly, set the
+optional `isSelected` argument to `true` or `false`.
+
+``` ts
+Reactable.toggleAllRowsSelected(
+  tableId: string,
+  isSelected?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle selection for all rows
+Reactable.toggleAllRowsSelected('cars-table')
+
+// Select all rows
+Reactable.toggleAllRowsSelected('cars-table', true)
+
+// Deselect all rows
+Reactable.toggleAllRowsSelected('cars-table', false)
+```
+
 ### `Reactable.setMeta()`
 
 New in v0.4.0
@@ -643,7 +731,7 @@ shinyApp(ui, server)
 
 ### `Reactable.gotoPage()`
 
-New in v0.4.4.9000
+New in v0.4.5.9000
 
 Changes the current page. `pageIndex` can either be a number or a
 function that takes the previous `pageIndex` and returns the new value.
@@ -677,7 +765,7 @@ Reactable.gotoPage('cars-table', prevPage => prevPage - 1)
 
 ### `Reactable.setPageSize()`
 
-New in v0.4.4.9000
+New in v0.4.5.9000
 
 Sets the current page size.
 

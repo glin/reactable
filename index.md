@@ -5,7 +5,6 @@ Status](https://www.r-pkg.org/badges/version/reactable)](https://cran.r-project.
 [![Build
 Status](https://github.com/glin/reactable/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/glin/reactable/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/glin/reactable/branch/master/graph/badge.svg)](https://app.codecov.io/gh/glin/reactable)
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 Interactive data tables for R, based on the [React
 Table](https://github.com/tanstack/table/tree/v7) library and made with
@@ -40,6 +39,8 @@ Table](https://github.com/tanstack/table/tree/v7) library and made with
 - [Demo
   Cookbook](https://glin.github.io/reactable/articles/cookbook/cookbook.html)
 - [100k Rows](https://glin.github.io/reactable/articles/100k-rows.html)
+- [100k Rows
+  (Virtualized)](https://glin.github.io/reactable/articles/100k-rows-virtual.html)
 - [Shiny
   Demo](https://glin.github.io/reactable/articles/shiny-demo.html)
 

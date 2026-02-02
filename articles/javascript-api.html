@@ -451,6 +451,95 @@ and collapsed. To expand or collapse rows explicitly, set the optional
 </div>
 </div>
 <div class="section level3">
+<h3 id="reactable-togglerowselected">
+<code>Reactable.toggleRowSelected()</code><a class="anchor" aria-label="anchor" href="#reactable-togglerowselected"></a>
+</h3>
+<div class="callout">
+<p>New in v0.4.5.9000</p>
+</div>
+<p>Toggles the selection state of a row. To select or deselect a row
+explicitly, set the optional <code>isSelected</code> argument to
+<code>true</code> or <code>false</code>.</p>
+<p>The <code>rowIndex</code> is the zero-based index of the row in the
+original data (matching <code>rowInfo.index</code> in JavaScript render
+functions and the indices returned by
+<code>Reactable.getState().selected</code>).</p>
+<div class="callout-note">
+<p>For grouped tables, aggregated (group header) rows cannot be selected
+by index. Use <code>rowInfo.toggleRowSelected()</code> in a custom
+render function or style function instead.</p>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleRowSelected</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  rowIndex<span class="op">:</span> <span class="dt">number</span><span class="op">,</span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>  isSelected<span class="op">?:</span> <span class="dt">boolean</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="section level4">
+<h4 id="examples-8">Examples<a class="anchor" aria-label="anchor" href="#examples-8"></a>
+</h4>
+<div class="sourceCode" id="cb24"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co">// Toggle selection for row at index 2</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleRowSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">2</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">// Select the row at index 0</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleRowSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">true</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="co">// Deselect the row at index 0</span></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleRowSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">false</span>)</span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="reactable-setrowsselected">
+<code>Reactable.setRowsSelected()</code><a class="anchor" aria-label="anchor" href="#reactable-setrowsselected"></a>
+</h3>
+<div class="callout">
+<p>New in v0.4.5.9000</p>
+</div>
+<p>Sets which rows are selected in the table. Takes an array of
+zero-based row indices. Use an empty array <code>[]</code> to clear all
+selections.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setRowsSelected</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  rowIndices<span class="op">:</span> <span class="dt">number</span>[]</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="section level4">
+<h4 id="examples-9">Examples<a class="anchor" aria-label="anchor" href="#examples-9"></a>
+</h4>
+<div class="sourceCode" id="cb26"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co">// Select rows at indices 0, 2, and 5</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setRowsSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">5</span>])</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="co">// Clear all selections</span></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setRowsSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> [])</span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="reactable-toggleallrowsselected">
+<code>Reactable.toggleAllRowsSelected()</code><a class="anchor" aria-label="anchor" href="#reactable-toggleallrowsselected"></a>
+</h3>
+<div class="callout">
+<p>New in v0.4.5.9000</p>
+</div>
+<p>Toggles the selection state of all rows in the table between selected
+and deselected. To select or deselect all rows explicitly, set the
+optional <code>isSelected</code> argument to <code>true</code> or
+<code>false</code>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsSelected</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  isSelected<span class="op">?:</span> <span class="dt">boolean</span></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="section level4">
+<h4 id="examples-10">Examples<a class="anchor" aria-label="anchor" href="#examples-10"></a>
+</h4>
+<div class="sourceCode" id="cb28"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co">// Toggle selection for all rows</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsSelected</span>(<span class="st">'cars-table'</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">// Select all rows</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="kw">true</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="co">// Deselect all rows</span></span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleAllRowsSelected</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="kw">false</span>)</span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
 <h3 id="reactable-setmeta">
 <code>Reactable.setMeta()</code><a class="anchor" aria-label="anchor" href="#reactable-setmeta"></a>
 </h3>
@@ -463,23 +552,23 @@ metadata object and returns new values.</p>
 <p>New values are merged into the current metadata, so only the values
 specified in <code>meta</code> will be updated. To clear all metadata,
 set <code>meta</code> to <code>undefined</code>.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(</span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  meta<span class="op">?:</span> <span class="dt">object</span> <span class="op">|</span> <span class="bu">Function</span></span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  meta<span class="op">?:</span> <span class="dt">object</span> <span class="op">|</span> <span class="bu">Function</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-8">Examples<a class="anchor" aria-label="anchor" href="#examples-8"></a>
+<h4 id="examples-11">Examples<a class="anchor" aria-label="anchor" href="#examples-11"></a>
 </h4>
-<div class="sourceCode" id="cb24"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co">// Set metadata, updating the values for the `count`, `enabled`, and `formatter` properties</span></span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> { <span class="dt">count</span><span class="op">:</span> <span class="dv">123</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">formatter</span><span class="op">:</span> value <span class="kw">=&gt;</span> <span class="st">'$'</span> <span class="op">+</span> value })</span>
-<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">// Set metadata using a function that increments `count` and toggles an `enabled` boolean</span></span>
-<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevMeta <span class="kw">=&gt;</span> {</span>
-<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  <span class="cf">return</span> { <span class="dt">count</span><span class="op">:</span> prevMeta<span class="op">.</span><span class="at">count</span> <span class="op">+</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="op">!</span>prevMeta<span class="op">.</span><span class="at">enabled</span> }</span>
-<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>})</span>
-<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a><span class="co">// Clear metadata</span></span>
-<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="kw">undefined</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="co">// Set metadata, updating the values for the `count`, `enabled`, and `formatter` properties</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> { <span class="dt">count</span><span class="op">:</span> <span class="dv">123</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">formatter</span><span class="op">:</span> value <span class="kw">=&gt;</span> <span class="st">'$'</span> <span class="op">+</span> value })</span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="co">// Set metadata using a function that increments `count` and toggles an `enabled` boolean</span></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevMeta <span class="kw">=&gt;</span> {</span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a>  <span class="cf">return</span> { <span class="dt">count</span><span class="op">:</span> prevMeta<span class="op">.</span><span class="at">count</span> <span class="op">+</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">enabled</span><span class="op">:</span> <span class="op">!</span>prevMeta<span class="op">.</span><span class="at">enabled</span> }</span>
+<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a>})</span>
+<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a><span class="co">// Clear metadata</span></span>
+<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setMeta</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="kw">undefined</span>)</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -492,22 +581,22 @@ set <code>meta</code> to <code>undefined</code>.</p>
 <p>Toggles the hidden state for a column between hidden and shown. To
 hide or show a column explicitly, set the optional <code>isHidden</code>
 argument to <code>true</code> or <code>false</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(</span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  columnId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>  isHidden<span class="op">?:</span> <span class="dt">boolean</span></span>
-<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>  columnId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>  isHidden<span class="op">?:</span> <span class="dt">boolean</span></span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-9">Examples<a class="anchor" aria-label="anchor" href="#examples-9"></a>
+<h4 id="examples-12">Examples<a class="anchor" aria-label="anchor" href="#examples-12"></a>
 </h4>
-<div class="sourceCode" id="cb26"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co">// Toggle hidden state for the "Type" column</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="co">// Hide the "Type" column</span></span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span><span class="op">,</span> <span class="kw">true</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a><span class="co">// Show the "Type" column</span></span>
-<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span><span class="op">,</span> <span class="kw">false</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="co">// Toggle hidden state for the "Type" column</span></span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="co">// Hide the "Type" column</span></span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span><span class="op">,</span> <span class="kw">true</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a><span class="co">// Show the "Type" column</span></span>
+<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">toggleHideColumn</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="st">'Type'</span><span class="op">,</span> <span class="kw">false</span>)</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -522,23 +611,23 @@ either be an array of column IDs, or a function that takes the previous
 hidden column IDs and returns new column IDs.</p>
 <p>To clear the hidden columns, set <code>columnIds</code> to an empty
 array, <code>[]</code>.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(</span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  columnIds<span class="op">:</span> <span class="dt">string</span>[] <span class="op">|</span> <span class="bu">Function</span></span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>  columnIds<span class="op">:</span> <span class="dt">string</span>[] <span class="op">|</span> <span class="bu">Function</span></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-10">Examples<a class="anchor" aria-label="anchor" href="#examples-10"></a>
+<h4 id="examples-13">Examples<a class="anchor" aria-label="anchor" href="#examples-13"></a>
 </h4>
-<div class="sourceCode" id="cb28"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="co">// Set the hidden columns to "Type" and "Manufacturer"</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> [<span class="st">'Type'</span><span class="op">,</span> <span class="st">'Manufacturer'</span>])</span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">// Set hidden columns using a function that adds "Type" to the existing hidden columns</span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevHiddenColumns <span class="kw">=&gt;</span> {</span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>  <span class="cf">return</span> prevHiddenColumns<span class="op">.</span><span class="fu">concat</span>(<span class="st">'Type'</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>})</span>
-<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a></span>
-<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a><span class="co">// Clear the hidden columns</span></span>
-<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> [])</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="co">// Set the hidden columns to "Type" and "Manufacturer"</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> [<span class="st">'Type'</span><span class="op">,</span> <span class="st">'Manufacturer'</span>])</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a><span class="co">// Set hidden columns using a function that adds "Type" to the existing hidden columns</span></span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevHiddenColumns <span class="kw">=&gt;</span> {</span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>  <span class="cf">return</span> prevHiddenColumns<span class="op">.</span><span class="fu">concat</span>(<span class="st">'Type'</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a>})</span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" tabindex="-1"></a><span class="co">// Clear the hidden columns</span></span>
+<span id="cb34-10"><a href="#cb34-10" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setHiddenColumns</span>(<span class="st">'cars-table'</span><span class="op">,</span> [])</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -556,24 +645,24 @@ columns as the original table data.</p>
 <p>When updating data, the selected rows and current page will reset by
 default. All other state will persist, including sorting, filtering, and
 grouping state.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  data<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span><span class="dt">object</span><span class="op">&gt;</span> <span class="op">|</span> <span class="dt">object</span></span>
-<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>  data<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span><span class="dt">object</span><span class="op">&gt;</span> <span class="op">|</span> <span class="dt">object</span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-11">Examples<a class="anchor" aria-label="anchor" href="#examples-11"></a>
+<h4 id="examples-14">Examples<a class="anchor" aria-label="anchor" href="#examples-14"></a>
 </h4>
-<div class="sourceCode" id="cb30"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="co">// Update data in row format</span></span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(<span class="st">'cars-table'</span><span class="op">,</span> [</span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  { <span class="dt">Model</span><span class="op">:</span> <span class="st">'Legend'</span><span class="op">,</span> <span class="dt">Type</span><span class="op">:</span> <span class="st">'Midsize'</span> }<span class="op">,</span></span>
-<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a>  { <span class="dt">Model</span><span class="op">:</span> <span class="st">'Integra'</span><span class="op">,</span> <span class="dt">Type</span><span class="op">:</span> <span class="st">'Small'</span> }</span>
-<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>])</span>
-<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a><span class="co">// Update data in column format</span></span>
-<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(<span class="st">'cars-table'</span><span class="op">,</span> {</span>
-<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a>  <span class="dt">Model</span><span class="op">:</span> [<span class="st">'Legend'</span><span class="op">,</span> <span class="st">'Integra'</span>]<span class="op">,</span></span>
-<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a>  <span class="dt">Type</span><span class="op">:</span> [<span class="st">'Midsize'</span><span class="op">,</span> <span class="st">'Small'</span>]</span>
-<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="co">// Update data in row format</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(<span class="st">'cars-table'</span><span class="op">,</span> [</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  { <span class="dt">Model</span><span class="op">:</span> <span class="st">'Legend'</span><span class="op">,</span> <span class="dt">Type</span><span class="op">:</span> <span class="st">'Midsize'</span> }<span class="op">,</span></span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>  { <span class="dt">Model</span><span class="op">:</span> <span class="st">'Integra'</span><span class="op">,</span> <span class="dt">Type</span><span class="op">:</span> <span class="st">'Small'</span> }</span>
+<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a>])</span>
+<span id="cb36-6"><a href="#cb36-6" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" tabindex="-1"></a><span class="co">// Update data in column format</span></span>
+<span id="cb36-8"><a href="#cb36-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setData</span>(<span class="st">'cars-table'</span><span class="op">,</span> {</span>
+<span id="cb36-9"><a href="#cb36-9" tabindex="-1"></a>  <span class="dt">Model</span><span class="op">:</span> [<span class="st">'Legend'</span><span class="op">,</span> <span class="st">'Integra'</span>]<span class="op">,</span></span>
+<span id="cb36-10"><a href="#cb36-10" tabindex="-1"></a>  <span class="dt">Type</span><span class="op">:</span> [<span class="st">'Midsize'</span><span class="op">,</span> <span class="st">'Small'</span>]</span>
+<span id="cb36-11"><a href="#cb36-11" tabindex="-1"></a>})</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -581,7 +670,7 @@ grouping state.</p>
 <code>Reactable.getState()</code><a class="anchor" aria-label="anchor" href="#reactable-getstate"></a>
 </h3>
 <p>Gets the current state of a table.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(tableId<span class="op">:</span> <span class="dt">string</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(tableId<span class="op">:</span> <span class="dt">string</span>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="state-properties">Value<a class="anchor" aria-label="anchor" href="#state-properties"></a>
 </h4>
@@ -711,10 +800,10 @@ custom table metadata from
 </div>
 </div>
 <div class="section level4">
-<h4 id="examples-12">Examples<a class="anchor" aria-label="anchor" href="#examples-12"></a>
+<h4 id="examples-15">Examples<a class="anchor" aria-label="anchor" href="#examples-15"></a>
 </h4>
-<div class="sourceCode" id="cb32"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(<span class="st">'cars-table'</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="co">// { page: 2, searchValue: 'petal', ... }</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">getState</span>(<span class="st">'cars-table'</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a><span class="co">// { page: 2, searchValue: 'petal', ... }</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -735,10 +824,10 @@ time. To ensure that the table is ready before running
 <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onRender.html" class="external-link">htmlwidgets::onRender()</a></code> for static widgets and Shiny
 outputs, or <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onStaticRenderComplete.html" class="external-link">htmlwidgets::onStaticRenderComplete()</a></code> for
 static widgets only.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(</span>
-<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>  listenerFn<span class="op">:</span> <span class="bu">Function</span></span>
-<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  listenerFn<span class="op">:</span> <span class="bu">Function</span></span>
+<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
 <h4 id="value-1">Value<a class="anchor" aria-label="anchor" href="#value-1"></a>
 </h4>
@@ -746,19 +835,19 @@ static widgets only.</p>
 called to cancel the listener function.</p>
 </div>
 <div class="section level4">
-<h4 id="examples-13">Examples<a class="anchor" aria-label="anchor" href="#examples-13"></a>
+<h4 id="examples-16">Examples<a class="anchor" aria-label="anchor" href="#examples-16"></a>
 </h4>
-<div class="sourceCode" id="cb34"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> state <span class="kw">=&gt;</span> {</span>
-<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">'selected rows:'</span><span class="op">,</span> state<span class="op">.</span><span class="at">selected</span>)</span>
-<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>})</span>
-<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a><span class="co">// Cancel the listener function</span></span>
-<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a><span class="kw">const</span> cancel <span class="op">=</span> Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> listenerFn)</span>
-<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a><span class="fu">cancel</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> state <span class="kw">=&gt;</span> {</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">'selected rows:'</span><span class="op">,</span> state<span class="op">.</span><span class="at">selected</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>})</span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a><span class="co">// Cancel the listener function</span></span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a><span class="kw">const</span> cancel <span class="op">=</span> Reactable<span class="op">.</span><span class="fu">onStateChange</span>(<span class="st">'cars-table'</span><span class="op">,</span> listenerFn)</span>
+<span id="cb40-7"><a href="#cb40-7" tabindex="-1"></a><span class="fu">cancel</span>()</span></code></pre></div>
 <div class="section level5">
 <h5 id="static-widgets">Static widgets<a class="anchor" aria-label="anchor" href="#static-widgets"></a>
 </h5>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/htmltools" class="external-link">htmltools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -791,7 +880,7 @@ called to cancel the listener function.</p>
 <div class="section level5">
 <h5 id="shiny-outputs">Shiny outputs<a class="anchor" aria-label="anchor" href="#shiny-outputs"></a>
 </h5>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MASS/man/Cars93.html" class="external-link">Cars93</a></span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manufacturer"</span>, <span class="st">"Model"</span>, <span class="st">"Type"</span>, <span class="st">"Price"</span><span class="op">)</span><span class="op">]</span></span>
@@ -828,7 +917,7 @@ called to cancel the listener function.</p>
 <code>Reactable.gotoPage()</code><a class="anchor" aria-label="anchor" href="#reactable-gotopage"></a>
 </h3>
 <div class="callout">
-<p>New in v0.4.4.9000</p>
+<p>New in v0.4.5.9000</p>
 </div>
 <p>Changes the current page. <code>pageIndex</code> can either be a
 number or a function that takes the previous <code>pageIndex</code> and
@@ -837,24 +926,24 @@ returns the new value.</p>
 <code>pageIndex</code> of <code>0</code>. If <code>pageIndex</code> is
 outside the valid <code>pageIndex</code> range,
 <code>Reactable.gotoPage()</code> will do nothing.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(</span>
-<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>  pageIndex<span class="op">?:</span> <span class="dt">number</span> <span class="op">|</span> <span class="bu">Function</span></span>
-<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a>  pageIndex<span class="op">?:</span> <span class="dt">number</span> <span class="op">|</span> <span class="bu">Function</span></span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-14">Examples<a class="anchor" aria-label="anchor" href="#examples-14"></a>
+<h4 id="examples-17">Examples<a class="anchor" aria-label="anchor" href="#examples-17"></a>
 </h4>
-<div class="sourceCode" id="cb38"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="co">// Go to page index 0 (the first page)</span></span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">0</span>)</span>
-<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a><span class="co">// Go to page index 2 (the third page)</span></span>
-<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">2</span>)</span>
-<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a></span>
-<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a><span class="co">// Go to the next page</span></span>
-<span id="cb38-8"><a href="#cb38-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevPage <span class="kw">=&gt;</span> prevPage <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb38-9"><a href="#cb38-9" tabindex="-1"></a></span>
-<span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a><span class="co">// Go to the previous page</span></span>
-<span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevPage <span class="kw">=&gt;</span> prevPage <span class="op">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="co">// Go to page index 0 (the first page)</span></span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">0</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a><span class="co">// Go to page index 2 (the third page)</span></span>
+<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">2</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" tabindex="-1"></a><span class="co">// Go to the next page</span></span>
+<span id="cb44-8"><a href="#cb44-8" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevPage <span class="kw">=&gt;</span> prevPage <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" tabindex="-1"></a><span class="co">// Go to the previous page</span></span>
+<span id="cb44-11"><a href="#cb44-11" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(<span class="st">'cars-table'</span><span class="op">,</span> prevPage <span class="kw">=&gt;</span> prevPage <span class="op">-</span> <span class="dv">1</span>)</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -862,18 +951,18 @@ outside the valid <code>pageIndex</code> range,
 <code>Reactable.setPageSize()</code><a class="anchor" aria-label="anchor" href="#reactable-setpagesize"></a>
 </h3>
 <div class="callout">
-<p>New in v0.4.4.9000</p>
+<p>New in v0.4.5.9000</p>
 </div>
 <p>Sets the current page size.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(</span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  pageSize<span class="op">?:</span> <span class="dt">number</span></span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">gotoPage</span>(</span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  tableId<span class="op">:</span> <span class="dt">string</span><span class="op">,</span></span>
+<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  pageSize<span class="op">?:</span> <span class="dt">number</span></span>
+<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a>)</span></code></pre></div>
 <div class="section level4">
-<h4 id="examples-15">Examples<a class="anchor" aria-label="anchor" href="#examples-15"></a>
+<h4 id="examples-18">Examples<a class="anchor" aria-label="anchor" href="#examples-18"></a>
 </h4>
-<div class="sourceCode" id="cb40"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="co">// Set the page size to 10</span></span>
-<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setPageSize</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="co">// Set the page size to 10</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>Reactable<span class="op">.</span><span class="fu">setPageSize</span>(<span class="st">'cars-table'</span><span class="op">,</span> <span class="dv">10</span>)</span></code></pre></div>
 <style type="text/css">
 /* rmarkdown html documents */
 .main-container {

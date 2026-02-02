@@ -66,12 +66,17 @@
 
 <div class="section level2">
 <h2 id="public-documentation">Public Documentation<a class="anchor" aria-label="anchor" href="#public-documentation"></a></h2>
+<p>When writing documentation, wrap lines at 120 characters for prose.</p>
 <p>When updating <code>NEWS.md</code>, do not use line breaks for long sentences. Keep each bullet point or paragraph on a single line regardless of length.</p>
+<p>When documenting new features in vignettes, add a version callout to indicate when the feature was introduced. Use the current package version from the <code>DESCRIPTION</code> file. For example:</p>
+<pre><code>::: {.callout}
+New in v0.4.5.9000
+:::</code></pre>
 </div>
 <div class="section level2">
 <h2 id="development-workflow">Development Workflow<a class="anchor" aria-label="anchor" href="#development-workflow"></a></h2>
 <ol style="list-style-type: decimal"><li>
-<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility and include a test plan.</li>
+<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use mtcars dataset for examples unless another dataset is more appropriate.</li>
 <li><strong>Make changes</strong></li>
 <li>
 <strong>Document R API</strong>: Run <code>devtools::document()</code> in R when making any changes to the R API (roxygen comments).</li>
@@ -80,8 +85,16 @@
 <li>
 <strong>Lint</strong>: Lint JavaScript code using <code>eslint</code>.</li>
 <li>
-<strong>Update docs</strong>: Update <code>NEWS.md</code> and <code>vignettes/examples.Rmd</code>.</li>
+<strong>Update docs</strong>: Update <code>NEWS.md</code> and <code>vignettes/examples.Rmd</code>. Check if any updates should be made to the existing Rmd docs under <code>vignettes/</code>.</li>
 </ol></div>
+<div class="section level2">
+<h2 id="javascript-tests">JavaScript Tests<a class="anchor" aria-label="anchor" href="#javascript-tests"></a></h2>
+<p>When adding JavaScript tests, use JSX syntax.</p>
+</div>
+<div class="section level2">
+<h2 id="bumping-package-version">Bumping Package Version<a class="anchor" aria-label="anchor" href="#bumping-package-version"></a></h2>
+<p>When bumping the package version and the previous version is a development version (4th version component is 9000 or above, e.g., <code>0.4.5.9000</code>), search for all version callouts in the docs (e.g., “New in v0.4.5.9000”) and update them to the new package version. Search in <code>vignettes/</code> for callouts like <code>::: {.callout}</code> followed by version strings.</p>
+</div>
 <div class="section level2">
 <h2 id="adding-new-files">Adding New Files<a class="anchor" aria-label="anchor" href="#adding-new-files"></a></h2>
 <p>When adding new files that are not meant to be included in the R package (e.g., development tools, test fixtures, documentation sources), add them to <code>.Rbuildignore</code>.</p>

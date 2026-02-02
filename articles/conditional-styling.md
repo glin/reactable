@@ -136,26 +136,27 @@ colDef(
 
 #### `rowInfo` properties
 
-| Property     | Example                                           | Description                             |
-|--------------|---------------------------------------------------|-----------------------------------------|
-| `values`     | `{ Petal.Length: 1.7, Species: "setosa" }`        | row data values                         |
-| `row`        | `{ Petal.Length: 1.7, Species: "setosa" }`        | same as `values` (deprecated in v0.3.0) |
-| `index`      | `20`                                              | row index (zero-based)                  |
-| `viewIndex`  | `0`                                               | row index within the page (zero-based)  |
-| `aggregated` | `true`                                            | whether the row is aggregated           |
-| `expanded`   | `true`                                            | whether the row is expanded             |
-| `subRows`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated rows only)    |
-| `level`      | `0`                                               | row nesting depth (zero-based)          |
-| `selected`   | `true`                                            | whether the row is selected             |
+| Property            | Example                                           | Description                                                                                                           |
+|---------------------|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `values`            | `{ Petal.Length: 1.7, Species: "setosa" }`        | row data values                                                                                                       |
+| `row`               | `{ Petal.Length: 1.7, Species: "setosa" }`        | same as `values` (deprecated in v0.3.0)                                                                               |
+| `index`             | `20`                                              | row index (zero-based)                                                                                                |
+| `viewIndex`         | `0`                                               | row index within the page (zero-based)                                                                                |
+| `aggregated`        | `true`                                            | whether the row is aggregated                                                                                         |
+| `expanded`          | `true`                                            | whether the row is expanded                                                                                           |
+| `subRows`           | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated rows only)                                                                                  |
+| `level`             | `0`                                               | row nesting depth (zero-based)                                                                                        |
+| `selected`          | `true`                                            | whether the row is selected                                                                                           |
+| `toggleRowSelected` | `function (isSelected?: boolean)`                 | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
 
 #### `column` properties
 
-| Property      | Example                          | Description                                                                      |
-|---------------|----------------------------------|----------------------------------------------------------------------------------|
-| `id`          | `"Petal.Length"`                 | column ID                                                                        |
-| `name`        | `"Petal Length"`                 | column display name                                                              |
-| `filterValue` | `"petal"`                        | column filter value                                                              |
-| `setFilter`   | `function setFilter(value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
+| Property      | Example                 | Description                                                                      |
+|---------------|-------------------------|----------------------------------------------------------------------------------|
+| `id`          | `"Petal.Length"`        | column ID                                                                        |
+| `name`        | `"Petal Length"`        | column display name                                                              |
+| `filterValue` | `"petal"`               | column filter value                                                              |
+| `setFilter`   | `function (value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
 
 #### `state` properties
 
@@ -239,17 +240,18 @@ reactable(
 
 #### `rowInfo` properties
 
-| Property     | Example                                           | Description                             |
-|--------------|---------------------------------------------------|-----------------------------------------|
-| `values`     | `{ Petal.Length: 1.7, Species: "setosa" }`        | row data values                         |
-| `row`        | `{ Petal.Length: 1.7, Species: "setosa" }`        | same as `values` (deprecated in v0.3.0) |
-| `index`      | `20`                                              | row index (zero-based)                  |
-| `viewIndex`  | `0`                                               | row index within the page (zero-based)  |
-| `aggregated` | `true`                                            | whether the row is aggregated           |
-| `expanded`   | `true`                                            | whether the row is expanded             |
-| `subRows`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated rows only)    |
-| `level`      | `0`                                               | row nesting depth (zero-based)          |
-| `selected`   | `true`                                            | whether the row is selected             |
+| Property            | Example                                           | Description                                                                                                           |
+|---------------------|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `values`            | `{ Petal.Length: 1.7, Species: "setosa" }`        | row data values                                                                                                       |
+| `row`               | `{ Petal.Length: 1.7, Species: "setosa" }`        | same as `values` (deprecated in v0.3.0)                                                                               |
+| `index`             | `20`                                              | row index (zero-based)                                                                                                |
+| `viewIndex`         | `0`                                               | row index within the page (zero-based)                                                                                |
+| `aggregated`        | `true`                                            | whether the row is aggregated                                                                                         |
+| `expanded`          | `true`                                            | whether the row is expanded                                                                                           |
+| `subRows`           | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated rows only)                                                                                  |
+| `level`             | `0`                                               | row nesting depth (zero-based)                                                                                        |
+| `selected`          | `true`                                            | whether the row is selected                                                                                           |
+| `toggleRowSelected` | `function (isSelected?: boolean)`                 | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
 
 #### `state` properties
 

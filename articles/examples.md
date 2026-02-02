@@ -8456,6 +8456,18 @@ setosa
 
 This example requires reactable v0.3.0 or above.
 
+Custom click actions are JavaScript functions that receive three
+arguments:
+
+- `rowInfo`, an object containing row information
+- `column`, an object containing column information
+- `state`, an object containing the current table state
+
+Some common properties include `rowInfo.index` (zero-based row index),
+`rowInfo.values` (row data values), `column.id` (column ID), and
+`state.selected` (selected row indices). For the full list of
+properties, see the [Custom Rendering](custom-rendering.md) guide.
+
 This example uses a custom click action to create custom “show details”
 action buttons in each row of the table:
 
@@ -8477,7 +8489,7 @@ reactable(
       cell = function() htmltools::tags$button("Show details")
     )
   ),
-  onClick = JS("function(rowInfo, column) {
+  onClick = JS("function(rowInfo, column, state) {
     // Only handle click events on the 'details' column
     if (column.id !== 'details') {
       return
