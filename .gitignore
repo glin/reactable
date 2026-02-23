@@ -1,6 +1,8 @@
 .Rprofile
 .Rproj.user/
 .Rhistory
+.quarto/
+**/*.quarto_ipynb
 coverage/
 docs/
 node_modules/
