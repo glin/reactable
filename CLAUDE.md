@@ -26,6 +26,13 @@ New in v0.4.5.9000
 5. **Lint**: Lint JavaScript code using `eslint`.
 6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
 
+## JavaScript API in HTML Documents
+
+JavaScript API calls like `Reactable.onStateChange()` that reference a reactable instance cannot run in an inline
+`<script>` tag because the widget may not have rendered yet. Use `htmlwidgets::onStaticRenderComplete()` for static
+widgets (Rmd/HTML documents) or `htmlwidgets::onRender()` for Shiny outputs to ensure the instance exists first.
+Button `onclick` handlers are fine since they run on user interaction, after the widget is already rendered.
+
 ## JavaScript Code Style
 
 Use `Boolean()` for boolean coercion instead of `!!`. For example, use `Boolean(column && column.sortDescFirst)` rather than `!!(column && column.sortDescFirst)`.
