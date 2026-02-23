@@ -1,0 +1,369 @@
+---
+title: "Sort API Test"
+output:
+  html_document:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+library(htmltools)
+```
+
+## Test Data
+
+```{r}
+data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price", "MPG.city", "Horsepower")]
+```
+
+## Reactable.toggleSortBy()
+
+### Toggle unsorted column
+
+Expected: Click "Sort by Price" → rows sort by Price ascending. Click again → descending. Click again → ascending (NOT unsorted).
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Price",
+    onclick = "Reactable.toggleSortBy('toggle-basic', 'Price')"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-basic').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "toggle-basic"
+  )
+)
+```
+
+### Set sort direction explicitly
+
+Expected: "Sort Asc" → ascending by Price. "Sort Desc" → descending by Price. "Clear Sort" → returns to original order.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort Asc",
+    onclick = "Reactable.toggleSortBy('toggle-explicit', 'Price', false)"
+  ),
+  tags$button(
+    "Sort Desc",
+    onclick = "Reactable.toggleSortBy('toggle-explicit', 'Price', true)"
+  ),
+  tags$button(
+    "Clear Sort",
+    onclick = "Reactable.setSortBy('toggle-explicit', [])"
+  ),
+  reactable(
+    data,
+    elementId = "toggle-explicit"
+  )
+)
+```
+
+### Replaces existing sort (single-column mode)
+
+Expected: "Sort by Price" then "Sort by Type" → only Type column is sorted, Price sort is cleared.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Price",
+    onclick = "Reactable.toggleSortBy('toggle-replace', 'Price')"
+  ),
+  tags$button(
+    "Sort by Type",
+    onclick = "Reactable.toggleSortBy('toggle-replace', 'Type')"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-replace').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "toggle-replace"
+  )
+)
+```
+
+### Multi-sort (multi)
+
+Expected: "Sort by Type" then "Add Price sort" → both columns sorted. "Toggle Type sort" cycles Type through asc → desc → removed.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Type",
+    onclick = "Reactable.toggleSortBy('toggle-multi', 'Type')"
+  ),
+  tags$button(
+    "Add Price sort",
+    onclick = "Reactable.toggleSortBy('toggle-multi', 'Price', null, true)"
+  ),
+  tags$button(
+    "Toggle Type (multi)",
+    onclick = "Reactable.toggleSortBy('toggle-multi', 'Type', null, true)"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-multi').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "toggle-multi"
+  )
+)
+```
+
+### sortDescFirst column
+
+Expected: "Sort by Price" → first toggle sorts descending (most expensive first).
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Price",
+    onclick = "Reactable.toggleSortBy('toggle-desc-first', 'Price')"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('toggle-desc-first').sorted)"
+  ),
+  reactable(
+    data,
+    columns = list(
+      Price = colDef(defaultSortOrder = "desc")
+    ),
+    elementId = "toggle-desc-first"
+  )
+)
+```
+
+## Reactable.setSortBy()
+
+### Set single column sort
+
+Expected: Rows sort by Price ascending.
+
+```{r}
+tagList(
+  tags$button(
+    "Set Sort",
+    onclick = "Reactable.setSortBy('set-single', [{ id: 'Price', desc: false }])"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('set-single').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "set-single"
+  )
+)
+```
+
+### Set multi-column sort
+
+Expected: Rows sort by Type ascending, then Price descending within each type.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort Type asc + Price desc",
+    onclick = "Reactable.setSortBy('set-multi', [{ id: 'Type', desc: false }, { id: 'Price', desc: true }])"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('set-multi').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "set-multi"
+  )
+)
+```
+
+### Clear all sorting
+
+Expected: "Set Sort" sorts the table, "Clear Sort" returns to original order.
+
+```{r}
+tagList(
+  tags$button(
+    "Set Sort",
+    onclick = "Reactable.setSortBy('set-clear', [{ id: 'Price', desc: false }])"
+  ),
+  tags$button(
+    "Clear Sort",
+    onclick = "Reactable.setSortBy('set-clear', [])"
+  ),
+  reactable(
+    data,
+    elementId = "set-clear"
+  )
+)
+```
+
+### Replace existing sort
+
+Expected: "Sort by Price" then "Sort by Type" replaces Price sort with Type sort.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Price asc",
+    onclick = "Reactable.setSortBy('set-replace', [{ id: 'Price', desc: false }])"
+  ),
+  tags$button(
+    "Sort by Type desc",
+    onclick = "Reactable.setSortBy('set-replace', [{ id: 'Type', desc: true }])"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('set-replace').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "set-replace"
+  )
+)
+```
+
+## Custom Sort Buttons (sortable = FALSE)
+
+Expected: Table headers are not clickable for sorting. Only the custom buttons control sort.
+
+```{r}
+tagList(
+  reactable(
+    data,
+    sortable = FALSE,
+    defaultColDef = colDef(
+      header = function(value, name) {
+        tagList(
+          value,
+          tags$button(
+            "\u2195",
+            style = "margin-left: 4px; cursor: pointer; border: 1px solid #ccc; background: #f5f5f5; border-radius: 3px;",
+            onclick = sprintf("Reactable.toggleSortBy('custom-buttons', '%s')", name),
+            title = sprintf("Sort by %s", value)
+          )
+        )
+      }
+    ),
+    elementId = "custom-buttons"
+  )
+)
+```
+
+## Interaction with UI Sorting
+
+Expected: Can sort via header click, then override via API, then continue sorting via header click.
+
+```{r}
+tagList(
+  tags$button(
+    "API: Sort Price desc",
+    onclick = "Reactable.setSortBy('mixed-sort', [{ id: 'Price', desc: true }])"
+  ),
+  tags$button(
+    "API: Clear sort",
+    onclick = "Reactable.setSortBy('mixed-sort', [])"
+  ),
+  tags$button(
+    "Get State",
+    onclick = "console.log(Reactable.getState('mixed-sort').sorted)"
+  ),
+  reactable(
+    data,
+    elementId = "mixed-sort"
+  )
+)
+```
+
+## onStateChange Integration
+
+Expected: Sort state changes (both API and UI) are logged to the div below the table.
+
+```{r}
+tagList(
+  tags$button(
+    "Sort by Price",
+    onclick = "Reactable.toggleSortBy('state-change', 'Price')"
+  ),
+  tags$button(
+    "Clear Sort",
+    onclick = "Reactable.setSortBy('state-change', [])"
+  ),
+  reactable(
+    data,
+    elementId = "state-change"
+  ),
+  tags$div(id = "state-log", style = "margin-top: 10px; padding: 8px; border: 1px solid #ddd; min-height: 40px;"),
+  htmlwidgets::onStaticRenderComplete("
+    Reactable.onStateChange('state-change', function(state) {
+      document.getElementById('state-log').textContent = 'sorted: ' + JSON.stringify(state.sorted);
+    });
+  ")
+)
+```
+
+## Shiny: `updateReactable(sortBy = ...)`
+
+Run the following Shiny app manually with `shiny::runApp()` or by sourcing the code block.
+
+Expected:
+
+- "Sort by Price asc" → table sorts by Price ascending, state output shows `list(Price = "asc")`
+- "Sort by Type asc + Price desc" → table sorts by Type ascending then Price descending within type
+- "Clear sort" → table returns to original order, sorted state becomes NULL
+- `getReactableState()` output updates reactively to reflect the current sort state
+
+```{r, eval=FALSE}
+library(shiny)
+library(reactable)
+
+data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price", "MPG.city", "Horsepower")]
+
+ui <- fluidPage(
+  h3("updateReactable(sortBy = ...) Test"),
+  actionButton("sort_price", "Sort by Price asc"),
+  actionButton("sort_multi", "Sort by Type asc + Price desc"),
+  actionButton("clear_sort", "Clear sort"),
+  reactableOutput("table"),
+  h4("getReactableState():"),
+  verbatimTextOutput("state")
+)
+
+server <- function(input, output) {
+  output$table <- renderReactable({
+    reactable(data)
+  })
+
+  observeEvent(input$sort_price, {
+    updateReactable("table", sortBy = list(Price = "asc"))
+  })
+
+  observeEvent(input$sort_multi, {
+    updateReactable("table", sortBy = list(Type = "asc", Price = "desc"))
+  })
+
+  observeEvent(input$clear_sort, {
+    updateReactable("table", sortBy = NA)
+  })
+
+  output$state <- renderPrint({
+    state <- getReactableState("table")
+    cat("sorted:", "\n")
+    print(state$sorted)
+    cat("\npage:", state$page, "\n")
+  })
+}
+
+shinyApp(ui, server)
+```

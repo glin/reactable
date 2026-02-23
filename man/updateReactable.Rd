@@ -7,9 +7,10 @@
 updateReactable(
   outputId,
   data = NULL,
-  selected = NULL,
-  expanded = NULL,
+  sortBy = NULL,
   page = NULL,
+  expanded = NULL,
+  selected = NULL,
   meta = NULL,
   session = NULL
 )
@@ -24,13 +25,17 @@ When updating \code{data}, the selected rows, expanded rows, and current page
 will reset unless explicitly specified. All other state will persist,
 including sorting, filtering, and grouping state.}
 
-\item{selected}{Selected rows. Either a numeric vector of row indices,
-or \code{NA} to deselect all rows.}
+\item{sortBy}{Sorted columns. A named list of column IDs with values of \code{"asc"} for
+ascending order or \code{"desc"} for descending order, or \code{NA} to clear all sorting.
+This format matches the return value of \code{getReactableState(outputId, "sorted")}.}
+
+\item{page}{The current page. A single, positive integer.}
 
 \item{expanded}{Expanded rows. Either \code{TRUE} to expand all rows, or \code{FALSE}
 to collapse all rows.}
 
-\item{page}{The current page. A single, positive integer.}
+\item{selected}{Selected rows. Either a numeric vector of row indices,
+or \code{NA} to deselect all rows.}
 
 \item{meta}{Custom table metadata. Either a named list with new values, or \code{NA}
 to clear all metadata. New values are merged into the current metadata, so only

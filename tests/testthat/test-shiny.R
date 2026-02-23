@@ -57,6 +57,31 @@ test_that("updateReactable", {
   )
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = expected))
 
+  # Update sortBy
+  expect_error(updateReactable("mytbl", sortBy = TRUE, session = session),
+               '`sortBy` must be a named list with values "asc" or "desc", or NA to clear')
+  expect_error(updateReactable("mytbl", sortBy = list(x = "up"), session = session),
+               '`sortBy` must be a named list with values "asc" or "desc", or NA to clear')
+  expect_error(updateReactable("mytbl", sortBy = list("asc"), session = session),
+               '`sortBy` must be a named list with values "asc" or "desc", or NA to clear')
+
+  updateReactable("mytbl", sortBy = list(Type = "asc"), session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(sortBy = list(list(id = "Type", desc = FALSE)))
+  ))
+  updateReactable("mytbl", sortBy = list(Type = "asc", Price = "desc"), session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(sortBy = list(list(id = "Type", desc = FALSE), list(id = "Price", desc = TRUE)))
+  ))
+  # Clear sorting
+  updateReactable("mytbl", sortBy = NA, session = session)
+  expect_equal(session$lastMsg, list(
+    type = "__reactable__mytbl",
+    message = list(sortBy = list())
+  ))
+
   # Update selected rows
   updateReactable("mytbl", selected = 1, session = session)
   expect_equal(session$lastMsg, list(type = "__reactable__mytbl", message = list(selected = list(0))))

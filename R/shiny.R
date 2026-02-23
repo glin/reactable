@@ -9,11 +9,14 @@
 #'   When updating `data`, the selected rows, expanded rows, and current page
 #'   will reset unless explicitly specified. All other state will persist,
 #'   including sorting, filtering, and grouping state.
-#' @param selected Selected rows. Either a numeric vector of row indices,
-#'   or `NA` to deselect all rows.
+#' @param sortBy Sorted columns. A named list of column IDs with values of `"asc"` for
+#'   ascending order or `"desc"` for descending order, or `NA` to clear all sorting.
+#'   This format matches the return value of `getReactableState(outputId, "sorted")`.
+#' @param page The current page. A single, positive integer.
 #' @param expanded Expanded rows. Either `TRUE` to expand all rows, or `FALSE`
 #'   to collapse all rows.
-#' @param page The current page. A single, positive integer.
+#' @param selected Selected rows. Either a numeric vector of row indices,
+#'   or `NA` to deselect all rows.
 #' @param meta Custom table metadata. Either a named list with new values, or `NA`
 #'   to clear all metadata. New values are merged into the current metadata, so only
 #'   the values specified in `meta` will be updated.
@@ -90,8 +93,8 @@
 #' }
 #'
 #' @export
-updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = NULL,
-                            page = NULL, meta = NULL, session = NULL) {
+updateReactable <- function(outputId, data = NULL, sortBy = NULL, page = NULL,
+                            expanded = NULL, selected = NULL, meta = NULL, session = NULL) {
   if (is.null(session)) {
     if (requireNamespace("shiny", quietly = TRUE)) {
       session <- shiny::getDefaultReactiveDomain()
@@ -119,17 +122,18 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     page <- if (is.null(page)) 1 else page
   }
 
-  if (!is.null(selected)) {
-    if (!is.numeric(selected) && !is.na(selected)) {
-      stop("`selected` must be numeric or NA")
+  if (!is.null(sortBy)) {
+    if (identical(sortBy, NA)) {
+      sortBy <- list()
+    } else {
+      if (!isNamedList(sortBy) || !all(vapply(sortBy, function(x) x %in% c("asc", "desc"), logical(1)))) {
+        stop('`sortBy` must be a named list with values "asc" or "desc", or NA to clear')
+      }
     }
-    selected <- stats::na.omit(selected)
-    # Convert to 0-based indexing
-    selected <- as.list(as.integer(selected) - 1)
-  }
-
-  if (!is.null(expanded) && !is.logical(expanded)) {
-    stop("`expanded` must be TRUE or FALSE")
+    # Convert to JS format: [{ id: "col", desc: true/false }, ...]
+    sortBy <- lapply(names(sortBy), function(id) {
+      list(id = id, desc = unname(sortBy[[id]]) == "desc")
+    })
   }
 
   if (!is.null(page)) {
@@ -138,6 +142,19 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     }
     # Convert to 0-based indexing
     page <- as.integer(page - 1)
+  }
+
+  if (!is.null(expanded) && !is.logical(expanded)) {
+    stop("`expanded` must be TRUE or FALSE")
+  }
+
+  if (!is.null(selected)) {
+    if (!is.numeric(selected) && !is.na(selected)) {
+      stop("`selected` must be numeric or NA")
+    }
+    selected <- stats::na.omit(selected)
+    # Convert to 0-based indexing
+    selected <- as.list(as.integer(selected) - 1)
   }
 
   if (!is.null(meta)) {
@@ -165,6 +182,7 @@ updateReactable <- function(outputId, data = NULL, selected = NULL, expanded = N
     expanded = expanded,
     page = page,
     meta = meta,
+    sortBy = sortBy,
     jsEvals = jsEvals
   ))
 

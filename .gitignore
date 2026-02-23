@@ -7,3 +7,6 @@ coverage/
 docs/
 node_modules/
 rsconnect/
+
+# R Markdown generated files
+*_files/

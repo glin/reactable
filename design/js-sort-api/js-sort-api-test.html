@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Sort API Test</title>
+
+<script src="js-sort-api-test_files/header-attrs-2.30/header-attrs.js"></script>
+<script src="js-sort-api-test_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="js-sort-api-test_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="js-sort-api-test_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="js-sort-api-test_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="js-sort-api-test_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="js-sort-api-test_files/navigation-1.1/tabsets.js"></script>
+<link href="js-sort-api-test_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="js-sort-api-test_files/highlightjs-9.12.0/highlight.js"></script>
+<script src="js-sort-api-test_files/react-18.2.0/react.min.js"></script>
+<script src="js-sort-api-test_files/react-18.2.0/react-dom.min.js"></script>
+<script src="js-sort-api-test_files/reactwidget-2.0.0/react-tools.js"></script>
+<link href="js-sort-api-test_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
+<script src="js-sort-api-test_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="js-sort-api-test_files/reactable-0.4.5.9000/reactable.css" rel="stylesheet" />
+<script src="js-sort-api-test_files/reactable-binding-0.4.5.9000/reactable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Sort API Test</h1>
+
+</div>
+
+
+<div id="test-data" class="section level2">
+<h2>Test Data</h2>
+<pre class="r"><code>data &lt;- MASS::Cars93[1:20, c(&quot;Manufacturer&quot;, &quot;Model&quot;, &quot;Type&quot;, &quot;Price&quot;, &quot;MPG.city&quot;, &quot;Horsepower&quot;)]</code></pre>
+</div>
+<div id="reactable.togglesortby" class="section level2">
+<h2>Reactable.toggleSortBy()</h2>
+<div id="toggle-unsorted-column" class="section level3">
+<h3>Toggle unsorted column</h3>
+<p>Expected: Click “Sort by Price” → rows sort by Price ascending. Click
+again → descending. Click again → ascending (NOT unsorted).</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Price&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-basic&#39;, &#39;Price&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;toggle-basic&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;toggle-basic&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-basic&#39;, &#39;Price&#39;)">Sort by Price</button>
+<button onclick="console.log(Reactable.getState(&#39;toggle-basic&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="toggle-basic" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="toggle-basic">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"toggle-basic","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="set-sort-direction-explicitly" class="section level3">
+<h3>Set sort direction explicitly</h3>
+<p>Expected: “Sort Asc” → ascending by Price. “Sort Desc” → descending
+by Price. “Clear Sort” → returns to original order.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort Asc&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-explicit&#39;, &#39;Price&#39;, false)&quot;
+  ),
+  tags$button(
+    &quot;Sort Desc&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-explicit&#39;, &#39;Price&#39;, true)&quot;
+  ),
+  tags$button(
+    &quot;Clear Sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;toggle-explicit&#39;, [])&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;toggle-explicit&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-explicit&#39;, &#39;Price&#39;, false)">Sort Asc</button>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-explicit&#39;, &#39;Price&#39;, true)">Sort Desc</button>
+<button onclick="Reactable.setSortBy(&#39;toggle-explicit&#39;, [])">Clear Sort</button>
+<div class="reactable html-widget html-fill-item" id="toggle-explicit" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="toggle-explicit">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"toggle-explicit","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="replaces-existing-sort-single-column-mode"
+class="section level3">
+<h3>Replaces existing sort (single-column mode)</h3>
+<p>Expected: “Sort by Price” then “Sort by Type” → only Type column is
+sorted, Price sort is cleared.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Price&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-replace&#39;, &#39;Price&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Sort by Type&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-replace&#39;, &#39;Type&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;toggle-replace&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;toggle-replace&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-replace&#39;, &#39;Price&#39;)">Sort by Price</button>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-replace&#39;, &#39;Type&#39;)">Sort by Type</button>
+<button onclick="console.log(Reactable.getState(&#39;toggle-replace&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="toggle-replace" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="toggle-replace">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"toggle-replace","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="multi-sort-multi" class="section level3">
+<h3>Multi-sort (multi)</h3>
+<p>Expected: “Sort by Type” then “Add Price sort” → both columns sorted.
+“Toggle Type sort” cycles Type through asc → desc → removed.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Type&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Type&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Add Price sort&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Price&#39;, null, true)&quot;
+  ),
+  tags$button(
+    &quot;Toggle Type (multi)&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Type&#39;, null, true)&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;toggle-multi&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;toggle-multi&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Type&#39;)">Sort by Type</button>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Price&#39;, null, true)">Add Price sort</button>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-multi&#39;, &#39;Type&#39;, null, true)">Toggle Type (multi)</button>
+<button onclick="console.log(Reactable.getState(&#39;toggle-multi&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="toggle-multi" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="toggle-multi">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"toggle-multi","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="sortdescfirst-column" class="section level3">
+<h3>sortDescFirst column</h3>
+<p>Expected: “Sort by Price” → first toggle sorts descending (most
+expensive first).</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Price&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;toggle-desc-first&#39;, &#39;Price&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;toggle-desc-first&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    columns = list(
+      Price = colDef(defaultSortOrder = &quot;desc&quot;)
+    ),
+    elementId = &quot;toggle-desc-first&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;toggle-desc-first&#39;, &#39;Price&#39;)">Sort by Price</button>
+<button onclick="console.log(Reactable.getState(&#39;toggle-desc-first&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="toggle-desc-first" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="toggle-desc-first">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric","defaultSortDesc":true},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"toggle-desc-first","dataKey":"8901d82569b7846d7bae7b3d193e0940"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="reactable.setsortby" class="section level2">
+<h2>Reactable.setSortBy()</h2>
+<div id="set-single-column-sort" class="section level3">
+<h3>Set single column sort</h3>
+<p>Expected: Rows sort by Price ascending.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Set Sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-single&#39;, [{ id: &#39;Price&#39;, desc: false }])&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;set-single&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;set-single&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.setSortBy(&#39;set-single&#39;, [{ id: &#39;Price&#39;, desc: false }])">Set Sort</button>
+<button onclick="console.log(Reactable.getState(&#39;set-single&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="set-single" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="set-single">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"set-single","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="set-multi-column-sort" class="section level3">
+<h3>Set multi-column sort</h3>
+<p>Expected: Rows sort by Type ascending, then Price descending within
+each type.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort Type asc + Price desc&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-multi&#39;, [{ id: &#39;Type&#39;, desc: false }, { id: &#39;Price&#39;, desc: true }])&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;set-multi&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;set-multi&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.setSortBy(&#39;set-multi&#39;, [{ id: &#39;Type&#39;, desc: false }, { id: &#39;Price&#39;, desc: true }])">Sort Type asc + Price desc</button>
+<button onclick="console.log(Reactable.getState(&#39;set-multi&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="set-multi" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="set-multi">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"set-multi","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="clear-all-sorting" class="section level3">
+<h3>Clear all sorting</h3>
+<p>Expected: “Set Sort” sorts the table, “Clear Sort” returns to
+original order.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Set Sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-clear&#39;, [{ id: &#39;Price&#39;, desc: false }])&quot;
+  ),
+  tags$button(
+    &quot;Clear Sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-clear&#39;, [])&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;set-clear&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.setSortBy(&#39;set-clear&#39;, [{ id: &#39;Price&#39;, desc: false }])">Set Sort</button>
+<button onclick="Reactable.setSortBy(&#39;set-clear&#39;, [])">Clear Sort</button>
+<div class="reactable html-widget html-fill-item" id="set-clear" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="set-clear">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"set-clear","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="replace-existing-sort" class="section level3">
+<h3>Replace existing sort</h3>
+<p>Expected: “Sort by Price” then “Sort by Type” replaces Price sort
+with Type sort.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Price asc&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-replace&#39;, [{ id: &#39;Price&#39;, desc: false }])&quot;
+  ),
+  tags$button(
+    &quot;Sort by Type desc&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;set-replace&#39;, [{ id: &#39;Type&#39;, desc: true }])&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;set-replace&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;set-replace&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.setSortBy(&#39;set-replace&#39;, [{ id: &#39;Price&#39;, desc: false }])">Sort by Price asc</button>
+<button onclick="Reactable.setSortBy(&#39;set-replace&#39;, [{ id: &#39;Type&#39;, desc: true }])">Sort by Type desc</button>
+<button onclick="console.log(Reactable.getState(&#39;set-replace&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="set-replace" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="set-replace">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"set-replace","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="custom-sort-buttons-sortable-false" class="section level2">
+<h2>Custom Sort Buttons (sortable = FALSE)</h2>
+<p>Expected: Table headers are not clickable for sorting. Only the
+custom buttons control sort.</p>
+<pre class="r"><code>tagList(
+  reactable(
+    data,
+    sortable = FALSE,
+    defaultColDef = colDef(
+      header = function(value, name) {
+        tagList(
+          value,
+          tags$button(
+            &quot;\u2195&quot;,
+            style = &quot;margin-left: 4px; cursor: pointer; border: 1px solid #ccc; background: #f5f5f5; border-radius: 3px;&quot;,
+            onclick = sprintf(&quot;Reactable.toggleSortBy(&#39;custom-buttons&#39;, &#39;%s&#39;)&quot;, name),
+            title = sprintf(&quot;Sort by %s&quot;, value)
+          )
+        )
+      }
+    ),
+    elementId = &quot;custom-buttons&quot;
+  )
+)</code></pre>
+<div class="reactable html-widget html-fill-item" id="custom-buttons" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="custom-buttons">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor","header":{"name":"Fragment","attribs":[],"children":["Manufacturer",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by Manufacturer","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'Manufacturer')}).apply(event.target,[_e])}"},"children":["↕"]}]}},{"id":"Model","name":"Model","type":"factor","header":{"name":"Fragment","attribs":[],"children":["Model",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by Model","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'Model')}).apply(event.target,[_e])}"},"children":["↕"]}]}},{"id":"Type","name":"Type","type":"factor","header":{"name":"Fragment","attribs":[],"children":["Type",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by Type","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'Type')}).apply(event.target,[_e])}"},"children":["↕"]}]}},{"id":"Price","name":"Price","type":"numeric","header":{"name":"Fragment","attribs":[],"children":["Price",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by Price","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'Price')}).apply(event.target,[_e])}"},"children":["↕"]}]}},{"id":"MPG.city","name":"MPG.city","type":"numeric","header":{"name":"Fragment","attribs":[],"children":["MPG.city",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by MPG.city","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'MPG.city')}).apply(event.target,[_e])}"},"children":["↕"]}]}},{"id":"Horsepower","name":"Horsepower","type":"numeric","header":{"name":"Fragment","attribs":[],"children":["Horsepower",{"name":"button","attribs":{"style":{"margin-left":"4px","cursor":"pointer","border":"1px solid #ccc","background":"#f5f5f5","border-radius":"3px"},"title":"Sort by Horsepower","onClick":"function(_e){(function(event){Reactable.toggleSortBy('custom-buttons', 'Horsepower')}).apply(event.target,[_e])}"},"children":["↕"]}]}}],"sortable":false,"elementId":"custom-buttons","dataKey":"25ed445502540a93d90adfa4686877c8"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.header.children.1.attribs.onClick","tag.attribs.columns.1.header.children.1.attribs.onClick","tag.attribs.columns.2.header.children.1.attribs.onClick","tag.attribs.columns.3.header.children.1.attribs.onClick","tag.attribs.columns.4.header.children.1.attribs.onClick","tag.attribs.columns.5.header.children.1.attribs.onClick"],"jsHooks":[]}</script>
+</div>
+<div id="interaction-with-ui-sorting" class="section level2">
+<h2>Interaction with UI Sorting</h2>
+<p>Expected: Can sort via header click, then override via API, then
+continue sorting via header click.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;API: Sort Price desc&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;mixed-sort&#39;, [{ id: &#39;Price&#39;, desc: true }])&quot;
+  ),
+  tags$button(
+    &quot;API: Clear sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;mixed-sort&#39;, [])&quot;
+  ),
+  tags$button(
+    &quot;Get State&quot;,
+    onclick = &quot;console.log(Reactable.getState(&#39;mixed-sort&#39;).sorted)&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;mixed-sort&quot;
+  )
+)</code></pre>
+<button onclick="Reactable.setSortBy(&#39;mixed-sort&#39;, [{ id: &#39;Price&#39;, desc: true }])">API: Sort Price desc</button>
+<button onclick="Reactable.setSortBy(&#39;mixed-sort&#39;, [])">API: Clear sort</button>
+<button onclick="console.log(Reactable.getState(&#39;mixed-sort&#39;).sorted)">Get State</button>
+<div class="reactable html-widget html-fill-item" id="mixed-sort" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="mixed-sort">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"mixed-sort","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="onstatechange-integration" class="section level2">
+<h2>onStateChange Integration</h2>
+<p>Expected: Sort state changes (both API and UI) are logged to the div
+below the table.</p>
+<pre class="r"><code>tagList(
+  tags$button(
+    &quot;Sort by Price&quot;,
+    onclick = &quot;Reactable.toggleSortBy(&#39;state-change&#39;, &#39;Price&#39;)&quot;
+  ),
+  tags$button(
+    &quot;Clear Sort&quot;,
+    onclick = &quot;Reactable.setSortBy(&#39;state-change&#39;, [])&quot;
+  ),
+  reactable(
+    data,
+    elementId = &quot;state-change&quot;
+  ),
+  tags$div(id = &quot;state-log&quot;, style = &quot;margin-top: 10px; padding: 8px; border: 1px solid #ddd; min-height: 40px;&quot;),
+  htmlwidgets::onStaticRenderComplete(&quot;
+    Reactable.onStateChange(&#39;state-change&#39;, function(state) {
+      document.getElementById(&#39;state-log&#39;).textContent = &#39;sorted: &#39; + JSON.stringify(state.sorted);
+    });
+  &quot;)
+)</code></pre>
+<button onclick="Reactable.toggleSortBy(&#39;state-change&#39;, &#39;Price&#39;)">Sort by Price</button>
+<button onclick="Reactable.setSortBy(&#39;state-change&#39;, [])">Clear Sort</button>
+<div class="reactable html-widget html-fill-item" id="state-change" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="state-change">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Manufacturer":["Acura","Acura","Audi","Audi","BMW","Buick","Buick","Buick","Buick","Cadillac","Cadillac","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chevrolet","Chrylser"],"Model":["Integra","Legend","90","100","535i","Century","LeSabre","Roadmaster","Riviera","DeVille","Seville","Cavalier","Corsica","Camaro","Lumina","Lumina_APV","Astro","Caprice","Corvette","Concorde"],"Type":["Small","Midsize","Compact","Midsize","Midsize","Midsize","Large","Large","Midsize","Large","Midsize","Compact","Compact","Sporty","Midsize","Van","Van","Large","Sporty","Large"],"Price":[15.9,33.9,29.1,37.7,30,15.7,20.8,23.7,26.3,34.7,40.1,13.4,11.4,15.1,15.9,16.3,16.6,18.8,38,18.4],"MPG.city":[25,18,20,19,22,22,19,16,19,16,16,25,25,19,21,18,15,17,17,20],"Horsepower":[140,200,172,172,208,110,170,180,170,200,295,110,110,160,110,170,165,170,300,153]},"columns":[{"id":"Manufacturer","name":"Manufacturer","type":"factor"},{"id":"Model","name":"Model","type":"factor"},{"id":"Type","name":"Type","type":"factor"},{"id":"Price","name":"Price","type":"numeric"},{"id":"MPG.city","name":"MPG.city","type":"numeric"},{"id":"Horsepower","name":"Horsepower","type":"numeric"}],"elementId":"state-change","dataKey":"a15951d6cb82c6ef41f201bb932a6710"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+<div id="state-log" style="margin-top: 10px; padding: 8px; border: 1px solid #ddd; min-height: 40px;"></div>
+<script>
+HTMLWidgets.addPostRenderHandler(function() {
+
+    Reactable.onStateChange('state-change', function(state) {
+      document.getElementById('state-log').textContent = 'sorted: ' + JSON.stringify(state.sorted);
+    });
+  
+});
+</script>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

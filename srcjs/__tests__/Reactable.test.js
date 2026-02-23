@@ -9056,6 +9056,49 @@ describe('updateReactable updates table state from Shiny', () => {
     expect(reactable.getState('my-tbl').meta).toEqual({})
   })
 
+  it('updates sortBy', () => {
+    const props = {
+      data: { a: [3, 1, 2], b: ['c', 'a', 'b'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable {...props} />
+      </div>
+    )
+
+    const [, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+
+    // Set sort
+    act(() => updateState({ sortBy: [{ id: 'a', desc: false }] }))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+    // Verify data re-sorted
+    let cells = getCells(container)
+    expect(cells[0].textContent).toEqual('1')
+
+    // Set multi-column sort
+    act(() =>
+      updateState({
+        sortBy: [
+          { id: 'a', desc: false },
+          { id: 'b', desc: true }
+        ]
+      })
+    )
+    expect(reactable.getState('my-tbl').sorted).toEqual([
+      { id: 'a', desc: false },
+      { id: 'b', desc: true }
+    ])
+
+    // Clear sort
+    act(() => updateState({ sortBy: [] }))
+    expect(reactable.getState('my-tbl').sorted).toEqual([])
+  })
+
   it('does not enable updateState for tables that are not Shiny outputs', () => {
     const props = {
       data: { a: [1, 2] },
@@ -9926,6 +9969,167 @@ describe('reactable JavaScript API', () => {
 
     act(() => reactable.setGroupBy('my-tbl', ['b', 'a']))
     expect(reactable.getState('my-tbl').groupBy).toEqual(['b', 'a'])
+  })
+
+  it('Reactable.toggleSortBy toggles unsorted column ascending', () => {
+    const props = {
+      data: { a: [3, 1, 2], b: ['c', 'a', 'b'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').sorted).toEqual([])
+
+    // Toggle unsorted column -> ascending
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+  })
+
+  it('Reactable.toggleSortBy toggles asc to desc to asc (no unsorted)', () => {
+    const props = {
+      data: { a: [3, 1, 2] },
+      columns: [{ name: 'a', id: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // asc
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+
+    // asc -> desc
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: true }])
+
+    // desc -> asc (NOT unsorted)
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+  })
+
+  it('Reactable.toggleSortBy with explicit desc', () => {
+    const props = {
+      data: { a: [3, 1, 2] },
+      columns: [{ name: 'a', id: 'a' }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    act(() => reactable.toggleSortBy('my-tbl', 'a', true))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: true }])
+
+    act(() => reactable.toggleSortBy('my-tbl', 'a', false))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+  })
+
+  it('Reactable.toggleSortBy replaces existing sort', () => {
+    const props = {
+      data: { a: [3, 1, 2], b: ['c', 'a', 'b'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+
+    // Toggling a different column replaces the existing sort
+    act(() => reactable.toggleSortBy('my-tbl', 'b'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'b', desc: false }])
+  })
+
+  it('Reactable.toggleSortBy respects sortDescFirst', () => {
+    const props = {
+      data: { a: [3, 1, 2] },
+      columns: [{ name: 'a', id: 'a', defaultSortDesc: true }],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // First toggle should sort descending when sortDescFirst is true
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: true }])
+
+    // Toggle again -> ascending
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+  })
+
+  it('Reactable.toggleSortBy with multi-sort', () => {
+    const props = {
+      data: { a: [3, 1, 2], b: ['c', 'a', 'b'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // Sort by 'a', then add 'b' as multi-sort
+    act(() => reactable.toggleSortBy('my-tbl', 'a'))
+    act(() => reactable.toggleSortBy('my-tbl', 'b', null, true))
+    expect(reactable.getState('my-tbl').sorted).toEqual([
+      { id: 'a', desc: false },
+      { id: 'b', desc: false }
+    ])
+
+    // Toggle 'a' in multi mode -> desc
+    act(() => reactable.toggleSortBy('my-tbl', 'a', null, true))
+    expect(reactable.getState('my-tbl').sorted).toEqual([
+      { id: 'a', desc: true },
+      { id: 'b', desc: false }
+    ])
+
+    // Toggle 'a' in multi mode again -> removed (3-state cycle)
+    act(() => reactable.toggleSortBy('my-tbl', 'a', null, true))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'b', desc: false }])
+  })
+
+  it('Reactable.setSortBy sets sort state', () => {
+    const props = {
+      data: { a: [3, 1, 2], b: ['c', 'a', 'b'] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    const { container } = render(<Reactable {...props} />)
+    expect(reactable.getState('my-tbl').sorted).toEqual([])
+
+    // Set single column sort
+    act(() => reactable.setSortBy('my-tbl', [{ id: 'a', desc: false }]))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'a', desc: false }])
+    // Verify data actually re-sorted
+    let cells = getCells(container)
+    expect(cells[0].textContent).toEqual('1')
+
+    // Set multi-column sort
+    act(() =>
+      reactable.setSortBy('my-tbl', [
+        { id: 'a', desc: false },
+        { id: 'b', desc: true }
+      ])
+    )
+    expect(reactable.getState('my-tbl').sorted).toEqual([
+      { id: 'a', desc: false },
+      { id: 'b', desc: true }
+    ])
+
+    // Clear all sorting
+    act(() => reactable.setSortBy('my-tbl', []))
+    expect(reactable.getState('my-tbl').sorted).toEqual([])
+
+    // Replace existing sort
+    act(() => reactable.setSortBy('my-tbl', [{ id: 'a', desc: true }]))
+    act(() => reactable.setSortBy('my-tbl', [{ id: 'b', desc: false }]))
+    expect(reactable.getState('my-tbl').sorted).toEqual([{ id: 'b', desc: false }])
   })
 
   it('Reactable.toggleAllRowsExpanded', () => {

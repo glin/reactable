@@ -75,6 +75,27 @@ export function setSearch(tableId, value) {
   getInstance(tableId).setGlobalFilter(value)
 }
 
+export function toggleSortBy(tableId, columnId, desc, multi) {
+  const instance = getInstance(tableId)
+
+  // Determine sort direction when toggling sorting like clicking the column header
+  if (desc == null) {
+    const { sortBy } = instance.state
+    const existingSort = sortBy.find(d => d.id === columnId)
+    if (existingSort) {
+      // Toggle direction, or allow clearing when multi-sorting
+      desc = multi ? null : !existingSort.desc
+    } else {
+      desc = Boolean(instance.allColumns.find(d => d.id === columnId)?.sortDescFirst)
+    }
+  }
+  instance.toggleSortBy(columnId, desc, multi)
+}
+
+export function setSortBy(tableId, sortBy) {
+  getInstance(tableId).setSortBy(sortBy)
+}
+
 export function toggleGroupBy(tableId, columnId, isGrouped) {
   getInstance(tableId).toggleGroupBy(columnId, isGrouped)
 }
@@ -2152,6 +2173,7 @@ function Table({
       return
     }
     const setRowsSelected = instance.setRowsSelected
+    const setSortBy = instance.setSortBy
     const gotoPage = instance.gotoPage
     const toggleAllRowsExpanded = instance.toggleAllRowsExpanded
 
@@ -2177,6 +2199,9 @@ function Table({
         )
         gotoPage(nearestValidPage)
       }
+      if (newState.sortBy != null) {
+        setSortBy(newState.sortBy)
+      }
       if (newState.expanded != null) {
         if (newState.expanded) {
           toggleAllRowsExpanded(true)
@@ -2192,6 +2217,7 @@ function Table({
   }, [
     nested,
     instance.setRowsSelected,
+    instance.setSortBy,
     instance.gotoPage,
     instance.toggleAllRowsExpanded,
     dataColumns,
