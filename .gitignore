@@ -2,6 +2,7 @@
 .Rproj.user/
 .Rhistory
 .quarto/
+.vscode/
 **/*.quarto_ipynb
 coverage/
 docs/
