@@ -9,9 +9,10 @@ application.
 updateReactable(
   outputId,
   data = NULL,
-  selected = NULL,
-  expanded = NULL,
+  sortBy = NULL,
   page = NULL,
+  expanded = NULL,
+  selected = NULL,
   meta = NULL,
   session = NULL
 )
@@ -32,19 +33,26 @@ updateReactable(
   will reset unless explicitly specified. All other state will persist,
   including sorting, filtering, and grouping state.
 
-- selected:
+- sortBy:
 
-  Selected rows. Either a numeric vector of row indices, or `NA` to
-  deselect all rows.
+  Sorted columns. A named list of column IDs with values of `"asc"` for
+  ascending order or `"desc"` for descending order, or `NA` to clear all
+  sorting. This format matches the return value of
+  `getReactableState(outputId, "sorted")`.
+
+- page:
+
+  The current page. A single, positive integer.
 
 - expanded:
 
   Expanded rows. Either `TRUE` to expand all rows, or `FALSE` to
   collapse all rows.
 
-- page:
+- selected:
 
-  The current page. A single, positive integer.
+  Selected rows. Either a numeric vector of row indices, or `NA` to
+  deselect all rows.
 
 - meta:
 

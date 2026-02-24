@@ -68,6 +68,7 @@
 <h2 id="public-documentation">Public Documentation<a class="anchor" aria-label="anchor" href="#public-documentation"></a></h2>
 <p>When writing documentation, wrap lines at 120 characters for prose.</p>
 <p>When updating <code>NEWS.md</code>, do not use line breaks for long sentences. Keep each bullet point or paragraph on a single line regardless of length.</p>
+<p>When updating <code>NEWS.md</code>, group similar items together (e.g., all JavaScript API additions) and sort features by significance, with the most important and impactful features listed first.</p>
 <p>When documenting new features in vignettes, add a version callout to indicate when the feature was introduced. Use the current package version from the <code>DESCRIPTION</code> file. For example:</p>
 <pre><code>::: {.callout}
 New in v0.4.5.9000
@@ -76,8 +77,17 @@ New in v0.4.5.9000
 <div class="section level2">
 <h2 id="development-workflow">Development Workflow<a class="anchor" aria-label="anchor" href="#development-workflow"></a></h2>
 <ol style="list-style-type: decimal"><li>
-<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use MASS::Cars93 or mtcars datasets for examples unless another built-in R dataset is more appropriate.</li>
-<li><strong>Make changes</strong></li>
+<strong>Update design docs</strong>: When using Plan Mode or for major features, write planning and design docs into the <code>design/</code> directory. Use <code>design/virtual-scrolling/</code> as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use MASS::Cars93 or mtcars datasets for examples unless another built-in R dataset is more appropriate.
+<ul><li>
+<strong>Ask questions</strong>: When writing design docs, ask clarifying questions about ambiguous design decisions, naming choices, scope, and behavior before finalizing the plan. This leads to much better designs.</li>
+<li>
+<strong>Reuse existing code</strong>: Before writing new logic, search the codebase for existing implementations of similar behavior. Reuse and delegate to existing code paths rather than duplicating logic (e.g., if header click sorting already computes the right state, call into that same code path from the API).</li>
+</ul></li>
+<li>
+<strong>Make changes</strong>
+<ul><li>
+<strong>Parameter ordering</strong>: When adding parameters to an existing function that mirrors another function (e.g., <code><a href="reference/updateReactable.html">updateReactable()</a></code> mirrors <code><a href="reference/reactable.html">reactable()</a></code>), order new parameters to roughly match the order of associated features/parameters in the parent function.</li>
+</ul></li>
 <li>
 <strong>Document R API</strong>: Run <code>devtools::document()</code> in R when making any changes to the R API (roxygen comments).</li>
 <li>
@@ -87,6 +97,14 @@ New in v0.4.5.9000
 <li>
 <strong>Update docs</strong>: Update <code>NEWS.md</code> and <code>vignettes/examples.Rmd</code>. Check if any updates should be made to the existing Rmd docs under <code>vignettes/</code>.</li>
 </ol></div>
+<div class="section level2">
+<h2 id="javascript-api-in-html-documents">JavaScript API in HTML Documents<a class="anchor" aria-label="anchor" href="#javascript-api-in-html-documents"></a></h2>
+<p>JavaScript API calls like <code>Reactable.onStateChange()</code> that reference a reactable instance cannot run in an inline <code>&lt;script&gt;</code> tag because the widget may not have rendered yet. Use <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onStaticRenderComplete.html" class="external-link">htmlwidgets::onStaticRenderComplete()</a></code> for static widgets (Rmd/HTML documents) or <code><a href="https://rdrr.io/pkg/htmlwidgets/man/onRender.html" class="external-link">htmlwidgets::onRender()</a></code> for Shiny outputs to ensure the instance exists first. Button <code>onclick</code> handlers are fine since they run on user interaction, after the widget is already rendered.</p>
+</div>
+<div class="section level2">
+<h2 id="javascript-code-style">JavaScript Code Style<a class="anchor" aria-label="anchor" href="#javascript-code-style"></a></h2>
+<p>Use <code>Boolean()</code> for boolean coercion instead of <code>!!</code>. For example, use <code>Boolean(column &amp;&amp; column.sortDescFirst)</code> rather than <code>!!(column &amp;&amp; column.sortDescFirst)</code>.</p>
+</div>
 <div class="section level2">
 <h2 id="javascript-tests">JavaScript Tests<a class="anchor" aria-label="anchor" href="#javascript-tests"></a></h2>
 <p>When adding JavaScript tests, use JSX syntax.</p>

@@ -73,9 +73,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">updateReactable</span><span class="op">(</span></span>
 <span>  <span class="va">outputId</span>,</span>
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  expanded <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sortBy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  page <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  expanded <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  meta <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  session <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -97,9 +98,14 @@ will reset unless explicitly specified. All other state will persist,
 including sorting, filtering, and grouping state.</p></dd>
 
 
-<dt id="arg-selected">selected<a class="anchor" aria-label="anchor" href="#arg-selected"></a></dt>
-<dd><p>Selected rows. Either a numeric vector of row indices,
-or <code>NA</code> to deselect all rows.</p></dd>
+<dt id="arg-sortby">sortBy<a class="anchor" aria-label="anchor" href="#arg-sortby"></a></dt>
+<dd><p>Sorted columns. A named list of column IDs with values of <code>"asc"</code> for
+ascending order or <code>"desc"</code> for descending order, or <code>NA</code> to clear all sorting.
+This format matches the return value of <code>getReactableState(outputId, "sorted")</code>.</p></dd>
+
+
+<dt id="arg-page">page<a class="anchor" aria-label="anchor" href="#arg-page"></a></dt>
+<dd><p>The current page. A single, positive integer.</p></dd>
 
 
 <dt id="arg-expanded">expanded<a class="anchor" aria-label="anchor" href="#arg-expanded"></a></dt>
@@ -107,8 +113,9 @@ or <code>NA</code> to deselect all rows.</p></dd>
 to collapse all rows.</p></dd>
 
 
-<dt id="arg-page">page<a class="anchor" aria-label="anchor" href="#arg-page"></a></dt>
-<dd><p>The current page. A single, positive integer.</p></dd>
+<dt id="arg-selected">selected<a class="anchor" aria-label="anchor" href="#arg-selected"></a></dt>
+<dd><p>Selected rows. Either a numeric vector of row indices,
+or <code>NA</code> to deselect all rows.</p></dd>
 
 
 <dt id="arg-meta">meta<a class="anchor" aria-label="anchor" href="#arg-meta"></a></dt>

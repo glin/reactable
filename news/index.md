@@ -49,11 +49,16 @@
   ```
 
 - New
-  [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
+  [`Reactable.toggleSortBy()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-togglesortby)
   and
-  [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
-  methods in the JavaScript API to change the current page or page size.
-  ([\#322](https://github.com/glin/reactable/issues/322))
+  [`Reactable.setSortBy()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setsortby)
+  methods in the JavaScript API to programmatically control column
+  sorting. `toggleSortBy()` toggles sort on a single column (cycling
+  between ascending and descending), while `setSortBy()` sets the full
+  sort state declaratively. Also available via
+  `updateReactable(sortBy = ...)` in Shiny.
+  ([\#316](https://github.com/glin/reactable/issues/316),
+  [\#322](https://github.com/glin/reactable/issues/322))
 
 - New
   [`Reactable.toggleRowSelected()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-togglerowselected),
@@ -67,6 +72,13 @@
   ([\#322](https://github.com/glin/reactable/issues/322),
   [\#394](https://github.com/glin/reactable/issues/394),
   [\#412](https://github.com/glin/reactable/issues/412))
+
+- New
+  [`Reactable.gotoPage()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-gotopage)
+  and
+  [`Reactable.setPageSize()`](https://glin.github.io/reactable/articles/javascript-api.html#reactable-setpagesize)
+  methods in the JavaScript API to change the current page or page size.
+  ([\#322](https://github.com/glin/reactable/issues/322))
 
 - JSON serialization of data can now be customized using the
   `reactable.json.func` option. This is an experimental feature for

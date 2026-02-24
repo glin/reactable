@@ -292,6 +292,74 @@ Reactable.setAllFilters('cars-table', [
 Reactable.setAllFilters([])
 ```
 
+### `Reactable.toggleSortBy()`
+
+New in v0.4.5.9000
+
+Toggles the sort state for a column. By default, cycles between
+ascending and descending sort only (the column will not be unsorted). To
+sort ascending or descending explicitly, set the optional `desc`
+argument to `false` or `true`.
+
+When `multi` is `true`, the column is added to the existing sort (like
+shift-clicking a header), and the toggle cycle includes removing the
+sort (ascending → descending → removed).
+
+``` ts
+Reactable.toggleSortBy(
+  tableId: string,
+  columnId: string,
+  desc?: boolean,
+  multi?: boolean
+)
+```
+
+#### Examples
+
+``` js
+// Toggle sort on the "Type" column (ascending <-> descending)
+Reactable.toggleSortBy('cars-table', 'Type')
+
+// Sort the "Type" column descending
+Reactable.toggleSortBy('cars-table', 'Type', true)
+
+// Sort the "Type" column ascending
+Reactable.toggleSortBy('cars-table', 'Type', false)
+
+// Add "Manufacturer" to the existing sort (multi-sort, like shift-click)
+Reactable.toggleSortBy('cars-table', 'Manufacturer', undefined, true)
+```
+
+### `Reactable.setSortBy()`
+
+New in v0.4.5.9000
+
+Sets the sort state for the table. To clear the sort, set `sortBy` to an
+empty array, `[]`.
+
+``` ts
+Reactable.setSortBy(
+  tableId: string,
+  sortBy: Array<{ id: string, desc: boolean }>
+)
+```
+
+#### Examples
+
+``` js
+// Sort by "Type" ascending
+Reactable.setSortBy('cars-table', [{ id: 'Type', desc: false }])
+
+// Sort by "Type" ascending, then "Price" descending
+Reactable.setSortBy('cars-table', [
+  { id: 'Type', desc: false },
+  { id: 'Price', desc: true }
+])
+
+// Clear all sorting
+Reactable.setSortBy('cars-table', [])
+```
+
 ### `Reactable.toggleGroupBy()`
 
 Toggles the `groupBy` state for a column between grouped and ungrouped.
