@@ -798,6 +798,67 @@ This is more complex than flat pagination but entirely feasible with the SQL mod
 
 ---
 
+## Phase 0 POC benchmark results
+
+Measured in Chrome (Windows) using [poc.html](poc.html) — a standalone HTML file with DuckDB-WASM loaded from CDN,
+data generated in JS and ingested via Apache Arrow IPC (`tableFromArrays` → `tableToIPC` → `insertArrowFromIPCStream`).
+Table has 7 columns: id (INT), name (VARCHAR), category (VARCHAR), value (DOUBLE), score (DOUBLE), active (BOOLEAN),
+created (INT/Date32).
+
+### Timing results
+
+| Operation | 100K rows | 500K rows | 1M rows |
+|-----------|-----------|-----------|---------|
+| DuckDB-WASM init (cold) | 553 ms | 557 ms | 540 ms |
+| JS data generation | 10 ms | 45 ms | 94 ms |
+| Arrow IPC ingestion | 72 ms | 223 ms | 413 ms |
+| Pagination query (LIMIT 25 OFFSET n) | 5 ms | 6 ms | 12 ms |
+| Global search ("books", 6 cols ILIKE) | 164 ms | 625 ms | 1,211 ms |
+
+### Assessment
+
+- **DuckDB-WASM init** is a fixed ~550ms one-time cost regardless of data size (WASM download + instantiation).
+- **Arrow IPC ingestion** scales linearly and is fast — 1M rows in 413ms. The original approach using SQL
+  `INSERT INTO ... VALUES` was 40-100x slower (4.1s for 100K, 37.4s for 1M).
+- **Pagination and sort queries** are extremely fast at all sizes (<15ms), well under the 300ms target.
+- **Global search** is the bottleneck at scale: 6 separate `CAST(col AS VARCHAR) ILIKE` comparisons per row.
+  At 100K (164ms) it's within the 300ms target. At 500K+ it exceeds it.
+
+### Search performance tradeoffs explored
+
+We tested two approaches to speed up search:
+
+1. **SQL-based search index** (`ALTER TABLE` + `UPDATE SET _search_text = LOWER(CONCAT(...))` post-ingest):
+   Reduced search to ~44-87ms at all sizes, but ingestion regressed 3-6x (1,752ms for 1M) because DuckDB must
+   scan and update every row.
+
+2. **JS-side precomputed search text** (build `_search_text` string column in Arrow before ingestion):
+   Similar search speedup, but ingestion still regressed 6x (2,488ms for 1M) because the extra VARCHAR column
+   bloats the Arrow IPC payload significantly.
+
+Neither approach is worthwhile. The extra column (storing concatenated text for 1M rows) costs more in transfer
+and memory than it saves on queries.
+
+### Recommended target range
+
+| Use case | Recommended approach |
+|----------|---------------------|
+| Static HTML (R Markdown / Quarto) up to ~200K rows | `engine = "duckdb"` (WASM) — all operations <300ms |
+| Static HTML, 200K-1M rows | `engine = "duckdb"` (WASM) — pagination/sort instant, search may lag |
+| Shiny with data that must stay on server | `server = "duckdb"` (R backend) — no WASM limit |
+| Shiny with >1M rows or sensitive data | `server = "duckdb"` (R backend) |
+
+### Future search optimizations
+
+- **DuckDB Full-Text Search (FTS) extension:** DuckDB has a `PRAGMA create_fts_index` that creates an inverted
+  index for fast text search. Not yet tested with DuckDB-WASM, but if available, it could bring 1M search to <100ms.
+- **Column-specific search:** If the user searches a specific column (column filter vs global search), only one
+  `ILIKE` is needed instead of 6. Column filters are already fast.
+- **Debounce tuning:** The POC debounces search input at 300ms. For large datasets, increasing the debounce or
+  requiring a minimum query length (3+ chars) would reduce perceived lag.
+
+---
+
 ## Why not just improve the V8 server-side backend?
 
 | | V8 Server-Side | DuckDB-WASM | DuckDB R Backend |

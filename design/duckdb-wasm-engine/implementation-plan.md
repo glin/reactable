@@ -7,38 +7,18 @@ memory, WASM variants), shared DuckDB R/WASM design, and the comparison with V8 
 
 ---
 
-### Phase 0: Standalone proof-of-concept (validate it works at all)
-**Goal:** A minimal HTML file that loads DuckDB-WASM, ingests data, and paginates. No R, no reactable, just raw
-JS. This validates the core technology before touching any reactable code.
+### Phase 0: Standalone proof-of-concept — DONE
 
-#### Steps
+See [design doc benchmarks](duckdb-wasm-engine.md#phase-0-poc-benchmark-results) for full results.
 
-- [ ] **0.1** Create `design/duckdb-wasm-engine/poc.html` — a standalone HTML file that:
-  1. Loads DuckDB-WASM (bundled locally; POC can use CDN for convenience)
-  2. Creates an in-memory database
-  3. Inserts sample data (e.g., 100K rows of `{id, name, value}` generated in JS)
-  4. Renders a basic HTML table showing page 1 (25 rows)
-  5. Has "Previous" / "Next" buttons that execute `LIMIT/OFFSET` queries
-  6. Has a text input that adds a `WHERE ... ILIKE` clause
-  7. Has a column header click that toggles `ORDER BY ... ASC/DESC`
-
-- [ ] **0.2** Measure and record:
-  - Time to instantiate DuckDB-WASM (cold start, first page load)
-  - Time to import 100K rows
-  - Time for a pagination query (LIMIT 25 OFFSET 50)
-  - Time for a sort query (ORDER BY value DESC LIMIT 25)
-  - Time for a filter query (WHERE name ILIKE '%foo%' LIMIT 25)
-  - Total WASM download size
-  - Memory usage (Chrome DevTools → Memory tab)
-
-- [ ] **0.3** Repeat 0.2 with 500K and 1M rows to find the breaking point
-
-#### Validate
-- [ ] Page 1 renders in <1s for 100K rows
-- [ ] Sort/filter/page change responds in <300ms for 100K rows
-- [ ] Memory stays under 500 MB for 100K × 10 columns
-- [ ] Works in Chrome, Firefox, Safari
-- [ ] WASM loads successfully
+**Key findings:**
+- Arrow IPC ingestion is the right path (70ms/100K, 413ms/1M). SQL INSERT was 40-100x slower.
+- `insertArrowFromIPCStream` is the working DuckDB-WASM API (not `registerFileBuffer` or `insertArrowTable`).
+- Prepared statement params are passed via `stmt.query(...params)`, not `stmt.bind()`.
+- Pagination/sort: <15ms at all sizes. Global search: 164ms/100K (OK), 625ms/500K, 1.2s/1M (too slow at scale).
+- Search precomputation (SQL or JS-side) not worthwhile — bloats ingest more than it saves on queries.
+- Recommended WASM target: up to ~200K rows for static HTML. Server backend for larger datasets.
+- Future: DuckDB FTS extension could fix search at scale.
 
 ---
 
@@ -129,9 +109,8 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
 
       // 2. Decode base64 Arrow IPC and load into DuckDB
       const bytes = Uint8Array.from(atob(arrowBase64), c => c.charCodeAt(0))
-      await this.db.registerFileBuffer('data.arrow', bytes)
       this.conn = await this.db.connect()
-      await this.conn.query(`CREATE TABLE reactable_data AS SELECT * FROM 'data.arrow'`)
+      await this.conn.insertArrowFromIPCStream(bytes, { name: 'reactable_data', create: true })
 
       // 3. Get total row count
       const countResult = await this.conn.query('SELECT COUNT(*) as n FROM reactable_data')

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DuckDB-WASM Proof of Concept — reactable</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; padding: 24px; color: #1a1a1a; }
+    h1 { font-size: 1.25rem; margin-bottom: 16px; }
+
+    .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .controls label { font-size: 0.85rem; font-weight: 600; }
+    .controls input, .controls select {
+      padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem;
+    }
+    .controls input[type="text"] { width: 220px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: fixed; }
+    th, td { padding: 6px 10px; border: 1px solid #ddd; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    th { background: #f5f5f5; cursor: pointer; user-select: none; position: relative; }
+    th:hover { background: #e8e8e8; }
+    th .sort-indicator { margin-left: 4px; opacity: 0.5; }
+    th.sorted .sort-indicator { opacity: 1; }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    .pagination { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: 0.85rem; }
+    .pagination button {
+      padding: 4px 12px; border: 1px solid #ccc; border-radius: 4px; background: #fff;
+      cursor: pointer; font-size: 0.85rem;
+    }
+    .pagination button:disabled { opacity: 0.4; cursor: default; }
+    .pagination button:not(:disabled):hover { background: #f0f0f0; }
+
+    #metrics { margin-top: 20px; padding: 12px; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.8rem; font-family: monospace; white-space: pre-wrap; }
+    #status { margin-bottom: 12px; font-size: 0.9rem; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>DuckDB-WASM Proof of Concept</h1>
+  <div id="status">Loading DuckDB-WASM…</div>
+
+  <div class="controls">
+    <label>Rows:
+      <select id="rowCountSelect">
+        <option value="100000" selected>100K</option>
+        <option value="500000">500K</option>
+        <option value="1000000">1M</option>
+      </select>
+    </label>
+    <button id="loadBtn">Load Data</button>
+    <label>Search: <input type="text" id="searchInput" placeholder="Global search…" disabled></label>
+    <label>Page size:
+      <select id="pageSizeSelect" disabled>
+        <option value="10">10</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="tableContainer"></div>
+
+  <div class="pagination">
+    <button id="firstBtn" disabled>First</button>
+    <button id="prevBtn" disabled>Previous</button>
+    <span id="pageInfo">–</span>
+    <button id="nextBtn" disabled>Next</button>
+    <button id="lastBtn" disabled>Last</button>
+  </div>
+
+  <div id="metrics"></div>
+
+  <script type="module">
+    import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.29.0/+esm'
+    import * as arrow from 'https://cdn.jsdelivr.net/npm/apache-arrow@18.1.0/+esm'
+
+    // ── State ──
+    let db = null
+    let conn = null
+    let totalRowCount = 0
+    let filteredRowCount = 0
+    let pageIndex = 0
+    let pageSize = 25
+    let sortColumn = null   // { id, desc }
+    let searchValue = ''
+    const columns = ['id', 'name', 'category', 'value', 'score', 'active', 'created']
+    const metrics = {}
+
+    // ── DOM refs ──
+    const $ = (sel) => document.querySelector(sel)
+    const statusEl = $('#status')
+    const metricsEl = $('#metrics')
+    const tableContainer = $('#tableContainer')
+    const searchInput = $('#searchInput')
+    const pageSizeSelect = $('#pageSizeSelect')
+    const rowCountSelect = $('#rowCountSelect')
+    const loadBtn = $('#loadBtn')
+    const firstBtn = $('#firstBtn')
+    const prevBtn = $('#prevBtn')
+    const nextBtn = $('#nextBtn')
+    const lastBtn = $('#lastBtn')
+    const pageInfo = $('#pageInfo')
+
+    // ── Helpers ──
+    function time(label) {
+      const start = performance.now()
+      return () => {
+        const ms = performance.now() - start
+        metrics[label] = ms.toFixed(1) + ' ms'
+        return ms
+      }
+    }
+
+    function logMetrics() {
+      metricsEl.textContent = Object.entries(metrics).map(([k, v]) => `${k}: ${v}`).join('\n')
+    }
+
+    function escapeIdentifier(name) {
+      return '"' + name.replace(/"/g, '""') + '"'
+    }
+
+    // ── Initialize DuckDB-WASM ──
+    async function initDuckDB() {
+      const end = time('DuckDB-WASM init (cold)')
+      const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles()
+      const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES)
+      const worker_url = URL.createObjectURL(
+        new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' })
+      )
+      const worker = new Worker(worker_url)
+      const logger = new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING)
+      db = new duckdb.AsyncDuckDB(logger, worker)
+      await db.instantiate(bundle.mainModule, bundle.pthreadWorker)
+      URL.revokeObjectURL(worker_url)
+      conn = await db.connect()
+      end()
+      logMetrics()
+      statusEl.textContent = 'DuckDB-WASM ready. Click "Load Data" to generate and ingest rows.'
+      loadBtn.disabled = false
+    }
+
+    // ── Generate + ingest data ──
+    async function loadData(numRows) {
+      statusEl.textContent = `Generating ${numRows.toLocaleString()} rows…`
+      loadBtn.disabled = true
+      searchInput.disabled = true
+      pageSizeSelect.disabled = true
+
+      // Drop old table if exists
+      await conn.query('DROP TABLE IF EXISTS reactable_data')
+
+      const endGen = time(`Generate ${numRows.toLocaleString()} rows (JS)`)
+      const categories = ['Electronics', 'Clothing', 'Books', 'Food', 'Sports', 'Home', 'Auto', 'Health']
+      const firstNames = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve', 'Frank', 'Grace', 'Hank', 'Iris', 'Jack']
+      const lastNames = ['Smith', 'Jones', 'Brown', 'Davis', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'White']
+
+      // Build typed arrays for Arrow table
+      const ids = new Int32Array(numRows)
+      const nameArr = new Array(numRows)
+      const catArr = new Array(numRows)
+      const values = new Float64Array(numRows)
+      const scores = new Float64Array(numRows)
+      const actives = new Uint8Array(numRows)
+      const createdMs = new Int32Array(numRows) // days since epoch for Arrow Date32
+
+      const epochMs = new Date(2020, 0, 1).getTime()
+      const dayMs = 86400000
+      const unixEpochMs = new Date(1970, 0, 1).getTime()
+      for (let i = 0; i < numRows; i++) {
+        ids[i] = i + 1
+        nameArr[i] = firstNames[i % firstNames.length] + ' ' + lastNames[Math.floor(i / firstNames.length) % lastNames.length]
+        catArr[i] = categories[i % categories.length]
+        values[i] = Math.round(Math.random() * 100000) / 100
+        scores[i] = Math.round(Math.random() * 1000) / 10
+        actives[i] = Math.random() > 0.3 ? 1 : 0
+        // Days since Unix epoch for Date32
+        createdMs[i] = Math.floor((epochMs + Math.floor(Math.random() * 1500) * dayMs - unixEpochMs) / dayMs)
+      }
+      endGen()
+
+      // Build Arrow table, serialize to IPC, and load into DuckDB
+      // This mirrors the real pipeline: R → Arrow IPC bytes → browser → DuckDB
+      const endIngest = time(`Ingest ${numRows.toLocaleString()} rows into DuckDB (Arrow IPC)`)
+
+      const arrowTable = arrow.tableFromArrays({
+        id: ids,
+        name: nameArr,
+        category: catArr,
+        value: values,
+        score: scores,
+        active: Array.from(actives, v => Boolean(v)),
+        created: createdMs
+      })
+
+      // Serialize to IPC stream bytes, then ingest via insertArrowFromIPCStream
+      const ipcBytes = arrow.tableToIPC(arrowTable, 'stream')
+      await conn.insertArrowFromIPCStream(ipcBytes, { name: 'reactable_data', create: true })
+      endIngest()
+
+      // Get total count
+      const countResult = await conn.query('SELECT COUNT(*) AS n FROM reactable_data')
+      totalRowCount = Number(countResult.toArray()[0].n)
+      filteredRowCount = totalRowCount
+
+      // Reset state
+      pageIndex = 0
+      sortColumn = null
+      searchValue = ''
+      searchInput.value = ''
+      searchInput.disabled = false
+      pageSizeSelect.disabled = false
+      loadBtn.disabled = false
+
+      statusEl.textContent = `Loaded ${totalRowCount.toLocaleString()} rows. Try sorting, searching, and paging.`
+      logMetrics()
+      await runQuery()
+    }
+
+    // ── Build and execute query ──
+    async function runQuery() {
+      const endQuery = time('Last query')
+      let sql = 'SELECT * FROM reactable_data'
+      let countSql = 'SELECT COUNT(*) AS n FROM reactable_data'
+      const params = []
+      const whereClauses = []
+
+      // Global search — match any column via ILIKE
+      if (searchValue) {
+        const searchCols = columns.filter(c => c !== 'active') // skip boolean
+        const colClauses = searchCols.map(c => {
+          params.push(searchValue)
+          return `CAST(${escapeIdentifier(c)} AS VARCHAR) ILIKE '%' || $${params.length} || '%'`
+        })
+        whereClauses.push('(' + colClauses.join(' OR ') + ')')
+      }
+
+      if (whereClauses.length > 0) {
+        const whereStr = ' WHERE ' + whereClauses.join(' AND ')
+        sql += whereStr
+        countSql += whereStr
+      }
+
+      // Sort
+      if (sortColumn) {
+        const dir = sortColumn.desc ? 'DESC' : 'ASC'
+        sql += ` ORDER BY ${escapeIdentifier(sortColumn.id)} ${dir} NULLS LAST`
+      }
+
+      // Pagination
+      const offset = pageIndex * pageSize
+      sql += ` LIMIT ${pageSize} OFFSET ${offset}`
+
+      // Execute
+      let dataResult, countResult
+      if (params.length > 0) {
+        const dataStmt = await conn.prepare(sql)
+        const countStmt = await conn.prepare(countSql)
+        dataResult = await dataStmt.query(...params)
+        countResult = await countStmt.query(...params)
+        await dataStmt.close()
+        await countStmt.close()
+      } else {
+        dataResult = await conn.query(sql)
+        countResult = await conn.query(countSql)
+      }
+
+      filteredRowCount = Number(countResult.toArray()[0].n)
+      const rows = dataResult.toArray().map(r => r.toJSON())
+      endQuery()
+      logMetrics()
+
+      renderTable(rows)
+      updatePagination()
+    }
+
+    // ── Render HTML table ──
+    function renderTable(rows) {
+      if (rows.length === 0) {
+        tableContainer.innerHTML = '<p style="padding:12px;color:#777;">No rows match.</p>'
+        return
+      }
+
+      let html = '<table><thead><tr>'
+      for (const col of columns) {
+        const isSorted = sortColumn && sortColumn.id === col
+        const sortedClass = isSorted ? ' class="sorted"' : ''
+        let indicator = '↕'
+        if (isSorted) indicator = sortColumn.desc ? '↓' : '↑'
+        html += `<th${sortedClass} data-col="${col}">${col}<span class="sort-indicator">${indicator}</span></th>`
+      }
+      html += '</tr></thead><tbody>'
+
+      for (const row of rows) {
+        html += '<tr>'
+        for (const col of columns) {
+          let val = row[col]
+          if (val === null || val === undefined) val = ''
+          else if (typeof val === 'boolean') val = val ? 'true' : 'false'
+          else if (col === 'value') val = Number(val).toFixed(2)
+          else if (col === 'score') val = Number(val).toFixed(1)
+          html += `<td>${val}</td>`
+        }
+        html += '</tr>'
+      }
+      html += '</tbody></table>'
+      tableContainer.innerHTML = html
+
+      // Attach sort handlers
+      tableContainer.querySelectorAll('th').forEach(th => {
+        th.addEventListener('click', () => onSort(th.dataset.col))
+      })
+    }
+
+    // ── Pagination UI ──
+    function updatePagination() {
+      const totalPages = Math.max(1, Math.ceil(filteredRowCount / pageSize))
+      const startRow = filteredRowCount === 0 ? 0 : pageIndex * pageSize + 1
+      const endRow = Math.min((pageIndex + 1) * pageSize, filteredRowCount)
+      pageInfo.textContent = `${startRow}–${endRow} of ${filteredRowCount.toLocaleString()} rows (page ${pageIndex + 1} of ${totalPages.toLocaleString()})`
+
+      firstBtn.disabled = pageIndex === 0
+      prevBtn.disabled = pageIndex === 0
+      nextBtn.disabled = pageIndex >= totalPages - 1
+      lastBtn.disabled = pageIndex >= totalPages - 1
+    }
+
+    // ── Event handlers ──
+    function onSort(colId) {
+      if (sortColumn && sortColumn.id === colId) {
+        if (!sortColumn.desc) {
+          sortColumn = { id: colId, desc: true }
+        } else {
+          sortColumn = null // third click clears sort
+        }
+      } else {
+        sortColumn = { id: colId, desc: false }
+      }
+      pageIndex = 0
+      runQuery()
+    }
+
+    let searchTimeout = null
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout)
+      searchTimeout = setTimeout(() => {
+        searchValue = searchInput.value.trim()
+        pageIndex = 0
+        runQuery()
+      }, 300) // debounce
+    })
+
+    pageSizeSelect.addEventListener('change', () => {
+      pageSize = Number(pageSizeSelect.value)
+      pageIndex = 0
+      runQuery()
+    })
+
+    firstBtn.addEventListener('click', () => { pageIndex = 0; runQuery() })
+    prevBtn.addEventListener('click', () => { pageIndex = Math.max(0, pageIndex - 1); runQuery() })
+    nextBtn.addEventListener('click', () => {
+      const maxPage = Math.ceil(filteredRowCount / pageSize) - 1
+      pageIndex = Math.min(maxPage, pageIndex + 1)
+      runQuery()
+    })
+    lastBtn.addEventListener('click', () => {
+      pageIndex = Math.ceil(filteredRowCount / pageSize) - 1
+      runQuery()
+    })
+
+    loadBtn.addEventListener('click', () => {
+      loadData(Number(rowCountSelect.value))
+    })
+    loadBtn.disabled = true
+
+    rowCountSelect.addEventListener('change', () => {
+      loadBtn.textContent = `Load Data (${rowCountSelect.options[rowCountSelect.selectedIndex].text})`
+    })
+
+    // ── Kick off ──
+    initDuckDB().catch(err => {
+      statusEl.textContent = 'Failed to initialize DuckDB-WASM: ' + err.message
+      console.error(err)
+    })
+  </script>
+</body>
+</html>
