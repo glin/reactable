@@ -22,55 +22,19 @@ See [design doc benchmarks](duckdb-wasm-engine.md#phase-0-poc-benchmark-results)
 
 ---
 
-### Phase 1: Arrow IPC serialization in R
-**Goal:** Replace JSON serialization with Arrow IPC as an opt-in format. This is valuable on its own — Arrow is
-faster to serialize, smaller, and handles NA/NaN/Inf natively. No DuckDB yet.
+### Phase 1: Arrow IPC serialization in R — DONE
 
-#### Steps
+Added `engine = NULL` param to `reactable()`, `serializeArrowIPC()` in `R/utils.R` using `arrow::write_ipc_stream()`
++ `jsonlite::base64_enc()`. When `engine = "duckdb"`, data is serialized as Arrow IPC base64 and passed as `arrowData`
+prop (data is NULL). `arrow` added to Suggests. `base64enc` not needed — `jsonlite::base64_enc` already available.
 
-- [ ] **1.1** Add `arrow` to Suggests in DESCRIPTION
-- [ ] **1.2** In `reactable()`, add `engine` parameter (after `server` param):
-  ```r
-  reactable <- function(
-    data,
-    # ... existing params ...
-    server = FALSE,
-    engine = NULL,    # NEW: NULL (default/JSON), "duckdb"
-    selectionId = NULL
-  )
-  ```
-- [ ] **1.3** Add Arrow serialization function in `R/utils.R` or new `R/engine.R`:
-  ```r
-  serializeArrowIPC <- function(data) {
-    if (!requireNamespace("arrow", quietly = TRUE)) {
-      stop('The arrow package is required for engine = "duckdb". ',
-           'Run install.packages("arrow")', call. = FALSE)
-    }
-    raw_bytes <- arrow::write_ipc_stream(data, raw())
-    base64enc::base64encode(raw_bytes)
-  }
-  ```
-- [ ] **1.4** When `engine = "duckdb"`, serialize data as Arrow IPC instead of JSON:
-  ```r
-  if (identical(engine, "duckdb")) {
-    data_payload <- list(
-      arrowIPC = serializeArrowIPC(data),
-      format = "arrow-ipc-base64"
-    )
-    # Pass Arrow payload instead of JSON data string
-  } else {
-    data <- toJSON(data)
-  }
-  ```
-- [ ] **1.5** Add `base64enc` to Suggests in DESCRIPTION (or use `jsonlite::base64_enc` which is already
-  a dependency)
-
-#### Validate
-- [ ] `arrow::write_ipc_stream(mtcars, raw())` round-trips correctly for: numeric, character, factor, Date,
-  POSIXct, logical, integer, NA, NaN, Inf, -Inf
-- [ ] Base64-encoded Arrow IPC of 100K rows is ≤ size of equivalent JSON (should be smaller)
-- [ ] Existing `reactable(mtcars)` (no engine param) is completely unchanged
-- [ ] `R CMD check` passes
+**Tests added** (`tests/testthat/test-reactable.R`, `tests/testthat/test-utils.R`):
+- Engine param validation (invalid values error, NULL works)
+- Arrow IPC round-trip (numeric, character, logical, factor, Date, POSIXct)
+- Special values (NA, NaN, Inf, -Inf in numeric; NA in character)
+- dataKey uniqueness across different data
+- Other reactable features preserved with engine = "duckdb"
+- `serializeArrowIPC()` unit tests (basic, column types, NA handling)
 
 ---
 
@@ -224,13 +188,14 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
   ```
 
 - [ ] **2.6** Create test Rmd: `vignettes-test/duckdb-basic.Rmd`
-  ```r
-  reactable(
-    MASS::Cars93[rep(seq_len(nrow(MASS::Cars93)), 1000), ],  # ~93K rows
-    engine = "duckdb",
-    defaultPageSize = 25
-  )
-  ```
+
+- [ ] **2.7** Add JS tests (`srcjs/__tests__/DuckDBEngine.test.js`):
+  - `DuckDBEngine.init()` creates table from Arrow IPC bytes
+  - `DuckDBEngine.query()` returns correct page of rows with LIMIT/OFFSET
+  - `DuckDBEngine.query()` returns correct `rowCount`
+  - `DuckDBEngine.destroy()` cleans up connection and database
+  - Edge case: empty data (0 rows)
+  - Edge case: page beyond last row returns empty result
 
 #### Validate
 - [ ] Knit `duckdb-basic.Rmd` to HTML, open in browser
@@ -321,6 +286,16 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
   column metadata already passed from R.
 
 - [ ] **3.4** Update `duckdb-basic.Rmd` test to enable `searchable = TRUE, filterable = TRUE`
+
+- [ ] **3.5** Add JS tests for sort/filter/search:
+  - Sort ASC/DESC produces correct SQL ORDER BY
+  - Multi-column sort produces correct ORDER BY clause
+  - Column filter produces correct WHERE ILIKE clause
+  - Global search produces correct OR-joined WHERE clause
+  - Numeric column filter uses LIKE (starts-with) not ILIKE (contains)
+  - Filter + sort + pagination combination produces correct SQL
+  - `escapeIdentifier` handles column names with special characters
+  - Parameterized queries prevent SQL injection (filter value with `'; DROP TABLE --`)
 
 #### Validate
 - [ ] Click column header → sorts ascending → click again → descending → click again → unsorted
@@ -414,6 +389,13 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 - [ ] **5.5** Add `__state` metadata to grouped results (index, grouped flag, subRowCount) to match what
   the react-table server-side mode expects
 
+- [ ] **5.6** Add JS tests for grouping:
+  - GROUP BY produces correct SQL with aggregation functions
+  - Expanding a group produces correct WHERE clause for sub-rows
+  - Multi-level grouping produces correct nested queries
+  - Aggregate function mapping (sum→SUM, mean→AVG, etc.) is correct
+  - Grouped row count is correct
+
 #### Validate
 - [ ] `reactable(data, engine = "duckdb", groupBy = "region")` shows grouped rows
 - [ ] Click to expand a group → shows child rows
@@ -439,6 +421,9 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 - [ ] **6.7** `Reactable.setData()` JS API: Support updating the DuckDB table when data changes
 - [ ] **6.8** Shiny `updateReactable(data = ...)`: Re-import Arrow data into DuckDB-WASM
 - [ ] **6.9** Write tests: Jest tests for DuckDBEngine, R tests for server-duckdb backend
+  - Ensure all DuckDBEngine methods have test coverage
+  - Ensure all R server-duckdb S3 methods have test coverage
+  - Integration tests: R Arrow IPC → JS DuckDB ingestion → query → correct results
 - [ ] **6.10** Document in vignettes: new `engine = "duckdb"` parameter, when to use it, limitations
 - [ ] **6.11** Update NEWS.md
 

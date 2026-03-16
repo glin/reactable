@@ -298,3 +298,68 @@ test_that("callFunc", {
   expect_equal(callFunc(function(x) x), NULL)
   expect_equal(callFunc(function(x, y) y, "x"), NULL)
 })
+
+test_that("serializeArrowIPC", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    x = c(1, 2, 3),
+    y = c("a", "b", "c"),
+    stringsAsFactors = FALSE
+  )
+
+  result <- serializeArrowIPC(df)
+
+  # Should return a base64-encoded string
+  expect_true(is.character(result))
+  expect_true(nchar(result) > 0)
+
+  # Should round-trip through Arrow IPC
+  raw_bytes <- jsonlite::base64_dec(result)
+  rt <- arrow::read_ipc_stream(raw_bytes)
+  expect_equal(rt$x, df$x)
+  expect_equal(as.character(rt$y), df$y)
+})
+
+test_that("serializeArrowIPC handles various column types", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    int_col = 1L:3L,
+    dbl_col = c(1.1, 2.2, 3.3),
+    chr_col = c("a", "b", "c"),
+    lgl_col = c(TRUE, FALSE, TRUE),
+    date_col = as.Date(c("2024-01-01", "2024-06-15", "2024-12-31")),
+    factor_col = factor(c("x", "y", "x")),
+    stringsAsFactors = FALSE
+  )
+
+  result <- serializeArrowIPC(df)
+  raw_bytes <- jsonlite::base64_dec(result)
+  rt <- arrow::read_ipc_stream(raw_bytes)
+
+  expect_equal(rt$int_col, df$int_col)
+  expect_equal(rt$dbl_col, df$dbl_col)
+  expect_equal(as.character(rt$chr_col), df$chr_col)
+  expect_equal(rt$lgl_col, df$lgl_col)
+  expect_equal(as.Date(rt$date_col), df$date_col)
+})
+
+test_that("serializeArrowIPC handles NA values", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    x = c(1, NA, 3),
+    y = c("a", NA, "c"),
+    stringsAsFactors = FALSE
+  )
+
+  result <- serializeArrowIPC(df)
+  raw_bytes <- jsonlite::base64_dec(result)
+  rt <- arrow::read_ipc_stream(raw_bytes)
+
+  expect_true(is.na(rt$x[2]))
+  expect_true(is.na(rt$y[2]))
+  expect_equal(rt$x[1], 1)
+  expect_equal(as.character(rt$y[1]), "a")
+})

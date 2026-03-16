@@ -133,6 +133,14 @@
 #'   V8 package, which is not installed with reactable by default.
 #'
 #'   Server-side data processing is currently **experimental**.
+#' @param engine Data engine for client-side data processing. Currently supports
+#'   `"duckdb"` to use DuckDB-WASM for sorting, filtering, and pagination in the
+#'   browser via SQL queries. This enables large datasets (100K+ rows) in static
+#'   R Markdown and Quarto documents without a server.
+#'
+#'   Requires the `arrow` package for data serialization.
+#'
+#'   The DuckDB engine is currently **experimental**.
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
@@ -239,6 +247,7 @@ reactable <- function(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
+  engine = NULL,
   selectionId = NULL
 ) {
   crosstalkKey <- NULL
@@ -260,6 +269,12 @@ reactable <- function(
   }
   if (ncol(data) == 0) {
     stop("`data` must have at least one column")
+  }
+
+  if (!is.null(engine)) {
+    if (!identical(engine, "duckdb")) {
+      stop('`engine` must be "duckdb" or NULL')
+    }
   }
 
   if (is.null(rownames)) {
@@ -730,11 +745,17 @@ reactable <- function(
   # By pre-serializing, we only pay the serialization cost once at the start, rather than every time when
   # rendering or printing the widget. This was originally done as a necessity to change the JSON serializer,
   # but now kept as an intentional optimization.
-  data <- toJSON(data)
+  arrowData <- NULL
+  if (identical(engine, "duckdb")) {
+    arrowData <- serializeArrowIPC(data)
+    data <- NULL
+  } else {
+    data <- toJSON(data)
+  }
 
   # Create a unique key for the data. The key is used to fully reset state when
   # the data changes (for tables in Shiny).
-  dataKey <- digest::digest(list(data = data, columns = cols, meta = meta))
+  dataKey <- digest::digest(list(data = if (!is.null(data)) data else arrowData, columns = cols, meta = meta))
 
   # Serialize user-set args only to keep the widget HTML slim
   defaultArgs <- formals()
@@ -743,6 +764,8 @@ reactable <- function(
 
   component <- reactR::component("Reactable", list(
     data = data,
+    arrowData = arrowData,
+    engine = engine,
     columns = cols,
     columnGroups = columnGroups,
     groupBy = groupBy,

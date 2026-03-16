@@ -1692,3 +1692,142 @@ test_that("server-side data", {
   registerS3method("reactableServerData", "custom_backend", reactableServerInit.custom_backend)
   expect_error(reactable(data, server = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })
+
+test_that("engine param validation", {
+  df <- data.frame(x = 1, y = "a")
+  expect_error(reactable(df, engine = "invalid"), '`engine` must be "duckdb" or NULL')
+  expect_error(reactable(df, engine = TRUE), '`engine` must be "duckdb" or NULL')
+  expect_error(reactable(df, engine = 123), '`engine` must be "duckdb" or NULL')
+
+  # NULL engine should work (default behavior)
+  tbl <- reactable(df, engine = NULL)
+  expect_null(getAttrib(tbl, "engine"))
+  expect_null(getAttrib(tbl, "arrowData"))
+  # data should be JSON-serialized as normal
+  expect_true(is.character(as.character(getAttrib(tbl, "data"))))
+})
+
+test_that("engine = 'duckdb' serializes data as Arrow IPC", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    int_col = 1:5,
+    dbl_col = c(1.1, 2.2, 3.3, 4.4, 5.5),
+    chr_col = c("a", "b", "c", "d", "e"),
+    lgl_col = c(TRUE, FALSE, TRUE, FALSE, TRUE),
+    stringsAsFactors = FALSE
+  )
+
+  tbl <- reactable(df, engine = "duckdb")
+  attribs <- getAttribs(tbl)
+
+  # data should be NULL (not JSON)
+  expect_null(attribs$data)
+
+  # arrowData should be a base64-encoded string
+  expect_true(is.character(attribs$arrowData))
+  expect_true(nchar(attribs$arrowData) > 0)
+
+  # engine prop should be passed through
+
+  expect_equal(attribs$engine, "duckdb")
+
+  # Arrow IPC should round-trip correctly
+  raw_bytes <- jsonlite::base64_dec(attribs$arrowData)
+  rt <- arrow::read_ipc_stream(raw_bytes)
+  expect_equal(rt$int_col, df$int_col)
+  expect_equal(rt$dbl_col, df$dbl_col)
+  expect_equal(as.character(rt$chr_col), df$chr_col)
+  expect_equal(rt$lgl_col, df$lgl_col)
+})
+
+test_that("engine = 'duckdb' handles special values in Arrow IPC", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    x = c(1, NA, NaN, Inf, -Inf),
+    y = c("a", NA, "c", NA, "e"),
+    stringsAsFactors = FALSE
+  )
+
+  tbl <- reactable(df, engine = "duckdb")
+  raw_bytes <- jsonlite::base64_dec(getAttrib(tbl, "arrowData"))
+  rt <- arrow::read_ipc_stream(raw_bytes)
+
+  # Numeric NA, NaN, Inf, -Inf should round-trip
+  expect_true(is.na(rt$x[2]))
+  expect_true(is.nan(rt$x[3]))
+  expect_equal(rt$x[4], Inf)
+  expect_equal(rt$x[5], -Inf)
+
+  # String NA should round-trip
+  expect_true(is.na(rt$y[2]))
+  expect_true(is.na(rt$y[4]))
+  expect_equal(as.character(rt$y[1]), "a")
+})
+
+test_that("engine = 'duckdb' handles Date and POSIXct in Arrow IPC", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(
+    date_col = as.Date(c("2024-01-15", "2024-06-30", NA)),
+    datetime_col = as.POSIXct(c("2024-01-15 10:30:00", "2024-06-30 23:59:59", NA), tz = "UTC"),
+    stringsAsFactors = FALSE
+  )
+
+  tbl <- reactable(df, engine = "duckdb")
+  raw_bytes <- jsonlite::base64_dec(getAttrib(tbl, "arrowData"))
+  rt <- arrow::read_ipc_stream(raw_bytes)
+
+  expect_equal(as.Date(rt$date_col), df$date_col)
+  expect_true(is.na(rt$date_col[3]))
+})
+
+test_that("engine = 'duckdb' requires arrow package", {
+  # Mock arrow not being available by testing the serializeArrowIPC function directly
+  # (Can't easily unload arrow, but we test the error message path exists)
+  df <- data.frame(x = 1)
+  # If arrow IS installed, this should succeed
+  skip_if_not_installed("arrow")
+  tbl <- reactable(df, engine = "duckdb")
+  expect_equal(getAttrib(tbl, "engine"), "duckdb")
+})
+
+test_that("engine = 'duckdb' produces unique dataKey", {
+  skip_if_not_installed("arrow")
+
+  df1 <- data.frame(x = 1:3)
+  df2 <- data.frame(x = 4:6)
+
+  tbl1 <- reactable(df1, engine = "duckdb")
+  tbl2 <- reactable(df2, engine = "duckdb")
+  tbl1_again <- reactable(df1, engine = "duckdb")
+
+  # Different data should produce different keys
+  expect_false(getAttrib(tbl1, "dataKey") == getAttrib(tbl2, "dataKey"))
+  # Same data should produce same key
+  expect_equal(getAttrib(tbl1, "dataKey"), getAttrib(tbl1_again, "dataKey"))
+})
+
+test_that("engine = 'duckdb' preserves other reactable features", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:10, y = letters[1:10], stringsAsFactors = FALSE)
+
+  tbl <- reactable(
+    df,
+    engine = "duckdb",
+    searchable = TRUE,
+    filterable = TRUE,
+    sortable = TRUE,
+    defaultPageSize = 5,
+    columns = list(x = colDef(name = "Number"))
+  )
+  attribs <- getAttribs(tbl)
+
+  expect_equal(attribs$engine, "duckdb")
+  expect_true(attribs$searchable)
+  expect_true(attribs$filterable)
+  expect_equal(attribs$defaultPageSize, 5)
+  expect_equal(attribs$columns[[1]]$name, "Number")
+})

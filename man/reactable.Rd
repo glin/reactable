@@ -56,6 +56,7 @@ reactable(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
+  engine = NULL,
   selectionId = NULL
 )
 }
@@ -228,6 +229,15 @@ rendered via \code{\link[=reactableOutput]{reactableOutput()}} in Shiny.}
 V8 package, which is not installed with reactable by default.
 
 Server-side data processing is currently \strong{experimental}.}
+
+\item{engine}{Data engine for client-side data processing. Currently supports
+\code{"duckdb"} to use DuckDB-WASM for sorting, filtering, and pagination in the
+browser via SQL queries. This enables large datasets (100K+ rows) in static
+R Markdown and Quarto documents without a server.
+
+Requires the \code{arrow} package for data serialization.
+
+The DuckDB engine is currently \strong{experimental}.}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}

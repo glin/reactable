@@ -2,6 +2,20 @@
 #' @export
 htmlwidgets::JS
 
+# Serialize a data frame to Arrow IPC stream format, base64-encoded.
+# Used when engine = "duckdb" to send data to the browser for DuckDB-WASM ingestion.
+serializeArrowIPC <- function(data) {
+  if (!requireNamespace("arrow", quietly = TRUE)) {
+    stop(
+      'The arrow package is required for engine = "duckdb". ',
+      'Install it with: install.packages("arrow")',
+      call. = FALSE
+    )
+  }
+  raw_bytes <- arrow::write_ipc_stream(data, raw())
+  jsonlite::base64_enc(raw_bytes)
+}
+
 #' Serialize JSON
 #'
 #' toJSON overrides the htmlwidgets default JSON serialization options for data:

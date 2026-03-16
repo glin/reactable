@@ -36,6 +36,7 @@ Imports:
     jsonlite,
     reactR (>= 0.6.1)
 Suggests:
+    arrow,
     covr,
     crosstalk,
     data.table,
