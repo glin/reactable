@@ -1283,7 +1283,7 @@ function Table({
     }
   }, [useDuckDB, arrowData])
 
-  // Query DuckDB on page changes
+  // Query DuckDB on page/sort/filter/search changes
   const skipInitialDuckDBQuery = React.useRef(useDuckDB && originalData.length > 0)
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
@@ -1299,15 +1299,30 @@ function Table({
     duckdbRef.current
       .query({
         pageIndex: state.pageIndex,
-        pageSize: state.pageSize
+        pageSize: state.pageSize,
+        sortBy: state.sortBy,
+        filters: state.filters,
+        searchValue: state.globalFilter,
+        columns: dataColumns
       })
       .then(result => {
         setNewData(result.rows)
+        setServerRowCount(result.rowCount)
+        setServerMaxRowCount(result.rowCount)
       })
       .catch(err => {
         console.error('DuckDB-WASM query failed:', err)
       })
-  }, [useDuckDB, duckdbReady, state.pageIndex, state.pageSize])
+  }, [
+    useDuckDB,
+    duckdbReady,
+    state.pageIndex,
+    state.pageSize,
+    state.sortBy,
+    state.filters,
+    state.globalFilter,
+    dataColumns
+  ])
 
   // Update table when default values change (preserves behavior from v6)
   useMountedLayoutEffect(() => {

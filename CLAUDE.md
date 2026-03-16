@@ -25,6 +25,7 @@ New in v0.4.5.9000
 4. **Format**: Format JavaScript code using `prettier`.
 5. **Lint**: Lint JavaScript code using `eslint`.
 6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
+7. **Commit**: Never commit built files in `inst/htmlwidgets/` together with source code changes. Always commit built files as separate, standalone commits, and only when prompted to do so.
 
 ## JavaScript API in HTML Documents
 

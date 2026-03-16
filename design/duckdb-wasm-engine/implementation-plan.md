@@ -257,12 +257,12 @@ table — so the first page was blank ("No rows found") until the engine was rea
 
 ---
 
-### Phase 3: Sort + filter + search
+### Phase 3: Sort + filter + search ✅
 **Goal:** Full interactive table powered by DuckDB-WASM.
 
 #### Steps
 
-- [ ] **3.1** Add sort SQL to `DuckDBEngine.query()`:
+- [x] **3.1** Add sort SQL to `DuckDBEngine.query()`:
   ```javascript
   async query({ pageIndex, pageSize, sortBy, filters, searchValue }) {
     let sql = 'SELECT * FROM reactable_data'
@@ -325,16 +325,16 @@ table — so the first page was blank ("No rows found") until the engine was rea
   }
   ```
 
-- [ ] **3.2** Wire `state.sortBy`, `state.filters`, `state.globalFilter` into the DuckDB query effect
+- [x] **3.2** Wire `state.sortBy`, `state.filters`, `state.globalFilter` into the DuckDB query effect
   (add to the useEffect dependency array alongside pageIndex/pageSize)
 
-- [ ] **3.3** Handle numeric filter matching: current reactable uses "starts with" for numeric columns.
+- [x] **3.3** Handle numeric filter matching: current reactable uses "starts with" for numeric columns.
   In SQL: `CAST(col AS VARCHAR) LIKE ? || '%'` (vs ILIKE for text). Detect column type from the
   column metadata already passed from R.
 
-- [ ] **3.4** Update `duckdb-basic.Rmd` test to enable `searchable = TRUE, filterable = TRUE`
+- [x] **3.4** Update `duckdb-basic.Rmd` test to enable `searchable = TRUE, filterable = TRUE`
 
-- [ ] **3.5** Add JS tests for sort/filter/search:
+- [x] **3.5** Add JS tests for sort/filter/search:
   - Sort ASC/DESC produces correct SQL ORDER BY
   - Multi-column sort produces correct ORDER BY clause
   - Column filter produces correct WHERE ILIKE clause
@@ -345,16 +345,16 @@ table — so the first page was blank ("No rows found") until the engine was rea
   - Parameterized queries prevent SQL injection (filter value with `'; DROP TABLE --`)
 
 #### Validate
-- [ ] Click column header → sorts ascending → click again → descending → click again → unsorted
-- [ ] Multi-column sort (shift+click) works
-- [ ] Type in search box → results filter, row count updates
-- [ ] Type in column filter → results filter
-- [ ] Numeric column filter: typing "5" shows values starting with 5 (50, 500, 5.1, etc.)
-- [ ] String column filter: typing "ford" shows values containing "ford" (case-insensitive)
-- [ ] Filter + sort combination works
-- [ ] Page count updates after filtering
-- [ ] Sort performance: <300ms on 100K rows (measure in DevTools)
-- [ ] Filter performance: <300ms on 100K rows
+- [x] Click column header → sorts ascending → click again → descending → click again → unsorted
+- [x] Multi-column sort (shift+click) works
+- [x] Type in search box → results filter, row count updates
+- [x] Type in column filter → results filter
+- [x] Numeric column filter: typing "5" shows values starting with 5 (50, 500, 5.1, etc.)
+- [x] String column filter: typing "ford" shows values containing "ford" (case-insensitive)
+- [x] Filter + sort combination works
+- [x] Page count updates after filtering
+- [x] Sort performance: <300ms on 100K rows (measure in DevTools)
+- [x] Filter performance: <300ms on 100K rows
 
 ---
 

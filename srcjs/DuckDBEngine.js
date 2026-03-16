@@ -40,19 +40,81 @@ export class DuckDBEngine {
     this.totalRowCount = Number(countResult.toArray()[0].n)
   }
 
-  async query({ pageIndex, pageSize }) {
-    const offset = pageIndex * pageSize
-    const result = await this.conn.query(
-      `SELECT * FROM reactable_data LIMIT ${Number(pageSize)} OFFSET ${Number(offset)}`
-    )
+  escapeIdentifier(name) {
+    // Double any existing double quotes, then wrap in double quotes
+    return '"' + name.replace(/"/g, '""') + '"'
+  }
 
-    // Convert Arrow result to row objects
-    const rows = result.toArray().map(row => row.toJSON())
+  async query({ pageIndex, pageSize, sortBy, filters, searchValue, columns }) {
+    let sql = 'SELECT * FROM reactable_data'
+    let countSql = 'SELECT COUNT(*) AS n FROM reactable_data'
+    const whereClauses = []
+    const params = []
 
-    return {
-      rows,
-      rowCount: this.totalRowCount
+    // Column filters
+    if (filters && filters.length > 0) {
+      for (const filter of filters) {
+        const col = this.escapeIdentifier(filter.id)
+        // Match the client-side behavior: numeric columns use "starts with",
+        // other columns use case-insensitive substring
+        const columnMeta = columns && columns.find(c => c.id === filter.id)
+        if (columnMeta && columnMeta.type === 'numeric') {
+          whereClauses.push(`CAST(${col} AS VARCHAR) LIKE ? || '%'`)
+        } else {
+          whereClauses.push(`CAST(${col} AS VARCHAR) ILIKE '%' || ? || '%'`)
+        }
+        params.push(filter.value)
+      }
     }
+
+    // Global search — OR across all searchable columns
+    if (searchValue) {
+      const searchCols = columns ? columns.filter(c => !c.disableGlobalFilter) : []
+      if (searchCols.length > 0) {
+        const orClauses = searchCols.map(c => {
+          const col = this.escapeIdentifier(c.id)
+          if (c.type === 'numeric') {
+            return `CAST(${col} AS VARCHAR) LIKE ? || '%'`
+          }
+          return `CAST(${col} AS VARCHAR) ILIKE '%' || ? || '%'`
+        })
+        whereClauses.push('(' + orClauses.join(' OR ') + ')')
+        for (let i = 0; i < searchCols.length; i++) {
+          params.push(searchValue)
+        }
+      }
+    }
+
+    if (whereClauses.length > 0) {
+      const whereStr = ' WHERE ' + whereClauses.join(' AND ')
+      sql += whereStr
+      countSql += whereStr
+    }
+
+    // Sort
+    if (sortBy && sortBy.length > 0) {
+      const orderClauses = sortBy.map(s => {
+        return this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+      })
+      sql += ' ORDER BY ' + orderClauses.join(', ')
+    }
+
+    sql += ` LIMIT ${Number(pageSize)} OFFSET ${Number(pageIndex) * Number(pageSize)}`
+
+    // Run data query and count query in parallel using prepared statements
+    const dataStmt = await this.conn.prepare(sql)
+    const countStmt = await this.conn.prepare(countSql)
+    const [dataResult, countResult] = await Promise.all([
+      dataStmt.query(...params),
+      countStmt.query(...params)
+    ])
+    dataStmt.close()
+    countStmt.close()
+
+    const rows = dataResult.toArray().map(row => row.toJSON())
+    const rowCount = Number(countResult.toArray()[0].n)
+
+    return { rows, rowCount }
   }
 
   async destroy() {

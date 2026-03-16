@@ -117,3 +117,119 @@ reactable(
   defaultPageSize = 10
 )
 ```
+
+## Sorting
+
+### Sortable columns
+
+All columns should be sortable. Click column headers to sort. Sorting should happen server-side
+via DuckDB and show correct results across pages.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  sortable = TRUE
+)
+```
+
+### Default sorted with sortable
+
+Start sorted by Horsepower descending. Clicking other headers should re-sort via DuckDB.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  sortable = TRUE,
+  defaultSorted = list(Horsepower = "desc")
+)
+```
+
+## Column Filters
+
+### Filterable columns
+
+All columns should have filter inputs. Typing in a filter should query DuckDB and update results.
+Numeric columns should use "starts with" matching, text columns should use substring matching.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  filterable = TRUE
+)
+```
+
+### Filterable with sorting
+
+Combining filters and sorting. Filter first, then sort the filtered results.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  filterable = TRUE,
+  sortable = TRUE
+)
+```
+
+## Global Search
+
+### Searchable table
+
+Global search should search across all columns via DuckDB. Page count should update as results
+are filtered.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  searchable = TRUE
+)
+```
+
+### Search with sort and filter combined
+
+All three features working together: search, column filters, and sorting.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  searchable = TRUE,
+  filterable = TRUE,
+  sortable = TRUE
+)
+```
+
+## Large Dataset with Sort/Filter/Search
+
+### 100k rows with all features
+
+```{r}
+n <- 100000
+large_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2)
+)
+
+reactable(
+  large_data,
+  engine = "duckdb",
+  defaultPageSize = 20,
+  searchable = TRUE,
+  filterable = TRUE,
+  sortable = TRUE,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(20, 50, 100)
+)
+```
