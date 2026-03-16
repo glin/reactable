@@ -748,7 +748,23 @@ reactable <- function(
   arrowData <- NULL
   if (identical(engine, "duckdb")) {
     arrowData <- serializeArrowIPC(data)
-    data <- NULL
+    totalRowCount <- nrow(data)
+
+    # Pre-compute the first page for immediate display (avoids blank table while DuckDB initializes).
+    # Apply defaultSorted so the pre-rendered page matches what DuckDB would return.
+    firstPageData <- data
+    if (length(defaultSorted) > 0) {
+      orderArgs <- lapply(defaultSorted, function(sort) {
+        col <- firstPageData[[sort$id]]
+        if (identical(sort$desc, TRUE)) -xtfrm(col) else xtfrm(col)
+      })
+      firstPageData <- firstPageData[do.call(order, orderArgs), , drop = FALSE]
+    }
+    firstPageData <- utils::head(firstPageData, defaultPageSize)
+    data <- toJSON(firstPageData)
+    serverRowCount <- totalRowCount
+    serverMaxRowCount <- totalRowCount
+    dependencies <- c(dependencies, list(duckdbDependency()))
   } else {
     data <- toJSON(data)
   }
@@ -1060,6 +1076,16 @@ reactDependencies <- function() {
   list(
     reactR::html_dependency_react(),
     reactR::html_dependency_reacttools()
+  )
+}
+
+duckdbDependency <- function() {
+  htmltools::htmlDependency(
+    name = "duckdb-wasm",
+    version = "1.29.0",
+    src = system.file("htmlwidgets/lib/duckdb-wasm", package = "reactable"),
+    script = "reactable-duckdb.js",
+    all_files = TRUE
   )
 }
 

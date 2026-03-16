@@ -1,0 +1,119 @@
+---
+title: "DuckDB-WASM Engine — Basic Test"
+output:
+  html_document:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+## Basic pagination with DuckDB-WASM engine
+
+This test renders a table with the DuckDB-WASM engine, which serializes data as Arrow IPC and
+queries it client-side via DuckDB-WASM for pagination.
+
+### MASS::Cars93 (93 rows)
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(10, 25, 50, 100)
+)
+```
+
+### mtcars (32 rows)
+
+```{r}
+reactable(
+  mtcars,
+  engine = "duckdb",
+  defaultPageSize = 10
+)
+```
+
+### iris (150 rows)
+
+```{r}
+reactable(
+  iris,
+  engine = "duckdb",
+  defaultPageSize = 25
+)
+```
+
+### Small dataset (less than one page)
+
+```{r}
+reactable(
+  head(mtcars, 5),
+  engine = "duckdb",
+  defaultPageSize = 10
+)
+```
+
+### Pre-rendered first page with defaultSorted
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  defaultSorted = list(Horsepower = "desc")
+)
+```
+
+### Large dataset: 100k rows
+
+```{r}
+n <- 100000
+large_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2)
+)
+
+reactable(
+  large_data,
+  engine = "duckdb",
+  defaultPageSize = 20,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(20, 50, 100)
+)
+```
+
+### Large dataset: 1M rows
+
+```{r}
+n <- 1000000
+big_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2)
+)
+
+reactable(
+  big_data,
+  engine = "duckdb",
+  defaultPageSize = 20,
+  showPageSizeOptions = TRUE,
+  pageSizeOptions = c(20, 50, 100)
+)
+```
+
+### Comparison: same data without engine (normal mode)
+
+```{r}
+reactable(
+  MASS::Cars93,
+  defaultPageSize = 10
+)
+```

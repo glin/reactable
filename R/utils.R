@@ -12,7 +12,10 @@ serializeArrowIPC <- function(data) {
       call. = FALSE
     )
   }
-  raw_bytes <- arrow::write_ipc_stream(data, raw())
+  tf <- tempfile(fileext = ".arrows")
+  on.exit(unlink(tf), add = TRUE)
+  arrow::write_ipc_stream(data, tf)
+  raw_bytes <- readBin(tf, "raw", file.info(tf)$size)
   jsonlite::base64_enc(raw_bytes)
 }
 

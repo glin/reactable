@@ -202,9 +202,12 @@ export function Reactable({
   theme,
   language,
   dataKey,
+  engine,
   ...rest
 }) {
-  data = normalizeColumnData(data, columns)
+  // When using the DuckDB engine, data contains the pre-rendered first page.
+  // normalizeColumnData handles both column-oriented data objects and empty arrays.
+  data = data != null ? normalizeColumnData(data, columns) : []
   columns = buildColumnDefs(columns, columnGroups, {
     sortable,
     defaultSortDesc,
@@ -227,6 +230,7 @@ export function Reactable({
       columns={columns}
       theme={theme}
       language={language}
+      engine={engine}
       // Reset all state when the data changes. By default, most of the table state
       // persists when the data changes (sorted, filtered, grouped state, etc.).
       key={dataKey}
@@ -955,7 +959,9 @@ function Table({
   nested,
   dataURL,
   serverRowCount: initialServerRowCount,
-  serverMaxRowCount: initialServerMaxRowCount
+  serverMaxRowCount: initialServerMaxRowCount,
+  engine,
+  arrowData
 }) {
   const [newData, setNewData] = React.useState(null)
   const data = React.useMemo(() => {
@@ -963,6 +969,7 @@ function Table({
   }, [newData, originalData])
 
   const useServerData = dataURL != null
+  const useDuckDB = engine === 'duckdb'
   const [serverRowCount, setServerRowCount] = React.useState(initialServerRowCount)
   const [serverMaxRowCount, setServerMaxRowCount] = React.useState(initialServerMaxRowCount)
 
@@ -1151,10 +1158,10 @@ function Table({
       autoResetResize: false,
       // Reset current page when the data changes (e.g., sorting, filtering, searching)
       autoResetPage: true,
-      manualPagination: useServerData,
-      manualSortBy: useServerData,
-      manualGlobalFilter: useServerData,
-      manualFilters: useServerData,
+      manualPagination: useServerData || useDuckDB,
+      manualSortBy: useServerData || useDuckDB,
+      manualGlobalFilter: useServerData || useDuckDB,
+      manualFilters: useServerData || useDuckDB,
       manualGroupBy: useServerData,
       // TODO for when server-side row selection is implemented - need the ability to select all first
       // manualRowSelectedKey: useServerData ? rowSelectedKey : null,
@@ -1163,7 +1170,7 @@ function Table({
       manualExpandedKey: null,
       // Prevent duplicate sub rows when sub rows are paginated server-side
       expandSubRows: !(useServerData && paginateSubRows),
-      rowCount: useServerData ? serverRowCount : null
+      rowCount: useServerData || useDuckDB ? serverRowCount : null
     },
     useServerSideRows,
     useResizeColumns,
@@ -1234,6 +1241,73 @@ function Table({
     state.selectedRowIds,
     dataColumns
   ])
+
+  // DuckDB-WASM engine data
+  const duckdbRef = React.useRef(null)
+  const [duckdbReady, setDuckdbReady] = React.useState(false)
+
+  // Initialize DuckDB engine on mount
+  React.useEffect(() => {
+    if (!useDuckDB || !arrowData) {
+      return
+    }
+
+    const duckdbModule = window.__ReactableDuckDB
+    if (!duckdbModule) {
+      console.error(
+        'DuckDB-WASM engine not loaded. Make sure the duckdb-wasm dependency is included.'
+      )
+      return
+    }
+
+    let cancelled = false
+    const engine = new duckdbModule.DuckDBEngine()
+    duckdbRef.current = engine
+
+    engine
+      .init(arrowData, duckdbModule.wasmBasePath)
+      .then(() => {
+        if (cancelled) return
+        setServerRowCount(engine.totalRowCount)
+        setServerMaxRowCount(engine.totalRowCount)
+        setDuckdbReady(true)
+      })
+      .catch(err => {
+        console.error('DuckDB-WASM initialization failed:', err)
+      })
+
+    return () => {
+      cancelled = true
+      engine.destroy()
+      duckdbRef.current = null
+    }
+  }, [useDuckDB, arrowData])
+
+  // Query DuckDB on page changes
+  const skipInitialDuckDBQuery = React.useRef(useDuckDB && originalData.length > 0)
+  React.useEffect(() => {
+    if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
+      return
+    }
+
+    // Skip the initial query if the first page was pre-rendered in R
+    if (skipInitialDuckDBQuery.current) {
+      skipInitialDuckDBQuery.current = false
+      return
+    }
+
+    duckdbRef.current
+      .query({
+        pageIndex: state.pageIndex,
+        pageSize: state.pageSize
+      })
+      .then(result => {
+        setNewData(result.rows)
+      })
+      .catch(err => {
+        console.error('DuckDB-WASM query failed:', err)
+      })
+  }, [useDuckDB, duckdbReady, state.pageIndex, state.pageSize])
 
   // Update table when default values change (preserves behavior from v6)
   useMountedLayoutEffect(() => {
@@ -2484,7 +2558,7 @@ function Table({
 }
 
 Reactable.propTypes = {
-  data: PropTypes.objectOf(PropTypes.array).isRequired,
+  data: PropTypes.objectOf(PropTypes.array),
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   columnGroups: PropTypes.arrayOf(PropTypes.object),
   groupBy: PropTypes.arrayOf(PropTypes.string),
@@ -2537,7 +2611,9 @@ Reactable.propTypes = {
   dataKey: PropTypes.string,
   dataURL: PropTypes.string,
   serverRowCount: PropTypes.number,
-  serverMaxRowCount: PropTypes.number
+  serverMaxRowCount: PropTypes.number,
+  engine: PropTypes.string,
+  arrowData: PropTypes.string
 }
 
 Reactable.defaultProps = {

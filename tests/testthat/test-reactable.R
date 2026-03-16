@@ -1707,7 +1707,7 @@ test_that("engine param validation", {
   expect_true(is.character(as.character(getAttrib(tbl, "data"))))
 })
 
-test_that("engine = 'duckdb' serializes data as Arrow IPC", {
+test_that("engine = 'duckdb' serializes data as Arrow IPC with pre-rendered first page", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(
@@ -1721,24 +1721,63 @@ test_that("engine = 'duckdb' serializes data as Arrow IPC", {
   tbl <- reactable(df, engine = "duckdb")
   attribs <- getAttribs(tbl)
 
-  # data should be NULL (not JSON)
-  expect_null(attribs$data)
+  # data should contain the pre-rendered first page (JSON), not NULL
+  expect_true(!is.null(attribs[["data"]]))
 
-  # arrowData should be a base64-encoded string
+  # serverRowCount and serverMaxRowCount should be set to total row count
+  expect_equal(attribs$serverRowCount, 5)
+  expect_equal(attribs$serverMaxRowCount, 5)
+
+  # arrowData should be a base64-encoded string (full dataset)
   expect_true(is.character(attribs$arrowData))
   expect_true(nchar(attribs$arrowData) > 0)
 
   # engine prop should be passed through
-
   expect_equal(attribs$engine, "duckdb")
 
-  # Arrow IPC should round-trip correctly
+  # Arrow IPC should round-trip correctly (full dataset, not just first page)
   raw_bytes <- jsonlite::base64_dec(attribs$arrowData)
   rt <- arrow::read_ipc_stream(raw_bytes)
   expect_equal(rt$int_col, df$int_col)
   expect_equal(rt$dbl_col, df$dbl_col)
   expect_equal(as.character(rt$chr_col), df$chr_col)
   expect_equal(rt$lgl_col, df$lgl_col)
+})
+
+test_that("engine = 'duckdb' pre-renders first page with correct size", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:50, stringsAsFactors = FALSE)
+
+  # Default page size (10)
+  tbl <- reactable(df, engine = "duckdb")
+  attribs <- getAttribs(tbl)
+  firstPage <- jsonlite::fromJSON(attribs[["data"]])
+  expect_equal(length(firstPage$x), 10)
+  expect_equal(attribs$serverRowCount, 50)
+
+  # Custom page size
+  tbl5 <- reactable(df, engine = "duckdb", defaultPageSize = 5)
+  attribs5 <- getAttribs(tbl5)
+  firstPage5 <- jsonlite::fromJSON(attribs5[["data"]])
+  expect_equal(length(firstPage5$x), 5)
+  expect_equal(attribs5$serverRowCount, 50)
+})
+
+test_that("engine = 'duckdb' pre-renders first page sorted by defaultSorted", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = c(3, 1, 4, 1, 5, 9, 2, 6), stringsAsFactors = FALSE)
+
+  # Sort ascending
+  tbl_asc <- reactable(df, engine = "duckdb", defaultSorted = list(x = "asc"), defaultPageSize = 3)
+  firstPage_asc <- jsonlite::fromJSON(getAttribs(tbl_asc)[["data"]])
+  expect_equal(firstPage_asc$x, c(1, 1, 2))
+
+  # Sort descending
+  tbl_desc <- reactable(df, engine = "duckdb", defaultSorted = list(x = "desc"), defaultPageSize = 3)
+  firstPage_desc <- jsonlite::fromJSON(getAttribs(tbl_desc)[["data"]])
+  expect_equal(firstPage_desc$x, c(9, 6, 5))
 })
 
 test_that("engine = 'duckdb' handles special values in Arrow IPC", {

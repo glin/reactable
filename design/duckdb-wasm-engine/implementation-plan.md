@@ -38,11 +38,29 @@ prop (data is NULL). `arrow` added to Suggests. `base64enc` not needed — `json
 
 ---
 
-### Phase 2: DuckDB-WASM JavaScript engine — MVP pagination
+### Phase 2: DuckDB-WASM JavaScript engine — MVP pagination — DONE
 **Goal:** Get a reactable table that loads Arrow data into DuckDB-WASM and paginates via SQL. This is the core
 proof that the full pipeline works end-to-end (R → Arrow → browser → DuckDB → react-table).
 
 **Scope for MVP:** Pagination ONLY. No sorting, no filtering, no grouping. Just `SELECT * FROM data LIMIT ? OFFSET ?`.
+
+**Architecture:**
+- Separate webpack bundle (`webpack.config.duckdb.js`) keeps DuckDB out of the main reactable bundle (0 cost when not used)
+- `srcjs/DuckDBEngine.js` — the engine class (init, query, destroy)
+- `srcjs/duckdb-entry.js` — entry point that registers `window.__ReactableDuckDB` with engine class + WASM base path
+- `reactable-duckdb.js` (202KB prod) + WASM files + worker files in `inst/htmlwidgets/lib/duckdb-wasm/`
+- R adds `htmltools::htmlDependency` for duckdb-wasm only when `engine = "duckdb"`
+- `Reactable.js` checks `window.__ReactableDuckDB`, creates engine instance, queries on page changes
+
+**Tests added** (8 tests in `srcjs/__tests__/DuckDB.test.js`):
+- Engine initialization and first page load
+- Pagination queries on page navigation
+- Page info with total row count
+- Engine cleanup on unmount
+- Empty data (0 rows)
+- Normal mode unaffected when engine not set
+- Error when `__ReactableDuckDB` not available
+- Graceful handling of init failure
 
 #### Steps
 
@@ -207,6 +225,35 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
 - [ ] Measure: first page load time, page navigation time
 - [ ] Chrome DevTools Network → verify WASM files loaded from bundled path
 - [ ] Chrome DevTools Memory → verify data frame not duplicated in JS heap
+
+---
+
+### Phase 2.5: Pre-rendered first page — DONE
+**Goal:** Eliminate the empty table flash while DuckDB-WASM initializes. On first render, the table should show
+real data immediately (like server mode's `skipInitialFetch` pattern), with DuckDB taking over for subsequent pages.
+
+**Problem:** DuckDB-WASM initialization is asynchronous — loading WASM, decoding Arrow IPC, creating the in-memory
+table — so the first page was blank ("No rows found") until the engine was ready. This also broke static rendering
+(V8 SSR) since `data` was NULL.
+
+**Solution:** Pre-compute the first page in R and pass it alongside the Arrow IPC data:
+
+1. **R side** (`R/reactable.R`): After serializing Arrow IPC (full dataset), sort data by `defaultSorted` (if any)
+   using `xtfrm()` + `order()`, take `head(data, defaultPageSize)` rows, serialize as JSON via `toJSON()`. Set
+   `serverRowCount` and `serverMaxRowCount` to the total row count so pagination info displays correctly.
+
+2. **JS side** (`srcjs/Reactable.js`): Added `skipInitialDuckDBQuery` ref — when `useDuckDB && originalData.length > 0`,
+   the first DuckDB query effect is skipped (pre-rendered data is already displayed). Subsequent page changes query
+   DuckDB normally.
+
+3. **Static rendering:** Works automatically because `data` now contains the first page (not NULL), so V8 SSR renders
+   actual rows.
+
+**Tests updated:**
+- R tests: 3 new tests — basic pre-rendering, page size verification, defaultSorted pre-computation
+- JS tests: 9 tests updated to pass pre-rendered first page data with `serverRowCount`/`serverMaxRowCount` props.
+  New tests verify immediate rendering, initial query skip, and graceful degradation on init failure.
+- Test Rmd: Added `defaultSorted` example, 100k-row and 1M-row examples.
 
 ---
 
