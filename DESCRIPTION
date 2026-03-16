@@ -40,6 +40,8 @@ Suggests:
     covr,
     crosstalk,
     data.table,
+    DBI,
+    duckdb,
     dplyr,
     fontawesome,
     knitr,

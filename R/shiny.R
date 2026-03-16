@@ -497,7 +497,8 @@ getServerBackend <- function(backend = NULL) {
   backends <- list(
     v8 = serverV8,
     df = serverDf,
-    dt = serverDt
+    dt = serverDt,
+    duckdb = serverDuckdb
   )
 
   if (is.null(backend) || !backend %in% names(backends)) {

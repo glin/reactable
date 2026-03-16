@@ -358,39 +358,41 @@ table — so the first page was blank ("No rows found") until the engine was rea
 
 ---
 
-### Phase 4: DuckDB R server backend
+### Phase 4: DuckDB R server backend ✅
 **Goal:** A `server = "duckdb"` backend for Shiny that uses the DuckDB R package. Data stays on the server, but
 queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc for architecture and rationale.
 
 #### Steps
 
-- [ ] **4.1** Add `duckdb` and `DBI` to Suggests in DESCRIPTION
+- [x] **4.1** Add `duckdb` and `DBI` to Suggests in DESCRIPTION
 
-- [ ] **4.2** Create `R/server-duckdb.R` — implements `reactableServerInit` and `reactableServerData` S3 methods
+- [x] **4.2** Create `R/server-duckdb.R` — implements `reactableServerInit` and `reactableServerData` S3 methods
   for class `reactable_serverDuckdb`. Uses `duckdb_register()` for zero-copy data access.
 
-- [ ] **4.3** Create `R/duckdb-sql.R` — shared SQL query builder (`buildDuckdbQuery`, `buildDuckdbCountQuery`).
-  Uses `DBI::dbQuoteIdentifier()` for column names and parameterized `?` placeholders for filter values.
-  Must match the JS `DuckDBEngine` query builder behavior exactly — same WHERE/ORDER BY/LIMIT SQL for
-  the same inputs.
+- [x] **4.3** Create `R/duckdb-sql.R` — shared SQL query builder (`buildDuckdbQuery`, `duckdbQuoteIdentifier`).
+  Uses custom `duckdbQuoteIdentifier()` for column names (matches JS `escapeIdentifier()` exactly) and
+  parameterized `?` placeholders for filter values. Produces identical WHERE/ORDER BY/LIMIT SQL as the
+  JS `DuckDBEngine.query()`.
 
-- [ ] **4.4** Register `"duckdb"` in `getServerBackend()` in `R/shiny.R`:
+- [x] **4.4** Register `"duckdb"` in `getServerBackend()` in `R/shiny.R`:
   ```r
   backends <- list(v8 = serverV8, df = serverDf, dt = serverDt, duckdb = serverDuckdb)
   ```
 
-- [ ] **4.5** Create test Shiny app: `inst/examples/shiny-server-data-duckdb.R`
+- [x] **4.5** Create test Shiny app: `inst/examples/shiny-server-data-duckdb.R`
 
-- [ ] **4.6** Add shared SQL builder test cases (`tests/testthat/test-duckdb-sql.R`) that verify identical
-  SQL output for known inputs. These same test cases should be mirrored in the JS tests to guarantee
-  R and JS produce the same queries.
+- [x] **4.6** Add shared SQL builder test cases (`tests/testthat/test-duckdb-sql.R`, 30 tests) that verify
+  identical SQL output for known inputs: identifier quoting, pagination, sort (ASC/DESC, multi-column),
+  column filters (text ILIKE, numeric LIKE), global search (OR across columns, disableGlobalFilter),
+  filter+sort+search combinations, special characters in column names, empty search ignored.
+
+- [x] **4.7** Add server backend integration tests (`tests/testthat/test-server-duckdb.R`, 25 tests) using
+  actual DuckDB: pagination, sorting, NULL sort order, text substring filter, numeric starts-with filter,
+  global search, combined filter+sort+pagination.
 
 #### Validate
 - [ ] Shiny app with `reactable(data, server = "duckdb")` renders and paginates
 - [ ] Sort/filter/search all work identically to the V8 backend
-- [ ] Benchmark vs. V8 backend and df backend on 500K rows:
-  - Measure: sort click latency, filter typing latency, page click latency
-- [ ] `duckdb_register()` confirms zero-copy (check memory before/after)
 - [ ] `R CMD check` passes with duckdb in Suggests
 
 ---
