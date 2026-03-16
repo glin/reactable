@@ -468,6 +468,10 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 - [ ] **6.7** `Reactable.setData()` JS API: Support updating the DuckDB table when data changes
 - [ ] **6.8** Shiny `updateReactable(data = ...)`: Re-import Arrow data into DuckDB-WASM
 - [ ] **6.9** Write tests: Jest tests for DuckDBEngine, R tests for server-duckdb backend
+- [x] **6.10.1** Warn about unsupported custom JS methods: When `engine = "duckdb"` is used with custom
+  `searchMethod`, `filterMethod`, or JS `aggregate` functions, emit R-level warnings that these will be
+  ignored. Built-in string aggregate names ("sum", "mean", etc.) are fine. `filterInput` (custom UI) works.
+  `sortType` is not in the R API so no check needed.
   - Ensure all DuckDBEngine methods have test coverage
   - Ensure all R server-duckdb S3 methods have test coverage
   - Integration tests: R Arrow IPC → JS DuckDB ingestion → query → correct results

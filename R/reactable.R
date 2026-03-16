@@ -747,6 +747,26 @@ reactable <- function(
   # but now kept as an intentional optimization.
   arrowData <- NULL
   if (identical(engine, "duckdb")) {
+    # Warn about custom JS methods that are not supported with the DuckDB engine
+    if (!is.null(searchMethod)) {
+      warning('Custom `searchMethod` is not supported with `engine = "duckdb"` and will be ignored. ',
+              "The DuckDB engine uses SQL-based searching.", call. = FALSE)
+    }
+    filterMethodCols <- Filter(function(col) !is.null(col$filterMethod), cols)
+    if (length(filterMethodCols) > 0) {
+      colNames <- vapply(filterMethodCols, function(col) col$id, character(1))
+      warning('Custom `filterMethod` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"` and will be ignored. ',
+              "The DuckDB engine uses SQL-based filtering.", call. = FALSE)
+    }
+    jsAggregateCols <- Filter(function(col) !is.null(col$aggregate) && is.JS(col$aggregate), cols)
+    if (length(jsAggregateCols) > 0) {
+      colNames <- vapply(jsAggregateCols, function(col) col$id, character(1))
+      warning('Custom JavaScript `aggregate` function in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"` and will be ignored. ',
+              "Use a built-in aggregate name instead (e.g., \"sum\", \"mean\", \"count\").", call. = FALSE)
+    }
+
     arrowData <- serializeArrowIPC(data)
     totalRowCount <- nrow(data)
 

@@ -1870,3 +1870,57 @@ test_that("engine = 'duckdb' preserves other reactable features", {
   expect_equal(attribs$defaultPageSize, 5)
   expect_equal(attribs$columns[[1]]$name, "Number")
 })
+
+test_that("engine = 'duckdb' warns about unsupported searchMethod", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb", searchable = TRUE,
+              searchMethod = JS("function(rows, columnIds, searchValue) { return rows }")),
+    'Custom `searchMethod` is not supported with `engine = "duckdb"`'
+  )
+
+  # No warning without searchMethod
+  expect_no_warning(reactable(df, engine = "duckdb", searchable = TRUE))
+})
+
+test_that("engine = 'duckdb' warns about unsupported filterMethod", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb", filterable = TRUE,
+              columns = list(x = colDef(filterMethod = JS("function(rows, id, value) { return rows }")))),
+    'Custom `filterMethod` in column\\(s\\) "x".*is not supported'
+  )
+
+  # Multiple columns with filterMethod
+  expect_warning(
+    reactable(df, engine = "duckdb", filterable = TRUE,
+              columns = list(
+                x = colDef(filterMethod = JS("function(rows, id, value) { return rows }")),
+                y = colDef(filterMethod = JS("function(rows, id, value) { return rows }"))
+              )),
+    'Custom `filterMethod` in column\\(s\\) "x", "y".*is not supported'
+  )
+
+  # No warning without filterMethod
+  expect_no_warning(reactable(df, engine = "duckdb", filterable = TRUE))
+})
+
+test_that("engine = 'duckdb' warns about unsupported JS aggregate", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(aggregate = JS("function(values) { return values[0] }")))),
+    'Custom JavaScript `aggregate` function in column\\(s\\) "x".*is not supported'
+  )
+
+  # Built-in string aggregate does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb", columns = list(x = colDef(aggregate = "sum")))
+  )
+})
