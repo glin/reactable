@@ -465,6 +465,25 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
   - Aggregate function mapping (sum→SUM, mean→AVG, etc.) is correct
   - Grouped row count is correct
 
+#### Known limitation: `paginateSubRows` not supported with DuckDB engine
+
+`paginateSubRows = TRUE` is not implemented for the DuckDB engine (WASM or R server). Sub-rows are always fetched
+in full for each visible group, and pagination is based on top-level group count only. This matches the behavior of
+the df and dt server backends, which also don't implement `paginateSubRows` — only the V8 backend does.
+
+When `paginateSubRows = FALSE` (the default), expanding a group adds its child rows *on top of* the page size.
+With `paginateSubRows = TRUE`, expanded children would count toward the page size, giving consistent page heights.
+
+Implementing it for DuckDB would require:
+- Passing `expanded` state to the engine (which groups are currently open)
+- Building a flat page interleaving group headers and their expanded children, respecting `pageSize` across group
+  boundaries (e.g., if group A has 50 children and page size is 10, page 2 starts mid-group-A)
+- Returning `__state` with `parentId` (on child rows) and `subRowCount` (on group rows) instead of nested `.subRows`
+- Setting `expandSubRows = false` in react-table config to prevent duplicate sub-row expansion
+- Computing correct total row count that accounts for expanded vs collapsed groups
+
+This is deferred as a future enhancement. See the "Deferred / Future" section for the revisit item.
+
 #### Validate
 
 - [ ] `reactable(data, engine = "duckdb", groupBy = "region")` shows grouped rows
@@ -513,6 +532,9 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 
 ### Deferred / Future (not in MVP)
 
+- [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
+      where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
+      cross-group page offsets. See Phase 5 limitation notes for full details.
 - [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
 - [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column

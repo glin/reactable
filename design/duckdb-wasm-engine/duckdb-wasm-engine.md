@@ -796,6 +796,16 @@ special handling:
 
 This is more complex than flat pagination but entirely feasible with the SQL model.
 
+### `paginateSubRows` not supported
+
+`paginateSubRows = TRUE` is not implemented for the DuckDB engine (WASM or R server). When groups are expanded,
+sub-rows are added on top of the page size (the default `paginateSubRows = FALSE` behavior). This matches the df
+and dt server backends — only the V8 backend supports `paginateSubRows`.
+
+Implementing it would require passing `expanded` state to the engine, building a flat page that interleaves group
+headers with their expanded children while respecting `pageSize` across group boundaries, and returning `__state`
+with `parentId`/`subRowCount` instead of nested `.subRows`. This is deferred as a future enhancement.
+
 ---
 
 ## Phase 0 POC benchmark results

@@ -144,6 +144,7 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     col.accessor = row => row[col.id]
 
     if (typeof col.aggregate === 'string') {
+      col.aggregateName = col.aggregate
       col.aggregate = getAggregateFunction(col.aggregate, col.type)
     }
 

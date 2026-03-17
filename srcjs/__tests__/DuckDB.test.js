@@ -634,6 +634,71 @@ describe('DuckDB engine', () => {
       )
     })
   })
+
+  it('does not skip initial query when groupBy is set', async () => {
+    const mockEngine = createMockEngine(20)
+
+    // Override query to return grouped data
+    mockEngine.query.mockImplementation(({ groupBy }) => {
+      if (groupBy && groupBy.length > 0) {
+        return Promise.resolve({
+          rows: [
+            {
+              a: 'group1',
+              b: null,
+              '.subRows': [{ a: 'group1', b: 'row1' }],
+              __state: { grouped: true }
+            },
+            {
+              a: 'group2',
+              b: null,
+              '.subRows': [{ a: 'group2', b: 'row2' }],
+              __state: { grouped: true }
+            }
+          ],
+          rowCount: 2
+        })
+      }
+      return Promise.resolve({ rows: [{ a: 1, b: 'x' }], rowCount: 1 })
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const groupableColumns = [
+      { name: 'colA', id: 'a', type: 'numeric' },
+      { name: 'colB', id: 'b' }
+    ]
+
+    render(
+      <Reactable
+        data={firstPageData}
+        columns={groupableColumns}
+        engine="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        groupBy={['a']}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // Wait for DuckDB to initialize
+    await waitFor(() => {
+      expect(mockEngine.init).toHaveBeenCalled()
+    })
+
+    // Initial query should NOT have been skipped because groupBy is set
+    await waitFor(() => {
+      expect(mockEngine.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groupBy: ['a']
+        })
+      )
+    })
+  })
 })
 
 // Unit tests for the DuckDBEngine class itself, with a mock conn.
@@ -841,5 +906,462 @@ describe('DuckDBEngine.escapeIdentifier', () => {
 
   it('handles names with multiple special characters', () => {
     expect(engine.escapeIdentifier('a "b" c')).toBe('"a ""b"" c"')
+  })
+})
+
+describe('DuckDBEngine.query with groupBy', () => {
+  // Create a mock conn that tracks all prepared statements and their SQL.
+  // Each call to conn.prepare() returns a mock statement. The resolver function
+  // determines the result based on the SQL string.
+  function createGroupMockConn(resolver) {
+    const stmts = []
+    const conn = {
+      prepare: jest.fn().mockImplementation(sql => {
+        const result = resolver(sql)
+        const stmt = {
+          sql,
+          query: jest.fn().mockImplementation((...params) => {
+            stmt.lastParams = params
+            return Promise.resolve(result)
+          }),
+          close: jest.fn(),
+          lastParams: null
+        }
+        stmts.push(stmt)
+        return Promise.resolve(stmt)
+      })
+    }
+    return { conn, stmts }
+  }
+
+  function arrowResult(rows) {
+    return {
+      toArray: () => rows.map(r => ({ ...r, toJSON: () => r }))
+    }
+  }
+
+  it('builds GROUP BY query with aggregate functions', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 3 }])
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { Manufacturer: 'Acura', Price: 49.8 },
+          { Manufacturer: 'Audi', Price: 66.8 }
+        ])
+      }
+      // Sub-row query
+      return arrowResult([
+        { Manufacturer: 'Acura', Model: 'Integra', Price: 15.9 },
+        { Manufacturer: 'Acura', Model: 'Legend', Price: 33.9 },
+        { Manufacturer: 'Audi', Model: '90', Price: 29.1 },
+        { Manufacturer: 'Audi', Model: '100', Price: 37.7 }
+      ])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'Manufacturer', type: 'character' },
+      { id: 'Model', type: 'character' },
+      { id: 'Price', type: 'numeric', aggregate: 'sum' }
+    ]
+
+    const result = await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['Manufacturer']
+    })
+
+    // Should have generated a GROUP BY query with SUM
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    expect(groupSql).toBeTruthy()
+    expect(groupSql.sql).toContain('SUM("Price") AS "Price"')
+    expect(groupSql.sql).toContain('GROUP BY "Manufacturer"')
+    expect(groupSql.sql).toContain('LIMIT 10 OFFSET 0')
+
+    // Should have generated a count query
+    const countSql = stmts.find(s => s.sql.includes('COUNT(DISTINCT'))
+    expect(countSql).toBeTruthy()
+    expect(countSql.sql).toContain('COUNT(DISTINCT "Manufacturer")')
+
+    // Result should have grouped rows with .subRows and __state
+    expect(result.rowCount).toBe(3)
+    expect(result.rows).toHaveLength(2)
+    expect(result.rows[0]).toMatchObject({
+      Manufacturer: 'Acura',
+      Price: 49.8,
+      __state: { grouped: true }
+    })
+    expect(result.rows[0]['.subRows']).toHaveLength(2)
+    expect(result.rows[0]['.subRows'][0]).toMatchObject({ Model: 'Integra', Price: 15.9 })
+  })
+
+  it('maps all supported aggregate functions to SQL', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'A' }])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'c1', type: 'numeric', aggregate: 'sum' },
+      { id: 'c2', type: 'numeric', aggregate: 'mean' },
+      { id: 'c3', type: 'numeric', aggregate: 'max' },
+      { id: 'c4', type: 'numeric', aggregate: 'min' },
+      { id: 'c5', type: 'numeric', aggregate: 'median' },
+      { id: 'c6', type: 'numeric', aggregate: 'count' },
+      { id: 'c7', type: 'character', aggregate: 'unique' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    expect(groupSql.sql).toContain('SUM("c1") AS "c1"')
+    expect(groupSql.sql).toContain('AVG("c2") AS "c2"')
+    expect(groupSql.sql).toContain('MAX("c3") AS "c3"')
+    expect(groupSql.sql).toContain('MIN("c4") AS "c4"')
+    expect(groupSql.sql).toContain('MEDIAN("c5") AS "c5"')
+    expect(groupSql.sql).toContain('COUNT("c6") AS "c6"')
+    expect(groupSql.sql).toContain('STRING_AGG(DISTINCT CAST("c7" AS VARCHAR), \', \') AS "c7"')
+  })
+
+  it('computes frequency aggregate from sub-rows', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'A' }])
+      return arrowResult([
+        { grp: 'A', type: 'Small' },
+        { grp: 'A', type: 'Small' },
+        { grp: 'A', type: 'Large' }
+      ])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'type', type: 'character', aggregate: 'frequency' }
+    ]
+
+    const result = await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    // frequency should be computed from sub-rows, not SQL
+    expect(result.rows[0].type).toContain('Small (2)')
+    expect(result.rows[0].type).toContain('Large (1)')
+  })
+
+  it('fetches sub-rows for visible groups using IN clause', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([{ cat: 'A' }, { cat: 'B' }])
+      }
+      return arrowResult([
+        { cat: 'A', val: 1 },
+        { cat: 'B', val: 2 }
+      ])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'cat', type: 'character' },
+      { id: 'val', type: 'numeric' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['cat']
+    })
+
+    // Sub-row query should use IN() with the group values
+    const subSql = stmts.find(s => s.sql.includes('IN'))
+    expect(subSql).toBeTruthy()
+    expect(subSql.sql).toContain('"cat" IN (?, ?)')
+    expect(subSql.lastParams).toEqual(['A', 'B'])
+  })
+
+  it('sorts groups by group column', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'B' }, { grp: 'A' }])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'val', type: 'numeric' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [{ id: 'grp', desc: true }],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    expect(groupSql.sql).toContain('ORDER BY "grp" DESC NULLS LAST')
+  })
+
+  it('sorts groups by aggregated column', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY'))
+        return arrowResult([
+          { grp: 'B', val: 10 },
+          { grp: 'A', val: 20 }
+        ])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'val', type: 'numeric', aggregate: 'sum' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [{ id: 'val', desc: false }],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    expect(groupSql.sql).toContain('ORDER BY SUM("val") ASC NULLS LAST')
+  })
+
+  it('applies filters to grouped queries', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'A' }])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'val', type: 'numeric' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [{ id: 'val', value: '5' }],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    expect(groupSql.sql).toContain('CAST("val" AS VARCHAR) LIKE ? || \'%\'')
+    expect(groupSql.lastParams).toEqual(['5'])
+  })
+
+  it('skips columns without aggregate in GROUP BY select', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'A' }])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'name', type: 'character' }, // no aggregate
+      { id: 'val', type: 'numeric', aggregate: 'sum' }
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    // "name" should NOT be in the SELECT (no aggregate)
+    expect(groupSql.sql).not.toContain('"name"')
+    // "val" should be in the SELECT with SUM
+    expect(groupSql.sql).toContain('SUM("val")')
+  })
+
+  it('does not sort by non-aggregated column in GROUP BY', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
+      if (sql.includes('GROUP BY')) return arrowResult([{ grp: 'A' }])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'grp', type: 'character' },
+      { id: 'name', type: 'character' } // no aggregate
+    ]
+
+    await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [{ id: 'name', desc: false }],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['grp']
+    })
+
+    const groupSql = stmts.find(s => s.sql.includes('GROUP BY'))
+    // Should NOT have ORDER BY for non-aggregated column
+    expect(groupSql.sql).not.toContain('ORDER BY')
+  })
+
+  it('returns empty rows when no groups match', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 0 }])
+      if (sql.includes('GROUP BY')) return arrowResult([])
+      return arrowResult([])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const result = await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [{ id: 'grp', type: 'character' }],
+      groupBy: ['grp']
+    })
+
+    expect(result.rows).toEqual([])
+    expect(result.rowCount).toBe(0)
+  })
+
+  it('handles multi-level grouping', async () => {
+    const callLog = []
+    const { conn } = createGroupMockConn(sql => {
+      callLog.push(sql)
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY "region"') && !sql.includes('"region" = ?')) {
+        return arrowResult([{ region: 'East' }, { region: 'West' }])
+      }
+      if (sql.includes('GROUP BY "city"') && sql.includes('"region" = ?')) {
+        return arrowResult([{ city: 'NYC' }, { city: 'Boston' }])
+      }
+      // Leaf rows
+      return arrowResult([
+        { region: 'East', city: 'NYC', val: 10 },
+        { region: 'East', city: 'Boston', val: 20 }
+      ])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const columns = [
+      { id: 'region', type: 'character' },
+      { id: 'city', type: 'character' },
+      { id: 'val', type: 'numeric', aggregate: 'sum' }
+    ]
+
+    const result = await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['region', 'city']
+    })
+
+    // Top-level groups
+    expect(result.rows).toHaveLength(2)
+    expect(result.rows[0].__state).toEqual({ grouped: true })
+
+    // Second-level: each region has sub-rows grouped by city
+    expect(result.rows[0]['.subRows']).toBeDefined()
+    expect(result.rows[0]['.subRows'].length).toBeGreaterThan(0)
+    expect(result.rows[0]['.subRows'][0].__state).toEqual({ grouped: true })
+    expect(result.rows[0]['.subRows'][0]['.subRows']).toBeDefined()
+  })
+
+  it('falls back to flat query when groupBy is empty', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(*)')) return arrowResult([{ n: 5 }])
+      return arrowResult([{ a: 1, b: 'x' }])
+    })
+
+    const engine = new DuckDBEngine()
+    engine.conn = conn
+
+    const result = await engine.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [{ id: 'a', type: 'numeric' }, { id: 'b' }],
+      groupBy: []
+    })
+
+    // Should use flat SELECT *, not GROUP BY
+    expect(stmts[0].sql).toContain('SELECT *')
+    expect(stmts[0].sql).not.toContain('GROUP BY')
+    expect(result.rows).toEqual([{ a: 1, b: 'x' }])
   })
 })

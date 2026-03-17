@@ -1,5 +1,18 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
 
+// Map reactable aggregate function names to SQL aggregate expressions.
+// The column identifier is passed pre-escaped.
+const aggregateSQLMap = {
+  sum: col => `SUM(${col})`,
+  mean: col => `AVG(${col})`,
+  max: col => `MAX(${col})`,
+  min: col => `MIN(${col})`,
+  median: col => `MEDIAN(${col})`,
+  count: col => `COUNT(${col})`,
+  unique: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ')`
+  // frequency: computed from sub-rows (too complex for a single GROUP BY expression)
+}
+
 export class DuckDBEngine {
   constructor() {
     this.db = null
@@ -45,10 +58,10 @@ export class DuckDBEngine {
     return '"' + name.replace(/"/g, '""') + '"'
   }
 
-  async query({ pageIndex, pageSize, sortBy, filters, searchValue, columns }) {
-    let sql = 'SELECT * FROM reactable_data'
-    let countSql = 'SELECT COUNT(*) AS n FROM reactable_data'
-    const whereClauses = []
+  // Build WHERE clause parts from column filters and global search.
+  // Returns { clauses: string[], params: any[] }
+  buildWhereParts(filters, searchValue, columns) {
+    const clauses = []
     const params = []
 
     // Column filters
@@ -59,9 +72,9 @@ export class DuckDBEngine {
         // other columns use case-insensitive substring
         const columnMeta = columns && columns.find(c => c.id === filter.id)
         if (columnMeta && columnMeta.type === 'numeric') {
-          whereClauses.push(`CAST(${col} AS VARCHAR) LIKE ? || '%'`)
+          clauses.push(`CAST(${col} AS VARCHAR) LIKE ? || '%'`)
         } else {
-          whereClauses.push(`CAST(${col} AS VARCHAR) ILIKE '%' || ? || '%'`)
+          clauses.push(`CAST(${col} AS VARCHAR) ILIKE '%' || ? || '%'`)
         }
         params.push(filter.value)
       }
@@ -78,18 +91,42 @@ export class DuckDBEngine {
           }
           return `CAST(${col} AS VARCHAR) ILIKE '%' || ? || '%'`
         })
-        whereClauses.push('(' + orClauses.join(' OR ') + ')')
+        clauses.push('(' + orClauses.join(' OR ') + ')')
         for (let i = 0; i < searchCols.length; i++) {
           params.push(searchValue)
         }
       }
     }
 
-    if (whereClauses.length > 0) {
-      const whereStr = ' WHERE ' + whereClauses.join(' AND ')
-      sql += whereStr
-      countSql += whereStr
+    return { clauses, params }
+  }
+
+  // Run a prepared statement with params and return the Arrow result.
+  async runPrepared(sql, params) {
+    const stmt = await this.conn.prepare(sql)
+    const result = await stmt.query(...params)
+    stmt.close()
+    return result
+  }
+
+  async query({ pageIndex, pageSize, sortBy, filters, searchValue, columns, groupBy }) {
+    if (groupBy && groupBy.length > 0) {
+      return this.queryGrouped({
+        pageIndex,
+        pageSize,
+        sortBy,
+        filters,
+        searchValue,
+        columns,
+        groupBy
+      })
     }
+
+    const where = this.buildWhereParts(filters, searchValue, columns)
+    const whereStr = where.clauses.length > 0 ? ' WHERE ' + where.clauses.join(' AND ') : ''
+
+    let sql = 'SELECT * FROM reactable_data' + whereStr
+    const countSql = 'SELECT COUNT(*) AS n FROM reactable_data' + whereStr
 
     // Sort
     if (sortBy && sortBy.length > 0) {
@@ -102,19 +139,207 @@ export class DuckDBEngine {
     sql += ` LIMIT ${Number(pageSize)} OFFSET ${Number(pageIndex) * Number(pageSize)}`
 
     // Run data query and count query in parallel using prepared statements
-    const dataStmt = await this.conn.prepare(sql)
-    const countStmt = await this.conn.prepare(countSql)
     const [dataResult, countResult] = await Promise.all([
-      dataStmt.query(...params),
-      countStmt.query(...params)
+      this.runPrepared(sql, where.params),
+      this.runPrepared(countSql, where.params)
     ])
-    dataStmt.close()
-    countStmt.close()
 
     const rows = dataResult.toArray().map(row => row.toJSON())
     const rowCount = Number(countResult.toArray()[0].n)
 
     return { rows, rowCount }
+  }
+
+  // Query with GROUP BY for grouped tables. Returns rows with nested .subRows and
+  // __state metadata so the client can render the grouped table correctly.
+  async queryGrouped({ pageIndex, pageSize, sortBy, filters, searchValue, columns, groupBy }) {
+    const baseWhere = this.buildWhereParts(filters, searchValue, columns)
+    const rows = await this.buildGroupLevel({
+      groupBy,
+      columns,
+      baseWhere,
+      parentFilters: { clauses: [], params: [] },
+      depth: 0,
+      pageIndex,
+      pageSize,
+      sortBy
+    })
+
+    // Count total groups at top level
+    const groupCol = this.escapeIdentifier(groupBy[0])
+    const allClauses = baseWhere.clauses
+    const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
+    const countResult = await this.runPrepared(
+      `SELECT COUNT(DISTINCT ${groupCol}) AS n FROM reactable_data` + whereStr,
+      baseWhere.params
+    )
+    const rowCount = Number(countResult.toArray()[0].n)
+
+    return { rows, rowCount }
+  }
+
+  // Recursively build grouped rows at the given depth level.
+  async buildGroupLevel({
+    groupBy,
+    columns,
+    baseWhere,
+    parentFilters,
+    depth,
+    pageIndex,
+    pageSize,
+    sortBy
+  }) {
+    const groupCol = groupBy[depth]
+    const escapedGroupCol = this.escapeIdentifier(groupCol)
+    const groupedCols = groupBy.slice(0, depth + 1)
+
+    // Combine base WHERE with parent group filters
+    const allClauses = [...baseWhere.clauses, ...parentFilters.clauses]
+    const allParams = [...baseWhere.params, ...parentFilters.params]
+    const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
+
+    // Build GROUP BY SELECT: group column + SQL-computable aggregates
+    const selectParts = [escapedGroupCol]
+    const postComputeAggs = [] // aggregates computed from sub-rows (e.g. frequency)
+
+    for (const col of columns) {
+      if (groupedCols.includes(col.id)) continue
+      const aggName =
+        col.aggregateName || (typeof col.aggregate === 'string' ? col.aggregate : null)
+      if (!aggName) continue
+
+      const sqlFn = aggregateSQLMap[aggName]
+      if (sqlFn) {
+        selectParts.push(
+          `${sqlFn(this.escapeIdentifier(col.id))} AS ${this.escapeIdentifier(col.id)}`
+        )
+      } else {
+        postComputeAggs.push({ id: col.id, aggregate: aggName })
+      }
+    }
+
+    let groupSql = `SELECT ${selectParts.join(', ')} FROM reactable_data${whereStr} GROUP BY ${escapedGroupCol}`
+
+    // Sort: apply sortBy columns that are the group column or have SQL aggregates
+    const sortClauses = this.buildGroupSortClauses(sortBy, groupCol, columns, groupedCols)
+    if (sortClauses.length > 0) {
+      groupSql += ' ORDER BY ' + sortClauses.join(', ')
+    }
+
+    // Paginate only at top level
+    if (depth === 0) {
+      groupSql += ` LIMIT ${Number(pageSize)} OFFSET ${Number(pageIndex) * Number(pageSize)}`
+    }
+
+    const groupResult = await this.runPrepared(groupSql, allParams)
+    const groupRows = groupResult.toArray().map(row => row.toJSON())
+
+    if (groupRows.length === 0) {
+      return groupRows
+    }
+
+    // Fetch sub-rows for all groups in a single query using IN()
+    const groupValues = groupRows.map(row => row[groupCol])
+    const inPlaceholders = groupValues.map(() => '?').join(', ')
+    const subClauses = [...allClauses, `${escapedGroupCol} IN (${inPlaceholders})`]
+    const subParams = [...allParams, ...groupValues]
+    const subWhereStr = ' WHERE ' + subClauses.join(' AND ')
+
+    if (depth + 1 < groupBy.length) {
+      // More grouping levels — recurse for each group
+      for (const row of groupRows) {
+        const childFilters = {
+          clauses: [...parentFilters.clauses, `${escapedGroupCol} = ?`],
+          params: [...parentFilters.params, row[groupCol]]
+        }
+        row['.subRows'] = await this.buildGroupLevel({
+          groupBy,
+          columns,
+          baseWhere,
+          parentFilters: childFilters,
+          depth: depth + 1,
+          pageIndex: 0,
+          pageSize: Number.MAX_SAFE_INTEGER,
+          sortBy
+        })
+        row['__state'] = { grouped: true }
+      }
+    } else {
+      // Leaf level — fetch all individual rows for visible groups
+      let subSql = 'SELECT * FROM reactable_data' + subWhereStr
+      if (sortBy && sortBy.length > 0) {
+        const leafSorts = sortBy.map(
+          s => this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+        )
+        subSql += ' ORDER BY ' + leafSorts.join(', ')
+      }
+
+      const subResult = await this.runPrepared(subSql, subParams)
+      const allSubRows = subResult.toArray().map(r => r.toJSON())
+
+      // Partition sub-rows by group value
+      const subRowsByGroup = new Map()
+      for (const subRow of allSubRows) {
+        const key = subRow[groupCol]
+        if (!subRowsByGroup.has(key)) subRowsByGroup.set(key, [])
+        subRowsByGroup.get(key).push(subRow)
+      }
+
+      for (const row of groupRows) {
+        row['.subRows'] = subRowsByGroup.get(row[groupCol]) || []
+        row['__state'] = { grouped: true }
+
+        // Post-compute aggregates that can't be expressed in SQL (e.g. frequency)
+        for (const agg of postComputeAggs) {
+          row[agg.id] = this.computeAggregate(agg.aggregate, row['.subRows'], agg.id)
+        }
+      }
+    }
+
+    return groupRows
+  }
+
+  // Build ORDER BY clauses for a GROUP BY query. Only includes sortBy columns that
+  // are the group column itself or have a SQL-computable aggregate.
+  buildGroupSortClauses(sortBy, groupCol, columns, groupedCols) {
+    if (!sortBy || sortBy.length === 0) return []
+    const clauses = []
+    for (const s of sortBy) {
+      if (s.id === groupCol) {
+        clauses.push(this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST')
+      } else {
+        const col = columns.find(c => c.id === s.id)
+        const aggName =
+          col && (col.aggregateName || (typeof col.aggregate === 'string' ? col.aggregate : null))
+        if (aggName && !groupedCols.includes(col.id)) {
+          const sqlFn = aggregateSQLMap[aggName]
+          if (sqlFn) {
+            // Sort by the aggregate expression
+            clauses.push(
+              sqlFn(this.escapeIdentifier(s.id)) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+            )
+          }
+        }
+      }
+    }
+    return clauses
+  }
+
+  // Compute an aggregate value from sub-row data for aggregates that can't be
+  // expressed in a GROUP BY SQL expression (e.g. frequency).
+  computeAggregate(aggregateName, subRows, columnId) {
+    const values = subRows.map(r => r[columnId])
+    if (aggregateName === 'frequency') {
+      const counts = {}
+      for (const v of values) {
+        const key = String(v)
+        counts[key] = (counts[key] || 0) + 1
+      }
+      return Object.entries(counts)
+        .map(([value, count]) => `${value} (${count})`)
+        .join(', ')
+    }
+    return null
   }
 
   async destroy() {

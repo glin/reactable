@@ -964,12 +964,16 @@ function Table({
   arrowData
 }) {
   const [newData, setNewData] = React.useState(null)
-  const data = React.useMemo(() => {
-    return newData ? newData : originalData
-  }, [newData, originalData])
-
   const useServerData = dataURL != null
   const useDuckDB = engine === 'duckdb'
+
+  const data = React.useMemo(() => {
+    if (newData) return newData
+    // When using DuckDB with groupBy, don't show the flat pre-rendered rows.
+    // Start with empty data until DuckDB returns properly grouped results.
+    if (useDuckDB && groupBy && groupBy.length > 0) return []
+    return originalData
+  }, [newData, originalData, useDuckDB, groupBy])
   const [serverRowCount, setServerRowCount] = React.useState(initialServerRowCount)
   const [serverMaxRowCount, setServerMaxRowCount] = React.useState(initialServerMaxRowCount)
 
@@ -1162,7 +1166,7 @@ function Table({
       manualSortBy: useServerData || useDuckDB,
       manualGlobalFilter: useServerData || useDuckDB,
       manualFilters: useServerData || useDuckDB,
-      manualGroupBy: useServerData,
+      manualGroupBy: useServerData || useDuckDB,
       // TODO for when server-side row selection is implemented - need the ability to select all first
       // manualRowSelectedKey: useServerData ? rowSelectedKey : null,
       // TODO for when server-side row expansion is implemented
@@ -1283,8 +1287,13 @@ function Table({
     }
   }, [useDuckDB, arrowData])
 
-  // Query DuckDB on page/sort/filter/search changes
-  const skipInitialDuckDBQuery = React.useRef(useDuckDB && originalData.length > 0)
+  // Query DuckDB on page/sort/filter/search changes.
+  // Don't skip the initial query when groupBy is set — the pre-rendered first page is flat
+  // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
+  const hasGroupBy = groupBy && groupBy.length > 0
+  const skipInitialDuckDBQuery = React.useRef(
+    useDuckDB && originalData.length > 0 && !hasGroupBy
+  )
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
       return
@@ -1303,7 +1312,8 @@ function Table({
         sortBy: state.sortBy,
         filters: state.filters,
         searchValue: state.globalFilter,
-        columns: dataColumns
+        columns: dataColumns,
+        groupBy: state.groupBy
       })
       .then(result => {
         setNewData(result.rows)
@@ -1321,6 +1331,7 @@ function Table({
     state.sortBy,
     state.filters,
     state.globalFilter,
+    state.groupBy,
     dataColumns
   ])
 

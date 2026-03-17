@@ -362,3 +362,219 @@ reactable(MASS::Cars93, server = TRUE, filterable = TRUE, searchable = TRUE)
 # Data frame backend (simplest, no external dependencies)
 reactable(MASS::Cars93, server = "df", filterable = TRUE, searchable = TRUE)
 ```
+
+## Grouping and Aggregation
+
+### Basic groupBy with sum aggregate
+
+Group by Manufacturer, show the sum of Min.Price and Max.Price per group. Clicking a group row
+should expand to show the individual car rows within that group.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = "Manufacturer",
+  columns = list(
+    Min.Price = colDef(aggregate = "sum"),
+    Max.Price = colDef(aggregate = "sum"),
+    Horsepower = colDef(aggregate = "mean")
+  )
+)
+```
+
+### Different aggregate functions
+
+Demonstrating all SQL-backed aggregate functions on a single grouped table.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = "Type",
+  columns = list(
+    Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Max.Price = colDef(aggregate = "max", format = colFormat(digits = 1)),
+    Horsepower = colDef(aggregate = "mean", format = colFormat(digits = 0)),
+    MPG.city = colDef(aggregate = "median", format = colFormat(digits = 0)),
+    RPM = colDef(aggregate = "min"),
+    Cylinders = colDef(aggregate = "count"),
+    Manufacturer = colDef(aggregate = "unique"),
+    Origin = colDef(aggregate = "frequency")
+  )
+)
+```
+
+### Grouped with sort and filter
+
+Combine grouping with sorting and filtering. Filter should narrow down rows before grouping,
+and sort should sort the group rows by the group column or aggregated values.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = "Origin",
+  filterable = TRUE,
+  sortable = TRUE,
+  columns = list(
+    Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Max.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Horsepower = colDef(aggregate = "mean", format = colFormat(digits = 0)),
+    Manufacturer = colDef(aggregate = "unique")
+  )
+)
+```
+
+### Grouped with search
+
+Global search should filter rows before grouping.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = "Type",
+  searchable = TRUE,
+  columns = list(
+    Min.Price = colDef(aggregate = "sum"),
+    Horsepower = colDef(aggregate = "mean"),
+    Manufacturer = colDef(aggregate = "count")
+  )
+)
+```
+
+### Multi-level grouping
+
+Group by Origin first, then by Type within each origin. Two levels of expand/collapse.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = c("Origin", "Type"),
+  columns = list(
+    Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Max.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Horsepower = colDef(aggregate = "mean", format = colFormat(digits = 0)),
+    Manufacturer = colDef(aggregate = "unique")
+  )
+)
+```
+
+### Large grouped dataset: 100k rows grouped by category
+
+```{r}
+n <- 100000
+large_data <- data.frame(
+  id = seq_len(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  value = round(rnorm(n, mean = 100, sd = 50), 2),
+  score = round(runif(n, 0, 100), 2)
+)
+
+reactable(
+  large_data,
+  engine = "duckdb",
+  defaultPageSize = 20,
+  groupBy = "category",
+  sortable = TRUE,
+  columns = list(
+    value = colDef(aggregate = "sum", format = colFormat(digits = 0)),
+    score = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    id = colDef(aggregate = "count"),
+    region = colDef(aggregate = "unique")
+  )
+)
+```
+
+### Large multi-level grouping: 100k rows grouped by category and region
+
+```{r}
+reactable(
+  large_data,
+  engine = "duckdb",
+  defaultPageSize = 20,
+  groupBy = c("category", "region"),
+  sortable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE,
+  columns = list(
+    value = colDef(aggregate = "sum", format = colFormat(digits = 0)),
+    score = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    id = colDef(aggregate = "count")
+  )
+)
+```
+
+### Comparison: groupBy without engine (normal client-side mode)
+
+Same table without the DuckDB engine for behavior comparison.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  defaultPageSize = 10,
+  groupBy = "Manufacturer",
+  columns = list(
+    Min.Price = colDef(aggregate = "sum"),
+    Max.Price = colDef(aggregate = "sum"),
+    Horsepower = colDef(aggregate = "mean")
+  )
+)
+```
+
+### DuckDB server backend with grouping (Shiny only)
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+rows <- 100000
+data <- data.frame(
+  region = sample(c("East", "West", "North", "South"), rows, replace = TRUE),
+  state = sample(rownames(USArrests), rows, replace = TRUE),
+  category = sample(LETTERS[1:10], rows, replace = TRUE),
+  revenue = round(runif(rows, 100, 50000), 2),
+  quantity = sample(1:100, rows, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+ui <- fluidPage(
+  titlePanel("DuckDB Server Backend — Grouped 100k rows"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      data,
+      server = "duckdb",
+      defaultPageSize = 20,
+      groupBy = "region",
+      filterable = TRUE,
+      searchable = TRUE,
+      sortable = TRUE,
+      highlight = TRUE,
+      columns = list(
+        revenue = colDef(
+          name = "Revenue",
+          aggregate = "sum",
+          format = colFormat(currency = "USD", separators = TRUE, digits = 0)
+        ),
+        quantity = colDef(name = "Quantity", aggregate = "sum"),
+        state = colDef(name = "State", aggregate = "unique"),
+        category = colDef(name = "Category", aggregate = "count")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
+```

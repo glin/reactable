@@ -194,3 +194,255 @@ test_that("serverDuckdb - requires duckdb package", {
   backend <- serverDuckdb()
   expect_s3_class(backend, "reactable_serverDuckdb")
 })
+
+# --- Grouping tests ---
+
+test_that("serverDuckdb - basic groupBy", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(15.9, 33.9, 29.1, 37.7, 30.0),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"))
+  expect_true(is.resolvedData(result))
+  expect_equal(result$rowCount, 3) # 3 manufacturers
+  expect_equal(nrow(result$data), 3)
+  expect_true(".subRows" %in% colnames(result$data))
+  expect_true("mfr" %in% colnames(result$data))
+  expect_true("price" %in% colnames(result$data))
+
+  # Check aggregated values (SUM of price per manufacturer)
+  acura_row <- result$data[result$data$mfr == "Acura", ]
+  expect_equal(acura_row$price, 15.9 + 33.9)
+
+  # Check sub-rows
+  acura_sub <- acura_row$.subRows[[1]]
+  expect_equal(nrow(acura_sub), 2)
+  expect_true("model" %in% colnames(acura_sub))
+})
+
+test_that("serverDuckdb - groupBy with pagination", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "B", "B", "C", "C", "D", "D"),
+    val = 1:8,
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Page 1: 2 groups
+  result1 <- reactableServerData(backend, data = df, columns = columns,
+                                 pageIndex = 0, pageSize = 2,
+                                 groupBy = list("grp"))
+  expect_equal(result1$rowCount, 4) # total groups
+  expect_equal(nrow(result1$data), 2) # 2 groups per page
+})
+
+test_that("serverDuckdb - groupBy with sort", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("B", "B", "A", "A", "C", "C"),
+    val = c(10, 20, 100, 200, 1, 2),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Sort by aggregated val DESC: A(300) > B(30) > C(3)
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                sortBy = list(list(id = "val", desc = TRUE)),
+                                groupBy = list("grp"))
+  expect_equal(result$data$grp, c("A", "B", "C"))
+  expect_equal(result$data$val, c(300, 30, 3))
+})
+
+test_that("serverDuckdb - groupBy with filter", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "B", "B"),
+    name = c("apple", "avocado", "banana", "blueberry"),
+    val = c(1, 2, 3, 4),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "name", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Filter by name containing "a" → apple, avocado, banana
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                filters = list(list(id = "name", value = "a")),
+                                groupBy = list("grp"))
+  expect_equal(result$rowCount, 2) # A and B groups
+  acura_row <- result$data[result$data$grp == "A", ]
+  expect_equal(acura_row$val, 3) # SUM(1, 2) — both apple and avocado match
+  b_row <- result$data[result$data$grp == "B", ]
+  expect_equal(b_row$val, 3) # only banana matches
+})
+
+test_that("serverDuckdb - groupBy with mean aggregate", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "B", "B"),
+    val = c(10, 20, 30, 40),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "mean")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("grp"))
+  a_row <- result$data[result$data$grp == "A", ]
+  b_row <- result$data[result$data$grp == "B", ]
+  expect_equal(a_row$val, 15) # mean(10, 20)
+  expect_equal(b_row$val, 35) # mean(30, 40)
+})
+
+test_that("serverDuckdb - groupBy with count aggregate", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "A", "B"),
+    val = c(1, 2, 3, 4),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "count")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("grp"))
+  a_row <- result$data[result$data$grp == "A", ]
+  b_row <- result$data[result$data$grp == "B", ]
+  expect_equal(a_row$val, 3)
+  expect_equal(b_row$val, 1)
+})
+
+test_that("serverDuckdb - groupBy with unique aggregate", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "A", "B"),
+    type = c("Small", "Small", "Large", "Medium"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "type", type = "character", aggregate = "unique")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("grp"))
+  a_row <- result$data[result$data$grp == "A", ]
+  # STRING_AGG(DISTINCT ...) — should have both unique values
+  expect_true(grepl("Large", a_row$type))
+  expect_true(grepl("Small", a_row$type))
+})
+
+test_that("serverDuckdb - groupBy with frequency aggregate", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "A", "A"),
+    type = c("Small", "Small", "Large"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "type", type = "character", aggregate = "frequency")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("grp"))
+  a_row <- result$data[result$data$grp == "A", ]
+  expect_true(grepl("Small \\(2\\)", a_row$type))
+  expect_true(grepl("Large \\(1\\)", a_row$type))
+})
+
+test_that("serverDuckdb - groupBy returns empty for no matches", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- serverDuckdb()
+  df <- data.frame(
+    grp = c("A", "B"),
+    val = c(1, 2),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Filter that matches nothing
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                filters = list(list(id = "val", value = "999")),
+                                groupBy = list("grp"))
+  expect_equal(result$rowCount, 0)
+  expect_equal(nrow(result$data), 0)
+})
