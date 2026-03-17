@@ -767,6 +767,53 @@ reactable <- function(
               "Use a built-in aggregate name instead (e.g., \"sum\", \"mean\", \"count\").", call. = FALSE)
     }
 
+    # Warn about R render functions that are pre-evaluated per-row. These produce arrays indexed
+    # by original row position, which won't match when DuckDB sorts/filters/paginates to different rows.
+    rCellCols <- Filter(function(col) is.list(col$cell) && !is.JS(col$cell), cols)
+    if (length(rCellCols) > 0) {
+      colNames <- vapply(rCellCols, function(col) col$id, character(1))
+      warning('R function `cell` renderer in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: colDef(cell = JS(\"function(cellInfo) { ... }\")).",
+              call. = FALSE)
+    }
+    rDetailsCols <- Filter(function(col) is.list(col$details) && !is.JS(col$details), cols)
+    if (length(rDetailsCols) > 0) {
+      colNames <- vapply(rDetailsCols, function(col) col$id, character(1))
+      warning('R function `details` renderer in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: colDef(details = JS(\"function(rowInfo) { ... }\")).",
+              call. = FALSE)
+    }
+    rStyleCols <- Filter(function(col) is.list(col$style) && is.null(names(col$style)), cols)
+    if (length(rStyleCols) > 0) {
+      colNames <- vapply(rStyleCols, function(col) col$id, character(1))
+      warning('R function `style` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: colDef(style = JS(\"function(rowInfo) { ... }\")).",
+              call. = FALSE)
+    }
+    rClassCols <- Filter(function(col) is.list(col$className), cols)
+    if (length(rClassCols) > 0) {
+      colNames <- vapply(rClassCols, function(col) col$id, character(1))
+      warning('R function `class` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
+              ' is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: colDef(class = JS(\"function(rowInfo) { ... }\")).",
+              call. = FALSE)
+    }
+    # rowClass/rowStyle from R functions become unnamed lists (one element per row).
+    # Distinguish from named list style objects (e.g., list(color = "red")) which are safe.
+    if (is.list(rowClass) && is.null(names(rowClass))) {
+      warning('R function `rowClass` is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: reactable(rowClass = JS(\"function(rowInfo) { ... }\")).",
+              call. = FALSE)
+    }
+    if (is.list(rowStyle) && is.null(names(rowStyle))) {
+      warning('R function `rowStyle` is not supported with `engine = "duckdb"`. ',
+              "Use a JS() function instead: reactable(rowStyle = JS(\"function(rowInfo) { ... }\")).",
+              call. = FALSE)
+    }
+
     arrowData <- serializeArrowIPC(data)
     totalRowCount <- nrow(data)
 

@@ -1291,9 +1291,7 @@ function Table({
   // Don't skip the initial query when groupBy is set — the pre-rendered first page is flat
   // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
   const hasGroupBy = groupBy && groupBy.length > 0
-  const skipInitialDuckDBQuery = React.useRef(
-    useDuckDB && originalData.length > 0 && !hasGroupBy
-  )
+  const skipInitialDuckDBQuery = React.useRef(useDuckDB && originalData.length > 0 && !hasGroupBy)
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
       return

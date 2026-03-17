@@ -13,6 +13,7 @@ R data frame → jsonlite::toJSON() → JSON string embedded in HTML → browser
 ```
 
 **Limitations:**
+
 - All data embedded in the HTML document (100K rows × 10 columns ≈ 2-10 MB of inline JSON)
 - Browser must parse all JSON on page load, then transform column→row format: O(n×m)
 - Sorting/filtering operates on the full JS array — workable up to ~50K rows, degrades beyond that
@@ -28,6 +29,7 @@ User sorts/filters → browser POSTs {pageIndex, sortBy, filters, ...} to Shiny 
 ```
 
 **Limitations:**
+
 - Requires Shiny (doesn't work in static R Markdown/Quarto documents)
 - Requires the V8 R package (installation issues on Fedora/CentOS, ICU locale problems)
 - Every user interaction (sort, filter, page) = HTTP round-trip to R server (latency)
@@ -37,6 +39,7 @@ User sorts/filters → browser POSTs {pageIndex, sortBy, filters, ...} to Shiny 
 ### Mode 3: No large data story for static documents
 
 If you knit an R Markdown or Quarto document with 500K rows, you either:
+
 - Embed all 500K rows as JSON in the HTML (huge file, slow to load, browser may crash)
 - Give up and paginate server-side (but there's no server for a static HTML file)
 
@@ -79,6 +82,7 @@ R data frame → arrow::write_ipc_stream() → binary Arrow IPC bytes → base64
 ```
 
 **Compare to current client-side:**
+
 ```
 R data frame → toJSON() → 10 MB JSON string in HTML → browser parses 10 MB JSON
 → JS transforms 500K objects → react-table holds all 500K rows in memory
@@ -86,6 +90,7 @@ R data frame → toJSON() → 10 MB JSON string in HTML → browser parses 10 MB
 ```
 
 **Compare to current server-side:**
+
 ```
 User action → HTTP POST → R wakes up → R processes data → R serializes JSON → HTTP response
 → browser parses JSON → renders (repeat for every click, with network latency)
@@ -213,7 +218,7 @@ export class DuckDBEngine {
     const whereClauses = []
 
     // Column filters → WHERE clauses
-    for (const filter of (filters || [])) {
+    for (const filter of filters || []) {
       const col = this.escapeIdentifier(filter.id)
       const colMeta = this.columns.find(c => c.id === filter.id)
 
@@ -230,7 +235,10 @@ export class DuckDBEngine {
     if (searchValue) {
       const searchCols = this.columns
         .filter(c => c.searchable !== false)
-        .map(c => `CAST(${this.escapeIdentifier(c.id)} AS VARCHAR) ILIKE '%${this.escapeValue(searchValue)}%'`)
+        .map(
+          c =>
+            `CAST(${this.escapeIdentifier(c.id)} AS VARCHAR) ILIKE '%${this.escapeValue(searchValue)}%'`
+        )
       if (searchCols.length > 0) {
         whereClauses.push(`(${searchCols.join(' OR ')})`)
       }
@@ -262,7 +270,7 @@ export class DuckDBEngine {
       const orderClauses = sortBy.map(s => {
         const col = this.escapeIdentifier(s.id)
         const dir = s.desc ? 'DESC' : 'ASC'
-        return `${col} ${dir} NULLS LAST`  // Match reactable's sortNALast behavior
+        return `${col} ${dir} NULLS LAST` // Match reactable's sortNALast behavior
       })
       sql += ` ORDER BY ${orderClauses.join(', ')}`
     }
@@ -307,51 +315,65 @@ The engine slots in where the data pipeline currently lives:
 function Reactable({ data, columns, engine, ...props }) {
   const [rows, setRows] = useState([])
   const [rowCount, setRowCount] = useState(0)
-  const [engineRef] = useState(() => engine === 'duckdb' ? new DuckDBEngine() : null)
+  const [engineRef] = useState(() => (engine === 'duckdb' ? new DuckDBEngine() : null))
   const [loading, setLoading] = useState(Boolean(engine))
 
   // Initialize engine on mount
   useEffect(() => {
     if (!engineRef.current) return
-    engineRef.current.init(data, columns).then(() => {
-      setLoading(false)
-      // Fetch initial page
-      return engineRef.current.query({ pageIndex: 0, pageSize: props.defaultPageSize })
-    }).then(result => {
-      setRows(result.rows)
-      setRowCount(result.rowCount)
-    })
+    engineRef.current
+      .init(data, columns)
+      .then(() => {
+        setLoading(false)
+        // Fetch initial page
+        return engineRef.current.query({ pageIndex: 0, pageSize: props.defaultPageSize })
+      })
+      .then(result => {
+        setRows(result.rows)
+        setRowCount(result.rowCount)
+      })
     return () => engineRef.current?.destroy()
   }, [])
 
   // Re-query on state changes (sort, filter, search, page)
   useEffect(() => {
     if (!engineRef.current || loading) return
-    engineRef.current.query({
-      pageIndex: state.pageIndex,
-      pageSize: state.pageSize,
-      sortBy: state.sortBy,
-      filters: state.filters,
-      searchValue: state.globalFilter,
-      groupBy: state.groupBy
-    }).then(result => {
-      setRows(result.rows)
-      setRowCount(result.rowCount)
-    })
-  }, [state.pageIndex, state.pageSize, state.sortBy, state.filters, state.globalFilter, state.groupBy])
+    engineRef.current
+      .query({
+        pageIndex: state.pageIndex,
+        pageSize: state.pageSize,
+        sortBy: state.sortBy,
+        filters: state.filters,
+        searchValue: state.globalFilter,
+        groupBy: state.groupBy
+      })
+      .then(result => {
+        setRows(result.rows)
+        setRowCount(result.rowCount)
+      })
+  }, [
+    state.pageIndex,
+    state.pageSize,
+    state.sortBy,
+    state.filters,
+    state.globalFilter,
+    state.groupBy
+  ])
 
   if (engine === 'duckdb') {
     // Manual pagination mode — DuckDB controls the data
-    return <ReactTable
-      data={rows}
-      columns={columns}
-      manualPagination
-      manualSortBy
-      manualFilters
-      manualGlobalFilter
-      pageCount={Math.ceil(rowCount / state.pageSize)}
-      {...props}
-    />
+    return (
+      <ReactTable
+        data={rows}
+        columns={columns}
+        manualPagination
+        manualSortBy
+        manualFilters
+        manualGlobalFilter
+        pageCount={Math.ceil(rowCount / state.pageSize)}
+        {...props}
+      />
+    )
   }
 
   // Existing path (unchanged)
@@ -370,7 +392,7 @@ Keep the current JSON/client-side path. It's fast, simple, and has zero dependen
 (3-4 MB WASM download for a table that renders instantly).
 
 ```r
-# This stays exactly the same  
+# This stays exactly the same
 reactable(mtcars)
 ```
 
@@ -387,6 +409,7 @@ reactable(big_data, engine = "duckdb")  # instant pagination, sorting, filtering
 ```
 
 The Arrow binary for 500K rows × 10 numeric columns ≈ 40 MB (vs ~50 MB JSON), but:
+
 - No JSON parse overhead (binary loaded directly)
 - No column→row transformation (DuckDB queries return only the visible page)
 - Sorting/filtering in DuckDB: <100ms even on 500K rows (vectorized, columnar)
@@ -410,7 +433,7 @@ to show the first page.
 
 ### For R Markdown / Quarto (static documents)
 
-```r
+````r
 ---
 title: "Sales Report"
 ---
@@ -436,7 +459,7 @@ reactable(
   ),
   groupBy = "region"
 )
-```
+````
 
 The knitted HTML file is maybe 45 MB (mostly the Arrow data), but the browser loads instantly — it only needs to
 query the first page (25 rows) from DuckDB. Sorting a column takes <100ms. Filtering is near-instant. No Shiny
@@ -465,6 +488,7 @@ round-trips, no R process blocking on data operations.
 ### For reactable-py (Python)
 
 Same engine, same JS code:
+
 ```python
 from reactable import reactable, col_def
 import polars as pl
@@ -560,10 +584,11 @@ renders its first page in <2 seconds with no R processing and no server.
 **Not a problem for reactable's use case.** Reactable queries are simple: filter + sort + paginate on a single table.
 These are not complex analytical joins or aggregations over billions of rows. Benchmarks on DuckDB-WASM show
 single-threaded performance of:
+
 - Scanning 1M rows: ~50ms
 - Sorting 1M rows: ~200ms
 - Filtering 1M rows with WHERE: ~30ms
-- COUNT(*) on 1M rows: ~5ms
+- COUNT(\*) on 1M rows: ~5ms
 
 These are all within interactive latency (~300ms budget). The `eh` (exception handling) WASM variant provides the best
 single-thread performance. The `threads` variant exists for heavier analytical workloads but adds complexity
@@ -577,15 +602,16 @@ single-thread performance. The `threads` variant exists for heavier analytical w
 
 **Rarely a problem — and it's self-correcting.** How much data fits in 4 GB?
 
-| Dataset | Rows | Columns | Approx memory |
-|---------|------|---------|---------------|
-| Numeric-heavy (10 num cols) | 1M | 10 | ~80 MB |
-| Numeric-heavy (10 num cols) | 10M | 10 | ~800 MB |
-| Mixed (5 num + 5 str avg 50 chars) | 1M | 10 | ~350 MB |
-| Mixed (5 num + 5 str avg 50 chars) | 10M | 10 | ~3.5 GB |
-| String-heavy (10 str avg 100 chars) | 1M | 10 | ~1 GB |
+| Dataset                             | Rows | Columns | Approx memory |
+| ----------------------------------- | ---- | ------- | ------------- |
+| Numeric-heavy (10 num cols)         | 1M   | 10      | ~80 MB        |
+| Numeric-heavy (10 num cols)         | 10M  | 10      | ~800 MB       |
+| Mixed (5 num + 5 str avg 50 chars)  | 1M   | 10      | ~350 MB       |
+| Mixed (5 num + 5 str avg 50 chars)  | 10M  | 10      | ~3.5 GB       |
+| String-heavy (10 str avg 100 chars) | 1M   | 10      | ~1 GB         |
 
 For datasets exceeding ~3 GB in-memory, DuckDB-WASM hits the wall. But:
+
 1. Embedding >3 GB of Arrow data in an HTML file is already impractical (page load time)
 2. For datasets this large, the Parquet sidecar + HTTP range request approach or the server-side DuckDB R backend
    avoids loading everything into WASM memory
@@ -597,6 +623,7 @@ backend or Parquet sidecar.
 ### WASM bundle size and variants
 
 Three variants with different tradeoffs:
+
 - **`mvp`** (~3 MB): WebAssembly 1.0, maximum compatibility, slowest
 - **`eh`** (~3 MB): Exception handling, better performance, modern browsers (Chrome 91+, Firefox 100+, Safari 15.2+)
 - **`threads`** (~3.5 MB): Threading support, requires COOP/COEP headers (breaks many hosting environments)
@@ -606,6 +633,7 @@ Three variants with different tradeoffs:
 ### Web Worker requirement
 
 DuckDB-WASM runs in a Web Worker:
+
 - **Pro:** Queries are non-blocking (UI stays responsive during long sorts)
 - **Pro:** Communication is async (all queries return Promises)
 - **Con:** Web Workers require same-origin or CDN-hosted scripts
@@ -731,13 +759,13 @@ directly from the R data frame's memory without copying.
 
 ### When to use which
 
-| Scenario | Recommended mode |
-|----------|-----------------|
-| Static HTML, R Markdown, Quarto (<2M rows) | `engine = "duckdb"` (WASM, client-side) |
-| Shiny, data must stay on server | `server = "duckdb"` (R backend) |
-| Shiny, don't mind client seeing data | `engine = "duckdb"` (WASM, offloads R server) |
-| Very large data (>2M rows, static doc) | `engine = "duckdb"` + Parquet sidecar file |
-| Small tables (<10K rows) | Default JSON path (no engine needed) |
+| Scenario                                   | Recommended mode                              |
+| ------------------------------------------ | --------------------------------------------- |
+| Static HTML, R Markdown, Quarto (<2M rows) | `engine = "duckdb"` (WASM, client-side)       |
+| Shiny, data must stay on server            | `server = "duckdb"` (R backend)               |
+| Shiny, don't mind client seeing data       | `engine = "duckdb"` (WASM, offloads R server) |
+| Very large data (>2M rows, static doc)     | `engine = "duckdb"` + Parquet sidecar file    |
+| Small tables (<10K rows)                   | Default JSON path (no engine needed)          |
 
 ---
 
@@ -745,11 +773,11 @@ directly from the R data frame's memory without copying.
 
 ### Bundle size
 
-| Component | Size (gzipped) |
-|-----------|---------------|
-| Current reactable.js | ~100 KB |
-| apache-arrow JS | ~120 KB |
-| DuckDB-WASM | ~3-4 MB |
+| Component            | Size (gzipped) |
+| -------------------- | -------------- |
+| Current reactable.js | ~100 KB        |
+| apache-arrow JS      | ~120 KB        |
+| DuckDB-WASM          | ~3-4 MB        |
 
 DuckDB-WASM is big. Mitigation: **lazy loading**. The WASM binary is only fetched when `engine = "duckdb"` is used.
 For normal small tables, bundle size is unchanged. Can also load from CDN (jsDelivr) instead of embedding.
@@ -774,22 +802,48 @@ const result = await stmt.query('%' + filterValue + '%', sortCol, pageSize, offs
 
 ### Custom R render functions
 
-R cell render functions (`cell = function(value, index) { ... }`) are pre-computed at widget creation time for all
-rows. With DuckDB, only the visible page of rows exists in the browser — R functions would need to be pre-computed
-only for the current page, or moved to JS functions.
+Per-row R render functions are pre-evaluated at widget creation time against the full dataset, producing arrays
+indexed by original row position. With DuckDB, the visible page changes dynamically (sort, filter, paginate), so
+these pre-rendered arrays won't match the current rows. The following parameters are affected:
 
-Options:
-- **For static docs:** Pre-compute renderers for ALL rows (same as today), but only send rendered HTML for the
-  current page. On page change, DuckDB returns raw data, and we fall back to default rendering or JS renderers.
-- **For Shiny:** On page change, call back to R to render the new page's cells. Adds a small round-trip but
-  preserves full R rendering capability.
-- **Recommended default:** Encourage JS render functions (`cell = JS("function(cellInfo) { ... }")`) for DuckDB
-  tables, since they execute in the browser on whatever page is visible.
+- `colDef(cell = function(...))` — per-row cell rendering
+- `colDef(details = function(...))` — per-row details/expansion content
+- `colDef(style = function(...))` — per-row conditional styling
+- `colDef(class = function(...))` — per-row conditional CSS classes
+- `reactable(rowClass = function(...))` — per-row class on row element
+- `reactable(rowStyle = function(...))` — per-row style on row element
+
+R-level warnings are emitted when any of these are used with `engine = "duckdb"`.
+
+**Safe parameters** (called once, not row-dependent): `header`, `footer`, `filterInput`, `colGroup header`.
+
+**Recommended:** Use `JS()` function variants for all per-row renderers with the DuckDB engine. JS functions
+execute client-side with the current row's data and work correctly regardless of page/sort/filter state.
+
+### Row details (`details` parameter)
+
+Row expansion via `details` works with the DuckDB engine, with the following caveats:
+
+- **`JS()` function details**: Work correctly. The function executes client-side with the current row's data.
+- **R function details**: Broken on pages beyond the first. R pre-evaluates details for all rows into an array
+  indexed by original row position, but DuckDB-fetched rows have different indices. A warning is emitted.
+- **Static HTML/list details**: Same issue as R functions — pre-rendered content is indexed by original position.
+
+### Multiple tables on the same page
+
+Multiple reactable tables with `engine = "duckdb"` on the same page are supported. Each table creates its own
+independent `DuckDBEngine` instance with its own Web Worker, WASM memory, and database. The hardcoded
+`reactable_data` table name doesn't conflict because each database is isolated.
+
+**Resource concern:** N tables = N Web Workers + N WASM instances (~3-4 MB each + data). For 2-3 tables this is
+fine. For many tables, memory could add up. A future enhancement (shared DuckDB instance pooling) could allow
+multiple tables to share a single DuckDB-WASM instance with separate table names.
 
 ### Grouped/nested rows
 
 DuckDB handles flat GROUP BY naturally, but reactable's nested sub-rows (expandable groups with child rows) need
 special handling:
+
 - Top-level: `SELECT groupCol, COUNT(*), SUM(val) FROM data GROUP BY groupCol` for the collapsed view
 - On expand: `SELECT * FROM data WHERE groupCol = 'value' ORDER BY ... LIMIT ... OFFSET ...` for the child rows
 - Multi-level grouping: Recursive queries or multiple queries per expansion level
@@ -817,13 +871,13 @@ created (INT/Date32).
 
 ### Timing results
 
-| Operation | 100K rows | 500K rows | 1M rows |
-|-----------|-----------|-----------|---------|
-| DuckDB-WASM init (cold) | 553 ms | 557 ms | 540 ms |
-| JS data generation | 10 ms | 45 ms | 94 ms |
-| Arrow IPC ingestion | 72 ms | 223 ms | 413 ms |
-| Pagination query (LIMIT 25 OFFSET n) | 5 ms | 6 ms | 12 ms |
-| Global search ("books", 6 cols ILIKE) | 164 ms | 625 ms | 1,211 ms |
+| Operation                             | 100K rows | 500K rows | 1M rows  |
+| ------------------------------------- | --------- | --------- | -------- |
+| DuckDB-WASM init (cold)               | 553 ms    | 557 ms    | 540 ms   |
+| JS data generation                    | 10 ms     | 45 ms     | 94 ms    |
+| Arrow IPC ingestion                   | 72 ms     | 223 ms    | 413 ms   |
+| Pagination query (LIMIT 25 OFFSET n)  | 5 ms      | 6 ms      | 12 ms    |
+| Global search ("books", 6 cols ILIKE) | 164 ms    | 625 ms    | 1,211 ms |
 
 ### Assessment
 
@@ -851,12 +905,12 @@ and memory than it saves on queries.
 
 ### Recommended target range
 
-| Use case | Recommended approach |
-|----------|---------------------|
-| Static HTML (R Markdown / Quarto) up to ~200K rows | `engine = "duckdb"` (WASM) — all operations <300ms |
-| Static HTML, 200K-1M rows | `engine = "duckdb"` (WASM) — pagination/sort instant, search may lag |
-| Shiny with data that must stay on server | `server = "duckdb"` (R backend) — no WASM limit |
-| Shiny with >1M rows or sensitive data | `server = "duckdb"` (R backend) |
+| Use case                                           | Recommended approach                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------- |
+| Static HTML (R Markdown / Quarto) up to ~200K rows | `engine = "duckdb"` (WASM) — all operations <300ms                   |
+| Static HTML, 200K-1M rows                          | `engine = "duckdb"` (WASM) — pagination/sort instant, search may lag |
+| Shiny with data that must stay on server           | `server = "duckdb"` (R backend) — no WASM limit                      |
+| Shiny with >1M rows or sensitive data              | `server = "duckdb"` (R backend)                                      |
 
 ### Future search optimizations
 
@@ -871,19 +925,19 @@ and memory than it saves on queries.
 
 ## Why not just improve the V8 server-side backend?
 
-| | V8 Server-Side | DuckDB-WASM | DuckDB R Backend |
-|---|---|---|---|
-| Works in static HTML | No (requires Shiny) | **Yes** | No (requires Shiny) |
-| Works offline | No (requires server) | **Yes** | Yes (local Shiny) |
-| R dependency | V8 (C++ lib, ICU issues) | arrow | duckdb |
-| Latency | Network round-trip per action | **Zero** (in-browser) | Network round-trip |
-| R server load | Blocks R process per query | **None** after initial send | Minimal (DuckDB is fast) |
-| Data stays on server | **Yes** | No (sent to browser) | **Yes** |
-| Data size limit | R server memory | Browser 4 GB WASM limit | R server memory |
-| Concurrent users | Limited by R processes | **Unlimited** (client-side) | Limited by R processes |
-| Query performance | R data.frame ops (~100ms) | DuckDB WASM (~10-50ms) | **DuckDB native (~5ms)** |
-| JSON overhead | On every request | **None** (Arrow binary) | On every response |
-| Initialization | V8 context + data copy | WASM download + Arrow load | **Zero-copy register** |
+|                      | V8 Server-Side                | DuckDB-WASM                 | DuckDB R Backend         |
+| -------------------- | ----------------------------- | --------------------------- | ------------------------ |
+| Works in static HTML | No (requires Shiny)           | **Yes**                     | No (requires Shiny)      |
+| Works offline        | No (requires server)          | **Yes**                     | Yes (local Shiny)        |
+| R dependency         | V8 (C++ lib, ICU issues)      | arrow                       | duckdb                   |
+| Latency              | Network round-trip per action | **Zero** (in-browser)       | Network round-trip       |
+| R server load        | Blocks R process per query    | **None** after initial send | Minimal (DuckDB is fast) |
+| Data stays on server | **Yes**                       | No (sent to browser)        | **Yes**                  |
+| Data size limit      | R server memory               | Browser 4 GB WASM limit     | R server memory          |
+| Concurrent users     | Limited by R processes        | **Unlimited** (client-side) | Limited by R processes   |
+| Query performance    | R data.frame ops (~100ms)     | DuckDB WASM (~10-50ms)      | **DuckDB native (~5ms)** |
+| JSON overhead        | On every request              | **None** (Arrow binary)     | On every response        |
+| Initialization       | V8 context + data copy        | WASM download + Arrow load  | **Zero-copy register**   |
 
 DuckDB-WASM is best for the common case (static documents, offloading Shiny). The DuckDB R backend is best when data
 must stay on the server (privacy, security) or exceeds the 4 GB WASM limit. V8 server-side remains available but is
@@ -899,6 +953,7 @@ document with instant sorting, filtering, and pagination — no server required.
 (Arrow) and an analytical database engine (DuckDB).
 
 The same DuckDB engine powers both sides:
+
 - **Client-side (DuckDB-WASM):** For static HTML documents, R Markdown, Quarto. Data is shipped as Arrow IPC, queried
   in the browser. No server, no latency, unlimited concurrent users.
 - **Server-side (DuckDB R):** For Shiny apps where data must stay private. Zero-copy data registration, ~100x faster

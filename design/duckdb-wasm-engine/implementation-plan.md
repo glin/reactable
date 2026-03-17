@@ -471,10 +471,11 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 in full for each visible group, and pagination is based on top-level group count only. This matches the behavior of
 the df and dt server backends, which also don't implement `paginateSubRows` — only the V8 backend does.
 
-When `paginateSubRows = FALSE` (the default), expanding a group adds its child rows *on top of* the page size.
+When `paginateSubRows = FALSE` (the default), expanding a group adds its child rows _on top of_ the page size.
 With `paginateSubRows = TRUE`, expanded children would count toward the page size, giving consistent page heights.
 
 Implementing it for DuckDB would require:
+
 - Passing `expanded` state to the engine (which groups are currently open)
 - Building a flat page interleaving group headers and their expanded children, respecting `pageSize` across group
   boundaries (e.g., if group A has 50 children and page size is 10, page 2 starts mid-group-A)
@@ -514,6 +515,18 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
       `searchMethod`, `filterMethod`, or JS `aggregate` functions, emit R-level warnings that these will be
       ignored. Built-in string aggregate names ("sum", "mean", etc.) are fine. `filterInput` (custom UI) works.
       `sortType` is not in the R API so no check needed.
+- [x] **6.10.2** Warn about unsupported per-row R render functions: When `engine = "duckdb"` is used with
+      R function renderers that are pre-evaluated per-row, emit R-level warnings. These produce arrays indexed
+      by original row position, which break when DuckDB sorts/filters/paginates to different rows.
+      Affected parameters (6 total):
+      - `colDef(cell = function(...))` — per-row cell rendering
+      - `colDef(details = function(...))` — per-row details/expansion content
+      - `colDef(style = function(...))` — per-row conditional styling
+      - `colDef(class = function(...))` — per-row conditional CSS classes
+      - `reactable(rowClass = function(...))` — per-row class on row element
+      - `reactable(rowStyle = function(...))` — per-row style on row element
+      Safe parameters (called once, not row-dependent): `header`, `footer`, `filterInput`, `colGroup header`.
+      JS() function variants of all parameters work correctly with DuckDB.
   - Ensure all DuckDBEngine methods have test coverage
   - Ensure all R server-duckdb S3 methods have test coverage
   - Integration tests: R Arrow IPC → JS DuckDB ingestion → query → correct results

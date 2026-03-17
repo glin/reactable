@@ -1924,3 +1924,113 @@ test_that("engine = 'duckdb' warns about unsupported JS aggregate", {
     reactable(df, engine = "duckdb", columns = list(x = colDef(aggregate = "sum")))
   )
 })
+
+test_that("engine = 'duckdb' warns about unsupported R function cell renderer", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(cell = function(value, index) value))),
+    'R function `cell` renderer in column\\(s\\) "x".*is not supported'
+  )
+
+  # JS cell renderer does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(cell = JS("function(cellInfo) { return cellInfo.value }"))))
+  )
+})
+
+test_that("engine = 'duckdb' warns about unsupported R function details renderer", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(details = function(index) paste("Row", index)))),
+    'R function `details` renderer in column\\(s\\) "x".*is not supported'
+  )
+
+  # JS details renderer does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(details = JS("function(rowInfo) { return 'details' }"))))
+  )
+})
+
+test_that("engine = 'duckdb' warns about unsupported R function style", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(style = function(value, index) list(color = "red")))),
+    'R function `style` in column\\(s\\) "x".*is not supported'
+  )
+
+  # JS style does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(style = JS("function(rowInfo) { return { color: 'red' } }"))))
+  )
+
+  # Named list style does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(style = list(color = "red"))))
+  )
+})
+
+test_that("engine = 'duckdb' warns about unsupported R function class", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(class = function(value, index) "my-class"))),
+    'R function `class` in column\\(s\\) "x".*is not supported'
+  )
+
+  # JS class does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb",
+              columns = list(x = colDef(class = JS("function(rowInfo) { return 'my-class' }"))))
+  )
+})
+
+test_that("engine = 'duckdb' warns about unsupported R function rowClass", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb", rowClass = function(index) "my-class"),
+    'R function `rowClass` is not supported with `engine = "duckdb"`'
+  )
+
+  # JS rowClass does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb", rowClass = JS("function(rowInfo) { return 'my-class' }"))
+  )
+
+  # Character rowClass does NOT warn
+  expect_no_warning(reactable(df, engine = "duckdb", rowClass = "my-class"))
+})
+
+test_that("engine = 'duckdb' warns about unsupported R function rowStyle", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb", rowStyle = function(index) list(color = "red")),
+    'R function `rowStyle` is not supported with `engine = "duckdb"`'
+  )
+
+  # JS rowStyle does NOT warn
+  expect_no_warning(
+    reactable(df, engine = "duckdb", rowStyle = JS("function(rowInfo) { return { color: 'red' } }"))
+  )
+
+  # Named list rowStyle does NOT warn
+  expect_no_warning(reactable(df, engine = "duckdb", rowStyle = list(color = "red")))
+})
