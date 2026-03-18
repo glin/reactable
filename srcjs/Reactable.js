@@ -1290,8 +1290,11 @@ function Table({
   // Query DuckDB on page/sort/filter/search changes.
   // Don't skip the initial query when groupBy is set — the pre-rendered first page is flat
   // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
+  // Don't skip when pagination is disabled — the pre-rendered page is only a subset of all rows.
   const hasGroupBy = groupBy && groupBy.length > 0
-  const skipInitialDuckDBQuery = React.useRef(useDuckDB && originalData.length > 0 && !hasGroupBy)
+  const skipInitialDuckDBQuery = React.useRef(
+    useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
+  )
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
       return
@@ -1305,8 +1308,8 @@ function Table({
 
     duckdbRef.current
       .query({
-        pageIndex: state.pageIndex,
-        pageSize: state.pageSize,
+        pageIndex: pagination ? state.pageIndex : 0,
+        pageSize: pagination ? state.pageSize : null,
         sortBy: state.sortBy,
         filters: state.filters,
         searchValue: state.globalFilter,
@@ -1324,6 +1327,7 @@ function Table({
   }, [
     useDuckDB,
     duckdbReady,
+    pagination,
     state.pageIndex,
     state.pageSize,
     state.sortBy,

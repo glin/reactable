@@ -136,7 +136,9 @@ export class DuckDBBackend {
       sql += ' ORDER BY ' + orderClauses.join(', ')
     }
 
-    sql += ` LIMIT ${Number(pageSize)} OFFSET ${Number(pageIndex) * Number(pageSize)}`
+    if (pageSize != null) {
+      sql += ` LIMIT ${Number(pageSize)} OFFSET ${Number(pageIndex) * Number(pageSize)}`
+    }
 
     // Run data query and count query in parallel using prepared statements
     const [dataResult, countResult] = await Promise.all([

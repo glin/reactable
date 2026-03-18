@@ -39,6 +39,9 @@ function createMockBackend(totalRows = 20) {
     totalRowCount: totalRows,
     init: jest.fn().mockResolvedValue(undefined),
     query: jest.fn().mockImplementation(({ pageIndex, pageSize }) => {
+      if (pageSize == null) {
+        return Promise.resolve({ rows: allRows, rowCount: totalRows })
+      }
       const start = pageIndex * pageSize
       const rows = allRows.slice(start, start + pageSize)
       return Promise.resolve({ rows, rowCount: totalRows })
@@ -711,6 +714,74 @@ describe('DuckDB backend', () => {
       )
     })
   })
+
+  it('fetches all rows when pagination is disabled', async () => {
+    const mockBackend = createMockBackend(20)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        pagination={false}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // Wait for DuckDB to init and query
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pageIndex: 0,
+          pageSize: null
+        })
+      )
+    })
+
+    // All 20 rows should be rendered
+    expect(getRows(container)).toHaveLength(20)
+  })
+
+  it('does not skip initial query when pagination is disabled', async () => {
+    const mockBackend = createMockBackend(20)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        pagination={false}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // Wait for DuckDB to initialize
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Initial query should NOT have been skipped because pagination is disabled
+    // (pre-rendered data is only a subset)
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.
@@ -765,6 +836,24 @@ describe('DuckDBBackend.query', () => {
     expect(mockStmt.close).toHaveBeenCalled()
     expect(mockCountStmt.close).toHaveBeenCalled()
     expect(result).toEqual({ rows: [{ a: 1, b: 'x' }], rowCount: 10 })
+  })
+
+  it('skips LIMIT/OFFSET when pageSize is null', async () => {
+    const { conn } = createMockConn([{ a: 1, b: 'x' }], 10)
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    await backend.query({
+      pageIndex: 0,
+      pageSize: null,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: []
+    })
+
+    expect(conn.prepare).toHaveBeenCalledWith('SELECT * FROM reactable_data')
+    expect(conn.prepare).toHaveBeenCalledWith('SELECT COUNT(*) AS n FROM reactable_data')
   })
 
   it('builds sort query with ORDER BY', async () => {
