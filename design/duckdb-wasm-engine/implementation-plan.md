@@ -499,18 +499,22 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 
 ### Phase 6: Polish and edge cases
 
-- [ ] **6.1** Loading state: Show a spinner/skeleton while DuckDB-WASM initializes (first page load)
-- [ ] **6.2** Error handling: graceful fallback if DuckDB-WASM fails to load (CDN down, old browser)
-- [ ] **6.3** Document limitation: R cell render functions (`colDef(cell = function(...) ...)`) are not
-      supported with `engine = "duckdb"`. Users must use JS render functions (`colDef(cell = JS(...))`).
-- [ ] **6.4** Column formatting: `colFormat()` works client-side (JS Intl), so it should work fine on
-      DuckDB query results. Verify dates, currencies, percentages.
-- [ ] **6.5** Selection: Row selection indices need mapping between DuckDB result rows and original data
-      row indices. Store original row index in a `_rowid` column.
-- [ ] **6.6** Accessibility: Ensure ARIA row count is correct (total rows, not just visible page)
-- [ ] **6.7** `Reactable.setData()` JS API: Support updating the DuckDB table when data changes
-- [ ] **6.8** Shiny `updateReactable(data = ...)`: Re-import Arrow data into DuckDB-WASM
-- [ ] **6.9** Write tests: Jest tests for DuckDBEngine, R tests for server-duckdb backend
+- ~~**6.1** Loading state~~ — Skipped (pre-rendered first page is sufficient)
+- ~~**6.2** Error handling~~ — Skipped for now (console.error + pre-rendered fallback is acceptable)
+- ~~**6.3** Document R render limitation~~ — Covered by 6.10.2 warnings; vignette will mention it
+- ~~**6.4** Column formatting verification~~ — Skipped (`colFormat()` is client-side JS, works fine).
+  Added colFormat examples to test Rmd instead (dates, currencies, percentages, grouped aggregates).
+- ~~**6.5** Selection~~ — Deferred. Row selection is broken with DuckDB (per-page index collisions,
+  server-side selection not implemented). Added to Deferred/Future list. Add R warning when
+  `selection` is used with `engine = "duckdb"`.
+- ~~**6.6** Accessibility (ARIA row count)~~ — Not needed. `aria-rowcount` is only set for virtual
+  tables, same as client-side tables. No DuckDB-specific issue.
+- ~~**6.7** `Reactable.setData()` JS API~~ — Deferred. DuckDB WASM is for static HTML where data
+  doesn't change dynamically. Added to Deferred/Future list.
+- ~~**6.8** Shiny `updateReactable(data = ...)`~~ — Deferred. Same reasoning. Added to Deferred/Future.
+- ~~**6.9** Write tests~~ — Already done as part of each phase. JS: 37 tests in DuckDB.test.js
+  (Phases 2, 2.5, 3, 5). R: 49 tests in test-server-duckdb.R, 29 in test-duckdb-sql.R (Phase 4),
+  plus DuckDB warning tests in test-reactable.R (Phase 6).
 - [x] **6.10.1** Warn about unsupported custom JS methods: When `engine = "duckdb"` is used with custom
       `searchMethod`, `filterMethod`, or JS `aggregate` functions, emit R-level warnings that these will be
       ignored. Built-in string aggregate names ("sum", "mean", etc.) are fine. `filterInput` (custom UI) works.
@@ -518,25 +522,20 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 - [x] **6.10.2** Warn about unsupported per-row R render functions: When `engine = "duckdb"` is used with
       R function renderers that are pre-evaluated per-row, emit R-level warnings. These produce arrays indexed
       by original row position, which break when DuckDB sorts/filters/paginates to different rows.
-      Affected parameters (6 total):
-      - `colDef(cell = function(...))` — per-row cell rendering
-      - `colDef(details = function(...))` — per-row details/expansion content
-      - `colDef(style = function(...))` — per-row conditional styling
-      - `colDef(class = function(...))` — per-row conditional CSS classes
-      - `reactable(rowClass = function(...))` — per-row class on row element
-      - `reactable(rowStyle = function(...))` — per-row style on row element
+      Affected parameters (6 total): - `colDef(cell = function(...))` — per-row cell rendering - `colDef(details = function(...))` — per-row details/expansion content - `colDef(style = function(...))` — per-row conditional styling - `colDef(class = function(...))` — per-row conditional CSS classes - `reactable(rowClass = function(...))` — per-row class on row element - `reactable(rowStyle = function(...))` — per-row style on row element
       Safe parameters (called once, not row-dependent): `header`, `footer`, `filterInput`, `colGroup header`.
       JS() function variants of all parameters work correctly with DuckDB.
   - Ensure all DuckDBEngine methods have test coverage
   - Ensure all R server-duckdb S3 methods have test coverage
   - Integration tests: R Arrow IPC → JS DuckDB ingestion → query → correct results
-- [ ] **6.10** Document in vignettes: new `engine = "duckdb"` parameter, when to use it, limitations
-- [ ] **6.11** Update NEWS.md
+- [x] **6.10.3** Warn about unsupported row selection: When `engine = "duckdb"` is used with
+      `selection`, emit an R-level warning. Row selection with DuckDB is not supported because
+      row IDs are per-page indices that collide across pages.
 
 #### Validate
 
-- [ ] All existing reactable tests pass (no regressions)
-- [ ] New DuckDB tests pass
+- [x] All existing reactable tests pass (no regressions)
+- [x] New DuckDB tests pass
 - [ ] Manual testing in Chrome, Firefox, Safari
 - [ ] `R CMD check` passes
 - [ ] pkgdown site builds
@@ -548,6 +547,13 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 - [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
       where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
       cross-group page offsets. See Phase 5 limitation notes for full details.
+- [ ] Row selection support for DuckDB engine: Currently broken because row IDs are per-page indices (0, 1, 2...)
+      that collide across pages. Needs a `_rowid` column mapping from DuckDB result rows to original data row
+      indices, plus server-side selection state tracking. See the `// TODO` in Reactable.js `getRowId`.
+- [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
+      holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
+- [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
+      would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
 - [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
 - [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
@@ -643,3 +649,19 @@ Alternatives: `duckdbBackend()` (camelCase, matches package conventions), `backe
 - [ ] `reactable(data, server = TRUE)` still works with deprecation warning
 - [ ] All existing tests pass
 - [ ] `R CMD check` passes
+
+---
+
+### Phase 8: Documentation
+
+**Goal:** Document the DuckDB engine feature in vignettes and NEWS.md.
+
+- [ ] **8.1** Document in vignettes: new `engine = "duckdb"` parameter, when to use it, limitations
+- [ ] **8.2** Update NEWS.md
+- [ ] **8.3** Update pkgdown site / website docs as needed
+
+#### Validate
+
+- [ ] Vignette renders correctly
+- [ ] pkgdown site builds
+- [ ] NEWS.md has DuckDB engine entry

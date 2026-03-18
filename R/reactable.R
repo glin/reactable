@@ -813,6 +813,10 @@ reactable <- function(
               "Use a JS() function instead: reactable(rowStyle = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
+    if (!is.null(selection)) {
+      warning('Row `selection` is not supported with `engine = "duckdb"` and will not work correctly.',
+              call. = FALSE)
+    }
 
     arrowData <- serializeArrowIPC(data)
     totalRowCount <- nrow(data)

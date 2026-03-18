@@ -2034,3 +2034,20 @@ test_that("engine = 'duckdb' warns about unsupported R function rowStyle", {
   # Named list rowStyle does NOT warn
   expect_no_warning(reactable(df, engine = "duckdb", rowStyle = list(color = "red")))
 })
+
+test_that("engine = 'duckdb' warns about unsupported row selection", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
+  expect_warning(
+    reactable(df, engine = "duckdb", selection = "multiple"),
+    'Row `selection` is not supported with `engine = "duckdb"`'
+  )
+  expect_warning(
+    reactable(df, engine = "duckdb", selection = "single"),
+    'Row `selection` is not supported with `engine = "duckdb"`'
+  )
+
+  # No selection does NOT warn
+  expect_no_warning(reactable(df, engine = "duckdb"))
+})

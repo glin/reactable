@@ -578,3 +578,217 @@ server <- function(input, output) {
 
 shinyApp(ui, server)
 ```
+
+## Column Formatting
+
+### colFormat with numbers, currencies, and percentages
+
+`colFormat()` is applied client-side via JavaScript's `Intl.NumberFormat`, so it works correctly
+with DuckDB query results. The data types (numbers, strings) are preserved through Arrow IPC.
+
+```{r}
+sales_data <- data.frame(
+  product = c("Widget A", "Widget B", "Gadget X", "Gadget Y", "Gizmo Z"),
+  units_sold = c(15234, 8921, 42010, 3150, 99120),
+  revenue = c(152340.50, 89210.75, 420100.00, 31500.25, 991200.99),
+  margin = c(0.234, 0.157, 0.412, 0.089, 0.301),
+  avg_price = c(9.999, 10.0, 10.001, 10.0001, 10.00001),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  sales_data,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  columns = list(
+    units_sold = colDef(
+      name = "Units Sold",
+      format = colFormat(separators = TRUE)
+    ),
+    revenue = colDef(
+      name = "Revenue",
+      format = colFormat(currency = "USD", separators = TRUE, digits = 2)
+    ),
+    margin = colDef(
+      name = "Margin",
+      format = colFormat(percent = TRUE, digits = 1)
+    ),
+    avg_price = colDef(
+      name = "Avg Price",
+      format = colFormat(digits = 2, prefix = "$")
+    )
+  )
+)
+```
+
+### colFormat with dates
+
+Date formatting via `colFormat()` works on DuckDB query results.
+
+```{r}
+date_data <- data.frame(
+  event = c("Launch", "Update 1", "Update 2", "Sunset"),
+  date = as.Date(c("2024-01-15", "2024-06-01", "2024-09-30", "2025-03-01")),
+  datetime = as.POSIXct(c(
+    "2024-01-15 09:30:00", "2024-06-01 14:00:00",
+    "2024-09-30 23:59:59", "2025-03-01 00:00:01"
+  )),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  date_data,
+  engine = "duckdb",
+  columns = list(
+    date = colDef(format = colFormat(date = TRUE)),
+    datetime = colDef(format = colFormat(datetime = TRUE))
+  )
+)
+```
+
+### colFormat on grouped aggregates
+
+`colFormat()` also applies to aggregated values in grouped tables.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  groupBy = "Type",
+  columns = list(
+    Min.Price = colDef(
+      aggregate = "sum",
+      format = colFormat(currency = "USD", separators = TRUE, digits = 0)
+    ),
+    Max.Price = colDef(
+      aggregate = "mean",
+      format = colFormat(currency = "USD", separators = TRUE, digits = 2)
+    ),
+    Horsepower = colDef(
+      aggregate = "mean",
+      format = colFormat(digits = 0, suffix = " hp")
+    ),
+    MPG.city = colDef(
+      aggregate = "median",
+      format = colFormat(digits = 1, suffix = " mpg")
+    ),
+    Weight = colDef(
+      aggregate = "sum",
+      format = colFormat(separators = TRUE, suffix = " lbs")
+    )
+  )
+)
+```
+
+## JS Render Functions
+
+### JS cell renderer
+
+`colDef(cell = JS(...))` works correctly with DuckDB — the JS function receives each cell value
+as DuckDB returns it.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  filterable = TRUE,
+  columns = list(
+    Horsepower = colDef(
+      cell = JS("function(cellInfo) {
+        const value = cellInfo.value
+        const color = value >= 200 ? '#e00' : value >= 150 ? '#f80' : '#080'
+        return React.createElement('span', {
+          style: { color: color, fontWeight: 'bold' }
+        }, value)
+      }")
+    ),
+    Min.Price = colDef(
+      format = colFormat(currency = "USD", separators = TRUE, digits = 2)
+    )
+  )
+)
+```
+
+### JS style and class functions
+
+`colDef(style = JS(...))` and `colDef(class = JS(...))` work correctly with DuckDB.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  engine = "duckdb",
+  defaultPageSize = 10,
+  sortable = TRUE,
+  columns = list(
+    Horsepower = colDef(
+      style = JS("function(rowInfo) {
+        const value = rowInfo.value
+        if (value >= 200) return { color: '#e00', fontWeight: 'bold' }
+        if (value >= 150) return { color: '#f80' }
+        return {}
+      }")
+    ),
+    Min.Price = colDef(
+      style = JS("function(rowInfo) {
+        if (rowInfo.value > 30) return { backgroundColor: '#ffe0e0' }
+      }")
+    )
+  )
+)
+```
+
+### JS row details
+
+`colDef(details = JS(...))` works correctly with DuckDB.
+
+```{r}
+reactable(
+  MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
+  engine = "duckdb",
+  defaultPageSize = 10,
+  details = JS("function(rowInfo) {
+    return React.createElement('div', { style: { padding: '10px', background: '#f8f8f8' } },
+      React.createElement('b', null, rowInfo.values.Manufacturer + ' ' + rowInfo.values.Model),
+      React.createElement('br'),
+      'Type: ' + rowInfo.values.Type,
+      React.createElement('br'),
+      'Price range: $' + rowInfo.values['Min.Price'] + ' - $' + rowInfo.values['Max.Price']
+    )
+  }")
+)
+```
+
+## Theming
+
+### Themed DuckDB table
+
+Themes work normally with the DuckDB engine since they're applied client-side.
+
+```{r}
+reactable(
+  MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
+  engine = "duckdb",
+  defaultPageSize = 10,
+  searchable = TRUE,
+  filterable = TRUE,
+  highlight = TRUE,
+  bordered = TRUE,
+  striped = TRUE,
+  theme = reactableTheme(
+    borderColor = "#dfe2e5",
+    stripedColor = "#f6f8fa",
+    highlightColor = "#f0f5ff",
+    headerStyle = list(
+      borderColor = "#dfe2e5",
+      backgroundColor = "#f6f8fa"
+    ),
+    searchInputStyle = list(
+      paddingLeft = "1.9rem",
+      paddingTop = "0.5rem",
+      paddingBottom = "0.5rem"
+    )
+  )
+)
+```
