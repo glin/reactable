@@ -60,7 +60,7 @@ const baseColumns = [
 ]
 
 describe('DuckDB backend', () => {
-  it('renders pre-rendered first page immediately', () => {
+  it('renders pre-rendered first page immediately', async () => {
     createMockBackend(20)
 
     // Simulate pre-rendered first page data (column-oriented, as R's toJSON produces)
@@ -95,6 +95,9 @@ describe('DuckDB backend', () => {
       '5',
       'row5'
     ])
+
+    // Flush async DuckDB init to avoid act() warnings
+    await act(async () => {})
   })
 
   it('skips initial DuckDB query when first page is pre-rendered', async () => {
@@ -183,7 +186,7 @@ describe('DuckDB backend', () => {
     })
   })
 
-  it('shows correct page info immediately with pre-rendered data', () => {
+  it('shows correct page info immediately with pre-rendered data', async () => {
     createMockBackend(50)
 
     const firstPageData = {
@@ -207,6 +210,9 @@ describe('DuckDB backend', () => {
     // Page info should show immediately (not after async DuckDB init)
     const pageInfo = getPageInfo(container)
     expect(pageInfo).toHaveTextContent('1–10 of 50 rows')
+
+    // Flush async DuckDB init to avoid act() warnings
+    await act(async () => {})
   })
 
   it('cleans up DuckDB backend on unmount', async () => {
@@ -233,6 +239,9 @@ describe('DuckDB backend', () => {
       expect(mockBackend.init).toHaveBeenCalled()
     })
 
+    // Flush async DuckDB init state updates before unmounting
+    await act(async () => {})
+
     unmount()
     expect(mockBackend.destroy).toHaveBeenCalled()
   })
@@ -257,6 +266,9 @@ describe('DuckDB backend', () => {
 
     const rows = getRows(container, ':not(.rt-tr-pad)')
     expect(rows).toHaveLength(0)
+
+    // Flush async DuckDB init to avoid act() warnings
+    await act(async () => {})
   })
 
   it('renders without DuckDB when backend is not set', () => {
