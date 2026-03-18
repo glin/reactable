@@ -3,11 +3,11 @@
 htmlwidgets::JS
 
 # Serialize a data frame to Arrow IPC stream format, base64-encoded.
-# Used when engine = "duckdb" to send data to the browser for DuckDB-WASM ingestion.
+# Used by backendDuckDB() to send data to the browser for DuckDB-WASM ingestion.
 serializeArrowIPC <- function(data) {
   if (!requireNamespace("arrow", quietly = TRUE)) {
     stop(
-      'The arrow package is required for engine = "duckdb". ',
+      'The arrow package is required for backendDuckDB(). ',
       'Install it with: install.packages("arrow")',
       call. = FALSE
     )

@@ -13,7 +13,7 @@ const aggregateSQLMap = {
   // frequency: computed from sub-rows (too complex for a single GROUP BY expression)
 }
 
-export class DuckDBEngine {
+export class DuckDBBackend {
   constructor() {
     this.db = null
     this.conn = null

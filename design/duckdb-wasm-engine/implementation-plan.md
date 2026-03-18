@@ -610,53 +610,77 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 
 ### Phase 7: Backend API refactor
 
-**Goal:** Replace `engine` and `server` with a unified `backend` param using constructor functions.
-See [backend-api.md](backend-api.md) for the full design doc.
+**Goal:** Introduce a `backend` param with `backendDuckDB()` constructor. Remove the `engine` param
+(never released). Keep `server` working exactly as-is (no internal remapping). `backendV8()` is
+deferred to Phase 9.
+
+See [backend-api.md](backend-api.md) for the design doc.
 
 ```r
 # New API:
-reactable(data, backend = duckdb_backend())     # auto client/server detection
-reactable(data, backend = v8_backend())          # legacy server-only
+reactable(data, backend = backendDuckDB())     # auto client/server detection
 
-# Old API (deprecated, still works):
-reactable(data, engine = "duckdb")               # → duckdb_backend("client")
-reactable(data, server = TRUE)                   # → v8_backend()
-reactable(data, server = "duckdb")               # → duckdb_backend("server")
+# Existing server param is completely unchanged:
+reactable(data, server = TRUE)                   # works as before (no remapping)
+reactable(data, server = "duckdb")               # works as before (getServerBackend)
+reactable(data, server = "df")                   # works as before
+reactable(data, server = "dt")                   # works as before
+
+# engine param is deleted (never released):
+reactable(data, engine = "duckdb")               # ❌ removed
 ```
+
+#### Key decisions
+
+- **`engine` param:** Delete entirely. It only existed on this dev branch and was never released.
+  All references to `engine = "duckdb"` in R code, JS code, and tests become `backend = backendDuckDB()`.
+- **`server` param:** Completely unchanged. No internal remapping to backend objects. `server = TRUE`
+  still dispatches to V8, `server = "duckdb"` still dispatches through `getServerBackend()`, etc.
+  Error if both `backend` and `server` are specified.
+- **Only `backendDuckDB()` in this phase.** `backendV8()` constructor is deferred to Phase 9
+  when `server` is merged into `backend`.
+- **Auto-detection:** `backendDuckDB("auto")` checks for active Shiny session → server mode,
+  otherwise → client WASM mode. Same detection as `preRenderHook`.
 
 #### Steps
 
-- [ ] **7.1** Add `backend` param to `reactable()` (default NULL). Validate: error if `backend` is used
-      alongside `engine` or `server`.
-- [ ] **7.2** Create constructor functions: `duckdb_backend()`, `v8_backend()`, `df_backend()`, `dt_backend()`.
-      Each returns an S3 object with class `reactable_backend_*`.
-- [ ] **7.3** Implement auto-detection in `duckdb_backend("auto")`: check for active Shiny session → server
-      mode; otherwise → client mode.
-- [ ] **7.4** Wire existing `engine`/`server` code paths through the new `backend` S3 dispatch.
-- [ ] **7.5** Deprecate `engine` and `server` params with lifecycle warnings.
-- [ ] **7.6** Update docs, vignettes, examples, NEWS.md.
-- [ ] **7.7** Update roxygen: `?duckdb_backend`, `?v8_backend`, `?reactable` backend param docs.
+- [ ] **7.1** Create `backendDuckDB()` in `R/backends.R`: - `backendDuckDB(mode = c("auto", "client", "server"))` → S3 class `"reactable_backendDuckDB"` - Export and add roxygen docs with examples and limitations. - No `backendV8()` in this phase (deferred to Phase 9).
 
-#### Naming decision (deferred)
+- [ ] **7.2** Add `backend` param to `reactable()`, remove `engine` param: - Add `backend = NULL` param (placed after `server` in the signature). - Delete `engine` param entirely. - Validate: error if both `backend` and `server` are specified. - `server` param is completely unchanged — no internal remapping to backend objects.
+      `server = TRUE`, `"duckdb"`, `"df"`, `"dt"` all dispatch through existing code paths.
 
-Preferred: `duckdb_backend()` (snake_case, reads well)
-Alternatives: `duckdbBackend()` (camelCase, matches package conventions), `backend_duckdb()` (prefix grouping)
+- [ ] **7.3** Implement auto-detection for `backendDuckDB("auto")`: - In `reactable()`, resolve mode: check Shiny session → "server", else → "client". - `"client"` mode → existing DuckDB WASM path (Arrow IPC, pre-rendered first page, etc.) - `"server"` mode → existing DuckDB R server path (duckdb_register, S3 methods)
+
+- [ ] **7.4** Refactor `reactable()` internals to use backend objects: - Replace `identical(engine, "duckdb")` checks with `isDuckDBClientBackend(backend)`. - Existing `server` checks (`!isFALSE(server)`, etc.) remain unchanged. - Move DuckDB WASM warnings (searchMethod, filterMethod, R render functions, selection)
+      to fire when backend is DuckDB client mode, not when `engine == "duckdb"`. - `getServerBackend()` accepts `backendDuckDB("server")` in addition to existing string dispatch.
+
+- [ ] **7.5** Update JS side: - In `Reactable.js`, rename `engine` prop to `backend` (or keep as internal prop name — decide). - Update `duckdb-entry.js` if needed. - The JS side just needs to know "use DuckDB WASM" — the prop name is the only change.
+
+- [ ] **7.6** Update all tests: - R tests: replace `engine = "duckdb"` with `backend = backendDuckDB()` (or `backendDuckDB("client")`
+      where explicit client mode is needed). - JS tests: update prop names if changed. - Add new tests for `backend` param validation, auto-detection logic,
+      error when both `backend` and `server` specified. - Existing `server` tests remain unchanged.
+
+- [ ] **7.7** Update `roxygen` docs: - `?reactable`: Add `backend` param docs. `server` param docs unchanged. - `?backendDuckDB`: Full docs with modes, examples, limitations. - Run `devtools::document()`.
+
+- [ ] **7.8** Update design docs and test Rmd: - `duckdb-wasm-engine-test.Rmd`: Replace `engine = "duckdb"` with `backend = backendDuckDB()`. - `implementation-plan.md`: Mark phase complete.
 
 #### Validate
 
-- [ ] `reactable(data, backend = duckdb_backend())` works in static HTML (WASM) and Shiny (server)
-- [ ] `reactable(data, engine = "duckdb")` still works with deprecation warning
-- [ ] `reactable(data, server = TRUE)` still works with deprecation warning
-- [ ] All existing tests pass
+- [ ] `reactable(data, backend = backendDuckDB())` works in static HTML (WASM) and Shiny (server)
+- [ ] `reactable(data, server = TRUE)` still works (completely unchanged)
+- [ ] `reactable(data, server = "duckdb")` still works (completely unchanged)
+- [ ] Error when both `backend` and `server` are specified
+- [ ] All existing tests pass (DuckDB tests updated to use `backend =`, server tests unchanged)
 - [ ] `R CMD check` passes
+- [ ] `npm test` passes
 
 ---
 
 ### Phase 8: Documentation
 
-**Goal:** Document the DuckDB engine feature in vignettes and NEWS.md.
+**Goal:** Document the backend API and DuckDB feature in vignettes and NEWS.md.
 
-- [ ] **8.1** Document in vignettes: new `engine = "duckdb"` parameter, when to use it, limitations
+- [ ] **8.1** Document in vignettes: `backend = backendDuckDB()`, when to use it, limitations
 - [ ] **8.2** Update NEWS.md
 - [ ] **8.3** Update pkgdown site / website docs as needed
 
@@ -665,3 +689,35 @@ Alternatives: `duckdbBackend()` (camelCase, matches package conventions), `backe
 - [ ] Vignette renders correctly
 - [ ] pkgdown site builds
 - [ ] NEWS.md has DuckDB engine entry
+
+---
+
+### Phase 9: Merge `server` into `backend`
+
+**Goal:** Create `backendV8()`, deprecate the `server` param, and fully merge it into `backend`.
+After this, `backend` is the single entry point for all non-default data processing backends.
+
+```r
+# After Phase 9:
+reactable(data, backend = backendDuckDB())     # DuckDB (auto client/server)
+reactable(data, backend = backendV8())          # V8 server
+reactable(data, server = TRUE)                   # ⚠️ deprecated → backendV8()
+```
+
+#### Steps
+
+- [ ] **9.1** Create `backendV8()` constructor in `R/backends.R`:
+      `backendV8()` → S3 class `"reactable_backendV8"`. Export and add roxygen docs.
+- [ ] **9.2** Add deprecation warning to `server` param: "Use `backend = backendV8()` or
+      `backend = backendDuckDB()` instead."
+- [ ] **9.3** Map `server` values to backend objects internally: `TRUE` → `backendV8()`,
+      `"duckdb"` → `backendDuckDB("server")`. Optionally create `backendDf()` / `backendDt()`
+      if there's demand, or just map through deprecation to existing internal dispatch.
+- [ ] **9.4** Update all docs, vignettes, examples to use `backend =` instead of `server =`.
+- [ ] **9.5** Update tests to use `backend =` for server backends.
+
+#### Validate
+
+- [ ] `server` param still works with deprecation warning
+- [ ] All existing tests pass
+- [ ] `R CMD check` passes

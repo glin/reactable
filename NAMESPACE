@@ -2,6 +2,7 @@
 
 S3method(as.tags,reactable)
 export(JS)
+export(backendDuckDB)
 export(colDef)
 export(colFormat)
 export(colGroup)

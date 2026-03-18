@@ -1693,21 +1693,25 @@ test_that("server-side data", {
   expect_error(reactable(data, server = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })
 
-test_that("engine param validation", {
+test_that("backend param validation", {
   df <- data.frame(x = 1, y = "a")
-  expect_error(reactable(df, engine = "invalid"), '`engine` must be "duckdb" or NULL')
-  expect_error(reactable(df, engine = TRUE), '`engine` must be "duckdb" or NULL')
-  expect_error(reactable(df, engine = 123), '`engine` must be "duckdb" or NULL')
+  expect_error(reactable(df, backend = "duckdb"), "`backend` must be a backend object")
+  expect_error(reactable(df, backend = TRUE), "`backend` must be a backend object")
+  expect_error(reactable(df, backend = 123), "`backend` must be a backend object")
 
-  # NULL engine should work (default behavior)
-  tbl <- reactable(df, engine = NULL)
-  expect_null(getAttrib(tbl, "engine"))
+  # Error when both backend and server are specified
+  expect_error(reactable(df, backend = backendDuckDB(), server = TRUE),
+               "`backend` and `server` cannot both be specified")
+
+  # NULL backend should work (default behavior)
+  tbl <- reactable(df, backend = NULL)
+  expect_null(getAttrib(tbl, "backend"))
   expect_null(getAttrib(tbl, "arrowData"))
   # data should be JSON-serialized as normal
   expect_true(is.character(as.character(getAttrib(tbl, "data"))))
 })
 
-test_that("engine = 'duckdb' serializes data as Arrow IPC with pre-rendered first page", {
+test_that("backendDuckDB() serializes data as Arrow IPC with pre-rendered first page", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(
@@ -1718,7 +1722,7 @@ test_that("engine = 'duckdb' serializes data as Arrow IPC with pre-rendered firs
     stringsAsFactors = FALSE
   )
 
-  tbl <- reactable(df, engine = "duckdb")
+  tbl <- reactable(df, backend = backendDuckDB())
   attribs <- getAttribs(tbl)
 
   # data should contain the pre-rendered first page (JSON), not NULL
@@ -1732,8 +1736,8 @@ test_that("engine = 'duckdb' serializes data as Arrow IPC with pre-rendered firs
   expect_true(is.character(attribs$arrowData))
   expect_true(nchar(attribs$arrowData) > 0)
 
-  # engine prop should be passed through
-  expect_equal(attribs$engine, "duckdb")
+  # backend prop should be passed through to JS
+  expect_equal(attribs$backend, "duckdb")
 
   # Arrow IPC should round-trip correctly (full dataset, not just first page)
   raw_bytes <- jsonlite::base64_dec(attribs$arrowData)
@@ -1744,43 +1748,43 @@ test_that("engine = 'duckdb' serializes data as Arrow IPC with pre-rendered firs
   expect_equal(rt$lgl_col, df$lgl_col)
 })
 
-test_that("engine = 'duckdb' pre-renders first page with correct size", {
+test_that("backendDuckDB() pre-renders first page with correct size", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:50, stringsAsFactors = FALSE)
 
   # Default page size (10)
-  tbl <- reactable(df, engine = "duckdb")
+  tbl <- reactable(df, backend = backendDuckDB())
   attribs <- getAttribs(tbl)
   firstPage <- jsonlite::fromJSON(attribs[["data"]])
   expect_equal(length(firstPage$x), 10)
   expect_equal(attribs$serverRowCount, 50)
 
   # Custom page size
-  tbl5 <- reactable(df, engine = "duckdb", defaultPageSize = 5)
+  tbl5 <- reactable(df, backend = backendDuckDB(), defaultPageSize = 5)
   attribs5 <- getAttribs(tbl5)
   firstPage5 <- jsonlite::fromJSON(attribs5[["data"]])
   expect_equal(length(firstPage5$x), 5)
   expect_equal(attribs5$serverRowCount, 50)
 })
 
-test_that("engine = 'duckdb' pre-renders first page sorted by defaultSorted", {
+test_that("backendDuckDB() pre-renders first page sorted by defaultSorted", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = c(3, 1, 4, 1, 5, 9, 2, 6), stringsAsFactors = FALSE)
 
   # Sort ascending
-  tbl_asc <- reactable(df, engine = "duckdb", defaultSorted = list(x = "asc"), defaultPageSize = 3)
+  tbl_asc <- reactable(df, backend = backendDuckDB(), defaultSorted = list(x = "asc"), defaultPageSize = 3)
   firstPage_asc <- jsonlite::fromJSON(getAttribs(tbl_asc)[["data"]])
   expect_equal(firstPage_asc$x, c(1, 1, 2))
 
   # Sort descending
-  tbl_desc <- reactable(df, engine = "duckdb", defaultSorted = list(x = "desc"), defaultPageSize = 3)
+  tbl_desc <- reactable(df, backend = backendDuckDB(), defaultSorted = list(x = "desc"), defaultPageSize = 3)
   firstPage_desc <- jsonlite::fromJSON(getAttribs(tbl_desc)[["data"]])
   expect_equal(firstPage_desc$x, c(9, 6, 5))
 })
 
-test_that("engine = 'duckdb' handles special values in Arrow IPC", {
+test_that("backendDuckDB() handles special values in Arrow IPC", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(
@@ -1789,7 +1793,7 @@ test_that("engine = 'duckdb' handles special values in Arrow IPC", {
     stringsAsFactors = FALSE
   )
 
-  tbl <- reactable(df, engine = "duckdb")
+  tbl <- reactable(df, backend = backendDuckDB())
   raw_bytes <- jsonlite::base64_dec(getAttrib(tbl, "arrowData"))
   rt <- arrow::read_ipc_stream(raw_bytes)
 
@@ -1805,7 +1809,7 @@ test_that("engine = 'duckdb' handles special values in Arrow IPC", {
   expect_equal(as.character(rt$y[1]), "a")
 })
 
-test_that("engine = 'duckdb' handles Date and POSIXct in Arrow IPC", {
+test_that("backendDuckDB() handles Date and POSIXct in Arrow IPC", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(
@@ -1814,7 +1818,7 @@ test_that("engine = 'duckdb' handles Date and POSIXct in Arrow IPC", {
     stringsAsFactors = FALSE
   )
 
-  tbl <- reactable(df, engine = "duckdb")
+  tbl <- reactable(df, backend = backendDuckDB())
   raw_bytes <- jsonlite::base64_dec(getAttrib(tbl, "arrowData"))
   rt <- arrow::read_ipc_stream(raw_bytes)
 
@@ -1822,25 +1826,25 @@ test_that("engine = 'duckdb' handles Date and POSIXct in Arrow IPC", {
   expect_true(is.na(rt$date_col[3]))
 })
 
-test_that("engine = 'duckdb' requires arrow package", {
+test_that("backendDuckDB() requires arrow package", {
   # Mock arrow not being available by testing the serializeArrowIPC function directly
   # (Can't easily unload arrow, but we test the error message path exists)
   df <- data.frame(x = 1)
   # If arrow IS installed, this should succeed
   skip_if_not_installed("arrow")
-  tbl <- reactable(df, engine = "duckdb")
-  expect_equal(getAttrib(tbl, "engine"), "duckdb")
+  tbl <- reactable(df, backend = backendDuckDB())
+  expect_equal(getAttrib(tbl, "backend"), "duckdb")
 })
 
-test_that("engine = 'duckdb' produces unique dataKey", {
+test_that("backendDuckDB() produces unique dataKey", {
   skip_if_not_installed("arrow")
 
   df1 <- data.frame(x = 1:3)
   df2 <- data.frame(x = 4:6)
 
-  tbl1 <- reactable(df1, engine = "duckdb")
-  tbl2 <- reactable(df2, engine = "duckdb")
-  tbl1_again <- reactable(df1, engine = "duckdb")
+  tbl1 <- reactable(df1, backend = backendDuckDB())
+  tbl2 <- reactable(df2, backend = backendDuckDB())
+  tbl1_again <- reactable(df1, backend = backendDuckDB())
 
   # Different data should produce different keys
   expect_false(getAttrib(tbl1, "dataKey") == getAttrib(tbl2, "dataKey"))
@@ -1848,14 +1852,14 @@ test_that("engine = 'duckdb' produces unique dataKey", {
   expect_equal(getAttrib(tbl1, "dataKey"), getAttrib(tbl1_again, "dataKey"))
 })
 
-test_that("engine = 'duckdb' preserves other reactable features", {
+test_that("backendDuckDB() preserves other reactable features", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:10, y = letters[1:10], stringsAsFactors = FALSE)
 
   tbl <- reactable(
     df,
-    engine = "duckdb",
+    backend = backendDuckDB(),
     searchable = TRUE,
     filterable = TRUE,
     sortable = TRUE,
@@ -1864,40 +1868,40 @@ test_that("engine = 'duckdb' preserves other reactable features", {
   )
   attribs <- getAttribs(tbl)
 
-  expect_equal(attribs$engine, "duckdb")
+  expect_equal(attribs$backend, "duckdb")
   expect_true(attribs$searchable)
   expect_true(attribs$filterable)
   expect_equal(attribs$defaultPageSize, 5)
   expect_equal(attribs$columns[[1]]$name, "Number")
 })
 
-test_that("engine = 'duckdb' warns about unsupported searchMethod", {
+test_that("backendDuckDB() warns about unsupported searchMethod", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb", searchable = TRUE,
+    reactable(df, backend = backendDuckDB(), searchable = TRUE,
               searchMethod = JS("function(rows, columnIds, searchValue) { return rows }")),
-    'Custom `searchMethod` is not supported with `engine = "duckdb"`'
+    'Custom `searchMethod` is not supported with `backendDuckDB\\(\\)`'
   )
 
   # No warning without searchMethod
-  expect_no_warning(reactable(df, engine = "duckdb", searchable = TRUE))
+  expect_no_warning(reactable(df, backend = backendDuckDB(), searchable = TRUE))
 })
 
-test_that("engine = 'duckdb' warns about unsupported filterMethod", {
+test_that("backendDuckDB() warns about unsupported filterMethod", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb", filterable = TRUE,
+    reactable(df, backend = backendDuckDB(), filterable = TRUE,
               columns = list(x = colDef(filterMethod = JS("function(rows, id, value) { return rows }")))),
     'Custom `filterMethod` in column\\(s\\) "x".*is not supported'
   )
 
   # Multiple columns with filterMethod
   expect_warning(
-    reactable(df, engine = "duckdb", filterable = TRUE,
+    reactable(df, backend = backendDuckDB(), filterable = TRUE,
               columns = list(
                 x = colDef(filterMethod = JS("function(rows, id, value) { return rows }")),
                 y = colDef(filterMethod = JS("function(rows, id, value) { return rows }"))
@@ -1906,148 +1910,148 @@ test_that("engine = 'duckdb' warns about unsupported filterMethod", {
   )
 
   # No warning without filterMethod
-  expect_no_warning(reactable(df, engine = "duckdb", filterable = TRUE))
+  expect_no_warning(reactable(df, backend = backendDuckDB(), filterable = TRUE))
 })
 
-test_that("engine = 'duckdb' warns about unsupported JS aggregate", {
+test_that("backendDuckDB() warns about unsupported JS aggregate", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(aggregate = JS("function(values) { return values[0] }")))),
     'Custom JavaScript `aggregate` function in column\\(s\\) "x".*is not supported'
   )
 
   # Built-in string aggregate does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb", columns = list(x = colDef(aggregate = "sum")))
+    reactable(df, backend = backendDuckDB(), columns = list(x = colDef(aggregate = "sum")))
   )
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function cell renderer", {
+test_that("backendDuckDB() warns about unsupported R function cell renderer", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(cell = function(value, index) value))),
     'R function `cell` renderer in column\\(s\\) "x".*is not supported'
   )
 
   # JS cell renderer does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(cell = JS("function(cellInfo) { return cellInfo.value }"))))
   )
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function details renderer", {
+test_that("backendDuckDB() warns about unsupported R function details renderer", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(details = function(index) paste("Row", index)))),
     'R function `details` renderer in column\\(s\\) "x".*is not supported'
   )
 
   # JS details renderer does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(details = JS("function(rowInfo) { return 'details' }"))))
   )
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function style", {
+test_that("backendDuckDB() warns about unsupported R function style", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(style = function(value, index) list(color = "red")))),
     'R function `style` in column\\(s\\) "x".*is not supported'
   )
 
   # JS style does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(style = JS("function(rowInfo) { return { color: 'red' } }"))))
   )
 
   # Named list style does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(style = list(color = "red"))))
   )
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function class", {
+test_that("backendDuckDB() warns about unsupported R function class", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(class = function(value, index) "my-class"))),
     'R function `class` in column\\(s\\) "x".*is not supported'
   )
 
   # JS class does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb",
+    reactable(df, backend = backendDuckDB(),
               columns = list(x = colDef(class = JS("function(rowInfo) { return 'my-class' }"))))
   )
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function rowClass", {
+test_that("backendDuckDB() warns about unsupported R function rowClass", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb", rowClass = function(index) "my-class"),
-    'R function `rowClass` is not supported with `engine = "duckdb"`'
+    reactable(df, backend = backendDuckDB(), rowClass = function(index) "my-class"),
+    'R function `rowClass` is not supported with `backendDuckDB\\(\\)`'
   )
 
   # JS rowClass does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb", rowClass = JS("function(rowInfo) { return 'my-class' }"))
+    reactable(df, backend = backendDuckDB(), rowClass = JS("function(rowInfo) { return 'my-class' }"))
   )
 
   # Character rowClass does NOT warn
-  expect_no_warning(reactable(df, engine = "duckdb", rowClass = "my-class"))
+  expect_no_warning(reactable(df, backend = backendDuckDB(), rowClass = "my-class"))
 })
 
-test_that("engine = 'duckdb' warns about unsupported R function rowStyle", {
+test_that("backendDuckDB() warns about unsupported R function rowStyle", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb", rowStyle = function(index) list(color = "red")),
-    'R function `rowStyle` is not supported with `engine = "duckdb"`'
+    reactable(df, backend = backendDuckDB(), rowStyle = function(index) list(color = "red")),
+    'R function `rowStyle` is not supported with `backendDuckDB\\(\\)`'
   )
 
   # JS rowStyle does NOT warn
   expect_no_warning(
-    reactable(df, engine = "duckdb", rowStyle = JS("function(rowInfo) { return { color: 'red' } }"))
+    reactable(df, backend = backendDuckDB(), rowStyle = JS("function(rowInfo) { return { color: 'red' } }"))
   )
 
   # Named list rowStyle does NOT warn
-  expect_no_warning(reactable(df, engine = "duckdb", rowStyle = list(color = "red")))
+  expect_no_warning(reactable(df, backend = backendDuckDB(), rowStyle = list(color = "red")))
 })
 
-test_that("engine = 'duckdb' warns about unsupported row selection", {
+test_that("backendDuckDB() warns about unsupported row selection", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
   expect_warning(
-    reactable(df, engine = "duckdb", selection = "multiple"),
-    'Row `selection` is not supported with `engine = "duckdb"`'
+    reactable(df, backend = backendDuckDB(), selection = "multiple"),
+    'Row `selection` is not supported with `backendDuckDB\\(\\)`'
   )
   expect_warning(
-    reactable(df, engine = "duckdb", selection = "single"),
-    'Row `selection` is not supported with `engine = "duckdb"`'
+    reactable(df, backend = backendDuckDB(), selection = "single"),
+    'Row `selection` is not supported with `backendDuckDB\\(\\)`'
   )
 
   # No selection does NOT warn
-  expect_no_warning(reactable(df, engine = "duckdb"))
+  expect_no_warning(reactable(df, backend = backendDuckDB()))
 })

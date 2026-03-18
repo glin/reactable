@@ -11,9 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reactable)
 ```
 
-## Basic pagination with DuckDB-WASM engine
+## Basic pagination with DuckDB backend
 
-This test renders a table with the DuckDB-WASM engine, which serializes data as Arrow IPC and
+This test renders a table with the DuckDB backend, which serializes data as Arrow IPC and
 queries it client-side via DuckDB-WASM for pagination.
 
 ### MASS::Cars93 (93 rows)
@@ -21,7 +21,7 @@ queries it client-side via DuckDB-WASM for pagination.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   showPageSizeOptions = TRUE,
   pageSizeOptions = c(10, 25, 50, 100)
@@ -33,7 +33,7 @@ reactable(
 ```{r}
 reactable(
   mtcars,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10
 )
 ```
@@ -43,7 +43,7 @@ reactable(
 ```{r}
 reactable(
   iris,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 25
 )
 ```
@@ -53,7 +53,7 @@ reactable(
 ```{r}
 reactable(
   head(mtcars, 5),
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10
 )
 ```
@@ -63,7 +63,7 @@ reactable(
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   defaultSorted = list(Horsepower = "desc")
 )
@@ -82,7 +82,7 @@ large_data <- data.frame(
 
 reactable(
   large_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 20,
   showPageSizeOptions = TRUE,
   pageSizeOptions = c(20, 50, 100)
@@ -102,14 +102,14 @@ big_data <- data.frame(
 
 reactable(
   big_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 20,
   showPageSizeOptions = TRUE,
   pageSizeOptions = c(20, 50, 100)
 )
 ```
 
-### Comparison: same data without engine (normal mode)
+### Comparison: same data without backend (normal mode)
 
 ```{r}
 reactable(
@@ -128,7 +128,7 @@ via DuckDB and show correct results across pages.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   sortable = TRUE
 )
@@ -141,7 +141,7 @@ Start sorted by Horsepower descending. Clicking other headers should re-sort via
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   sortable = TRUE,
   defaultSorted = list(Horsepower = "desc")
@@ -158,7 +158,7 @@ Numeric columns should use "starts with" matching, text columns should use subst
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   filterable = TRUE
 )
@@ -171,7 +171,7 @@ Combining filters and sorting. Filter first, then sort the filtered results.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   filterable = TRUE,
   sortable = TRUE
@@ -188,7 +188,7 @@ are filtered.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   searchable = TRUE
 )
@@ -201,7 +201,7 @@ All three features working together: search, column filters, and sorting.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   searchable = TRUE,
   filterable = TRUE,
@@ -224,7 +224,7 @@ large_data <- data.frame(
 
 reactable(
   large_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 20,
   searchable = TRUE,
   filterable = TRUE,
@@ -373,7 +373,7 @@ should expand to show the individual car rows within that group.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = "Manufacturer",
   columns = list(
@@ -391,7 +391,7 @@ Demonstrating all SQL-backed aggregate functions on a single grouped table.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = "Type",
   columns = list(
@@ -415,7 +415,7 @@ and sort should sort the group rows by the group column or aggregated values.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = "Origin",
   filterable = TRUE,
@@ -436,7 +436,7 @@ Global search should filter rows before grouping.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = "Type",
   searchable = TRUE,
@@ -455,7 +455,7 @@ Group by Origin first, then by Type within each origin. Two levels of expand/col
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = c("Origin", "Type"),
   columns = list(
@@ -481,7 +481,7 @@ large_data <- data.frame(
 
 reactable(
   large_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 20,
   groupBy = "category",
   sortable = TRUE,
@@ -499,7 +499,7 @@ reactable(
 ```{r}
 reactable(
   large_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 20,
   groupBy = c("category", "region"),
   sortable = TRUE,
@@ -513,9 +513,9 @@ reactable(
 )
 ```
 
-### Comparison: groupBy without engine (normal client-side mode)
+### Comparison: groupBy without backend (normal client-side mode)
 
-Same table without the DuckDB engine for behavior comparison.
+Same table without the DuckDB backend for behavior comparison.
 
 ```{r}
 reactable(
@@ -598,7 +598,7 @@ sales_data <- data.frame(
 
 reactable(
   sales_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   columns = list(
     units_sold = colDef(
@@ -638,7 +638,7 @@ date_data <- data.frame(
 
 reactable(
   date_data,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   columns = list(
     date = colDef(format = colFormat(date = TRUE)),
     datetime = colDef(format = colFormat(datetime = TRUE))
@@ -653,7 +653,7 @@ reactable(
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   groupBy = "Type",
   columns = list(
@@ -691,7 +691,7 @@ as DuckDB returns it.
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   filterable = TRUE,
   columns = list(
@@ -718,7 +718,7 @@ reactable(
 ```{r}
 reactable(
   MASS::Cars93,
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   sortable = TRUE,
   columns = list(
@@ -746,7 +746,7 @@ reactable(
 ```{r}
 reactable(
   MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   details = JS("function(rowInfo) {
     return React.createElement('div', { style: { padding: '10px', background: '#f8f8f8' } },
@@ -764,12 +764,12 @@ reactable(
 
 ### Themed DuckDB table
 
-Themes work normally with the DuckDB engine since they're applied client-side.
+Themes work normally with the DuckDB backend since they're applied client-side.
 
 ```{r}
 reactable(
   MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
-  engine = "duckdb",
+  backend = backendDuckDB(),
   defaultPageSize = 10,
   searchable = TRUE,
   filterable = TRUE,

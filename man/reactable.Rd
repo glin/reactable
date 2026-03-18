@@ -56,7 +56,7 @@ reactable(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
-  engine = NULL,
+  backend = NULL,
   selectionId = NULL
 )
 }
@@ -230,14 +230,12 @@ V8 package, which is not installed with reactable by default.
 
 Server-side data processing is currently \strong{experimental}.}
 
-\item{engine}{Data engine for client-side data processing. Currently supports
-\code{"duckdb"} to use DuckDB-WASM for sorting, filtering, and pagination in the
-browser via SQL queries. This enables large datasets (100K+ rows) in static
-R Markdown and Quarto documents without a server.
+\item{backend}{A backend object for data processing. Use \code{\link[=backendDuckDB]{backendDuckDB()}} for
+DuckDB-powered sorting, filtering, and pagination. In static documents
+(R Markdown, Quarto), DuckDB-WASM runs in the browser. In Shiny, the DuckDB
+R package runs on the server.
 
-Requires the \code{arrow} package for data serialization.
-
-The DuckDB engine is currently \strong{experimental}.}
+The DuckDB backend is currently \strong{experimental}.}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}

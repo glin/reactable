@@ -133,14 +133,12 @@
 #'   V8 package, which is not installed with reactable by default.
 #'
 #'   Server-side data processing is currently **experimental**.
-#' @param engine Data engine for client-side data processing. Currently supports
-#'   `"duckdb"` to use DuckDB-WASM for sorting, filtering, and pagination in the
-#'   browser via SQL queries. This enables large datasets (100K+ rows) in static
-#'   R Markdown and Quarto documents without a server.
+#' @param backend A backend object for data processing. Use [backendDuckDB()] for
+#'   DuckDB-powered sorting, filtering, and pagination. In static documents
+#'   (R Markdown, Quarto), DuckDB-WASM runs in the browser. In Shiny, the DuckDB
+#'   R package runs on the server.
 #'
-#'   Requires the `arrow` package for data serialization.
-#'
-#'   The DuckDB engine is currently **experimental**.
+#'   The DuckDB backend is currently **experimental**.
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
@@ -247,7 +245,7 @@ reactable <- function(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
-  engine = NULL,
+  backend = NULL,
   selectionId = NULL
 ) {
   crosstalkKey <- NULL
@@ -271,9 +269,12 @@ reactable <- function(
     stop("`data` must have at least one column")
   }
 
-  if (!is.null(engine)) {
-    if (!identical(engine, "duckdb")) {
-      stop('`engine` must be "duckdb" or NULL')
+  if (!is.null(backend)) {
+    if (!isDuckDBBackend(backend)) {
+      stop("`backend` must be a backend object created by `backendDuckDB()`, or NULL")
+    }
+    if (!isFALSE(server)) {
+      stop("Column `backend` and `server` cannot both be specified. Use one or the other.")
     }
   }
 
@@ -688,6 +689,18 @@ reactable <- function(
     })
   }
 
+  # Resolve backend mode: "auto" detects Shiny vs static, then route to client or server path
+  isDuckDBClientMode <- FALSE
+  if (isDuckDBBackend(backend)) {
+    resolvedMode <- resolveDuckDBMode(backend)
+    if (resolvedMode == "server") {
+      # Route to existing server infrastructure
+      server <- "duckdb"
+    } else {
+      isDuckDBClientMode <- TRUE
+    }
+  }
+
   preRenderHook <- NULL
   serverRowCount <- NULL
   serverMaxRowCount <- NULL
@@ -746,24 +759,24 @@ reactable <- function(
   # rendering or printing the widget. This was originally done as a necessity to change the JSON serializer,
   # but now kept as an intentional optimization.
   arrowData <- NULL
-  if (identical(engine, "duckdb")) {
-    # Warn about custom JS methods that are not supported with the DuckDB engine
+  if (isDuckDBClientMode) {
+    # Warn about custom JS methods that are not supported with the DuckDB backend
     if (!is.null(searchMethod)) {
-      warning('Custom `searchMethod` is not supported with `engine = "duckdb"` and will be ignored. ',
-              "The DuckDB engine uses SQL-based searching.", call. = FALSE)
+      warning('Custom `searchMethod` is not supported with `backendDuckDB()` and will be ignored. ',
+              "The DuckDB backend uses SQL-based searching.", call. = FALSE)
     }
     filterMethodCols <- Filter(function(col) !is.null(col$filterMethod), cols)
     if (length(filterMethodCols) > 0) {
       colNames <- vapply(filterMethodCols, function(col) col$id, character(1))
       warning('Custom `filterMethod` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"` and will be ignored. ',
-              "The DuckDB engine uses SQL-based filtering.", call. = FALSE)
+              ' is not supported with `backendDuckDB()` and will be ignored. ',
+              "The DuckDB backend uses SQL-based filtering.", call. = FALSE)
     }
     jsAggregateCols <- Filter(function(col) !is.null(col$aggregate) && is.JS(col$aggregate), cols)
     if (length(jsAggregateCols) > 0) {
       colNames <- vapply(jsAggregateCols, function(col) col$id, character(1))
       warning('Custom JavaScript `aggregate` function in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"` and will be ignored. ',
+              ' is not supported with `backendDuckDB()` and will be ignored. ',
               "Use a built-in aggregate name instead (e.g., \"sum\", \"mean\", \"count\").", call. = FALSE)
     }
 
@@ -773,7 +786,7 @@ reactable <- function(
     if (length(rCellCols) > 0) {
       colNames <- vapply(rCellCols, function(col) col$id, character(1))
       warning('R function `cell` renderer in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"`. ',
+              ' is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: colDef(cell = JS(\"function(cellInfo) { ... }\")).",
               call. = FALSE)
     }
@@ -781,7 +794,7 @@ reactable <- function(
     if (length(rDetailsCols) > 0) {
       colNames <- vapply(rDetailsCols, function(col) col$id, character(1))
       warning('R function `details` renderer in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"`. ',
+              ' is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: colDef(details = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
@@ -789,7 +802,7 @@ reactable <- function(
     if (length(rStyleCols) > 0) {
       colNames <- vapply(rStyleCols, function(col) col$id, character(1))
       warning('R function `style` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"`. ',
+              ' is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: colDef(style = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
@@ -797,24 +810,24 @@ reactable <- function(
     if (length(rClassCols) > 0) {
       colNames <- vapply(rClassCols, function(col) col$id, character(1))
       warning('R function `class` in column(s) ', paste0('"', colNames, '"', collapse = ", "),
-              ' is not supported with `engine = "duckdb"`. ',
+              ' is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: colDef(class = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
     # rowClass/rowStyle from R functions become unnamed lists (one element per row).
     # Distinguish from named list style objects (e.g., list(color = "red")) which are safe.
     if (is.list(rowClass) && is.null(names(rowClass))) {
-      warning('R function `rowClass` is not supported with `engine = "duckdb"`. ',
+      warning('R function `rowClass` is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: reactable(rowClass = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
     if (is.list(rowStyle) && is.null(names(rowStyle))) {
-      warning('R function `rowStyle` is not supported with `engine = "duckdb"`. ',
+      warning('R function `rowStyle` is not supported with `backendDuckDB()`. ',
               "Use a JS() function instead: reactable(rowStyle = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
     if (!is.null(selection)) {
-      warning('Row `selection` is not supported with `engine = "duckdb"` and will not work correctly.',
+      warning('Row `selection` is not supported with `backendDuckDB()` and will not work correctly.',
               call. = FALSE)
     }
 
@@ -852,7 +865,7 @@ reactable <- function(
   component <- reactR::component("Reactable", list(
     data = data,
     arrowData = arrowData,
-    engine = engine,
+    backend = if (isDuckDBClientMode) "duckdb",
     columns = cols,
     columnGroups = columnGroups,
     groupBy = groupBy,

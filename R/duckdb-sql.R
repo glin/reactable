@@ -1,5 +1,5 @@
 # Shared DuckDB SQL query builder used by the R server backend.
-# The SQL generated here must match the JS DuckDBEngine.query() behavior exactly
+# The SQL generated here must match the JS DuckDBBackend.query() behavior exactly
 # so that client-side (WASM) and server-side (R) produce identical results.
 
 buildDuckdbQuery <- function(tableName, columns, filters, searchValue, sortBy,
@@ -40,10 +40,10 @@ buildDuckdbWhere <- function(columns, filters, searchValue) {
       col <- duckdbQuoteIdentifier(filter$id)
       columnMeta <- Find(function(c) c$id == filter$id, columns)
       if (!is.null(columnMeta) && identical(columnMeta$type, "numeric")) {
-        # Numeric: starts-with matching (same as JS DuckDBEngine)
+        # Numeric: starts-with matching (same as JS DuckDBBackend)
         whereClauses <- c(whereClauses, paste0("CAST(", col, " AS VARCHAR) LIKE ? || '%'"))
       } else {
-        # Text: case-insensitive substring (same as JS DuckDBEngine)
+        # Text: case-insensitive substring (same as JS DuckDBBackend)
         whereClauses <- c(whereClauses, paste0("CAST(", col, " AS VARCHAR) ILIKE '%' || ? || '%'"))
       }
       params <- c(params, list(filter$value))

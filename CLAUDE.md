@@ -21,7 +21,7 @@ New in v0.4.5.9000
    - **Reuse existing code**: Before writing new logic, search the codebase for existing implementations of similar behavior. Reuse and delegate to existing code paths rather than duplicating logic (e.g., if header click sorting already computes the right state, call into that same code path from the API).
 2. **Make changes**
    - **Parameter ordering**: When adding parameters to an existing function that mirrors another function (e.g., `updateReactable()` mirrors `reactable()`), order new parameters to roughly match the order of associated features/parameters in the parent function.
-3. **Document R API**: Run `devtools::document()` in R when making any changes to the R API (roxygen comments).
+3. **Document R API**: Always run `devtools::document()` in R after making any changes to roxygen comments or exported functions. This updates `NAMESPACE`, `man/` pages, and ensures the documentation stays in sync.
 4. **Format**: Format JavaScript code using `prettier`.
 5. **Lint**: Lint JavaScript code using `eslint`.
 6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.

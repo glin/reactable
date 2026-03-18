@@ -1,4 +1,4 @@
-import { DuckDBEngine } from './DuckDBEngine'
+import { DuckDBBackend } from './DuckDBBackend'
 
 // Detect the base path for WASM files from this script's URL.
 // This script is loaded via an htmlDependency <script> tag, so
@@ -8,6 +8,6 @@ const wasmBasePath = currentScript ? currentScript.src.replace(/[^/]*$/, '') : '
 
 // Register globally so the main reactable bundle can access it
 window.__ReactableDuckDB = {
-  DuckDBEngine,
+  DuckDBBackend,
   wasmBasePath
 }

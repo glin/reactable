@@ -3,11 +3,11 @@ import reactR from 'reactR'
 import { render, fireEvent, act, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-// Must mock before importing DuckDBEngine (which imports @duckdb/duckdb-wasm)
+// Must mock before importing DuckDBBackend (which imports @duckdb/duckdb-wasm)
 jest.mock('@duckdb/duckdb-wasm', () => ({}))
 
 import { Reactable } from '../Reactable'
-import { DuckDBEngine } from '../DuckDBEngine'
+import { DuckDBBackend } from '../DuckDBBackend'
 
 import {
   getRows,
@@ -28,14 +28,14 @@ afterEach(() => {
   delete window.__ReactableDuckDB
 })
 
-// Helper to create a mock DuckDB engine that returns predictable data
-function createMockEngine(totalRows = 20) {
+// Helper to create a mock DuckDB backend that returns predictable data
+function createMockBackend(totalRows = 20) {
   const allRows = Array.from({ length: totalRows }, (_, i) => ({
     a: i + 1,
     b: `row${i + 1}`
   }))
 
-  const mockEngine = {
+  const mockBackend = {
     totalRowCount: totalRows,
     init: jest.fn().mockResolvedValue(undefined),
     query: jest.fn().mockImplementation(({ pageIndex, pageSize }) => {
@@ -47,11 +47,11 @@ function createMockEngine(totalRows = 20) {
   }
 
   window.__ReactableDuckDB = {
-    DuckDBEngine: jest.fn().mockReturnValue(mockEngine),
+    DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
     wasmBasePath: '/mock/path/'
   }
 
-  return mockEngine
+  return mockBackend
 }
 
 const baseColumns = [
@@ -59,9 +59,9 @@ const baseColumns = [
   { name: 'colB', id: 'b' }
 ]
 
-describe('DuckDB engine', () => {
+describe('DuckDB backend', () => {
   it('renders pre-rendered first page immediately', () => {
-    createMockEngine(20)
+    createMockBackend(20)
 
     // Simulate pre-rendered first page data (column-oriented, as R's toJSON produces)
     const firstPageData = {
@@ -73,7 +73,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         serverRowCount={20}
@@ -98,7 +98,7 @@ describe('DuckDB engine', () => {
   })
 
   it('skips initial DuckDB query when first page is pre-rendered', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -109,7 +109,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         serverRowCount={20}
@@ -119,15 +119,15 @@ describe('DuckDB engine', () => {
 
     // Wait for DuckDB to initialize
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalledWith('mock-base64-arrow-data', '/mock/path/')
+      expect(mockBackend.init).toHaveBeenCalledWith('mock-base64-arrow-data', '/mock/path/')
     })
 
     // The initial page 0 query should NOT have been made (pre-rendered data is used instead)
-    expect(mockEngine.query).not.toHaveBeenCalled()
+    expect(mockBackend.query).not.toHaveBeenCalled()
   })
 
   it('queries DuckDB on page navigation', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -138,7 +138,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -152,7 +152,7 @@ describe('DuckDB engine', () => {
 
     // Wait for DuckDB init
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Navigate to next page
@@ -162,7 +162,7 @@ describe('DuckDB engine', () => {
     })
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({ pageIndex: 1, pageSize: 5 })
       )
     })
@@ -184,7 +184,7 @@ describe('DuckDB engine', () => {
   })
 
   it('shows correct page info immediately with pre-rendered data', () => {
-    createMockEngine(50)
+    createMockBackend(50)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -195,7 +195,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={10}
         showPagination
@@ -209,8 +209,8 @@ describe('DuckDB engine', () => {
     expect(pageInfo).toHaveTextContent('1–10 of 50 rows')
   })
 
-  it('cleans up DuckDB engine on unmount', async () => {
-    const mockEngine = createMockEngine(5)
+  it('cleans up DuckDB backend on unmount', async () => {
+    const mockBackend = createMockBackend(5)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -221,7 +221,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         serverRowCount={5}
@@ -230,15 +230,15 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     unmount()
-    expect(mockEngine.destroy).toHaveBeenCalled()
+    expect(mockBackend.destroy).toHaveBeenCalled()
   })
 
   it('handles empty data (0 rows)', async () => {
-    createMockEngine(0)
+    createMockBackend(0)
 
     // Empty pre-rendered data (column-oriented with empty arrays)
     const emptyData = { a: [], b: [] }
@@ -247,7 +247,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={emptyData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={10}
         serverRowCount={0}
@@ -259,7 +259,7 @@ describe('DuckDB engine', () => {
     expect(rows).toHaveLength(0)
   })
 
-  it('renders without DuckDB when engine is not set', () => {
+  it('renders without DuckDB when backend is not set', () => {
     const props = {
       data: { a: [1, 2, 3], b: ['x', 'y', 'z'] },
       columns: baseColumns,
@@ -284,7 +284,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         serverRowCount={1}
@@ -294,7 +294,7 @@ describe('DuckDB engine', () => {
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(
-        'DuckDB-WASM engine not loaded. Make sure the duckdb-wasm dependency is included.'
+        'DuckDB-WASM backend not loaded. Make sure the duckdb-wasm dependency is included.'
       )
     })
 
@@ -304,7 +304,7 @@ describe('DuckDB engine', () => {
   it('handles DuckDB initialization failure gracefully', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
-    const mockEngine = {
+    const mockBackend = {
       totalRowCount: 0,
       init: jest.fn().mockRejectedValue(new Error('WASM load failed')),
       query: jest.fn(),
@@ -312,7 +312,7 @@ describe('DuckDB engine', () => {
     }
 
     window.__ReactableDuckDB = {
-      DuckDBEngine: jest.fn().mockReturnValue(mockEngine),
+      DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
       wasmBasePath: '/mock/path/'
     }
 
@@ -322,7 +322,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         serverRowCount={1}
@@ -346,7 +346,7 @@ describe('DuckDB engine', () => {
   })
 
   it('queries with sortBy when a column header is clicked', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -362,7 +362,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={sortableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -372,7 +372,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Click a sortable header
@@ -380,7 +380,7 @@ describe('DuckDB engine', () => {
     fireEvent.click(headers[0])
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           pageIndex: 0,
           pageSize: 5,
@@ -393,7 +393,7 @@ describe('DuckDB engine', () => {
     fireEvent.click(headers[0])
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           sortBy: [{ id: 'a', desc: true }]
         })
@@ -402,7 +402,7 @@ describe('DuckDB engine', () => {
   })
 
   it('queries with filters when a column filter is typed', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -418,7 +418,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={filterableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -428,7 +428,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Type in the first column filter
@@ -436,7 +436,7 @@ describe('DuckDB engine', () => {
     fireEvent.change(filters[0], { target: { value: '10' } })
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           pageIndex: 0,
           filters: [{ id: 'a', value: '10' }]
@@ -446,7 +446,7 @@ describe('DuckDB engine', () => {
   })
 
   it('queries with searchValue when global search is typed', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -457,7 +457,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={baseColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -468,7 +468,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Type in the global search input
@@ -476,7 +476,7 @@ describe('DuckDB engine', () => {
     fireEvent.change(searchInput, { target: { value: 'row5' } })
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           searchValue: 'row5'
         })
@@ -485,10 +485,10 @@ describe('DuckDB engine', () => {
   })
 
   it('updates row count when filter reduces results', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     // Override query to return fewer rows when filters are applied
-    mockEngine.query.mockImplementation(({ pageIndex, pageSize, filters }) => {
+    mockBackend.query.mockImplementation(({ pageIndex, pageSize, filters }) => {
       if (filters && filters.length > 0) {
         const filteredRows = [{ a: 10, b: 'row10' }]
         return Promise.resolve({ rows: filteredRows, rowCount: 1 })
@@ -512,7 +512,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={filterableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -522,7 +522,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Initially shows 20 rows total
@@ -538,7 +538,7 @@ describe('DuckDB engine', () => {
   })
 
   it('passes columns with type info to query for filter behavior', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -554,7 +554,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={filterableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -564,7 +564,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Type a filter to trigger a query
@@ -572,7 +572,7 @@ describe('DuckDB engine', () => {
     fireEvent.change(filters[0], { target: { value: '5' } })
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           columns: expect.arrayContaining([
             expect.objectContaining({ id: 'a', type: 'numeric' }),
@@ -584,7 +584,7 @@ describe('DuckDB engine', () => {
   })
 
   it('resets to first page when sort or filter changes', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -600,7 +600,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={sortableFilterableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         showPagination
@@ -610,7 +610,7 @@ describe('DuckDB engine', () => {
     )
 
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Navigate to page 2
@@ -618,7 +618,7 @@ describe('DuckDB engine', () => {
     fireEvent.click(nextButton)
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
     })
 
     // Apply a filter - should reset to page 0
@@ -626,7 +626,7 @@ describe('DuckDB engine', () => {
     fireEvent.change(filters[0], { target: { value: '1' } })
 
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           pageIndex: 0,
           filters: [{ id: 'a', value: '1' }]
@@ -636,10 +636,10 @@ describe('DuckDB engine', () => {
   })
 
   it('does not skip initial query when groupBy is set', async () => {
-    const mockEngine = createMockEngine(20)
+    const mockBackend = createMockBackend(20)
 
     // Override query to return grouped data
-    mockEngine.query.mockImplementation(({ groupBy }) => {
+    mockBackend.query.mockImplementation(({ groupBy }) => {
       if (groupBy && groupBy.length > 0) {
         return Promise.resolve({
           rows: [
@@ -676,7 +676,7 @@ describe('DuckDB engine', () => {
       <Reactable
         data={firstPageData}
         columns={groupableColumns}
-        engine="duckdb"
+        backend="duckdb"
         arrowData="mock-base64-arrow-data"
         defaultPageSize={5}
         groupBy={['a']}
@@ -687,12 +687,12 @@ describe('DuckDB engine', () => {
 
     // Wait for DuckDB to initialize
     await waitFor(() => {
-      expect(mockEngine.init).toHaveBeenCalled()
+      expect(mockBackend.init).toHaveBeenCalled()
     })
 
     // Initial query should NOT have been skipped because groupBy is set
     await waitFor(() => {
-      expect(mockEngine.query).toHaveBeenCalledWith(
+      expect(mockBackend.query).toHaveBeenCalledWith(
         expect.objectContaining({
           groupBy: ['a']
         })
@@ -701,10 +701,10 @@ describe('DuckDB engine', () => {
   })
 })
 
-// Unit tests for the DuckDBEngine class itself, with a mock conn.
+// Unit tests for the DuckDBBackend class itself, with a mock conn.
 // These test the actual query() method code path (SQL building, prepared statement
 // usage) rather than just verifying that Reactable calls the mock with the right args.
-describe('DuckDBEngine.query', () => {
+describe('DuckDBBackend.query', () => {
   // Create a mock conn that mimics the real DuckDB-WASM AsyncDuckDBConnection API.
   // The mock prepared statement's query() accepts variadic params (matching the real API).
   function createMockConn(dataRows = [], countValue = 0) {
@@ -733,10 +733,10 @@ describe('DuckDBEngine.query', () => {
 
   it('builds basic pagination query', async () => {
     const { conn, mockStmt, mockCountStmt } = createMockConn([{ a: 1, b: 'x' }], 10)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 2,
       pageSize: 5,
       sortBy: [],
@@ -757,10 +757,10 @@ describe('DuckDBEngine.query', () => {
 
   it('builds sort query with ORDER BY', async () => {
     const { conn } = createMockConn([], 0)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [
@@ -779,15 +779,15 @@ describe('DuckDBEngine.query', () => {
 
   it('builds column filter query with WHERE clause and passes params to query()', async () => {
     const { conn, mockStmt, mockCountStmt } = createMockConn([], 0)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'price', type: 'numeric' },
       { id: 'name', type: 'character' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -812,8 +812,8 @@ describe('DuckDBEngine.query', () => {
 
   it('builds global search query with OR-joined WHERE clause', async () => {
     const { conn, mockStmt } = createMockConn([], 0)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'a', type: 'numeric' },
@@ -821,7 +821,7 @@ describe('DuckDBEngine.query', () => {
       { id: 'c', type: 'character', disableGlobalFilter: true }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -842,15 +842,15 @@ describe('DuckDBEngine.query', () => {
 
   it('combines filters, search, and sort in a single query', async () => {
     const { conn, mockStmt } = createMockConn([], 0)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'a', type: 'numeric' },
       { id: 'b', type: 'character' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 1,
       pageSize: 5,
       sortBy: [{ id: 'a', desc: true }],
@@ -875,10 +875,10 @@ describe('DuckDBEngine.query', () => {
 
   it('escapes column names with special characters', async () => {
     const { conn } = createMockConn([], 0)
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [{ id: 'col "quoted"', desc: false }],
@@ -893,23 +893,23 @@ describe('DuckDBEngine.query', () => {
   })
 })
 
-describe('DuckDBEngine.escapeIdentifier', () => {
-  const engine = new DuckDBEngine()
+describe('DuckDBBackend.escapeIdentifier', () => {
+  const backend = new DuckDBBackend()
 
   it('wraps simple names in double quotes', () => {
-    expect(engine.escapeIdentifier('name')).toBe('"name"')
+    expect(backend.escapeIdentifier('name')).toBe('"name"')
   })
 
   it('escapes existing double quotes', () => {
-    expect(engine.escapeIdentifier('col"name')).toBe('"col""name"')
+    expect(backend.escapeIdentifier('col"name')).toBe('"col""name"')
   })
 
   it('handles names with multiple special characters', () => {
-    expect(engine.escapeIdentifier('a "b" c')).toBe('"a ""b"" c"')
+    expect(backend.escapeIdentifier('a "b" c')).toBe('"a ""b"" c"')
   })
 })
 
-describe('DuckDBEngine.query with groupBy', () => {
+describe('DuckDBBackend.query with groupBy', () => {
   // Create a mock conn that tracks all prepared statements and their SQL.
   // Each call to conn.prepare() returns a mock statement. The resolver function
   // determines the result based on the SQL string.
@@ -958,8 +958,8 @@ describe('DuckDBEngine.query with groupBy', () => {
       ])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'Manufacturer', type: 'character' },
@@ -967,7 +967,7 @@ describe('DuckDBEngine.query with groupBy', () => {
       { id: 'Price', type: 'numeric', aggregate: 'sum' }
     ]
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1008,8 +1008,8 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
@@ -1022,7 +1022,7 @@ describe('DuckDBEngine.query with groupBy', () => {
       { id: 'c7', type: 'character', aggregate: 'unique' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1053,15 +1053,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       ])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
       { id: 'type', type: 'character', aggregate: 'frequency' }
     ]
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1088,15 +1088,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       ])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'cat', type: 'character' },
       { id: 'val', type: 'numeric' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1120,15 +1120,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
       { id: 'val', type: 'numeric' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [{ id: 'grp', desc: true }],
@@ -1153,15 +1153,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
       { id: 'val', type: 'numeric', aggregate: 'sum' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [{ id: 'val', desc: false }],
@@ -1182,15 +1182,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
       { id: 'val', type: 'numeric' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1212,8 +1212,8 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
@@ -1221,7 +1221,7 @@ describe('DuckDBEngine.query with groupBy', () => {
       { id: 'val', type: 'numeric', aggregate: 'sum' }
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1245,15 +1245,15 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'grp', type: 'character' },
       { id: 'name', type: 'character' } // no aggregate
     ]
 
-    await engine.query({
+    await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [{ id: 'name', desc: false }],
@@ -1275,10 +1275,10 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1310,8 +1310,8 @@ describe('DuckDBEngine.query with groupBy', () => {
       ])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
     const columns = [
       { id: 'region', type: 'character' },
@@ -1319,7 +1319,7 @@ describe('DuckDBEngine.query with groupBy', () => {
       { id: 'val', type: 'numeric', aggregate: 'sum' }
     ]
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],
@@ -1346,10 +1346,10 @@ describe('DuckDBEngine.query with groupBy', () => {
       return arrowResult([{ a: 1, b: 'x' }])
     })
 
-    const engine = new DuckDBEngine()
-    engine.conn = conn
+    const backend = new DuckDBBackend()
+    backend.conn = conn
 
-    const result = await engine.query({
+    const result = await backend.query({
       pageIndex: 0,
       pageSize: 10,
       sortBy: [],

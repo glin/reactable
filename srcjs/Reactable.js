@@ -202,10 +202,10 @@ export function Reactable({
   theme,
   language,
   dataKey,
-  engine,
+  backend,
   ...rest
 }) {
-  // When using the DuckDB engine, data contains the pre-rendered first page.
+  // When using the DuckDB backend, data contains the pre-rendered first page.
   // normalizeColumnData handles both column-oriented data objects and empty arrays.
   data = data != null ? normalizeColumnData(data, columns) : []
   columns = buildColumnDefs(columns, columnGroups, {
@@ -230,7 +230,7 @@ export function Reactable({
       columns={columns}
       theme={theme}
       language={language}
-      engine={engine}
+      backend={backend}
       // Reset all state when the data changes. By default, most of the table state
       // persists when the data changes (sorted, filtered, grouped state, etc.).
       key={dataKey}
@@ -960,12 +960,12 @@ function Table({
   dataURL,
   serverRowCount: initialServerRowCount,
   serverMaxRowCount: initialServerMaxRowCount,
-  engine,
+  backend,
   arrowData
 }) {
   const [newData, setNewData] = React.useState(null)
   const useServerData = dataURL != null
-  const useDuckDB = engine === 'duckdb'
+  const useDuckDB = backend === 'duckdb'
 
   const data = React.useMemo(() => {
     if (newData) return newData
@@ -1246,11 +1246,11 @@ function Table({
     dataColumns
   ])
 
-  // DuckDB-WASM engine data
+  // DuckDB-WASM backend data
   const duckdbRef = React.useRef(null)
   const [duckdbReady, setDuckdbReady] = React.useState(false)
 
-  // Initialize DuckDB engine on mount
+  // Initialize DuckDB backend on mount
   React.useEffect(() => {
     if (!useDuckDB || !arrowData) {
       return
@@ -1259,21 +1259,21 @@ function Table({
     const duckdbModule = window.__ReactableDuckDB
     if (!duckdbModule) {
       console.error(
-        'DuckDB-WASM engine not loaded. Make sure the duckdb-wasm dependency is included.'
+        'DuckDB-WASM backend not loaded. Make sure the duckdb-wasm dependency is included.'
       )
       return
     }
 
     let cancelled = false
-    const engine = new duckdbModule.DuckDBEngine()
-    duckdbRef.current = engine
+    const duckdbBackend = new duckdbModule.DuckDBBackend()
+    duckdbRef.current = duckdbBackend
 
-    engine
+    duckdbBackend
       .init(arrowData, duckdbModule.wasmBasePath)
       .then(() => {
         if (cancelled) return
-        setServerRowCount(engine.totalRowCount)
-        setServerMaxRowCount(engine.totalRowCount)
+        setServerRowCount(duckdbBackend.totalRowCount)
+        setServerMaxRowCount(duckdbBackend.totalRowCount)
         setDuckdbReady(true)
       })
       .catch(err => {
@@ -1282,7 +1282,7 @@ function Table({
 
     return () => {
       cancelled = true
-      engine.destroy()
+      duckdbBackend.destroy()
       duckdbRef.current = null
     }
   }, [useDuckDB, arrowData])
@@ -2636,7 +2636,7 @@ Reactable.propTypes = {
   dataURL: PropTypes.string,
   serverRowCount: PropTypes.number,
   serverMaxRowCount: PropTypes.number,
-  engine: PropTypes.string,
+  backend: PropTypes.string,
   arrowData: PropTypes.string
 }
 
