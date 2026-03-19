@@ -105,7 +105,57 @@ reactable(
   backend = backendDuckDB(),
   defaultPageSize = 20,
   showPageSizeOptions = TRUE,
-  pageSizeOptions = c(20, 50, 100)
+  searchable = TRUE
+)
+```
+
+### Large dataset: 1M rows (no DuckDB)
+
+```{r}
+n <- 1000000
+big_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2)
+)
+
+reactable(
+  big_data,
+  defaultPageSize = 20,
+  showPageSizeOptions = TRUE,
+  searchable = TRUE
+)
+```
+
+### Large dataset: 1M rows (virtualized)
+
+```{r}
+reactable(
+  big_data,
+  backend = backendDuckDB(),
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 500,
+  sortable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE
+)
+```
+
+### Unpaginated with virtual scrolling (MASS::Cars93)
+
+```{r}
+reactable(
+  MASS::Cars93,
+  backend = backendDuckDB(),
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 400,
+  sortable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE,
+  striped = TRUE
 )
 ```
 

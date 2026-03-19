@@ -1,0 +1,156 @@
+---
+title: 'Client-Side DuckDB'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(5)
+
+options(reactable.static = TRUE)
+```
+
+::: {.callout}
+New in v0.4.5.9000
+:::
+
+The DuckDB backend enables sorting, filtering, searching, and pagination for large datasets entirely in the browser, with no server required. This works in static R Markdown and Quarto documents, where traditional server-side processing isn't available.
+
+Instead of embedding all data as JSON and processing it in JavaScript, the DuckDB backend serializes data as [Arrow IPC](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) at render time, then uses [DuckDB-WASM](https://duckdb.org/docs/api/wasm/overview) to execute SQL queries directly in the browser. Only one page of results is rendered at a time, so even million-row tables stay responsive.
+
+## 1,000,000 rows
+
+Try sorting, filtering, and searching to see DuckDB handling one million rows entirely client-side.
+
+```{r}
+library(reactable)
+
+rows <- 1000000
+dates <- seq.Date(as.Date("2018-01-01"), as.Date("2018-12-01"), "day")
+data <- data.frame(
+  index = seq_len(rows),
+  date = sample(dates, rows, replace = TRUE),
+  city = sample(names(precip), rows, replace = TRUE),
+  state = sample(rownames(USArrests), rows, replace = TRUE),
+  temp = round(runif(rows, 0, 100), 1),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  data,
+  backend = backendDuckDB(),
+  filterable = TRUE,
+  searchable = TRUE,
+  highlight = TRUE,
+  columns = list(
+    state = colDef(
+      html = TRUE,
+      cell = JS('function(cell) {
+        return `<a href="https://wikipedia.org/wiki/${cell.value}">${cell.value}</a>`
+      }')
+    )
+  )
+)
+```
+
+## How it works
+
+When you use `backend = backendDuckDB()`, reactable changes how data is processed:
+
+1. **At render time**, R serializes the data frame to [Arrow IPC](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) binary format (via the [arrow](https://arrow.apache.org/docs/r/) package), base64-encodes it, and embeds it in the HTML. The first page of data is also pre-rendered as JSON so the table displays instantly.
+
+2. **On page load**, the browser decodes the Arrow IPC data and loads it into a [DuckDB-WASM](https://duckdb.org/docs/api/wasm/overview) database running in a Web Worker. The pre-rendered first page displays immediately, without waiting for DuckDB to initialize.
+
+3. **On each interaction** (sort, filter, search, page change), reactable constructs a SQL query and DuckDB executes it in the browser. Only the matching page of results is returned and rendered.
+
+This means the browser never needs to hold all rows in JavaScript memory at once, and sorting/filtering runs at database speed rather than JavaScript array speed.
+
+## Data size
+
+Arrow IPC is a compact binary format that's typically smaller than the equivalent JSON:
+
+```{r}
+# Measure Arrow IPC size (the binary data embedded in the page)
+arrow_ipc_size <- function(df) {
+  tf <- tempfile(fileext = ".arrows")
+  on.exit(unlink(tf), add = TRUE)
+  arrow::write_ipc_stream(df, tf)
+  file.size(tf)
+}
+
+format_mb <- function(bytes) sprintf("%.1f MB", bytes / 1024^2)
+
+arrow_size <- arrow_ipc_size(data)
+
+# Base64 encoding adds ~33% overhead
+arrow_size_b64 <- ceiling(arrow_size * 4 / 3)
+
+# Measure equivalent JSON size (what the default client-side mode would embed)
+json_size <- function(df) {
+  nchar(jsonlite::toJSON(df, dataframe = "columns"), type = "bytes")
+}
+
+json <- json_size(data)
+```
+
+|                            |                       1M rows |
+| :------------------------- | ----------------------------: |
+| Arrow IPC (raw binary)     |     `r format_mb(arrow_size)` |
+| Arrow IPC (base64 in HTML) | `r format_mb(arrow_size_b64)` |
+| JSON (default mode)        |           `r format_mb(json)` |
+
+The Arrow IPC data is base64-encoded when embedded in the HTML, which adds ~33% to the raw binary size. Even with base64 overhead, the embedded data is comparable in size to the equivalent JSON. The key difference is what happens in the browser: with JSON, all rows are parsed and loaded into JavaScript memory. With Arrow IPC, the data is loaded into DuckDB and only one page of rows is ever in JavaScript memory at a time.
+
+With gzip compression (standard on most web servers including GitHub Pages), the actual download sizes are significantly smaller, roughly 3x to 4x smaller than the uncompressed sizes above.
+
+## Comparison with default client-side rendering
+
+The default client-side mode loads all data as JSON into JavaScript memory and processes everything in JavaScript. This works well for small to medium tables but slows down at scale. Here's how the two modes compare on the 1M row table above, measured in Chrome on Windows:
+
+|                       | Default (client-side) | DuckDB backend                                                                                                                        |
+| :-------------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| **Page load**         | ~2.4s                 | ~1s (first page pre-rendered)                                                                                                         |
+| **Sorting**           | ~1s, blocks UI        | Near instant                                                                                                                          |
+| **Search**            | <1s, blocks UI        | ~1s, non-blocking (Web Worker)                                                                                                        |
+| **Pagination**        | Slightly slower       | Very fast                                                                                                                             |
+| **Memory (after GC)** | 569 MB                | 428 MB                                                                                                                                |
+| **Document size**     | 47 MB (8 MB gzipped)  | 55 MB (16 MB gzipped)                                                                                                                 |
+| **Dependencies**      | None (built-in)       | [arrow](https://arrow.apache.org/docs/r/) R package, [DuckDB-WASM](https://duckdb.org/docs/api/wasm/overview) (~8 MB gzipped, cached) |
+
+Sorting is the biggest difference. DuckDB sorts near-instantly, while the default backend freezes the page for about a second at 1M rows (about 4 seconds at 2M rows). Searching is a tradeoff: the default backend is slightly faster in raw time, but DuckDB runs queries in a background thread so the UI stays responsive. Page load is faster with DuckDB despite a larger document, because the default mode must parse and transform all JSON before rendering.
+
+The DuckDB document is about 2x larger when gzip-compressed because base64-encoded binary data compresses less efficiently than JSON text.
+
+For small tables (under ~10,000 rows), the default client-side mode is simpler and has no extra dependencies. The DuckDB backend is most useful for large tables where interactive sorting and filtering speed matters.
+
+## Limitations
+
+The DuckDB backend is currently **experimental**. The following features are not supported:
+
+- **Custom search/filter methods**: `searchMethod` and column `filterMethod` are ignored. DuckDB uses SQL-based filtering instead (case-insensitive substring match for text, prefix match for numbers).
+- **Custom JavaScript aggregate functions**: Use built-in aggregate names like `"sum"`, `"mean"`, `"max"`, `"min"`, `"median"`, `"count"`, `"unique"`, and `"frequency"`.
+- **R function renderers**: R functions passed to `cell`, `details`, `style`, `class`, `rowClass`, and `rowStyle` don't work correctly because they're evaluated at render time against the original row order. Use `JS()` functions instead, which execute in the browser with the current page's data.
+- **Row selection**: Not yet supported with the DuckDB backend.
+
+## Browser requirements
+
+The DuckDB backend requires a modern browser with:
+
+- **WebAssembly** - supported in all modern browsers (Chrome 57+, Firefox 52+, Safari 11+, Edge 16+). Not supported in Internet Explorer.
+- **Web Workers** - used to run DuckDB in a background thread so the UI stays responsive. Supported in all modern browsers.
+
+**DuckDB-WASM download size**: The DuckDB-WASM binary is approximately 33 MB uncompressed (~8 MB gzipped). Most web servers (including GitHub Pages) serve it gzip-compressed. The WASM file is downloaded once on first page load and cached by the browser for subsequent visits. This is in addition to the data embedded in the page.
+
+**Memory limits**: WebAssembly has a maximum memory limit of 4 GB. In practice, this means the DuckDB backend can handle datasets up to roughly 1–2 GB of in-memory data, depending on the number and types of columns. String-heavy datasets use more memory than numeric ones.
+
+**Multiple tables**: Each `reactable()` with `backendDuckDB()` on the same page creates its own DuckDB-WASM instance. A few tables is fine, but many DuckDB tables on one page will multiply memory usage.
+
+**Local file:// URLs**: DuckDB-WASM does not work when opening HTML files directly from the filesystem (`file://` URLs) because browsers block `fetch()` and Web Worker requests from `file://` origins for security reasons. The pre-rendered first page will still display, but sorting, filtering, and pagination won't work. To test locally, serve the file over HTTP, for example with `servr::httd()` in R.
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+```

@@ -16,8 +16,10 @@ R data frame → jsonlite::toJSON() → JSON string embedded in HTML → browser
 
 - All data embedded in the HTML document (100K rows × 10 columns ≈ 2-10 MB of inline JSON)
 - Browser must parse all JSON on page load, then transform column→row format: O(n×m)
-- Sorting/filtering operates on the full JS array — workable up to ~50K rows, degrades beyond that
-- No way to handle millions of rows
+- Sorting/filtering operates on the full JS array — works even at 1M rows, but sorting is noticeably
+  slower than a database engine (hundreds of ms vs. single-digit ms), and search scales linearly
+- All rows held in JS memory as individual objects (high per-object overhead)
+- No way to partially load data — the entire dataset must be embedded and parsed upfront
 
 ### Mode 2: Server-side (requires V8 + Shiny)
 
@@ -95,6 +97,43 @@ R data frame → toJSON() → 10 MB JSON string in HTML → browser parses 10 MB
 User action → HTTP POST → R wakes up → R processes data → R serializes JSON → HTTP response
 → browser parses JSON → renders (repeat for every click, with network latency)
 ```
+
+### Honest assessment: where DuckDB-WASM actually helps
+
+The default client-side backend is more capable than expected -- it handles 1M rows without crashing, and pagination
+works fine. But end-to-end benchmarks (see "End-to-end benchmark" section below) show DuckDB-WASM provides a more
+significant improvement than initially estimated from POC-only timings.
+
+**DuckDB-WASM is NOT needed because the default backend breaks.** But it provides a meaningfully better user
+experience at scale, especially for sorting:
+
+1. **Sort speed is the killer feature** — At 1M rows, DuckDB sorts near-instantly while the default takes ~1s and
+   blocks the UI. At 2M rows, the default takes ~4s with a completely frozen UI. This alone justifies DuckDB for
+   interactive tables at 500K+ rows.
+
+2. **Page load is faster, not slower** — Despite a larger document (~18% uncompressed, ~2x gzipped), DuckDB page
+   load is ~2x faster (1.1s vs 2.4s at 1M). The default backend's JSON parse + column-to-row transform is the
+   bottleneck, not network transfer. DuckDB pre-renders the first page and loads Arrow data asynchronously.
+
+3. **Memory efficiency is real** — 25-30% less memory after GC (428 MB vs 569 MB at 1M, 726 MB vs 1,074 MB at 2M).
+   DuckDB's columnar storage is more compact than 1M individual JS row objects.
+
+4. **Global search is slower but non-blocking** — DuckDB search runs in a Web Worker (~1s at 1M, ~3s at 2M) while
+   the default's JS search is faster in raw time (<1s at 1M, ~1.5s at 2M) but blocks the UI thread completely. The
+   non-blocking behavior is a significant UX advantage at scale.
+
+5. **Foundation for Parquet sidecar files** — This is the genuinely transformative feature. With Parquet, the
+   browser fetches only the bytes needed for each page via HTTP range requests. A 10 GB dataset can render its first
+   page by downloading ~1-5 MB. This is fundamentally impossible with the default backend, which must embed and
+   parse ALL data upfront. DuckDB-WASM is a prerequisite for this.
+
+6. **Server-side DuckDB R backend** — Replaces V8 for Shiny server-side processing. No V8 dependency (no ICU
+   issues), ~100x faster queries via zero-copy `duckdb_register()`. This is arguably the most immediately useful
+   outcome of the DuckDB investment.
+
+**Bottom line:** DuckDB-WASM for embedded Arrow data provides a clearly better experience for interactive sorting and
+overall responsiveness at 500K+ rows. The document size tradeoff (2x larger gzipped) is the main cost. The Parquet
+sidecar approach and the DuckDB R server backend remain the features with the most transformative potential.
 
 ---
 
@@ -396,36 +435,43 @@ Keep the current JSON/client-side path. It's fast, simple, and has zero dependen
 reactable(mtcars)
 ```
 
-### Medium tables (10K-500K rows) — biggest win
+### Medium tables (10K-500K rows) — incremental improvement
 
-Currently painful: too large for smooth client-side, server-side requires V8 + Shiny.
-
-```r
-# Before: either embed 50 MB of JSON, or give up on static docs
-reactable(big_data)  # browser freezes
-
-# After: works in static HTML, R Markdown, Quarto — no Shiny needed
-reactable(big_data, engine = "duckdb")  # instant pagination, sorting, filtering
-```
-
-The Arrow binary for 500K rows × 10 numeric columns ≈ 40 MB (vs ~50 MB JSON), but:
-
-- No JSON parse overhead (binary loaded directly)
-- No column→row transformation (DuckDB queries return only the visible page)
-- Sorting/filtering in DuckDB: <100ms even on 500K rows (vectorized, columnar)
-- Browser memory: only holds the visible page (~10-100 rows), not all 500K
-
-### Large tables (500K-10M rows) — sidecar file approach
+The default client-side backend actually handles medium tables reasonably well. Page load is under a second even at
+1M rows, pagination is fast, and sorting/filtering work (just slower than DuckDB). DuckDB-WASM provides a speed
+improvement for interactive operations but not a qualitative difference at this size.
 
 ```r
-# Data too large to embed in HTML — writes a .arrow file alongside the document
-reactable(huge_data, engine = "duckdb")
-# Produces: document.html + document_files/reactable_data_abc123.arrow
+# Default backend works fine here, but DuckDB is snappier for sort/filter
+reactable(big_data, backend = backendDuckDB())  # faster sorting and filtering
 ```
 
-The HTML contains a URL reference; the browser fetches the .arrow file on demand. DuckDB-WASM can even query
-Parquet files with HTTP range requests (partial reads), meaning the browser doesn't need to download the entire file
-to show the first page.
+The Arrow binary for 500K rows × 10 numeric columns ≈ 40 MB (vs ~50 MB JSON):
+
+- Sorting/filtering in DuckDB: <100ms even on 500K rows vs. hundreds of ms in JS
+- Browser memory: only the visible page materialized as JS objects, not all 500K
+- No column-to-row transformation overhead
+- But: ~550ms DuckDB-WASM init cost, ~3-4 MB WASM download, date/type conversion edge cases
+- Global search is actually _slower_ in DuckDB at scale (1.2s at 1M rows with 6 ILIKE comparisons)
+
+**Honest assessment:** At this size, the default backend is adequate. DuckDB is a nice-to-have for sort/filter speed,
+not a necessity. The real value of DuckDB-WASM at this tier is that it's the same engine that enables the
+transformative Parquet sidecar approach (see below).
+
+### Large tables (500K-10M rows) — Parquet sidecar file (the real win)
+
+This is where DuckDB-WASM becomes genuinely transformative. Instead of embedding the entire dataset in the HTML,
+R writes a Parquet file alongside the document. The browser fetches only the bytes it needs for each page.
+
+```r
+# R writes a .parquet file alongside the HTML document
+reactable(huge_data, backend = backendDuckDB())
+# Produces: document.html + document_files/reactable_data_abc123.parquet
+```
+
+The HTML contains a URL reference. DuckDB-WASM uses HTTP range requests to read only the relevant byte ranges from
+the Parquet file. A 10 GB dataset could render its first page by downloading maybe 100 KB. This is fundamentally
+impossible with the default client-side backend, which must embed and parse ALL data upfront.
 
 ---
 
@@ -546,26 +592,146 @@ splitting / dynamic import).
 **Deliverable:** `reactable(data, engine = "duckdb")` — full sorting/filtering/grouping/pagination powered by SQL in
 the browser.
 
-### Phase 3: Advanced features
+### Phase 3: Parquet sidecar files
+
+**Goal:** Enable tables backed by Parquet files instead of embedded Arrow IPC, so the browser only downloads the data
+it needs. This is the most impactful feature in the roadmap.
+
+#### Why Parquet changes everything
+
+With Arrow IPC (current approach), the entire dataset is base64-encoded and embedded in the HTML document. A 1M row
+table produces a 40-80 MB HTML file that the browser must fully download and decode before DuckDB can query it.
+
+With Parquet sidecar files, the data lives in a separate `.parquet` file. DuckDB-WASM uses HTTP range requests to read
+only the bytes it needs:
+
+1. **Metadata fetch (~1 KB):** Parquet stores a footer with schema, row group locations, and column chunk offsets.
+   DuckDB reads this first to understand the file layout.
+
+2. **Column pruning:** If the user sorts by column A, DuckDB only fetches column A's data from the Parquet file,
+   skipping all other columns entirely. A 50-column table where you page/sort on 2 columns downloads ~4% of the file.
+
+3. **Row group filtering:** Parquet stores min/max statistics per row group (typically 128K-1M rows per group). If a
+   filter is `WHERE price > 100` and a row group's max price is 50, DuckDB skips that entire row group without
+   downloading it.
+
+4. **Page-sized reads:** For a simple page query (`LIMIT 25 OFFSET 0`), DuckDB downloads at most one row group's
+   worth of data for the needed columns, then returns 25 rows. On a 10 GB file, this might be 1-5 MB.
+
+#### Concrete example
+
+```
+10 GB Parquet file, 50M rows × 20 columns, hosted on a static file server
+
+1. Browser loads HTML (small, just widget markup + Parquet URL reference)
+2. DuckDB-WASM inits (~550ms one-time)
+3. Fetches Parquet footer via HTTP range request (~1 KB, ~50ms)
+4. User sees first page: fetches 1 row group × 20 columns (~2 MB, ~200ms)
+5. User sorts by "price" DESC: fetches only "price" column (~100 KB range request, ~50ms),
+   then fetches the top-25 rows' full data (~50 KB)
+6. User filters "category = Electronics": fetches "category" column, applies filter,
+   skips row groups where min/max stats exclude "Electronics"
+
+Total downloaded: maybe 5-10 MB out of 10 GB. First page visible in <2 seconds.
+```
+
+Compare to the default backend: you'd need to embed 10 GB of JSON. That's not viable. Even Arrow IPC at 10 GB is
+not viable as embedded data. Parquet is the only approach that lets you back a table with arbitrarily large data in a
+static HTML document.
+
+#### How R would generate the sidecar
+
+```r
+reactable <- function(data, ..., backend = NULL) {
+  if (uses_duckdb_backend(backend)) {
+    arrow_bytes_size <- estimate_arrow_size(data)
+
+    if (arrow_bytes_size < 20 * 1024 * 1024) {
+      # Small data: embed as base64 Arrow IPC (current approach)
+      data_payload <- list(format = "arrow-ipc", encoding = "base64", bytes = serialize_arrow(data))
+    } else {
+      # Large data: write Parquet sidecar file
+      parquet_path <- write_parquet_sidecar(data, output_dir)
+      data_payload <- list(format = "parquet", encoding = "url", url = parquet_path)
+    }
+  }
+}
+
+write_parquet_sidecar <- function(data, output_dir) {
+  filename <- paste0("reactable_data_", substr(digest::digest(data), 1, 8), ".parquet")
+  path <- file.path(output_dir, filename)
+  arrow::write_parquet(
+    data, path,
+    # Row group size affects granularity of range requests vs. overhead
+    chunk_size = 100000  # 100K rows per row group (good balance)
+  )
+  filename  # relative URL for the browser
+}
+```
+
+#### JS-side Parquet support
+
+DuckDB-WASM has built-in Parquet support. The init path would branch based on the data format:
+
+```javascript
+async init(dataPayload) {
+  // ... DuckDB-WASM initialization ...
+
+  if (dataPayload.format === 'arrow-ipc') {
+    // Current path: decode base64, insert Arrow IPC
+    const bytes = Uint8Array.from(atob(dataPayload.bytes), c => c.charCodeAt(0))
+    await this.conn.insertArrowFromIPCStream(bytes, { name: 'reactable_data', create: true })
+  } else if (dataPayload.format === 'parquet') {
+    // Parquet sidecar: register URL, DuckDB handles range requests
+    await this.conn.query(
+      `CREATE TABLE reactable_data AS SELECT * FROM read_parquet('${dataPayload.url}')`
+    )
+    // Or for true lazy reading (no full scan):
+    await this.conn.query(
+      `CREATE VIEW reactable_data AS SELECT * FROM read_parquet('${dataPayload.url}')`
+    )
+  }
+}
+```
+
+Using `CREATE VIEW` instead of `CREATE TABLE` means DuckDB never loads the full file into WASM memory. Every query
+goes directly to the Parquet file via range requests. This keeps WASM memory usage near-zero regardless of file size.
+
+#### Hosting requirements
+
+Parquet sidecar files need a server that supports HTTP range requests (`Accept-Ranges: bytes`). This includes:
+
+- Any static file server (nginx, Apache, Caddy, Python's `http.server`)
+- GitHub Pages, Netlify, Vercel, S3, GCS, Azure Blob Storage
+- R Markdown / Quarto `self_contained: false` output
+
+It does NOT work with `self_contained: true` (which inlines everything) or the RStudio Viewer pane.
+
+#### Limitations
+
+- Requires `self_contained: false` in R Markdown/Quarto
+- HTTP range requests add latency per query (~50-200ms round trip per request)
+- Sorting/filtering may require multiple range requests (one to read the filter column, one to read result columns)
+- Row group statistics only help with numeric/date range filters, not substring search
+- Parquet files are slightly larger than gzipped Arrow IPC for the same data
+
+### Phase 4: Additional features
 
 1. **Custom filter methods:** Allow translating custom R/JS filter functions to SQL WHERE clauses, or fall back to
    JS-based filtering on the page results
-2. **Parquet sidecar files:** For very large data, write Parquet instead of Arrow IPC. DuckDB-WASM supports HTTP range
-   requests on Parquet files — the browser only downloads the byte ranges needed for the current query (column
-   pruning + row group filtering). A 10 GB Parquet file could back a table that loads in under a second.
-3. **Pre-aggregated data:** For grouped tables on huge data, pre-compute group aggregations in R and store as a
+2. **Pre-aggregated data:** For grouped tables on huge data, pre-compute group aggregations in R and store as a
    separate table. DuckDB queries the summary table for top-level groups, detail table for expanded sub-rows.
-4. **Row selection, expansion:** Map DuckDB row IDs back to original data indices for selection/expansion state.
-5. **Shiny integration:** `updateReactable(data = new_data)` re-imports Arrow into DuckDB without page reload.
-6. **Web Worker:** Move DuckDB queries to a Web Worker so the UI thread never blocks during heavy queries.
+3. **Row selection, expansion:** Map DuckDB row IDs back to original data indices for selection/expansion state.
+4. **Shiny integration:** `updateReactable(data = new_data)` re-imports Arrow into DuckDB without page reload.
+5. **Web Worker:** Move DuckDB queries to a Web Worker so the UI thread never blocks during heavy queries.
 
-### Phase 4: Parquet URL data source (stretch goal)
+### Phase 5: Parquet URL data source (stretch goal)
 
 ```r
 # Table backed by a remote Parquet file — the data never enters R at all
 reactable(
   parquet_url = "https://data.example.com/sales.parquet",
-  engine = "duckdb",
+  backend = backendDuckDB(),
   columns = list(...)
 )
 ```
@@ -920,6 +1086,78 @@ and memory than it saves on queries.
   `ILIKE` is needed instead of 6. Column filters are already fast.
 - **Debounce tuning:** The POC debounces search input at 300ms. For large datasets, increasing the debounce or
   requiring a minimum query length (3+ chars) would reduce perceived lag.
+
+## End-to-end benchmark: DuckDB vs default backend
+
+Measured in Chrome (Windows), serving rendered R Markdown documents over HTTP. Both documents use the same dataset
+(5 columns: index, date, city, state, temp) with the same seed. Hard page refresh with cache disabled for page load;
+DuckDB-WASM binary cached for interaction tests. Memory measured in Chrome Task Manager.
+
+### 1M rows (5 columns)
+
+| Metric                   | DuckDB backend    | Default backend |
+| ------------------------ | ----------------- | --------------- |
+| **Document size**        | 55 MB             | 47 MB           |
+| **Document size (gzip)** | 16 MB             | 8 MB            |
+| **Page load**            | ~1.1s             | ~2.4s           |
+| **Sorting**              | Near instant      | ~1s, blocks UI  |
+| **Global search**        | ~1s, non-blocking | <1s, blocks UI  |
+| **Pagination**           | Very fast         | Slightly slower |
+| **Memory (peak)**        | 925 MB            | 900 MB          |
+| **Memory (after GC)**    | 428 MB            | 569 MB          |
+
+### 2M rows (5 columns)
+
+| Metric                   | DuckDB backend    | Default backend   |
+| ------------------------ | ----------------- | ----------------- |
+| **Document size**        | 109 MB            | 93 MB             |
+| **Document size (gzip)** | 32 MB             | 16 MB             |
+| **Page load**            | ~2.3s             | ~4.9s             |
+| **Sorting**              | Near instant      | ~4s, blocks UI    |
+| **Global search**        | ~3s, non-blocking | ~1.5s, blocks UI  |
+| **Pagination**           | Very fast         | Noticeably slower |
+| **Memory (peak)**        | 1,083 MB          | 1,493 MB          |
+| **Memory (after GC)**    | 726 MB            | 1,074 MB          |
+
+### Key findings
+
+- **Sorting is the biggest win.** DuckDB sorting is near-instant at both 1M and 2M rows. The default backend takes
+  ~1s at 1M and ~4s at 2M, and blocks the UI thread the entire time (no input, no scrolling). This is the single
+  most compelling reason to use DuckDB for large tables.
+
+- **Page load is faster despite larger payload.** DuckDB loads 2x faster even though the document is ~18% larger
+  (uncompressed). The default backend must parse all JSON and transform column-oriented data to row objects for every
+  row, which is the bottleneck. DuckDB skips this: the first page is pre-rendered, and Arrow data is loaded into
+  DuckDB asynchronously.
+
+- **Global search is a tradeoff.** DuckDB search is slower in raw time (~1s vs <1s at 1M, ~3s vs ~1.5s at 2M)
+  because it runs 5 ILIKE comparisons per row in SQL. However, DuckDB runs queries in a Web Worker, so the UI stays
+  responsive during search. The default backend's JS-based search is faster but blocks the UI thread completely.
+  At 2M rows, the blocking becomes a serious UX issue.
+
+- **Document size is larger, especially gzipped.** Base64-encoded Arrow IPC compresses poorly with gzip (~3.4x
+  compression) compared to JSON (~5.7x). The DuckDB document is about 2x larger when gzip-compressed. The DuckDB-WASM
+  binary (~34 MB uncompressed, ~8 MB gzipped) is an additional one-time download, cached by the browser.
+
+- **Memory is lower after GC.** Peak memory is similar at 1M but diverges at 2M (1,083 MB vs 1,493 MB). After
+  garbage collection, DuckDB uses 25-30% less memory at both sizes. The default backend holds all rows as individual
+  JS objects with high per-object overhead; DuckDB stores data in columnar format and only materializes one page of
+  row objects at a time.
+
+- **Pagination and filtering scale well.** DuckDB pagination is consistently fast at both sizes (SQL LIMIT/OFFSET).
+  The default backend's pagination is acceptable but noticeably slower, especially at 2M rows.
+
+### Updated assessment
+
+The earlier POC benchmark (synthetic data, DuckDB-only timing) was conservative. The end-to-end comparison shows
+DuckDB-WASM provides a more significant improvement than initially estimated:
+
+- Sorting goes from "noticeably slower but still works" to "near instant" -- the difference is dramatic enough
+  that users with interactive sort requirements should use DuckDB at 500K+ rows.
+- Page load is actually faster with DuckDB, not slower as initially assumed from the larger payload.
+- The global search speed concern from the POC (1.2s at 1M) is confirmed, but the non-blocking execution via
+  Web Worker makes it feel better than the default's faster-but-blocking search.
+- Memory efficiency is a real benefit, not just theoretical -- 25-30% less after GC.
 
 ---
 

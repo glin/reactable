@@ -47,6 +47,8 @@ navbar:
         href: articles/100k-rows.html
       - text: 100k Rows (Virtualized)
         href: articles/100k-rows-virtual.html
+      - text: Client-Side DuckDB
+        href: articles/duckdb-backend.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
       - text: Quarto and Observable
@@ -86,6 +88,7 @@ reference:
   contents:
   - reactable-server
   - resolvedData
+  - backendDuckDB
 
 # Exclude duplicate no-static examples from search index
 search:
