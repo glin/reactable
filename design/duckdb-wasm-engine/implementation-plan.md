@@ -564,6 +564,8 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
       (e.g., jsDelivr, with `options()` to override), (2) separate companion package on r-universe or GitHub,
       (3) first-use download and local cache (like `webshot2` downloads Chrome). Must also work for air-gapped /
       corporate environments.
+- [ ] Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field (copyright holders).
+      DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0 licensed (Apache Software Foundation).
 
 ---
 
