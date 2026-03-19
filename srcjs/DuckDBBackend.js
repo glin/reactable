@@ -1,4 +1,5 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
+import { DataType } from 'apache-arrow'
 
 // Map reactable aggregate function names to SQL aggregate expressions.
 // The column identifier is passed pre-escaped.
@@ -11,6 +12,44 @@ const aggregateSQLMap = {
   count: col => `COUNT(${col})`,
   unique: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ')`
   // frequency: computed from sub-rows (too complex for a single GROUP BY expression)
+}
+
+// Convert an Arrow table to an array of plain JS objects, converting temporal
+// columns (Date, Timestamp) from epoch milliseconds to ISO 8601 strings.
+// This matches R's toJSON serialization (Date = "ISO8601", POSIXt = "ISO8601").
+function arrowTableToRows(table) {
+  // Find temporal columns from the schema
+  const temporalCols = []
+  for (const field of table.schema.fields) {
+    if (DataType.isDate(field.type)) {
+      temporalCols.push({ name: field.name, kind: 'date' })
+    } else if (DataType.isTimestamp(field.type)) {
+      temporalCols.push({ name: field.name, kind: 'timestamp' })
+    }
+  }
+
+  const rows = table.toArray().map(row => row.toJSON())
+
+  if (temporalCols.length === 0) {
+    return rows
+  }
+
+  // Convert temporal values from epoch ms to ISO 8601 strings
+  for (const row of rows) {
+    for (const col of temporalCols) {
+      const value = row[col.name]
+      if (value == null) continue
+      if (col.kind === 'date') {
+        // Date -> "YYYY-MM-DD" (matches R's Date = "ISO8601")
+        row[col.name] = new Date(value).toISOString().slice(0, 10)
+      } else {
+        // Timestamp -> "YYYY-MM-DDTHH:MM:SSZ" (matches R's POSIXt = "ISO8601")
+        row[col.name] = new Date(value).toISOString()
+      }
+    }
+  }
+
+  return rows
 }
 
 export class DuckDBBackend {
@@ -146,7 +185,7 @@ export class DuckDBBackend {
       this.runPrepared(countSql, where.params)
     ])
 
-    const rows = dataResult.toArray().map(row => row.toJSON())
+    const rows = arrowTableToRows(dataResult)
     const rowCount = Number(countResult.toArray()[0].n)
 
     return { rows, rowCount }
@@ -234,7 +273,7 @@ export class DuckDBBackend {
     }
 
     const groupResult = await this.runPrepared(groupSql, allParams)
-    const groupRows = groupResult.toArray().map(row => row.toJSON())
+    const groupRows = arrowTableToRows(groupResult)
 
     if (groupRows.length === 0) {
       return groupRows
@@ -277,7 +316,7 @@ export class DuckDBBackend {
       }
 
       const subResult = await this.runPrepared(subSql, subParams)
-      const allSubRows = subResult.toArray().map(r => r.toJSON())
+      const allSubRows = arrowTableToRows(subResult)
 
       // Partition sub-rows by group value
       const subRowsByGroup = new Map()

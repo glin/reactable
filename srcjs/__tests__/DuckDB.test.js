@@ -6,6 +6,14 @@ import '@testing-library/jest-dom/extend-expect'
 // Must mock before importing DuckDBBackend (which imports @duckdb/duckdb-wasm)
 jest.mock('@duckdb/duckdb-wasm', () => ({}))
 
+// Mock apache-arrow DataType for temporal type detection
+jest.mock('apache-arrow', () => ({
+  DataType: {
+    isDate: type => type && type._arrowType === 'date',
+    isTimestamp: type => type && type._arrowType === 'timestamp'
+  }
+}))
+
 import { Reactable } from '../Reactable'
 import { DuckDBBackend } from '../DuckDBBackend'
 
@@ -790,15 +798,17 @@ describe('DuckDB backend', () => {
 describe('DuckDBBackend.query', () => {
   // Create a mock conn that mimics the real DuckDB-WASM AsyncDuckDBConnection API.
   // The mock prepared statement's query() accepts variadic params (matching the real API).
-  function createMockConn(dataRows = [], countValue = 0) {
+  function createMockConn(dataRows = [], countValue = 0, { schemaFields = [] } = {}) {
     const mockStmt = {
       query: jest.fn().mockResolvedValue({
+        schema: { fields: schemaFields },
         toArray: () => dataRows.map(r => ({ toJSON: () => r }))
       }),
       close: jest.fn()
     }
     const mockCountStmt = {
       query: jest.fn().mockResolvedValue({
+        schema: { fields: [] },
         toArray: () => [{ n: countValue }]
       }),
       close: jest.fn()
@@ -992,6 +1002,64 @@ describe('DuckDBBackend.query', () => {
       expect.stringContaining('ORDER BY "col ""quoted""" ASC NULLS LAST')
     )
   })
+
+  it('converts Date columns from epoch ms to ISO date strings', async () => {
+    const schemaFields = [
+      { name: 'id', type: {} },
+      { name: 'date_col', type: { _arrowType: 'date' } },
+      { name: 'label', type: {} }
+    ]
+    const dataRows = [
+      { id: 1, date_col: 1541376000000, label: 'a' }, // 2018-11-05
+      { id: 2, date_col: 1542240000000, label: 'b' }, // 2018-11-15
+      { id: 3, date_col: null, label: 'c' }
+    ]
+    const { conn } = createMockConn(dataRows, 3, { schemaFields })
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: []
+    })
+
+    expect(result.rows[0].date_col).toBe('2018-11-05')
+    expect(result.rows[1].date_col).toBe('2018-11-15')
+    expect(result.rows[2].date_col).toBeNull()
+    // Non-date columns are unchanged
+    expect(result.rows[0].id).toBe(1)
+    expect(result.rows[0].label).toBe('a')
+  })
+
+  it('converts Timestamp columns from epoch ms to ISO datetime strings', async () => {
+    const schemaFields = [
+      { name: 'id', type: {} },
+      { name: 'ts_col', type: { _arrowType: 'timestamp' } }
+    ]
+    const dataRows = [
+      { id: 1, ts_col: 1541376000000 }, // 2018-11-05T00:00:00.000Z
+      { id: 2, ts_col: 1541419265000 } // 2018-11-05T12:01:05.000Z
+    ]
+    const { conn } = createMockConn(dataRows, 2, { schemaFields })
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: []
+    })
+
+    expect(result.rows[0].ts_col).toBe('2018-11-05T00:00:00.000Z')
+    expect(result.rows[1].ts_col).toBe('2018-11-05T12:01:05.000Z')
+  })
 })
 
 describe('DuckDBBackend.escapeIdentifier', () => {
@@ -1037,6 +1105,7 @@ describe('DuckDBBackend.query with groupBy', () => {
 
   function arrowResult(rows) {
     return {
+      schema: { fields: [] },
       toArray: () => rows.map(r => ({ ...r, toJSON: () => r }))
     }
   }
