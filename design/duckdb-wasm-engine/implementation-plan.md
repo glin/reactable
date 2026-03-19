@@ -555,6 +555,12 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 - [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
       would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
 - [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
+- [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
+      dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as JSON). Even with pagination, the
+      pre-rendered JSON page is redundant weight. Consider removing R-side pre-rendering entirely and instead showing
+      a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
+      flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
+      the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
 - [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
