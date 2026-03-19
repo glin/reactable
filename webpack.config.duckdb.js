@@ -27,7 +27,14 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: path.join(__dirname, 'node_modules', '@duckdb', 'duckdb-wasm', 'dist', 'duckdb-eh.wasm'),
+            from: path.join(
+              __dirname,
+              'node_modules',
+              '@duckdb',
+              'duckdb-wasm',
+              'dist',
+              'duckdb-eh.wasm'
+            ),
             to: '.'
           },
           {

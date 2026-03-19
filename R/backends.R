@@ -14,6 +14,18 @@
 #'     \item{`"server"`}{Always uses the DuckDB R package on the server. Only works
 #'       in Shiny apps.}
 #'   }
+#' @param format Data format for client-side mode. One of `"auto"`, `"arrow"`, or `"parquet"`:
+#'   \describe{
+#'     \item{`"auto"` (default)}{Uses Arrow IPC for small datasets and Parquet sidecar
+#'       files for larger datasets (over ~20 MB). Parquet files are served via HTTP range
+#'       requests so the browser only downloads the data it needs for each page.}
+#'     \item{`"arrow"`}{Always embeds data as base64-encoded Arrow IPC in the HTML document.}
+#'     \item{`"parquet"`}{Always writes a Parquet sidecar file alongside the HTML document.
+#'       Only works with `self_contained: false` output.}
+#'   }
+#'
+#'   The `format` option only applies in client-side mode (DuckDB-WASM in the browser).
+#'   In server mode, data stays in R memory and this option is ignored.
 #'
 #' @return A backend object to pass to the `backend` argument of [reactable()].
 #'
@@ -37,12 +49,20 @@
 #'
 #' # Force server-side (DuckDB R package, Shiny only)
 #' reactable(data, backend = backendDuckDB("server"))
+#'
+#' # Always use Parquet sidecar files (for large datasets)
+#' reactable(data, backend = backendDuckDB(format = "parquet"))
+#'
+#' # Always embed Arrow IPC (for self-contained output)
+#' reactable(data, backend = backendDuckDB(format = "arrow"))
 #' }
 #'
 #' @export
-backendDuckDB <- function(mode = c("auto", "client", "server")) {
+backendDuckDB <- function(mode = c("auto", "client", "server"),
+                          format = c("auto", "arrow", "parquet")) {
   mode <- match.arg(mode)
-  structure(list(mode = mode), class = "reactable_backendDuckDB")
+  format <- match.arg(format)
+  structure(list(mode = mode, format = format), class = "reactable_backendDuckDB")
 }
 
 isDuckDBBackend <- function(x) {

@@ -961,7 +961,8 @@ function Table({
   serverRowCount: initialServerRowCount,
   serverMaxRowCount: initialServerMaxRowCount,
   backend,
-  arrowData
+  arrowData,
+  parquetId
 }) {
   const [newData, setNewData] = React.useState(null)
   const useServerData = dataURL != null
@@ -1252,7 +1253,7 @@ function Table({
 
   // Initialize DuckDB backend on mount
   React.useEffect(() => {
-    if (!useDuckDB || !arrowData) {
+    if (!useDuckDB || (!arrowData && !parquetId)) {
       return
     }
 
@@ -1264,12 +1265,28 @@ function Table({
       return
     }
 
+    // Resolve Parquet URL from the locator script registered by parquetDependency
+    let parquetUrl = null
+    if (parquetId) {
+      const parquetRegistry = window.__ReactableParquet
+      if (parquetRegistry && parquetRegistry[parquetId]) {
+        parquetUrl = parquetRegistry[parquetId]
+      } else {
+        console.error(
+          'Parquet sidecar file not found for parquetId: ' +
+            parquetId +
+            '. Make sure the Parquet dependency is included.'
+        )
+        return
+      }
+    }
+
     let cancelled = false
     const duckdbBackend = new duckdbModule.DuckDBBackend()
     duckdbRef.current = duckdbBackend
 
     duckdbBackend
-      .init(arrowData, duckdbModule.wasmBasePath)
+      .init({ arrowBase64: arrowData, parquetUrl, wasmBasePath: duckdbModule.wasmBasePath })
       .then(() => {
         if (cancelled) return
         setServerRowCount(duckdbBackend.totalRowCount)
@@ -1285,7 +1302,7 @@ function Table({
       duckdbBackend.destroy()
       duckdbRef.current = null
     }
-  }, [useDuckDB, arrowData])
+  }, [useDuckDB, arrowData, parquetId])
 
   // Query DuckDB on page/sort/filter/search changes.
   // Don't skip the initial query when groupBy is set — the pre-rendered first page is flat
@@ -2641,7 +2658,8 @@ Reactable.propTypes = {
   serverRowCount: PropTypes.number,
   serverMaxRowCount: PropTypes.number,
   backend: PropTypes.string,
-  arrowData: PropTypes.string
+  arrowData: PropTypes.string,
+  parquetId: PropTypes.string
 }
 
 Reactable.defaultProps = {

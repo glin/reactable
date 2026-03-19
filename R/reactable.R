@@ -759,6 +759,7 @@ reactable <- function(
   # rendering or printing the widget. This was originally done as a necessity to change the JSON serializer,
   # but now kept as an intentional optimization.
   arrowData <- NULL
+  parquetId <- NULL
   if (isDuckDBClientMode) {
     # Warn about custom JS methods that are not supported with the DuckDB backend
     if (!is.null(searchMethod)) {
@@ -834,6 +835,28 @@ reactable <- function(
     arrowData <- serializeArrowIPC(data)
     totalRowCount <- nrow(data)
 
+    # Decide data format: Parquet sidecar vs. embedded Arrow IPC.
+    # Parquet writes a sidecar file alongside the HTML, queried via HTTP range requests.
+    # Arrow IPC is base64-encoded and embedded directly in the HTML document.
+    dataFormat <- if (!is.null(backend$format)) backend$format else "auto"
+    useParquet <- identical(dataFormat, "parquet")
+    if (identical(dataFormat, "auto")) {
+      # Auto: use Parquet for large datasets (Arrow IPC > 20 MB)
+      arrowIPCSize <- nchar(arrowData) * 3 / 4  # base64 overhead is ~4/3
+      useParquet <- arrowIPCSize > 20 * 1024 * 1024
+    }
+
+    if (useParquet) {
+      parquetResult <- serializeParquet(data)
+      parquetId <- substr(digest::digest(data), 1, 8)
+      dependencies <- c(dependencies, list(parquetDependency(
+        parquetDir = parquetResult$dir,
+        parquetFilename = parquetResult$filename,
+        parquetId = parquetId
+      )))
+      arrowData <- NULL  # Don't embed Arrow IPC when using Parquet
+    }
+
     # Pre-compute the first page for immediate display (avoids blank table while DuckDB initializes).
     # Apply defaultSorted so the pre-rendered page matches what DuckDB would return.
     firstPageData <- data
@@ -855,7 +878,7 @@ reactable <- function(
 
   # Create a unique key for the data. The key is used to fully reset state when
   # the data changes (for tables in Shiny).
-  dataKey <- digest::digest(list(data = if (!is.null(data)) data else arrowData, columns = cols, meta = meta))
+  dataKey <- digest::digest(list(data = if (!is.null(data)) data else if (!is.null(arrowData)) arrowData else parquetId, columns = cols, meta = meta))
 
   # Serialize user-set args only to keep the widget HTML slim
   defaultArgs <- formals()
@@ -865,6 +888,7 @@ reactable <- function(
   component <- reactR::component("Reactable", list(
     data = data,
     arrowData = arrowData,
+    parquetId = parquetId,
     backend = if (isDuckDBClientMode) "duckdb",
     columns = cols,
     columnGroups = columnGroups,
@@ -1169,6 +1193,27 @@ duckdbDependency <- function() {
     version = "1.29.0",
     src = system.file("htmlwidgets/lib/duckdb-wasm", package = "reactable"),
     script = "reactable-duckdb.js",
+    all_files = TRUE
+  )
+}
+
+# Create an htmlDependency that deploys a Parquet sidecar file alongside the HTML.
+# Includes a locator script that registers the Parquet file URL so JS can find it.
+parquetDependency <- function(parquetDir, parquetFilename, parquetId) {
+  # Write a locator script that registers the Parquet URL for this widget.
+  # Uses document.currentScript to detect the deployed path (same technique as duckdb-entry.js).
+  locatorJs <- sprintf(
+    "(function(){var s=document.currentScript;var b=s?s.src.replace(/[^/]*$/,''):'';window.__ReactableParquet=window.__ReactableParquet||{};window.__ReactableParquet['%s']=b+'%s';})();",
+    parquetId, parquetFilename
+  )
+  locatorFile <- file.path(parquetDir, "parquet-locator.js")
+  writeLines(locatorJs, locatorFile)
+
+  htmltools::htmlDependency(
+    name = paste0("reactable-parquet-", parquetId),
+    version = "1",
+    src = parquetDir,
+    script = "parquet-locator.js",
     all_files = TRUE
   )
 }

@@ -842,3 +842,59 @@ reactable(
   )
 )
 ```
+
+## Parquet Sidecar Files
+
+### Explicit Parquet format (small data)
+
+Force Parquet sidecar even for small data. A `.parquet` file should appear in the `_files/lib/` directory.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  backend = backendDuckDB(format = "parquet"),
+  defaultPageSize = 10,
+  sortable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE
+)
+```
+
+### Auto Parquet (large data, > 20 MB)
+
+1M rows should auto-switch to Parquet sidecar file.
+
+```{r}
+n <- 1000000
+parquet_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2),
+  label = paste0("item-", seq_len(n))
+)
+
+reactable(
+  parquet_data,
+  backend = backendDuckDB(),
+  defaultPageSize = 20,
+  sortable = TRUE,
+  filterable = TRUE,
+  searchable = TRUE,
+  showPageSizeOptions = TRUE
+)
+```
+
+### Explicit Arrow format (force embedded)
+
+Force embedded Arrow IPC even for large data.
+
+```{r}
+reactable(
+  parquet_data,
+  backend = backendDuckDB(format = "arrow"),
+  defaultPageSize = 20,
+  sortable = TRUE,
+  searchable = TRUE
+)
+```

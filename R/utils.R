@@ -19,6 +19,43 @@ serializeArrowIPC <- function(data) {
   jsonlite::base64_enc(raw_bytes)
 }
 
+# Estimate Arrow IPC size in bytes without base64 encoding overhead.
+estimateArrowIPCSize <- function(data) {
+  if (!requireNamespace("arrow", quietly = TRUE)) {
+    stop(
+      'The arrow package is required for backendDuckDB(). ',
+      'Install it with: install.packages("arrow")',
+      call. = FALSE
+    )
+  }
+  tf <- tempfile(fileext = ".arrows")
+  on.exit(unlink(tf), add = TRUE)
+  arrow::write_ipc_stream(data, tf)
+  file.info(tf)$size
+}
+
+# Serialize a data frame to a Parquet sidecar file in a temporary directory.
+# Returns a list with:
+#   - dir: path to the temp directory containing the Parquet file
+#   - filename: the Parquet filename (content-hash-based for uniqueness)
+serializeParquet <- function(data) {
+  if (!requireNamespace("arrow", quietly = TRUE)) {
+    stop(
+      'The arrow package is required for backendDuckDB(). ',
+      'Install it with: install.packages("arrow")',
+      call. = FALSE
+    )
+  }
+  hash <- substr(digest::digest(data), 1, 8)
+  filename <- paste0("reactable-data-", hash, ".parquet")
+  dir <- tempfile("reactable-parquet-")
+  dir.create(dir, recursive = TRUE)
+  path <- file.path(dir, filename)
+  # 100K rows per row group balances range request granularity vs. overhead
+  arrow::write_parquet(data, path, chunk_size = 100000L)
+  list(dir = dir, filename = filename)
+}
+
 #' Serialize JSON
 #'
 #' toJSON overrides the htmlwidgets default JSON serialization options for data:

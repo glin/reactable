@@ -59,7 +59,7 @@ export class DuckDBBackend {
     this.totalRowCount = 0
   }
 
-  async init(arrowBase64, wasmBasePath) {
+  async init({ arrowBase64, parquetUrl, wasmBasePath }) {
     // Use the EH (Exception Handling) bundle only. The MVP fallback bundle is not
     // included to reduce package size. WebAssembly EH is supported by all major
     // browsers since late 2021 (Chrome 95, Firefox 100, Safari 15.2, Edge 95).
@@ -75,10 +75,20 @@ export class DuckDBBackend {
     await this.db.instantiate(mainModule)
     URL.revokeObjectURL(worker_url)
 
-    // Decode base64 Arrow IPC and load into DuckDB
-    const bytes = Uint8Array.from(atob(arrowBase64), c => c.charCodeAt(0))
     this.conn = await this.db.connect()
-    await this.conn.insertArrowFromIPCStream(bytes, { name: 'reactable_data', create: true })
+
+    if (parquetUrl) {
+      // Parquet sidecar: create a view that queries the Parquet file via HTTP range requests.
+      // DuckDB-WASM reads only the bytes needed for each query (column pruning + row group filtering).
+      // Using a VIEW instead of TABLE keeps WASM memory near-zero regardless of file size.
+      await this.conn.query(
+        `CREATE VIEW reactable_data AS SELECT * FROM read_parquet('${parquetUrl}')`
+      )
+    } else {
+      // Embedded Arrow IPC: decode base64 and load into DuckDB memory
+      const bytes = Uint8Array.from(atob(arrowBase64), c => c.charCodeAt(0))
+      await this.conn.insertArrowFromIPCStream(bytes, { name: 'reactable_data', create: true })
+    }
 
     // Get total row count
     const countResult = await this.conn.query('SELECT COUNT(*) as n FROM reactable_data')

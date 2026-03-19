@@ -34,6 +34,7 @@ reactR.hydrate = (components, tag) => tag
 afterEach(() => {
   jest.clearAllMocks()
   delete window.__ReactableDuckDB
+  delete window.__ReactableParquet
 })
 
 // Helper to create a mock DuckDB backend that returns predictable data
@@ -133,7 +134,11 @@ describe('DuckDB backend', () => {
 
     // Wait for DuckDB to initialize
     await waitFor(() => {
-      expect(mockBackend.init).toHaveBeenCalledWith('mock-base64-arrow-data', '/mock/path/')
+      expect(mockBackend.init).toHaveBeenCalledWith({
+        arrowBase64: 'mock-base64-arrow-data',
+        parquetUrl: null,
+        wasmBasePath: '/mock/path/'
+      })
     })
 
     // The initial page 0 query should NOT have been made (pre-rendered data is used instead)
@@ -364,6 +369,71 @@ describe('DuckDB backend', () => {
     const root = getRoot(container)
     expect(root).toBeVisible()
     expect(getRows(container)).toHaveLength(1)
+
+    consoleSpy.mockRestore()
+  })
+
+  it('initializes with Parquet URL when parquetId is provided', async () => {
+    const mockBackend = createMockBackend(20)
+
+    // Register a Parquet URL via the locator mechanism
+    window.__ReactableParquet = {
+      abc12345: 'http://localhost/lib/reactable-parquet-abc12345-1/reactable-data-abc12345.parquet'
+    }
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        parquetId="abc12345"
+        defaultPageSize={5}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalledWith({
+        arrowBase64: undefined,
+        parquetUrl:
+          'http://localhost/lib/reactable-parquet-abc12345-1/reactable-data-abc12345.parquet',
+        wasmBasePath: '/mock/path/'
+      })
+    })
+  })
+
+  it('logs error when parquetId is provided but Parquet URL is not registered', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    createMockBackend(20)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        parquetId="missing-id"
+        defaultPageSize={5}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Parquet sidecar file not found for parquetId: missing-id')
+      )
+    })
 
     consoleSpy.mockRestore()
   })

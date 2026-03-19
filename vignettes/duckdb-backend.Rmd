@@ -104,6 +104,43 @@ The Arrow IPC data is base64-encoded when embedded in the HTML, which adds ~33% 
 
 With gzip compression (standard on most web servers including GitHub Pages), the actual download sizes are significantly smaller, roughly 3x to 4x smaller than the uncompressed sizes above.
 
+## Parquet sidecar files
+
+For very large datasets, embedding all the data in the HTML document can make the page slow to download. Parquet sidecar files solve this by writing the data as a separate `.parquet` file alongside the HTML document. DuckDB-WASM reads the Parquet file using [HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests), downloading only the row groups needed for the current page.
+
+### How it works
+
+When using the Parquet format, reactable writes the data to a `.parquet` file alongside the HTML output (as an htmlwidgets dependency). In the browser, DuckDB-WASM creates a SQL view over the remote Parquet file:
+
+```sql
+CREATE VIEW reactable_data AS SELECT * FROM read_parquet('path/to/data.parquet')
+```
+
+Because this uses a view rather than loading the entire file, DuckDB only fetches the row groups it needs for each query. This means much less data is downloaded on page load, and sorting/filtering only fetches the relevant parts of the file.
+
+### Automatic format selection
+
+By default, `backendDuckDB()` automatically chooses the data format:
+
+- **Small datasets** (Arrow IPC under ~20 MB): Embedded as base64-encoded Arrow IPC directly in the HTML, same as before.
+- **Large datasets** (Arrow IPC over ~20 MB): Written as a Parquet sidecar file with HTTP range request access.
+
+You can override this with the `format` parameter:
+
+```r
+# Always use Parquet sidecar files
+reactable(data, backend = backendDuckDB(format = "parquet"))
+
+# Always embed Arrow IPC (e.g., for self-contained output)
+reactable(data, backend = backendDuckDB(format = "arrow"))
+```
+
+### Requirements and limitations
+
+- **Not compatible with self-contained output**: Parquet sidecar files cannot be embedded in a single self-contained HTML file. If the output format uses `self_contained: true`, the Parquet file will not be included. Use `self_contained: false` or `embed_resources: false` when using Parquet sidecar files.
+- **Web server required**: The Parquet file must be served over HTTP for range requests to work. This is the same requirement as the DuckDB-WASM files themselves. Most web servers (including GitHub Pages) support range requests.
+- **File deployment**: The Parquet file is deployed as an htmlwidgets dependency alongside the HTML output (in the `*_files/lib/` directory). When deploying, include this directory along with the HTML file.
+
 ## Comparison with default client-side rendering
 
 The default client-side mode loads all data as JSON into JavaScript memory and processes everything in JavaScript. This works well for small to medium tables but slows down at scale. Here's how the two modes compare on the 1M row table above, measured in Chrome on Windows:
