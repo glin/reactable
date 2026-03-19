@@ -790,11 +790,19 @@ backend or Parquet sidecar.
 
 Three variants with different tradeoffs:
 
-- **`mvp`** (~3 MB): WebAssembly 1.0, maximum compatibility, slowest
-- **`eh`** (~3 MB): Exception handling, better performance, modern browsers (Chrome 91+, Firefox 100+, Safari 15.2+)
-- **`threads`** (~3.5 MB): Threading support, requires COOP/COEP headers (breaks many hosting environments)
+- **`mvp`** (~37.5 MB): WebAssembly 1.0, maximum compatibility, slowest
+- **`eh`** (~32.7 MB): Exception handling, better performance, modern browsers (Chrome 95+, Firefox 100+, Safari 15.2+)
+- **`threads`**: Threading support, requires COOP/COEP headers (breaks many hosting environments)
 
-**Recommendation:** Default to `eh`, fall back to `mvp`. Skip `threads`.
+**Decision:** Ship only the `eh` bundle. The `mvp` fallback bundle is not included. WebAssembly Exception Handling
+has been supported by all major browsers since late 2021 (Chrome 95, Firefox 100, Safari 15.2, Edge 95), so there
+is no practical compatibility cost. Dropping `mvp` saves ~37.5 MB. Skip `threads` (COOP/COEP headers break most
+hosting environments).
+
+Even with only the `eh` bundle, the self-hosted WASM files are ~32.7 MB, which exceeds CRAN's 5 MB package tarball
+limit. The WASM files cannot be included directly in the R package for CRAN submission. This needs a delivery
+strategy such as runtime CDN download, a separate companion package on r-universe, or a first-use download cache.
+See the Deferred/Future section in the implementation plan.
 
 ### Web Worker requirement
 
@@ -939,14 +947,18 @@ directly from the R data frame's memory without copying.
 
 ### Bundle size
 
-| Component            | Size (gzipped) |
-| -------------------- | -------------- |
-| Current reactable.js | ~100 KB        |
-| apache-arrow JS      | ~120 KB        |
-| DuckDB-WASM          | ~3-4 MB        |
+| Component            | Size (uncompressed) |
+| -------------------- | ------------------- |
+| Current reactable.js | ~330 KB             |
+| apache-arrow JS      | ~120 KB (gzipped)   |
+| DuckDB-WASM (eh)     | ~32.7 MB            |
 
-DuckDB-WASM is big. Mitigation: **lazy loading**. The WASM binary is only fetched when `engine = "duckdb"` is used.
-For normal small tables, bundle size is unchanged. Can also load from CDN (jsDelivr) instead of embedding.
+DuckDB-WASM is big. Mitigation: **lazy loading**. The WASM binary is only fetched when `backend = "duckdb"` is
+used. For normal small tables, bundle size is unchanged. Only the `eh` variant is shipped (the `mvp` fallback was
+dropped to save ~37.5 MB).
+
+The ~32.7 MB WASM binary exceeds CRAN's 5 MB package tarball limit, so it cannot be bundled directly in the R
+package. A separate delivery mechanism is needed (CDN download at runtime, companion package, or first-use cache).
 
 ### New R dependency
 

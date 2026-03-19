@@ -60,26 +60,19 @@ export class DuckDBBackend {
   }
 
   async init(arrowBase64, wasmBasePath) {
-    // Build bundle descriptor pointing to self-hosted WASM/worker files
-    const bundles = {
-      mvp: {
-        mainModule: wasmBasePath + 'duckdb-mvp.wasm',
-        mainWorker: wasmBasePath + 'duckdb-browser-mvp.worker.js'
-      },
-      eh: {
-        mainModule: wasmBasePath + 'duckdb-eh.wasm',
-        mainWorker: wasmBasePath + 'duckdb-browser-eh.worker.js'
-      }
-    }
+    // Use the EH (Exception Handling) bundle only. The MVP fallback bundle is not
+    // included to reduce package size. WebAssembly EH is supported by all major
+    // browsers since late 2021 (Chrome 95, Firefox 100, Safari 15.2, Edge 95).
+    const mainModule = wasmBasePath + 'duckdb-eh.wasm'
+    const mainWorker = wasmBasePath + 'duckdb-browser-eh.worker.js'
 
-    const bundle = await duckdb.selectBundle(bundles)
     const worker_url = URL.createObjectURL(
-      new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' })
+      new Blob([`importScripts("${mainWorker}");`], { type: 'text/javascript' })
     )
     const worker = new Worker(worker_url)
     const logger = new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING)
     this.db = new duckdb.AsyncDuckDB(logger, worker)
-    await this.db.instantiate(bundle.mainModule, bundle.pthreadWorker)
+    await this.db.instantiate(mainModule)
     URL.revokeObjectURL(worker_url)
 
     // Decode base64 Arrow IPC and load into DuckDB
