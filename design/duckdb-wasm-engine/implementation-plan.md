@@ -711,32 +711,115 @@ reactable(data, engine = "duckdb")               # ❌ removed
 
 ---
 
-### Phase 9: Merge `server` into `backend`
+### Phase 8.5: Improve duckdb-backend vignette
 
-**Goal:** Create `backendV8()`, deprecate the `server` param, and fully merge it into `backend`.
-After this, `backend` is the single entry point for all non-default data processing backends.
+**Goal:** Fix vignette prose that became inaccurate after Parquet sidecar support was added.
+
+- [ ] **8.5.1** Fix the 1M row demo: it auto-switches to Parquet (Arrow IPC ~40 MB exceeds 20 MB threshold),
+      but the vignette uses `output: html_document` which defaults to `self_contained: true`, incompatible
+      with Parquet sidecar. Options: force `format = "arrow"` on the demo, or switch to
+      `self_contained: false` and rewrite prose for the Parquet path.
+- [ ] **8.5.2** Update intro paragraph: currently says "serializes data as Arrow IPC" with no mention of Parquet.
+- [ ] **8.5.3** Update "How it works" steps 1-3: currently describes only the Arrow IPC path (base64-encodes,
+      embeds in HTML), not the Parquet sidecar alternative.
+- [ ] **8.5.4** Update comparison table: document sizes (55 MB / 16 MB gzipped) were measured with embedded
+      Arrow IPC. These numbers change with Parquet sidecar mode.
+- [ ] **8.5.5** Fix "The DuckDB document is about 2x larger when gzip-compressed" claim: not true for Parquet mode.
+- [ ] **8.5.6** Update memory limits section: says "1-2 GB of in-memory data" but Parquet range requests
+      avoid loading the full dataset into WASM memory.
+
+#### Validate
+
+- [ ] Vignette renders correctly with accurate prose for both Arrow IPC and Parquet modes
+- [ ] 1M row demo works end-to-end (doesn't silently fail from self_contained + Parquet conflict)
+
+---
+
+### Phase 9: Merge `server` into `backend` + server-side data polish
+
+**Goal:** Unify the `server` and `backend` params, deprecate `server`, fix server-side data bugs,
+and document the server-side data feature. This merges work from the `server-data-3` branch
+(see `design/server-side-data/server-side-data.md` for the full plan).
+
+#### 9.0: Cherry-pick from `server-data-3` branch
+
+- [ ] **9.0.1** Cherry-pick `design/server-side-data/server-side-data.md` into this branch
+      (commit `5a325715` from `server-data-3`).
+- [ ] **9.0.2** Cherry-pick bug fix commit `cd015147` from `server-data-3`: doc typo fix in
+      `R/shiny.R` + `man/reactable-server.Rd`, dfGroupBy `__state` fix in `R/server-df.R`,
+      and tests in `tests/testthat/test-server-df.R`. Resolve conflict in `R/shiny.R`
+      (trivial: duckdb-wasm already has a superset of the shiny.R changes).
 
 ```r
 # After Phase 9:
 reactable(data, backend = backendDuckDB())     # DuckDB (auto client/server)
-reactable(data, backend = backendV8())          # V8 server
-reactable(data, server = TRUE)                   # ⚠️ deprecated → backendV8()
+reactable(data, backend = backendV8())          # V8 server (currently server = TRUE)
+reactable(data, backend = backendDf())          # Pure R server backend
+reactable(data, backend = backendDt())          # data.table server backend
+reactable(data, server = TRUE)                   # still works, undocumented, deprecated warning
 ```
 
-#### Steps
+#### 9A: `server` to `backend` migration
 
-- [ ] **9.1** Create `backendV8()` constructor in `R/backends.R`:
-      `backendV8()` → S3 class `"reactable_backendV8"`. Export and add roxygen docs.
-- [ ] **9.2** Add deprecation warning to `server` param: "Use `backend = backendV8()` or
-      `backend = backendDuckDB()` instead."
-- [ ] **9.3** Map `server` values to backend objects internally: `TRUE` → `backendV8()`,
-      `"duckdb"` → `backendDuckDB("server")`. Optionally create `backendDf()` / `backendDt()`
-      if there's demand, or just map through deprecation to existing internal dispatch.
+- [ ] **9.1** Alias `server` to `backend` internally: Accept `server` via `...` args in `reactable()`.
+      `server` remains an accepted but undocumented parameter. When `server` is used, emit a deprecation
+      warning: "The `server` argument is deprecated. Use `backend =` instead." Map `server` values to
+      backend objects: `TRUE` / `"v8"` -> `backendV8()`, `"df"` -> `backendDf()`, `"dt"` -> `backendDt()`,
+      `"duckdb"` -> `backendDuckDB("server")`, S3 objects pass through.
+- [ ] **9.2** Create `backendV8()`, `backendDf()`, `backendDt()` constructors in `R/backends.R`.
+      Export and add roxygen docs. Each returns an S3 class (`reactable_backendV8`, etc.).
+- [ ] **9.3** Update `getServerBackend()` to dispatch on `backend` S3 class instead of string matching.
 - [ ] **9.4** Update all docs, vignettes, examples to use `backend =` instead of `server =`.
 - [ ] **9.5** Update tests to use `backend =` for server backends.
+
+#### 9B: Server-side data bug fixes (from `server-data-3` branch)
+
+- [ ] **9.6** Fix documentation typo in `man/reactable-server.Rd`: second bullet says
+      `reactableServerData()` should be `reactableServerInit()`. (Already fixed on `server-data-3`.)
+- [ ] **9.7** Fix df backend groupBy bug: `dfGroupBy()` missing `__state` property on grouped rows,
+      causing broken row identification when `Reactable.toggleGroupBy()` is called via JS API.
+      (Already fixed on `server-data-3` with tests.)
+- [ ] **9.8** Fix pagination display with empty results: server-side search returning zero results
+      shows "1-10 of 0 rows" instead of "0-0 of 0 rows".
+- [ ] **9.9** Stop sending unused `expanded` and `selectedRowIds` in every server request until
+      server-side selection/expansion is implemented.
+
+#### 9C: Server-side data documentation
+
+- [ ] **9.10** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
+      quick start, built-in backends (V8/df/dt), creating custom backends, grouped data format,
+      limitations, performance tips. Include DuckDB custom backend example.
+- [ ] **9.11** Update pkgdown reference: add server-side data section with `reactableServerInit`,
+      `reactableServerData`, `resolvedData`.
+- [ ] **9.12** Document S3 registration for custom backends in packages (`registerS3method()`).
+
+#### 9D: Server-side data API refinements (optional)
+
+- [ ] **9.13** Add `resolvedData()` validation for grouped `.subRows` structure.
+- [ ] **9.14** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
+
+#### 9E: Server-side data testing
+
+- [ ] **9.15** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
+      Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
+      `maxRowCount` pagination edge cases.
+
+#### 9F: Server-side row selection and expansion (future, optional)
+
+- [ ] **9.16** Document current limitation: select-all / expand-all only affect current page.
+      This matches ag-Grid's server-side model behavior and is acceptable for v1.
+- [ ] **9.17** Full server-side selection (if user demand warrants): requires consistent row IDs
+      across pages via `getRowId` / `__state.id`, `manualRowSelectedKey` integration, and server-side
+      state tracking. Complex edge cases with grouped rows and `paginateSubRows`. See full analysis
+      in `design/server-side-data/server-side-data.md` section 2.
+
+**Full server-side data plan:** See `design/server-side-data/server-side-data.md` for the complete plan
+including architecture, request/response format, grouped data format, backend comparison matrix,
+manual testing checklist, and related GitHub issues.
 
 #### Validate
 
 - [ ] `server` param still works with deprecation warning
-- [ ] All existing tests pass
+- [ ] All existing tests pass (server + DuckDB)
 - [ ] `R CMD check` passes
+- [ ] Server-side data vignette renders
