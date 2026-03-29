@@ -50,6 +50,40 @@ When bumping the package version and the previous version is a development versi
 
 When adding new files that are not meant to be included in the R package (e.g., development tools, test fixtures, documentation sources), add them to `.Rbuildignore`.
 
+## Browser Testing
+
+Use `agent-browser` for end-to-end testing in the browser. Run `agent-browser --help` for all commands.
+
+### Generating test HTML files
+
+To generate a standalone HTML file with a reactable table for browser testing, use `htmltools::save_html()`:
+
+```r
+Rscript -e "library(reactable); library(htmltools); w <- reactable(mtcars[1:10, ]); f <- tempfile(fileext = '.html'); save_html(w, file = f); cat(f)"
+```
+
+This creates a self-contained HTML file that can be opened directly in `agent-browser`. Use the printed temp file path
+with `agent-browser open`.
+
+### Core workflow
+
+1. `agent-browser --allow-file-access open file:///path/to/file.html` — Open a local HTML file
+2. `agent-browser snapshot -i` — Get interactive elements with refs (@e1, @e2)
+3. `agent-browser click @e1` / `fill @e2 "text"` — Interact using refs
+4. Re-snapshot after page changes
+
+Use `--allow-file-access` when opening local `file://` URLs (knitted Rmd output, test HTML files). This is required
+for the widget's JavaScript to load local resources.
+
+Useful commands for testing reactable widgets:
+
+- `agent-browser snapshot -i` — List interactive elements (pagination buttons, sort headers, filter inputs)
+- `agent-browser screenshot [path]` — Take a screenshot (use `--full` for full page)
+- `agent-browser get text <sel>` — Get text content of an element
+- `agent-browser eval <js>` — Run JavaScript (e.g., check `Reactable.getState()`)
+- `agent-browser wait --text "some text"` — Wait for text to appear after an interaction
+- `agent-browser wait --load networkidle` — Wait for page to finish loading (useful after opening HTML files)
+
 ## Adding Library Dependencies
 
 When adding a new JS library dependency that gets shipped to users (included in `inst/htmlwidgets` files):
