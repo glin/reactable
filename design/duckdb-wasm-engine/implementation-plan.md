@@ -542,39 +542,6 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 
 ---
 
-### Deferred / Future (not in MVP)
-
-- [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
-      where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
-      cross-group page offsets. See Phase 5 limitation notes for full details.
-- [ ] Row selection support for DuckDB engine: Currently broken because row IDs are per-page indices (0, 1, 2...)
-      that collide across pages. Needs a `_rowid` column mapping from DuckDB result rows to original data row
-      indices, plus server-side selection state tracking. See the `// TODO` in Reactable.js `getRowId`.
-- [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
-      holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
-- [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
-      would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
-- [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
-- [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
-      dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as JSON). Even with pagination, the
-      pre-rendered JSON page is redundant weight. Consider removing R-side pre-rendering entirely and instead showing
-      a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
-      flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
-      the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
-- [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
-- [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
-- [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
-- [ ] Shared DuckDB instance: Multiple reactable tables on one page share a single DuckDB-WASM instance
-- [ ] CRAN package size: The `duckdb-eh.wasm` file (~32.7 MB) exceeds CRAN's 5 MB tarball limit and cannot be
-      bundled in the R package. Need a delivery strategy for the WASM binary. Options: (1) CDN download at runtime
-      (e.g., jsDelivr, with `options()` to override), (2) separate companion package on r-universe or GitHub,
-      (3) first-use download and local cache (like `webshot2` downloads Chrome). Must also work for air-gapped /
-      corporate environments.
-- [ ] Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field (copyright holders).
-      DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0 licensed (Apache Software Foundation).
-
----
-
 ## File inventory (what gets created/modified)
 
 ### New files
@@ -823,3 +790,146 @@ manual testing checklist, and related GitHub issues.
 - [ ] All existing tests pass (server + DuckDB)
 - [ ] `R CMD check` passes
 - [ ] Server-side data vignette renders
+
+---
+
+### Phase 10: Internal JS backend plugin interface
+
+**Goal:** Define an internal generic backend interface in JS and refactor DuckDB to be a plugin of
+it. This removes DuckDB-specific code paths from `Reactable.js`, making the component backend-agnostic
+and laying groundwork for future custom backends. The interface is internal only -- not documented or
+exposed as a public API.
+
+#### Internal backend interface
+
+A backend plugin is a JS object with well-known methods:
+
+```js
+// Internal interface -- not user-facing. Used by DuckDB and potentially future built-in backends.
+{
+  // Called once on mount. Initialize resources (WASM, DB connections, etc.).
+  init: async function(props) { ... },
+
+  // Called on every page/sort/filter/search/group change. Return one page of results.
+  // Return: { data: Array<Object>, rowCount: number, maxRowCount?: number }
+  resolveData: async function({ pageIndex, pageSize, sortBy, filters, searchValue, groupBy }) {
+    return { data: [...], rowCount: 50000 }
+  },
+
+  // Cleanup on unmount.
+  destroy: async function() {}
+}
+```
+
+#### Steps
+
+- [ ] **10.1** Refactor `Reactable.js` to consume a generic backend object instead of DuckDB-specific
+      code paths. Replace `useDuckDB` flag, `duckdbRef`, `duckdbReady` state, and the DuckDB init/query
+      effects with generic `useBackend`, `backendRef`, etc. The component calls `backend.init()`,
+      `backend.resolveData()`, and `backend.destroy()` without knowing what backend it is.
+- [ ] **10.2** Refactor `DuckDBBackend.js` to export a factory function that returns a backend object
+      conforming to the resolver interface. The `duckdb-entry.js` registers this factory instead of the
+      raw class. `init()` wraps WASM setup + Arrow/Parquet import, `resolveData()` wraps `query()` /
+      `queryGrouped()`, `destroy()` wraps cleanup. Estimated ~15 lines of glue.
+- [ ] **10.3** Add JS tests for the refactored backend plugin with DuckDB factory.
+
+#### Validate
+
+- [ ] DuckDB backend works identically after refactor (sort, filter, search, group, paginate, Parquet)
+- [ ] No DuckDB-specific code paths remain in `Reactable.js`
+- [ ] All existing JS tests pass
+
+---
+
+### Deferred / Future
+
+- [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
+      where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
+      cross-group page offsets. See Phase 5 limitation notes for full details.
+- [ ] Row selection support for DuckDB engine: Currently broken because row IDs are per-page indices (0, 1, 2...)
+      that collide across pages. Needs a `_rowid` column mapping from DuckDB result rows to original data row
+      indices, plus server-side selection state tracking. See the `// TODO` in Reactable.js `getRowId`.
+- [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
+      holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
+- [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
+      would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
+- [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
+- [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
+      dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as JSON). Even with pagination, the
+      pre-rendered JSON page is redundant weight. Consider removing R-side pre-rendering entirely and instead showing
+      a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
+      flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
+      the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
+- [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
+- [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
+- [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
+- [ ] Shared DuckDB instance: Multiple reactable tables on one page share a single DuckDB-WASM instance
+- [ ] CRAN package size: The `duckdb-eh.wasm` file (~32.7 MB) exceeds CRAN's 5 MB tarball limit and cannot be
+      bundled in the R package. Need a delivery strategy for the WASM binary. Options: (1) CDN download at runtime
+      (e.g., jsDelivr, with `options()` to override), (2) separate companion package on r-universe or GitHub,
+      (3) first-use download and local cache (like `webshot2` downloads Chrome). Must also work for air-gapped /
+      corporate environments.
+- [ ] Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field (copyright holders).
+      DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0 licensed (Apache Software Foundation).
+- [ ] Public custom JS backend API: Expose the internal backend plugin interface as a public API so users can
+      write custom client-side backends. Requires substantial documentation of the backend contract, object shapes,
+      return types, column discovery, and error handling. See "Design notes: custom JS backend API" below for the
+      full design sketch.
+
+---
+
+### Design notes: custom JS backend API
+
+Design sketch for the deferred public custom JS backend feature. Not yet implemented.
+
+**Two patterns for loading data via JS:**
+
+1. **Load-all (data source):** Use the `data` arg with a JS callback: `data = JS("async function() { ... }")`. The
+   function fetches/loads all data, then reactable handles sort/filter/paginate client-side. This mirrors how `data`
+   already works -- it provides the full dataset, just asynchronously from JS instead of from R.
+
+2. **Per-page resolver:** Use `backend = JS("{...}")` with a resolver object that handles sort/filter/paginate
+   per-request (like the internal backend plugin interface in Phase 10, but user-facing).
+
+**Resolver interface (user-facing version of Phase 10 internal interface):**
+
+```js
+// backend = JS("{ ... }")
+{
+  // Optional. Called once on mount. Initialize resources.
+  init: async function() { ... },
+
+  // Called on every page/sort/filter/search change. Return one page of results.
+  // Return: { data: Array<Object>, rowCount: number }
+  resolveData: async function({ pageIndex, pageSize, sortBy, filters, searchValue, groupBy }) {
+    const params = new URLSearchParams({ page: pageIndex, size: pageSize })
+    const resp = await fetch('/api/data?' + params)
+    const json = await resp.json()
+    return { data: json.rows, rowCount: json.total }
+  },
+
+  // Optional. Cleanup on unmount.
+  destroy: async function() {}
+}
+```
+
+**Column type declaration:** When using JS backends with no R data, declare column types via a zero-row
+data.frame: `data.frame(col = numeric(0), name = character(0))`. This gives R the column names and types
+(like `vapply`'s `FUN.VALUE` pattern) without requiring actual data.
+
+**DuckDB as plugin:** `DuckDBBackend` wraps as a resolver factory -- ~15 lines of glue mapping `init()` to
+WASM setup + Arrow/Parquet import, `resolveData()` to `query()`/`queryGrouped()`, `destroy()` to cleanup.
+
+**Use cases:**
+
+1. External CSV/Parquet on same site (fetch hosted file, client-side sort/filter)
+2. External paged API (REST endpoint with pages + total count)
+3. Custom in-browser databases (SQLite-WASM, OPFS, IndexedDB)
+4. DuckDB over arbitrary remote Parquet URLs
+
+**Open questions:**
+
+- Column discovery for load-all mode: infer from first row of returned data, or require predefinition?
+- Grouped data in resolver mode: support `.subRows` in return value, or only for built-in backends?
+- Backend factory vs object: `function(tableId) { return {...} }` for per-instance state, or plain object?
+- Loading state / error state rendering (shared concern with "remove pre-rendering" deferred item)
