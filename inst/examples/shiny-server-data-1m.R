@@ -39,6 +39,7 @@ tables <- lapply(rows_options, function(rows) {
         '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
     }")
     ),
+    selection = "multiple",
     showPageSizeOptions = TRUE,
     backend = backendV8()
   )

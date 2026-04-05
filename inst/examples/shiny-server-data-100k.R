@@ -36,6 +36,7 @@ tbl <- reactable(
         '<pre>' + JSON.stringify(rowInfo.row, null, 2) + '</pre>'
     }")
   ),
+  selection = "multiple",
   showPageSizeOptions = TRUE,
   backend = backendV8()
 )

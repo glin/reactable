@@ -748,10 +748,72 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 - [x] **9.7** Fix df backend groupBy bug: `dfGroupBy()` missing `__state` property on grouped rows,
       causing broken row identification when `Reactable.toggleGroupBy()` is called via JS API.
       (Cherry-picked in 9.0.2 with tests.)
-- [ ] **9.8** Stop sending unused `expanded` and `selectedRowIds` in every server request until
-      server-side selection/expansion is implemented.
 
-#### 9C: Server-side data documentation
+#### 9C: Row selection for DuckDB (and all server backends)
+
+**Goal:** Fix row selection so it works correctly with DuckDB and all server backends. Currently,
+row IDs are per-page indices (0, 1, 2...) that collide across pages. This is broken for DuckDB
+(both WASM and R server) and the df/dt backends (non-grouped flat rows). V8 works because it
+provides `__state.id` from the server-side react-table pipeline, but it wastefully re-fetches on
+every selection click.
+
+**Current state of selection across backends:**
+- **V8:** Selection visually persists across pages (thanks to `autoResetSelectedRows: false` and
+  stable `__state.id`), but every click triggers an unnecessary server re-fetch because
+  `state.selectedRowIds` is in the useEffect dependency array. The server ignores it.
+  `manualRowSelectedKey` is commented out. Select-all only affects current page.
+- **df/dt:** Non-grouped flat rows use page-relative IDs (same collision bug as DuckDB).
+  Grouped rows have `__state = { id: "colName:value", grouped: true }` so they work.
+- **DuckDB (WASM and server):** All rows use page-relative IDs. R warning currently blocks use.
+- **Details expansion:** Works for client-side DuckDB because `details` is a JS function called
+  at render time. Grouped row expansion also works because `.subRows` are fetched inline with the
+  query for all visible groups. Server-side DuckDB works the same way.
+
+**Steps:**
+
+- [ ] **9C.1** **R side:** Add `_reactable_rowid` column (0-based) to data before serializing to Arrow
+      IPC / Parquet. For `backendDuckDB("server")`, add it to the data frame before `duckdb_register()`.
+- [ ] **9C.2** **JS side (DuckDBBackend.js):** After `query()` returns rows, extract `_reactable_rowid`,
+      set `row['__state'] = { id: String(row._reactable_rowid), index: row._reactable_rowid }`, and
+      delete `row._reactable_rowid`. For grouped rows, set `id` to `"colName:value"` pattern (matching
+      the df backend). Include `_reactable_rowid` via `SELECT *` (hidden column approach).
+- [ ] **9C.3** **JS side (Reactable.js):** Extend `getRowId` to check `useDuckDB || useServerData`.
+- [ ] **9C.4** **R DuckDB server backend (backend-duckdb.R):** Add `__state` with `id` and `index` to
+      `resolvedData()` response for flat rows. Grouped rows already have `__state` from the df backend
+      pattern used in `duckdbGroupedQuery()` -- add `id` field there too.
+- [ ] **9C.5** **V8 server request:** Remove `state.selectedRowIds` from the V8 server request useEffect
+      dependency array to stop the unnecessary re-fetch on every selection click. The V8 backend ignores
+      it anyway. Keep `selectedRowIds` in the request body for future use but don't trigger re-fetches.
+- [ ] **9C.6** **R warning:** Remove the "not supported" warning for `selection` with `backendDuckDB()`.
+- [ ] **9C.7** **Tests:** Add JS tests for row selection with DuckDB (select on page 1, navigate to
+      page 2, select there, navigate back -- both selections preserved). Add R tests for
+      `_reactable_rowid` column in Arrow IPC / Parquet output and in server backend responses.
+- [ ] **9C.8** **df/dt backends:** Add `__state` with `id` and `index` to flat (non-grouped) rows in
+      `dfSortFilterPage()` / `dtSortFilterPage()` to fix the same page-relative ID collision bug.
+
+#### 9D: Server-side expansion
+
+**Goal:** Implement server-side row expansion where the server controls which groups are open
+and only fetches sub-rows on demand. Currently, grouped row expansion is handled client-side
+for all backends -- DuckDB (WASM and server) fetches all sub-rows for visible groups in one
+query, and react-table manages expansion state locally. Details expansion
+(`colDef(details = ...)`) also works client-side.
+
+Server-side expansion would require passing `expanded` state to the backend and implementing
+incremental sub-row loading. This also addresses the `expanded` field currently sent (but
+ignored) in V8 server requests -- instead of removing it, we make it functional.
+
+**Steps:**
+
+- [ ] **9D.1** Design the expansion protocol: how `expanded` state flows from JS to the backend,
+      what the backend returns (incremental sub-rows vs full page rebuild), and how it interacts
+      with pagination and sorting.
+- [ ] **9D.2** Update the V8 server useEffect to properly use `expanded` state instead of ignoring it.
+- [ ] **9D.3** Implement expansion support in DuckDB backend (WASM and server).
+- [ ] **9D.4** Update df/dt backends if applicable.
+- [ ] **9D.5** Tests for server-side expansion across backends.
+
+#### 9E: Server-side data documentation
 
 - [ ] **9.9** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
       quick start, built-in backends (V8/df/dt/DuckDB server), creating custom backends, grouped
@@ -777,7 +839,7 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
       - Consider whether Phase 10 (JS backend plugin) should be designed first, so the custom
         backend docs can reference a future extension point for client-side backends.
 
-#### 9D: Server-side data API refinements (optional)
+#### 9F: Server-side data API refinements (optional)
 
 - [ ] **9.13** Benchmark V8 vs DuckDB server-side backends on large datasets (e.g., 1M rows).
       Compare initialization time (V8 startup is notably slow on large data), query speed
@@ -794,20 +856,26 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 - [ ] **9.14** Add `resolvedData()` validation for grouped `.subRows` structure.
 - [ ] **9.15** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
 
-#### 9E: Server-side data testing
+#### 9G: Server-side data testing
 
 - [ ] **9.16** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
       Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
       `maxRowCount` pagination edge cases.
 
-#### 9F: Server-side row selection and expansion (future, optional)
+#### 9H: Cross-page select-all (future, optional)
 
-- [ ] **9.17** Document current limitation: select-all / expand-all only affect current page.
+- [ ] **9.17** Document current limitation: select-all only affects current page.
       This matches ag-Grid's server-side model behavior and is acceptable for v1.
-- [ ] **9.18** Full server-side selection (if user demand warrants): requires consistent row IDs
-      across pages via `getRowId` / `__state.id`, `manualRowSelectedKey` integration, and server-side
-      state tracking. Complex edge cases with grouped rows and `paginateSubRows`. See full analysis
-      in `design/server-side-data/server-side-data.md` section 2.
+      Per-row selection across pages works after 9C.
+- [ ] **9.18** Full cross-page select-all (if user demand warrants): use an inverted selection model
+      where `{ selectAll: true, deselected: {"5": true} }` tracks exceptions instead of all selected
+      rows. Normal per-row clicks continue using regular `selectedRowIds`; the inverted mode only
+      activates when the user clicks select-all. Requires updating `isAllRowsSelected`,
+      `toggleAllRowsSelected`, `toggleRowSelected`, and `selectedRowIndexes` to handle the inverted
+      case. Also needs backend queries to resolve the inverted set (e.g., for Shiny's
+      `getReactableState("selected")`). This would benefit all backend modes and regular client-side
+      tables. See 9C for the per-row selection fix and memory analysis.
+      See also `design/server-side-data/server-side-data.md` section 2.
 
 **Full server-side data plan:** See `design/server-side-data/server-side-data.md` for the complete plan
 including architecture, request/response format, grouped data format, backend comparison matrix,
@@ -875,9 +943,6 @@ A backend plugin is a JS object with well-known methods:
 - [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
       where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
       cross-group page offsets. See Phase 5 limitation notes for full details.
-- [ ] Row selection support for DuckDB engine: Currently broken because row IDs are per-page indices (0, 1, 2...)
-      that collide across pages. Needs a `_rowid` column mapping from DuckDB result rows to original data row
-      indices, plus server-side selection state tracking. See the `// TODO` in Reactable.js `getRowId`.
 - [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
       holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
 - [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend

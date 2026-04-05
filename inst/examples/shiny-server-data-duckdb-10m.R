@@ -32,6 +32,7 @@ server <- function(input, output) {
           }")
         )
       ),
+      selection = "multiple",
       showPageSizeOptions = TRUE,
       backend = backendDuckDB()
     )
