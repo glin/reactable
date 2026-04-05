@@ -31,7 +31,8 @@ data <- data.frame(
 
 reactable(
   data,
-  backend = backendDuckDB(),
+  # Force embedded Arrow IPC (data exceeds the 20 MB auto-Parquet threshold)
+  backend = backendDuckDB(format = "arrow"),
   filterable = TRUE,
   searchable = TRUE,
   highlight = TRUE,
