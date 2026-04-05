@@ -21,6 +21,7 @@ import {
   getRows,
   getCellsText,
   getPageInfo,
+  getPagination,
   getNextButton,
   getRoot,
   getSortableHeaders,
@@ -628,6 +629,62 @@ describe('DuckDB backend', () => {
     await waitFor(() => {
       expect(getPageInfo(container)).toHaveTextContent('1–1 of 1 rows')
     })
+  })
+
+  it('does not auto-hide pagination when filter returns 0 results', async () => {
+    const mockBackend = createMockBackend(20)
+
+    // Override query to return 0 rows when filters are applied
+    mockBackend.query.mockImplementation(({ pageIndex, pageSize, filters }) => {
+      if (filters && filters.length > 0) {
+        return Promise.resolve({ rows: [], rowCount: 0 })
+      }
+      const start = pageIndex * pageSize
+      const allRows = Array.from({ length: 20 }, (_, i) => ({ a: i + 1, b: `row${i + 1}` }))
+      return Promise.resolve({ rows: allRows.slice(start, start + pageSize), rowCount: 20 })
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const filterableColumns = [
+      { name: 'colA', id: 'a', type: 'numeric', filterable: true },
+      { name: 'colB', id: 'b', filterable: true }
+    ]
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={filterableColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Pagination should be visible initially (20 rows > page size of 5)
+    expect(getPagination(container)).toBeVisible()
+    expect(getPageInfo(container)).toHaveTextContent('1–5 of 20 rows')
+
+    // Filter to get 0 results
+    const filters = getFilters(container)
+    fireEvent.change(filters[0], { target: { value: 'nonexistent' } })
+
+    await waitFor(() => {
+      expect(getPageInfo(container)).toHaveTextContent('0–0 of 0 rows')
+    })
+
+    // Pagination should still be visible (not auto-hidden) because the table
+    // had more rows than the page size before filtering
+    expect(getPagination(container)).toBeVisible()
   })
 
   it('passes columns with type info to query for filter behavior', async () => {

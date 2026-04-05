@@ -1336,7 +1336,9 @@ function Table({
       .then(result => {
         setNewData(result.rows)
         setServerRowCount(result.rowCount)
-        setServerMaxRowCount(result.rowCount)
+        // Track the highest row count seen so pagination doesn't auto-hide after
+        // a search or filter reduces results to zero.
+        setServerMaxRowCount(prev => Math.max(prev ?? 0, result.rowCount))
       })
       .catch(err => {
         console.error('DuckDB-WASM query failed:', err)
