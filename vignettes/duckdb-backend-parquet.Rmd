@@ -1,0 +1,97 @@
+---
+title: "Client-Side DuckDB (Parquet)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(5)
+
+options(reactable.static = TRUE)
+```
+
+::: {.callout}
+New in v0.4.5.9000
+:::
+
+For very large datasets, embedding all the data in the HTML document can make the page slow to download. The [DuckDB backend](duckdb-backend.html) supports external Parquet files to solve this: the data is written as a separate `.parquet` file alongside the HTML, and DuckDB-WASM downloads only the portions of the file it needs for each query rather than the entire file.
+
+This means much less data is downloaded on page load compared to embedded Arrow IPC, and memory usage is lower since the full dataset is never loaded into the browser at once.
+
+## 1,000,000 rows
+
+This demo uses the same 1M row table as the [main DuckDB example](duckdb-backend.html), but the data is stored as an external Parquet file rather than embedded in the HTML.
+
+```{r}
+library(reactable)
+
+rows <- 1000000
+dates <- seq.Date(as.Date("2018-01-01"), as.Date("2018-12-01"), "day")
+data <- data.frame(
+  index = seq_len(rows),
+  date = sample(dates, rows, replace = TRUE),
+  city = sample(names(precip), rows, replace = TRUE),
+  state = sample(rownames(USArrests), rows, replace = TRUE),
+  temp = round(runif(rows, 0, 100), 1),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  data,
+  backend = backendDuckDB(format = "parquet"),
+  filterable = TRUE,
+  searchable = TRUE,
+  highlight = TRUE,
+  columns = list(
+    state = colDef(
+      html = TRUE,
+      cell = JS('function(cell) {
+        return `<a href="https://wikipedia.org/wiki/${cell.value}">${cell.value}</a>`
+      }')
+    )
+  )
+)
+```
+
+## Automatic format selection
+
+By default, `backendDuckDB()` automatically chooses the data format:
+
+- **Small datasets** (Arrow IPC under ~20 MB): Embedded as base64-encoded Arrow IPC directly in the HTML, keeping everything in a single file.
+- **Large datasets** (Arrow IPC over ~20 MB): Written as an external Parquet file. DuckDB downloads only the parts it needs for each query.
+
+You can override this with the `format` parameter:
+
+```r
+# Always use external Parquet files
+reactable(data, backend = backendDuckDB(format = "parquet"))
+
+# Always embed Arrow IPC (e.g., for self-contained output)
+reactable(data, backend = backendDuckDB(format = "arrow"))
+```
+
+## Requirements and limitations
+
+- **Not compatible with self-contained output**: External Parquet files cannot be embedded in a single self-contained HTML file. If the output format uses `self_contained: true`, the Parquet file will not be included. Use `self_contained: false` or `embed_resources: false` when using external Parquet files.
+- **Web server required**: The Parquet file must be served over HTTP so that DuckDB can request specific byte ranges from the file instead of downloading it all at once. Most web servers (including GitHub Pages) support this. This is the same requirement as the DuckDB-WASM files themselves.
+- **File deployment**: The Parquet file is deployed as an htmlwidgets dependency alongside the HTML output (in the `*_files/lib/` directory). When deploying, include this directory along with the HTML file.
+
+## How it works
+
+When using external Parquet files, reactable writes the data to a `.parquet` file alongside the HTML output (as an htmlwidgets dependency). In the browser, DuckDB-WASM creates a SQL view over the remote Parquet file:
+
+```sql
+CREATE VIEW reactable_data AS SELECT * FROM read_parquet('path/to/data.parquet')
+```
+
+Because this uses a view rather than loading the entire file, DuckDB only downloads the row groups it needs for each query. It does this using [HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests), which let a browser ask a web server for specific byte ranges of a file instead of the whole thing. This means much less data is downloaded on page load, and sorting or filtering only reads the relevant parts of the file.
+
+The first page of data is pre-rendered as JSON so the table displays instantly, without waiting for DuckDB to initialize or the Parquet file to download.
+
+```{css echo=FALSE}
+/* rmarkdown html documents */
+.main-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+```

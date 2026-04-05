@@ -49,8 +49,8 @@ navbar:
         href: articles/100k-rows-virtual.html
       - text: Client-Side DuckDB
         href: articles/duckdb-backend.html
-      - text: Client-Side DuckDB (Embedded)
-        href: articles/duckdb-backend-embedded.html
+      - text: Client-Side DuckDB (Parquet)
+        href: articles/duckdb-backend-parquet.html
       - text: Shiny Demo
         href: articles/shiny-demo.html
       - text: Quarto and Observable
