@@ -38,8 +38,8 @@ install.packages("reactable")
 
 Or install the development version from GitHub with:
 ```r
-# install.packages("devtools")
-devtools::install_github("glin/reactable")
+# install.packages("remotes")
+remotes::install_github("glin/reactable")
 ```
 
 ## Usage
