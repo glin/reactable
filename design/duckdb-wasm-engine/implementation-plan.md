@@ -678,22 +678,18 @@ reactable(data, engine = "duckdb")               # ❌ removed
 
 ---
 
-### Phase 8.5: Improve duckdb-backend vignette
+### Phase 8.5: Improve duckdb-backend vignette — DONE
 
 **Goal:** Fix vignette prose that became inaccurate after Parquet sidecar support was added.
+Split into two vignettes: `duckdb-backend.Rmd` (embedded Arrow IPC) and `duckdb-backend-parquet.Rmd`
+(external Parquet files).
 
-- [ ] **8.5.1** Fix the 1M row demo: it auto-switches to Parquet (Arrow IPC ~40 MB exceeds 20 MB threshold),
-      but the vignette uses `output: html_document` which defaults to `self_contained: true`, incompatible
-      with Parquet sidecar. Options: force `format = "arrow"` on the demo, or switch to
-      `self_contained: false` and rewrite prose for the Parquet path.
-- [ ] **8.5.2** Update intro paragraph: currently says "serializes data as Arrow IPC" with no mention of Parquet.
-- [ ] **8.5.3** Update "How it works" steps 1-3: currently describes only the Arrow IPC path (base64-encodes,
-      embeds in HTML), not the Parquet sidecar alternative.
-- [ ] **8.5.4** Update comparison table: document sizes (55 MB / 16 MB gzipped) were measured with embedded
-      Arrow IPC. These numbers change with Parquet sidecar mode.
-- [ ] **8.5.5** Fix "The DuckDB document is about 2x larger when gzip-compressed" claim: not true for Parquet mode.
-- [ ] **8.5.6** Update memory limits section: says "1-2 GB of in-memory data" but Parquet range requests
-      avoid loading the full dataset into WASM memory.
+- [x] **8.5.1** Fix the 1M row demo: force `format = "arrow"` on the main vignette demo.
+- [x] **8.5.2** Update intro paragraph: mentions both Arrow IPC and Parquet with link to Parquet page.
+- [x] **8.5.3** Update "How it works" steps 1-3: focused on embedded Arrow IPC path.
+- [x] **8.5.4** Update comparison table: labeled as embedded Arrow IPC measurements.
+- [x] **8.5.5** Fix "The DuckDB document is about 2x larger when gzip-compressed" claim: accurate for embedded.
+- [x] **8.5.6** Update memory limits section: links to Parquet page for larger datasets.
 
 #### Validate
 
@@ -710,9 +706,9 @@ and document the server-side data feature. This merges work from the `server-dat
 
 #### 9.0: Cherry-pick from `server-data-3` branch
 
-- [ ] **9.0.1** Cherry-pick `design/server-side-data/server-side-data.md` into this branch
+- [x] **9.0.1** Cherry-pick `design/server-side-data/server-side-data.md` into this branch
       (commit `5a325715` from `server-data-3`).
-- [ ] **9.0.2** Cherry-pick bug fix commit `cd015147` from `server-data-3`: doc typo fix in
+- [x] **9.0.2** Cherry-pick bug fix commit `cd015147` from `server-data-3`: doc typo fix in
       `R/shiny.R` + `man/reactable-server.Rd`, dfGroupBy `__state` fix in `R/server-df.R`,
       and tests in `tests/testthat/test-server-df.R`. Resolve conflict in `R/shiny.R`
       (trivial: duckdb-wasm already has a superset of the shiny.R changes).
