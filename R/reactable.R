@@ -912,6 +912,24 @@ reactable <- function(
     serverRowCount <- totalRowCount
     serverMaxRowCount <- totalRowCount
     dependencies <- c(dependencies, list(duckdbDependency()))
+
+    # Warn if this widget ends up being rendered in a Shiny session, since DuckDB-WASM
+    # (client mode) was selected because no Shiny session was detected at reactable() call time.
+    # This happens when reactable() is called at the top level of a Shiny app script.
+    preRenderHook <- function(instance) {
+      session <- if (requireNamespace("shiny", quietly = TRUE)) {
+        shiny::getDefaultReactiveDomain()
+      }
+      if (!is.null(session)) {
+        warning(
+          "`backendDuckDB()` was configured for client-side mode because `reactable()` was called ",
+          "outside of a Shiny render function. Move the `reactable()` call inside `renderReactable()` ",
+          "so the backend can detect the Shiny session and use server mode.",
+          call. = FALSE
+        )
+      }
+      instance
+    }
   } else {
     data <- toJSON(data)
   }

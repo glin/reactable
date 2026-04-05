@@ -748,22 +748,20 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 - [x] **9.7** Fix df backend groupBy bug: `dfGroupBy()` missing `__state` property on grouped rows,
       causing broken row identification when `Reactable.toggleGroupBy()` is called via JS API.
       (Cherry-picked in 9.0.2 with tests.)
-- [ ] **9.8** Fix pagination display with empty results: server-side search returning zero results
-      shows "1-10 of 0 rows" instead of "0-0 of 0 rows".
-- [ ] **9.9** Stop sending unused `expanded` and `selectedRowIds` in every server request until
+- [ ] **9.8** Stop sending unused `expanded` and `selectedRowIds` in every server request until
       server-side selection/expansion is implemented.
 
 #### 9C: Server-side data documentation
 
-- [ ] **9.10** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
+- [ ] **9.9** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
       quick start, built-in backends (V8/df/dt/DuckDB server), creating custom backends, grouped
       data format, limitations, performance tips. Should cover `backendDuckDB(mode = "server")`
       as a built-in server backend option alongside V8/df/dt, and explain when to prefer it
       (e.g., SQL-based filtering vs. V8's JavaScript-based filtering).
-- [ ] **9.11** Update pkgdown reference: add server-side data section with `reactableServerInit`,
+- [ ] **9.10** Update pkgdown reference: add server-side data section with `reactableServerInit`,
       `reactableServerData`, `resolvedData`.
-- [ ] **9.12** Document S3 registration for custom backends in packages (`registerS3method()`).
-- [ ] **9.13** Before publicly documenting the custom backend API, decide how to handle custom
+- [ ] **9.11** Document S3 registration for custom backends in packages (`registerS3method()`).
+- [ ] **9.12** Before publicly documenting the custom backend API, decide how to handle custom
       backends in client mode. Currently, only `backendDuckDB()` works in client mode (static
       HTML / R Markdown) because it has a WASM implementation. All other backends (`backendV8()`,
       `backendDf()`, `backendDt()`, custom S3 backends) silently fall back to default client-side
@@ -781,27 +779,32 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 
 #### 9D: Server-side data API refinements (optional)
 
-- [ ] **9.14** Benchmark V8 vs DuckDB server-side backends on large datasets (e.g., 1M rows).
+- [ ] **9.13** Benchmark V8 vs DuckDB server-side backends on large datasets (e.g., 1M rows).
       Compare initialization time (V8 startup is notably slow on large data), query speed
       (sort/filter/search), and memory usage. If DuckDB is faster across the board, consider
       deprecating and eventually removing the V8 backend entirely in favor of DuckDB as the
       default server backend. This would simplify the backend landscape and eliminate the V8
       dependency. Test with the `shiny-server-data-duckdb-1m.R` example vs the equivalent
       `shiny-server-data-1m.R` (V8) example.
-- [ ] **9.15** Add `resolvedData()` validation for grouped `.subRows` structure.
-- [ ] **9.16** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
+      Note: V8 requires calling `reactable()` at the top level (outside `renderReactable()`)
+      to avoid re-initializing the expensive V8 context on every Shiny re-render (see
+      [#22](https://github.com/glin/reactable/issues/22)). DuckDB's `duckdb_register()`
+      uses zero-copy access and initializes much faster, so this pattern may not be necessary.
+      This is another reason to prefer DuckDB over V8.
+- [ ] **9.14** Add `resolvedData()` validation for grouped `.subRows` structure.
+- [ ] **9.15** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
 
 #### 9E: Server-side data testing
 
-- [ ] **9.17** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
+- [ ] **9.16** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
       Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
       `maxRowCount` pagination edge cases.
 
 #### 9F: Server-side row selection and expansion (future, optional)
 
-- [ ] **9.18** Document current limitation: select-all / expand-all only affect current page.
+- [ ] **9.17** Document current limitation: select-all / expand-all only affect current page.
       This matches ag-Grid's server-side model behavior and is acceptable for v1.
-- [ ] **9.19** Full server-side selection (if user demand warrants): requires consistent row IDs
+- [ ] **9.18** Full server-side selection (if user demand warrants): requires consistent row IDs
       across pages via `getRowId` / `__state.id`, `manualRowSelectedKey` integration, and server-side
       state tracking. Complex edge cases with grouped rows and `paginateSubRows`. See full analysis
       in `design/server-side-data/server-side-data.md` section 2.
@@ -886,6 +889,14 @@ A backend plugin is a JS object with well-known methods:
       a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
       flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
       the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
+- [ ] Defer `resolveDuckDBMode()` to render time: Currently, `backendDuckDB(mode = "auto")` resolves
+      client vs. server at `reactable()` call time, which means calling `reactable()` at the top level
+      of a Shiny script (outside `renderReactable()`) incorrectly picks client mode. The V8 backend
+      works at the top level because it has no auto-detection. To fix, defer mode resolution to
+      `preRenderHook`, where the Shiny session is available. This is much simpler after removing
+      first-page pre-rendering (above), since both paths would just need Arrow IPC serialization
+      at `reactable()` time, with the server path discarding it in the hook. Currently, a warning
+      is emitted when DuckDB client mode is rendered in Shiny.
 - [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once

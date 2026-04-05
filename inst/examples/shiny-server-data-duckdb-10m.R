@@ -12,31 +12,29 @@ data <- data.frame(
   stringsAsFactors = FALSE
 )
 
-tbl <- reactable(
-  data,
-  filterable = TRUE,
-  searchable = TRUE,
-  minRows = 10,
-  highlight = TRUE,
-  columns = list(
-    state = colDef(
-      html = TRUE,
-      cell = JS("function(cell) {
-        return '<a href=\"https://wikipedia.org/wiki/' + cell.value + '\">' + cell.value + '</a>'
-      }")
-    )
-  ),
-  showPageSizeOptions = TRUE,
-  backend = backendDuckDB()
-)
-
 ui <- fluidPage(
   reactableOutput("tbl")
 )
 
 server <- function(input, output) {
   output$tbl <- renderReactable({
-    tbl
+    reactable(
+      data,
+      filterable = TRUE,
+      searchable = TRUE,
+      minRows = 10,
+      highlight = TRUE,
+      columns = list(
+        state = colDef(
+          html = TRUE,
+          cell = JS("function(cell) {
+            return '<a href=\"https://wikipedia.org/wiki/' + cell.value + '\">' + cell.value + '</a>'
+          }")
+        )
+      ),
+      showPageSizeOptions = TRUE,
+      backend = backendDuckDB()
+    )
   })
 }
 
