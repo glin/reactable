@@ -76,7 +76,7 @@ reactableServerData(
 \value{
 \itemize{
 \item \code{reactableServerData()} should return a \code{\link[=resolvedData]{resolvedData()}} object.
-\item \code{reactableServerData()} should not return any value.
+\item \code{reactableServerInit()} should not return any value.
 }
 }
 \description{

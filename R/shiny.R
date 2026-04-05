@@ -367,7 +367,7 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' @param ... Additional arguments passed to the S3 method.
 #' @return
 #' - `reactableServerData()` should return a [resolvedData()] object.
-#' - `reactableServerData()` should not return any value.
+#' - `reactableServerInit()` should not return any value.
 #'
 #' @name reactable-server
 #'

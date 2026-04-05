@@ -145,6 +145,21 @@ dfGroupBy <- function(df, by, columns = NULL, depth = 0) {
     subGroup <- groups[[value]]
     dfGroupBy(subGroup, by, columns = columns, depth = depth + 1)
   })
+
+  # Add row state for grouped rows. This includes:
+
+  # - id: unique identifier for the row (format: "columnId:value")
+  # - grouped: TRUE to mark this as a grouped row
+  # - subRowCount: count of sub rows (for paginateSubRows)
+  rowIds <- unname(vapply(values, function(x) {
+    value <- if (is.list(x)) toJSON(x) else as.character(x)
+    sprintf("%s:%s", groupedColumnId, value)
+  }, character(1)))
+  subRowCounts <- vapply(df[[".subRows"]], nrow, integer(1))
+  df[["__state"]] <- lapply(seq_along(rowIds), function(i) {
+    list(id = rowIds[i], grouped = TRUE, subRowCount = subRowCounts[i])
+  })
+
   df
 }
 
