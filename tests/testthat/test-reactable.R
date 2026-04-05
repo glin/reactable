@@ -1867,6 +1867,27 @@ test_that("backendDuckDB() requires arrow package", {
   expect_equal(getAttrib(tbl, "backend"), "duckdb")
 })
 
+test_that("backendDuckDB() adds _reactable_rowid to Arrow data but not pre-rendered page", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(x = 1:5, y = letters[1:5], stringsAsFactors = FALSE)
+  tbl <- reactable(df, backend = backendDuckDB())
+
+  # Pre-rendered first page should not contain _reactable_rowid
+  firstPageData <- jsonlite::fromJSON(getAttrib(tbl, "data"))
+  expect_false("_reactable_rowid" %in% colnames(firstPageData))
+
+  # Arrow IPC data should contain _reactable_rowid
+  arrowData <- getAttrib(tbl, "arrowData")
+  raw_bytes <- jsonlite::base64_dec(arrowData)
+  tf <- tempfile(fileext = ".arrows")
+  on.exit(unlink(tf), add = TRUE)
+  writeBin(raw_bytes, tf)
+  rt <- as.data.frame(arrow::read_ipc_stream(tf))
+  expect_true("_reactable_rowid" %in% colnames(rt))
+  expect_equal(rt$`_reactable_rowid`, 0:4)
+})
+
 test_that("backendDuckDB() produces unique dataKey", {
   skip_if_not_installed("arrow")
 
@@ -2068,21 +2089,4 @@ test_that("backendDuckDB() warns about unsupported R function rowStyle", {
 
   # Named list rowStyle does NOT warn
   expect_no_warning(reactable(df, backend = backendDuckDB(), rowStyle = list(color = "red")))
-})
-
-test_that("backendDuckDB() warns about unsupported row selection", {
-  skip_if_not_installed("arrow")
-
-  df <- data.frame(x = 1:3, y = letters[1:3], stringsAsFactors = FALSE)
-  expect_warning(
-    reactable(df, backend = backendDuckDB(), selection = "multiple"),
-    'Row `selection` is not supported with `backendDuckDB\\(\\)`'
-  )
-  expect_warning(
-    reactable(df, backend = backendDuckDB(), selection = "single"),
-    'Row `selection` is not supported with `backendDuckDB\\(\\)`'
-  )
-
-  # No selection does NOT warn
-  expect_no_warning(reactable(df, backend = backendDuckDB()))
 })

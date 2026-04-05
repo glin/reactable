@@ -25,15 +25,18 @@ reactableServerData.reactable_backendDf <- function(
   sortBy = NULL,
   filters = NULL,
   searchValue = NULL,
+  searchMethod = NULL,
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
   # Unused/unimplemented props
   selectedRowIds = NULL,
   expanded = NULL,
-  searchMethod = NULL,
   ...
 ) {
+
+  # Add 0-based row IDs for stable row identification across pages
+  data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
 
   # Column filters - simple text match for now
   if (length(filters) > 0) {
@@ -191,6 +194,15 @@ dataFrame <- function(...) {
 }
 
 dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
+  # Extract _reactable_rowid into __state for stable row identification (flat rows only)
+  if ("_reactable_rowid" %in% colnames(df) && !"__state" %in% colnames(df)) {
+    rowids <- df[["_reactable_rowid"]]
+    df[["__state"]] <- lapply(rowids, function(rid) {
+      list(id = as.character(rid), index = as.integer(rid))
+    })
+    df[["_reactable_rowid"]] <- NULL
+  }
+
   if (is.null(pageSize)) {
     return(resolvedData(df, rowCount = nrow(df)))
   }

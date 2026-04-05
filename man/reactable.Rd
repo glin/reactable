@@ -226,7 +226,7 @@ Static rendering is \strong{experimental}, and is not supported for tables
 rendered via \code{\link[=reactableOutput]{reactableOutput()}} in Shiny.}
 
 \item{server}{\strong{Deprecated.} Use \code{backend} instead. Accepts \code{TRUE} (equivalent
-to \code{backendV8()}), or a backend string like \code{"df"}, \code{"dt"}, \code{"duckdb"}.}
+to \code{backendV8()}), or a backend string like \code{"df"}, \code{"duckdb"}.}
 
 \item{backend}{A backend object for data processing. Options:
 \describe{
@@ -235,7 +235,6 @@ In static documents (R Markdown, Quarto), DuckDB-WASM runs in the browser.
 In Shiny, the DuckDB R package runs on the server.}
 \item{\code{\link[=backendV8]{backendV8()}}}{V8 server-side processing (Shiny only).}
 \item{\code{\link[=backendDf]{backendDf()}}}{Pure R data frame operations (Shiny only).}
-\item{\code{\link[=backendDt]{backendDt()}}}{data.table operations (Shiny only). Requires the data.table package.}
 }}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows

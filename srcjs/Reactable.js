@@ -1116,7 +1116,7 @@ function Table({
     const defaultGetRowId = (row, index, parent) => {
       return `${parent ? [parent.id, index].join('.') : index}`
     }
-    if (!useServerData) {
+    if (!useServerData && !useDuckDB) {
       return defaultGetRowId
     }
     return (row, index, parent) => {
@@ -1126,7 +1126,7 @@ function Table({
       // Fall back for backends that don't implement row state
       return defaultGetRowId(row, index, parent)
     }
-  }, [useServerData])
+  }, [useServerData, useDuckDB])
 
   const { state, ...instance } = useTable(
     {
@@ -1233,6 +1233,9 @@ function Table({
       .catch(err => {
         console.error(err)
       })
+    // selectedRowIds is intentionally excluded - selections are client-side only
+    // and should not trigger server re-fetches
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     useServerData,
     dataURL,
@@ -1243,7 +1246,6 @@ function Table({
     state.globalFilter,
     state.groupBy,
     state.expanded,
-    state.selectedRowIds,
     dataColumns
   ])
 

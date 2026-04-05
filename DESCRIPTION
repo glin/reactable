@@ -39,7 +39,6 @@ Suggests:
     arrow,
     covr,
     crosstalk,
-    data.table,
     DBI,
     duckdb,
     dplyr,

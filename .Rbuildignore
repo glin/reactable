@@ -20,3 +20,4 @@
 ^srcjs$
 ^vignettes$
 ^webpack\.config.*\.js$
+^\.claude$

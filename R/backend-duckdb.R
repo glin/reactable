@@ -104,6 +104,8 @@ reactableServerInit.reactable_backendDuckdb <- function(x, data = NULL, columns 
   }
 
   con <- DBI::dbConnect(duckdb::duckdb())
+  # Add 0-based row IDs for stable row identification across pages
+  data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
   # Zero-copy registration - DuckDB reads directly from R data frame memory
   duckdb::duckdb_register(con, "reactable_data", data)
   x$private$con <- con
@@ -120,13 +122,13 @@ reactableServerData.reactable_backendDuckdb <- function(
   sortBy = NULL,
   filters = NULL,
   searchValue = NULL,
+  searchMethod = NULL,
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
   # Unused/unimplemented props
   selectedRowIds = NULL,
   expanded = NULL,
-  searchMethod = NULL,
   ...
 ) {
   con <- x$private$con
@@ -151,6 +153,15 @@ reactableServerData.reactable_backendDuckdb <- function(
   page <- DBI::dbGetQuery(con, query$sql, params = query$params)
   countResult <- DBI::dbGetQuery(con, query$countSql, params = query$params)
   rowCount <- countResult$n
+
+  # Extract _reactable_rowid into __state for stable row identification
+  if ("_reactable_rowid" %in% colnames(page)) {
+    rowids <- page[["_reactable_rowid"]]
+    page[["__state"]] <- lapply(rowids, function(rid) {
+      list(id = as.character(rid), index = as.integer(rid))
+    })
+    page[["_reactable_rowid"]] <- NULL
+  }
 
   resolvedData(page, rowCount = rowCount)
 }
@@ -241,9 +252,18 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
         subRowsList[[i]] <- subResult
       }
     } else {
-      # Leaf level — fetch individual rows
+      # Leaf level -- fetch individual rows
       subQuery <- buildDuckdbSubRowSql("reactable_data", baseWhere, childFilters, sortBy)
-      subRowsList[[i]] <- DBI::dbGetQuery(con, subQuery$sql, params = subQuery$params)
+      subRows <- DBI::dbGetQuery(con, subQuery$sql, params = subQuery$params)
+      # Extract _reactable_rowid into __state for stable row identification
+      if ("_reactable_rowid" %in% colnames(subRows)) {
+        rowids <- subRows[["_reactable_rowid"]]
+        subRows[["__state"]] <- lapply(rowids, function(rid) {
+          list(id = as.character(rid), index = as.integer(rid))
+        })
+        subRows[["_reactable_rowid"]] <- NULL
+      }
+      subRowsList[[i]] <- subRows
     }
 
     # Post-compute aggregates from sub-row data (e.g. frequency)
@@ -256,6 +276,11 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
   }
 
   groupData[[".subRows"]] <- subRowsList
+
+  # Add __state with group ID for group header rows
+  groupData[["__state"]] <- lapply(groupValues, function(val) {
+    list(id = paste0(groupCol, ":", val), grouped = TRUE)
+  })
 
   if (depth == 0) {
     resolvedData(groupData, rowCount = rowCount)

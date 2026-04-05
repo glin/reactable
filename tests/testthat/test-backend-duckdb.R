@@ -446,3 +446,100 @@ test_that("backendDuckdb - groupBy returns empty for no matches", {
   expect_equal(result$rowCount, 0)
   expect_equal(nrow(result$data), 0)
 })
+
+test_that("backendDuckdb - flat rows have __state with stable row IDs", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    x = c(10, 20, 30, 40, 50),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(list(id = "x", type = "numeric"))
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # First page: row IDs should be 0-based original indices
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 3)
+  expect_equal(result$data$`__state`, list(
+    list(id = "0", index = 0L),
+    list(id = "1", index = 1L),
+    list(id = "2", index = 2L)
+  ))
+
+  # Second page: row IDs should continue from original data
+  result2 <- reactableServerData(backend, data = df, columns = columns,
+                                 pageIndex = 1, pageSize = 3)
+  expect_equal(result2$data$`__state`, list(
+    list(id = "3", index = 3L),
+    list(id = "4", index = 4L)
+  ))
+
+  # _reactable_rowid should not appear in data
+  expect_false("_reactable_rowid" %in% colnames(result$data))
+})
+
+test_that("backendDuckdb - sorted rows preserve original __state IDs", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    x = c(30, 10, 20),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(list(id = "x", type = "numeric"))
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Sort ascending: original indices should be preserved
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                sortBy = list(list(id = "x", desc = FALSE)))
+  expect_equal(result$data$x, c(10, 20, 30))
+  expect_equal(result$data$`__state`, list(
+    list(id = "1", index = 1L),
+    list(id = "2", index = 2L),
+    list(id = "0", index = 0L)
+  ))
+})
+
+test_that("backendDuckdb - grouped rows have __state with id", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    grp = c("A", "A", "B"),
+    val = c(1, 2, 3),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("grp"))
+
+  # Group header rows should have __state with "grp:value" format
+  groupIds <- vapply(result$data$`__state`, function(s) s$id, character(1))
+  expect_true(setequal(groupIds, c("grp:A", "grp:B")))
+  expect_true(all(vapply(result$data$`__state`, function(s) s$grouped, logical(1))))
+
+  # Sub-rows for group A should have __state with stable row IDs (0, 1)
+  groupAIdx <- which(result$data$grp == "A")
+  subRowsA <- result$data$.subRows[[groupAIdx]]
+  subRowIds <- vapply(subRowsA$`__state`, function(s) s$id, character(1))
+  subRowIndices <- vapply(subRowsA$`__state`, function(s) s$index, integer(1))
+  expect_true(setequal(subRowIds, c("0", "1")))
+  expect_true(setequal(subRowIndices, c(0L, 1L)))
+
+  # _reactable_rowid should not appear in sub-rows
+  expect_false("_reactable_rowid" %in% colnames(subRowsA))
+})

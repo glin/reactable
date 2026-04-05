@@ -130,7 +130,7 @@
 #'   Static rendering is **experimental**, and is not supported for tables
 #'   rendered via [reactableOutput()] in Shiny.
 #' @param server **Deprecated.** Use `backend` instead. Accepts `TRUE` (equivalent
-#'   to `backendV8()`), or a backend string like `"df"`, `"dt"`, `"duckdb"`.
+#'   to `backendV8()`), or a backend string like `"df"`, `"duckdb"`.
 #' @param backend A backend object for data processing. Options:
 #'   \describe{
 #'     \item{[backendDuckDB()]}{DuckDB-powered sorting, filtering, and pagination.
@@ -138,7 +138,6 @@
 #'       In Shiny, the DuckDB R package runs on the server.}
 #'     \item{[backendV8()]}{V8 server-side processing (Shiny only).}
 #'     \item{[backendDf()]}{Pure R data frame operations (Shiny only).}
-#'     \item{[backendDt()]}{data.table operations (Shiny only). Requires the data.table package.}
 #'   }
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
@@ -272,7 +271,7 @@ reactable <- function(
 
   if (!is.null(backend)) {
     if (!is.object(backend)) {
-      stop("`backend` must be a backend object created by `backendDuckDB()`, `backendV8()`, `backendDf()`, or `backendDt()`")
+      stop("`backend` must be a backend object created by `backendDuckDB()`, `backendV8()`, or `backendDf()`")
     }
     if (!isFALSE(server)) {
       stop("`backend` and `server` cannot both be specified. Use `backend` instead of `server`.")
@@ -287,7 +286,6 @@ reactable <- function(
       "The `server` argument is deprecated. Use `backend` instead:\n",
       '  backend = backendV8()      # instead of server = TRUE\n',
       '  backend = backendDf()      # instead of server = "df"\n',
-      '  backend = backendDt()      # instead of server = "dt"\n',
       '  backend = backendDuckDB()  # instead of server = "duckdb"',
       call. = FALSE
     )
@@ -297,8 +295,6 @@ reactable <- function(
       backend <- backendV8()
     } else if (identical(server, "df")) {
       backend <- backendDf()
-    } else if (identical(server, "dt")) {
-      backend <- backendDt()
     } else if (identical(server, "duckdb")) {
       backend <- backendDuckDB(mode = "server")
     } else if (is.object(server)) {
@@ -867,10 +863,10 @@ reactable <- function(
               "Use a JS() function instead: reactable(rowStyle = JS(\"function(rowInfo) { ... }\")).",
               call. = FALSE)
     }
-    if (!is.null(selection)) {
-      warning('Row `selection` is not supported with `backendDuckDB()` and will not work correctly.',
-              call. = FALSE)
-    }
+    # Add 0-based row IDs for stable row identification across pages. DuckDB queries
+    # return different rows per page, so page-relative indices (0, 1, 2...) would collide.
+    # The JS side extracts this column and uses it for __state.id and __state.index.
+    data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
 
     arrowData <- serializeArrowIPC(data)
     totalRowCount <- nrow(data)
@@ -908,6 +904,7 @@ reactable <- function(
       firstPageData <- firstPageData[do.call(order, orderArgs), , drop = FALSE]
     }
     firstPageData <- utils::head(firstPageData, defaultPageSize)
+    firstPageData[["_reactable_rowid"]] <- NULL
     data <- toJSON(firstPageData)
     serverRowCount <- totalRowCount
     serverMaxRowCount <- totalRowCount

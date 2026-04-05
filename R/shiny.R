@@ -499,7 +499,6 @@ getServerBackend <- function(backend = NULL) {
   backends <- list(
     v8 = backendV8,
     df = backendDf,
-    dt = backendDt,
     duckdb = backendDuckdbServer
   )
 

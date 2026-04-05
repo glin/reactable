@@ -5,18 +5,27 @@ test_that("backendDf - basic pagination", {
     a = c("a", "b", "c", "d", "e"),
     b = c(1, 2, 3, 4, 5)
   )
-  expect_equal(
-    reactableServerData(backend, data = df, pageSize = NULL),
-    resolvedData(df, rowCount = 5)
-  )
-  expect_equal(
-    reactableServerData(backend, data = df, pageIndex = 0, pageSize = 10),
-    resolvedData(df, rowCount = 5)
-  )
-  expect_equal(
-    reactableServerData(backend, data = df, pageIndex = 1, pageSize = 3),
-    resolvedData(df[4:5, ], rowCount = 5)
-  )
+
+  # No pagination
+  result <- reactableServerData(backend, data = df, pageSize = NULL)
+  expect_equal(result$rowCount, 5)
+  expect_equal(result$data$a, df$a)
+  expect_equal(result$data$b, df$b)
+  expect_equal(result$data$`__state`, lapply(0:4, function(i) list(id = as.character(i), index = i)))
+
+  # Single page (all rows fit)
+  result <- reactableServerData(backend, data = df, pageIndex = 0, pageSize = 10)
+  expect_equal(result$rowCount, 5)
+  expect_equal(result$data$a, df$a)
+  expect_equal(result$data$b, df$b)
+  expect_equal(result$data$`__state`, lapply(0:4, function(i) list(id = as.character(i), index = i)))
+
+  # Second page
+  result <- reactableServerData(backend, data = df, pageIndex = 1, pageSize = 3)
+  expect_equal(result$rowCount, 5)
+  expect_equal(result$data$a, c("d", "e"))
+  expect_equal(result$data$b, c(4, 5))
+  expect_equal(result$data$`__state`, lapply(3:4, function(i) list(id = as.character(i), index = i)))
 })
 
 test_that("dfSortBy", {

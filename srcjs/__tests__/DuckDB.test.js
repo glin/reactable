@@ -26,7 +26,8 @@ import {
   getRoot,
   getSortableHeaders,
   getFilters,
-  getSearchInput
+  getSearchInput,
+  getSelectRowCheckboxes
 } from './utils/test-utils'
 
 jest.mock('reactR')
@@ -42,7 +43,8 @@ afterEach(() => {
 function createMockBackend(totalRows = 20) {
   const allRows = Array.from({ length: totalRows }, (_, i) => ({
     a: i + 1,
-    b: `row${i + 1}`
+    b: `row${i + 1}`,
+    __state: { id: String(i), index: i }
   }))
 
   const mockBackend = {
@@ -797,13 +799,13 @@ describe('DuckDB backend', () => {
               a: 'group1',
               b: null,
               '.subRows': [{ a: 'group1', b: 'row1' }],
-              __state: { grouped: true }
+              __state: { id: 'a:group1', grouped: true }
             },
             {
               a: 'group2',
               b: null,
               '.subRows': [{ a: 'group2', b: 'row2' }],
-              __state: { grouped: true }
+              __state: { id: 'a:group2', grouped: true }
             }
           ],
           rowCount: 2
@@ -917,6 +919,67 @@ describe('DuckDB backend', () => {
       expect(mockBackend.query).toHaveBeenCalled()
     })
   })
+
+  it('preserves row selections across page navigation', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    // Wait for DuckDB to initialize
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select first row on page 1 (index 1 skips the header "select all" checkbox)
+    const checkboxes = getSelectRowCheckboxes(container)
+    expect(checkboxes).toHaveLength(6) // 1 header + 5 rows
+    fireEvent.click(checkboxes[1])
+    expect(checkboxes[1].checked).toBe(true)
+
+    // Navigate to page 2
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    // Select first row on page 2
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(page2Checkboxes[1])
+    expect(page2Checkboxes[1].checked).toBe(true)
+
+    // Navigate back to page 1
+    const prevButton = container.querySelector('.rt-prev-button')
+    await act(async () => {
+      fireEvent.click(prevButton)
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 0 }))
+    })
+
+    // First row on page 1 should still be selected
+    const page1Checkboxes = getSelectRowCheckboxes(container)
+    expect(page1Checkboxes[1].checked).toBe(true)
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.
@@ -973,6 +1036,32 @@ describe('DuckDBBackend.query', () => {
     expect(mockStmt.close).toHaveBeenCalled()
     expect(mockCountStmt.close).toHaveBeenCalled()
     expect(result).toEqual({ rows: [{ a: 1, b: 'x' }], rowCount: 10 })
+  })
+
+  it('extracts _reactable_rowid into __state for stable row IDs', async () => {
+    const { conn } = createMockConn(
+      [
+        { a: 1, b: 'x', _reactable_rowid: 42 },
+        { a: 2, b: 'y', _reactable_rowid: 99 }
+      ],
+      100
+    )
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: []
+    })
+
+    expect(result.rows).toEqual([
+      { a: 1, b: 'x', __state: { id: '42', index: 42 } },
+      { a: 2, b: 'y', __state: { id: '99', index: 99 } }
+    ])
   })
 
   it('skips LIMIT/OFFSET when pageSize is null', async () => {
@@ -1292,7 +1381,7 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(result.rows[0]).toMatchObject({
       Manufacturer: 'Acura',
       Price: 49.8,
-      __state: { grouped: true }
+      __state: { id: 'Manufacturer:Acura', grouped: true }
     })
     expect(result.rows[0]['.subRows']).toHaveLength(2)
     expect(result.rows[0]['.subRows'][0]).toMatchObject({ Model: 'Integra', Price: 15.9 })
@@ -1628,12 +1717,12 @@ describe('DuckDBBackend.query with groupBy', () => {
 
     // Top-level groups
     expect(result.rows).toHaveLength(2)
-    expect(result.rows[0].__state).toEqual({ grouped: true })
+    expect(result.rows[0].__state).toEqual({ id: 'region:East', grouped: true })
 
     // Second-level: each region has sub-rows grouped by city
     expect(result.rows[0]['.subRows']).toBeDefined()
     expect(result.rows[0]['.subRows'].length).toBeGreaterThan(0)
-    expect(result.rows[0]['.subRows'][0].__state).toEqual({ grouped: true })
+    expect(result.rows[0]['.subRows'][0].__state).toEqual({ id: 'city:NYC', grouped: true })
     expect(result.rows[0]['.subRows'][0]['.subRows']).toBeDefined()
   })
 

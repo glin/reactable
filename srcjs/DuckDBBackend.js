@@ -191,6 +191,14 @@ export class DuckDBBackend {
     const rows = arrowTableToRows(dataResult)
     const rowCount = Number(countResult.toArray()[0].n)
 
+    // Extract _reactable_rowid into __state for stable row identification across pages
+    for (const row of rows) {
+      if (row._reactable_rowid != null) {
+        row['__state'] = { id: String(row._reactable_rowid), index: row._reactable_rowid }
+        delete row._reactable_rowid
+      }
+    }
+
     return { rows, rowCount }
   }
 
@@ -306,7 +314,7 @@ export class DuckDBBackend {
           pageSize: Number.MAX_SAFE_INTEGER,
           sortBy
         })
-        row['__state'] = { grouped: true }
+        row['__state'] = { id: `${groupCol}:${row[groupCol]}`, grouped: true }
       }
     } else {
       // Leaf level — fetch all individual rows for visible groups
@@ -331,7 +339,18 @@ export class DuckDBBackend {
 
       for (const row of groupRows) {
         row['.subRows'] = subRowsByGroup.get(row[groupCol]) || []
-        row['__state'] = { grouped: true }
+        row['__state'] = { id: `${groupCol}:${row[groupCol]}`, grouped: true }
+
+        // Extract _reactable_rowid into __state for sub-rows
+        for (const subRow of row['.subRows']) {
+          if (subRow._reactable_rowid != null) {
+            subRow['__state'] = {
+              id: String(subRow._reactable_rowid),
+              index: subRow._reactable_rowid
+            }
+            delete subRow._reactable_rowid
+          }
+        }
 
         // Post-compute aggregates that can't be expressed in SQL (e.g. frequency)
         for (const agg of postComputeAggs) {
