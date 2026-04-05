@@ -225,17 +225,18 @@ subsequently rendered by JavaScript as needed.
 Static rendering is \strong{experimental}, and is not supported for tables
 rendered via \code{\link[=reactableOutput]{reactableOutput()}} in Shiny.}
 
-\item{server}{Enable server-side data processing in Shiny apps? Requires the
-V8 package, which is not installed with reactable by default.
+\item{server}{\strong{Deprecated.} Use \code{backend} instead. Accepts \code{TRUE} (equivalent
+to \code{backendV8()}), or a backend string like \code{"df"}, \code{"dt"}, \code{"duckdb"}.}
 
-Server-side data processing is currently \strong{experimental}.}
-
-\item{backend}{A backend object for data processing. Use \code{\link[=backendDuckDB]{backendDuckDB()}} for
-DuckDB-powered sorting, filtering, and pagination. In static documents
-(R Markdown, Quarto), DuckDB-WASM runs in the browser. In Shiny, the DuckDB
-R package runs on the server.
-
-The DuckDB backend is currently \strong{experimental}.}
+\item{backend}{A backend object for data processing. Options:
+\describe{
+\item{\code{\link[=backendDuckDB]{backendDuckDB()}}}{DuckDB-powered sorting, filtering, and pagination.
+In static documents (R Markdown, Quarto), DuckDB-WASM runs in the browser.
+In Shiny, the DuckDB R package runs on the server.}
+\item{\code{\link[=backendV8]{backendV8()}}}{V8 server-side processing (Shiny only).}
+\item{\code{\link[=backendDf]{backendDf()}}}{Pure R data frame operations (Shiny only).}
+\item{\code{\link[=backendDt]{backendDt()}}}{data.table operations (Shiny only). Requires the data.table package.}
+}}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}

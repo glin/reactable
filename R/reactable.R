@@ -129,16 +129,17 @@
 #'
 #'   Static rendering is **experimental**, and is not supported for tables
 #'   rendered via [reactableOutput()] in Shiny.
-#' @param server Enable server-side data processing in Shiny apps? Requires the
-#'   V8 package, which is not installed with reactable by default.
-#'
-#'   Server-side data processing is currently **experimental**.
-#' @param backend A backend object for data processing. Use [backendDuckDB()] for
-#'   DuckDB-powered sorting, filtering, and pagination. In static documents
-#'   (R Markdown, Quarto), DuckDB-WASM runs in the browser. In Shiny, the DuckDB
-#'   R package runs on the server.
-#'
-#'   The DuckDB backend is currently **experimental**.
+#' @param server **Deprecated.** Use `backend` instead. Accepts `TRUE` (equivalent
+#'   to `backendV8()`), or a backend string like `"df"`, `"dt"`, `"duckdb"`.
+#' @param backend A backend object for data processing. Options:
+#'   \describe{
+#'     \item{[backendDuckDB()]}{DuckDB-powered sorting, filtering, and pagination.
+#'       In static documents (R Markdown, Quarto), DuckDB-WASM runs in the browser.
+#'       In Shiny, the DuckDB R package runs on the server.}
+#'     \item{[backendV8()]}{V8 server-side processing (Shiny only).}
+#'     \item{[backendDf()]}{Pure R data frame operations (Shiny only).}
+#'     \item{[backendDt()]}{data.table operations (Shiny only). Requires the data.table package.}
+#'   }
 #' @param selectionId **Deprecated**. Use [getReactableState()] to get the selected rows
 #'   in Shiny.
 #' @return A `reactable` HTML widget that can be used in R Markdown documents
@@ -270,12 +271,43 @@ reactable <- function(
   }
 
   if (!is.null(backend)) {
-    if (!isDuckDBBackend(backend)) {
-      stop("`backend` must be a backend object created by `backendDuckDB()`, or NULL")
+    if (!is.object(backend)) {
+      stop("`backend` must be a backend object created by `backendDuckDB()`, `backendV8()`, `backendDf()`, or `backendDt()`")
     }
     if (!isFALSE(server)) {
-      stop("Column `backend` and `server` cannot both be specified. Use one or the other.")
+      stop("`backend` and `server` cannot both be specified. Use `backend` instead of `server`.")
     }
+  }
+
+  # Deprecate `server` param: convert to backend object.
+  # `server` was added during development but never included in a CRAN release,
+  # so it can be removed in a future version without a deprecation cycle.
+  if (!isFALSE(server)) {
+    warning(
+      "The `server` argument is deprecated. Use `backend` instead:\n",
+      '  backend = backendV8()      # instead of server = TRUE\n',
+      '  backend = backendDf()      # instead of server = "df"\n',
+      '  backend = backendDt()      # instead of server = "dt"\n',
+      '  backend = backendDuckDB()  # instead of server = "duckdb"',
+      call. = FALSE
+    )
+    if (isTRUE(server)) {
+      backend <- backendV8()
+    } else if (identical(server, "v8")) {
+      backend <- backendV8()
+    } else if (identical(server, "df")) {
+      backend <- backendDf()
+    } else if (identical(server, "dt")) {
+      backend <- backendDt()
+    } else if (identical(server, "duckdb")) {
+      backend <- backendDuckDB(mode = "server")
+    } else if (is.object(server)) {
+      # Custom S3 backend object passed via server param
+      backend <- server
+    } else {
+      stop("`server` must be TRUE or a backend object. Use the `backend` argument instead.", call. = FALSE)
+    }
+    server <- FALSE
   }
 
   if (is.null(rownames)) {
@@ -691,22 +723,25 @@ reactable <- function(
 
   # Resolve backend mode: "auto" detects Shiny vs static, then route to client or server path
   isDuckDBClientMode <- FALSE
+  isServerMode <- FALSE
   if (isDuckDBBackend(backend)) {
     resolvedMode <- resolveDuckDBMode(backend)
     if (resolvedMode == "server") {
-      # Route to existing server infrastructure
-      server <- "duckdb"
+      # Route DuckDB server mode through the server infrastructure
+      backend <- getServerBackend(backend = "duckdb")
+      isServerMode <- TRUE
     } else {
       isDuckDBClientMode <- TRUE
     }
+  } else if (!is.null(backend)) {
+    # Any non-DuckDB backend is a server backend
+    isServerMode <- TRUE
   }
 
   preRenderHook <- NULL
   serverRowCount <- NULL
   serverMaxRowCount <- NULL
-  if (!isFALSE(server)) {
-    backend <- if (isTRUE(server)) getOption("reactable.server.backend") else server
-    backend <- getServerBackend(backend = backend)
+  if (isServerMode) {
 
     initialProps <- list(
       data = data,
@@ -740,6 +775,11 @@ reactable <- function(
       if (is.null(session)) {
         # Not in an active Shiny session or Shiny not installed. Fall back to client-side
         # mode using the original data.
+        warning(
+          "The backend provided to `reactable()` requires a Shiny session and has no effect ",
+          "in static documents. The table will use default client-side data processing.",
+          call. = FALSE
+        )
         instance$x$tag$attribs$data <- toJSON(initialProps$data)
         return(instance)
       }

@@ -1,5 +1,5 @@
 ---
-title: 'Client-Side DuckDB'
+title: 'DuckDB Backend'
 output: html_document
 ---
 
@@ -15,7 +15,18 @@ options(reactable.static = TRUE)
 New in v0.4.5.9000
 :::
 
+::: {.callout-note}
+**Note:** The DuckDB backend is currently experimental. There are [limitations](#limitations) to be
+aware of, and the API may change in future versions.
+:::
+
 The DuckDB backend enables sorting, filtering, searching, and pagination for large datasets entirely in the browser, with no server required. This works in static R Markdown and Quarto documents, where traditional server-side processing isn't available.
+
+Before using the DuckDB backend, install the required [arrow](https://arrow.apache.org/docs/r/) package:
+
+```r
+install.packages("arrow")
+```
 
 Instead of embedding all data as JSON and processing it in JavaScript, the DuckDB backend serializes data as [Arrow IPC](https://arrow.apache.org/docs/format/Columnar.html#ipc-streaming-format) at render time and embeds it directly in the HTML, keeping everything in a single file. In the browser, [DuckDB-WASM](https://duckdb.org/docs/api/wasm/overview) executes SQL queries against the data, so only one page of results is rendered at a time and even million-row tables stay responsive.
 

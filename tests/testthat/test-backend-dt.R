@@ -1,5 +1,5 @@
-test_that("serverDt - basic pagination", {
-  backend <- serverDt()
+test_that("backendDt - basic pagination", {
+  backend <- backendDt()
 
   df <- dataFrame(
     a = c("a", "b", "c", "d", "e"),

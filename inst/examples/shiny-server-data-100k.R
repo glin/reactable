@@ -37,7 +37,7 @@ tbl <- reactable(
     }")
   ),
   showPageSizeOptions = TRUE,
-  server = TRUE
+  backend = backendV8()
 )
 
 ui <- fluidPage(

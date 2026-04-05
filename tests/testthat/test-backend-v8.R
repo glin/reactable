@@ -1,9 +1,9 @@
-test_that("serverV8 handles server rendering errors", {
+test_that("backendV8 handles server rendering errors", {
   df <- dataFrame(x = c(1, 2, 3, 4, 5), y = c("a", "b", "c", "d", "e"))
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   expect_error(
@@ -17,7 +17,7 @@ test_that("pagination", {
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   results <- reactableServerData(backend, pageIndex = 0, pageSize = 10)
@@ -45,7 +45,7 @@ test_that("sorting", {
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, sortBy = list(list(id = "x")))
@@ -67,7 +67,7 @@ test_that("sorting", {
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   results <- reactableServerData(backend, pageIndex = 0, pageSize = 10,
@@ -88,7 +88,7 @@ test_that("filtering", {
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   # No filters
@@ -143,7 +143,7 @@ test_that("searching", {
   tbl <- reactable(df)
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   # Empty search value
@@ -189,7 +189,7 @@ test_that("grouping", {
   ))
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns)
 
   results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))
@@ -220,7 +220,7 @@ test_that("grouping with paginateSubRows=true", {
   ))
   columns <- getAttrib(tbl, "columns")
 
-  backend <- serverV8()
+  backend <- backendV8()
   reactableServerInit(backend, data = df, columns = columns, paginateSubRows = TRUE)
 
   results <- reactableServerData(backend, pageIndex = 0, pageSize = 10, groupBy = list("mfr", "type"))

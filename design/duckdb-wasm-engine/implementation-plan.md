@@ -724,24 +724,30 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 
 #### 9A: `server` to `backend` migration
 
-- [ ] **9.1** Alias `server` to `backend` internally: Accept `server` via `...` args in `reactable()`.
+- [x] **9.1** Alias `server` to `backend` internally: Accept `server` via `...` args in `reactable()`.
       `server` remains an accepted but undocumented parameter. When `server` is used, emit a deprecation
       warning: "The `server` argument is deprecated. Use `backend =` instead." Map `server` values to
       backend objects: `TRUE` / `"v8"` -> `backendV8()`, `"df"` -> `backendDf()`, `"dt"` -> `backendDt()`,
       `"duckdb"` -> `backendDuckDB("server")`, S3 objects pass through.
-- [ ] **9.2** Create `backendV8()`, `backendDf()`, `backendDt()` constructors in `R/backends.R`.
-      Export and add roxygen docs. Each returns an S3 class (`reactable_backendV8`, etc.).
-- [ ] **9.3** Update `getServerBackend()` to dispatch on `backend` S3 class instead of string matching.
-- [ ] **9.4** Update all docs, vignettes, examples to use `backend =` instead of `server =`.
-- [ ] **9.5** Update tests to use `backend =` for server backends.
+- [x] **9.2** Create `backendV8()`, `backendDf()`, `backendDt()` constructors.
+      Export and add roxygen docs. Each defined in its own `R/backend-*.R` file.
+- [x] **9.3** Update `getServerBackend()` to dispatch on `backend` S3 class instead of string matching.
+- [x] **9.4** Update all docs, vignettes, examples to use `backend =` instead of `server =`.
+- [x] **9.5** Update tests to use `backend =` for server backends.
+- [x] **9.5.1** Rename `R/server-*.R` files to `R/backend-*.R` and rename S3 classes
+      from `reactable_server*` to `reactable_backend*`. Test files similarly renamed from
+      `test-server-*.R` to `test-backend-*.R`. Removed `R/backends.R` -- each backend
+      constructor (`backendV8()`, `backendDf()`, `backendDt()`, `backendDuckDB()`) now lives
+      in its own `R/backend-*.R` file alongside its implementation and S3 methods.
+      Removed unused `isServerBackend()` helper.
 
 #### 9B: Server-side data bug fixes (from `server-data-3` branch)
 
-- [ ] **9.6** Fix documentation typo in `man/reactable-server.Rd`: second bullet says
-      `reactableServerData()` should be `reactableServerInit()`. (Already fixed on `server-data-3`.)
-- [ ] **9.7** Fix df backend groupBy bug: `dfGroupBy()` missing `__state` property on grouped rows,
+- [x] **9.6** Fix documentation typo in `man/reactable-server.Rd`: second bullet says
+      `reactableServerData()` should be `reactableServerInit()`. (Cherry-picked in 9.0.2.)
+- [x] **9.7** Fix df backend groupBy bug: `dfGroupBy()` missing `__state` property on grouped rows,
       causing broken row identification when `Reactable.toggleGroupBy()` is called via JS API.
-      (Already fixed on `server-data-3` with tests.)
+      (Cherry-picked in 9.0.2 with tests.)
 - [ ] **9.8** Fix pagination display with empty results: server-side search returning zero results
       shows "1-10 of 0 rows" instead of "0-0 of 0 rows".
 - [ ] **9.9** Stop sending unused `expanded` and `selectedRowIds` in every server request until
@@ -750,28 +756,52 @@ reactable(data, server = TRUE)                   # still works, undocumented, de
 #### 9C: Server-side data documentation
 
 - [ ] **9.10** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
-      quick start, built-in backends (V8/df/dt), creating custom backends, grouped data format,
-      limitations, performance tips. Include DuckDB custom backend example.
+      quick start, built-in backends (V8/df/dt/DuckDB server), creating custom backends, grouped
+      data format, limitations, performance tips. Should cover `backendDuckDB(mode = "server")`
+      as a built-in server backend option alongside V8/df/dt, and explain when to prefer it
+      (e.g., SQL-based filtering vs. V8's JavaScript-based filtering).
 - [ ] **9.11** Update pkgdown reference: add server-side data section with `reactableServerInit`,
       `reactableServerData`, `resolvedData`.
 - [ ] **9.12** Document S3 registration for custom backends in packages (`registerS3method()`).
+- [ ] **9.13** Before publicly documenting the custom backend API, decide how to handle custom
+      backends in client mode. Currently, only `backendDuckDB()` works in client mode (static
+      HTML / R Markdown) because it has a WASM implementation. All other backends (`backendV8()`,
+      `backendDf()`, `backendDt()`, custom S3 backends) silently fall back to default client-side
+      React Table behavior when used outside Shiny. Questions to resolve:
+      - Should custom backends be allowed to provide client-side implementations? This would
+        require a JS plugin interface, a data serialization protocol, and a dependency registration
+        mechanism (similar to what DuckDB does with Arrow IPC / Parquet + duckdb-wasm JS bundle).
+      - If not, should non-DuckDB backends warn when used outside Shiny instead of silently
+        falling back? (e.g., "backendV8() only works in Shiny. Table will use default client-side
+        processing.")
+      - How should the docs describe this asymmetry? The `backend` param is unified, but the
+        capabilities differ: DuckDB works everywhere, others are Shiny-only.
+      - Consider whether Phase 10 (JS backend plugin) should be designed first, so the custom
+        backend docs can reference a future extension point for client-side backends.
 
 #### 9D: Server-side data API refinements (optional)
 
-- [ ] **9.13** Add `resolvedData()` validation for grouped `.subRows` structure.
-- [ ] **9.14** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
+- [ ] **9.14** Benchmark V8 vs DuckDB server-side backends on large datasets (e.g., 1M rows).
+      Compare initialization time (V8 startup is notably slow on large data), query speed
+      (sort/filter/search), and memory usage. If DuckDB is faster across the board, consider
+      deprecating and eventually removing the V8 backend entirely in favor of DuckDB as the
+      default server backend. This would simplify the backend landscape and eliminate the V8
+      dependency. Test with the `shiny-server-data-duckdb-1m.R` example vs the equivalent
+      `shiny-server-data-1m.R` (V8) example.
+- [ ] **9.15** Add `resolvedData()` validation for grouped `.subRows` structure.
+- [ ] **9.16** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
 
 #### 9E: Server-side data testing
 
-- [ ] **9.15** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
+- [ ] **9.17** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
       Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
       `maxRowCount` pagination edge cases.
 
 #### 9F: Server-side row selection and expansion (future, optional)
 
-- [ ] **9.16** Document current limitation: select-all / expand-all only affect current page.
+- [ ] **9.18** Document current limitation: select-all / expand-all only affect current page.
       This matches ag-Grid's server-side model behavior and is acceptable for v1.
-- [ ] **9.17** Full server-side selection (if user demand warrants): requires consistent row IDs
+- [ ] **9.19** Full server-side selection (if user demand warrants): requires consistent row IDs
       across pages via `getRowId` / `__state.id`, `manualRowSelectedKey` integration, and server-side
       state tracking. Complex edge cases with grouped rows and `paginateSubRows`. See full analysis
       in `design/server-side-data/server-side-data.md` section 2.
@@ -871,6 +901,9 @@ A backend plugin is a JS object with well-known methods:
       write custom client-side backends. Requires substantial documentation of the backend contract, object shapes,
       return types, column discovery, and error handling. See "Design notes: custom JS backend API" below for the
       full design sketch.
+- [ ] Remove `backendDf()` and `backendDt()`: These were carried over from development but are unlikely to be
+      needed. DuckDB server mode should cover the same use cases with better performance. Can be removed
+      without a deprecation cycle since they were never in a CRAN release.
 
 ---
 

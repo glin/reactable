@@ -1,15 +1,30 @@
-serverDt <- function() {
-  structure(list(), class = "reactable_serverDt")
+#' data.table Server Backend
+#'
+#' Uses the data.table package for table data processing in Shiny apps.
+#' Requires the data.table package.
+#'
+#' @return A backend object to pass to the `backend` argument of [reactable()].
+#'
+#' @examples
+#' \dontrun{
+#' reactable(data, backend = backendDt())
+#' }
+#'
+#' @export
+backendDt <- function() {
+  structure(list(), class = "reactable_backendDt")
 }
 
-reactableServerInit.reactable_serverDt <- function(...) {
+#' @exportS3Method
+reactableServerInit.reactable_backendDt <- function(...) {
   if (!require("data.table", quietly = TRUE)) {
     stop('The data.table package must be installed to use the "dt" server backend.
 Do you need to run `install.packages("data.table")`?', call. = FALSE)
   }
 }
 
-reactableServerData.reactable_serverDt <- function(
+#' @exportS3Method
+reactableServerData.reactable_backendDt <- function(
   x,
   data = NULL,
   columns = NULL,

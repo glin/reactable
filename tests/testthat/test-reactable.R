@@ -1637,20 +1637,20 @@ test_that("server-side data", {
   tbl <- reactable(data)
 
   # Should default to V8 backend and return first page
-  tbl <- reactable(data, defaultPageSize = 3, server = TRUE)
+  tbl <- reactable(data, defaultPageSize = 3, backend = backendV8())
   expect_equal(as.character(getAttrib(tbl, "data")), '{"x":[1,1,2],"y":["a","b","c"],"__state":{"id":["0","1","2"],"index":[0,1,2]}}')
   expect_equal(getAttrib(tbl, "serverRowCount"), 5)
   expect_equal(getAttrib(tbl, "serverMaxRowCount"), 5)
 
   # Should set serverMaxRowCount correctly
-  tbl <- reactable(data, defaultPageSize = 3, groupBy = "x", paginateSubRows = TRUE, server = TRUE)
+  tbl <- reactable(data, defaultPageSize = 3, groupBy = "x", paginateSubRows = TRUE, backend = backendV8())
   expect_equal(getAttrib(tbl, "serverRowCount"), 4)
   expect_equal(getAttrib(tbl, "serverMaxRowCount"), 9)
 
   # Custom backend
   backend <- structure(list(), class = "custom_backend")
   # reactableServerData should be required
-  expect_error(reactable(data, server = backend), "reactable server backends must have a `reactableServerData` S3 method defined.")
+  expect_error(reactable(data, backend = backend), "reactable server backends must have a `reactableServerData` S3 method defined.")
 
   # reactableServerInit should be optional
   reactableServerData.custom_backend <- function(...) {
@@ -1658,7 +1658,7 @@ test_that("server-side data", {
   }
   registerS3method("reactableServerData", "custom_backend", reactableServerData.custom_backend)
 
-  tbl <- reactable(data, server = backend)
+  tbl <- reactable(data, backend = backend)
   expect_equal(as.character(getAttrib(tbl, "data")), '{"z":[1,2,3]}')
   expect_equal(getAttrib(tbl, "serverRowCount"), 20)
   expect_equal(getAttrib(tbl, "serverMaxRowCount"), 21)
@@ -1669,28 +1669,26 @@ test_that("server-side data", {
     initCalled <<- TRUE
   }
   registerS3method("reactableServerInit", "custom_backend", reactableServerInit.custom_backend)
-  tbl <- reactable(data, server = backend)
+  tbl <- reactable(data, backend = backend)
   expect_true(initCalled)
 
-  # Global option should work when server = TRUE
-  old <- options(reactable.server.backend = backend)
-  on.exit(options(old))
-  tbl <- reactable(data, server = backend)
+  # Custom backend via backend param
+  tbl <- reactable(data, backend = backend)
   expect_equal(as.character(getAttrib(tbl, "data")), '{"z":[1,2,3]}')
 
-  # Global option should be overridable
+  # Different custom backend
   newBackend <- structure(list(), class = "new_backend")
   reactableServerData.new_backend <- function(...) {
     resolvedData(data = data.frame(), rowCount = 12345)
   }
   registerS3method("reactableServerData", "new_backend", reactableServerData.new_backend)
-  tbl <- reactable(data, server = newBackend)
+  tbl <- reactable(data, backend = newBackend)
   expect_equal(getAttrib(tbl, "serverRowCount"), 12345)
 
   # reactableServerData should return resolvedData()
   reactableServerInit.custom_backend <- function(...) "not resolvedData"
   registerS3method("reactableServerData", "custom_backend", reactableServerInit.custom_backend)
-  expect_error(reactable(data, server = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
+  expect_error(reactable(data, backend = backend), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })
 
 test_that("backend param validation", {
@@ -1700,8 +1698,10 @@ test_that("backend param validation", {
   expect_error(reactable(df, backend = 123), "`backend` must be a backend object")
 
   # Error when both backend and server are specified
-  expect_error(reactable(df, backend = backendDuckDB(), server = TRUE),
-               "`backend` and `server` cannot both be specified")
+  expect_error(
+    expect_warning(reactable(df, backend = backendDuckDB(), server = TRUE)),
+    "`backend` and `server` cannot both be specified"
+  )
 
   # NULL backend should work (default behavior)
   tbl <- reactable(df, backend = NULL)
@@ -1709,6 +1709,37 @@ test_that("backend param validation", {
   expect_null(getAttrib(tbl, "arrowData"))
   # data should be JSON-serialized as normal
   expect_true(is.character(as.character(getAttrib(tbl, "data"))))
+})
+
+test_that("server param deprecation", {
+  data <- data.frame(x = c(1, 1, 2), y = c("a", "b", "c"))
+
+  # server = TRUE maps to backendV8()
+  expect_warning(tbl <- reactable(data, defaultPageSize = 3, server = TRUE), "deprecated")
+  expect_equal(getAttrib(tbl, "serverRowCount"), 3)
+
+  # server = "v8"
+  expect_warning(tbl <- reactable(data, defaultPageSize = 3, server = "v8"), "deprecated")
+  expect_equal(getAttrib(tbl, "serverRowCount"), 3)
+
+  # server = "df"
+  expect_warning(tbl <- reactable(data, defaultPageSize = 3, server = "df"), "deprecated")
+  expect_equal(getAttrib(tbl, "serverRowCount"), 3)
+
+  # server with custom S3 backend object
+  custom <- structure(list(), class = "test_deprecation_backend")
+  reactableServerData.test_deprecation_backend <- function(...) {
+    resolvedData(data = data.frame(z = 1), rowCount = 99)
+  }
+  registerS3method("reactableServerData", "test_deprecation_backend", reactableServerData.test_deprecation_backend)
+  expect_warning(tbl <- reactable(data, server = custom), "deprecated")
+  expect_equal(getAttrib(tbl, "serverRowCount"), 99)
+
+  # Unknown string errors
+  expect_error(
+    expect_warning(reactable(data, server = "badname"), "deprecated"),
+    "`server` must be TRUE or a backend object"
+  )
 })
 
 test_that("backendDuckDB() serializes data as Arrow IPC with pre-rendered first page", {

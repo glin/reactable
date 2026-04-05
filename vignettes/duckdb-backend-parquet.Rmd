@@ -1,5 +1,5 @@
 ---
-title: "Client-Side DuckDB (Parquet)"
+title: "DuckDB Backend (Parquet)"
 output: html_document
 ---
 
@@ -13,6 +13,11 @@ options(reactable.static = TRUE)
 
 ::: {.callout}
 New in v0.4.5.9000
+:::
+
+::: {.callout-note}
+**Note:** The DuckDB backend is currently experimental. See the [main DuckDB page](duckdb-backend.html)
+for setup instructions and limitations.
 :::
 
 For very large datasets, embedding all the data in the HTML document can make the page slow to download. The [DuckDB backend](duckdb-backend.html) supports external Parquet files to solve this: the data is written as a separate `.parquet` file alongside the HTML, and DuckDB-WASM downloads only the portions of the file it needs for each query rather than the entire file.

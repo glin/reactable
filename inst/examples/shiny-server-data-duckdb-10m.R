@@ -1,7 +1,7 @@
 library(shiny)
 library(reactable)
 
-rows <- 100000
+rows <- 10000000
 dates <- seq.Date(as.Date("2018-01-01"), as.Date("2018-12-01"), "day")
 data <- data.frame(
   index = seq_len(rows),

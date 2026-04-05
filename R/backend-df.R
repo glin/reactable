@@ -1,8 +1,22 @@
-serverDf <- function() {
-  structure(list(), class = "reactable_serverDf")
+#' Data Frame Server Backend
+#'
+#' Uses pure R data frame operations for table data processing in Shiny apps.
+#' Does not require the V8 package.
+#'
+#' @return A backend object to pass to the `backend` argument of [reactable()].
+#'
+#' @examples
+#' \dontrun{
+#' reactable(data, backend = backendDf())
+#' }
+#'
+#' @export
+backendDf <- function() {
+  structure(list(), class = "reactable_backendDf")
 }
 
-reactableServerData.reactable_serverDf <- function(
+#' @exportS3Method
+reactableServerData.reactable_backendDf <- function(
   x,
   data = NULL,
   columns = NULL,

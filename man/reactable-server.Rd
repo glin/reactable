@@ -84,7 +84,7 @@ Custom server-side data backends are created using the
 \href{https://adv-r.hadley.nz/s3.html}{S3 object system}.
 
 To create a custom server-side data backend, provide an S3 object to the
-\code{server} argument in \code{\link[=reactable]{reactable()}} with the following S3 methods defined:
+\code{backend} argument in \code{\link[=reactable]{reactable()}} with the following S3 methods defined:
 \itemize{
 \item \code{reactableServerInit} initializes the server backend (optional).
 \item \code{reactableServerData} handles requests for data and should return a

@@ -47,9 +47,9 @@ navbar:
         href: articles/100k-rows.html
       - text: 100k Rows (Virtualized)
         href: articles/100k-rows-virtual.html
-      - text: Client-Side DuckDB
+      - text: DuckDB Backend
         href: articles/duckdb-backend.html
-      - text: Client-Side DuckDB (Parquet)
+      - text: DuckDB Backend (Parquet)
         href: articles/duckdb-backend-parquet.html
       - text: Shiny Demo
         href: articles/shiny-demo.html

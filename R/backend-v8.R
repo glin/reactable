@@ -1,4 +1,17 @@
-serverV8 <- function() {
+#' V8 Server Backend
+#'
+#' Uses V8 (server-side JavaScript) for table data processing in Shiny apps.
+#' This is the default server-side backend.
+#'
+#' @return A backend object to pass to the `backend` argument of [reactable()].
+#'
+#' @examples
+#' \dontrun{
+#' reactable(data, backend = backendV8())
+#' }
+#'
+#' @export
+backendV8 <- function() {
   private <- new.env(parent = emptyenv())
 
   structure(list(
@@ -12,7 +25,7 @@ serverV8 <- function() {
     ) {
 
       if (!requireNamespace("V8", quietly = TRUE)) {
-        stop('The V8 package must be installed to use `reactable(server = TRUE)`.
+        stop('The V8 package must be installed to use `reactable(backend = backendV8())`.
 Do you need to run `install.packages("V8")`?', call. = FALSE)
       }
       # Initialize V8 and set initial props to reduce overhead of JSON serialization,
@@ -41,7 +54,7 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
       ctx$call("Reactable.setInitialProps", toJSON(input))
       private$ctx <- ctx
       end <- Sys.time()
-      debugLog(sprintf("(serverV8) init time: %s", format(end - start)))
+      debugLog(sprintf("(backendV8) init time: %s", format(end - start)))
     },
 
     data = function(
@@ -82,7 +95,7 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         input <- toJSON(input)
         result <- private$ctx$call("Reactable.renderToData", input)
         end <- Sys.time()
-        debugLog(sprintf("(serverV8) Reactable.renderToData() time: %s", format(end - start)))
+        debugLog(sprintf("(backendV8) Reactable.renderToData() time: %s", format(end - start)))
         result
       }, error = function(e) {
         stop(sprintf("Failed to server render table:\n%s", e), call. = FALSE)
@@ -101,13 +114,15 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         maxRowCount = result$maxRowCount
       ))
     }
-  ), class = "reactable_serverV8")
+  ), class = "reactable_backendV8")
 }
 
-reactableServerInit.reactable_serverV8 <- function(x, ...) {
+#' @exportS3Method
+reactableServerInit.reactable_backendV8 <- function(x, ...) {
   x$init(...)
 }
 
-reactableServerData.reactable_serverV8 <- function(x, ...) {
+#' @exportS3Method
+reactableServerData.reactable_backendV8 <- function(x, ...) {
   x$data(...)
 }

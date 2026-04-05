@@ -1,5 +1,5 @@
-test_that("serverDf - basic pagination", {
-  backend <- serverDf()
+test_that("backendDf - basic pagination", {
+  backend <- backendDf()
 
   df <- dataFrame(
     a = c("a", "b", "c", "d", "e"),
@@ -419,7 +419,7 @@ test_that("dfGroupBy with aggregate functions grouped by a factor column", {
   expect_equal(grouped, expected)
 })
 
-test_that("dfGroupBy with aggregate functions grouped by a factor column", {
+test_that("dfGroupBy with aggregate functions grouped by a list column", {
   df <- dataFrame(
     mfr = c("Acura", "Acura", "Audi"),
     model = c("Integra", "Legend", "90"),

@@ -40,7 +40,7 @@ tables <- lapply(rows_options, function(rows) {
     }")
     ),
     showPageSizeOptions = TRUE,
-    server = TRUE
+    backend = backendV8()
   )
 
   tbl

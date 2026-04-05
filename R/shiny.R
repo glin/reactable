@@ -332,7 +332,7 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' [S3 object system](https://adv-r.hadley.nz/s3.html).
 #'
 #' To create a custom server-side data backend, provide an S3 object to the
-#' `server` argument in [reactable()] with the following S3 methods defined:
+#' `backend` argument in [reactable()] with the following S3 methods defined:
 #'
 #' - `reactableServerInit` initializes the server backend (optional).
 #' - `reactableServerData` handles requests for data and should return a
@@ -416,11 +416,13 @@ reactableServerData <- function(
 }
 
 # Default reactableServerInit method: no-op, since initialization is optional.
+#' @exportS3Method
 reactableServerInit.default <- function(...) {
   # No-op
 }
 
 # Default reactableServerData method
+#' @exportS3Method
 reactableServerData.default <- function(...) {
   stop(
     "reactable server backends must have a `reactableServerData` S3 method defined.\n\nFor more details, see `?reactable::reactableServerData`",
@@ -495,10 +497,10 @@ getServerBackend <- function(backend = NULL) {
   }
 
   backends <- list(
-    v8 = serverV8,
-    df = serverDf,
-    dt = serverDt,
-    duckdb = serverDuckdb
+    v8 = backendV8,
+    df = backendDf,
+    dt = backendDt,
+    duckdb = backendDuckdbServer
   )
 
   if (is.null(backend) || !backend %in% names(backends)) {

@@ -1,8 +1,8 @@
-test_that("serverDuckdb - basic pagination", {
+test_that("backendDuckdb - basic pagination", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     x = c(1, 2, 3, 4, 5),
     y = c("a", "b", "c", "d", "e"),
@@ -32,11 +32,11 @@ test_that("serverDuckdb - basic pagination", {
   expect_equal(result2$data$x, c(4, 5))
 })
 
-test_that("serverDuckdb - sorting", {
+test_that("backendDuckdb - sorting", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     x = c(3, 1, 5, 2, 4),
     y = c("c", "a", "e", "b", "d"),
@@ -63,11 +63,11 @@ test_that("serverDuckdb - sorting", {
   expect_equal(result2$data$x, c(5, 4, 3, 2, 1))
 })
 
-test_that("serverDuckdb - NULLs sort last", {
+test_that("backendDuckdb - NULLs sort last", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     x = c(3, NA, 1, NA, 2),
     stringsAsFactors = FALSE
@@ -82,11 +82,11 @@ test_that("serverDuckdb - NULLs sort last", {
   expect_equal(result$data$x, c(1, 2, 3, NA, NA))
 })
 
-test_that("serverDuckdb - column filter (text substring)", {
+test_that("backendDuckdb - column filter (text substring)", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     name = c("Ford Mustang", "Toyota Corolla", "Ford Focus", "Honda Civic"),
     price = c(25000, 20000, 22000, 21000),
@@ -106,11 +106,11 @@ test_that("serverDuckdb - column filter (text substring)", {
   expect_equal(result$data$name, c("Ford Mustang", "Ford Focus"))
 })
 
-test_that("serverDuckdb - column filter (numeric starts-with)", {
+test_that("backendDuckdb - column filter (numeric starts-with)", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     value = c(1, 12, 123, 2, 21, 213),
     stringsAsFactors = FALSE
@@ -126,11 +126,11 @@ test_that("serverDuckdb - column filter (numeric starts-with)", {
   expect_equal(result$data$value, c(12, 123))
 })
 
-test_that("serverDuckdb - global search", {
+test_that("backendDuckdb - global search", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     name = c("Ford Mustang", "Toyota Corolla", "Ford Focus", "Honda Civic"),
     city = c("Detroit", "Tokyo", "Detroit", "Tokyo"),
@@ -158,11 +158,11 @@ test_that("serverDuckdb - global search", {
   expect_equal(result2$data$name, c("Toyota Corolla", "Honda Civic"))
 })
 
-test_that("serverDuckdb - filter + sort + pagination combined", {
+test_that("backendDuckdb - filter + sort + pagination combined", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     name = c("a1", "b1", "a2", "b2", "a3", "b3", "a4"),
     value = c(10, 20, 30, 40, 50, 60, 70),
@@ -187,21 +187,21 @@ test_that("serverDuckdb - filter + sort + pagination combined", {
   expect_equal(result$data$value, c(30, 10))
 })
 
-test_that("serverDuckdb - requires duckdb package", {
+test_that("backendDuckdb - requires duckdb package", {
   skip_if_not_installed("duckdb")
 
   # Just verify the backend can be created and initialized without error
-  backend <- serverDuckdb()
-  expect_s3_class(backend, "reactable_serverDuckdb")
+  backend <- backendDuckdbServer()
+  expect_s3_class(backend, "reactable_backendDuckdb")
 })
 
 # --- Grouping tests ---
 
-test_that("serverDuckdb - basic groupBy", {
+test_that("backendDuckdb - basic groupBy", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
     model = c("Integra", "Legend", "90", "100", "535i"),
@@ -236,11 +236,11 @@ test_that("serverDuckdb - basic groupBy", {
   expect_true("model" %in% colnames(acura_sub))
 })
 
-test_that("serverDuckdb - groupBy with pagination", {
+test_that("backendDuckdb - groupBy with pagination", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "B", "B", "C", "C", "D", "D"),
     val = 1:8,
@@ -261,11 +261,11 @@ test_that("serverDuckdb - groupBy with pagination", {
   expect_equal(nrow(result1$data), 2) # 2 groups per page
 })
 
-test_that("serverDuckdb - groupBy with sort", {
+test_that("backendDuckdb - groupBy with sort", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("B", "B", "A", "A", "C", "C"),
     val = c(10, 20, 100, 200, 1, 2),
@@ -287,11 +287,11 @@ test_that("serverDuckdb - groupBy with sort", {
   expect_equal(result$data$val, c(300, 30, 3))
 })
 
-test_that("serverDuckdb - groupBy with filter", {
+test_that("backendDuckdb - groupBy with filter", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "B", "B"),
     name = c("apple", "avocado", "banana", "blueberry"),
@@ -318,11 +318,11 @@ test_that("serverDuckdb - groupBy with filter", {
   expect_equal(b_row$val, 3) # only banana matches
 })
 
-test_that("serverDuckdb - groupBy with mean aggregate", {
+test_that("backendDuckdb - groupBy with mean aggregate", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "B", "B"),
     val = c(10, 20, 30, 40),
@@ -344,11 +344,11 @@ test_that("serverDuckdb - groupBy with mean aggregate", {
   expect_equal(b_row$val, 35) # mean(30, 40)
 })
 
-test_that("serverDuckdb - groupBy with count aggregate", {
+test_that("backendDuckdb - groupBy with count aggregate", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "A", "B"),
     val = c(1, 2, 3, 4),
@@ -370,11 +370,11 @@ test_that("serverDuckdb - groupBy with count aggregate", {
   expect_equal(b_row$val, 1)
 })
 
-test_that("serverDuckdb - groupBy with unique aggregate", {
+test_that("backendDuckdb - groupBy with unique aggregate", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "A", "B"),
     type = c("Small", "Small", "Large", "Medium"),
@@ -396,11 +396,11 @@ test_that("serverDuckdb - groupBy with unique aggregate", {
   expect_true(grepl("Small", a_row$type))
 })
 
-test_that("serverDuckdb - groupBy with frequency aggregate", {
+test_that("backendDuckdb - groupBy with frequency aggregate", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "A", "A"),
     type = c("Small", "Small", "Large"),
@@ -421,11 +421,11 @@ test_that("serverDuckdb - groupBy with frequency aggregate", {
   expect_true(grepl("Large \\(1\\)", a_row$type))
 })
 
-test_that("serverDuckdb - groupBy returns empty for no matches", {
+test_that("backendDuckdb - groupBy returns empty for no matches", {
   skip_if_not_installed("duckdb")
   skip_if_not_installed("DBI")
 
-  backend <- serverDuckdb()
+  backend <- backendDuckdbServer()
   df <- data.frame(
     grp = c("A", "B"),
     val = c(1, 2),

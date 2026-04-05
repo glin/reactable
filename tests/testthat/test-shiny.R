@@ -256,9 +256,9 @@ test_that("parseParams", {
 })
 
 test_that("getServerBackend", {
-  expect_equal(getServerBackend("v8"), serverV8())
-  expect_equal(getServerBackend(), serverV8())
+  expect_equal(getServerBackend("v8"), backendV8())
+  expect_equal(getServerBackend(), backendV8())
   customBackend <- list(data = function() {})
   expect_equal(getServerBackend(customBackend), customBackend)
-  expect_equal(getServerBackend("doesNotExist"), serverV8())
+  expect_equal(getServerBackend("doesNotExist"), backendV8())
 })
