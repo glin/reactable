@@ -109,7 +109,8 @@ reactableServerInit.reactable_backendDuckdb <- function(x, data = NULL, columns 
   # Zero-copy registration - DuckDB reads directly from R data frame memory
   duckdb::duckdb_register(con, "reactable_data", data)
   x$private$con <- con
-  x$private$columns <- columns
+  # Filter out virtual columns (e.g., .selection) that don't exist in the data
+  x$private$columns <- Filter(function(col) !startsWith(col$id, "."), columns)
 }
 
 #' @exportS3Method

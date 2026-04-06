@@ -195,6 +195,33 @@ test_that("backendDuckdb - requires duckdb package", {
   expect_s3_class(backend, "reactable_backendDuckdb")
 })
 
+test_that("backendDuckdb - virtual columns like .selection are excluded from queries", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    name = c("Ford Mustang", "Toyota Corolla"),
+    value = c(10, 20),
+    stringsAsFactors = FALSE
+  )
+  # Include a .selection virtual column like reactable does for selection = "multiple"
+  columns <- list(
+    list(id = ".selection", type = "character"),
+    list(id = "name", type = "character"),
+    list(id = "value", type = "numeric")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Global search should not reference .selection column
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                searchValue = "ford")
+  expect_equal(result$rowCount, 1)
+  expect_equal(result$data$name, "Ford Mustang")
+})
+
 # --- Grouping tests ---
 
 test_that("backendDuckdb - basic groupBy", {
