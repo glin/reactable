@@ -980,6 +980,168 @@ describe('DuckDB backend', () => {
     const page1Checkboxes = getSelectRowCheckboxes(container)
     expect(page1Checkboxes[1].checked).toBe(true)
   })
+
+  it('select-all selects rows across all pages', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Click select-all checkbox (first checkbox in the header)
+    const checkboxes = getSelectRowCheckboxes(container)
+    const selectAllCheckbox = checkboxes[0]
+    fireEvent.click(selectAllCheckbox)
+
+    // All rows on current page should be selected
+    expect(selectAllCheckbox.checked).toBe(true)
+    for (let i = 1; i <= 5; i++) {
+      expect(checkboxes[i].checked).toBe(true)
+    }
+
+    // Navigate to page 2
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    // Rows on page 2 should also be selected (cross-page select-all)
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    expect(page2Checkboxes[0].checked).toBe(true) // select-all still checked
+    for (let i = 1; i <= 5; i++) {
+      expect(page2Checkboxes[i].checked).toBe(true)
+    }
+  })
+
+  it('deselecting a row after select-all uses inverted model', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all
+    const checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(checkboxes[0])
+    expect(checkboxes[0].checked).toBe(true)
+
+    // Deselect the first row
+    fireEvent.click(checkboxes[1])
+    expect(checkboxes[1].checked).toBe(false)
+
+    // Select-all checkbox should now be indeterminate (not checked, not unchecked)
+    expect(checkboxes[0].checked).toBe(false)
+
+    // Other rows should still be selected
+    for (let i = 2; i <= 5; i++) {
+      expect(checkboxes[i].checked).toBe(true)
+    }
+
+    // Navigate to page 2 - rows should still be selected
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    for (let i = 1; i <= 5; i++) {
+      expect(page2Checkboxes[i].checked).toBe(true)
+    }
+  })
+
+  it('deselect-all after select-all clears all selections', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all, then deselect all
+    const checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(checkboxes[0]) // select all
+    expect(checkboxes[0].checked).toBe(true)
+    fireEvent.click(checkboxes[0]) // deselect all
+    expect(checkboxes[0].checked).toBe(false)
+
+    // All rows should be deselected
+    for (let i = 1; i <= 5; i++) {
+      expect(checkboxes[i].checked).toBe(false)
+    }
+
+    // Navigate to page 2 - rows should also be deselected
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    for (let i = 1; i <= 5; i++) {
+      expect(page2Checkboxes[i].checked).toBe(false)
+    }
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.

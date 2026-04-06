@@ -296,7 +296,14 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 
   getState <- function(outputId, name) {
     # NOTE: input IDs must always come first to work with Shiny modules
-    session$input[[sprintf("%s__reactable__%s", outputId, name)]]
+    value <- session$input[[sprintf("%s__reactable__%s", outputId, name)]]
+    # Resolve inverted selection (selectAll mode) to a concrete integer vector.
+    # The inverted payload includes rowCount so it's self-contained.
+    if (name == "selected" && is.list(value) && isTRUE(value$selectAll)) {
+      deselected <- as.integer(unlist(value$deselected))
+      value <- setdiff(seq_len(value$rowCount), deselected)
+    }
+    value
   }
 
   props <- c("page", "pageSize", "pages", "sorted", "selected")

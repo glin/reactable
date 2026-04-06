@@ -5,7 +5,11 @@
 //   This is also useful to clear all selection, since toggleAllRowsSelected()
 //   only affects visible rows, excluding any selected rows that may be filtered out.
 // - Handle sub rows correctly when custom getSubRows is used
-//  (https://github.com/TanStack/react-table/pull/2886)
+//   (https://github.com/TanStack/react-table/pull/2886)
+// - Add inverted selection model for backend modes (manualPagination). In backend mode,
+//   only one page of rows is loaded at a time, so toggleAllRowsSelected can't enumerate
+//   all row IDs. Instead, selectAllRows=true means "all rows selected" and deselectedRowIds
+//   tracks exceptions. This is resolved to concrete indices at API boundaries (Shiny, JS API).
 
 import React from 'react'
 import {
@@ -74,7 +78,8 @@ const defaultGetToggleAllRowsSelectedProps = (props, { instance }) => [
     checked: instance.isAllRowsSelected,
     title: 'Toggle All Rows Selected',
     indeterminate: Boolean(
-      !instance.isAllRowsSelected && Object.keys(instance.state.selectedRowIds).length
+      !instance.isAllRowsSelected &&
+        (instance.state.selectAllRows || Object.keys(instance.state.selectedRowIds).length)
     )
   }
 ]
@@ -101,6 +106,8 @@ function reducer(state, action, previousState, instance) {
   if (action.type === actions.init) {
     return {
       selectedRowIds: {},
+      selectAllRows: false,
+      deselectedRowIds: {},
       ...state
     }
   }
@@ -108,16 +115,44 @@ function reducer(state, action, previousState, instance) {
   if (action.type === actions.resetSelectedRows) {
     return {
       ...state,
-      selectedRowIds: instance.initialState.selectedRowIds || {}
+      selectedRowIds: instance.initialState.selectedRowIds || {},
+      selectAllRows: false,
+      deselectedRowIds: {}
     }
   }
 
   if (action.type === actions.toggleAllRowsSelected) {
     const { value: setSelected } = action
-    const { isAllRowsSelected, rowsById, nonGroupedRowsById = rowsById } = instance
+    const {
+      isAllRowsSelected,
+      rowsById,
+      nonGroupedRowsById = rowsById,
+      manualPagination
+    } = instance
 
     const selectAll = typeof setSelected !== 'undefined' ? setSelected : !isAllRowsSelected
 
+    // In backend mode, use inverted selection model: track "all selected" flag and exceptions,
+    // rather than enumerating all row IDs (which aren't all loaded).
+    if (manualPagination) {
+      if (selectAll) {
+        return {
+          ...state,
+          selectAllRows: true,
+          deselectedRowIds: {},
+          selectedRowIds: {}
+        }
+      } else {
+        return {
+          ...state,
+          selectAllRows: false,
+          deselectedRowIds: {},
+          selectedRowIds: {}
+        }
+      }
+    }
+
+    // Client-side: enumerate visible rows (existing behavior)
     // Only remove/add the rows that are visible on the screen
     //  Leave all the other rows that are selected alone.
     const selectedRowIds = Object.assign({}, state.selectedRowIds)
@@ -141,6 +176,42 @@ function reducer(state, action, previousState, instance) {
   if (action.type === actions.toggleRowSelected) {
     const { id, value: setSelected } = action
     const { rowsById, selectSubRows = true } = instance
+
+    // In inverted (select-all) mode, toggle in the deselected set
+    if (state.selectAllRows) {
+      const isDeselected = Boolean(state.deselectedRowIds[id])
+      const shouldBeSelected = typeof setSelected !== 'undefined' ? setSelected : isDeselected
+
+      if (shouldBeSelected === !isDeselected) {
+        return state
+      }
+
+      const newDeselectedRowIds = { ...state.deselectedRowIds }
+
+      const handleRowById = id => {
+        const row = rowsById[id]
+        if (!row || !row.isGrouped) {
+          if (shouldBeSelected) {
+            delete newDeselectedRowIds[id]
+          } else {
+            newDeselectedRowIds[id] = true
+          }
+        }
+
+        if (selectSubRows && row && row.subRows) {
+          row.subRows.forEach(row => handleRowById(row.id))
+        }
+      }
+
+      handleRowById(id)
+
+      return {
+        ...state,
+        deselectedRowIds: newDeselectedRowIds
+      }
+    }
+
+    // Normal mode: existing behavior
     const isSelected = state.selectedRowIds[id]
     const shouldExist = typeof setSelected !== 'undefined' ? setSelected : !isSelected
 
@@ -233,7 +304,9 @@ function reducer(state, action, previousState, instance) {
 
     return {
       ...state,
-      selectedRowIds: newSelectedRowIds
+      selectedRowIds: newSelectedRowIds,
+      selectAllRows: false,
+      deselectedRowIds: {}
     }
   }
   return state
@@ -248,7 +321,7 @@ function useInstance(instance) {
     rowsById,
     nonGroupedRowsById = rowsById,
     autoResetSelectedRows = true,
-    state: { selectedRowIds },
+    state: { selectedRowIds, selectAllRows, deselectedRowIds },
     selectSubRows = true,
     dispatch,
     page
@@ -266,10 +339,16 @@ function useInstance(instance) {
     // Ensure row.isSelected is set for sub rows when paginateExpandedRows = false
     // https://github.com/TanStack/react-table/issues/2908
     const handleRow = row => {
-      const isSelected = selectSubRows
-        ? getRowIsSelected(row, selectedRowIds)
-        : !!selectedRowIds[row.id]
-      row.isSelected = !!isSelected
+      let isSelected
+      if (selectAllRows) {
+        // Inverted mode: all non-grouped rows are selected unless in deselectedRowIds
+        isSelected = row.isGrouped ? false : !deselectedRowIds[row.id]
+      } else {
+        isSelected = selectSubRows
+          ? getRowIsSelected(row, selectedRowIds)
+          : Boolean(selectedRowIds[row.id])
+      }
+      row.isSelected = Boolean(isSelected)
       row.isSomeSelected = isSelected === null
 
       if (isSelected) {
@@ -284,22 +363,33 @@ function useInstance(instance) {
     rows.forEach(row => handleRow(row))
 
     return selectedFlatRows
-  }, [rows, selectSubRows, selectedRowIds])
+  }, [rows, selectSubRows, selectedRowIds, selectAllRows, deselectedRowIds])
 
-  let isAllRowsSelected = Boolean(
-    Object.keys(nonGroupedRowsById).length && Object.keys(selectedRowIds).length
-  )
+  let isAllRowsSelected
 
-  let isAllPageRowsSelected = isAllRowsSelected
+  if (selectAllRows) {
+    // Inverted mode: all selected unless there are deselected rows
+    isAllRowsSelected = Object.keys(deselectedRowIds).length === 0
+  } else {
+    isAllRowsSelected = Boolean(
+      Object.keys(nonGroupedRowsById).length && Object.keys(selectedRowIds).length
+    )
 
-  if (isAllRowsSelected) {
-    if (Object.keys(nonGroupedRowsById).some(id => !selectedRowIds[id])) {
-      isAllRowsSelected = false
+    if (isAllRowsSelected) {
+      if (Object.keys(nonGroupedRowsById).some(id => !selectedRowIds[id])) {
+        isAllRowsSelected = false
+      }
     }
   }
 
+  let isAllPageRowsSelected = isAllRowsSelected
+
   if (!isAllRowsSelected) {
-    if (page && page.length && page.some(({ id }) => !selectedRowIds[id])) {
+    if (selectAllRows) {
+      // Inverted mode: page is fully selected if no page rows are deselected
+      isAllPageRowsSelected =
+        page && page.length > 0 && !page.some(({ id }) => deselectedRowIds[id])
+    } else if (page && page.length && page.some(({ id }) => !selectedRowIds[id])) {
       isAllPageRowsSelected = false
     }
   }

@@ -183,6 +183,32 @@ test_that("getReactableState", {
   ))
 })
 
+test_that("getReactableState resolves inverted selection", {
+  session <- mockSession()
+
+  # Inverted selection: selectAll = TRUE with rowCount and deselected
+  # With 10 total rows minus deselected c(3, 7), should be c(1,2,4,5,6,8,9,10)
+  session$input[["mytbl__reactable__selected"]] <- list(selectAll = TRUE, deselected = c(3, 7), rowCount = 10)
+  expect_equal(
+    getReactableState("mytbl", "selected", session = session),
+    c(1L, 2L, 4L, 5L, 6L, 8L, 9L, 10L)
+  )
+
+  # Inverted selection with no deselected rows (all selected)
+  session$input[["mytbl__reactable__selected"]] <- list(selectAll = TRUE, deselected = list(), rowCount = 10)
+  expect_equal(
+    getReactableState("mytbl", "selected", session = session),
+    1:10
+  )
+
+  # Normal selection (non-inverted) still works
+  session$input[["mytbl__reactable__selected"]] <- c(1, 5)
+  expect_equal(
+    getReactableState("mytbl", "selected", session = session),
+    c(1, 5)
+  )
+})
+
 test_that("resolvedData", {
   expect_error(resolvedData(123), "`data` must be a data frame")
   expect_error(resolvedData(data.frame(x = 1)), "`rowCount` must be provided and numeric")

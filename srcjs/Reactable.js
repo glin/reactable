@@ -1384,6 +1384,17 @@ function Table({
 
   const rowsById = instance.preFilteredRowsById || instance.rowsById
   const selectedRowIndexes = React.useMemo(() => {
+    if (state.selectAllRows) {
+      // Inverted mode: all non-grouped rows are selected unless in deselectedRowIds.
+      // For backend mode, rowsById only has current page's rows, so this returns
+      // only the visible selected indices. Full resolution for Shiny happens separately.
+      return Object.values(rowsById).reduce((indexes, row) => {
+        if (!row.isGrouped && !state.deselectedRowIds[row.id]) {
+          indexes.push(row.index)
+        }
+        return indexes
+      }, [])
+    }
     return Object.keys(state.selectedRowIds).reduce((indexes, id) => {
       const row = rowsById[id]
       if (row) {
@@ -1391,7 +1402,7 @@ function Table({
       }
       return indexes
     }, [])
-  }, [state.selectedRowIds, rowsById])
+  }, [state.selectedRowIds, state.selectAllRows, state.deselectedRowIds, rowsById])
 
   // Update Shiny on selected row changes (deprecated in v0.2.0)
   React.useEffect(() => {
@@ -2260,20 +2271,31 @@ function Table({
       sorted[sortInfo.id] = sortInfo.desc ? 'desc' : 'asc'
     }
 
+    // For inverted selection (select-all active), send a self-contained inverted
+    // representation so R can resolve it without needing separate state storage.
+    let selected
+    if (state.selectAllRows) {
+      // Send deselected row indices (0-based __state.id values converted to 1-based R indices)
+      const deselectedIndexes = Object.keys(state.deselectedRowIds).map(id => Number(id) + 1)
+      selected = { selectAll: true, deselected: deselectedIndexes, rowCount: serverRowCount }
+    } else {
+      selected = selectedIndexes
+    }
+
     // NOTE: any object arrays will be simplified into vectors by jsonlite by default. Avoid sending
     // arrays without transforming them first, or adding a custom input type and input handler.
-    const state = {
+    const shinyState = {
       page: page,
       pageSize: stateInfo.pageSize,
       pages: stateInfo.pages,
       sorted: sorted,
-      selected: selectedIndexes
+      selected: selected
     }
     // Shiny.onInputChange has built-in debouncing, so it's not strictly necessary to
     // debounce rapid state changes here.
-    Object.keys(state).forEach(prop => {
+    Object.keys(shinyState).forEach(prop => {
       // NOTE: output IDs must always come first to work with Shiny modules
-      window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, state[prop])
+      window.Shiny.onInputChange(`${outputId}__reactable__${prop}`, shinyState[prop])
     })
   }, [
     nested,
@@ -2281,7 +2303,10 @@ function Table({
     stateInfo.pageSize,
     stateInfo.pages,
     stateInfo.sorted,
-    stateInfo.selected
+    stateInfo.selected,
+    state.selectAllRows,
+    state.deselectedRowIds,
+    serverRowCount
   ])
 
   // Getter for the latest page count
