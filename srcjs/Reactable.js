@@ -1382,30 +1382,55 @@ function Table({
     setRowsSelected((defaultSelected || []).map(index => String(index)))
   }, [instance.setRowsSelected, defaultSelected])
 
-  // Reset inverted selection (selectAllRows) when filters or search change.
-  // In backend mode, selectAllRows is a blanket flag meaning "all rows selected."
-  // When filters change, the set of matching rows changes, so the blanket select-all
-  // would incorrectly apply to the new result set. Clear it to match client-side
-  // semantics where select-all only applies to the currently filtered rows.
-  useMountedLayoutEffect(() => {
-    if (state.selectAllRows) {
-      instance.setRowsSelected([])
+  // Override toggleAllRowsSelected for backend modes (DuckDB-WASM and server).
+  // In backend mode, only one page of rows is loaded at a time, so the default
+  // toggleAllRowsSelected can only enumerate page rows. Instead, query the backend
+  // for ALL row IDs matching current filters/search and set them as explicit
+  // selectedRowIds. This matches client-side behavior where select-all selects
+  // exactly the currently filtered rows, and those selections persist through
+  // filter/sort changes.
+  const getIsAllRowsSelected = useGetLatest(instance.isAllRowsSelected)
+  if (useDuckDB || useServerData) {
+    instance.toggleAllRowsSelected = async value => {
+      const shouldSelect = typeof value !== 'undefined' ? value : !getIsAllRowsSelected()
+      if (!shouldSelect) {
+        instance.setRowsSelected([])
+        return
+      }
+      // Query the backend for all matching row IDs
+      if (useDuckDB && duckdbRef.current) {
+        const rowIds = await duckdbRef.current.queryRowIds({
+          filters: state.filters,
+          searchValue: state.globalFilter,
+          columns: dataColumns
+        })
+        instance.setRowsSelected(rowIds)
+      } else if (useServerData && dataURL) {
+        const url = new window.URL(dataURL, window.location)
+        const params = {
+          selectAll: true,
+          filters: state.filters,
+          searchValue: state.globalFilter
+        }
+        try {
+          const res = await window.fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(params)
+          })
+          const body = await res.json()
+          if (body.rowIds) {
+            instance.setRowsSelected(body.rowIds)
+          }
+        } catch (err) {
+          console.error('Failed to fetch select-all row IDs:', err)
+        }
+      }
     }
-  }, [state.filters, state.globalFilter])
+  }
 
   const rowsById = instance.preFilteredRowsById || instance.rowsById
   const selectedRowIndexes = React.useMemo(() => {
-    if (state.selectAllRows) {
-      // Inverted mode: all non-grouped rows are selected unless in deselectedRowIds.
-      // For backend mode, rowsById only has current page's rows, so this returns
-      // only the visible selected indices. Full resolution for Shiny happens separately.
-      return Object.values(rowsById).reduce((indexes, row) => {
-        if (!row.isGrouped && !state.deselectedRowIds[row.id]) {
-          indexes.push(row.index)
-        }
-        return indexes
-      }, [])
-    }
     return Object.keys(state.selectedRowIds).reduce((indexes, id) => {
       const row = rowsById[id]
       if (row) {
@@ -1413,7 +1438,7 @@ function Table({
       }
       return indexes
     }, [])
-  }, [state.selectedRowIds, state.selectAllRows, state.deselectedRowIds, rowsById])
+  }, [state.selectedRowIds, rowsById])
 
   // Update Shiny on selected row changes (deprecated in v0.2.0)
   React.useEffect(() => {
@@ -2282,13 +2307,13 @@ function Table({
       sorted[sortInfo.id] = sortInfo.desc ? 'desc' : 'asc'
     }
 
-    // For inverted selection (select-all active), send a self-contained inverted
-    // representation so R can resolve it without needing separate state storage.
+    // For backend mode, selectedRowIds keys are stable row IDs (from __state.id),
+    // which are 0-based row indices. Convert directly to 1-based R indices.
+    // This works for both page-level and cross-page selection since the IDs
+    // are global identifiers, not page-relative.
     let selected
-    if (state.selectAllRows) {
-      // Send deselected row indices (0-based __state.id values converted to 1-based R indices)
-      const deselectedIndexes = Object.keys(state.deselectedRowIds).map(id => Number(id) + 1)
-      selected = { selectAll: true, deselected: deselectedIndexes, rowCount: serverRowCount }
+    if (useDuckDB || useServerData) {
+      selected = Object.keys(state.selectedRowIds).map(id => Number(id) + 1)
     } else {
       selected = selectedIndexes
     }
@@ -2315,9 +2340,9 @@ function Table({
     stateInfo.pages,
     stateInfo.sorted,
     stateInfo.selected,
-    state.selectAllRows,
-    state.deselectedRowIds,
-    serverRowCount
+    state.selectedRowIds,
+    useDuckDB,
+    useServerData
   ])
 
   // Getter for the latest page count

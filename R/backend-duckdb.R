@@ -127,6 +127,7 @@ reactableServerData.reactable_backendDuckdb <- function(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
+  selectAll = NULL,
   # Unused/unimplemented props
   selectedRowIds = NULL,
   expanded = NULL,
@@ -134,6 +135,19 @@ reactableServerData.reactable_backendDuckdb <- function(
 ) {
   con <- x$private$con
   cols <- x$private$columns
+
+  # Handle select-all request: return just the matching row IDs
+  if (isTRUE(selectAll)) {
+    query <- buildDuckdbRowIdQuery(
+      tableName = "reactable_data",
+      columns = cols,
+      filters = filters,
+      searchValue = searchValue
+    )
+    result <- DBI::dbGetQuery(con, query$sql, params = query$params)
+    rowIds <- as.character(result[["_reactable_rowid"]])
+    return(structure(list(rowIds = rowIds), class = "reactable_selectAllResult"))
+  }
 
   if (length(groupBy) > 0) {
     return(duckdbGroupedQuery(con, cols, filters, searchValue, sortBy,

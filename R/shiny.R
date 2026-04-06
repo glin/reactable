@@ -297,12 +297,6 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
   getState <- function(outputId, name) {
     # NOTE: input IDs must always come first to work with Shiny modules
     value <- session$input[[sprintf("%s__reactable__%s", outputId, name)]]
-    # Resolve inverted selection (selectAll mode) to a concrete integer vector.
-    # The inverted payload includes rowCount so it's self-contained.
-    if (name == "selected" && is.list(value) && isTRUE(value$selectAll)) {
-      deselected <- as.integer(unlist(value$deselected))
-      value <- setdiff(seq_len(value$rowCount), deselected)
-    }
     value
   }
 
@@ -475,19 +469,28 @@ reactableFilterFunc <- function(data, req) {
   params <- parseParams(body)
 
   start <- Sys.time()
-  resolvedData <- do.call(reactableServerData, c(list(data$backend), mergeLists(data, params)))
+  result <- do.call(reactableServerData, c(list(data$backend), mergeLists(data, params)))
   end <- Sys.time()
 
-  if (!is.resolvedData(resolvedData)) {
+  # Select-all requests return row IDs, not resolved data
+  if (inherits(result, "reactable_selectAllResult")) {
+    return(shiny::httpResponse(
+      status = 200L,
+      content_type = "application/json",
+      content = toJSON(result)
+    ))
+  }
+
+  if (!is.resolvedData(result)) {
     stop("reactable server backends must return a `resolvedData()` object from `reactableServerData()`")
   }
 
-  debugLog(sprintf("(reactableFilterFunc) time to resolve data: %s\n%s", format(end - start, units = "secs"), toJSON(resolvedData)))
+  debugLog(sprintf("(reactableFilterFunc) time to resolve data: %s\n%s", format(end - start, units = "secs"), toJSON(result)))
 
   shiny::httpResponse(
     status = 200L,
     content_type = "application/json",
-    content = toJSON(resolvedData)
+    content = toJSON(result)
   )
 }
 

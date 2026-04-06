@@ -30,6 +30,14 @@ buildDuckdbQuery <- function(tableName, columns, filters, searchValue, sortBy,
   list(sql = sql, countSql = countSql, params = result$params)
 }
 
+# Build a query that returns only the row IDs matching current filters/search.
+# Used by select-all to enumerate the exact set of filtered rows.
+buildDuckdbRowIdQuery <- function(tableName, columns, filters, searchValue) {
+  result <- buildDuckdbWhere(columns, filters, searchValue)
+  sql <- paste0('SELECT "_reactable_rowid" FROM ', tableName, result$where)
+  list(sql = sql, params = result$params)
+}
+
 buildDuckdbWhere <- function(columns, filters, searchValue) {
   whereClauses <- character(0)
   params <- list()

@@ -58,6 +58,10 @@ function createMockBackend(totalRows = 20) {
       const rows = allRows.slice(start, start + pageSize)
       return Promise.resolve({ rows, rowCount: totalRows })
     }),
+    queryRowIds: jest.fn().mockImplementation(() => {
+      // By default, return all row IDs (no filtering in mock)
+      return Promise.resolve(allRows.map(row => row.__state.id))
+    }),
     destroy: jest.fn().mockResolvedValue(undefined)
   }
 
@@ -1006,16 +1010,23 @@ describe('DuckDB backend', () => {
       expect(mockBackend.init).toHaveBeenCalled()
     })
 
-    // Click select-all checkbox (first checkbox in the header)
+    // Click select-all checkbox (async: queries DuckDB for all matching row IDs)
     const checkboxes = getSelectRowCheckboxes(container)
-    const selectAllCheckbox = checkboxes[0]
-    fireEvent.click(selectAllCheckbox)
+    await act(async () => {
+      fireEvent.click(checkboxes[0])
+    })
+
+    // queryRowIds should have been called to fetch all matching row IDs
+    expect(mockBackend.queryRowIds).toHaveBeenCalled()
 
     // All rows on current page should be selected
-    expect(selectAllCheckbox.checked).toBe(true)
-    for (let i = 1; i <= 5; i++) {
-      expect(checkboxes[i].checked).toBe(true)
-    }
+    await waitFor(() => {
+      const updatedCheckboxes = getSelectRowCheckboxes(container)
+      expect(updatedCheckboxes[0].checked).toBe(true)
+      for (let i = 1; i <= 5; i++) {
+        expect(updatedCheckboxes[i].checked).toBe(true)
+      }
+    })
 
     // Navigate to page 2
     await act(async () => {
@@ -1026,7 +1037,7 @@ describe('DuckDB backend', () => {
       expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
     })
 
-    // Rows on page 2 should also be selected (cross-page select-all)
+    // Rows on page 2 should also be selected (cross-page select-all via explicit IDs)
     const page2Checkboxes = getSelectRowCheckboxes(container)
     expect(page2Checkboxes[0].checked).toBe(true) // select-all still checked
     for (let i = 1; i <= 5; i++) {
@@ -1034,7 +1045,7 @@ describe('DuckDB backend', () => {
     }
   })
 
-  it('deselecting a row after select-all uses inverted model', async () => {
+  it('deselecting a row after select-all keeps other rows selected', async () => {
     const mockBackend = createMockBackend(10)
 
     const firstPageData = {
@@ -1060,23 +1071,27 @@ describe('DuckDB backend', () => {
     })
 
     // Select all
-    const checkboxes = getSelectRowCheckboxes(container)
-    fireEvent.click(checkboxes[0])
-    expect(checkboxes[0].checked).toBe(true)
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(true)
+    })
 
     // Deselect the first row
-    fireEvent.click(checkboxes[1])
-    expect(checkboxes[1].checked).toBe(false)
+    fireEvent.click(getSelectRowCheckboxes(container)[1])
+    expect(getSelectRowCheckboxes(container)[1].checked).toBe(false)
 
     // Select-all checkbox should now be indeterminate (not checked, not unchecked)
-    expect(checkboxes[0].checked).toBe(false)
+    expect(getSelectRowCheckboxes(container)[0].checked).toBe(false)
 
     // Other rows should still be selected
     for (let i = 2; i <= 5; i++) {
-      expect(checkboxes[i].checked).toBe(true)
+      expect(getSelectRowCheckboxes(container)[i].checked).toBe(true)
     }
 
-    // Navigate to page 2 - rows should still be selected
+    // Navigate to page 2 - rows should still be selected (explicit IDs persist)
     await act(async () => {
       fireEvent.click(getNextButton(container))
     })
@@ -1116,16 +1131,27 @@ describe('DuckDB backend', () => {
       expect(mockBackend.init).toHaveBeenCalled()
     })
 
-    // Select all, then deselect all
-    const checkboxes = getSelectRowCheckboxes(container)
-    fireEvent.click(checkboxes[0]) // select all
-    expect(checkboxes[0].checked).toBe(true)
-    fireEvent.click(checkboxes[0]) // deselect all
-    expect(checkboxes[0].checked).toBe(false)
+    // Select all
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(true)
+    })
+
+    // Deselect all (click select-all again when all are selected)
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(false)
+    })
 
     // All rows should be deselected
     for (let i = 1; i <= 5; i++) {
-      expect(checkboxes[i].checked).toBe(false)
+      expect(getSelectRowCheckboxes(container)[i].checked).toBe(false)
     }
 
     // Navigate to page 2 - rows should also be deselected
@@ -1143,7 +1169,7 @@ describe('DuckDB backend', () => {
     }
   })
 
-  it('select-all resets when search filter changes', async () => {
+  it('selections persist through search filter changes', async () => {
     const mockBackend = createMockBackend(10)
 
     const firstPageData = {
@@ -1169,12 +1195,16 @@ describe('DuckDB backend', () => {
       expect(mockBackend.init).toHaveBeenCalled()
     })
 
-    // Select all
-    const checkboxes = getSelectRowCheckboxes(container)
-    fireEvent.click(checkboxes[0])
-    expect(checkboxes[0].checked).toBe(true)
+    // Select all (queries backend for all 10 row IDs: "0"-"9")
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
 
-    // Change search filter - should reset select-all
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(true)
+    })
+
+    // Change search filter - explicit selections should persist
     const searchInput = getSearchInput(container)
     fireEvent.change(searchInput, { target: { value: 'row1' } })
 
@@ -1184,16 +1214,23 @@ describe('DuckDB backend', () => {
       )
     })
 
-    // After filter change, select-all should be cleared
+    // After filter change, the rows that were selected (by explicit ID) should
+    // still be selected on the current page if their IDs are still in state
     const updatedCheckboxes = getSelectRowCheckboxes(container)
-    expect(updatedCheckboxes[0].checked).toBe(false)
+    // All rows on the filtered page should still be checked because their IDs
+    // (from __state.id) are still in selectedRowIds
     for (let i = 1; i < updatedCheckboxes.length; i++) {
-      expect(updatedCheckboxes[i].checked).toBe(false)
+      expect(updatedCheckboxes[i].checked).toBe(true)
     }
   })
 
-  it('select-all resets when column filter changes', async () => {
+  it('select-all queries backend for filtered row IDs', async () => {
     const mockBackend = createMockBackend(10)
+
+    // Mock queryRowIds to return only even-indexed rows (simulating filtered results)
+    mockBackend.queryRowIds.mockImplementation(() => {
+      return Promise.resolve(['0', '2', '4', '6', '8'])
+    })
 
     const firstPageData = {
       a: [1, 2, 3, 4, 5],
@@ -1222,29 +1259,24 @@ describe('DuckDB backend', () => {
       expect(mockBackend.init).toHaveBeenCalled()
     })
 
-    // Select all
-    const checkboxes = getSelectRowCheckboxes(container)
-    fireEvent.click(checkboxes[0])
-    expect(checkboxes[0].checked).toBe(true)
-
-    // Change a column filter - should reset select-all
-    const filters = getFilters(container)
-    fireEvent.change(filters[0], { target: { value: '1' } })
-
-    await waitFor(() => {
-      expect(mockBackend.query).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filters: [{ id: 'a', value: '1' }]
-        })
-      )
+    // Select all with filter active - should call queryRowIds
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
     })
 
-    // After filter change, select-all should be cleared
-    const updatedCheckboxes = getSelectRowCheckboxes(container)
-    expect(updatedCheckboxes[0].checked).toBe(false)
-    for (let i = 1; i < updatedCheckboxes.length; i++) {
-      expect(updatedCheckboxes[i].checked).toBe(false)
-    }
+    expect(mockBackend.queryRowIds).toHaveBeenCalled()
+
+    // Only even-indexed rows should be selected on the current page.
+    // Page has rows with __state.id "0","1","2","3","4".
+    // Only "0","2","4" are in the selected set.
+    await waitFor(() => {
+      const checkboxes = getSelectRowCheckboxes(container)
+      expect(checkboxes[1].checked).toBe(true) // row 0
+      expect(checkboxes[2].checked).toBe(false) // row 1
+      expect(checkboxes[3].checked).toBe(true) // row 2
+      expect(checkboxes[4].checked).toBe(false) // row 3
+      expect(checkboxes[5].checked).toBe(true) // row 4
+    })
   })
 })
 

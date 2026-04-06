@@ -183,29 +183,21 @@ test_that("getReactableState", {
   ))
 })
 
-test_that("getReactableState resolves inverted selection", {
+test_that("getReactableState returns selected indices from backend mode", {
   session <- mockSession()
 
-  # Inverted selection: selectAll = TRUE with rowCount and deselected
-  # With 10 total rows minus deselected c(3, 7), should be c(1,2,4,5,6,8,9,10)
-  session$input[["mytbl__reactable__selected"]] <- list(selectAll = TRUE, deselected = c(3, 7), rowCount = 10)
+  # Backend mode sends explicit 1-based indices directly (no inverted model)
+  session$input[["mytbl__reactable__selected"]] <- c(1, 3, 5, 233, 234)
   expect_equal(
     getReactableState("mytbl", "selected", session = session),
-    c(1L, 2L, 4L, 5L, 6L, 8L, 9L, 10L)
+    c(1, 3, 5, 233, 234)
   )
 
-  # Inverted selection with no deselected rows (all selected)
-  session$input[["mytbl__reactable__selected"]] <- list(selectAll = TRUE, deselected = list(), rowCount = 10)
+  # Empty selection
+  session$input[["mytbl__reactable__selected"]] <- integer(0)
   expect_equal(
     getReactableState("mytbl", "selected", session = session),
-    1:10
-  )
-
-  # Normal selection (non-inverted) still works
-  session$input[["mytbl__reactable__selected"]] <- c(1, 5)
-  expect_equal(
-    getReactableState("mytbl", "selected", session = session),
-    c(1, 5)
+    integer(0)
   )
 })
 

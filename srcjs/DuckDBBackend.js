@@ -202,6 +202,16 @@ export class DuckDBBackend {
     return { rows, rowCount }
   }
 
+  // Query for all row IDs matching the current filters/search. Used by select-all
+  // to enumerate the exact set of filtered rows rather than using a blanket flag.
+  async queryRowIds({ filters, searchValue, columns }) {
+    const where = this.buildWhereParts(filters, searchValue, columns)
+    const whereStr = where.clauses.length > 0 ? ' WHERE ' + where.clauses.join(' AND ') : ''
+    const sql = 'SELECT _reactable_rowid FROM reactable_data' + whereStr
+    const result = await this.runPrepared(sql, where.params)
+    return result.toArray().map(row => String(row._reactable_rowid))
+  }
+
   // Query with GROUP BY for grouped tables. Returns rows with nested .subRows and
   // __state metadata so the client can render the grouped table correctly.
   async queryGrouped({ pageIndex, pageSize, sortBy, filters, searchValue, columns, groupBy }) {
