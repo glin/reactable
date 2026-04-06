@@ -693,3 +693,33 @@ test_that("dfPaginate", {
     resolvedData(df[0, ], rowCount = 0)
   )
 })
+
+test_that("backendDf - selectAll returns matching row IDs", {
+  backend <- backendDf()
+  df <- data.frame(
+    name = c("Ford Mustang", "Toyota Corolla", "Honda Civic", "Ford Focus"),
+    city = c("Detroit", "Tokyo", "Tokyo", "Detroit"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "name", type = "character"),
+    list(id = "city", type = "character")
+  )
+
+  # selectAll with no filters returns all row IDs
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                selectAll = TRUE)
+  expect_s3_class(result, "reactable_selectAllResult")
+  expect_equal(sort(result$rowIds), c("0", "1", "2", "3"))
+
+  # selectAll with search filter returns only matching row IDs
+  result2 <- reactableServerData(backend, data = df, columns = columns,
+                                 selectAll = TRUE, searchValue = "ford")
+  expect_equal(sort(result2$rowIds), c("0", "3"))
+
+  # selectAll with column filter
+  result3 <- reactableServerData(backend, data = df, columns = columns,
+                                 selectAll = TRUE,
+                                 filters = list(list(id = "city", value = "tokyo")))
+  expect_equal(sort(result3$rowIds), c("1", "2"))
+})

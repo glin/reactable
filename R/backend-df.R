@@ -29,6 +29,7 @@ reactableServerData.reactable_backendDf <- function(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
+  selectAll = NULL,
   # Unused/unimplemented props
   selectedRowIds = NULL,
   expanded = NULL,
@@ -46,6 +47,12 @@ reactableServerData.reactable_backendDf <- function(
   # Global searching - simple text match for now
   if (!is.null(searchValue)) {
     data <- dfGlobalSearch(data, searchValue)
+  }
+
+  # Handle select-all request: return just the matching row IDs
+  if (isTRUE(selectAll)) {
+    rowIds <- as.character(data[["_reactable_rowid"]])
+    return(structure(list(rowIds = rowIds), class = "reactable_selectAllResult"))
   }
 
   # Sorting
