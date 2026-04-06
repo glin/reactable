@@ -835,14 +835,11 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
    is incomplete. Fix: send `selectedRowIds` keys directly (they're already stable row indices
    from `__state.id`) instead of resolving through `rowsById`.
 
-2. **Select-all + filter interaction:** In backend mode, `selectAllRows: true` is a blanket
-   flag that doesn't account for active filters. If the user filters to 20 rows, clicks
-   select-all, then clears the filter, all 100 rows appear selected (and Shiny reports
-   `1:100` via `rowCount`). Client-side mode correctly only selects the 20 filtered rows.
-   Fix: reset `selectAllRows` when `state.filters` or `state.globalFilter` changes, via
-   an effect in `Reactable.js`. This matches the client-side semantic where select-all
-   applies to the current filtered result set. Since the inverted model doesn't store
-   explicit IDs, we can't preserve the old filter set's selections -- just clear them.
+2. **~~Select-all + filter interaction:~~** Fixed. Added a `useMountedLayoutEffect` in
+   `Reactable.js` that watches `state.filters` and `state.globalFilter`. When either changes
+   while `selectAllRows` is true, it calls `setRowsSelected([])` to clear the inverted
+   selection state. This matches client-side semantics where select-all only applies to
+   the currently filtered rows.
 
 #### 9E: Server-side expansion
 

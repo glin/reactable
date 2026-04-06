@@ -1382,6 +1382,17 @@ function Table({
     setRowsSelected((defaultSelected || []).map(index => String(index)))
   }, [instance.setRowsSelected, defaultSelected])
 
+  // Reset inverted selection (selectAllRows) when filters or search change.
+  // In backend mode, selectAllRows is a blanket flag meaning "all rows selected."
+  // When filters change, the set of matching rows changes, so the blanket select-all
+  // would incorrectly apply to the new result set. Clear it to match client-side
+  // semantics where select-all only applies to the currently filtered rows.
+  useMountedLayoutEffect(() => {
+    if (state.selectAllRows) {
+      instance.setRowsSelected([])
+    }
+  }, [state.filters, state.globalFilter])
+
   const rowsById = instance.preFilteredRowsById || instance.rowsById
   const selectedRowIndexes = React.useMemo(() => {
     if (state.selectAllRows) {

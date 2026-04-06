@@ -1142,6 +1142,110 @@ describe('DuckDB backend', () => {
       expect(page2Checkboxes[i].checked).toBe(false)
     }
   })
+
+  it('select-all resets when search filter changes', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+        searchable
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all
+    const checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(checkboxes[0])
+    expect(checkboxes[0].checked).toBe(true)
+
+    // Change search filter - should reset select-all
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'row1' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ searchValue: 'row1' })
+      )
+    })
+
+    // After filter change, select-all should be cleared
+    const updatedCheckboxes = getSelectRowCheckboxes(container)
+    expect(updatedCheckboxes[0].checked).toBe(false)
+    for (let i = 1; i < updatedCheckboxes.length; i++) {
+      expect(updatedCheckboxes[i].checked).toBe(false)
+    }
+  })
+
+  it('select-all resets when column filter changes', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const filterableColumns = [
+      { name: 'colA', id: 'a', type: 'numeric', filterable: true },
+      { name: 'colB', id: 'b', filterable: true }
+    ]
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={filterableColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all
+    const checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(checkboxes[0])
+    expect(checkboxes[0].checked).toBe(true)
+
+    // Change a column filter - should reset select-all
+    const filters = getFilters(container)
+    fireEvent.change(filters[0], { target: { value: '1' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: [{ id: 'a', value: '1' }]
+        })
+      )
+    })
+
+    // After filter change, select-all should be cleared
+    const updatedCheckboxes = getSelectRowCheckboxes(container)
+    expect(updatedCheckboxes[0].checked).toBe(false)
+    for (let i = 1; i < updatedCheckboxes.length; i++) {
+      expect(updatedCheckboxes[i].checked).toBe(false)
+    }
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.
