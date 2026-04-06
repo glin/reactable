@@ -1278,6 +1278,137 @@ describe('DuckDB backend', () => {
       expect(checkboxes[5].checked).toBe(true) // row 4
     })
   })
+
+  it('selections persist through sort changes', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const sortableColumns = [
+      { name: 'colA', id: 'a', type: 'numeric', sortable: true },
+      { name: 'colB', id: 'b', sortable: true }
+    ]
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={sortableColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all (stores explicit IDs "0"-"9")
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(true)
+    })
+
+    // Sort by column A - selections should persist
+    const headers = getSortableHeaders(container)
+    await act(async () => {
+      fireEvent.click(headers[0])
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sortBy: [{ id: 'a', desc: undefined }]
+        })
+      )
+    })
+
+    // All rows should still be selected after sort
+    const sortedCheckboxes = getSelectRowCheckboxes(container)
+    expect(sortedCheckboxes[0].checked).toBe(true) // select-all
+    for (let i = 1; i <= 5; i++) {
+      expect(sortedCheckboxes[i].checked).toBe(true)
+    }
+  })
+
+  it('filtered select-all persists after clearing filter, only selected rows remain checked', async () => {
+    const mockBackend = createMockBackend(10)
+
+    // Mock queryRowIds to return only 3 specific row IDs (simulating filtered results)
+    mockBackend.queryRowIds.mockImplementation(() => {
+      return Promise.resolve(['1', '4', '7'])
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+        searchable
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Filter first, then select-all on filtered results
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'xyz' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ searchValue: 'xyz' })
+      )
+    })
+
+    // Select all on filtered view - gets IDs [1, 4, 7] from queryRowIds
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.queryRowIds).toHaveBeenCalled()
+    })
+
+    // Clear the search filter
+    fireEvent.change(searchInput, { target: { value: '' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ searchValue: undefined })
+      )
+    })
+
+    // After clearing filter, only the 3 originally-selected rows should be checked.
+    // Page has rows with __state.id "0","1","2","3","4" - only "1" and "4" are in selected set.
+    const checkboxes = getSelectRowCheckboxes(container)
+    expect(checkboxes[0].checked).toBe(false) // select-all should NOT be checked
+    expect(checkboxes[1].checked).toBe(false) // row 0 - not selected
+    expect(checkboxes[2].checked).toBe(true) // row 1 - selected
+    expect(checkboxes[3].checked).toBe(false) // row 2 - not selected
+    expect(checkboxes[4].checked).toBe(false) // row 3 - not selected
+    expect(checkboxes[5].checked).toBe(true) // row 4 - selected
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.
