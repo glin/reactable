@@ -791,28 +791,58 @@ every selection click.
 - [ ] **9C.8** **df/dt backends:** Add `__state` with `id` and `index` to flat (non-grouped) rows in
       `dfSortFilterPage()` / `dtSortFilterPage()` to fix the same page-relative ID collision bug.
 
-#### 9D: Cross-page select-all
+#### 9D: Cross-page select-all -- DONE
 
 **Goal:** Make the select-all checkbox select all rows across all pages, not just the current
 page. Currently, `toggleAllRowsSelected()` only iterates over rows loaded into react-table
 (the current page for backend modes). Per-row selection across pages works after 9C.
 
-**Approach:** Use an inverted selection model where `{ selectAll: true, deselected: {"5": true} }`
-tracks exceptions instead of all selected rows. Normal per-row clicks continue using regular
-`selectedRowIds`; the inverted mode only activates when the user clicks select-all.
+**Approach:** Inverted selection model in backend modes (`manualPagination`). When select-all
+is clicked, state becomes `{ selectAllRows: true, deselectedRowIds: {} }` instead of enumerating
+all row IDs. Individual deselections add to the `deselectedRowIds` set. Client-side tables keep
+existing behavior unchanged.
+
+Resolved transparently at API boundaries: Shiny `getReactableState('selected')` detects the
+inverted payload `{ selectAll: true, deselected: [...], rowCount: N }` and resolves to an
+integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self-contained
+(no `session$userData` needed).
 
 **Steps:**
 
-- [ ] **9D.1** Implement inverted selection model in `useRowSelect.js`: update `isAllRowsSelected`,
-      `toggleAllRowsSelected`, `toggleRowSelected`, and `selectedRowIndexes` to handle the inverted
-      case. When select-all is clicked, set `{ selectAll: true, deselected: {} }` instead of
-      enumerating all row IDs. Individual row deselection adds to the `deselected` set.
-- [ ] **9D.2** Update `Reactable.js` to pass the inverted selection state to backends and Shiny.
-- [ ] **9D.3** Update `getReactableState("selected")` in Shiny to resolve the inverted set
-      (query backend for all row IDs minus deselected).
-- [ ] **9D.4** Update the select-all checkbox UI to reflect correct state (checked when all
-      rows selected, indeterminate when some deselected).
-- [ ] **9D.5** Tests for cross-page select-all across all backend modes and client-side tables.
+- [x] **9D.1** Implement inverted selection model in `useRowSelect.js`: new state fields
+      `selectAllRows` and `deselectedRowIds`. `toggleAllRowsSelected` in backend mode sets
+      `selectAllRows` flag. `toggleRowSelected` in inverted mode adds/removes from
+      `deselectedRowIds`. `selectedFlatRows` and `row.isSelected` handle both modes.
+      `isAllRowsSelected` is O(1) in inverted mode. Client-side unchanged.
+- [x] **9D.2** Update `Reactable.js`: `selectedRowIndexes` handles inverted mode by iterating
+      visible rows and checking `!deselectedRowIds`. Shiny sync sends self-contained inverted
+      payload with `rowCount` embedded.
+- [x] **9D.3** Update `getReactableState("selected")` in R to detect and resolve inverted
+      payload transparently. Returns integer vector always.
+- [x] **9D.4** Select-all checkbox shows correct checked/indeterminate state in inverted mode
+      via updated `defaultGetToggleAllRowsSelectedProps` indeterminate check.
+- [x] **9D.5** Tests: 3 JS tests (cross-page select-all, deselect after select-all,
+      deselect-all after select-all). R test for inverted selection resolution in
+      `getReactableState`.
+
+**Known issues (to fix next):**
+
+1. **Per-row Shiny reporting incomplete:** Per-row selections (non-inverted) in backend mode
+   only report the current page's selected indices to Shiny via `selectedRowIndexes`, because
+   `rowsById` only contains current-page rows. Selecting row 1 on page 1 then navigating to
+   page 2 causes `getReactableState('selected')` to return `integer(0)`. The visual selection
+   persists correctly (the checkbox stays checked when navigating back), but the Shiny reporting
+   is incomplete. Fix: send `selectedRowIds` keys directly (they're already stable row indices
+   from `__state.id`) instead of resolving through `rowsById`.
+
+2. **Select-all + filter interaction:** In backend mode, `selectAllRows: true` is a blanket
+   flag that doesn't account for active filters. If the user filters to 20 rows, clicks
+   select-all, then clears the filter, all 100 rows appear selected (and Shiny reports
+   `1:100` via `rowCount`). Client-side mode correctly only selects the 20 filtered rows.
+   Fix: reset `selectAllRows` when `state.filters` or `state.globalFilter` changes, via
+   an effect in `Reactable.js`. This matches the client-side semantic where select-all
+   applies to the current filtered result set. Since the inverted model doesn't store
+   explicit IDs, we can't preserve the old filter set's selections -- just clear them.
 
 #### 9E: Server-side expansion
 
