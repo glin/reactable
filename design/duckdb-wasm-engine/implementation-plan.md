@@ -791,7 +791,30 @@ every selection click.
 - [ ] **9C.8** **df/dt backends:** Add `__state` with `id` and `index` to flat (non-grouped) rows in
       `dfSortFilterPage()` / `dtSortFilterPage()` to fix the same page-relative ID collision bug.
 
-#### 9D: Server-side expansion
+#### 9D: Cross-page select-all
+
+**Goal:** Make the select-all checkbox select all rows across all pages, not just the current
+page. Currently, `toggleAllRowsSelected()` only iterates over rows loaded into react-table
+(the current page for backend modes). Per-row selection across pages works after 9C.
+
+**Approach:** Use an inverted selection model where `{ selectAll: true, deselected: {"5": true} }`
+tracks exceptions instead of all selected rows. Normal per-row clicks continue using regular
+`selectedRowIds`; the inverted mode only activates when the user clicks select-all.
+
+**Steps:**
+
+- [ ] **9D.1** Implement inverted selection model in `useRowSelect.js`: update `isAllRowsSelected`,
+      `toggleAllRowsSelected`, `toggleRowSelected`, and `selectedRowIndexes` to handle the inverted
+      case. When select-all is clicked, set `{ selectAll: true, deselected: {} }` instead of
+      enumerating all row IDs. Individual row deselection adds to the `deselected` set.
+- [ ] **9D.2** Update `Reactable.js` to pass the inverted selection state to backends and Shiny.
+- [ ] **9D.3** Update `getReactableState("selected")` in Shiny to resolve the inverted set
+      (query backend for all row IDs minus deselected).
+- [ ] **9D.4** Update the select-all checkbox UI to reflect correct state (checked when all
+      rows selected, indeterminate when some deselected).
+- [ ] **9D.5** Tests for cross-page select-all across all backend modes and client-side tables.
+
+#### 9E: Server-side expansion
 
 **Goal:** Implement server-side row expansion where the server controls which groups are open
 and only fetches sub-rows on demand. Currently, grouped row expansion is handled client-side
@@ -805,15 +828,15 @@ ignored) in V8 server requests -- instead of removing it, we make it functional.
 
 **Steps:**
 
-- [ ] **9D.1** Design the expansion protocol: how `expanded` state flows from JS to the backend,
+- [ ] **9E.1** Design the expansion protocol: how `expanded` state flows from JS to the backend,
       what the backend returns (incremental sub-rows vs full page rebuild), and how it interacts
       with pagination and sorting.
-- [ ] **9D.2** Update the V8 server useEffect to properly use `expanded` state instead of ignoring it.
-- [ ] **9D.3** Implement expansion support in DuckDB backend (WASM and server).
-- [ ] **9D.4** Update df/dt backends if applicable.
-- [ ] **9D.5** Tests for server-side expansion across backends.
+- [ ] **9E.2** Update the V8 server useEffect to properly use `expanded` state instead of ignoring it.
+- [ ] **9E.3** Implement expansion support in DuckDB backend (WASM and server).
+- [ ] **9E.4** Update df backends if applicable.
+- [ ] **9E.5** Tests for server-side expansion across backends.
 
-#### 9E: Server-side data documentation
+#### 9F: Server-side data documentation
 
 - [ ] **9.9** Create server-side data vignette (`vignettes/server-side-data.Rmd`): when to use,
       quick start, built-in backends (V8/df/dt/DuckDB server), creating custom backends, grouped
@@ -839,7 +862,7 @@ ignored) in V8 server requests -- instead of removing it, we make it functional.
       - Consider whether Phase 10 (JS backend plugin) should be designed first, so the custom
         backend docs can reference a future extension point for client-side backends.
 
-#### 9F: Server-side data API refinements (optional)
+#### 9G: Server-side data API refinements (optional)
 
 - [ ] **9.13** Benchmark V8 vs DuckDB server-side backends on large datasets (e.g., 1M rows).
       Compare initialization time (V8 startup is notably slow on large data), query speed
@@ -856,26 +879,11 @@ ignored) in V8 server requests -- instead of removing it, we make it functional.
 - [ ] **9.14** Add `resolvedData()` validation for grouped `.subRows` structure.
 - [ ] **9.15** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
 
-#### 9G: Server-side data testing
+#### 9H: Server-side data testing
 
 - [ ] **9.16** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
       Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
       `maxRowCount` pagination edge cases.
-
-#### 9H: Cross-page select-all (future, optional)
-
-- [ ] **9.17** Document current limitation: select-all only affects current page.
-      This matches ag-Grid's server-side model behavior and is acceptable for v1.
-      Per-row selection across pages works after 9C.
-- [ ] **9.18** Full cross-page select-all (if user demand warrants): use an inverted selection model
-      where `{ selectAll: true, deselected: {"5": true} }` tracks exceptions instead of all selected
-      rows. Normal per-row clicks continue using regular `selectedRowIds`; the inverted mode only
-      activates when the user clicks select-all. Requires updating `isAllRowsSelected`,
-      `toggleAllRowsSelected`, `toggleRowSelected`, and `selectedRowIndexes` to handle the inverted
-      case. Also needs backend queries to resolve the inverted set (e.g., for Shiny's
-      `getReactableState("selected")`). This would benefit all backend modes and regular client-side
-      tables. See 9C for the per-row selection fix and memory analysis.
-      See also `design/server-side-data/server-side-data.md` section 2.
 
 **Full server-side data plan:** See `design/server-side-data/server-side-data.md` for the complete plan
 including architecture, request/response format, grouped data format, backend comparison matrix,

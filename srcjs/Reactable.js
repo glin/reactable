@@ -1116,6 +1116,9 @@ function Table({
     const defaultGetRowId = (row, index, parent) => {
       return `${parent ? [parent.id, index].join('.') : index}`
     }
+    // Server and DuckDB backends use __state.id for stable row identification
+    // across pages. Without this, row IDs are page-relative indices (0, 1, 2...)
+    // that collide across pages, breaking selection and expansion state.
     if (!useServerData && !useDuckDB) {
       return defaultGetRowId
     }

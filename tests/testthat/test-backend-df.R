@@ -11,21 +11,21 @@ test_that("backendDf - basic pagination", {
   expect_equal(result$rowCount, 5)
   expect_equal(result$data$a, df$a)
   expect_equal(result$data$b, df$b)
-  expect_equal(result$data$`__state`, lapply(0:4, function(i) list(id = as.character(i), index = i)))
+  expect_equal(result$data$`__state`, data.frame(id = as.character(0:4), index = 0:4, stringsAsFactors = FALSE))
 
   # Single page (all rows fit)
   result <- reactableServerData(backend, data = df, pageIndex = 0, pageSize = 10)
   expect_equal(result$rowCount, 5)
   expect_equal(result$data$a, df$a)
   expect_equal(result$data$b, df$b)
-  expect_equal(result$data$`__state`, lapply(0:4, function(i) list(id = as.character(i), index = i)))
+  expect_equal(result$data$`__state`, data.frame(id = as.character(0:4), index = 0:4, stringsAsFactors = FALSE))
 
   # Second page
   result <- reactableServerData(backend, data = df, pageIndex = 1, pageSize = 3)
   expect_equal(result$rowCount, 5)
   expect_equal(result$data$a, c("d", "e"))
   expect_equal(result$data$b, c(4, 5))
-  expect_equal(result$data$`__state`, lapply(3:4, function(i) list(id = as.character(i), index = i)))
+  expect_equal(result$data$`__state`, data.frame(id = as.character(3:4), index = 3:4, stringsAsFactors = FALSE))
 })
 
 test_that("dfSortBy", {
@@ -185,10 +185,11 @@ test_that("dfGroupBy grouped by a string column", {
         price = c(5)
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 2L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -214,9 +215,11 @@ test_that("dfGroupBy grouped by a numeric column", {
         model = c("Legend", "90")
       )
     ),
-    `__state` = list(
-      list(id = "price:1", grouped = TRUE, subRowCount = 1L),
-      list(id = "price:2", grouped = TRUE, subRowCount = 2L)
+    `__state` = data.frame(
+      id = c("price:1", "price:2"),
+      grouped = c(TRUE, TRUE),
+      subRowCount = c(1L, 2L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -247,10 +250,11 @@ test_that("dfGroupBy grouped by a factor column", {
         price = c(5)
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 2L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -276,9 +280,11 @@ test_that("dfGroupBy grouped by a list-column", {
         model = c("Legend", "90")
       )
     ),
-    `__state` = list(
-      list(id = "price:[1]", grouped = TRUE, subRowCount = 1L),
-      list(id = "price:[2]", grouped = TRUE, subRowCount = 2L)
+    `__state` = data.frame(
+      id = c("price:[1]", "price:[2]"),
+      grouped = c(TRUE, TRUE),
+      subRowCount = c(1L, 2L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -308,9 +314,11 @@ test_that("dfGroupBy grouped by multiple columns", {
             price = c(2)
           )
         ),
-        `__state` = list(
-          list(id = "type:Small", grouped = TRUE, subRowCount = 1L),
-          list(id = "type:Midsize", grouped = TRUE, subRowCount = 1L)
+        `__state` = data.frame(
+          id = c("type:Small", "type:Midsize"),
+          grouped = c(TRUE, TRUE),
+          subRowCount = c(1L, 1L),
+          stringsAsFactors = FALSE
         )
       ),
       listSafeDataFrame(
@@ -321,8 +329,11 @@ test_that("dfGroupBy grouped by multiple columns", {
             price = c(2, 10)
           )
         ),
-        `__state` = list(
-          list(id = "type:Compact", grouped = TRUE, subRowCount = 2L)
+        `__state` = data.frame(
+          id = "type:Compact",
+          grouped = TRUE,
+          subRowCount = 2L,
+          stringsAsFactors = FALSE
         )
       ),
       listSafeDataFrame(
@@ -333,15 +344,19 @@ test_that("dfGroupBy grouped by multiple columns", {
             price = c(5)
           )
         ),
-        `__state` = list(
-          list(id = "type:Midsize", grouped = TRUE, subRowCount = 1L)
+        `__state` = data.frame(
+          id = "type:Midsize",
+          grouped = TRUE,
+          subRowCount = 1L,
+          stringsAsFactors = FALSE
         )
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 1L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 1L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -380,10 +395,11 @@ test_that("dfGroupBy with aggregate functions", {
         price = c(5)
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 2L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -419,10 +435,11 @@ test_that("dfGroupBy with aggregate functions grouped by a factor column", {
         price = c(5)
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 2L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -453,9 +470,11 @@ test_that("dfGroupBy with aggregate functions grouped by a list column", {
         price = I(list(list(2)))
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi"),
+      grouped = c(TRUE, TRUE),
+      subRowCount = c(2L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)
@@ -496,9 +515,11 @@ test_that("dfGroupBy with aggregate functions grouped by multiple columns", {
             price = c(2)
           )
         ),
-        `__state` = list(
-          list(id = "type:Small", grouped = TRUE, subRowCount = 1L),
-          list(id = "type:Midsize", grouped = TRUE, subRowCount = 1L)
+        `__state` = data.frame(
+          id = c("type:Small", "type:Midsize"),
+          grouped = c(TRUE, TRUE),
+          subRowCount = c(1L, 1L),
+          stringsAsFactors = FALSE
         )
       ),
       listSafeDataFrame(
@@ -510,8 +531,11 @@ test_that("dfGroupBy with aggregate functions grouped by multiple columns", {
             price = c(2, 10)
           )
         ),
-        `__state` = list(
-          list(id = "type:Compact", grouped = TRUE, subRowCount = 2L)
+        `__state` = data.frame(
+          id = "type:Compact",
+          grouped = TRUE,
+          subRowCount = 2L,
+          stringsAsFactors = FALSE
         )
       ),
       listSafeDataFrame(
@@ -523,15 +547,19 @@ test_that("dfGroupBy with aggregate functions grouped by multiple columns", {
             price = c(5)
           )
         ),
-        `__state` = list(
-          list(id = "type:Midsize", grouped = TRUE, subRowCount = 1L)
+        `__state` = data.frame(
+          id = "type:Midsize",
+          grouped = TRUE,
+          subRowCount = 1L,
+          stringsAsFactors = FALSE
         )
       )
     ),
-    `__state` = list(
-      list(id = "mfr:Acura", grouped = TRUE, subRowCount = 2L),
-      list(id = "mfr:Audi", grouped = TRUE, subRowCount = 1L),
-      list(id = "mfr:BMW", grouped = TRUE, subRowCount = 1L)
+    `__state` = data.frame(
+      id = c("mfr:Acura", "mfr:Audi", "mfr:BMW"),
+      grouped = c(TRUE, TRUE, TRUE),
+      subRowCount = c(2L, 1L, 1L),
+      stringsAsFactors = FALSE
     )
   )
   expect_equal(grouped, expected)

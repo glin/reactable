@@ -463,19 +463,16 @@ test_that("backendDuckdb - flat rows have __state with stable row IDs", {
   # First page: row IDs should be 0-based original indices
   result <- reactableServerData(backend, data = df, columns = columns,
                                 pageIndex = 0, pageSize = 3)
-  expect_equal(result$data$`__state`, list(
-    list(id = "0", index = 0L),
-    list(id = "1", index = 1L),
-    list(id = "2", index = 2L)
-  ))
+  expect_equal(result$data$`__state`,
+    data.frame(id = as.character(0:2), index = 0:2, stringsAsFactors = FALSE)
+  )
 
   # Second page: row IDs should continue from original data
   result2 <- reactableServerData(backend, data = df, columns = columns,
                                  pageIndex = 1, pageSize = 3)
-  expect_equal(result2$data$`__state`, list(
-    list(id = "3", index = 3L),
-    list(id = "4", index = 4L)
-  ))
+  expect_equal(result2$data$`__state`,
+    data.frame(id = as.character(3:4), index = 3:4, stringsAsFactors = FALSE)
+  )
 
   # _reactable_rowid should not appear in data
   expect_false("_reactable_rowid" %in% colnames(result$data))
@@ -499,11 +496,9 @@ test_that("backendDuckdb - sorted rows preserve original __state IDs", {
                                 pageIndex = 0, pageSize = 10,
                                 sortBy = list(list(id = "x", desc = FALSE)))
   expect_equal(result$data$x, c(10, 20, 30))
-  expect_equal(result$data$`__state`, list(
-    list(id = "1", index = 1L),
-    list(id = "2", index = 2L),
-    list(id = "0", index = 0L)
-  ))
+  expect_equal(result$data$`__state`,
+    data.frame(id = c("1", "2", "0"), index = c(1L, 2L, 0L), stringsAsFactors = FALSE)
+  )
 })
 
 test_that("backendDuckdb - grouped rows have __state with id", {
@@ -528,15 +523,15 @@ test_that("backendDuckdb - grouped rows have __state with id", {
                                 groupBy = list("grp"))
 
   # Group header rows should have __state with "grp:value" format
-  groupIds <- vapply(result$data$`__state`, function(s) s$id, character(1))
+  groupIds <- result$data$`__state`$id
   expect_true(setequal(groupIds, c("grp:A", "grp:B")))
-  expect_true(all(vapply(result$data$`__state`, function(s) s$grouped, logical(1))))
+  expect_true(all(result$data$`__state`$grouped))
 
   # Sub-rows for group A should have __state with stable row IDs (0, 1)
   groupAIdx <- which(result$data$grp == "A")
   subRowsA <- result$data$.subRows[[groupAIdx]]
-  subRowIds <- vapply(subRowsA$`__state`, function(s) s$id, character(1))
-  subRowIndices <- vapply(subRowsA$`__state`, function(s) s$index, integer(1))
+  subRowIds <- subRowsA$`__state`$id
+  subRowIndices <- subRowsA$`__state`$index
   expect_true(setequal(subRowIds, c("0", "1")))
   expect_true(setequal(subRowIndices, c(0L, 1L)))
 

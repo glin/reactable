@@ -173,9 +173,11 @@ dfGroupBy <- function(df, by, columns = NULL, depth = 0) {
     sprintf("%s:%s", groupedColumnId, value)
   }, character(1)))
   subRowCounts <- vapply(df[[".subRows"]], nrow, integer(1))
-  df[["__state"]] <- lapply(seq_along(rowIds), function(i) {
-    list(id = rowIds[i], grouped = TRUE, subRowCount = subRowCounts[i])
-  })
+  df[["__state"]] <- dataFrame(
+    id = rowIds,
+    grouped = rep(TRUE, length(rowIds)),
+    subRowCount = subRowCounts
+  )
 
   df
 }
@@ -193,17 +195,23 @@ dataFrame <- function(...) {
   data.frame(..., stringsAsFactors = FALSE)
 }
 
-dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
-  # Extract _reactable_rowid into __state for stable row identification (flat rows only)
+# Extract _reactable_rowid into __state for stable row identification
+dfAddRowState <- function(df) {
   if ("_reactable_rowid" %in% colnames(df) && !"__state" %in% colnames(df)) {
     rowids <- df[["_reactable_rowid"]]
-    df[["__state"]] <- lapply(rowids, function(rid) {
-      list(id = as.character(rid), index = as.integer(rid))
-    })
+    df[["__state"]] <- dataFrame(
+      id = as.character(rowids),
+      index = as.integer(rowids)
+    )
     df[["_reactable_rowid"]] <- NULL
   }
+  df
+}
 
+dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   if (is.null(pageSize)) {
+    # Extract _reactable_rowid into __state for stable row identification (flat rows only)
+    df <- dfAddRowState(df)
     return(resolvedData(df, rowCount = nrow(df)))
   }
 
@@ -219,6 +227,8 @@ dfPaginate <- function(df, pageIndex = 0, pageSize = NULL) {
   rowStart <- min(pageIndex * pageSize + 1, nrow(df))
   rowEnd <- min(pageIndex * pageSize + pageSize, nrow(df))
   page <- df[rowStart:rowEnd, ]
+  # Extract _reactable_rowid into __state after pagination to avoid row name issues
+  page <- dfAddRowState(page)
 
   resolvedData(page, rowCount = rowCount)
 }

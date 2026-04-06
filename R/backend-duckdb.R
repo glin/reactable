@@ -157,9 +157,10 @@ reactableServerData.reactable_backendDuckdb <- function(
   # Extract _reactable_rowid into __state for stable row identification
   if ("_reactable_rowid" %in% colnames(page)) {
     rowids <- page[["_reactable_rowid"]]
-    page[["__state"]] <- lapply(rowids, function(rid) {
-      list(id = as.character(rid), index = as.integer(rid))
-    })
+    page[["__state"]] <- dataFrame(
+      id = as.character(rowids),
+      index = as.integer(rowids)
+    )
     page[["_reactable_rowid"]] <- NULL
   }
 
@@ -258,9 +259,10 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
       # Extract _reactable_rowid into __state for stable row identification
       if ("_reactable_rowid" %in% colnames(subRows)) {
         rowids <- subRows[["_reactable_rowid"]]
-        subRows[["__state"]] <- lapply(rowids, function(rid) {
-          list(id = as.character(rid), index = as.integer(rid))
-        })
+        subRows[["__state"]] <- dataFrame(
+          id = as.character(rowids),
+          index = as.integer(rowids)
+        )
         subRows[["_reactable_rowid"]] <- NULL
       }
       subRowsList[[i]] <- subRows
@@ -278,9 +280,10 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
   groupData[[".subRows"]] <- subRowsList
 
   # Add __state with group ID for group header rows
-  groupData[["__state"]] <- lapply(groupValues, function(val) {
-    list(id = paste0(groupCol, ":", val), grouped = TRUE)
-  })
+  groupData[["__state"]] <- dataFrame(
+    id = vapply(groupValues, function(val) paste0(groupCol, ":", val), character(1)),
+    grouped = rep(TRUE, length(groupValues))
+  )
 
   if (depth == 0) {
     resolvedData(groupData, rowCount = rowCount)
