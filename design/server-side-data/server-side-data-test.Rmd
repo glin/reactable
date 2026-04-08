@@ -1,0 +1,237 @@
+---
+title: "Server-Side Data — Selection Tests"
+output:
+  html_document:
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reactable)
+```
+
+These tests use the V8 server backend (`backendV8()`). All selection tests
+mirror the DuckDB test doc to ensure consistent behavior across backends.
+
+## Cross-page selection
+
+### Select-all across pages
+
+Select all, then navigate to page 2 -- all rows should still be selected.
+Deselect a row on page 2, navigate back to page 1 -- all page 1 rows should
+still be selected. Navigate back to page 2 -- the deselected row should still
+be unchecked.
+
+With search: type a search term (e.g., "Ford"), select all filtered rows,
+clear the search -- only the previously filtered rows should remain selected.
+The select-all checkbox should not be checked (only a subset is selected).
+
+### Select-all + search filter reset
+
+1. Click select-all checkbox (all rows become selected)
+2. Type in the search box (e.g., "Ford")
+3. Selection should be cleared -- the select-all should not carry over to the
+   filtered result set
+
+### Select-all + column filter reset
+
+1. Click select-all checkbox
+2. Type a value in a column filter (e.g., filter Manufacturer to "Ford")
+3. Selection should be cleared
+
+### Select-all + both search and column filter
+
+### Per-row selection across pages
+
+1. Select rows 1 and 3 on page 1
+2. Navigate to page 2 -- no rows should be selected
+3. Select row 2 on page 2
+4. Navigate back to page 1 -- rows 1 and 3 should still be selected
+5. Search for "Ford" -- selected Ford rows should still be checked
+6. Clear search -- rows 1 and 3 (and row 2 from page 2) should still be selected
+
+### Default selected rows
+
+Rows 1, 3, and 5 should be pre-selected on load. Navigate to page 2 -- no rows
+should be checked. Navigate back to page 1 -- rows 1, 3, and 5 should still be
+selected. The select-all checkbox should not be checked (only 3 of 93 are selected).
+
+### Default selected with single selection
+
+Row 2 should be pre-selected on load. Clicking another row should deselect row 2.
+
+### Default selected with sorted data
+
+Rows 1 and 2 (by original data order) should be pre-selected. With Horsepower
+sorted descending, the selected rows may not appear on the first page. Navigate
+to find them -- they should be checked.
+
+## Shiny selection tests
+
+### Cross-page selection
+
+Run this Shiny app to test cross-page selection with `getReactableState("selected")`.
+
+Test steps:
+1. Select all -- should select all 93 rows. `getReactableState` should show `1:93`.
+2. Search for "Ford" -- selected Ford rows should still be checked.
+   `getReactableState` should still show all 93 indices.
+3. Clear search, filter Manufacturer to "Ford" -- only Ford rows are checked.
+4. Click select-all on filtered view -- should select only the filtered rows.
+   `getReactableState` should show non-sequential indices (e.g., `14, 15, 16, 17, 18`).
+5. Clear filter -- only those Ford rows should remain selected, others unchecked.
+6. Sort by a column -- selections should persist.
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("Cross-page selection test (V8 backend)"),
+  actionButton("select_rows", "Select rows 1, 3, 5"),
+  actionButton("clear_selection", "Clear selection"),
+  actionButton("select_all", "Select all rows"),
+  reactableOutput("table"),
+  verbatimTextOutput("selected_output")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      MASS::Cars93[, 1:8],
+      backend = backendV8(),
+      selection = "multiple",
+      defaultPageSize = 10,
+      searchable = TRUE,
+      filterable = TRUE
+    )
+  })
+
+  observeEvent(input$select_rows, {
+    updateReactable("table", selected = c(1, 3, 5))
+  })
+  observeEvent(input$clear_selection, {
+    updateReactable("table", selected = NA)
+  })
+  observeEvent(input$select_all, {
+    updateReactable("table", selected = seq_len(nrow(MASS::Cars93)))
+  })
+
+  output$selected_output <- renderPrint({
+    selected <- getReactableState("table", "selected")
+    cat("Count:", length(selected), "\n")
+    cat("Selected:", paste(selected, collapse = ", "), "\n")
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### defaultSelected
+
+Test that `defaultSelected` highlights the correct rows and that
+`getReactableState("selected")` returns the right 1-based indices on load.
+
+Test steps:
+1. On load, rows 1, 3, 5 should be checked. Output should show `1, 3, 5`.
+2. Navigate to page 2 -- no rows should be checked.
+3. Navigate back to page 1 -- rows 1, 3, 5 still checked.
+4. Deselect row 3, output should show `1, 5`.
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("defaultSelected test (V8 backend)"),
+  actionButton("select_rows", "Select rows 2, 4, 6"),
+  actionButton("clear_selection", "Clear selection"),
+  reactableOutput("table"),
+  verbatimTextOutput("selected_output")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      MASS::Cars93[, 1:8],
+      backend = backendV8(),
+      selection = "multiple",
+      defaultSelected = c(1, 3, 5),
+      defaultPageSize = 10,
+      searchable = TRUE
+    )
+  })
+
+  observeEvent(input$select_rows, {
+    updateReactable("table", selected = c(2, 4, 6))
+  })
+  observeEvent(input$clear_selection, {
+    updateReactable("table", selected = NA)
+  })
+
+  output$selected_output <- renderPrint({
+    selected <- getReactableState("table", "selected")
+    cat("Count:", length(selected), "\n")
+    cat("Selected:", paste(selected, collapse = ", "), "\n")
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### defaultSelected + defaultSorted
+
+Test that `defaultSelected` refers to original data row indices, not display
+position, even when `defaultSorted` reorders the table.
+
+Test steps:
+1. On load, the table is sorted by Horsepower descending. Rows 1 and 2 from the
+   original data (Acura Integra and Acura Legend) should be selected, NOT the
+   first two rows on screen. Output should show `1, 2`.
+2. The selected rows may not be visible on the first page. Navigate to find
+   them -- they should be checked.
+3. Sort by a different column -- the same rows should stay checked, output
+   unchanged.
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("defaultSelected + defaultSorted test (V8 backend)"),
+  actionButton("select_rows", "Select rows 3, 5, 7"),
+  actionButton("clear_selection", "Clear selection"),
+  reactableOutput("table"),
+  verbatimTextOutput("selected_output")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Price", "Max.Price", "MPG.city", "Horsepower")],
+      backend = backendV8(),
+      selection = "multiple",
+      defaultSelected = c(1, 2),
+      defaultSorted = list(Horsepower = "desc"),
+      defaultPageSize = 10,
+      searchable = TRUE
+    )
+  })
+
+  observeEvent(input$select_rows, {
+    updateReactable("table", selected = c(3, 5, 7))
+  })
+  observeEvent(input$clear_selection, {
+    updateReactable("table", selected = NA)
+  })
+
+  output$selected_output <- renderPrint({
+    selected <- getReactableState("table", "selected")
+    cat("Count:", length(selected), "\n")
+    cat("Selected:", paste(selected, collapse = ", "), "\n")
+  })
+}
+
+shinyApp(ui, server)
+```

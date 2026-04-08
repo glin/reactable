@@ -109,8 +109,8 @@ reactableServerInit.reactable_backendDuckdb <- function(x, data = NULL, columns 
   # Zero-copy registration - DuckDB reads directly from R data frame memory
   duckdb::duckdb_register(con, "reactable_data", data)
   x$private$con <- con
-  # Filter out virtual columns (e.g., .selection) that don't exist in the data
-  x$private$columns <- Filter(function(col) !startsWith(col$id, "."), columns)
+  # Filter out virtual columns that don't exist in the data
+  x$private$columns <- Filter(function(col) !(col$id %in% virtualColumnIds), columns)
 }
 
 #' @exportS3Method
@@ -128,8 +128,6 @@ reactableServerData.reactable_backendDuckdb <- function(
   pagination = NULL,
   paginateSubRows = NULL,
   selectAll = NULL,
-  # Unused/unimplemented props
-  selectedRowIds = NULL,
   expanded = NULL,
   ...
 ) {

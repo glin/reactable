@@ -19,7 +19,6 @@ reactableServerInit(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
-  selectedRowIds = NULL,
   expanded = NULL,
   ...
 )
@@ -37,7 +36,6 @@ reactableServerData(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
-  selectedRowIds = NULL,
   expanded = NULL,
   ...
 )
@@ -66,8 +64,6 @@ reactableServerData(
 \item{pagination}{Whether pagination is enabled, \code{TRUE} or \code{FALSE}.}
 
 \item{paginateSubRows}{Whether sub rows are paginated, \code{TRUE} or \code{FALSE}.}
-
-\item{selectedRowIds}{The current selected rows.}
 
 \item{expanded}{The current expanded rows.}
 

@@ -367,7 +367,7 @@ reactable <- function(
   columnKeys <- columnKeys[columnKeys != subRowsKey]
 
   if (!is.null(details)) {
-    detailsKey <- ".details"
+    detailsKey <- detailsColumnId
     columnKeys <- c(detailsKey, columnKeys)
     detailsColumn <- colDef(name = "", sortable = FALSE, filterable = FALSE,
                             searchable = FALSE, resizable = FALSE, width = 45,
@@ -382,9 +382,9 @@ reactable <- function(
   }
 
   if (!is.null(selection)) {
-    selectionKey <- ".selection"
+    selectionKey <- selectionColumnId
     columnKeys <- c(selectionKey, columnKeys)
-    selectionColumn <- colDef(name = "", resizable = FALSE, width = 45)
+    selectionColumn <- colDef(name = "", searchable = FALSE, resizable = FALSE, width = 45)
     selectionColumn$selectable <- TRUE
     if (selectionKey %in% names(columns)) {
       selectionColumn <- mergeLists(selectionColumn, columns[[selectionKey]])
@@ -749,7 +749,7 @@ reactable <- function(
       sortBy = defaultSorted,
       groupBy = groupBy,
       searchMethod = searchMethod
-      # TODO add expanded, selectedRowIds
+      # TODO add expanded
     )
 
     do.call(reactableServerInit, c(list(backend), initialProps))
@@ -904,6 +904,14 @@ reactable <- function(
       firstPageData <- firstPageData[do.call(order, orderArgs), , drop = FALSE]
     }
     firstPageData <- utils::head(firstPageData, defaultPageSize)
+    # Convert _reactable_rowid into __state for stable row identification on the
+    # pre-rendered page. Without this, rows use page-relative indices as IDs, which
+    # causes defaultSelected to highlight wrong rows when defaultSorted reorders data.
+    rowids <- firstPageData[["_reactable_rowid"]]
+    firstPageData[["__state"]] <- dataFrame(
+      id = as.character(rowids),
+      index = as.integer(rowids)
+    )
     firstPageData[["_reactable_rowid"]] <- NULL
     data <- toJSON(firstPageData)
     serverRowCount <- totalRowCount

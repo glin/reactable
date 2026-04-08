@@ -30,8 +30,6 @@ reactableServerData.reactable_backendDf <- function(
   pagination = NULL,
   paginateSubRows = NULL,
   selectAll = NULL,
-  # Unused/unimplemented props
-  selectedRowIds = NULL,
   expanded = NULL,
   ...
 ) {

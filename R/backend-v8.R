@@ -64,8 +64,6 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
       filters = NULL,
       searchValue = NULL,
       groupBy = NULL,
-      # TODO currently unused/unimplemented props
-      selectedRowIds = NULL,
       expanded = NULL,
       ...
     ) {
@@ -77,8 +75,6 @@ Do you need to run `install.packages("V8")`?', call. = FALSE)
         searchValue = searchValue,
         sortBy = sortBy,
         groupBy = asJSONList(groupBy),
-        # Currently unused
-        selectedRowIds = selectedRowIds,
         expanded = expanded
       ))
 

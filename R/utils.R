@@ -2,6 +2,12 @@
 #' @export
 htmlwidgets::JS
 
+# Virtual column names used internally by reactable. These columns are added
+# to the column list for selection/details UI but don't exist in user data.
+selectionColumnId <- ".selection"
+detailsColumnId <- ".details"
+virtualColumnIds <- c(selectionColumnId, detailsColumnId)
+
 # Serialize a data frame to Arrow IPC stream format, base64-encoded.
 # Used by backendDuckDB() to send data to the browser for DuckDB-WASM ingestion.
 serializeArrowIPC <- function(data) {

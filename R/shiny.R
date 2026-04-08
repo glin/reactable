@@ -364,7 +364,6 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' @param pagination Whether pagination is enabled, `TRUE` or `FALSE`.
 #' @param paginateSubRows Whether sub rows are paginated, `TRUE` or `FALSE`.
 #' @param expanded The current expanded rows.
-#' @param selectedRowIds The current selected rows.
 #' @param ... Additional arguments passed to the S3 method.
 #' @return
 #' - `reactableServerData()` should return a [resolvedData()] object.
@@ -386,7 +385,6 @@ reactableServerInit <- function(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
-  selectedRowIds = NULL,
   expanded = NULL,
   ...
 ) {
@@ -409,7 +407,7 @@ reactableServerData <- function(
     groupBy = NULL,
     pagination = NULL,
     paginateSubRows = NULL,
-    selectedRowIds = NULL,
+    selectAll = NULL,
     expanded = NULL,
     ...
 ) {

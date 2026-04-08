@@ -584,6 +584,54 @@ describe('DuckDB backend', () => {
     })
   })
 
+  it('global search excludes virtual columns like .selection', async () => {
+    const mockBackend = createMockBackend(20)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={[
+          // .selection column: searchable false, like the R colDef generates
+          { name: '', id: '.selection', searchable: false, selectable: true },
+          ...baseColumns
+        ]}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        showPagination
+        searchable
+        selection="multiple"
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'test' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          searchValue: 'test',
+          // The .selection column should be in the columns list but with
+          // disableGlobalFilter set, so it won't be included in SQL search
+          columns: expect.arrayContaining([
+            expect.objectContaining({ id: '.selection', disableGlobalFilter: true })
+          ])
+        })
+      )
+    })
+  })
+
   it('updates row count when filter reduces results', async () => {
     const mockBackend = createMockBackend(20)
 
@@ -924,6 +972,51 @@ describe('DuckDB backend', () => {
     })
   })
 
+  it('defaultSelected selects correct rows when pre-rendered data has __state', async () => {
+    const mockBackend = createMockBackend(10)
+
+    // Pre-rendered data with __state (like R generates for DuckDB client mode).
+    // Simulates defaultSorted reordering: display order is row5, row3, row1, row4, row2
+    // but __state.id preserves original indices.
+    const firstPageData = {
+      a: [50, 30, 10, 40, 20],
+      b: ['row5', 'row3', 'row1', 'row4', 'row2'],
+      __state: {
+        id: ['4', '2', '0', '3', '1'],
+        index: [4, 2, 0, 3, 1]
+      }
+    }
+
+    // defaultSelected = [0, 1] means original rows 0 and 1 (row1 and row2)
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+        defaultSelected={[0, 1]}
+      />
+    )
+
+    // Wait for DuckDB to initialize
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Row 0 is at display position 3 (row1), row 1 is at display position 5 (row2)
+    const checkboxes = getSelectRowCheckboxes(container)
+    // checkboxes[0] = select-all, checkboxes[1..5] = rows in display order
+    expect(checkboxes[1].checked).toBe(false) // row5 (id=4) - not selected
+    expect(checkboxes[2].checked).toBe(false) // row3 (id=2) - not selected
+    expect(checkboxes[3].checked).toBe(true) // row1 (id=0) - selected
+    expect(checkboxes[4].checked).toBe(false) // row4 (id=3) - not selected
+    expect(checkboxes[5].checked).toBe(true) // row2 (id=1) - selected
+  })
+
   it('preserves row selections across page navigation', async () => {
     const mockBackend = createMockBackend(10)
 
@@ -1043,6 +1136,48 @@ describe('DuckDB backend', () => {
     for (let i = 1; i <= 5; i++) {
       expect(page2Checkboxes[i].checked).toBe(true)
     }
+  })
+
+  it('select-all checkbox is not checked when only current page rows are selected', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all 5 rows on the current page individually
+    const checkboxes = getSelectRowCheckboxes(container)
+    for (let i = 1; i <= 5; i++) {
+      fireEvent.click(checkboxes[i])
+    }
+
+    // All page rows are checked, but select-all should NOT be checked
+    // because only 5 of 10 total rows are selected
+    await waitFor(() => {
+      const updatedCheckboxes = getSelectRowCheckboxes(container)
+      for (let i = 1; i <= 5; i++) {
+        expect(updatedCheckboxes[i].checked).toBe(true)
+      }
+      expect(updatedCheckboxes[0].checked).toBe(false)
+    })
   })
 
   it('deselecting a row after select-all keeps other rows selected', async () => {
@@ -1167,6 +1302,84 @@ describe('DuckDB backend', () => {
     for (let i = 1; i <= 5; i++) {
       expect(page2Checkboxes[i].checked).toBe(false)
     }
+  })
+
+  it('deselect-all on filtered view only deselects filtered rows', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+        searchable
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select all (stores IDs "0"-"9")
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(true)
+    })
+
+    // Filter the table
+    const searchInput = getSearchInput(container)
+    fireEvent.change(searchInput, { target: { value: 'row1' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ searchValue: 'row1' })
+      )
+    })
+
+    // Mock queryRowIds to return only filtered row IDs (simulating filter match)
+    mockBackend.queryRowIds.mockImplementationOnce(() => {
+      return Promise.resolve(['0', '1'])
+    })
+
+    // Deselect all on filtered view - should only deselect filtered rows
+    await act(async () => {
+      fireEvent.click(getSelectRowCheckboxes(container)[0])
+    })
+
+    // Wait for the async deselect to complete
+    await waitFor(() => {
+      expect(getSelectRowCheckboxes(container)[0].checked).toBe(false)
+    })
+
+    // Clear the filter to see all rows again
+    fireEvent.change(searchInput, { target: { value: '' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ searchValue: undefined })
+      )
+    })
+
+    // Rows "0" and "1" should be deselected, but rows "2"-"9" should still be selected
+    const checkboxes = getSelectRowCheckboxes(container)
+    expect(checkboxes[1].checked).toBe(false) // row 0 - deselected
+    expect(checkboxes[2].checked).toBe(false) // row 1 - deselected
+    expect(checkboxes[3].checked).toBe(true) // row 2 - still selected
+    expect(checkboxes[4].checked).toBe(true) // row 3 - still selected
+    expect(checkboxes[5].checked).toBe(true) // row 4 - still selected
   })
 
   it('selections persist through search filter changes', async () => {

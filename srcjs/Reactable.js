@@ -1214,8 +1214,7 @@ function Table({
       filters: state.filters,
       searchValue: state.globalFilter,
       groupBy: state.groupBy,
-      expanded: state.expanded,
-      selectedRowIds: state.selectedRowIds
+      expanded: state.expanded
     }
     window
       .fetch(url, {
@@ -1236,9 +1235,6 @@ function Table({
       .catch(err => {
         console.error(err)
       })
-    // selectedRowIds is intentionally excluded - selections are client-side only
-    // and should not trigger server re-fetches
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     useServerData,
     dataURL,
@@ -1382,49 +1378,84 @@ function Table({
     setRowsSelected((defaultSelected || []).map(index => String(index)))
   }, [instance.setRowsSelected, defaultSelected])
 
+  // Override isAllRowsSelected for backend modes. The default check only looks at
+  // nonGroupedRowsById, which in backend mode only contains the current page's rows.
+  // If all page rows are selected, it incorrectly reports all rows as selected.
+  // Add an additional count check against the total filtered row count.
+  if (useDuckDB || useServerData) {
+    if (instance.isAllRowsSelected && serverRowCount != null) {
+      const selectedCount = Object.keys(state.selectedRowIds).length
+      instance.isAllRowsSelected = selectedCount >= serverRowCount
+    }
+  }
+
   // Override toggleAllRowsSelected for backend modes (DuckDB-WASM and server).
   // In backend mode, only one page of rows is loaded at a time, so the default
   // toggleAllRowsSelected can only enumerate page rows. Instead, query the backend
   // for ALL row IDs matching current filters/search and set them as explicit
   // selectedRowIds. This matches client-side behavior where select-all selects
   // exactly the currently filtered rows, and those selections persist through
-  // filter/sort changes.
+  // filter/sort changes. Deselect-all similarly only removes the filtered rows,
+  // leaving other selections intact.
   const getIsAllRowsSelected = useGetLatest(instance.isAllRowsSelected)
+  const getSelectedRowIds = useGetLatest(state.selectedRowIds)
+  // Guard against concurrent calls. The select-all checkbox fires both onChange
+  // and onClick (event bubbles to parent th), causing two calls per click. The
+  // synchronous version handles this fine (React batches identical dispatches),
+  // but the async version needs a guard to prevent the second call from using
+  // stale state and overwriting the first call's result.
+  const toggleAllInProgressRef = React.useRef(false)
   if (useDuckDB || useServerData) {
     instance.toggleAllRowsSelected = async value => {
+      if (toggleAllInProgressRef.current) return
+      toggleAllInProgressRef.current = true
       const shouldSelect = typeof value !== 'undefined' ? value : !getIsAllRowsSelected()
-      if (!shouldSelect) {
-        instance.setRowsSelected([])
-        return
-      }
-      // Query the backend for all matching row IDs
-      if (useDuckDB && duckdbRef.current) {
-        const rowIds = await duckdbRef.current.queryRowIds({
-          filters: state.filters,
-          searchValue: state.globalFilter,
-          columns: dataColumns
-        })
-        instance.setRowsSelected(rowIds)
-      } else if (useServerData && dataURL) {
-        const url = new window.URL(dataURL, window.location)
-        const params = {
-          selectAll: true,
-          filters: state.filters,
-          searchValue: state.globalFilter
-        }
-        try {
+
+      // Helper to get matching row IDs from the backend
+      const getMatchingRowIds = async () => {
+        if (useDuckDB && duckdbRef.current) {
+          return duckdbRef.current.queryRowIds({
+            filters: state.filters,
+            searchValue: state.globalFilter,
+            columns: dataColumns
+          })
+        } else if (useServerData && dataURL) {
+          const url = new window.URL(dataURL, window.location)
+          const params = {
+            selectAll: true,
+            filters: state.filters,
+            searchValue: state.globalFilter
+          }
           const res = await window.fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params)
           })
           const body = await res.json()
-          if (body.rowIds) {
-            instance.setRowsSelected(body.rowIds)
-          }
-        } catch (err) {
-          console.error('Failed to fetch select-all row IDs:', err)
+          return body.rowIds || []
         }
+        return []
+      }
+
+      try {
+        const matchingIds = await getMatchingRowIds()
+        if (shouldSelect) {
+          // Add matching IDs to existing selection
+          const currentIds = Object.keys(getSelectedRowIds())
+          const mergedIds = [...new Set([...currentIds, ...matchingIds])]
+          instance.setRowsSelected(mergedIds)
+        } else {
+          // Remove only the matching IDs, keep other selections
+          const removeSet = new Set(matchingIds)
+          const remainingIds = Object.keys(getSelectedRowIds()).filter(
+            id => !removeSet.has(id)
+          )
+          instance.setRowsSelected(remainingIds)
+        }
+      } catch (err) {
+        console.error('Failed to fetch row IDs for select-all:', err)
+      } finally {
+        toggleAllInProgressRef.current = false
       }
     }
   }
@@ -2671,7 +2702,7 @@ function Table({
 }
 
 Reactable.propTypes = {
-  data: PropTypes.objectOf(PropTypes.array),
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.object])),
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   columnGroups: PropTypes.arrayOf(PropTypes.object),
   groupBy: PropTypes.arrayOf(PropTypes.string),
