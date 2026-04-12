@@ -30,3 +30,12 @@ test_that("backendDuckDB() client mode has preRenderHook for Shiny detection", {
   )
   expect_warning(tbl$preRenderHook(tbl), "outside of a Shiny render function")
 })
+
+test_that("backendDuckDB(mode = 'client') skips preRenderHook warning", {
+  skip_if_not_installed("arrow")
+
+  data <- data.frame(x = c(1, 2), y = c("a", "b"))
+  tbl <- reactable(data, backend = backendDuckDB(mode = "client"))
+  # preRenderHook should not be set when user explicitly chose client mode
+  expect_null(tbl$preRenderHook)
+})

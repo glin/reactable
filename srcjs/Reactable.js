@@ -1272,6 +1272,16 @@ function Table({
       const parquetRegistry = window.__ReactableParquet
       if (parquetRegistry && parquetRegistry[parquetId]) {
         parquetUrl = parquetRegistry[parquetId]
+        // If the locator script couldn't detect its base path (e.g., in Shiny where
+        // document.currentScript is null for dynamically-inserted scripts), the URL
+        // will be just a filename. Resolve it against the locator script's actual URL
+        // from the DOM.
+        if (parquetUrl && !/^https?:\/\//.test(parquetUrl)) {
+          const locatorEl = document.querySelector('script[src*="parquet-locator"]')
+          if (locatorEl) {
+            parquetUrl = locatorEl.src.replace(/[^/]*$/, '') + parquetUrl
+          }
+        }
       } else {
         console.error(
           'Parquet sidecar file not found for parquetId: ' +
@@ -1286,8 +1296,20 @@ function Table({
     const duckdbBackend = new duckdbModule.DuckDBBackend()
     duckdbRef.current = duckdbBackend
 
+    // Resolve wasmBasePath. The locator script sets this at load time via
+    // document.currentScript, but in Shiny, scripts are dynamically inserted
+    // and document.currentScript is null. By the time this useEffect runs,
+    // the script elements are in the DOM, so fall back to querySelector.
+    let { wasmBasePath } = duckdbModule
+    if (!wasmBasePath) {
+      const scriptEl = document.querySelector('script[src*="reactable-duckdb"]')
+      if (scriptEl) {
+        wasmBasePath = scriptEl.src.replace(/[^/]*$/, '')
+      }
+    }
+
     duckdbBackend
-      .init({ arrowBase64: arrowData, parquetUrl, wasmBasePath: duckdbModule.wasmBasePath })
+      .init({ arrowBase64: arrowData, parquetUrl, wasmBasePath: wasmBasePath || '' })
       .then(() => {
         if (cancelled) return
         setServerRowCount(duckdbBackend.totalRowCount)

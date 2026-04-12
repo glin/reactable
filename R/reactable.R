@@ -719,8 +719,10 @@ reactable <- function(
 
   # Resolve backend mode: "auto" detects Shiny vs static, then route to client or server path
   isDuckDBClientMode <- FALSE
+  isDuckDBClientModeExplicit <- FALSE
   isServerMode <- FALSE
   if (isDuckDBBackend(backend)) {
+    isDuckDBClientModeExplicit <- identical(backend$mode, "client")
     resolvedMode <- resolveDuckDBMode(backend)
     if (resolvedMode == "server") {
       # Route DuckDB server mode through the server infrastructure
@@ -921,19 +923,22 @@ reactable <- function(
     # Warn if this widget ends up being rendered in a Shiny session, since DuckDB-WASM
     # (client mode) was selected because no Shiny session was detected at reactable() call time.
     # This happens when reactable() is called at the top level of a Shiny app script.
-    preRenderHook <- function(instance) {
-      session <- if (requireNamespace("shiny", quietly = TRUE)) {
-        shiny::getDefaultReactiveDomain()
+    # Don't warn if the user explicitly set mode = "client".
+    if (!isDuckDBClientModeExplicit) {
+      preRenderHook <- function(instance) {
+        session <- if (requireNamespace("shiny", quietly = TRUE)) {
+          shiny::getDefaultReactiveDomain()
+        }
+        if (!is.null(session)) {
+          warning(
+            "`backendDuckDB()` was configured for client-side mode because `reactable()` was called ",
+            "outside of a Shiny render function. Move the `reactable()` call inside `renderReactable()` ",
+            "so the backend can detect the Shiny session and use server mode.",
+            call. = FALSE
+          )
+        }
+        instance
       }
-      if (!is.null(session)) {
-        warning(
-          "`backendDuckDB()` was configured for client-side mode because `reactable()` was called ",
-          "outside of a Shiny render function. Move the `reactable()` call inside `renderReactable()` ",
-          "so the backend can detect the Shiny session and use server mode.",
-          call. = FALSE
-        )
-      }
-      instance
     }
   } else {
     data <- toJSON(data)
@@ -1255,7 +1260,7 @@ duckdbDependency <- function() {
     name = "duckdb-wasm",
     version = "1.29.0",
     src = system.file("htmlwidgets/lib/duckdb-wasm", package = "reactable"),
-    script = "reactable-duckdb.js",
+    script = c("duckdb-locator.js", "reactable-duckdb.js"),
     all_files = TRUE
   )
 }
@@ -1264,9 +1269,10 @@ duckdbDependency <- function() {
 # Includes a locator script that registers the Parquet file URL so JS can find it.
 parquetDependency <- function(parquetDir, parquetFilename, parquetId) {
   # Write a locator script that registers the Parquet URL for this widget.
-  # Uses document.currentScript to detect the deployed path (same technique as duckdb-entry.js).
+  # Uses document.currentScript to detect the deployed path, with a querySelector
+  # fallback for Shiny where scripts are dynamically inserted.
   locatorJs <- sprintf(
-    "(function(){var s=document.currentScript;var b=s?s.src.replace(/[^/]*$/,''):'';window.__ReactableParquet=window.__ReactableParquet||{};window.__ReactableParquet['%s']=b+'%s';})();",
+    "(function(){var s=document.currentScript||document.querySelector('script[src*=\"parquet-locator\"]');var b=s?s.src.replace(/[^/]*$/,''):'';window.__ReactableParquet=window.__ReactableParquet||{};window.__ReactableParquet['%s']=b+'%s';})();",
     parquetId, parquetFilename
   )
   locatorFile <- file.path(parquetDir, "parquet-locator.js")

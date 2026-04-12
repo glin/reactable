@@ -11,7 +11,10 @@ Server-side data processing (`reactable(server = TRUE)`) moves sorting, filterin
 - ✅ Pagination, sorting, filtering, global search
 - ✅ Grouping with aggregation (V8 backend)
 - ✅ Custom S3 backend interface
-- ⚠️ Row selection/expansion only work for current page
+- ✅ Cross-page row selection (select-all, deselect-all, per-row)
+- ✅ `defaultSelected` with stable row IDs across pages
+- ✅ `updateReactable(selected = ...)` in backend modes
+- ✅ DuckDB-WASM client mode in Shiny (`mode = "client"`, both Arrow IPC and Parquet)
 - ⚠️ R render functions still run for entire table up front
 - ❌ No documentation vignette
 
@@ -91,7 +94,6 @@ JavaScript sends these parameters on every data request:
 | `searchValue` | string | Global search value |
 | `groupBy` | list | Grouped column IDs |
 | `expanded` | object | Expanded row state (currently unused) |
-| `selectedRowIds` | object | Selected row state (currently unused) |
 
 ### Response Format
 
@@ -164,25 +166,34 @@ df[["__state"]] <- listSafeDataFrame(
 When server-side search returns zero results, pagination shows "1-10 of 0 rows" instead of "0-0 of 0 rows".
 
 #### 1.4 Stop Sending Unused State
-**File:** `srcjs/Reactable.js` lines 1180-1183
+**File:** `srcjs/Reactable.js`
 
-Currently sends `expanded` and `selectedRowIds` in every request, but no backend uses them. Either:
-- Remove from requests until server-side selection/expansion is implemented
-- Or implement server-side versions (see section 2)
+~~Currently sends `expanded` and `selectedRowIds` in every request, but no backend uses them.~~ **Done.** `selectedRowIds` has been removed from server requests and all backend signatures. `expanded` is still sent for potential future use with `paginateSubRows`.
 
-### 2. Server-Side Row Selection and Expansion
+### 2. Server-Side Row Selection
 
-This is complex work involving react-table hooks and row ID management.
+~~This is complex work involving react-table hooks and row ID management.~~
 
-#### Current Behavior
-- Selection and expansion fall back to client-side mode
-- Select-all and expand-all only affect rows on the current page
-- This matches ag-Grid's server-side model behavior
+**Done.** Cross-page row selection is fully implemented:
 
-#### Implementation Approach
+- Select-all queries the backend for all matching row IDs (via `selectAll` param) and stores them as explicit `selectedRowIds`
+- Deselect-all only removes the filtered/searched rows, leaving other selections intact
+- Per-row selections persist across page navigation, sort, and filter changes
+- `isAllRowsSelected` checks against `serverRowCount` (not just current page rows)
+- `toggleAllInProgressRef` guard prevents concurrent async calls from checkbox onChange+onClick bubbling
+- All 3 backends (DuckDB, V8, df) support `selectAll`
+- `defaultSelected` works correctly with `defaultSorted` via `__state` on pre-rendered pages
+- `updateReactable(selected = ...)` works in backend modes (0-based indices match `__state.id`)
 
-**Option A: Document limitation (recommended for v1)**
-- Document that select-all/expand-all only work for current page
+### 3. DuckDB-WASM Client Mode in Shiny
+
+**Done.** DuckDB-WASM client mode (`backendDuckDB(mode = "client")`) works in Shiny apps:
+
+- WASM base path detection: locator script (`duckdb-locator.js`) runs before the main bundle and uses `document.currentScript` with a `querySelector` fallback for Shiny (where scripts are dynamically inserted and `document.currentScript` is null)
+- Runtime fallback in `Reactable.js` `useEffect`: queries DOM for `script[src*="reactable-duckdb"]` to resolve WASM/worker paths
+- Parquet sidecar files: same `querySelector` fallback in the Parquet locator script and a runtime URL resolution fallback in `useEffect`
+- Both `format = "arrow"` and `format = "parquet"` work correctly
+- Warning suppressed when user explicitly sets `mode = "client"` (only warns for auto-resolved client mode)
 - This is acceptable behavior matching other table libraries
 - Much simpler than full server-side implementation
 

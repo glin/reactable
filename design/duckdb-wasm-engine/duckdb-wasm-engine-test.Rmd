@@ -899,6 +899,84 @@ reactable(
 )
 ```
 
+### Parquet in Shiny (client mode)
+
+Test that Parquet sidecar files work in a Shiny app. In Shiny, `backendDuckDB()` defaults
+to server mode (data stays in R), so Parquet requires `mode = "client"` to force DuckDB-WASM.
+The Parquet file is served via Shiny's htmlDependency resource path, and the locator script
+resolves the URL using `document.currentScript.src`.
+
+Test steps:
+1. Table should render and be interactive (sort, filter, search).
+2. Open browser DevTools Network tab -- requests to the `.parquet` file should use HTTP
+   range requests (partial content, status 206 or 200 with Range header).
+3. Sorting, filtering should work without full file download.
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+n <- 1000000
+parquet_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2),
+  label = paste0("item-", seq_len(n))
+)
+
+ui <- fluidPage(
+  h3("Parquet sidecar in Shiny (DuckDB client mode, 1M rows)"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      parquet_data,
+      backend = backendDuckDB(mode = "client", format = "parquet"),
+      defaultPageSize = 20,
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      showPageSizeOptions = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Arrow IPC in Shiny (client mode)
+
+Test that embedded Arrow IPC works in a Shiny app with DuckDB client mode.
+This should work the same as the Parquet example but with data embedded in the HTML.
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("Arrow IPC in Shiny (DuckDB client mode)"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      MASS::Cars93,
+      backend = backendDuckDB(mode = "client", format = "arrow"),
+      defaultPageSize = 10,
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
 ## Cross-page selection
 
 ### Select-all across pages
