@@ -21,11 +21,12 @@ New in v0.4.5.9000
    - **Reuse existing code**: Before writing new logic, search the codebase for existing implementations of similar behavior. Reuse and delegate to existing code paths rather than duplicating logic (e.g., if header click sorting already computes the right state, call into that same code path from the API).
 2. **Make changes**
    - **Parameter ordering**: When adding parameters to an existing function that mirrors another function (e.g., `updateReactable()` mirrors `reactable()`), order new parameters to roughly match the order of associated features/parameters in the parent function.
-3. **Document R API**: Always run `devtools::document()` in R after making any changes to roxygen comments or exported functions. This updates `NAMESPACE`, `man/` pages, and ensures the documentation stays in sync.
-4. **Format**: Format JavaScript code using `prettier`.
-5. **Lint**: Lint JavaScript code using `eslint`.
-6. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
-7. **Commit**: Never commit built files in `inst/htmlwidgets/` together with source code changes. Always commit built files as separate, standalone commits, and only when prompted to do so.
+3. **S3 methods**: When adding or reordering parameters in an S3 generic function, update all S3 method implementations to have a matching signature (same parameter names in the same order). Also update the roxygen `@param` documentation. R CMD check enforces this consistency.
+4. **Document R API**: Always run `devtools::document()` in R after making any changes to roxygen comments or exported functions. This updates `NAMESPACE`, `man/` pages, and ensures the documentation stays in sync.
+5. **Format**: Format JavaScript code using `prettier`.
+6. **Lint**: Lint JavaScript code using `eslint`.
+7. **Update docs**: Update `NEWS.md` and `vignettes/examples.Rmd`. Check if any updates should be made to the existing Rmd docs under `vignettes/`.
+8. **Commit**: Never commit built files in `inst/htmlwidgets/` together with source code changes. Always commit built files as separate, standalone commits, and only when prompted to do so.
 
 ## JavaScript API in HTML Documents
 
@@ -59,11 +60,11 @@ Use `agent-browser` for end-to-end testing in the browser. Run `agent-browser --
 To generate a standalone HTML file with a reactable table for browser testing, use `htmltools::save_html()`:
 
 ```r
-Rscript -e "library(reactable); library(htmltools); w <- reactable(mtcars[1:10, ]); f <- tempfile(fileext = '.html'); save_html(w, file = f); cat(f)"
+Rscript -e "library(reactable); library(htmltools); w <- reactable(mtcars[1:10, ]); save_html(w, file = 'vignettes-test/basic-test.html')"
 ```
 
-This creates a self-contained HTML file that can be opened directly in `agent-browser`. Use the printed temp file path
-with `agent-browser open`.
+This creates a self-contained HTML file that can be opened directly in `agent-browser`. Do not use `rmarkdown::render()`
+for this purpose as it requires pandoc. Clean up generated test HTML files after testing.
 
 ### Core workflow
 

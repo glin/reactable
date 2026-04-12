@@ -363,6 +363,7 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' @param groupBy The current grouped columns. `NULL` if empty.
 #' @param pagination Whether pagination is enabled, `TRUE` or `FALSE`.
 #' @param paginateSubRows Whether sub rows are paginated, `TRUE` or `FALSE`.
+#' @param selectAll Whether a select-all operation is being requested, `TRUE` or `NULL`.
 #' @param expanded The current expanded rows.
 #' @param ... Additional arguments passed to the S3 method.
 #' @return

@@ -119,8 +119,13 @@ reactableServerInit.reactable_backendV8 <- function(x, ...) {
 }
 
 #' @exportS3Method
-reactableServerData.reactable_backendV8 <- function(x, data = NULL, selectAll = NULL,
-                                                    filters = NULL, searchValue = NULL, ...) {
+reactableServerData.reactable_backendV8 <- function(x, data = NULL, columns = NULL,
+                                                    pageIndex = 0, pageSize = 0,
+                                                    sortBy = NULL, filters = NULL,
+                                                    searchValue = NULL, searchMethod = NULL,
+                                                    groupBy = NULL, pagination = NULL,
+                                                    paginateSubRows = NULL, selectAll = NULL,
+                                                    expanded = NULL, ...) {
   # Handle select-all request using R data frame operations (V8 JS engine
   # doesn't need to be involved for this).
   if (isTRUE(selectAll) && !is.null(data)) {

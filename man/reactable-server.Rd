@@ -36,6 +36,7 @@ reactableServerData(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
+  selectAll = NULL,
   expanded = NULL,
   ...
 )
@@ -68,6 +69,8 @@ reactableServerData(
 \item{expanded}{The current expanded rows.}
 
 \item{...}{Additional arguments passed to the S3 method.}
+
+\item{selectAll}{Whether a select-all operation is being requested, \code{TRUE} or \code{NULL}.}
 }
 \value{
 \itemize{
