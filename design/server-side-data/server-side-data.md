@@ -197,6 +197,10 @@ When server-side search returns zero results, pagination shows "1-10 of 0 rows" 
 - This is acceptable behavior matching other table libraries
 - Much simpler than full server-side implementation
 
+**Future simplification: consider removing pre-rendered first page.** The R-side pre-rendering of the first page (to avoid a blank flash while WASM loads) adds significant JS complexity: `canSkipInitialDuckDBQuery`, `duckdbQueryCount`, `stateMatchesPrerender` comparison against `defaultSorted`, the groupBy special case (pre-rendered data is flat so we must query immediately), and race conditions when users interact before DuckDB is ready. Without pre-rendering, the query effect fires unconditionally after init and the entire skip optimization disappears. The tradeoff is showing a loading/empty state during WASM init instead of instant first-page display.
+
+Another issue: **floating point precision mismatch** between the two data paths. The pre-rendered page goes through `jsonlite::toJSON(digits = NA)` which uses C's `%.15g` format (15 significant digits), while DuckDB query results come through Arrow's `row.toJSON()` which uses JavaScript's `Number.toString()` (up to 17 significant digits for exact float64 round-trip). Since 15 significant digits isn't always enough to recover the exact float64 value, numbers with many decimal places can visibly change when the user first interacts and DuckDB takes over from the pre-rendered data. This is unsolvable without either (a) increasing jsonlite's digits to 17 for exact round-trip, (b) rounding DuckDB results to 15 significant digits to match jsonlite, or (c) removing pre-rendering so there's only one data path.
+
 **Option B: Full server-side implementation (future)**
 - Use `manualRowSelectedKey` / `manualExpandedKey` in react-table
 - Track selection/expansion state on server
