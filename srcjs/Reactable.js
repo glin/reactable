@@ -1277,7 +1277,7 @@ function Table({
         // will be just a filename. Resolve it against the locator script's actual URL
         // from the DOM.
         if (parquetUrl && !/^https?:\/\//.test(parquetUrl)) {
-          const locatorEl = document.querySelector('script[src*="parquet-locator"]')
+          const locatorEl = document.querySelector(`script[src*="reactable-parquet-${parquetId}"]`)
           if (locatorEl) {
             parquetUrl = locatorEl.src.replace(/[^/]*$/, '') + parquetUrl
           }
