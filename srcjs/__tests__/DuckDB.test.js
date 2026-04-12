@@ -152,6 +152,169 @@ describe('DuckDB backend', () => {
     expect(mockBackend.query).not.toHaveBeenCalled()
   })
 
+  it('queries DuckDB when page changes during initialization', async () => {
+    // Simulate slow init (e.g., Parquet loading) with a deferred promise
+    let resolveInit
+    const mockBackend = createMockBackend(20)
+    mockBackend.init = jest.fn().mockImplementation(() => {
+      return new Promise(resolve => {
+        resolveInit = resolve
+      })
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        showPagination
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // First page renders immediately from pre-rendered data
+    expect(getRows(container)).toHaveLength(5)
+    expect(mockBackend.query).not.toHaveBeenCalled()
+
+    // User clicks next page BEFORE DuckDB is ready
+    const nextButton = getNextButton(container)
+    act(() => {
+      nextButton.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+
+    // DuckDB init hasn't resolved yet, so no query should fire
+    expect(mockBackend.query).not.toHaveBeenCalled()
+
+    // DuckDB finishes initializing
+    await act(async () => {
+      resolveInit()
+    })
+
+    // The query for page 2 should fire despite the skip-initial-query optimization,
+    // because the user already navigated away from page 1
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ pageIndex: 1, pageSize: 5 })
+      )
+    })
+  })
+
+  it('queries DuckDB when sort changes during initialization', async () => {
+    let resolveInit
+    const mockBackend = createMockBackend(20)
+    mockBackend.init = jest.fn().mockImplementation(() => {
+      return new Promise(resolve => {
+        resolveInit = resolve
+      })
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const sortableColumns = [
+      { name: 'colA', id: 'a', type: 'numeric', sortable: true },
+      { name: 'colB', id: 'b', sortable: true }
+    ]
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={sortableColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        showPagination
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // User clicks a column header to sort BEFORE DuckDB is ready
+    const headers = getSortableHeaders(container)
+    act(() => {
+      fireEvent.click(headers[0])
+    })
+
+    expect(mockBackend.query).not.toHaveBeenCalled()
+
+    // DuckDB finishes initializing
+    await act(async () => {
+      resolveInit()
+    })
+
+    // The query with the new sort should fire
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pageIndex: 0,
+          sortBy: expect.arrayContaining([expect.objectContaining({ id: 'a' })])
+        })
+      )
+    })
+  })
+
+  it('queries DuckDB when filter changes during initialization', async () => {
+    let resolveInit
+    const mockBackend = createMockBackend(20)
+    mockBackend.init = jest.fn().mockImplementation(() => {
+      return new Promise(resolve => {
+        resolveInit = resolve
+      })
+    })
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const columnsWithFilter = baseColumns.map(col => ({ ...col, filterable: true }))
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={columnsWithFilter}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        showPagination
+        filterable
+        serverRowCount={20}
+        serverMaxRowCount={20}
+      />
+    )
+
+    // User types in a filter BEFORE DuckDB is ready
+    const filterInputs = getFilters(container)
+    fireEvent.change(filterInputs[0], { target: { value: '3' } })
+
+    expect(mockBackend.query).not.toHaveBeenCalled()
+
+    // DuckDB finishes initializing
+    await act(async () => {
+      resolveInit()
+    })
+
+    // The query with the filter should fire
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pageIndex: 0,
+          filters: [{ id: 'a', value: '3' }]
+        })
+      )
+    })
+  })
+
   it('queries DuckDB on page navigation', async () => {
     const mockBackend = createMockBackend(20)
 

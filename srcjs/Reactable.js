@@ -1332,19 +1332,29 @@ function Table({
   // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
   // Don't skip when pagination is disabled — the pre-rendered page is only a subset of all rows.
   const hasGroupBy = groupBy && groupBy.length > 0
-  const skipInitialDuckDBQuery = React.useRef(
-    useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
-  )
+  const canSkipInitialDuckDBQuery = useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
+  const duckdbQueryCount = React.useRef(0)
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
       return
     }
 
-    // Skip the initial query if the first page was pre-rendered in R
-    if (skipInitialDuckDBQuery.current) {
-      skipInitialDuckDBQuery.current = false
-      return
+    // Skip the first query if the pre-rendered first page is still valid — i.e., the user
+    // hasn't changed page, sort, filter, or search while DuckDB was initializing.
+    if (canSkipInitialDuckDBQuery && duckdbQueryCount.current === 0) {
+      const initialSort = defaultSorted || []
+      const stateMatchesPrerender =
+        state.pageIndex === 0 &&
+        state.sortBy.length === initialSort.length &&
+        state.sortBy.every((s, i) => s.id === initialSort[i].id && s.desc === initialSort[i].desc) &&
+        (!state.filters || state.filters.length === 0) &&
+        !state.globalFilter
+      if (stateMatchesPrerender) {
+        duckdbQueryCount.current++
+        return
+      }
     }
+    duckdbQueryCount.current++
 
     duckdbRef.current
       .query({
