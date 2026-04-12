@@ -947,6 +947,54 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+### Multiple Parquet tables in Shiny
+
+Test that multiple Parquet-backed tables on the same Shiny page resolve their sidecar
+files independently. Each table has its own `parquetId` and locator script, so the
+querySelector fallback must use a table-specific selector (not just `parquet-locator`).
+
+Test steps:
+1. Both tables should render with correct data.
+2. Sorting and filtering should work independently on each table.
+3. Check browser console for errors (wrong Parquet URL would cause a fetch failure).
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("Multiple Parquet tables in Shiny"),
+  h4("Table 1: mtcars"),
+  reactableOutput("table1"),
+  h4("Table 2: iris"),
+  reactableOutput("table2")
+)
+
+server <- function(input, output, session) {
+  output$table1 <- renderReactable({
+    reactable(
+      mtcars,
+      backend = backendDuckDB(mode = "client", format = "parquet"),
+      defaultPageSize = 10,
+      sortable = TRUE,
+      filterable = TRUE
+    )
+  })
+
+  output$table2 <- renderReactable({
+    reactable(
+      iris,
+      backend = backendDuckDB(mode = "client", format = "parquet"),
+      defaultPageSize = 10,
+      sortable = TRUE,
+      filterable = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
 ### Arrow IPC in Shiny (client mode)
 
 Test that embedded Arrow IPC works in a Shiny app with DuckDB client mode.

@@ -194,8 +194,6 @@ When server-side search returns zero results, pagination shows "1-10 of 0 rows" 
 - Parquet sidecar files: same `querySelector` fallback in the Parquet locator script and a runtime URL resolution fallback in `useEffect`
 - Both `format = "arrow"` and `format = "parquet"` work correctly
 - Warning suppressed when user explicitly sets `mode = "client"` (only warns for auto-resolved client mode)
-- This is acceptable behavior matching other table libraries
-- Much simpler than full server-side implementation
 
 **Future simplification: consider removing pre-rendered first page.** The R-side pre-rendering of the first page (to avoid a blank flash while WASM loads) adds significant JS complexity: `canSkipInitialDuckDBQuery`, `duckdbQueryCount`, `stateMatchesPrerender` comparison against `defaultSorted`, the groupBy special case (pre-rendered data is flat so we must query immediately), and race conditions when users interact before DuckDB is ready. Without pre-rendering, the query effect fires unconditionally after init and the entire skip optimization disappears. The tradeoff is showing a loading/empty state during WASM init instead of instant first-page display.
 
