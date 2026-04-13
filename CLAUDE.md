@@ -16,6 +16,17 @@ New in v0.4.5.9000
 
 ## Development Workflow
 
+### Before committing
+
+After iterating on a feature or fix, do a self-review before committing:
+
+- **Dead code**: Check for variables, functions, or parameters that were added during iteration but are no longer used. Search for variables that are assigned but never read.
+- **Stale comments and docs**: Verify that comments, design docs, and `NEWS.md` entries still accurately describe the final implementation, not an earlier iteration. Look for struck-through text in design docs that still has leftover content from before it was struck through.
+- **Redundant fallbacks**: When multiple fallback strategies were tried, check whether earlier approaches are still needed or if a later, more complete fix supersedes them.
+- **Consistency**: If a pattern was applied in one place (e.g., a querySelector selector string), check that all related uses follow the same pattern and handle the same edge cases (e.g., multiple widgets on one page).
+
+### Steps
+
 1. **Update design docs**: When using Plan Mode or for major features, write planning and design docs into the `design/` directory. Use `design/virtual-scrolling/` as a model. Ensure that features consider accessibility (targeting WCAG 2.2 at a minimum) and include a test plan. Also create an Rmd file with examples of different test cases. Use MASS::Cars93 or mtcars datasets for examples unless another built-in R dataset is more appropriate.
    - **Ask questions**: When writing design docs, ask clarifying questions about ambiguous design decisions, naming choices, scope, and behavior before finalizing the plan. This leads to much better designs.
    - **Reuse existing code**: Before writing new logic, search the codebase for existing implementations of similar behavior. Reuse and delegate to existing code paths rather than duplicating logic (e.g., if header click sorting already computes the right state, call into that same code path from the API).
