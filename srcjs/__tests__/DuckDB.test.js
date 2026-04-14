@@ -1067,6 +1067,80 @@ describe('DuckDB backend', () => {
     })
   })
 
+  it('renders paginateSubRows page with orphan sub-rows whose parent is on another page', async () => {
+    const mockBackend = createMockBackend(20)
+
+    // Page 1: group header + 2 sub-rows (of 4 total) fill the page
+    // Page 2: remaining 2 sub-rows (orphans - parent header is on page 1) + next group header
+    mockBackend.query.mockImplementation(({ pageIndex }) => {
+      if (pageIndex === 0) {
+        return Promise.resolve({
+          rows: [
+            {
+              a: 'grpA',
+              b: null,
+              __state: { id: 'a:grpA', grouped: true, subRowCount: 4 }
+            },
+            { a: 'grpA', b: 'sub1', __state: { id: '0', index: 0, parentId: 'a:grpA' } },
+            { a: 'grpA', b: 'sub2', __state: { id: '1', index: 1, parentId: 'a:grpA' } }
+          ],
+          rowCount: 8
+        })
+      }
+      // Page 2: orphan sub-rows (parent header not on this page) + next group header
+      return Promise.resolve({
+        rows: [
+          { a: 'grpA', b: 'sub3', __state: { id: '2', index: 2, parentId: 'a:grpA' } },
+          { a: 'grpA', b: 'sub4', __state: { id: '3', index: 3, parentId: 'a:grpA' } },
+          {
+            a: 'grpB',
+            b: null,
+            __state: { id: 'a:grpB', grouped: true, subRowCount: 3 }
+          }
+        ],
+        rowCount: 8
+      })
+    })
+
+    const firstPageData = { a: ['grpA'], b: [''] }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={3}
+        showPagination
+        groupBy={['a']}
+        paginateSubRows
+        serverRowCount={8}
+        serverMaxRowCount={8}
+      />
+    )
+
+    // Wait for DuckDB to be ready and page 1 to render
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+    await waitFor(() => {
+      expect(getRows(container)).toHaveLength(3)
+    })
+
+    // Navigate to page 2 - should NOT crash despite sub-rows referencing
+    // a parent group header that only exists on page 1
+    fireEvent.click(getNextButton(container))
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(
+        expect.objectContaining({ pageIndex: 1 })
+      )
+    })
+    await waitFor(() => {
+      expect(getRows(container)).toHaveLength(3)
+    })
+  })
+
   it('fetches all rows when pagination is disabled', async () => {
     const mockBackend = createMockBackend(20)
 
@@ -2593,5 +2667,184 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(stmts[0].sql).toContain('SELECT *')
     expect(stmts[0].sql).not.toContain('GROUP BY')
     expect(result.rows).toEqual([{ a: 1, b: 'x' }])
+  })
+
+  it('paginateSubRows: returns flat group headers with subRowCount when no groups expanded', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { grp: 'A', _sub_count: 5, val: 100 },
+          { grp: 'B', _sub_count: 3, val: 200 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'grp', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['grp'],
+      expanded: {},
+      paginateSubRows: true
+    })
+
+    expect(result.rowCount).toBe(2) // 2 collapsed groups
+    expect(result.rows).toHaveLength(2)
+    expect(result.rows[0]).toMatchObject({
+      grp: 'A',
+      val: 100,
+      __state: { id: 'grp:A', grouped: true, subRowCount: 5 }
+    })
+    expect(result.rows[1]).toMatchObject({
+      grp: 'B',
+      val: 200,
+      __state: { id: 'grp:B', grouped: true, subRowCount: 3 }
+    })
+    // No .subRows property
+    expect(result.rows[0]['.subRows']).toBeUndefined()
+  })
+
+  it('paginateSubRows: returns group header + sub-row slice when group is expanded', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { grp: 'A', _sub_count: 3, val: 60 },
+          { grp: 'B', _sub_count: 2, val: 40 }
+        ])
+      }
+      // Sub-row query for expanded group A
+      if (sql.includes('SELECT *') && sql.includes('"grp" = ?')) {
+        return arrowResult([
+          { grp: 'A', val: 10, _reactable_rowid: 0 },
+          { grp: 'A', val: 20, _reactable_rowid: 1 },
+          { grp: 'A', val: 30, _reactable_rowid: 2 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'grp', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['grp'],
+      expanded: { 'grp:A': true },
+      paginateSubRows: true
+    })
+
+    // rowCount = (1 + 3) + 1 = 5 (group A expanded, group B collapsed)
+    expect(result.rowCount).toBe(5)
+    expect(result.rows).toHaveLength(5)
+
+    // Group A header
+    expect(result.rows[0]).toMatchObject({
+      grp: 'A',
+      val: 60,
+      __state: { id: 'grp:A', grouped: true, subRowCount: 3 }
+    })
+    // Sub-rows of A with parentId
+    expect(result.rows[1]).toMatchObject({
+      grp: 'A',
+      val: 10,
+      __state: { id: '0', index: 0, parentId: 'grp:A' }
+    })
+    expect(result.rows[2]).toMatchObject({
+      grp: 'A',
+      val: 20,
+      __state: { id: '1', index: 1, parentId: 'grp:A' }
+    })
+    expect(result.rows[3]).toMatchObject({
+      grp: 'A',
+      val: 30,
+      __state: { id: '2', index: 2, parentId: 'grp:A' }
+    })
+    // Group B header (collapsed)
+    expect(result.rows[4]).toMatchObject({
+      grp: 'B',
+      val: 40,
+      __state: { id: 'grp:B', grouped: true, subRowCount: 2 }
+    })
+  })
+
+  it('paginateSubRows: paginates across group boundaries', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { grp: 'A', _sub_count: 3, val: 60 },
+          { grp: 'B', _sub_count: 2, val: 40 }
+        ])
+      }
+      // Sub-row queries - return based on LIMIT/OFFSET in sql
+      if (sql.includes('"grp" = ?')) {
+        if (sql.includes('LIMIT 1 OFFSET 2')) {
+          // Last sub-row of group A on page 1
+          return arrowResult([{ grp: 'A', val: 30, _reactable_rowid: 2 }])
+        }
+        if (sql.includes('LIMIT 1 OFFSET 0')) {
+          // First sub-row of group B on page 1
+          return arrowResult([{ grp: 'B', val: 15, _reactable_rowid: 3 }])
+        }
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    // Both groups expanded: flattened = [A hdr, A.0, A.1, A.2, B hdr, B.0, B.1] = 7 rows
+    // Page 1 (pageIndex=1, pageSize=3) = flat positions [3, 4, 5] = [A.2, B hdr, B.0]
+    const result = await backend.query({
+      pageIndex: 1,
+      pageSize: 3,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'grp', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['grp'],
+      expanded: { 'grp:A': true, 'grp:B': true },
+      paginateSubRows: true
+    })
+
+    expect(result.rowCount).toBe(7) // (1+3) + (1+2)
+    expect(result.rows).toHaveLength(3)
+
+    // Last sub-row of A
+    expect(result.rows[0]).toMatchObject({
+      val: 30,
+      __state: { id: '2', index: 2, parentId: 'grp:A' }
+    })
+    // Group B header
+    expect(result.rows[1]).toMatchObject({
+      grp: 'B',
+      val: 40,
+      __state: { id: 'grp:B', grouped: true, subRowCount: 2 }
+    })
+    // First sub-row of B
+    expect(result.rows[2]).toMatchObject({
+      val: 15,
+      __state: { id: '3', index: 3, parentId: 'grp:B' }
+    })
   })
 })

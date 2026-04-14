@@ -652,6 +652,37 @@ reactable(
 )
 ```
 
+### paginateSubRows with Parquet sidecar
+
+100k rows forced to Parquet format. Tests that paginateSubRows works with the Parquet
+code path (HTTP range requests via DuckDB-WASM) rather than embedded Arrow IPC.
+
+```{r}
+n <- 100000
+parquet_grouped <- data.frame(
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  category = sample(LETTERS[1:10], n, replace = TRUE),
+  value = round(rnorm(n, mean = 100, sd = 50), 2),
+  score = round(runif(n, 0, 100), 2),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  parquet_grouped,
+  backend = backendDuckDB(format = "parquet"),
+  defaultPageSize = 20,
+  groupBy = "region",
+  paginateSubRows = TRUE,
+  sortable = TRUE,
+  filterable = TRUE,
+  columns = list(
+    value = colDef(aggregate = "sum", format = colFormat(digits = 0)),
+    score = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    category = colDef(aggregate = "count")
+  )
+)
+```
+
 ### Comparison: paginateSubRows without backend (normal client-side mode)
 
 ```{r}

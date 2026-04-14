@@ -1088,7 +1088,11 @@ function Table({
           }
           // Rebuild sub rows
           if (rowState.parentId != null) {
-            rowsById[rowState.parentId].subRows.push(row)
+            // Parent may not be on the current page when paginateSubRows splits a group
+            // across page boundaries (e.g., header on page 1, remaining sub-rows on page 2)
+            if (rowsById[rowState.parentId]) {
+              rowsById[rowState.parentId].subRows.push(row)
+            }
             // Set parentId on row to tell useGroupBy that this is a nested row
             // TODO change this so useGroupBy gets a properly nested row structure, not flat rows
             row.parentId = rowState.parentId
@@ -1104,7 +1108,9 @@ function Table({
         if (paginateSubRows) {
           rows.forEach(row => {
             const rowState = row.original[rowStateKey]
-            row.subRows.length = rowState.subRowCount
+            if (rowState && rowState.subRowCount != null) {
+              row.subRows.length = rowState.subRowCount
+            }
           })
         }
       }
@@ -1177,7 +1183,7 @@ function Table({
       // Disable manual row expansion
       manualExpandedKey: null,
       // Prevent duplicate sub rows when sub rows are paginated server-side
-      expandSubRows: !(useServerData && paginateSubRows),
+      expandSubRows: !((useServerData || useDuckDB) && paginateSubRows),
       rowCount: useServerData || useDuckDB ? serverRowCount : null
     },
     useServerSideRows,
@@ -1332,7 +1338,8 @@ function Table({
   // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
   // Don't skip when pagination is disabled — the pre-rendered page is only a subset of all rows.
   const hasGroupBy = groupBy && groupBy.length > 0
-  const canSkipInitialDuckDBQuery = useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
+  const canSkipInitialDuckDBQuery =
+    useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
   const duckdbQueryCount = React.useRef(0)
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
@@ -1346,7 +1353,9 @@ function Table({
       const stateMatchesPrerender =
         state.pageIndex === 0 &&
         state.sortBy.length === initialSort.length &&
-        state.sortBy.every((s, i) => s.id === initialSort[i].id && s.desc === initialSort[i].desc) &&
+        state.sortBy.every(
+          (s, i) => s.id === initialSort[i].id && s.desc === initialSort[i].desc
+        ) &&
         (!state.filters || state.filters.length === 0) &&
         !state.globalFilter
       if (stateMatchesPrerender) {
@@ -1364,7 +1373,9 @@ function Table({
         filters: state.filters,
         searchValue: state.globalFilter,
         columns: dataColumns,
-        groupBy: state.groupBy
+        groupBy: state.groupBy,
+        expanded: paginateSubRows ? state.expanded : undefined,
+        paginateSubRows
       })
       .then(result => {
         setNewData(result.rows)
@@ -1386,6 +1397,7 @@ function Table({
     state.filters,
     state.globalFilter,
     state.groupBy,
+    paginateSubRows ? state.expanded : undefined,
     dataColumns
   ])
 
@@ -1479,9 +1491,7 @@ function Table({
         } else {
           // Remove only the matching IDs, keep other selections
           const removeSet = new Set(matchingIds)
-          const remainingIds = Object.keys(getSelectedRowIds()).filter(
-            id => !removeSet.has(id)
-          )
+          const remainingIds = Object.keys(getSelectedRowIds()).filter(id => !removeSet.has(id))
           instance.setRowsSelected(remainingIds)
         }
       } catch (err) {

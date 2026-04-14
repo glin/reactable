@@ -154,8 +154,30 @@ export class DuckDBBackend {
     return result
   }
 
-  async query({ pageIndex, pageSize, sortBy, filters, searchValue, columns, groupBy }) {
+  async query({
+    pageIndex,
+    pageSize,
+    sortBy,
+    filters,
+    searchValue,
+    columns,
+    groupBy,
+    expanded,
+    paginateSubRows
+  }) {
     if (groupBy && groupBy.length > 0) {
+      if (paginateSubRows) {
+        return this.queryGroupedPaginated({
+          pageIndex,
+          pageSize,
+          sortBy,
+          filters,
+          searchValue,
+          columns,
+          groupBy,
+          expanded
+        })
+      }
       return this.queryGrouped({
         pageIndex,
         pageSize,
@@ -239,6 +261,159 @@ export class DuckDBBackend {
       baseWhere.params
     )
     const rowCount = Number(countResult.toArray()[0].n)
+
+    return { rows, rowCount }
+  }
+
+  // Query with GROUP BY and paginateSubRows. Returns a flat list where group headers
+  // and expanded sub-rows are interleaved, paginated as a single list. Sub-rows count
+  // toward pageSize. Only fetches sub-rows for expanded groups on the current page.
+  async queryGroupedPaginated({
+    pageIndex,
+    pageSize,
+    sortBy,
+    filters,
+    searchValue,
+    columns,
+    groupBy,
+    expanded
+  }) {
+    const baseWhere = this.buildWhereParts(filters, searchValue, columns)
+    const allClauses = baseWhere.clauses
+    const allParams = baseWhere.params
+    const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
+
+    const groupCol = groupBy[0]
+    const escapedGroupCol = this.escapeIdentifier(groupCol)
+    const groupedCols = groupBy.slice(0, 1)
+
+    // Build GROUP BY SELECT with aggregates and COUNT(*) for sub-row counts
+    const selectParts = [escapedGroupCol, `COUNT(*) AS _sub_count`]
+    const numericAggCols = []
+
+    for (const col of columns) {
+      if (groupedCols.includes(col.id)) continue
+      const aggName =
+        col.aggregateName || (typeof col.aggregate === 'string' ? col.aggregate : null)
+      if (!aggName) continue
+
+      const sqlAgg = aggregateSQLMap[aggName]
+      if (sqlAgg) {
+        selectParts.push(
+          `${sqlAgg.sql(this.escapeIdentifier(col.id))} AS ${this.escapeIdentifier(col.id)}`
+        )
+        if (sqlAgg.numeric) {
+          numericAggCols.push(col.id)
+        }
+      }
+    }
+
+    let groupSql = `SELECT ${selectParts.join(', ')} FROM reactable_data${whereStr} GROUP BY ${escapedGroupCol}`
+
+    const sortClauses = this.buildGroupSortClauses(sortBy, groupCol, columns, groupedCols)
+    if (sortClauses.length > 0) {
+      groupSql += ' ORDER BY ' + sortClauses.join(', ')
+    }
+
+    // Fetch ALL groups (no LIMIT) to compute flattened row count and page window
+    const groupResult = await this.runPrepared(groupSql, allParams)
+    const allGroups = arrowTableToRows(groupResult)
+
+    // Round numeric aggregates
+    if (numericAggCols.length > 0) {
+      for (const row of allGroups) {
+        for (const colId of numericAggCols) {
+          if (typeof row[colId] === 'number') {
+            row[colId] = round(row[colId], 12)
+          }
+        }
+      }
+    }
+
+    // Build group IDs and determine which are expanded
+    const expandedMap = expanded || {}
+    const groupMeta = allGroups.map(row => {
+      const groupId = `${groupCol}:${row[groupCol]}`
+      const subCount = Number(row._sub_count)
+      const isExpanded = Boolean(expandedMap[groupId])
+      const flatSize = isExpanded ? 1 + subCount : 1
+      return { groupId, groupValue: row[groupCol], subCount, isExpanded, flatSize, row }
+    })
+
+    // Compute total flattened row count
+    let rowCount = 0
+    for (const g of groupMeta) {
+      rowCount += g.flatSize
+    }
+
+    // Determine which groups and sub-row ranges fall on this page
+    const pageStart = Number(pageIndex) * Number(pageSize)
+    const pageEnd = pageStart + Number(pageSize)
+    const rows = []
+
+    let flatOffset = 0
+    for (const g of groupMeta) {
+      const groupStart = flatOffset
+      const groupEnd = groupStart + g.flatSize
+
+      if (groupEnd <= pageStart) {
+        flatOffset = groupEnd
+        continue // entirely before this page
+      }
+      if (groupStart >= pageEnd) {
+        break // entirely after this page
+      }
+
+      // Group header appears on this page if its position falls in [pageStart, pageEnd)
+      if (groupStart >= pageStart && groupStart < pageEnd) {
+        const headerRow = { ...g.row }
+        delete headerRow._sub_count
+        headerRow['__state'] = { id: g.groupId, grouped: true, subRowCount: g.subCount }
+        rows.push(headerRow)
+      }
+
+      // Fetch sub-row slice if this group is expanded and sub-rows fall on this page
+      if (g.isExpanded && g.subCount > 0) {
+        const subFlatStart = groupStart + 1 // sub-rows start after the header
+        const subSliceStart = Math.max(0, pageStart - subFlatStart)
+        const subSliceEnd = Math.min(g.subCount, pageEnd - subFlatStart)
+
+        if (subSliceEnd > subSliceStart) {
+          const subLimit = subSliceEnd - subSliceStart
+          const subOffset = subSliceStart
+
+          let subSql = `SELECT * FROM reactable_data`
+          const subClauses = [...allClauses, `${escapedGroupCol} = ?`]
+          subSql += ' WHERE ' + subClauses.join(' AND ')
+          const subParams = [...allParams, g.groupValue]
+
+          if (sortBy && sortBy.length > 0) {
+            const leafSorts = sortBy.map(
+              s => this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+            )
+            subSql += ' ORDER BY ' + leafSorts.join(', ')
+          }
+          subSql += ` LIMIT ${subLimit} OFFSET ${subOffset}`
+
+          const subResult = await this.runPrepared(subSql, subParams)
+          const subRows = arrowTableToRows(subResult)
+
+          for (const subRow of subRows) {
+            if (subRow._reactable_rowid != null) {
+              subRow['__state'] = {
+                id: String(subRow._reactable_rowid),
+                index: subRow._reactable_rowid,
+                parentId: g.groupId
+              }
+              delete subRow._reactable_rowid
+            }
+            rows.push(subRow)
+          }
+        }
+      }
+
+      flatOffset = groupEnd
+    }
 
     return { rows, rowCount }
   }
