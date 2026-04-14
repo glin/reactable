@@ -2851,8 +2851,8 @@ describe('DuckDBBackend.query with groupBy', () => {
     const { conn } = createGroupMockConn(sql => {
       if (sql.includes('GROUP BY')) {
         return arrowResult([
-          { region: 'East', _sub_count: 5, val: 100 },
-          { region: 'West', _sub_count: 3, val: 200 }
+          { region: 'East', _sub_count: 5, _sub_group_count: 2, val: 100 },
+          { region: 'West', _sub_count: 3, _sub_group_count: 2, val: 200 }
         ])
       }
       return arrowResult([])
@@ -2879,15 +2879,16 @@ describe('DuckDBBackend.query with groupBy', () => {
 
     expect(result.rowCount).toBe(2)
     expect(result.rows).toHaveLength(2)
+    // subRowCount = sub-group count (not leaf count) for non-leaf groups
     expect(result.rows[0]).toMatchObject({
       region: 'East',
       val: 100,
-      __state: { id: 'region:East', grouped: true, subRowCount: 5 }
+      __state: { id: 'region:East', grouped: true, subRowCount: 2 }
     })
     expect(result.rows[1]).toMatchObject({
       region: 'West',
       val: 200,
-      __state: { id: 'region:West', grouped: true, subRowCount: 3 }
+      __state: { id: 'region:West', grouped: true, subRowCount: 2 }
     })
   })
 
@@ -2897,8 +2898,8 @@ describe('DuckDBBackend.query with groupBy', () => {
       // Top-level GROUP BY region
       if (sql.includes('GROUP BY "region"') && !sql.includes('"region" = ?')) {
         return arrowResult([
-          { region: 'East', _sub_count: 5, val: 100 },
-          { region: 'West', _sub_count: 3, val: 200 }
+          { region: 'East', _sub_count: 5, _sub_group_count: 2, val: 100 },
+          { region: 'West', _sub_count: 3, _sub_group_count: 2, val: 200 }
         ])
       }
       // Sub-group GROUP BY type WHERE region = 'East'
@@ -2940,7 +2941,7 @@ describe('DuckDBBackend.query with groupBy', () => {
       val: 100,
       __state: { id: 'region:East', grouped: true, subRowCount: 2 }
     })
-    // Sub-group Small (uses path-based ID)
+    // Sub-group Small (uses path-based ID) - leaf level, so subRowCount is leaf count
     expect(result.rows[1]).toMatchObject({
       type: 'Small',
       val: 60,
@@ -2952,11 +2953,11 @@ describe('DuckDBBackend.query with groupBy', () => {
       val: 40,
       __state: { id: 'region:East.type:Large', grouped: true, subRowCount: 2 }
     })
-    // West header (collapsed) - subRowCount is leaf count since sub-groups aren't fetched
+    // West header (collapsed) - subRowCount = sub-group count
     expect(result.rows[3]).toMatchObject({
       region: 'West',
       val: 200,
-      __state: { id: 'region:West', grouped: true, subRowCount: 3 }
+      __state: { id: 'region:West', grouped: true, subRowCount: 2 }
     })
   })
 
@@ -2965,8 +2966,8 @@ describe('DuckDBBackend.query with groupBy', () => {
     const { conn } = createGroupMockConn(sql => {
       if (sql.includes('GROUP BY "region"') && !sql.includes('"region" = ?')) {
         return arrowResult([
-          { region: 'East', _sub_count: 5, val: 100 },
-          { region: 'West', _sub_count: 3, val: 200 }
+          { region: 'East', _sub_count: 5, _sub_group_count: 2, val: 100 },
+          { region: 'West', _sub_count: 3, _sub_group_count: 2, val: 200 }
         ])
       }
       if (sql.includes('GROUP BY "type"') && sql.includes('"region" = ?')) {
@@ -3035,11 +3036,11 @@ describe('DuckDBBackend.query with groupBy', () => {
       grouped: true,
       subRowCount: 3
     })
-    // West (collapsed) - subRowCount is leaf count since sub-groups aren't fetched
+    // West (collapsed) - subRowCount = sub-group count
     expect(result.rows[5].__state).toMatchObject({
       id: 'region:West',
       grouped: true,
-      subRowCount: 3
+      subRowCount: 2
     })
   })
 })

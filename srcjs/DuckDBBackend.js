@@ -348,6 +348,12 @@ export class DuckDBBackend {
 
     // Build GROUP BY SELECT with aggregates and COUNT(*) for sub-row counts
     const selectParts = [escapedGroupCol, `COUNT(*) AS _sub_count`]
+    // For non-leaf levels, also count distinct sub-groups so we always know the
+    // immediate children count (used for the "(N)" expander display)
+    if (!isLeafLevel) {
+      const nextGroupCol = this.escapeIdentifier(groupBy[depth + 1])
+      selectParts.push(`COUNT(DISTINCT ${nextGroupCol}) AS _sub_group_count`)
+    }
     const numericAggCols = []
 
     for (const col of columns) {
@@ -430,10 +436,14 @@ export class DuckDBBackend {
         }
       }
 
+      // subGroupCount: for non-leaf levels, the number of distinct sub-groups
+      const subGroupCount = !isLeafLevel ? Number(row._sub_group_count) : null
+
       nodes.push({
         groupId,
         groupValue: row[groupCol],
         subCount,
+        subGroupCount,
         isExpanded,
         flatSize,
         row,
@@ -478,13 +488,13 @@ export class DuckDBBackend {
       if (nodeStart >= pageStart && nodeStart < pageEnd) {
         const headerRow = { ...node.row }
         delete headerRow._sub_count
+        delete headerRow._sub_group_count
         headerRow['__state'] = {
           id: node.groupId,
           grouped: true,
           // subRowCount: number of immediate children for the expander "(N)" display.
-          // Leaf-level groups: count of data rows. Non-leaf groups: count of sub-groups
-          // (from children if fetched, else from _sub_count as best available).
-          subRowCount: node.children ? node.children.length : node.subCount
+          // Leaf-level groups: count of data rows. Non-leaf groups: count of sub-groups.
+          subRowCount: node.subGroupCount != null ? node.subGroupCount : node.subCount
         }
         rows.push(headerRow)
       }
