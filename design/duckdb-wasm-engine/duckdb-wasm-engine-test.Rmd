@@ -294,9 +294,9 @@ reactable(
 
 ## DuckDB R Server Backend (Shiny only)
 
-The following examples use `server = "duckdb"` which requires a Shiny session. They won't render
-in static HTML — run as a Shiny app with `shiny::runApp()` or use the example app at
-`inst/examples/shiny-server-data-duckdb.R`.
+The following examples use `backend = backendDuckDB()` which automatically uses server mode
+in a Shiny session. They won't render in static HTML -- run as a Shiny app with
+`shiny::runApp()` or use the example app at `inst/examples/shiny-server-data-duckdb.R`.
 
 ### Full Shiny app with DuckDB server backend
 
@@ -324,7 +324,7 @@ server <- function(input, output) {
   output$tbl <- renderReactable({
     reactable(
       data,
-      server = "duckdb",
+      backend = backendDuckDB(),
       defaultPageSize = 20,
       filterable = TRUE,
       searchable = TRUE,
@@ -382,7 +382,7 @@ server <- function(input, output) {
   output$tbl <- renderReactable({
     reactable(
       data,
-      server = "duckdb",
+      backend = backendDuckDB(),
       defaultPageSize = 25,
       filterable = TRUE,
       searchable = TRUE,
@@ -412,13 +412,13 @@ shinyApp(ui, server)
 # DuckDB is ~100x faster than df for large datasets.
 
 # DuckDB backend (fastest for large data)
-reactable(MASS::Cars93, server = "duckdb", filterable = TRUE, searchable = TRUE)
+reactable(MASS::Cars93, backend = backendDuckDB(), filterable = TRUE, searchable = TRUE)
 
 # V8 backend (default, matches client-side behavior exactly)
-reactable(MASS::Cars93, server = TRUE, filterable = TRUE, searchable = TRUE)
+reactable(MASS::Cars93, backend = backendV8(), filterable = TRUE, searchable = TRUE)
 
 # Data frame backend (simplest, no external dependencies)
-reactable(MASS::Cars93, server = "df", filterable = TRUE, searchable = TRUE)
+reactable(MASS::Cars93, backend = backendDf(), filterable = TRUE, searchable = TRUE)
 ```
 
 ## Grouping and Aggregation
@@ -580,6 +580,94 @@ reactable(
 )
 ```
 
+### paginateSubRows with DuckDB backend
+
+With `paginateSubRows = TRUE`, expanded sub-rows count toward the page size. This prevents a
+group with many rows from overwhelming the page. Compare with the non-DuckDB version below.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  backend = backendDuckDB(),
+  defaultPageSize = 10,
+  groupBy = "Manufacturer",
+  paginateSubRows = TRUE,
+  columns = list(
+    Min.Price = colDef(aggregate = "sum"),
+    Max.Price = colDef(aggregate = "sum"),
+    Horsepower = colDef(aggregate = "mean")
+  )
+)
+```
+
+### paginateSubRows with multi-level grouping
+
+Multi-level grouping with paginateSubRows. Expanding groups at both levels should count
+toward the page size.
+
+```{r}
+reactable(
+  MASS::Cars93,
+  backend = backendDuckDB(),
+  defaultPageSize = 10,
+  groupBy = c("Origin", "Type"),
+  paginateSubRows = TRUE,
+  columns = list(
+    Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Max.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+    Horsepower = colDef(aggregate = "mean", format = colFormat(digits = 0)),
+    Manufacturer = colDef(aggregate = "unique")
+  )
+)
+```
+
+### paginateSubRows with large dataset
+
+100k rows with 4 groups of ~25k rows each. Without paginateSubRows, expanding a group
+would show all 25k sub-rows. With paginateSubRows, only pageSize rows are shown at a time.
+
+```{r}
+n <- 100000
+large_grouped <- data.frame(
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  category = sample(LETTERS[1:10], n, replace = TRUE),
+  value = round(rnorm(n, mean = 100, sd = 50), 2),
+  score = round(runif(n, 0, 100), 2),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  large_grouped,
+  backend = backendDuckDB(),
+  defaultPageSize = 20,
+  groupBy = "region",
+  paginateSubRows = TRUE,
+  sortable = TRUE,
+  filterable = TRUE,
+  columns = list(
+    value = colDef(aggregate = "sum", format = colFormat(digits = 0)),
+    score = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    category = colDef(aggregate = "count")
+  )
+)
+```
+
+### Comparison: paginateSubRows without backend (normal client-side mode)
+
+```{r}
+reactable(
+  MASS::Cars93,
+  defaultPageSize = 10,
+  groupBy = "Manufacturer",
+  paginateSubRows = TRUE,
+  columns = list(
+    Min.Price = colDef(aggregate = "sum"),
+    Max.Price = colDef(aggregate = "sum"),
+    Horsepower = colDef(aggregate = "mean")
+  )
+)
+```
+
 ### Comparison: groupBy without backend (normal client-side mode)
 
 Same table without the DuckDB backend for behavior comparison.
@@ -622,7 +710,7 @@ server <- function(input, output) {
   output$tbl <- renderReactable({
     reactable(
       data,
-      server = "duckdb",
+      backend = backendDuckDB(),
       defaultPageSize = 20,
       groupBy = "region",
       filterable = TRUE,

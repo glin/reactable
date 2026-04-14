@@ -976,8 +976,7 @@ A backend plugin is a JS object with well-known methods:
 ### Deferred / Future
 
 - [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
-      where sub-rows count toward the page size. Requires passing `expanded` state to the engine and computing
-      cross-group page offsets. See Phase 5 limitation notes for full details.
+      where sub-rows count toward the page size. See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
 - [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
       holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
 - [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
