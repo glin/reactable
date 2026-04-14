@@ -90,7 +90,9 @@ reference:
   contents:
   - reactable-server
   - resolvedData
+  - backendDf
   - backendDuckDB
+  - backendV8
 
 # Exclude duplicate no-static examples from search index
 search:

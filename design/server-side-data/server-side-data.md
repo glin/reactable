@@ -133,37 +133,22 @@ For multi-level grouping, nested data frames contain their own `.subRows`.
 ### 1. Bug Fixes and Polish
 
 #### 1.1 Documentation Typo
-**File:** `man/reactable-server.Rd` line 52-53
 
-Current text incorrectly says:
-```
-- `reactableServerData()` should return a `resolvedData()` object.
-- `reactableServerData()` should not return any value.
-```
+~~**File:** `man/reactable-server.Rd` line 52-53~~
 
-Should be:
-```
-- `reactableServerData()` should return a `resolvedData()` object.
-- `reactableServerInit()` should not return any value.
-```
+**Done.** The Rd already correctly says `reactableServerInit()` should not return any value.
 
 #### 1.2 df Backend groupBy Bug
-**File:** `R/server-df.R`
 
-When `Reactable.toggleGroupBy()` is called via JavaScript API, the df backend returns grouped rows without the `__state` property needed for proper row identification. The V8 backend handles this correctly.
+~~**File:** `R/server-df.R`~~
 
-**Fix:** In `dfGroupBy()`, add state information to grouped rows:
-```r
-df[["__state"]] <- listSafeDataFrame(
-  id = sapply(df[[groupedColumnId]], function(x) sprintf("%s:%s", groupedColumnId, x)),
-  grouped = rep(TRUE, nrow(df))
-)
-```
+**Done.** `dfGroupBy()` now adds `__state` with `id`, `grouped`, and `subRowCount` to grouped rows.
 
 #### 1.3 Pagination Display with Empty Results
-**File:** `srcjs/Reactable.js`
 
-When server-side search returns zero results, pagination shows "1-10 of 0 rows" instead of "0-0 of 0 rows".
+~~**File:** `srcjs/Reactable.js`~~
+
+**Done.** `Pagination.js` uses `Math.min(page * pageSize + 1, rowCount)` to correctly show "0-0 of 0 rows" when `rowCount = 0`.
 
 #### 1.4 Stop Sending Unused State
 **File:** `srcjs/Reactable.js`
@@ -196,6 +181,8 @@ When server-side search returns zero results, pagination shows "1-10 of 0 rows" 
 - Warning suppressed when user explicitly sets `mode = "client"` (only warns for auto-resolved client mode)
 
 **Future simplification: consider removing pre-rendered first page.** The R-side pre-rendering of the first page (to avoid a blank flash while WASM loads) adds significant JS complexity: `canSkipInitialDuckDBQuery`, `duckdbQueryCount`, `stateMatchesPrerender` comparison against `defaultSorted`, the groupBy special case (pre-rendered data is flat so we must query immediately), and race conditions when users interact before DuckDB is ready. Without pre-rendering, the query effect fires unconditionally after init and the entire skip optimization disappears. The tradeoff is showing a loading/empty state during WASM init instead of instant first-page display.
+
+Pre-rendering is also problematic with **virtual scrolling + `pagination = FALSE`**: the pre-rendered `defaultPageSize` rows (e.g., 10) display immediately, then several seconds later the full dataset loads from DuckDB and the table jumps to show all rows. This creates a jarring partial-load effect. Deferring table readiness until all client-side data is fetched (showing a loading indicator instead of the partial pre-render) would give a smoother experience for this combination.
 
 Another issue: **floating point precision mismatch** between the two data paths. The pre-rendered page goes through `jsonlite::toJSON(digits = NA)` which uses C's `%.15g` format (15 significant digits), while DuckDB query results come through Arrow's `row.toJSON()` which uses JavaScript's `Number.toString()` (up to 17 significant digits for exact float64 round-trip). Since 15 significant digits isn't always enough to recover the exact float64 value, numbers with many decimal places can visibly change when the user first interacts and DuckDB takes over from the pre-rendered data. This is unsolvable without either (a) increasing jsonlite's digits to 17 for exact round-trip, (b) rounding DuckDB results to 15 significant digits to match jsonlite, or (c) removing pre-rendering so there's only one data path.
 
@@ -418,6 +405,16 @@ reactableServerData.duckdb_backend <- function(
 4. **Phase 4: Server-side selection** (future, optional)
    - Document current limitation first
    - Full implementation if user demand warrants
+
+5. **Phase 5: Virtualized windowed fetching** (future)
+   - Enable `virtual = TRUE, pagination = FALSE` with DuckDB/Parquet without loading all rows at once
+   - Watch `virtualizer.range` (debounced) to detect when visible rows change
+   - Fire DuckDB queries with `LIMIT bufferSize OFFSET scrollPosition` for a sliding window (~500 rows centered on viewport)
+   - Maintain a sparse data array of length `totalRowCount` with placeholder objects for unfetched rows
+   - Show loading skeleton/shimmer for placeholder rows while data is in-flight
+   - Invalidate entire buffer on sort/filter/search and re-fetch from current scroll position
+   - Key benefit for Parquet: HTTP range requests mean DuckDB reads only the byte ranges needed, not the full file
+   - This is bidirectional infinite scroll -- the main complexity is buffer management and debouncing queries during fast scrolling
 
 ## Verification
 

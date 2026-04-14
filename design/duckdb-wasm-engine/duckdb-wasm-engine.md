@@ -1099,6 +1099,10 @@ and memory than it saves on queries.
 - **Debounce tuning:** The POC debounces search input at 300ms. For large datasets, increasing the debounce or
   requiring a minimum query length (3+ chars) would reduce perceived lag.
 
+### Future: virtualized windowed fetching
+
+With `virtual = TRUE, pagination = FALSE`, DuckDB currently fetches all rows at once (`pageSize: null` omits LIMIT/OFFSET). For Parquet, this means downloading the entire file over HTTP before the table renders. A future enhancement would use scroll-position-driven queries to fetch only a sliding window of rows around the viewport, leveraging Parquet HTTP range requests for efficient partial reads. See Phase 5 in `design/server-side-data/server-side-data.md` for the full plan.
+
 ## End-to-end benchmark: DuckDB vs default backend
 
 Measured in Chrome (Windows), serving rendered R Markdown documents over HTTP. Both documents use the same dataset

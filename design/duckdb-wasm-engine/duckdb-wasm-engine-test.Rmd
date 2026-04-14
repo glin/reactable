@@ -131,6 +131,14 @@ reactable(
 ### Large dataset: 1M rows (virtualized)
 
 ```{r}
+n <- 1000000
+big_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2)
+)
+
 reactable(
   big_data,
   backend = backendDuckDB(),
@@ -547,6 +555,15 @@ reactable(
 ### Large multi-level grouping: 100k rows grouped by category and region
 
 ```{r}
+n <- 100000
+large_data <- data.frame(
+  id = seq_len(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  value = round(rnorm(n, mean = 100, sd = 50), 2),
+  score = round(runif(n, 0, 100), 2)
+)
+
 reactable(
   large_data,
   backend = backendDuckDB(),
@@ -890,11 +907,47 @@ reactable(
 Force embedded Arrow IPC even for large data.
 
 ```{r}
+n <- 1000000
+parquet_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2),
+  label = paste0("item-", seq_len(n))
+)
+
 reactable(
   parquet_data,
   backend = backendDuckDB(format = "arrow"),
   defaultPageSize = 20,
   sortable = TRUE,
+  searchable = TRUE
+)
+```
+
+### Parquet with virtual scrolling
+
+Unpaginated virtual scrolling with Parquet sidecar. DuckDB sends all rows in a single
+query (pageSize = null), and virtual scrolling handles rendering.
+
+```{r}
+n <- 1000000
+parquet_data <- data.frame(
+  id = seq_len(n),
+  value = rnorm(n),
+  category = sample(LETTERS, n, replace = TRUE),
+  score = round(runif(n, 0, 100), 2),
+  label = paste0("item-", seq_len(n))
+)
+
+reactable(
+  parquet_data,
+  backend = backendDuckDB(format = "parquet"),
+  pagination = FALSE,
+  virtual = TRUE,
+  height = 500,
+  sortable = TRUE,
+  filterable = TRUE,
   searchable = TRUE
 )
 ```

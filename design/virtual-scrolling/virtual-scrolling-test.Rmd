@@ -228,7 +228,7 @@ server <- function(input, output) {
 
     reactable(
       data,
-      server = TRUE,
+      backend = backendV8(),
       virtual = TRUE,
       height = 500,
       defaultPageSize = 1000,
@@ -276,7 +276,7 @@ Hypothetical API:
 reactable(
   # Column schema only, no data
   data.frame(id = integer(), value = numeric(), category = character()),
-  server = TRUE,
+  backend = backendV8(),
   virtual = TRUE,
   pagination = FALSE,  # No pagination - seamless scrolling
   height = 500,
