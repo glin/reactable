@@ -683,6 +683,36 @@ reactable(
 )
 ```
 
+### paginateSubRows with Parquet sidecar and multi-level grouping
+
+100k rows with Parquet format and two-level grouping. Expanding groups at both levels
+should count toward the page size.
+
+```{r}
+n <- 100000
+parquet_multi <- data.frame(
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  category = sample(LETTERS[1:10], n, replace = TRUE),
+  value = round(rnorm(n, mean = 100, sd = 50), 2),
+  score = round(runif(n, 0, 100), 2),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  parquet_multi,
+  backend = backendDuckDB(format = "parquet"),
+  defaultPageSize = 20,
+  groupBy = c("region", "category"),
+  paginateSubRows = TRUE,
+  sortable = TRUE,
+  filterable = TRUE,
+  columns = list(
+    value = colDef(aggregate = "sum", format = colFormat(digits = 0)),
+    score = colDef(aggregate = "mean", format = colFormat(digits = 1))
+  )
+)
+```
+
 ### Comparison: paginateSubRows without backend (normal client-side mode)
 
 ```{r}

@@ -268,6 +268,7 @@ export class DuckDBBackend {
   // Query with GROUP BY and paginateSubRows. Returns a flat list where group headers
   // and expanded sub-rows are interleaved, paginated as a single list. Sub-rows count
   // toward pageSize. Only fetches sub-rows for expanded groups on the current page.
+  // Supports multi-level groupBy via recursive sub-group fetching.
   async queryGroupedPaginated({
     pageIndex,
     pageSize,
@@ -279,13 +280,71 @@ export class DuckDBBackend {
     expanded
   }) {
     const baseWhere = this.buildWhereParts(filters, searchValue, columns)
-    const allClauses = baseWhere.clauses
-    const allParams = baseWhere.params
-    const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
+    const expandedMap = expanded || {}
 
-    const groupCol = groupBy[0]
+    // Build the full group tree with flat sizes, then paginate
+    const tree = await this.buildPaginatedGroupTree({
+      groupBy,
+      columns,
+      baseWhere,
+      parentFilters: { clauses: [], params: [] },
+      parentId: null,
+      depth: 0,
+      expandedMap,
+      sortBy
+    })
+
+    // Compute total flattened row count
+    let rowCount = 0
+    for (const node of tree) {
+      rowCount += node.flatSize
+    }
+
+    // Collect rows for the current page
+    const pageStart = Number(pageIndex) * Number(pageSize)
+    const pageEnd = pageStart + Number(pageSize)
+    const rows = []
+
+    await this.collectPageRows({
+      nodes: tree,
+      pageStart,
+      pageEnd,
+      flatOffset: 0,
+      rows,
+      groupBy,
+      columns,
+      baseWhere,
+      sortBy
+    })
+
+    return { rows, rowCount }
+  }
+
+  // Recursively build the group tree for paginateSubRows. Each node contains:
+  // - groupId, groupValue, row (aggregate data), depth
+  // - subCount (number of leaf rows in this group)
+  // - isExpanded, children (sub-group nodes or null for leaf level)
+  // - flatSize (1 + sum of children flat sizes if expanded, else 1)
+  // - parentFilters (WHERE clauses to scope queries to this group's ancestors)
+  async buildPaginatedGroupTree({
+    groupBy,
+    columns,
+    baseWhere,
+    parentFilters,
+    parentId,
+    depth,
+    expandedMap,
+    sortBy
+  }) {
+    const groupCol = groupBy[depth]
     const escapedGroupCol = this.escapeIdentifier(groupCol)
-    const groupedCols = groupBy.slice(0, 1)
+    const groupedCols = groupBy.slice(0, depth + 1)
+    const isLeafLevel = depth + 1 >= groupBy.length
+
+    // Combine base WHERE with parent group filters
+    const allClauses = [...baseWhere.clauses, ...parentFilters.clauses]
+    const allParams = [...baseWhere.params, ...parentFilters.params]
+    const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
 
     // Build GROUP BY SELECT with aggregates and COUNT(*) for sub-row counts
     const selectParts = [escapedGroupCol, `COUNT(*) AS _sub_count`]
@@ -315,7 +374,7 @@ export class DuckDBBackend {
       groupSql += ' ORDER BY ' + sortClauses.join(', ')
     }
 
-    // Fetch ALL groups (no LIMIT) to compute flattened row count and page window
+    // Fetch ALL groups at this level (no LIMIT) to compute flattened row count
     const groupResult = await this.runPrepared(groupSql, allParams)
     const allGroups = arrowTableToRows(groupResult)
 
@@ -330,92 +389,164 @@ export class DuckDBBackend {
       }
     }
 
-    // Build group IDs and determine which are expanded
-    const expandedMap = expanded || {}
-    const groupMeta = allGroups.map(row => {
-      const groupId = `${groupCol}:${row[groupCol]}`
+    // Build tree nodes
+    const nodes = []
+    for (const row of allGroups) {
+      const groupId = parentId
+        ? `${parentId}.${groupCol}:${row[groupCol]}`
+        : `${groupCol}:${row[groupCol]}`
       const subCount = Number(row._sub_count)
       const isExpanded = Boolean(expandedMap[groupId])
-      const flatSize = isExpanded ? 1 + subCount : 1
-      return { groupId, groupValue: row[groupCol], subCount, isExpanded, flatSize, row }
-    })
 
-    // Compute total flattened row count
-    let rowCount = 0
-    for (const g of groupMeta) {
-      rowCount += g.flatSize
-    }
-
-    // Determine which groups and sub-row ranges fall on this page
-    const pageStart = Number(pageIndex) * Number(pageSize)
-    const pageEnd = pageStart + Number(pageSize)
-    const rows = []
-
-    let flatOffset = 0
-    for (const g of groupMeta) {
-      const groupStart = flatOffset
-      const groupEnd = groupStart + g.flatSize
-
-      if (groupEnd <= pageStart) {
-        flatOffset = groupEnd
-        continue // entirely before this page
-      }
-      if (groupStart >= pageEnd) {
-        break // entirely after this page
+      const childFilters = {
+        clauses: [...parentFilters.clauses, `${escapedGroupCol} = ?`],
+        params: [...parentFilters.params, row[groupCol]]
       }
 
-      // Group header appears on this page if its position falls in [pageStart, pageEnd)
-      if (groupStart >= pageStart && groupStart < pageEnd) {
-        const headerRow = { ...g.row }
-        delete headerRow._sub_count
-        headerRow['__state'] = { id: g.groupId, grouped: true, subRowCount: g.subCount }
-        rows.push(headerRow)
-      }
+      let children = null
+      let flatSize = 1 // the group header itself
 
-      // Fetch sub-row slice if this group is expanded and sub-rows fall on this page
-      if (g.isExpanded && g.subCount > 0) {
-        const subFlatStart = groupStart + 1 // sub-rows start after the header
-        const subSliceStart = Math.max(0, pageStart - subFlatStart)
-        const subSliceEnd = Math.min(g.subCount, pageEnd - subFlatStart)
-
-        if (subSliceEnd > subSliceStart) {
-          const subLimit = subSliceEnd - subSliceStart
-          const subOffset = subSliceStart
-
-          let subSql = `SELECT * FROM reactable_data`
-          const subClauses = [...allClauses, `${escapedGroupCol} = ?`]
-          subSql += ' WHERE ' + subClauses.join(' AND ')
-          const subParams = [...allParams, g.groupValue]
-
-          if (sortBy && sortBy.length > 0) {
-            const leafSorts = sortBy.map(
-              s => this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
-            )
-            subSql += ' ORDER BY ' + leafSorts.join(', ')
+      if (isExpanded) {
+        if (isLeafLevel) {
+          // Expanded leaf-level group: children are data rows
+          flatSize = 1 + subCount
+        } else {
+          // Expanded non-leaf group: recursively fetch sub-groups
+          children = await this.buildPaginatedGroupTree({
+            groupBy,
+            columns,
+            baseWhere,
+            parentFilters: childFilters,
+            parentId: groupId,
+            depth: depth + 1,
+            expandedMap,
+            sortBy
+          })
+          let childrenSize = 0
+          for (const child of children) {
+            childrenSize += child.flatSize
           }
-          subSql += ` LIMIT ${subLimit} OFFSET ${subOffset}`
-
-          const subResult = await this.runPrepared(subSql, subParams)
-          const subRows = arrowTableToRows(subResult)
-
-          for (const subRow of subRows) {
-            if (subRow._reactable_rowid != null) {
-              subRow['__state'] = {
-                id: String(subRow._reactable_rowid),
-                index: subRow._reactable_rowid,
-                parentId: g.groupId
-              }
-              delete subRow._reactable_rowid
-            }
-            rows.push(subRow)
-          }
+          flatSize = 1 + childrenSize
         }
       }
 
-      flatOffset = groupEnd
+      nodes.push({
+        groupId,
+        groupValue: row[groupCol],
+        subCount,
+        isExpanded,
+        flatSize,
+        row,
+        depth,
+        isLeafLevel,
+        children,
+        childFilters
+      })
     }
 
-    return { rows, rowCount }
+    return nodes
+  }
+
+  // Walk the group tree and collect rows that fall within [pageStart, pageEnd).
+  // Only fetches leaf sub-rows for expanded groups on the current page.
+  async collectPageRows({
+    nodes,
+    pageStart,
+    pageEnd,
+    flatOffset,
+    rows,
+    groupBy,
+    columns,
+    baseWhere,
+    sortBy
+  }) {
+    let offset = flatOffset
+
+    for (const node of nodes) {
+      const nodeStart = offset
+      const nodeEnd = nodeStart + node.flatSize
+
+      if (nodeEnd <= pageStart) {
+        offset = nodeEnd
+        continue // entirely before this page
+      }
+      if (nodeStart >= pageEnd) {
+        break // entirely after this page
+      }
+
+      // Group header on this page?
+      if (nodeStart >= pageStart && nodeStart < pageEnd) {
+        const headerRow = { ...node.row }
+        delete headerRow._sub_count
+        headerRow['__state'] = {
+          id: node.groupId,
+          grouped: true,
+          // subRowCount: number of immediate children for the expander "(N)" display.
+          // Leaf-level groups: count of data rows. Non-leaf groups: count of sub-groups
+          // (from children if fetched, else from _sub_count as best available).
+          subRowCount: node.children ? node.children.length : node.subCount
+        }
+        rows.push(headerRow)
+      }
+
+      if (node.isExpanded) {
+        if (node.isLeafLevel) {
+          // Fetch leaf sub-row slice
+          const subFlatStart = nodeStart + 1
+          const subSliceStart = Math.max(0, pageStart - subFlatStart)
+          const subSliceEnd = Math.min(node.subCount, pageEnd - subFlatStart)
+
+          if (subSliceEnd > subSliceStart) {
+            const subLimit = subSliceEnd - subSliceStart
+            const subOffset = subSliceStart
+
+            const allClauses = [...baseWhere.clauses, ...node.childFilters.clauses]
+            const allParams = [...baseWhere.params, ...node.childFilters.params]
+            let subSql = `SELECT * FROM reactable_data WHERE ${allClauses.join(' AND ')}`
+
+            if (sortBy && sortBy.length > 0) {
+              const leafSorts = sortBy.map(
+                s => this.escapeIdentifier(s.id) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+              )
+              subSql += ' ORDER BY ' + leafSorts.join(', ')
+            }
+            subSql += ` LIMIT ${subLimit} OFFSET ${subOffset}`
+
+            const subResult = await this.runPrepared(subSql, allParams)
+            const subRows = arrowTableToRows(subResult)
+
+            for (const subRow of subRows) {
+              if (subRow._reactable_rowid != null) {
+                subRow['__state'] = {
+                  id: String(subRow._reactable_rowid),
+                  index: subRow._reactable_rowid,
+                  parentId: node.groupId
+                }
+                delete subRow._reactable_rowid
+              }
+              rows.push(subRow)
+            }
+          }
+        } else if (node.children) {
+          // Recurse into sub-group children
+          await this.collectPageRows({
+            nodes: node.children,
+            pageStart,
+            pageEnd,
+            flatOffset: nodeStart + 1, // children start after this header
+            rows,
+            groupBy,
+            columns,
+            baseWhere,
+            sortBy
+          })
+        }
+      }
+
+      offset = nodeEnd
+    }
+
+    return offset
   }
 
   // Recursively build grouped rows at the given depth level.

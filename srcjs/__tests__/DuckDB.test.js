@@ -1132,9 +1132,7 @@ describe('DuckDB backend', () => {
     fireEvent.click(getNextButton(container))
 
     await waitFor(() => {
-      expect(mockBackend.query).toHaveBeenCalledWith(
-        expect.objectContaining({ pageIndex: 1 })
-      )
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
     })
     await waitFor(() => {
       expect(getRows(container)).toHaveLength(3)
@@ -2845,6 +2843,203 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(result.rows[2]).toMatchObject({
       val: 15,
       __state: { id: '3', index: 3, parentId: 'grp:B' }
+    })
+  })
+
+  it('paginateSubRows: multi-level grouping with collapsed top-level groups', async () => {
+    // groupBy = ['region', 'type'], all collapsed
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { region: 'East', _sub_count: 5, val: 100 },
+          { region: 'West', _sub_count: 3, val: 200 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'region', type: 'character' },
+        { id: 'type', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['region', 'type'],
+      expanded: {},
+      paginateSubRows: true
+    })
+
+    expect(result.rowCount).toBe(2)
+    expect(result.rows).toHaveLength(2)
+    expect(result.rows[0]).toMatchObject({
+      region: 'East',
+      val: 100,
+      __state: { id: 'region:East', grouped: true, subRowCount: 5 }
+    })
+    expect(result.rows[1]).toMatchObject({
+      region: 'West',
+      val: 200,
+      __state: { id: 'region:West', grouped: true, subRowCount: 3 }
+    })
+  })
+
+  it('paginateSubRows: multi-level grouping with expanded top-level shows sub-groups', async () => {
+    // groupBy = ['region', 'type'], East expanded -> shows sub-groups by type
+    const { conn } = createGroupMockConn(sql => {
+      // Top-level GROUP BY region
+      if (sql.includes('GROUP BY "region"') && !sql.includes('"region" = ?')) {
+        return arrowResult([
+          { region: 'East', _sub_count: 5, val: 100 },
+          { region: 'West', _sub_count: 3, val: 200 }
+        ])
+      }
+      // Sub-group GROUP BY type WHERE region = 'East'
+      if (sql.includes('GROUP BY "type"') && sql.includes('"region" = ?')) {
+        return arrowResult([
+          { type: 'Small', _sub_count: 3, val: 60 },
+          { type: 'Large', _sub_count: 2, val: 40 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'region', type: 'character' },
+        { id: 'type', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['region', 'type'],
+      expanded: { 'region:East': true },
+      paginateSubRows: true
+    })
+
+    // East(1) + Small(1) + Large(1) + West(1) = 4
+    expect(result.rowCount).toBe(4)
+    expect(result.rows).toHaveLength(4)
+
+    // East header - subRowCount = 2 (sub-groups, not leaf rows)
+    expect(result.rows[0]).toMatchObject({
+      region: 'East',
+      val: 100,
+      __state: { id: 'region:East', grouped: true, subRowCount: 2 }
+    })
+    // Sub-group Small (uses path-based ID)
+    expect(result.rows[1]).toMatchObject({
+      type: 'Small',
+      val: 60,
+      __state: { id: 'region:East.type:Small', grouped: true, subRowCount: 3 }
+    })
+    // Sub-group Large
+    expect(result.rows[2]).toMatchObject({
+      type: 'Large',
+      val: 40,
+      __state: { id: 'region:East.type:Large', grouped: true, subRowCount: 2 }
+    })
+    // West header (collapsed) - subRowCount is leaf count since sub-groups aren't fetched
+    expect(result.rows[3]).toMatchObject({
+      region: 'West',
+      val: 200,
+      __state: { id: 'region:West', grouped: true, subRowCount: 3 }
+    })
+  })
+
+  it('paginateSubRows: multi-level with both levels expanded shows leaf rows', async () => {
+    // groupBy = ['region', 'type'], East expanded, East.Small expanded -> shows leaf rows
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('GROUP BY "region"') && !sql.includes('"region" = ?')) {
+        return arrowResult([
+          { region: 'East', _sub_count: 5, val: 100 },
+          { region: 'West', _sub_count: 3, val: 200 }
+        ])
+      }
+      if (sql.includes('GROUP BY "type"') && sql.includes('"region" = ?')) {
+        return arrowResult([
+          { type: 'Small', _sub_count: 2, val: 60 },
+          { type: 'Large', _sub_count: 3, val: 40 }
+        ])
+      }
+      // Leaf rows for East + Small
+      if (sql.includes('SELECT *') && sql.includes('"region" = ?') && sql.includes('"type" = ?')) {
+        return arrowResult([
+          { region: 'East', type: 'Small', val: 10, _reactable_rowid: 0 },
+          { region: 'East', type: 'Small', val: 20, _reactable_rowid: 1 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns: [
+        { id: 'region', type: 'character' },
+        { id: 'type', type: 'character' },
+        { id: 'val', type: 'numeric', aggregate: 'sum' }
+      ],
+      groupBy: ['region', 'type'],
+      expanded: { 'region:East': true, 'region:East.type:Small': true },
+      paginateSubRows: true
+    })
+
+    // East(1) + Small(1+2) + Large(1) + West(1) = 6
+    expect(result.rowCount).toBe(6)
+    expect(result.rows).toHaveLength(6)
+
+    expect(result.rows[0].__state).toMatchObject({
+      id: 'region:East',
+      grouped: true,
+      subRowCount: 2
+    })
+    expect(result.rows[1].__state).toMatchObject({
+      id: 'region:East.type:Small',
+      grouped: true,
+      subRowCount: 2
+    })
+    // Leaf rows under East.Small
+    expect(result.rows[2].__state).toMatchObject({
+      id: '0',
+      index: 0,
+      parentId: 'region:East.type:Small'
+    })
+    expect(result.rows[3].__state).toMatchObject({
+      id: '1',
+      index: 1,
+      parentId: 'region:East.type:Small'
+    })
+    // Large sub-group (collapsed)
+    expect(result.rows[4].__state).toMatchObject({
+      id: 'region:East.type:Large',
+      grouped: true,
+      subRowCount: 3
+    })
+    // West (collapsed) - subRowCount is leaf count since sub-groups aren't fetched
+    expect(result.rows[5].__state).toMatchObject({
+      id: 'region:West',
+      grouped: true,
+      subRowCount: 3
     })
   })
 })
