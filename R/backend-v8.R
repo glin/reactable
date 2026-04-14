@@ -139,5 +139,9 @@ reactableServerData.reactable_backendV8 <- function(x, data = NULL, columns = NU
     rowIds <- as.character(data[["_reactable_rowid"]])
     return(structure(list(rowIds = rowIds), class = "reactable_selectAllResult"))
   }
-  x$data(filters = filters, searchValue = searchValue, ...)
+  x$data(
+    pageIndex = pageIndex, pageSize = pageSize, sortBy = sortBy,
+    filters = filters, searchValue = searchValue, groupBy = groupBy,
+    expanded = expanded, ...
+  )
 }
