@@ -1,16 +1,19 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
 import { DataType } from 'apache-arrow'
 
+import { round } from './aggregators'
+
 // Map reactable aggregate function names to SQL aggregate expressions.
 // The column identifier is passed pre-escaped.
+// `numeric: true` flags aggregates whose float64 results need precision rounding.
 const aggregateSQLMap = {
-  sum: col => `SUM(${col})`,
-  mean: col => `AVG(${col})`,
-  max: col => `MAX(${col})`,
-  min: col => `MIN(${col})`,
-  median: col => `MEDIAN(${col})`,
-  count: col => `COUNT(${col})`,
-  unique: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ')`
+  sum: { sql: col => `SUM(${col})`, numeric: true },
+  mean: { sql: col => `AVG(${col})`, numeric: true },
+  max: { sql: col => `MAX(${col})`, numeric: true },
+  min: { sql: col => `MIN(${col})`, numeric: true },
+  median: { sql: col => `MEDIAN(${col})`, numeric: true },
+  count: { sql: col => `COUNT(${col})`, numeric: false },
+  unique: { sql: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ')`, numeric: false }
   // frequency: computed from sub-rows (too complex for a single GROUP BY expression)
 }
 
@@ -263,6 +266,7 @@ export class DuckDBBackend {
     // Build GROUP BY SELECT: group column + SQL-computable aggregates
     const selectParts = [escapedGroupCol]
     const postComputeAggs = [] // aggregates computed from sub-rows (e.g. frequency)
+    const numericAggCols = [] // columns with numeric SQL aggregates that need precision rounding
 
     for (const col of columns) {
       if (groupedCols.includes(col.id)) continue
@@ -270,11 +274,14 @@ export class DuckDBBackend {
         col.aggregateName || (typeof col.aggregate === 'string' ? col.aggregate : null)
       if (!aggName) continue
 
-      const sqlFn = aggregateSQLMap[aggName]
-      if (sqlFn) {
+      const sqlAgg = aggregateSQLMap[aggName]
+      if (sqlAgg) {
         selectParts.push(
-          `${sqlFn(this.escapeIdentifier(col.id))} AS ${this.escapeIdentifier(col.id)}`
+          `${sqlAgg.sql(this.escapeIdentifier(col.id))} AS ${this.escapeIdentifier(col.id)}`
         )
+        if (sqlAgg.numeric) {
+          numericAggCols.push(col.id)
+        }
       } else {
         postComputeAggs.push({ id: col.id, aggregate: aggName })
       }
@@ -295,6 +302,19 @@ export class DuckDBBackend {
 
     const groupResult = await this.runPrepared(groupSql, allParams)
     const groupRows = arrowTableToRows(groupResult)
+
+    // Round numeric SQL aggregate values to avoid floating-point precision artifacts
+    // (e.g., SUM returning 75.10000000000001 instead of 75.1). This matches the
+    // client-side aggregators in aggregators.js which use round(result, 12).
+    if (numericAggCols.length > 0) {
+      for (const row of groupRows) {
+        for (const colId of numericAggCols) {
+          if (typeof row[colId] === 'number') {
+            row[colId] = round(row[colId], 12)
+          }
+        }
+      }
+    }
 
     if (groupRows.length === 0) {
       return groupRows
@@ -385,11 +405,11 @@ export class DuckDBBackend {
         const aggName =
           col && (col.aggregateName || (typeof col.aggregate === 'string' ? col.aggregate : null))
         if (aggName && !groupedCols.includes(col.id)) {
-          const sqlFn = aggregateSQLMap[aggName]
-          if (sqlFn) {
+          const sqlAgg = aggregateSQLMap[aggName]
+          if (sqlAgg) {
             // Sort by the aggregate expression
             clauses.push(
-              sqlFn(this.escapeIdentifier(s.id)) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
+              sqlAgg.sql(this.escapeIdentifier(s.id)) + (s.desc ? ' DESC' : ' ASC') + ' NULLS LAST'
             )
           }
         }

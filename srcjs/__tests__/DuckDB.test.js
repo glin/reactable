@@ -2233,6 +2233,45 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(groupSql.sql).toContain('STRING_AGG(DISTINCT CAST("c7" AS VARCHAR), \', \') AS "c7"')
   })
 
+  it('rounds numeric SQL aggregates to avoid floating-point precision artifacts', async () => {
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        // Simulate float64 precision artifacts from SQL SUM/AVG
+        return arrowResult([
+          { mfr: 'Dodge', price: 75.10000000000001, hp: 153.33333333333334 },
+          { mfr: 'Ford', price: 20.099999999999998, hp: 120.0 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const columns = [
+      { id: 'mfr', type: 'character' },
+      { id: 'price', type: 'numeric', aggregate: 'sum' },
+      { id: 'hp', type: 'numeric', aggregate: 'mean' }
+    ]
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['mfr']
+    })
+
+    // Precision artifacts should be rounded away (12 decimal places)
+    expect(result.rows[0].price).toBe(75.1)
+    expect(result.rows[0].hp).toBe(153.333333333333)
+    expect(result.rows[1].price).toBe(20.1)
+    expect(result.rows[1].hp).toBe(120.0)
+  })
+
   it('computes frequency aggregate from sub-rows', async () => {
     const { conn } = createGroupMockConn(sql => {
       if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 1 }])
