@@ -1236,7 +1236,10 @@ function Table({
         const { rowCount, maxRowCount } = body
         setNewData(data)
         setServerRowCount(rowCount)
-        setServerMaxRowCount(maxRowCount)
+        // Track the highest row count seen so pagination doesn't auto-hide after
+        // a search or filter reduces results to zero. Use the backend-provided
+        // maxRowCount if available (e.g., V8), otherwise track the max of rowCount.
+        setServerMaxRowCount(prev => Math.max(prev ?? 0, maxRowCount ?? rowCount))
       })
       .catch(err => {
         console.error(err)
