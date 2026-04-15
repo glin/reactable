@@ -795,6 +795,46 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+### DuckDB server backend with paginateSubRows (Shiny only)
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price")]
+
+ui <- fluidPage(
+  h3("DuckDB Server-Side paginateSubRows Test"),
+  checkboxInput("paginateSubRows", "paginateSubRows", value = TRUE),
+  checkboxInput("multiGroup", "Multi-level groupBy (Manufacturer + Type)", value = FALSE),
+  htmltools::tags$button("Expand/collapse all", onclick = "Reactable.toggleAllRowsExpanded('tbl')"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    groupBy <- if (input$multiGroup) c("Manufacturer", "Type") else "Manufacturer"
+    reactable(
+      data,
+      elementId = "tbl",
+      groupBy = groupBy,
+      paginateSubRows = input$paginateSubRows,
+      columns = list(
+        Min.Price = colDef(aggregate = "sum"),
+        Max.Price = colDef(aggregate = "mean")
+      ),
+      filterable = TRUE,
+      searchable = TRUE,
+      showPageSizeOptions = TRUE,
+      defaultPageSize = 10,
+      backend = backendDuckDB()
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
 ## Column Formatting
 
 ### colFormat with numbers, currencies, and percentages

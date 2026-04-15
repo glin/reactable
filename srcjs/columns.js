@@ -89,7 +89,10 @@ export function columnsToRows(columns) {
   return rows
 }
 
-const numericRowStateColumns = [{ id: 'index', type: 'numeric' }]
+const numericRowStateColumns = [
+  { id: 'index', type: 'numeric' },
+  { id: 'subRowCount', type: 'numeric' }
+]
 export function materializedRowsToData(rows, paginateSubRows) {
   const parentRowIds = {}
   return rows.map(row => {

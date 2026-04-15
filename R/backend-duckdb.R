@@ -148,6 +148,10 @@ reactableServerData.reactable_backendDuckdb <- function(
   }
 
   if (length(groupBy) > 0) {
+    if (isTRUE(paginateSubRows)) {
+      return(duckdbPaginateSubRows(con, cols, filters, searchValue, sortBy,
+                                   pageIndex, pageSize, groupBy, expanded))
+    }
     return(duckdbGroupedQuery(con, cols, filters, searchValue, sortBy,
                               pageIndex, pageSize, groupBy))
   }
@@ -218,11 +222,12 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
                       " FROM reactable_data", whereStr,
                       " GROUP BY ", escapedGroupCol)
 
-  # Sort
+  # Sort (default to group column for deterministic ordering)
   sortClauses <- buildDuckdbGroupSortClauses(sortBy, groupCol, columns, groupedCols)
-  if (length(sortClauses) > 0) {
-    groupSql <- paste0(groupSql, " ORDER BY ", paste(sortClauses, collapse = ", "))
+  if (length(sortClauses) == 0) {
+    sortClauses <- paste(escapedGroupCol, "ASC NULLS LAST")
   }
+  groupSql <- paste0(groupSql, " ORDER BY ", paste(sortClauses, collapse = ", "))
 
   # Paginate only at top level
   if (depth == 0) {
@@ -303,4 +308,271 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
   } else {
     groupData
   }
+}
+
+# Paginate grouped data with paginateSubRows: flatten group headers + sub-rows
+# into a single stream and return the slice for the current page.
+duckdbPaginateSubRows <- function(con, columns, filters, searchValue, sortBy,
+                                   pageIndex, pageSize, groupBy, expanded) {
+  expandedMap <- if (is.null(expanded)) list() else expanded
+  baseWhere <- buildDuckdbWhere(columns, filters, searchValue)
+
+  # Fetch all groups with sub-row counts and aggregates
+  groupTree <- duckdbBuildGroupTree(con, columns, filters, searchValue, sortBy,
+                                    groupBy, baseWhere, depth = 0,
+                                    parentFilters = list(clauses = character(0), params = list()))
+
+  # Compute flat sizes and total row count
+  flatSizes <- duckdbFlatSizes(groupTree, expandedMap, groupBy, depth = 0, parentId = NULL)
+  rowCount <- sum(flatSizes)
+
+  # Determine page window
+  pageStart <- pageIndex * pageSize
+  pageEnd <- pageStart + pageSize
+
+  # Collect rows for the current page
+  rows <- duckdbCollectPageRows(con, groupTree, flatSizes, pageStart, pageEnd,
+                                 groupBy, baseWhere, sortBy, columns,
+                                 depth = 0, parentId = NULL, expandedMap = expandedMap)
+
+  resolvedData(rows, rowCount = rowCount)
+}
+
+# Build a group tree: for each group at this level, fetch group header data
+# (aggregates, sub-row counts). For non-leaf levels, recurse to build sub-group trees.
+duckdbBuildGroupTree <- function(con, columns, filters, searchValue, sortBy,
+                                  groupBy, baseWhere, depth, parentFilters) {
+  groupCol <- groupBy[[depth + 1]]
+  groupedCols <- groupBy[seq_len(depth + 1)]
+  isLeafLevel <- depth + 1 >= length(groupBy)
+
+  escapedGroupCol <- duckdbQuoteIdentifier(groupCol)
+
+  # Build SELECT: group column + COUNT(*) + SQL aggregates
+  selectParts <- c(escapedGroupCol, "COUNT(*) AS _sub_row_count")
+  postComputeAggs <- list()
+
+  # For non-leaf levels, also count distinct sub-groups
+  if (!isLeafLevel) {
+    nextGroupCol <- groupBy[[depth + 2]]
+    selectParts <- c(selectParts,
+                     paste0("COUNT(DISTINCT ", duckdbQuoteIdentifier(nextGroupCol),
+                            ") AS _sub_group_count"))
+  }
+
+  for (col in columns) {
+    if (col$id %in% groupedCols) next
+    aggregate <- col$aggregate
+    if (is.null(aggregate) || is.function(aggregate)) next
+    sqlExpr <- duckdbAggregateSQL(aggregate, col$id)
+    if (!is.null(sqlExpr)) {
+      selectParts <- c(selectParts, paste0(sqlExpr, " AS ", duckdbQuoteIdentifier(col$id)))
+    } else {
+      postComputeAggs <- c(postComputeAggs, list(list(id = col$id, aggregate = aggregate)))
+    }
+  }
+
+  allClauses <- c(baseWhere$clauses, parentFilters$clauses)
+  allParams <- c(baseWhere$params, parentFilters$params)
+  whereStr <- if (length(allClauses) > 0) {
+    paste0(" WHERE ", paste(allClauses, collapse = " AND "))
+  } else {
+    ""
+  }
+
+  groupSql <- paste0("SELECT ", paste(selectParts, collapse = ", "),
+                      " FROM reactable_data", whereStr,
+                      " GROUP BY ", escapedGroupCol)
+
+  # Sort (default to group column for deterministic ordering)
+  sortClauses <- buildDuckdbGroupSortClauses(sortBy, groupCol, columns, groupedCols)
+  if (length(sortClauses) == 0) {
+    sortClauses <- paste(escapedGroupCol, "ASC NULLS LAST")
+  }
+  groupSql <- paste0(groupSql, " ORDER BY ", paste(sortClauses, collapse = ", "))
+
+  groupData <- DBI::dbGetQuery(con, groupSql, params = allParams)
+
+  if (nrow(groupData) == 0) {
+    return(groupData)
+  }
+
+  groupValues <- groupData[[groupCol]]
+
+  # Post-compute aggregates that can't be done in SQL (e.g., frequency)
+  if (length(postComputeAggs) > 0) {
+    for (i in seq_along(groupValues)) {
+      childFilters <- list(
+        clauses = c(parentFilters$clauses, paste0(escapedGroupCol, " = ?")),
+        params = c(parentFilters$params, list(groupValues[[i]]))
+      )
+      subQuery <- buildDuckdbSubRowSql("reactable_data", baseWhere, childFilters, sortBy)
+      subRows <- DBI::dbGetQuery(con, subQuery$sql, params = subQuery$params)
+      for (agg in postComputeAggs) {
+        if (agg$id %in% colnames(subRows)) {
+          groupData[i, agg$id] <- duckdbComputeAggregate(agg$aggregate, subRows[[agg$id]])
+        }
+      }
+    }
+  }
+
+  # For non-leaf levels, recursively build sub-group trees for each group
+  if (!isLeafLevel) {
+    subTrees <- vector("list", length(groupValues))
+    for (i in seq_along(groupValues)) {
+      childFilters <- list(
+        clauses = c(parentFilters$clauses, paste0(escapedGroupCol, " = ?")),
+        params = c(parentFilters$params, list(groupValues[[i]]))
+      )
+      subTrees[[i]] <- duckdbBuildGroupTree(con, columns, filters, searchValue, sortBy,
+                                             groupBy, baseWhere, depth = depth + 1,
+                                             parentFilters = childFilters)
+    }
+    groupData[[".subTrees"]] <- subTrees
+  }
+
+  groupData
+}
+
+# Compute the flat size of each group row: 1 if collapsed, 1 + children if expanded.
+duckdbFlatSizes <- function(groupTree, expandedMap, groupBy, depth, parentId) {
+  groupCol <- groupBy[[depth + 1]]
+  isLeafLevel <- depth + 1 >= length(groupBy)
+  ngroups <- nrow(groupTree)
+  sizes <- integer(ngroups)
+
+  for (i in seq_len(ngroups)) {
+    groupId <- paste0(groupCol, ":", groupTree[[groupCol]][i])
+    if (!is.null(parentId)) {
+      groupId <- paste0(parentId, ".", groupId)
+    }
+
+    if (isTRUE(expandedMap[[groupId]])) {
+      if (isLeafLevel) {
+        sizes[i] <- 1L + as.integer(groupTree[["_sub_row_count"]][i])
+      } else {
+        childSizes <- duckdbFlatSizes(groupTree[[".subTrees"]][[i]], expandedMap, groupBy,
+                                       depth = depth + 1, parentId = groupId)
+        sizes[i] <- 1L + sum(childSizes)
+      }
+    } else {
+      sizes[i] <- 1L
+    }
+  }
+  sizes
+}
+
+# Collect rows that fall within [pageStart, pageEnd) from the flattened group stream.
+duckdbCollectPageRows <- function(con, groupTree, flatSizes, pageStart, pageEnd,
+                                   groupBy, baseWhere, sortBy, columns,
+                                   depth, parentId, expandedMap) {
+  groupCol <- groupBy[[depth + 1]]
+  isLeafLevel <- depth + 1 >= length(groupBy)
+  escapedGroupCol <- duckdbQuoteIdentifier(groupCol)
+
+  # Data columns: everything except internal columns
+  dataCols <- setdiff(colnames(groupTree), c("_sub_row_count", "_sub_group_count", ".subTrees"))
+
+  rows <- list()
+  offset <- 0L
+
+  for (i in seq_len(nrow(groupTree))) {
+    nodeStart <- offset
+    nodeEnd <- nodeStart + flatSizes[i]
+
+    if (nodeEnd <= pageStart) {
+      offset <- nodeEnd
+      next
+    }
+    if (nodeStart >= pageEnd) {
+      break
+    }
+
+    groupValue <- groupTree[[groupCol]][i]
+    groupId <- paste0(groupCol, ":", groupValue)
+    if (!is.null(parentId)) {
+      groupId <- paste0(parentId, ".", groupId)
+    }
+
+    # Group header on this page?
+    if (nodeStart >= pageStart && nodeStart < pageEnd) {
+      headerRow <- groupTree[i, dataCols, drop = FALSE]
+      row.names(headerRow) <- NULL
+
+      # subRowCount: for non-leaf levels, count of sub-groups; for leaf, count of data rows
+      if (!isLeafLevel) {
+        subRowCount <- as.integer(groupTree[["_sub_group_count"]][i])
+      } else {
+        subRowCount <- as.integer(groupTree[["_sub_row_count"]][i])
+      }
+
+      headerRow[["__state"]] <- dataFrame(
+        id = groupId,
+        grouped = TRUE,
+        subRowCount = subRowCount
+      )
+      if (!is.null(parentId)) {
+        headerRow[["__state"]]$parentId <- parentId
+      }
+      rows <- c(rows, list(headerRow))
+    }
+
+    isExpanded <- isTRUE(expandedMap[[groupId]])
+    if (isExpanded) {
+      if (isLeafLevel) {
+        # Fetch leaf sub-row slice from DuckDB
+        subRowCount <- as.integer(groupTree[["_sub_row_count"]][i])
+        subFlatStart <- nodeStart + 1L
+        subSliceStart <- max(0L, pageStart - subFlatStart)
+        subSliceEnd <- min(subRowCount, pageEnd - subFlatStart)
+
+        if (subSliceEnd > subSliceStart) {
+          childFilters <- list(
+            clauses = paste0(escapedGroupCol, " = ?"),
+            params = list(groupValue)
+          )
+          subQuery <- buildDuckdbSubRowSql("reactable_data", baseWhere, childFilters, sortBy)
+          # Add LIMIT/OFFSET to the sub-row query
+          subQuery$sql <- paste0(subQuery$sql,
+                                 " LIMIT ", as.integer(subSliceEnd - subSliceStart),
+                                 " OFFSET ", as.integer(subSliceStart))
+          subSlice <- DBI::dbGetQuery(con, subQuery$sql, params = subQuery$params)
+
+          # Extract _reactable_rowid into __state
+          if ("_reactable_rowid" %in% colnames(subSlice)) {
+            rowids <- subSlice[["_reactable_rowid"]]
+            subSlice[["__state"]] <- dataFrame(
+              id = as.character(rowids),
+              index = as.integer(rowids),
+              parentId = rep(groupId, length(rowids))
+            )
+            subSlice[["_reactable_rowid"]] <- NULL
+          }
+          rows <- c(rows, list(subSlice))
+        }
+      } else {
+        # Recurse into sub-groups, adjusting page window to child's coordinate system
+        childTree <- groupTree[[".subTrees"]][[i]]
+        childSizes <- duckdbFlatSizes(childTree, expandedMap, groupBy,
+                                       depth = depth + 1, parentId = groupId)
+        childPageStart <- pageStart - (nodeStart + 1L)
+        childPageEnd <- pageEnd - (nodeStart + 1L)
+        childRows <- duckdbCollectPageRows(con, childTree, childSizes,
+                                            childPageStart, childPageEnd,
+                                            groupBy, baseWhere, sortBy, columns,
+                                            depth = depth + 1, parentId = groupId,
+                                            expandedMap = expandedMap)
+        if (!is.null(childRows) && nrow(childRows) > 0) {
+          rows <- c(rows, list(childRows))
+        }
+      }
+    }
+
+    offset <- nodeEnd
+  }
+
+  if (length(rows) == 0) {
+    return(dataFrame())
+  }
+  rbindFill(rows)
 }

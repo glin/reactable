@@ -64,7 +64,11 @@ reactableServerData.reactable_backendDf <- function(
   }
 
   # Pagination
-  dfPaginate(data, pageIndex, pageSize)
+  if (isTRUE(paginateSubRows) && length(groupBy) > 0) {
+    dfPaginateSubRows(data, pageIndex, pageSize, expanded, groupBy)
+  } else {
+    dfPaginate(data, pageIndex, pageSize)
+  }
 }
 
 dfFilter <- function(df, filters) {
@@ -198,6 +202,217 @@ listSafeDataFrame <- function(...) {
 # Like data.frame() but always uses stringsAsFactors = FALSE for R 3.6 and below
 dataFrame <- function(...) {
   data.frame(..., stringsAsFactors = FALSE)
+}
+
+# Paginate grouped data with paginateSubRows: flatten group headers + sub-rows
+# into a single stream and return the slice for the current page.
+dfPaginateSubRows <- function(groupedDf, pageIndex, pageSize, expanded, groupBy) {
+  expandedMap <- if (is.null(expanded)) list() else expanded
+
+  # Compute the flat size of each group (how many rows it contributes to the stream)
+  flatSizes <- dfFlatSizes(groupedDf, expandedMap, groupBy, depth = 0, parentId = NULL)
+  rowCount <- sum(flatSizes)
+
+  # Determine page window
+  pageStart <- pageIndex * pageSize
+  pageEnd <- pageStart + pageSize
+
+  # Collect rows for the current page
+  rows <- dfCollectPageRows(groupedDf, flatSizes, pageStart, pageEnd, groupBy,
+                            depth = 0, parentId = NULL, expandedMap = expandedMap)
+
+  resolvedData(rows, rowCount = rowCount)
+}
+
+# Compute the flat size of each group row: 1 if collapsed, 1 + children if expanded.
+# For multi-level groupBy, recursively computes sizes of sub-groups.
+dfFlatSizes <- function(groupedDf, expandedMap, groupBy, depth, parentId) {
+  ngroups <- nrow(groupedDf)
+  sizes <- integer(ngroups)
+  states <- groupedDf[["__state"]]
+  subRowsList <- groupedDf[[".subRows"]]
+  isLeafLevel <- depth + 1 >= length(groupBy)
+
+  for (i in seq_len(ngroups)) {
+    groupId <- if (!is.null(parentId)) {
+      paste0(parentId, ".", states$id[i])
+    } else {
+      states$id[i]
+    }
+
+    if (isTRUE(expandedMap[[groupId]])) {
+      if (isLeafLevel) {
+        sizes[i] <- 1L + nrow(subRowsList[[i]])
+      } else {
+        childSizes <- dfFlatSizes(subRowsList[[i]], expandedMap, groupBy,
+                                  depth = depth + 1, parentId = groupId)
+        sizes[i] <- 1L + sum(childSizes)
+      }
+    } else {
+      sizes[i] <- 1L
+    }
+  }
+  sizes
+}
+
+# Collect the rows that fall within [pageStart, pageEnd) from the flattened group stream.
+dfCollectPageRows <- function(groupedDf, flatSizes, pageStart, pageEnd, groupBy,
+                              depth, parentId, expandedMap) {
+  states <- groupedDf[["__state"]]
+  subRowsList <- groupedDf[[".subRows"]]
+  isLeafLevel <- depth + 1 >= length(groupBy)
+
+  # Get all column names except .subRows and __state (the data columns)
+  dataCols <- setdiff(colnames(groupedDf), c(".subRows", "__state"))
+
+  rows <- list()
+  offset <- 0L
+
+  for (i in seq_len(nrow(groupedDf))) {
+    nodeStart <- offset
+    nodeEnd <- nodeStart + flatSizes[i]
+
+    if (nodeEnd <= pageStart) {
+      offset <- nodeEnd
+      next
+    }
+    if (nodeStart >= pageEnd) {
+      break
+    }
+
+    groupId <- if (!is.null(parentId)) {
+      paste0(parentId, ".", states$id[i])
+    } else {
+      states$id[i]
+    }
+
+    # Group header on this page?
+    if (nodeStart >= pageStart && nodeStart < pageEnd) {
+      headerRow <- groupedDf[i, dataCols, drop = FALSE]
+      row.names(headerRow) <- NULL
+
+      # subRowCount: for non-leaf levels, count of sub-groups; for leaf, count of data rows
+      if (!isLeafLevel) {
+        subRowCount <- nrow(subRowsList[[i]])
+      } else {
+        subRowCount <- states$subRowCount[i]
+      }
+
+      headerRow[["__state"]] <- dataFrame(
+        id = groupId,
+        grouped = TRUE,
+        subRowCount = subRowCount
+      )
+      rows <- c(rows, list(headerRow))
+    }
+
+    isExpanded <- isTRUE(expandedMap[[groupId]])
+    if (isExpanded) {
+      if (isLeafLevel) {
+        # Fetch leaf sub-row slice
+        subDf <- subRowsList[[i]]
+        subFlatStart <- nodeStart + 1L
+        subSliceStart <- max(0L, pageStart - subFlatStart)
+        subSliceEnd <- min(nrow(subDf), pageEnd - subFlatStart)
+
+        if (subSliceEnd > subSliceStart) {
+          subSlice <- subDf[(subSliceStart + 1L):subSliceEnd, , drop = FALSE]
+          row.names(subSlice) <- NULL
+
+          # Add __state with parentId for each sub-row
+          if ("_reactable_rowid" %in% colnames(subSlice)) {
+            rowids <- subSlice[["_reactable_rowid"]]
+            subSlice[["__state"]] <- dataFrame(
+              id = as.character(rowids),
+              index = as.integer(rowids),
+              parentId = rep(groupId, length(rowids))
+            )
+            subSlice[["_reactable_rowid"]] <- NULL
+          }
+          rows <- c(rows, list(subSlice))
+        }
+      } else {
+        # Recurse into sub-groups, adjusting page window to child's coordinate system
+        childDf <- subRowsList[[i]]
+        childSizes <- dfFlatSizes(childDf, expandedMap, groupBy,
+                                  depth = depth + 1, parentId = groupId)
+        childPageStart <- pageStart - (nodeStart + 1L)
+        childPageEnd <- pageEnd - (nodeStart + 1L)
+        childRows <- dfCollectPageRows(childDf, childSizes, childPageStart, childPageEnd,
+                                       groupBy, depth = depth + 1, parentId = groupId,
+                                       expandedMap = expandedMap)
+        if (!is.null(childRows) && nrow(childRows) > 0) {
+          rows <- c(rows, list(childRows))
+        }
+      }
+    }
+
+    offset <- nodeEnd
+  }
+
+  if (length(rows) == 0) {
+    return(dataFrame())
+  }
+  rbindFill(rows)
+}
+
+# rbind data frames with different columns, filling missing columns with NA.
+# Group headers and sub-rows typically have different column sets, and __state
+# is a nested data frame column that needs special handling to avoid row name conflicts.
+rbindFill <- function(dfs) {
+  # Collect all column names
+  allDataCols <- unique(unlist(lapply(dfs, function(df) setdiff(colnames(df), "__state"))))
+  allStateCols <- unique(unlist(lapply(dfs, function(df) {
+    if ("__state" %in% colnames(df)) colnames(df[["__state"]]) else character(0)
+  })))
+
+  # Align columns and separate __state to avoid nested data frame rbind issues
+  dataList <- vector("list", length(dfs))
+  stateList <- vector("list", length(dfs))
+
+  for (k in seq_along(dfs)) {
+    df <- dfs[[k]]
+    n <- nrow(df)
+
+    # Extract and remove __state
+    state <- df[["__state"]]
+    df[["__state"]] <- NULL
+
+    # Fill missing data columns with NA
+    for (col in setdiff(allDataCols, colnames(df))) {
+      df[[col]] <- NA
+    }
+    dataList[[k]] <- df[, allDataCols, drop = FALSE]
+
+    # Fill missing state columns with NA
+    if (!is.null(state)) {
+      for (col in setdiff(allStateCols, colnames(state))) {
+        state[[col]] <- NA
+      }
+      stateList[[k]] <- state[, allStateCols, drop = FALSE]
+    } else {
+      stateList[[k]] <- as.data.frame(
+        setNames(replicate(length(allStateCols), rep(NA, n), simplify = FALSE), allStateCols),
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+
+  # rbind data and state separately, then re-attach
+  resultData <- do.call(rbind, c(dataList, list(make.row.names = FALSE)))
+  resultState <- do.call(rbind, c(stateList, list(make.row.names = FALSE)))
+
+  # Convert numeric __state columns to character so that NAs serialize as JSON null
+  # rather than "NA" (jsonlite preserves numeric NAs as strings for table cell display,
+  # but __state fields like subRowCount and index need null when absent)
+  for (col in colnames(resultState)) {
+    if (is.numeric(resultState[[col]])) {
+      resultState[[col]] <- as.character(resultState[[col]])
+    }
+  }
+
+  resultData[["__state"]] <- resultState
+  resultData
 }
 
 # Extract _reactable_rowid into __state for stable row identification

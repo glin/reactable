@@ -723,3 +723,252 @@ test_that("backendDf - selectAll returns matching row IDs", {
                                  filters = list(list(id = "city", value = "tokyo")))
   expect_equal(sort(result3$rowIds), c("1", "2"))
 })
+
+# --- paginateSubRows tests ---
+
+test_that("dfPaginateSubRows with all groups collapsed", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(1, 2, 2, 10, 5),
+    `_reactable_rowid` = 0:4,
+    check.names = FALSE
+  )
+  columns <- getAttrib(
+    reactable(df[, c("mfr", "model", "price")],
+              columns = list(model = colDef(aggregate = "unique"),
+                             price = colDef(aggregate = "sum"))),
+    "columns"
+  )
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
+  result <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 10,
+                              expanded = list(), groupBy = list("mfr"))
+
+  expect_equal(result$rowCount, 3)
+  expect_equal(nrow(result$data), 3)
+  expect_equal(result$data$mfr, c("Acura", "Audi", "BMW"))
+  expect_equal(result$data[["__state"]]$id, c("mfr:Acura", "mfr:Audi", "mfr:BMW"))
+  expect_equal(result$data[["__state"]]$grouped, c(TRUE, TRUE, TRUE))
+  expect_equal(result$data[["__state"]]$subRowCount, c("2", "2", "1"))
+})
+
+test_that("dfPaginateSubRows with expanded group shows sub-rows", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "90"),
+    price = c(1, 2, 3),
+    `_reactable_rowid` = 0:2,
+    check.names = FALSE
+  )
+  columns <- getAttrib(
+    reactable(df[, c("mfr", "model", "price")],
+              columns = list(model = colDef(aggregate = "unique"),
+                             price = colDef(aggregate = "sum"))),
+    "columns"
+  )
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
+  result <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 10,
+                              expanded = list("mfr:Acura" = TRUE),
+                              groupBy = list("mfr"))
+
+  # Acura(1) + 2 sub-rows + Audi(1) = 4
+  expect_equal(result$rowCount, 4)
+  expect_equal(nrow(result$data), 4)
+
+  # Row 1: Acura header
+  expect_equal(result$data[["__state"]]$id[1], "mfr:Acura")
+  expect_equal(result$data[["__state"]]$grouped[1], TRUE)
+  expect_equal(result$data[["__state"]]$subRowCount[1], "2")
+
+  # Rows 2-3: sub-rows with parentId
+  expect_equal(result$data[["__state"]]$id[2], "0")
+  expect_equal(result$data[["__state"]]$parentId[2], "mfr:Acura")
+  expect_equal(result$data$model[2], "Integra")
+  expect_equal(result$data[["__state"]]$id[3], "1")
+  expect_equal(result$data[["__state"]]$parentId[3], "mfr:Acura")
+  expect_equal(result$data$model[3], "Legend")
+
+  # Row 4: Audi header
+  expect_equal(result$data[["__state"]]$id[4], "mfr:Audi")
+  expect_equal(result$data[["__state"]]$grouped[4], TRUE)
+})
+
+test_that("dfPaginateSubRows paginates across group boundaries", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Acura", "Audi", "Audi"),
+    model = c("Integra", "Legend", "NSX", "90", "100"),
+    price = c(1, 2, 3, 4, 5),
+    `_reactable_rowid` = 0:4,
+    check.names = FALSE
+  )
+  columns <- getAttrib(
+    reactable(df[, c("mfr", "model", "price")],
+              columns = list(model = colDef(aggregate = "unique"),
+                             price = colDef(aggregate = "sum"))),
+    "columns"
+  )
+  grouped <- dfGroupBy(df, list("mfr"), columns = columns)
+
+  # Acura expanded: header + 3 sub-rows = 4. Audi collapsed: header = 1. Total = 5.
+  # Page 1 (pageSize=3): Acura header + 2 sub-rows
+  result1 <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 3,
+                               expanded = list("mfr:Acura" = TRUE),
+                               groupBy = list("mfr"))
+  expect_equal(result1$rowCount, 5)
+  expect_equal(nrow(result1$data), 3)
+  expect_equal(result1$data[["__state"]]$id, c("mfr:Acura", "0", "1"))
+
+  # Page 2 (pageSize=3): last Acura sub-row + Audi header
+  result2 <- dfPaginateSubRows(grouped, pageIndex = 1, pageSize = 3,
+                               expanded = list("mfr:Acura" = TRUE),
+                               groupBy = list("mfr"))
+  expect_equal(result2$rowCount, 5)
+  expect_equal(nrow(result2$data), 2)
+  expect_equal(result2$data[["__state"]]$id, c("2", "mfr:Audi"))
+  expect_equal(result2$data[["__state"]]$parentId[1], "mfr:Acura")
+})
+
+test_that("dfPaginateSubRows multi-level with collapsed top-level", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(1, 2, 2, 10, 5),
+    type = c("Small", "Midsize", "Compact", "Compact", "Midsize"),
+    `_reactable_rowid` = 0:4,
+    check.names = FALSE
+  )
+  grouped <- dfGroupBy(df, list("mfr", "type"))
+  result <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 10,
+                              expanded = list(), groupBy = list("mfr", "type"))
+
+  # 3 collapsed top-level groups
+  expect_equal(result$rowCount, 3)
+  expect_equal(nrow(result$data), 3)
+  expect_equal(result$data$mfr, c("Acura", "Audi", "BMW"))
+  # subRowCount = sub-group count (not leaf count)
+  expect_equal(result$data[["__state"]]$subRowCount, c("2", "1", "1"))
+})
+
+test_that("dfPaginateSubRows multi-level with expanded top-level shows sub-groups", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(1, 2, 2, 10, 5),
+    type = c("Small", "Midsize", "Compact", "Compact", "Midsize"),
+    `_reactable_rowid` = 0:4,
+    check.names = FALSE
+  )
+  grouped <- dfGroupBy(df, list("mfr", "type"))
+  result <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 10,
+                              expanded = list("mfr:Acura" = TRUE),
+                              groupBy = list("mfr", "type"))
+
+  # Acura(1) + Small(1) + Midsize(1) + Audi(1) + BMW(1) = 5
+  expect_equal(result$rowCount, 5)
+  expect_equal(nrow(result$data), 5)
+  expect_equal(result$data[["__state"]]$id,
+               c("mfr:Acura", "mfr:Acura.type:Small", "mfr:Acura.type:Midsize",
+                 "mfr:Audi", "mfr:BMW"))
+  # Acura header subRowCount = 2 (sub-groups)
+  expect_equal(result$data[["__state"]]$subRowCount[1], "2")
+  # Sub-group headers subRowCount = leaf row count
+  expect_equal(result$data[["__state"]]$subRowCount[2], "1") # Small
+  expect_equal(result$data[["__state"]]$subRowCount[3], "1") # Midsize
+})
+
+test_that("dfPaginateSubRows multi-level with both levels expanded", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "90"),
+    price = c(1, 2, 3),
+    type = c("Small", "Midsize", "Compact"),
+    `_reactable_rowid` = 0:2,
+    check.names = FALSE
+  )
+  grouped <- dfGroupBy(df, list("mfr", "type"))
+  result <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 10,
+                              expanded = list("mfr:Acura" = TRUE,
+                                              "mfr:Acura.type:Small" = TRUE),
+                              groupBy = list("mfr", "type"))
+
+  # Acura(1) + Small(1+1) + Midsize(1) + Audi(1) = 5
+  expect_equal(result$rowCount, 5)
+  expect_equal(nrow(result$data), 5)
+  expect_equal(result$data[["__state"]]$id,
+               c("mfr:Acura", "mfr:Acura.type:Small", "0",
+                 "mfr:Acura.type:Midsize", "mfr:Audi"))
+  # Leaf sub-row has parentId
+  expect_equal(result$data[["__state"]]$parentId[3], "mfr:Acura.type:Small")
+  expect_equal(result$data$model[3], "Integra")
+})
+
+test_that("reactableServerData with paginateSubRows integration", {
+  backend <- backendDf()
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "90"),
+    price = c(1, 2, 3)
+  )
+  columns <- getAttrib(
+    reactable(df, columns = list(model = colDef(aggregate = "unique"),
+                                 price = colDef(aggregate = "sum"))),
+    "columns"
+  )
+
+  # All collapsed
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"),
+                                paginateSubRows = TRUE, expanded = list())
+  expect_equal(result$rowCount, 2)
+  expect_equal(result$data[["__state"]]$id, c("mfr:Acura", "mfr:Audi"))
+
+  # Acura expanded
+  result2 <- reactableServerData(backend, data = df, columns = columns,
+                                 pageIndex = 0, pageSize = 10,
+                                 groupBy = list("mfr"),
+                                 paginateSubRows = TRUE,
+                                 expanded = list("mfr:Acura" = TRUE))
+  expect_equal(result2$rowCount, 4)
+  expect_equal(nrow(result2$data), 4)
+  expect_equal(result2$data[["__state"]]$id, c("mfr:Acura", "0", "1", "mfr:Audi"))
+  expect_equal(result2$data[["__state"]]$parentId[2], "mfr:Acura")
+})
+test_that("dfPaginateSubRows multi-level page boundary inside expanded children", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "NSX", "90"),
+    price = c(1, 2, 3, 4),
+    type = c("Small", "Midsize", "Large", "Compact"),
+    `_reactable_rowid` = 0:3,
+    check.names = FALSE
+  )
+  grouped <- dfGroupBy(df, list("mfr", "type"))
+
+  # Acura expanded (3 sub-groups), Small expanded (1 leaf row)
+  # Flat: Acura(1) + Small(1+1) + Midsize(1) + Large(1) + Audi(1) = 6
+  expanded <- list("mfr:Acura" = TRUE, "mfr:Acura.type:Small" = TRUE)
+
+  # Page 1 (pageSize=2): Acura header + Small header
+  r1 <- dfPaginateSubRows(grouped, pageIndex = 0, pageSize = 2,
+                          expanded = expanded, groupBy = list("mfr", "type"))
+  expect_equal(r1$rowCount, 6)
+  expect_equal(nrow(r1$data), 2)
+  expect_equal(r1$data[["__state"]]$id, c("mfr:Acura", "mfr:Acura.type:Small"))
+
+  # Page 2 (pageSize=2): Small leaf row + Midsize header
+  r2 <- dfPaginateSubRows(grouped, pageIndex = 1, pageSize = 2,
+                          expanded = expanded, groupBy = list("mfr", "type"))
+  expect_equal(r2$rowCount, 6)
+  expect_equal(nrow(r2$data), 2)
+  expect_equal(r2$data[["__state"]]$id, c("0", "mfr:Acura.type:Midsize"))
+  expect_equal(r2$data[["__state"]]$parentId[1], "mfr:Acura.type:Small")
+  expect_equal(r2$data$model[1], "Integra")
+
+  # Page 3 (pageSize=2): Large header + Audi header
+  r3 <- dfPaginateSubRows(grouped, pageIndex = 2, pageSize = 2,
+                          expanded = expanded, groupBy = list("mfr", "type"))
+  expect_equal(r3$rowCount, 6)
+  expect_equal(nrow(r3$data), 2)
+  expect_equal(r3$data[["__state"]]$id, c("mfr:Acura.type:Large", "mfr:Audi"))
+})

@@ -600,3 +600,299 @@ test_that("backendDuckdb - grouped rows have __state with id", {
   # _reactable_rowid should not appear in sub-rows
   expect_false("_reactable_rowid" %in% colnames(subRowsA))
 })
+
+# --- paginateSubRows tests ---
+
+test_that("backendDuckdb - paginateSubRows with all groups collapsed", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(15.9, 33.9, 29.1, 37.7, 30.0),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"),
+                                paginateSubRows = TRUE, expanded = list())
+  expect_true(is.resolvedData(result))
+  expect_equal(result$rowCount, 3)
+  expect_equal(nrow(result$data), 3)
+
+  # Should NOT have .subRows (flat format)
+  expect_false(".subRows" %in% colnames(result$data))
+
+  # All rows should be group headers
+  expect_true(all(result$data$`__state`$grouped))
+  expect_true(all(result$data$`__state`$subRowCount > 0))
+  expect_true(all(c("mfr:Acura", "mfr:Audi", "mfr:BMW") %in% result$data$`__state`$id))
+})
+
+test_that("backendDuckdb - paginateSubRows with expanded group shows sub-rows", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(15.9, 33.9, 29.1, 37.7, 30.0),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                sortBy = list(list(id = "mfr", desc = FALSE)),
+                                groupBy = list("mfr"),
+                                paginateSubRows = TRUE,
+                                expanded = list("mfr:Acura" = TRUE))
+  # 3 group headers + 2 Acura sub-rows = 5
+  expect_equal(result$rowCount, 5)
+  expect_equal(nrow(result$data), 5)
+
+  # Find Acura group header
+  acuraIdx <- which(result$data$`__state`$id == "mfr:Acura")
+  expect_length(acuraIdx, 1)
+  expect_true(result$data$`__state`$grouped[acuraIdx])
+  expect_equal(result$data$`__state`$subRowCount[acuraIdx], "2")
+
+  # Sub-rows should have parentId = "mfr:Acura"
+  subRowIdx <- which(result$data$`__state`$parentId == "mfr:Acura")
+  expect_length(subRowIdx, 2)
+
+  # _reactable_rowid should not appear
+  expect_false("_reactable_rowid" %in% colnames(result$data))
+})
+
+test_that("backendDuckdb - paginateSubRows paginates across group boundaries", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    grp = c("A", "A", "A", "B", "B"),
+    val = c(1, 2, 3, 4, 5),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "grp", type = "character"),
+    list(id = "val", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Expand group A (3 sub-rows) + group B (2 sub-rows)
+  # Flat: [A header, A:1, A:2, A:3, B header, B:4, B:5] = 7 rows
+  expanded <- list("grp:A" = TRUE, "grp:B" = TRUE)
+
+  # Page 1: first 3 rows (A header + 2 sub-rows)
+  r1 <- reactableServerData(backend, data = df, columns = columns,
+                             pageIndex = 0, pageSize = 3,
+                             sortBy = list(list(id = "grp", desc = FALSE)),
+                             groupBy = list("grp"),
+                             paginateSubRows = TRUE, expanded = expanded)
+  expect_equal(r1$rowCount, 7)
+  expect_equal(nrow(r1$data), 3)
+  expect_equal(r1$data$`__state`$id[1], "grp:A")
+  expect_true(r1$data$`__state`$grouped[1])
+
+  # Page 2: next 3 rows (A:3 sub-row, B header, B:4 sub-row)
+  r2 <- reactableServerData(backend, data = df, columns = columns,
+                             pageIndex = 1, pageSize = 3,
+                             sortBy = list(list(id = "grp", desc = FALSE)),
+                             groupBy = list("grp"),
+                             paginateSubRows = TRUE, expanded = expanded)
+  expect_equal(nrow(r2$data), 3)
+  # Should contain B header
+  expect_true("grp:B" %in% r2$data$`__state`$id)
+})
+
+test_that("backendDuckdb - paginateSubRows multi-level with collapsed top-level", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Acura", "Audi", "Audi"),
+    type = c("Small", "Small", "Compact", "Small", "Small"),
+    model = c("Integra", "Legend", "CL", "A4", "A6"),
+    price = c(15.9, 33.9, 20.0, 29.1, 37.7),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "type", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr", "type"),
+                                paginateSubRows = TRUE, expanded = list())
+  # All collapsed: just 2 top-level groups
+  expect_equal(result$rowCount, 2)
+  expect_equal(nrow(result$data), 2)
+  expect_true(all(result$data$`__state`$grouped))
+  # subRowCount should be count of sub-groups, not leaf rows
+  acuraIdx <- which(result$data$mfr == "Acura")
+  expect_equal(result$data$`__state`$subRowCount[acuraIdx], "2") # Small + Compact
+})
+
+test_that("backendDuckdb - paginateSubRows multi-level with expanded top-level", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Acura", "Audi", "Audi"),
+    type = c("Small", "Small", "Compact", "Small", "Small"),
+    model = c("Integra", "Legend", "CL", "A4", "A6"),
+    price = c(15.9, 33.9, 20.0, 29.1, 37.7),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "type", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Expand Acura: shows its 2 sub-groups (Small, Compact), collapsed
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                sortBy = list(list(id = "mfr", desc = FALSE)),
+                                groupBy = list("mfr", "type"),
+                                paginateSubRows = TRUE,
+                                expanded = list("mfr:Acura" = TRUE))
+  # Acura header (1) + 2 sub-groups (2) + Audi header (1) = 4
+  expect_equal(result$rowCount, 4)
+  expect_equal(nrow(result$data), 4)
+
+  # Acura header should be present
+  expect_true("mfr:Acura" %in% result$data$`__state`$id)
+
+  # Acura's sub-groups should have parentId = "mfr:Acura"
+  subGroupIdx <- which(result$data$`__state`$parentId == "mfr:Acura")
+  expect_length(subGroupIdx, 2)
+  subGroupIds <- result$data$`__state`$id[subGroupIdx]
+  expect_true(all(grepl("^mfr:Acura\\.type:", subGroupIds)))
+})
+
+test_that("backendDuckdb - paginateSubRows multi-level both levels expanded", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Acura", "Audi", "Audi"),
+    type = c("Small", "Small", "Compact", "Small", "Small"),
+    model = c("Integra", "Legend", "CL", "A4", "A6"),
+    price = c(15.9, 33.9, 20.0, 29.1, 37.7),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "type", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Expand Acura and its Small sub-group
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 20,
+                                sortBy = list(list(id = "mfr", desc = FALSE)),
+                                groupBy = list("mfr", "type"),
+                                paginateSubRows = TRUE,
+                                expanded = list(
+                                  "mfr:Acura" = TRUE,
+                                  "mfr:Acura.type:Small" = TRUE
+                                ))
+  # Acura(1) + Small(1) + 2 leaves + Compact(1) + Audi(1) = 6
+  expect_equal(result$rowCount, 6)
+  expect_equal(nrow(result$data), 6)
+
+  # Leaf rows should have parentId pointing to their sub-group
+  leafRows <- which(!is.na(result$data$`__state`$index))
+  expect_true(all(result$data$`__state`$parentId[leafRows] == "mfr:Acura.type:Small"))
+})
+
+test_that("backendDuckdb - paginateSubRows multi-level page boundary inside expanded children", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Acura", "Audi", "Audi"),
+    type = c("Small", "Small", "Compact", "Small", "Small"),
+    model = c("Integra", "Legend", "CL", "A4", "A6"),
+    price = c(15.9, 33.9, 20.0, 29.1, 37.7),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "type", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Expand both levels of Acura
+  # With default sort, Compact comes before Small alphabetically
+  # Flat: Acura(1), Compact(1), Small(1), Integra, Legend, Audi(1) = 6
+  expanded <- list("mfr:Acura" = TRUE, "mfr:Acura.type:Small" = TRUE)
+  sortBy <- list(list(id = "mfr", desc = FALSE))
+
+  # Page 1 (pageSize=2): Acura header + Compact header
+  r1 <- reactableServerData(backend, data = df, columns = columns,
+                             pageIndex = 0, pageSize = 2,
+                             sortBy = sortBy,
+                             groupBy = list("mfr", "type"),
+                             paginateSubRows = TRUE, expanded = expanded)
+  expect_equal(r1$rowCount, 6)
+  expect_equal(nrow(r1$data), 2)
+  expect_equal(r1$data$`__state`$id[1], "mfr:Acura")
+  expect_true(grepl("type:Compact", r1$data$`__state`$id[2]))
+
+  # Page 2 (pageSize=2): Small header + Integra leaf
+  r2 <- reactableServerData(backend, data = df, columns = columns,
+                             pageIndex = 1, pageSize = 2,
+                             sortBy = sortBy,
+                             groupBy = list("mfr", "type"),
+                             paginateSubRows = TRUE, expanded = expanded)
+  expect_equal(nrow(r2$data), 2)
+  expect_true(grepl("type:Small", r2$data$`__state`$id[1]))
+
+  # Page 3 (pageSize=2): Legend leaf + Audi header
+  r3 <- reactableServerData(backend, data = df, columns = columns,
+                             pageIndex = 2, pageSize = 2,
+                             sortBy = sortBy,
+                             groupBy = list("mfr", "type"),
+                             paginateSubRows = TRUE, expanded = expanded)
+  expect_equal(nrow(r3$data), 2)
+})
