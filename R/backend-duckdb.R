@@ -465,7 +465,8 @@ duckdbFlatSizes <- function(groupTree, expandedMap, groupBy, depth, parentId) {
 # Collect rows that fall within [pageStart, pageEnd) from the flattened group stream.
 duckdbCollectPageRows <- function(con, groupTree, flatSizes, pageStart, pageEnd,
                                    groupBy, baseWhere, sortBy, columns,
-                                   depth, parentId, expandedMap) {
+                                   depth, parentId, expandedMap,
+                                   parentFilters = list(clauses = character(0), params = list())) {
   groupCol <- groupBy[[depth + 1]]
   isLeafLevel <- depth + 1 >= length(groupBy)
   escapedGroupCol <- duckdbQuoteIdentifier(groupCol)
@@ -528,8 +529,8 @@ duckdbCollectPageRows <- function(con, groupTree, flatSizes, pageStart, pageEnd,
 
         if (subSliceEnd > subSliceStart) {
           childFilters <- list(
-            clauses = paste0(escapedGroupCol, " = ?"),
-            params = list(groupValue)
+            clauses = c(parentFilters$clauses, paste0(escapedGroupCol, " = ?")),
+            params = c(parentFilters$params, list(groupValue))
           )
           subQuery <- buildDuckdbSubRowSql("reactable_data", baseWhere, childFilters, sortBy)
           # Add LIMIT/OFFSET to the sub-row query
@@ -557,11 +558,16 @@ duckdbCollectPageRows <- function(con, groupTree, flatSizes, pageStart, pageEnd,
                                        depth = depth + 1, parentId = groupId)
         childPageStart <- pageStart - (nodeStart + 1L)
         childPageEnd <- pageEnd - (nodeStart + 1L)
+        levelFilters <- list(
+          clauses = c(parentFilters$clauses, paste0(escapedGroupCol, " = ?")),
+          params = c(parentFilters$params, list(groupValue))
+        )
         childRows <- duckdbCollectPageRows(con, childTree, childSizes,
                                             childPageStart, childPageEnd,
                                             groupBy, baseWhere, sortBy, columns,
                                             depth = depth + 1, parentId = groupId,
-                                            expandedMap = expandedMap)
+                                            expandedMap = expandedMap,
+                                            parentFilters = levelFilters)
         if (!is.null(childRows) && nrow(childRows) > 0) {
           rows <- c(rows, list(childRows))
         }

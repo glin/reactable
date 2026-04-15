@@ -303,6 +303,9 @@ dfCollectPageRows <- function(groupedDf, flatSizes, pageStart, pageEnd, groupBy,
         grouped = TRUE,
         subRowCount = subRowCount
       )
+      if (!is.null(parentId)) {
+        headerRow[["__state"]]$parentId <- parentId
+      }
       rows <- c(rows, list(headerRow))
     }
 

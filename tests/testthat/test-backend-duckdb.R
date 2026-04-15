@@ -839,6 +839,10 @@ test_that("backendDuckdb - paginateSubRows multi-level both levels expanded", {
   # Leaf rows should have parentId pointing to their sub-group
   leafRows <- which(!is.na(result$data$`__state`$index))
   expect_true(all(result$data$`__state`$parentId[leafRows] == "mfr:Acura.type:Small"))
+
+  # Leaf rows should only be from Acura's Small group (Integra, Legend), not Audi's
+  leafModels <- sort(result$data$model[leafRows])
+  expect_equal(leafModels, c("Integra", "Legend"))
 })
 
 test_that("backendDuckdb - paginateSubRows multi-level page boundary inside expanded children", {

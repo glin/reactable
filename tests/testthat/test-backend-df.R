@@ -897,6 +897,9 @@ test_that("dfPaginateSubRows multi-level with both levels expanded", {
   expect_equal(result$data[["__state"]]$id,
                c("mfr:Acura", "mfr:Acura.type:Small", "0",
                  "mfr:Acura.type:Midsize", "mfr:Audi"))
+  # Sub-group headers have parentId
+  expect_equal(result$data[["__state"]]$parentId[2], "mfr:Acura")
+  expect_equal(result$data[["__state"]]$parentId[4], "mfr:Acura")
   # Leaf sub-row has parentId
   expect_equal(result$data[["__state"]]$parentId[3], "mfr:Acura.type:Small")
   expect_equal(result$data$model[3], "Integra")
