@@ -35,7 +35,7 @@ server <- function(input, output) {
   output$table <- renderReactable({
     reactable(
       large_data,
-      server = TRUE,
+      backend = backendV8(),
       filterable = TRUE,
       searchable = TRUE
     )
@@ -48,17 +48,24 @@ shinyApp(ui, server)
 ### Backend Options
 
 ```r
-# Default: V8 backend (recommended, uses JavaScript engine)
-reactable(data, server = TRUE)
+# V8 backend (uses JavaScript engine)
+reactable(data, backend = backendV8())
 
 # Pure R backend (no V8 dependency, some limitations)
-reactable(data, server = "df")
+reactable(data, backend = backendDf())
 
 # data.table backend (faster for large data)
-reactable(data, server = "dt")
+reactable(data, backend = backendDt())
+
+# DuckDB backend (fastest, SQL-based)
+reactable(data, backend = backendDuckDB("server"))
 
 # Custom backend (S3 object)
-reactable(data, server = my_custom_backend())
+reactable(data, backend = my_custom_backend())
+
+# Legacy API (deprecated, still works)
+reactable(data, server = TRUE)  # V8
+reactable(data, server = "df")  # df
 ```
 
 ## Architecture
@@ -153,7 +160,7 @@ For multi-level grouping, nested data frames contain their own `.subRows`.
 #### 1.4 Stop Sending Unused State
 **File:** `srcjs/Reactable.js`
 
-~~Currently sends `expanded` and `selectedRowIds` in every request, but no backend uses them.~~ **Done.** `selectedRowIds` has been removed from server requests and all backend signatures. `expanded` is still sent for potential future use with `paginateSubRows`.
+~~Currently sends `expanded` and `selectedRowIds` in every request, but no backend uses them.~~ **Done.** `selectedRowIds` has been removed from server requests and all backend signatures. `expanded` is sent and used by backends when `paginateSubRows = TRUE`.
 
 ### 2. Server-Side Row Selection
 
@@ -186,21 +193,23 @@ Pre-rendering is also problematic with **virtual scrolling + `pagination = FALSE
 
 Another issue: **floating point precision mismatch** between the two data paths. The pre-rendered page goes through `jsonlite::toJSON(digits = NA)` which uses C's `%.15g` format (15 significant digits), while DuckDB query results come through Arrow's `row.toJSON()` which uses JavaScript's `Number.toString()` (up to 17 significant digits for exact float64 round-trip). Since 15 significant digits isn't always enough to recover the exact float64 value, numbers with many decimal places can visibly change when the user first interacts and DuckDB takes over from the pre-rendered data. This is unsolvable without either (a) increasing jsonlite's digits to 17 for exact round-trip, (b) rounding DuckDB results to 15 significant digits to match jsonlite, or (c) removing pre-rendering so there's only one data path.
 
-**Option B: Full server-side implementation (future)**
-- Use `manualRowSelectedKey` / `manualExpandedKey` in react-table
-- Track selection/expansion state on server
-- Requires consistent row IDs across pages
-- Complex edge cases with grouped rows and `paginateSubRows`
+~~**Option B: Full server-side implementation (future)**~~
+~~- Use `manualRowSelectedKey` / `manualExpandedKey` in react-table~~
+~~- Track selection/expansion state on server~~
+~~- Requires consistent row IDs across pages~~
+~~- Complex edge cases with grouped rows and `paginateSubRows`~~
 
-#### Key Challenges (from TODO notes)
+Implemented via a different approach in 9C/9D: inverted selection model with stable row IDs from `__state`.
 
-1. **Row ID management**: Every page has indices starting from 0. Need consistent IDs across pages via `getRowId` option or `__state.id` property.
+#### Key Challenges (from TODO notes) -- RESOLVED
 
-2. **Grouped row selection with paginateSubRows=TRUE**: Impossible to know if a grouped row should show as selected without access to all child rows.
+1. **Row ID management**: ~~Every page has indices starting from 0. Need consistent IDs across pages via `getRowId` option or `__state.id` property.~~ Fixed in 9C: all backends now provide stable `__state.id` and `__state.index` via `_reactable_rowid`.
 
-3. **Select-all with millions of rows**: Can't send million row IDs. Need "select all" command that server interprets, returning only visible selections.
+2. **~~Grouped row selection with paginateSubRows=TRUE~~**: ~~Impossible to know if a grouped row should show as selected without access to all child rows.~~ Resolved: `paginateSubRows` is now implemented for all backends, and selection works with cross-page select-all.
 
-4. **react-table hooks**: `manualRowSelectedKey` exists but doesn't fully bail out of client-side selection logic.
+3. **~~Select-all with millions of rows~~**: ~~Can't send million row IDs. Need "select all" command that server interprets, returning only visible selections.~~ Resolved in 9D: inverted selection model sends `{ selectAll: true, deselected: [...] }` instead of enumerating all IDs.
+
+4. **~~react-table hooks~~**: ~~`manualRowSelectedKey` exists but doesn't fully bail out of client-side selection logic.~~ Resolved: custom `useRowSelect` hook handles both normal and inverted selection modes.
 
 ### 3. Custom Backend API Improvements
 
@@ -281,7 +290,7 @@ Outline:
    - Aggregation functions
 
 6. **Limitations**
-   - Select-all/expand-all only work on current page
+   - ~~Select-all/expand-all only work on current page~~ Select-all now works cross-page (9D). Expand-all still page-only.
    - R render functions run for entire table up front
    - Custom `searchMethod` not supported in df backend
 
@@ -380,9 +389,11 @@ reactableServerData.duckdb_backend <- function(
 
 | Backend | Filter | Search | Sort | Group | Paginate | Selection | Expansion |
 |---------|--------|--------|------|-------|----------|-----------|-----------|
-| V8 | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only | ⚠️ page-only |
-| df | ✅ | ✅ | ✅ | ⚠️ bug | ✅ | ⚠️ page-only | ⚠️ page-only |
-| dt | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only | ⚠️ page-only |
+| V8 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only |
+| df | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only |
+| dt | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only |
+| DuckDB (server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only |
+| DuckDB (WASM) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ page-only |
 
 ## Implementation Order
 
@@ -402,9 +413,9 @@ reactableServerData.duckdb_backend <- function(
    - Document S3 registration for packages
    - Consider reactableServerDestroy()
 
-4. **Phase 4: Server-side selection** (future, optional)
-   - Document current limitation first
-   - Full implementation if user demand warrants
+4. **Phase 4: Server-side selection** -- DONE
+   - Implemented in 9C/9D via inverted selection model (select-all sends query to backend,
+     deselections tracked client-side). Cross-page per-row and select-all both work.
 
 5. **Phase 5: Virtualized windowed fetching** (future)
    - Enable `virtual = TRUE, pagination = FALSE` with DuckDB/Parquet without loading all rows at once
@@ -440,7 +451,7 @@ server <- function(input, output) {
   output$table <- renderReactable({
     reactable(
       data,
-      server = TRUE,
+      backend = backendV8(),
       filterable = TRUE,
       searchable = TRUE,
       groupBy = "category",
@@ -462,7 +473,7 @@ Test checklist:
 - [ ] Global search works (timing <50ms)
 - [ ] Grouping works with aggregation
 - [ ] Expand group shows sub-rows
-- [ ] Selection works (page-only expected)
+- [ ] Selection works (cross-page)
 - [ ] No console errors
 
 ### Automated Tests

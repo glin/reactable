@@ -1,5 +1,9 @@
 # DuckDB-WASM Data Engine for Reactable
 
+> **API note:** This doc was written before the Phase 7 `backend =` refactor. Code examples using
+> `engine = "duckdb"` and `server = "duckdb"` should be read as `backend = backendDuckDB()` and
+> `backend = backendDuckDB("server")` respectively. The `engine` param was removed and never released.
+
 ## Problem Statement
 
 reactable has three modes for handling data, each with significant limitations:
@@ -815,13 +819,17 @@ DuckDB-WASM runs in a Web Worker:
 
 ### CDN vs. self-hosted
 
-Can use jsDelivr CDN for the WASM files (simplest, no self-hosting required) or bundle them with the R package.
+~~Can use jsDelivr CDN for the WASM files (simplest, no self-hosting required) or bundle them with the R package.~~
 
-CDN pros: cached across sites, no package size increase, always latest version.
-CDN cons: requires internet, reliability depends on CDN, not available in air-gapped environments.
+~~CDN pros: cached across sites, no package size increase, always latest version.~~
+~~CDN cons: requires internet, reliability depends on CDN, not available in air-gapped environments.~~
 
-**Recommendation:** Default to jsDelivr CDN. Add `options(reactable.duckdb.wasm.url = "local/path")` for
-self-hosted/offline use.
+~~**Recommendation:** Default to jsDelivr CDN. Add `options(reactable.duckdb.wasm.url = "local/path")` for
+self-hosted/offline use.~~
+
+**Decision:** Self-hosted/bundled. WASM files are bundled in `inst/htmlwidgets/lib/duckdb-wasm/`. CDN was
+rejected because it fails for air-gapped corporate environments. CRAN size limit (~5 MB) is an open concern
+since `duckdb-eh.wasm` is ~32.7 MB.
 
 ### Query execution is sequential
 
@@ -933,12 +941,12 @@ directly from the R data frame's memory without copying.
 
 ### When to use which
 
-| Scenario                                   | Recommended mode                              |
-| ------------------------------------------ | --------------------------------------------- |
-| Static HTML, R Markdown, Quarto (<2M rows) | `engine = "duckdb"` (WASM, client-side)       |
-| Shiny, data must stay on server            | `server = "duckdb"` (R backend)               |
-| Shiny, don't mind client seeing data       | `engine = "duckdb"` (WASM, offloads R server) |
-| Very large data (>2M rows, static doc)     | `engine = "duckdb"` + Parquet sidecar file    |
+| Scenario                                   | Recommended mode                                           |
+| ------------------------------------------ | ---------------------------------------------------------- |
+| Static HTML, R Markdown, Quarto (<2M rows) | `backend = backendDuckDB()` (WASM, client-side)            |
+| Shiny, data must stay on server            | `backend = backendDuckDB("server")` (R backend)            |
+| Shiny, don't mind client seeing data       | `backend = backendDuckDB()` (WASM, offloads R server)      |
+| Very large data (>2M rows, static doc)     | `backend = backendDuckDB()` + Parquet sidecar file         |
 | Small tables (<10K rows)                   | Default JSON path (no engine needed)          |
 
 ---
@@ -1028,13 +1036,10 @@ special handling:
 
 This is more complex than flat pagination but entirely feasible with the SQL model.
 
-### `paginateSubRows` not supported
+### ~~`paginateSubRows` not supported~~ DONE
 
-`paginateSubRows = TRUE` is not implemented for the DuckDB engine (WASM or R server). When groups are expanded,
-sub-rows are added on top of the page size (the default `paginateSubRows = FALSE` behavior). This matches the df
-and dt server backends — only the V8 backend supports `paginateSubRows`.
-
-See [paginate-sub-rows.md](paginate-sub-rows.md) for the design plan to implement this.
+`paginateSubRows = TRUE` is now implemented for all backends: DuckDB WASM (client), DuckDB R server, and df server.
+See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
 
 ---
 
@@ -1081,12 +1086,12 @@ and memory than it saves on queries.
 
 ### Recommended target range
 
-| Use case                                           | Recommended approach                                                 |
-| -------------------------------------------------- | -------------------------------------------------------------------- |
-| Static HTML (R Markdown / Quarto) up to ~200K rows | `engine = "duckdb"` (WASM) — all operations <300ms                   |
-| Static HTML, 200K-1M rows                          | `engine = "duckdb"` (WASM) — pagination/sort instant, search may lag |
-| Shiny with data that must stay on server           | `server = "duckdb"` (R backend) — no WASM limit                      |
-| Shiny with >1M rows or sensitive data              | `server = "duckdb"` (R backend)                                      |
+| Use case                                           | Recommended approach                                                          |
+| -------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Static HTML (R Markdown / Quarto) up to ~200K rows | `backend = backendDuckDB()` (WASM) -- all operations <300ms                   |
+| Static HTML, 200K-1M rows                          | `backend = backendDuckDB()` (WASM) -- pagination/sort instant, search may lag |
+| Shiny with data that must stay on server           | `backend = backendDuckDB("server")` (R backend) -- no WASM limit              |
+| Shiny with >1M rows or sensitive data              | `backend = backendDuckDB("server")` (R backend)                               |
 
 ### Future search optimizations
 
@@ -1215,6 +1220,6 @@ The same DuckDB engine powers both sides:
 - **Server-side (DuckDB R):** For Shiny apps where data must stay private. Zero-copy data registration, ~100x faster
   than the current data.frame backend, same SQL as the WASM engine.
 
-The implementation is additive (opt-in via `engine = "duckdb"` or `server = "duckdb"`), backward compatible (existing
+The implementation is additive (opt-in via `backend = backendDuckDB()`), backward compatible (existing
 tables unchanged), and phased (Arrow-only is valuable on its own, DuckDB-WASM pagination is the first milestone, and
 the R backend shares the same query logic).

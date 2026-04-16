@@ -2,6 +2,9 @@
 
 Working scratch doc. MVP-first: get basic pagination working ASAP to validate the approach, then layer features.
 
+**Note:** Step-level checkboxes and code snippets in earlier phases (0-4) were not maintained after
+phase completion. Phase headers marked "DONE" or "\u2714\uFE0F" are the authoritative completion status.
+
 See [duckdb-wasm-engine.md](duckdb-wasm-engine.md) for architecture, rationale, limitations (single thread, 4 GB
 memory, WASM variants), shared DuckDB R/WASM design, and the comparison with V8 server-side.
 
@@ -415,13 +418,13 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
 
 ---
 
-### Phase 5: Grouping and aggregation
+### Phase 5: Grouping and aggregation — DONE
 
 **Goal:** `groupBy` works with the DuckDB engine (both WASM and R).
 
 #### Steps
 
-- [ ] **5.1** Add GROUP BY SQL generation:
+- [x] **5.1** Add GROUP BY SQL generation:
 
   ```sql
   -- Top-level groups (collapsed view)
@@ -438,7 +441,7 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
   LIMIT 25 OFFSET 0
   ```
 
-- [ ] **5.2** Map reactable aggregate functions to SQL:
+- [x] **5.2** Map reactable aggregate functions to SQL:
       | reactable | SQL |
       |-----------|-----|
       | "sum" | `SUM(col)` |
@@ -450,50 +453,35 @@ queries are fast (DuckDB instead of data.frame `grepl`/`order`). See design doc 
       | "unique" | `STRING_AGG(DISTINCT CAST(col AS VARCHAR), ', ')` |
       | "frequency" | custom subquery |
 
-- [ ] **5.3** Handle row expansion: when user clicks to expand a group, fire a sub-query for that group's
+- [x] **5.3** Handle row expansion: when user clicks to expand a group, fire a sub-query for that group's
       children. The expanded group key is passed in `state.expanded`.
 
-- [ ] **5.4** Handle multi-level grouping: `groupBy = c("region", "city")` → nested GROUP BY queries
+- [x] **5.4** Handle multi-level grouping: `groupBy = c("region", "city")` → nested GROUP BY queries
 
-- [ ] **5.5** Add `__state` metadata to grouped results (index, grouped flag, subRowCount) to match what
+- [x] **5.5** Add `__state` metadata to grouped results (index, grouped flag, subRowCount) to match what
       the react-table server-side mode expects
 
-- [ ] **5.6** Add JS tests for grouping:
+- [x] **5.6** Add JS tests for grouping:
   - GROUP BY produces correct SQL with aggregation functions
   - Expanding a group produces correct WHERE clause for sub-rows
   - Multi-level grouping produces correct nested queries
   - Aggregate function mapping (sum→SUM, mean→AVG, etc.) is correct
   - Grouped row count is correct
 
-#### Known limitation: `paginateSubRows` not supported with DuckDB engine
+#### ~~Known limitation: `paginateSubRows` not supported with DuckDB engine~~ DONE
 
-`paginateSubRows = TRUE` is not implemented for the DuckDB engine (WASM or R server). Sub-rows are always fetched
-in full for each visible group, and pagination is based on top-level group count only. This matches the behavior of
-the df and dt server backends, which also don't implement `paginateSubRows` — only the V8 backend does.
-
-When `paginateSubRows = FALSE` (the default), expanding a group adds its child rows _on top of_ the page size.
-With `paginateSubRows = TRUE`, expanded children would count toward the page size, giving consistent page heights.
-
-Implementing it for DuckDB would require:
-
-- Passing `expanded` state to the engine (which groups are currently open)
-- Building a flat page interleaving group headers and their expanded children, respecting `pageSize` across group
-  boundaries (e.g., if group A has 50 children and page size is 10, page 2 starts mid-group-A)
-- Returning `__state` with `parentId` (on child rows) and `subRowCount` (on group rows) instead of nested `.subRows`
-- Setting `expandSubRows = false` in react-table config to prevent duplicate sub-row expansion
-- Computing correct total row count that accounts for expanded vs collapsed groups
-
-This is deferred as a future enhancement. See the "Deferred / Future" section for the revisit item.
+`paginateSubRows = TRUE` is now implemented for all backends: DuckDB WASM (client), DuckDB R server, and df server.
+See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
 
 #### Validate
 
-- [ ] `reactable(data, engine = "duckdb", groupBy = "region")` shows grouped rows
-- [ ] Click to expand a group → shows child rows
-- [ ] Aggregated values (sum, mean, count) are correct
-- [ ] Pagination works within expanded groups
-- [ ] Sort works on grouped view
-- [ ] Filter + group combination works
-- [ ] Same behavior in DuckDB R backend
+- [x] `reactable(data, backend = backendDuckDB(), groupBy = "region")` shows grouped rows
+- [x] Click to expand a group → shows child rows
+- [x] Aggregated values (sum, mean, count) are correct
+- [x] Pagination works within expanded groups
+- [x] Sort works on grouped view
+- [x] Filter + group combination works
+- [x] Same behavior in DuckDB R backend
 
 ---
 
@@ -504,9 +492,9 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
 - ~~**6.3** Document R render limitation~~ — Covered by 6.10.2 warnings; vignette will mention it
 - ~~**6.4** Column formatting verification~~ — Skipped (`colFormat()` is client-side JS, works fine).
   Added colFormat examples to test Rmd instead (dates, currencies, percentages, grouped aggregates).
-- ~~**6.5** Selection~~ — Deferred. Row selection is broken with DuckDB (per-page index collisions,
+- ~~**6.5** Selection~~ — ~~Deferred. Row selection is broken with DuckDB (per-page index collisions,
   server-side selection not implemented). Added to Deferred/Future list. Add R warning when
-  `selection` is used with `engine = "duckdb"`.
+  `selection` is used with `engine = "duckdb"`.~~ Fixed in 9C/9D.
 - ~~**6.6** Accessibility (ARIA row count)~~ — Not needed. `aria-rowcount` is only set for virtual
   tables, same as client-side tables. No DuckDB-specific issue.
 - ~~**6.7** `Reactable.setData()` JS API~~ — Deferred. DuckDB WASM is for static HTML where data
@@ -528,9 +516,10 @@ This is deferred as a future enhancement. See the "Deferred / Future" section fo
   - Ensure all DuckDBEngine methods have test coverage
   - Ensure all R server-duckdb S3 methods have test coverage
   - Integration tests: R Arrow IPC → JS DuckDB ingestion → query → correct results
-- [x] **6.10.3** Warn about unsupported row selection: When `engine = "duckdb"` is used with
+- [x] **6.10.3** ~~Warn about unsupported row selection: When `engine = "duckdb"` is used with
       `selection`, emit an R-level warning. Row selection with DuckDB is not supported because
-      row IDs are per-page indices that collide across pages.
+      row IDs are per-page indices that collide across pages.~~ Warning was added, then removed
+      when row selection was fixed in 9C/9D.
 
 #### Validate
 
@@ -624,23 +613,23 @@ reactable(data, engine = "duckdb")               # ❌ removed
 
 #### Steps
 
-- [ ] **7.1** Create `backendDuckDB()` in `R/backends.R`: - `backendDuckDB(mode = c("auto", "client", "server"))` → S3 class `"reactable_backendDuckDB"` - Export and add roxygen docs with examples and limitations. - No `backendV8()` in this phase (deferred to Phase 9).
+- [x] **7.1** Create `backendDuckDB()` in `R/backends.R`: - `backendDuckDB(mode = c("auto", "client", "server"))` → S3 class `"reactable_backendDuckDB"` - Export and add roxygen docs with examples and limitations. - No `backendV8()` in this phase (deferred to Phase 9).
 
-- [ ] **7.2** Add `backend` param to `reactable()`, remove `engine` param: - Add `backend = NULL` param (placed after `server` in the signature). - Delete `engine` param entirely. - Validate: error if both `backend` and `server` are specified. - `server` param is completely unchanged — no internal remapping to backend objects.
+- [x] **7.2** Add `backend` param to `reactable()`, remove `engine` param: - Add `backend = NULL` param (placed after `server` in the signature). - Delete `engine` param entirely. - Validate: error if both `backend` and `server` are specified. - `server` param is completely unchanged — no internal remapping to backend objects.
       `server = TRUE`, `"duckdb"`, `"df"`, `"dt"` all dispatch through existing code paths.
 
-- [ ] **7.3** Implement auto-detection for `backendDuckDB("auto")`: - In `reactable()`, resolve mode: check Shiny session → "server", else → "client". - `"client"` mode → existing DuckDB WASM path (Arrow IPC, pre-rendered first page, etc.) - `"server"` mode → existing DuckDB R server path (duckdb_register, S3 methods)
+- [x] **7.3** Implement auto-detection for `backendDuckDB("auto")`: - In `reactable()`, resolve mode: check Shiny session → "server", else → "client". - `"client"` mode → existing DuckDB WASM path (Arrow IPC, pre-rendered first page, etc.) - `"server"` mode → existing DuckDB R server path (duckdb_register, S3 methods)
 
-- [ ] **7.4** Refactor `reactable()` internals to use backend objects: - Replace `identical(engine, "duckdb")` checks with `isDuckDBClientBackend(backend)`. - Existing `server` checks (`!isFALSE(server)`, etc.) remain unchanged. - Move DuckDB WASM warnings (searchMethod, filterMethod, R render functions, selection)
+- [x] **7.4** Refactor `reactable()` internals to use backend objects: - Replace `identical(engine, "duckdb")` checks with `isDuckDBClientBackend(backend)`. - Existing `server` checks (`!isFALSE(server)`, etc.) remain unchanged. - Move DuckDB WASM warnings (searchMethod, filterMethod, R render functions, selection)
       to fire when backend is DuckDB client mode, not when `engine == "duckdb"`. - `getServerBackend()` accepts `backendDuckDB("server")` in addition to existing string dispatch.
 
-- [ ] **7.5** Update JS side: - In `Reactable.js`, rename `engine` prop to `backend` (or keep as internal prop name — decide). - Update `duckdb-entry.js` if needed. - The JS side just needs to know "use DuckDB WASM" — the prop name is the only change.
+- [x] **7.5** Update JS side: - In `Reactable.js`, rename `engine` prop to `backend` (or keep as internal prop name — decide). - Update `duckdb-entry.js` if needed. - The JS side just needs to know "use DuckDB WASM" — the prop name is the only change.
 
-- [ ] **7.6** Update all tests: - R tests: replace `engine = "duckdb"` with `backend = backendDuckDB()` (or `backendDuckDB("client")`
+- [x] **7.6** Update all tests: - R tests: replace `engine = "duckdb"` with `backend = backendDuckDB()` (or `backendDuckDB("client")`
       where explicit client mode is needed). - JS tests: update prop names if changed. - Add new tests for `backend` param validation, auto-detection logic,
       error when both `backend` and `server` specified. - Existing `server` tests remain unchanged.
 
-- [ ] **7.7** Update `roxygen` docs: - `?reactable`: Add `backend` param docs. `server` param docs unchanged. - `?backendDuckDB`: Full docs with modes, examples, limitations. - Run `devtools::document()`.
+- [x] **7.7** Update `roxygen` docs: - `?reactable`: Add `backend` param docs. `server` param docs unchanged. - `?backendDuckDB`: Full docs with modes, examples, limitations. - Run `devtools::document()`.
 
 - [x] **7.8** Update design docs and test Rmd: - `duckdb-wasm-engine-test.Rmd`: Replace `engine = "duckdb"` with `backend = backendDuckDB()`. - `implementation-plan.md`: Mark phase complete.
 
@@ -771,24 +760,24 @@ every selection click.
 
 **Steps:**
 
-- [ ] **9C.1** **R side:** Add `_reactable_rowid` column (0-based) to data before serializing to Arrow
+- [x] **9C.1** **R side:** Add `_reactable_rowid` column (0-based) to data before serializing to Arrow
       IPC / Parquet. For `backendDuckDB("server")`, add it to the data frame before `duckdb_register()`.
-- [ ] **9C.2** **JS side (DuckDBBackend.js):** After `query()` returns rows, extract `_reactable_rowid`,
+- [x] **9C.2** **JS side (DuckDBBackend.js):** After `query()` returns rows, extract `_reactable_rowid`,
       set `row['__state'] = { id: String(row._reactable_rowid), index: row._reactable_rowid }`, and
       delete `row._reactable_rowid`. For grouped rows, set `id` to `"colName:value"` pattern (matching
       the df backend). Include `_reactable_rowid` via `SELECT *` (hidden column approach).
-- [ ] **9C.3** **JS side (Reactable.js):** Extend `getRowId` to check `useDuckDB || useServerData`.
-- [ ] **9C.4** **R DuckDB server backend (backend-duckdb.R):** Add `__state` with `id` and `index` to
+- [x] **9C.3** **JS side (Reactable.js):** Extend `getRowId` to check `useDuckDB || useServerData`.
+- [x] **9C.4** **R DuckDB server backend (backend-duckdb.R):** Add `__state` with `id` and `index` to
       `resolvedData()` response for flat rows. Grouped rows already have `__state` from the df backend
       pattern used in `duckdbGroupedQuery()` -- add `id` field there too.
-- [ ] **9C.5** **V8 server request:** Remove `state.selectedRowIds` from the V8 server request useEffect
+- [x] **9C.5** **V8 server request:** Remove `state.selectedRowIds` from the V8 server request useEffect
       dependency array to stop the unnecessary re-fetch on every selection click. The V8 backend ignores
       it anyway. Keep `selectedRowIds` in the request body for future use but don't trigger re-fetches.
-- [ ] **9C.6** **R warning:** Remove the "not supported" warning for `selection` with `backendDuckDB()`.
-- [ ] **9C.7** **Tests:** Add JS tests for row selection with DuckDB (select on page 1, navigate to
+- [x] **9C.6** **R warning:** Remove the "not supported" warning for `selection` with `backendDuckDB()`.
+- [x] **9C.7** **Tests:** Add JS tests for row selection with DuckDB (select on page 1, navigate to
       page 2, select there, navigate back -- both selections preserved). Add R tests for
       `_reactable_rowid` column in Arrow IPC / Parquet output and in server backend responses.
-- [ ] **9C.8** **df/dt backends:** Add `__state` with `id` and `index` to flat (non-grouped) rows in
+- [x] **9C.8** **df/dt backends:** Add `__state` with `id` and `index` to flat (non-grouped) rows in
       `dfSortFilterPage()` / `dtSortFilterPage()` to fix the same page-relative ID collision bug.
 
 #### 9D: Cross-page select-all -- DONE
@@ -827,13 +816,26 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
 
 **Known issues (to fix next):**
 
-1. **Per-row Shiny reporting incomplete:** Per-row selections (non-inverted) in backend mode
-   only report the current page's selected indices to Shiny via `selectedRowIndexes`, because
-   `rowsById` only contains current-page rows. Selecting row 1 on page 1 then navigating to
-   page 2 causes `getReactableState('selected')` to return `integer(0)`. The visual selection
-   persists correctly (the checkbox stays checked when navigating back), but the Shiny reporting
-   is incomplete. Fix: send `selectedRowIds` keys directly (they're already stable row indices
-   from `__state.id`) instead of resolving through `rowsById`.
+1. **~~Per-row Shiny reporting incomplete:~~** Partially fixed. The main path
+   (`getReactableState('selected')`) already bypasses `rowsById` and sends
+   `Object.keys(state.selectedRowIds).map(id => Number(id) + 1)` directly for backend modes
+   (line ~2390 in Reactable.js). Cross-page selections are reported correctly through this path.
+
+   **Still broken:** The `selectedRowIndexes` memo (line ~1509) and two consumers that use it:
+
+   a. **Deprecated `selectionId` Shiny input** (line ~1519): The pre-v0.3.0 API
+      `reactable(selection = "multiple", selectionId = "my_sel")` sends selected indices via
+      `Shiny.onInputChange("my_sel", selectedIndexes)`, and this path still resolves through
+      `rowsById` (current page only). Users would access it via `input$my_sel` in Shiny.
+      This API emits a deprecation warning since v0.3.0 and is unlikely to be used with
+      backend mode since backends were added later. Not worth fixing.
+
+   b. **`stateInfo.selected`** used by JS callbacks (`Reactable.onStateChange`,
+      `Reactable.getState`): Still backed by `selectedRowIndexes`, so JS API consumers
+      checking `state.selected` in backend mode see only current-page selections.
+
+   Both could be fixed by applying the same `Object.keys(selectedRowIds)` approach used in
+   the `getReactableState` path.
 
 2. **~~Select-all + filter interaction:~~** Fixed. Added a `useMountedLayoutEffect` in
    `Reactable.js` that watches `state.filters` and `state.globalFilter`. When either changes
@@ -975,13 +977,15 @@ A backend plugin is a JS object with well-known methods:
 
 ### Deferred / Future
 
-- [ ] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
+- [x] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
       where sub-rows count toward the page size. See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
+      Implemented for DuckDB WASM, DuckDB R server, and df server backends.
 - [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
       holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
 - [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
       would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
-- [ ] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests
+- [x] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests.
+      Implemented: `backendDuckDB(format = "parquet")`, auto-format picks Parquet when Arrow IPC > ~20 MB.
 - [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
       dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as JSON). Even with pagination, the
       pre-rendered JSON page is redundant weight. Consider removing R-side pre-rendering entirely and instead showing
@@ -996,7 +1000,10 @@ A backend plugin is a JS object with well-known methods:
       first-page pre-rendering (above), since both paths would just need Arrow IPC serialization
       at `reactable()` time, with the server path discarding it in the hook. Currently, a warning
       is emitted when DuckDB client mode is rendered in Shiny.
-- [ ] Web Worker isolation: Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks
+- [x] Web Worker isolation: ~~Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks~~
+      Already implemented. `DuckDBBackend.js` creates an `AsyncDuckDB(logger, worker)` instance with a Web Worker
+      (blob URL from `duckdb-browser-eh.worker.js`). All SQL execution runs off the main thread via Worker
+      `postMessage`. Only `arrowTableToRows()` result conversion runs on the main thread (unavoidable).
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
 - [ ] Shared DuckDB instance: Multiple reactable tables on one page share a single DuckDB-WASM instance
