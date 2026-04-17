@@ -816,26 +816,16 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
 
 **Known issues (to fix next):**
 
-1. **~~Per-row Shiny reporting incomplete:~~** Partially fixed. The main path
-   (`getReactableState('selected')`) already bypasses `rowsById` and sends
-   `Object.keys(state.selectedRowIds).map(id => Number(id) + 1)` directly for backend modes
-   (line ~2390 in Reactable.js). Cross-page selections are reported correctly through this path.
+1. **~~Per-row Shiny reporting incomplete:~~** Fixed. The `selectedRowIndexes` memo
+   (line ~1509 in Reactable.js) now checks for backend mode (`useDuckDB || useServerData`)
+   and converts `selectedRowIds` keys directly via `Number(id)` instead of looking up
+   `rowsById` (which only has current-page rows). This fixes `stateInfo.selected` (used by
+   `Reactable.getState`, `Reactable.onStateChange`) and the deprecated `selectionId` path.
+   The duplicate backend-specific branch in the Shiny state sync effect was removed since
+   `stateInfo.selected` is now correct for all modes.
 
-   **Still broken:** The `selectedRowIndexes` memo (line ~1509) and two consumers that use it:
-
-   a. **Deprecated `selectionId` Shiny input** (line ~1519): The pre-v0.3.0 API
-      `reactable(selection = "multiple", selectionId = "my_sel")` sends selected indices via
-      `Shiny.onInputChange("my_sel", selectedIndexes)`, and this path still resolves through
-      `rowsById` (current page only). Users would access it via `input$my_sel` in Shiny.
-      This API emits a deprecation warning since v0.3.0 and is unlikely to be used with
-      backend mode since backends were added later. Not worth fixing.
-
-   b. **`stateInfo.selected`** used by JS callbacks (`Reactable.onStateChange`,
-      `Reactable.getState`): Still backed by `selectedRowIndexes`, so JS API consumers
-      checking `state.selected` in backend mode see only current-page selections.
-
-   Both could be fixed by applying the same `Object.keys(selectedRowIds)` approach used in
-   the `getReactableState` path.
+   The deprecated `selectionId` Shiny input (pre-v0.3.0 API) is also fixed by the
+   `selectedRowIndexes` change, since it reads from the same memo (line ~1531).
 
 2. **~~Select-all + filter interaction:~~** Fixed. Added a `useMountedLayoutEffect` in
    `Reactable.js` that watches `state.filters` and `state.globalFilter`. When either changes

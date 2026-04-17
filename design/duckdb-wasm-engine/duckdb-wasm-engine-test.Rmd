@@ -1406,7 +1406,8 @@ reactable(
 
 ## Cross-page selection in Shiny
 
-Run this Shiny app to test cross-page selection with `getReactableState("selected")`.
+Run this Shiny app to test cross-page selection with `getReactableState("selected")` and
+`Reactable.getState().selected`.
 
 Test steps:
 1. Select all -- should select all 93 rows. `getReactableState` should show `1:93`.
@@ -1417,6 +1418,9 @@ Test steps:
    `getReactableState` should show non-sequential indices (e.g., `14, 15, 16, 17, 18`).
 5. Clear filter -- only those Ford rows should remain selected, others unchecked.
 6. Sort by a column -- selections should persist.
+7. Select rows 1 and 3 on page 1. Navigate to page 2. Click "Check JS getState".
+   Both R and JS outputs should show the same selected row indices (R is 1-based, JS is 0-based).
+   Before the `selectedRowIndexes` fix, JS would show empty on a different page.
 
 ```r
 library(shiny)
@@ -1427,8 +1431,12 @@ ui <- fluidPage(
   actionButton("select_rows", "Select rows 1, 3, 5"),
   actionButton("clear_selection", "Clear selection"),
   actionButton("select_all", "Select all rows"),
+  actionButton("check_js", "Check JS getState"),
   reactableOutput("table"),
-  verbatimTextOutput("selected_output")
+  h4("R: getReactableState('selected')"),
+  verbatimTextOutput("selected_output"),
+  h4("JS: Reactable.getState().selected"),
+  verbatimTextOutput("js_selected")
 )
 
 server <- function(input, output, session) {
@@ -1439,7 +1447,8 @@ server <- function(input, output, session) {
       selection = "multiple",
       defaultPageSize = 10,
       searchable = TRUE,
-      filterable = TRUE
+      filterable = TRUE,
+      elementId = "table"
     )
   })
 
@@ -1458,7 +1467,30 @@ server <- function(input, output, session) {
     cat("Count:", length(selected), "\n")
     cat("Selected:", paste(selected, collapse = ", "), "\n")
   })
+
+  observeEvent(input$check_js, {
+    session$sendCustomMessage("check_js_state", list())
+  })
+  output$js_selected <- renderPrint({
+    sel <- input$js_state_selected
+    if (is.null(sel) || length(sel) == 0) {
+      cat("None")
+    } else {
+      cat("Count:", length(sel), "\n")
+      cat("Selected (0-based):", paste(sel, collapse = ", "), "\n")
+    }
+  })
 }
+
+ui <- tagList(
+  ui,
+  tags$script(HTML("
+    Shiny.addCustomMessageHandler('check_js_state', function(msg) {
+      var state = Reactable.getState('table');
+      Shiny.setInputValue('js_state_selected', state.selected);
+    });
+  "))
+)
 
 shinyApp(ui, server)
 ```

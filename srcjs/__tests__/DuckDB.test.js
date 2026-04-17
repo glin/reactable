@@ -14,7 +14,7 @@ jest.mock('apache-arrow', () => ({
   }
 }))
 
-import { Reactable } from '../Reactable'
+import { Reactable, getState } from '../Reactable'
 import { DuckDBBackend } from '../DuckDBBackend'
 
 import {
@@ -1311,6 +1311,61 @@ describe('DuckDB backend', () => {
     // First row on page 1 should still be selected
     const page1Checkboxes = getSelectRowCheckboxes(container)
     expect(page1Checkboxes[1].checked).toBe(true)
+  })
+
+  it('getState().selected reports selections across pages', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+        elementId="sel-test"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Select rows 1 and 3 on page 1 (checkboxes[0] is select-all)
+    const checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(checkboxes[1]) // row index 0
+    fireEvent.click(checkboxes[3]) // row index 2
+    expect(getState('sel-test').selected).toEqual(expect.arrayContaining([0, 2]))
+    expect(getState('sel-test').selected).toHaveLength(2)
+
+    // Navigate to page 2
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    // Selections from page 1 should still appear in getState().selected
+    expect(getState('sel-test').selected).toEqual(expect.arrayContaining([0, 2]))
+    expect(getState('sel-test').selected).toHaveLength(2)
+
+    // Select first row on page 2
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    fireEvent.click(page2Checkboxes[1]) // row index 5
+
+    // All three selections should be reported
+    expect(getState('sel-test').selected).toEqual(expect.arrayContaining([0, 2, 5]))
+    expect(getState('sel-test').selected).toHaveLength(3)
   })
 
   it('select-all selects rows across all pages', async () => {

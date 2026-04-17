@@ -1507,6 +1507,12 @@ function Table({
 
   const rowsById = instance.preFilteredRowsById || instance.rowsById
   const selectedRowIndexes = React.useMemo(() => {
+    // In backend mode, selectedRowIds keys are stable global row IDs from __state.id
+    // (0-based row indices as strings). Resolve directly instead of looking up rowsById,
+    // which only contains current-page rows and would drop cross-page selections.
+    if (useDuckDB || useServerData) {
+      return Object.keys(state.selectedRowIds).map(id => Number(id))
+    }
     return Object.keys(state.selectedRowIds).reduce((indexes, id) => {
       const row = rowsById[id]
       if (row) {
@@ -1514,7 +1520,7 @@ function Table({
       }
       return indexes
     }, [])
-  }, [state.selectedRowIds, rowsById])
+  }, [state.selectedRowIds, rowsById, useDuckDB, useServerData])
 
   // Update Shiny on selected row changes (deprecated in v0.2.0)
   React.useEffect(() => {
@@ -2374,24 +2380,13 @@ function Table({
       return
     }
     // Convert to R's 1-based indices
-    const selectedIndexes = stateInfo.selected.map(index => index + 1)
+    const selected = stateInfo.selected.map(index => index + 1)
     // Convert to R's 1-based indices
     const page = stateInfo.page + 1
     // Convert sortBy array to named list of "asc" and "desc"
     let sorted = stateInfo.sorted.length > 0 ? {} : null
     for (let sortInfo of stateInfo.sorted) {
       sorted[sortInfo.id] = sortInfo.desc ? 'desc' : 'asc'
-    }
-
-    // For backend mode, selectedRowIds keys are stable row IDs (from __state.id),
-    // which are 0-based row indices. Convert directly to 1-based R indices.
-    // This works for both page-level and cross-page selection since the IDs
-    // are global identifiers, not page-relative.
-    let selected
-    if (useDuckDB || useServerData) {
-      selected = Object.keys(state.selectedRowIds).map(id => Number(id) + 1)
-    } else {
-      selected = selectedIndexes
     }
 
     // NOTE: any object arrays will be simplified into vectors by jsonlite by default. Avoid sending
@@ -2415,10 +2410,7 @@ function Table({
     stateInfo.pageSize,
     stateInfo.pages,
     stateInfo.sorted,
-    stateInfo.selected,
-    state.selectedRowIds,
-    useDuckDB,
-    useServerData
+    stateInfo.selected
   ])
 
   // Getter for the latest page count
