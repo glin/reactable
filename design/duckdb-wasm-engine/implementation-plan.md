@@ -833,27 +833,100 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
    selection state. This matches client-side semantics where select-all only applies to
    the currently filtered rows.
 
-#### 9E: Server-side expansion
+#### 9E: Server-side expansion (lazy sub-row fetching)
 
-**Goal:** Implement server-side row expansion where the server controls which groups are open
-and only fetches sub-rows on demand. Currently, grouped row expansion is handled client-side
-for all backends -- DuckDB (WASM and server) fetches all sub-rows for visible groups in one
-query, and react-table manages expansion state locally. Details expansion
-(`colDef(details = ...)`) also works client-side.
+**Goal:** Only fetch sub-rows for expanded groups, not all groups on the page. Currently, in
+non-`paginateSubRows` mode, all backends fetch sub-rows for every visible group (even collapsed
+ones). This wastes bandwidth and query time, especially with many groups or large sub-row sets.
 
-Server-side expansion would require passing `expanded` state to the backend and implementing
-incremental sub-row loading. This also addresses the `expanded` field currently sent (but
-ignored) in V8 server requests -- instead of removing it, we make it functional.
+**Scope:** DuckDB WASM, DuckDB R server, and df backends. V8 is excluded because it runs
+react-table internally and already receives `expanded` state (optimizing V8's internal rendering
+is out of scope). dt backend was removed (see Deferred list).
+
+**Current behavior (non-`paginateSubRows`):**
+- DuckDB WASM `queryGrouped()`: fetches ALL sub-rows for ALL groups on the page via `IN()` query
+- DuckDB R server `duckdbGroupedQuery()`: fetches ALL sub-rows per group in a loop
+- df backend `dfGroupBy()`: groups entire filtered data in memory, attaches all sub-rows
+- V8: sends `expanded` in POST body, re-fetches on expand/collapse (react-table in V8 handles expansion)
+- `state.expanded` is deliberately NOT sent to DuckDB WASM (line ~1388: `expanded: paginateSubRows ? state.expanded : undefined`)
+- `state.expanded` IS in V8 server useEffect deps (line ~1257), so V8 already re-fetches on expand
+
+**`paginateSubRows` already works correctly:** When `paginateSubRows=true`, `expanded` is sent
+to all backends and only visible expanded rows on the current page are fetched. No changes
+needed for that path.
+
+**Design:**
+
+1. **Pass `expanded` to backends in non-`paginateSubRows` grouped mode.** Change the DuckDB
+   query effect to always send `state.expanded` when `groupBy` is active (not just when
+   `paginateSubRows` is true). Add `state.expanded` to the effect's dependency array so
+   expanding/collapsing a group triggers a re-query.
+
+2. **Backends only fetch sub-rows for expanded groups.** Each backend checks the `expanded`
+   map. Collapsed groups get empty `.subRows` but include `__state.subRowCount` so the
+   expander arrow shows. Expanded groups get full sub-rows as before.
+
+3. **Client-side placeholder sub-rows for collapsed groups.** In `Reactable.js`, extend the
+   `subRowCount` placeholder pattern (currently `paginateSubRows`-only) to also apply in
+   non-`paginateSubRows` backend mode (`useDuckDB || useServerData`). This sets
+   `row.subRows.length = rowState.subRowCount` so `canExpand` is true and the expander shows.
+
+4. **Multi-level grouping:** For multi-level `groupBy`, a group is expanded if its ID is in
+   the `expanded` map. Sub-groups of an expanded group follow the same rule: only fetch their
+   sub-rows if they are also expanded. A collapsed parent means its children are never fetched.
+
+**Changes per backend:**
+
+- **DuckDB WASM (`DuckDBBackend.js` `queryGrouped()`):** Accept `expanded` param. At the leaf
+  level, only fetch sub-rows (the `IN()` query) for group values where `expanded[groupId]`
+  is true. For collapsed groups, set `__state.subRowCount` from `COUNT(*)` (needs to be
+  added to the GROUP BY SELECT; see `_sub_count` in `buildPaginatedGroupTree` for reference).
+  For multi-level, only recurse into expanded groups.
+
+- **DuckDB R server (`backend-duckdb.R` `duckdbGroupedQuery()`):** Accept `expanded` param.
+  Skip sub-row fetch for collapsed groups. Set `__state$subRowCount` from the GROUP BY
+  count. The `_sub_row_count` is already computed in `duckdbBuildGroupTree()` but not in
+  `duckdbGroupedQuery()` -- add `COUNT(*)` to the GROUP BY select.
+
+- **df backend (`backend-df.R` `dfGroupBy()`):** Accept `expanded` param. After grouping,
+  replace `.subRows` with empty data frames for collapsed groups. Set `__state$subRowCount`
+  from `nrow()` of the original sub-rows.
+
+- **Reactable.js:** Always send `expanded` in DuckDB query when `groupBy` is active. Always
+  include `state.expanded` in dependency array when `groupBy` is active. Extend the
+  `subRowCount` placeholder logic to non-`paginateSubRows` backend mode.
+
+- **V8:** No changes. V8 already sends `expanded` and re-fetches. The V8 react-table engine
+  handles expansion internally.
 
 **Steps:**
 
-- [ ] **9E.1** Design the expansion protocol: how `expanded` state flows from JS to the backend,
-      what the backend returns (incremental sub-rows vs full page rebuild), and how it interacts
-      with pagination and sorting.
-- [ ] **9E.2** Update the V8 server useEffect to properly use `expanded` state instead of ignoring it.
-- [ ] **9E.3** Implement expansion support in DuckDB backend (WASM and server).
-- [ ] **9E.4** Update df backends if applicable.
-- [ ] **9E.5** Tests for server-side expansion across backends.
+- [ ] **9E.1** **Reactable.js:** Always pass `expanded: state.expanded` (not just when
+      `paginateSubRows`) in the DuckDB query effect when `groupBy` is active. Add
+      `state.expanded` to the dependency array for grouped DuckDB queries. Extend the
+      `subRowCount` placeholder pattern to apply in `(useDuckDB || useServerData) && !paginateSubRows`
+      mode (currently only `paginateSubRows`).
+- [ ] **9E.2** **Reactable.js (server data):** The V8 server useEffect already sends `expanded`
+      and has it in deps. For non-V8 server backends (df/duckdb-server), the expanded state
+      needs to reach the backend. Verify that the server POST includes `expanded` and that the
+      R `reactableServerData` methods pass it through to the grouping functions.
+- [ ] **9E.3** **DuckDB WASM (`DuckDBBackend.js`):** Update `queryGrouped()` to accept
+      `expanded` param. At leaf level, split groups into expanded/collapsed. For expanded groups,
+      fetch sub-rows via `IN()` as before. For collapsed groups, skip the sub-row query and set
+      `.subRows = []` with `__state.subRowCount` from `COUNT(*)` (needs to be added to
+      `buildGroupLevel()` SELECT; see `_sub_count` in `buildPaginatedGroupTree` for reference).
+      For multi-level, only recurse into expanded groups.
+- [ ] **9E.4** **DuckDB R server (`backend-duckdb.R`):** Update `duckdbGroupedQuery()` to
+      accept and use `expanded`. Add `COUNT(*) AS _sub_row_count` to the GROUP BY select if not
+      already present. Skip sub-row fetch for collapsed groups. Set `__state$subRowCount`.
+      Pass `expanded` from `reactableServerData` to `duckdbGroupedQuery()`.
+- [ ] **9E.5** **df backend (`backend-df.R`):** Update `dfGroupBy()` or add post-processing in
+      `reactableServerData` to trim sub-rows for collapsed groups. Set `__state$subRowCount`
+      for collapsed groups. Pass `expanded` through from `reactableServerData`.
+- [ ] **9E.6** **Tests:** JS tests: grouped table with DuckDB, expand group triggers re-query
+      and shows sub-rows, collapse group triggers re-query and hides sub-rows. Verify collapsed
+      groups show expander arrow (canExpand is true). R tests: verify `__state$subRowCount` in
+      responses, verify sub-rows only returned for expanded groups.
 
 #### 9F: Server-side data documentation
 
@@ -997,11 +1070,10 @@ A backend plugin is a JS object with well-known methods:
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
 - [ ] Shared DuckDB instance: Multiple reactable tables on one page share a single DuckDB-WASM instance
-- [ ] CRAN package size: The `duckdb-eh.wasm` file (~32.7 MB) exceeds CRAN's 5 MB tarball limit and cannot be
-      bundled in the R package. Need a delivery strategy for the WASM binary. Options: (1) CDN download at runtime
-      (e.g., jsDelivr, with `options()` to override), (2) separate companion package on r-universe or GitHub,
-      (3) first-use download and local cache (like `webshot2` downloads Chrome). Must also work for air-gapped /
-      corporate environments.
+- [x] CRAN package size: The `duckdb-eh.wasm` file is ~32.7 MB uncompressed but compresses to ~7.3 MB with
+      gzip/tar.gz. A full source tarball is ~8.9 MB, within CRAN's 10 MB limit (CRAN prefers bundling third-party
+      source software over runtime downloads, and modest limit increases are available on request). No separate
+      delivery mechanism is needed.
 - [ ] Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field (copyright holders).
       DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0 licensed (Apache Software Foundation).
 - [ ] Public custom JS backend API: Expose the internal backend plugin interface as a public API so users can
@@ -1011,6 +1083,11 @@ A backend plugin is a JS object with well-known methods:
 - [ ] Remove `backendDf()` and `backendDt()`: These were carried over from development but are unlikely to be
       needed. DuckDB server mode should cover the same use cases with better performance. Can be removed
       without a deprecation cycle since they were never in a CRAN release.
+- [ ] Virtualized windowed fetching: With `virtual = TRUE, pagination = FALSE`, DuckDB currently fetches all
+      rows at once (`pageSize: null` omits LIMIT/OFFSET). For Parquet, this means downloading the entire file
+      over HTTP before the table renders. Use scroll-position-driven queries to fetch only a sliding window of
+      rows around the viewport, leveraging Parquet HTTP range requests for efficient partial reads. See
+      `design/duckdb-wasm-engine/duckdb-wasm-engine.md` "Future: virtualized windowed fetching" section.
 
 ---
 
