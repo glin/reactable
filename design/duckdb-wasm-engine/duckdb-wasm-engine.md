@@ -803,10 +803,10 @@ has been supported by all major browsers since late 2021 (Chrome 95, Firefox 100
 is no practical compatibility cost. Dropping `mvp` saves ~37.5 MB. Skip `threads` (COOP/COEP headers break most
 hosting environments).
 
-Even with only the `eh` bundle, the self-hosted WASM files are ~32.7 MB, which exceeds CRAN's 5 MB package tarball
-limit. The WASM files cannot be included directly in the R package for CRAN submission. This needs a delivery
-strategy such as runtime CDN download, a separate companion package on r-universe, or a first-use download cache.
-See the Deferred/Future section in the implementation plan.
+Even with only the `eh` bundle, the self-hosted WASM files are ~32.7 MB uncompressed. However, WASM compresses
+very well: `duckdb-eh.wasm` compresses to ~7.3 MB with gzip/tar.gz. CRAN's source tarball limit is 10 MB (with
+modest increases available when third-party source software is bundled), and a full source tarball build comes in
+at ~8.9 MB, so this is likely within acceptable limits for CRAN submission.
 
 ### Web Worker requirement
 
@@ -828,8 +828,8 @@ DuckDB-WASM runs in a Web Worker:
 self-hosted/offline use.~~
 
 **Decision:** Self-hosted/bundled. WASM files are bundled in `inst/htmlwidgets/lib/duckdb-wasm/`. CDN was
-rejected because it fails for air-gapped corporate environments. CRAN size limit (~5 MB) is an open concern
-since `duckdb-eh.wasm` is ~32.7 MB.
+rejected because it fails for air-gapped corporate environments. The WASM binary is ~32.7 MB uncompressed but
+compresses to ~7.3 MB with gzip, and a full source tarball is ~8.9 MB, within CRAN's 10 MB limit.
 
 ### Query execution is sequential
 
@@ -965,8 +965,8 @@ DuckDB-WASM is big. Mitigation: **lazy loading**. The WASM binary is only fetche
 used. For normal small tables, bundle size is unchanged. Only the `eh` variant is shipped (the `mvp` fallback was
 dropped to save ~37.5 MB).
 
-The ~32.7 MB WASM binary exceeds CRAN's 5 MB package tarball limit, so it cannot be bundled directly in the R
-package. A separate delivery mechanism is needed (CDN download at runtime, companion package, or first-use cache).
+The WASM binary is ~32.7 MB uncompressed but compresses to ~7.3 MB with gzip. A full source tarball is ~8.9 MB,
+within CRAN's 10 MB limit (with modest increases available when bundling third-party source software).
 
 ### New R dependency
 
@@ -1206,10 +1206,24 @@ superseded by DuckDB R in every dimension — same server-side model, but ~100x 
 
 ---
 
+## Related projects
+
+These validate the architectural approach (SQL in browser, Arrow transfer, Parquet lazy loading). None are in the R
+ecosystem.
+
+- **[Observable Framework](https://observablehq.com/framework/)**: DuckDB-WASM as a built-in for static sites with
+  Parquet/Arrow support. Users write SQL by hand.
+- **[Mosaic](https://idl.uw.edu/mosaic/)** (UW IDL): JS framework routing SQL to DuckDB (WASM or server-side).
+  Cross-filtering on 10M+ rows with automatic query optimization.
+- **[Perspective](https://perspective-dev.github.io/)** (FINOS): Own C++ WASM engine for self-service pivot tables and
+  charts. Experimental [DuckDB adapter](https://perspective-dev.github.io/block?example=duckdb).
+
+---
+
 ## Summary
 
-The DuckDB engine would make reactable the first R table package that can handle million-row datasets in a static HTML
-document with instant sorting, filtering, and pagination — no server required. It replaces the current pain points
+The DuckDB engine makes reactable the first R table package that can handle million-row datasets in a static HTML
+document with near-instant sorting, filtering, and pagination without blocking the UI. It replaces the current pain points
 (JSON serialization, V8 dependency, Shiny requirement, network latency) with a single, well-supported binary format
 (Arrow) and an analytical database engine (DuckDB).
 
