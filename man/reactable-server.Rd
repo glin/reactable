@@ -36,7 +36,6 @@ reactableServerData(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
-  selectAll = NULL,
   expanded = NULL,
   ...
 )
@@ -69,8 +68,6 @@ reactableServerData(
 \item{expanded}{The current expanded rows.}
 
 \item{...}{Additional arguments passed to the S3 method.}
-
-\item{selectAll}{Whether a select-all operation is being requested, \code{TRUE} or \code{NULL}.}
 }
 \value{
 \itemize{
@@ -88,16 +85,14 @@ To create a custom server-side data backend, provide an S3 object to the
 \item \code{reactableServerInit} initializes the server backend (optional).
 \item \code{reactableServerData} handles requests for data and should return a
 \code{\link[=resolvedData]{resolvedData()}} object.
+\item \code{reactableServerSelectAll} handles select-all requests and returns
+matching row IDs (optional). The default method uses R data frame
+filtering, so custom backends get cross-page select-all for free.
+Backends that need optimized select-all (e.g., SQL-based) can override.
 }
 
 Custom backend methods do not have to accept every argument, and can choose
-not to implement certain features such as grouping, row expansion, or
-row selection.
-
-If there is no server-side implementation for row expansion and row selection,
-reactable will fall back to client-side row expansion and selection. This means
-row expansion and selection will only work for rows on the current page, so for
-example, selecting all rows in the table will only select rows on the current page.
+not to implement certain features such as grouping or row expansion.
 
 Custom backend methods should accept additional arguments via \code{...} in case
 new arguments are added in the future.

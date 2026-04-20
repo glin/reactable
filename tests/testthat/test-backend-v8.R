@@ -253,19 +253,17 @@ test_that("backendV8 - selectAll returns matching row IDs", {
   reactableServerInit(backend, data = df, columns = columns)
 
   # selectAll with no filters returns all row IDs
-  result <- reactableServerData(backend, data = df, columns = columns,
-                                selectAll = TRUE)
+  result <- reactableServerSelectAll(backend, data = df, columns = columns)
   expect_s3_class(result, "reactable_selectAllResult")
   expect_equal(sort(result$rowIds), c("0", "1", "2", "3"))
 
   # selectAll with search filter returns only matching row IDs
-  result2 <- reactableServerData(backend, data = df, columns = columns,
-                                 selectAll = TRUE, searchValue = "ford")
+  result2 <- reactableServerSelectAll(backend, data = df, columns = columns,
+                                      searchValue = "ford")
   expect_equal(sort(result2$rowIds), c("0", "3"))
 
   # selectAll with column filter
-  result3 <- reactableServerData(backend, data = df, columns = columns,
-                                 selectAll = TRUE,
-                                 filters = list(list(id = "city", value = "tokyo")))
+  result3 <- reactableServerSelectAll(backend, data = df, columns = columns,
+                                      filters = list(list(id = "city", value = "tokyo")))
   expect_equal(sort(result3$rowIds), c("1", "2"))
 })

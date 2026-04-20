@@ -338,15 +338,13 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' - `reactableServerInit` initializes the server backend (optional).
 #' - `reactableServerData` handles requests for data and should return a
 #'   [resolvedData()] object.
+#' - `reactableServerSelectAll` handles select-all requests and returns
+#'   matching row IDs (optional). The default method uses R data frame
+#'   filtering, so custom backends get cross-page select-all for free.
+#'   Backends that need optimized select-all (e.g., SQL-based) can override.
 #'
 #' Custom backend methods do not have to accept every argument, and can choose
-#' not to implement certain features such as grouping, row expansion, or
-#' row selection.
-#'
-#' If there is no server-side implementation for row expansion and row selection,
-#' reactable will fall back to client-side row expansion and selection. This means
-#' row expansion and selection will only work for rows on the current page, so for
-#' example, selecting all rows in the table will only select rows on the current page.
+#' not to implement certain features such as grouping or row expansion.
 #'
 #' Custom backend methods should accept additional arguments via `...` in case
 #' new arguments are added in the future.
@@ -363,8 +361,6 @@ getReactableState <- function(outputId, name = NULL, session = NULL) {
 #' @param groupBy The current grouped columns. `NULL` if empty.
 #' @param pagination Whether pagination is enabled, `TRUE` or `FALSE`.
 #' @param paginateSubRows Whether sub rows are paginated, `TRUE` or `FALSE`.
-#' @param selectAll Whether a select-all operation is being requested. `TRUE` if the
-#'   user clicked the select-all checkbox, or `NULL` for normal data requests.
 #' @param expanded The current expanded rows.
 #' @param ... Additional arguments passed to the S3 method.
 #' @return
@@ -409,7 +405,6 @@ reactableServerData <- function(
     groupBy = NULL,
     pagination = NULL,
     paginateSubRows = NULL,
-    selectAll = NULL,
     expanded = NULL,
     ...
 ) {
@@ -429,6 +424,48 @@ reactableServerData.default <- function(...) {
     "reactable server backends must have a `reactableServerData` S3 method defined.\n\nFor more details, see `?reactable::reactableServerData`",
     call. = FALSE
   )
+}
+
+#' Handle select-all requests for server backends
+#'
+#' `reactableServerSelectAll()` returns the row IDs matching the current
+#' filters and search, enabling cross-page select-all in backend mode.
+#'
+#' The default method uses R data frame operations (filter + search) and
+#' extracts row IDs from `_reactable_rowid`. Custom backends get cross-page
+#' select-all for free without implementing this method. Backends that need
+#' optimized select-all (e.g., SQL-based backends) can provide their own method.
+#'
+#' @param x The server backend.
+#' @param data The original table data. A data frame.
+#' @param columns Table columns. A list of [colDef()] objects.
+#' @param filters The current column filters. `NULL` if empty.
+#' @param searchValue The current global search value. `NULL` if empty.
+#' @param ... Additional arguments passed to the S3 method.
+#' @return A `reactable_selectAllResult` object: a list with a `rowIds`
+#'   character vector of matching row IDs (0-based index strings).
+#'
+#' @keywords internal
+#' @export
+reactableServerSelectAll <- function(x, data = NULL, columns = NULL,
+                                     filters = NULL, searchValue = NULL, ...) {
+  UseMethod("reactableServerSelectAll")
+}
+
+# Default method: filter data using R data frame operations and extract row IDs.
+# This gives custom backends cross-page select-all for free.
+#' @exportS3Method
+reactableServerSelectAll.default <- function(x, data = NULL, columns = NULL,
+                                             filters = NULL, searchValue = NULL, ...) {
+  data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
+  if (length(filters) > 0) {
+    data <- dfFilter(data, filters)
+  }
+  if (!is.null(searchValue)) {
+    data <- dfGlobalSearch(data, searchValue)
+  }
+  rowIds <- as.character(data[["_reactable_rowid"]])
+  structure(list(rowIds = rowIds), class = "reactable_selectAllResult")
 }
 
 #' The result from handling a server-side data request
@@ -468,18 +505,25 @@ reactableFilterFunc <- function(data, req) {
   body <- rawToChar(req$rook.input$read())
   params <- parseParams(body)
 
-  start <- Sys.time()
-  result <- do.call(reactableServerData, c(list(data$backend), mergeLists(data, params)))
-  end <- Sys.time()
-
-  # Select-all requests return row IDs, not resolved data
-  if (inherits(result, "reactable_selectAllResult")) {
+  # Select-all requests dispatch to the separate reactableServerSelectAll generic
+  if (isTRUE(params$selectAll)) {
+    result <- reactableServerSelectAll(
+      data$backend,
+      data = data$data,
+      columns = data$columns,
+      filters = params$filters,
+      searchValue = params$searchValue
+    )
     return(shiny::httpResponse(
       status = 200L,
       content_type = "application/json",
       content = toJSON(result)
     ))
   }
+
+  start <- Sys.time()
+  result <- do.call(reactableServerData, c(list(data$backend), mergeLists(data, params)))
+  end <- Sys.time()
 
   if (!is.resolvedData(result)) {
     stop("reactable server backends must return a `resolvedData()` object from `reactableServerData()`")

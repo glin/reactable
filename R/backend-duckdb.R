@@ -114,6 +114,23 @@ reactableServerInit.reactable_backendDuckdb <- function(x, data = NULL, columns 
 }
 
 #' @exportS3Method
+reactableServerSelectAll.reactable_backendDuckdb <- function(x, data = NULL, columns = NULL,
+                                                             filters = NULL, searchValue = NULL,
+                                                             ...) {
+  con <- x$private$con
+  cols <- x$private$columns
+  query <- buildDuckdbRowIdQuery(
+    tableName = "reactable_data",
+    columns = cols,
+    filters = filters,
+    searchValue = searchValue
+  )
+  result <- DBI::dbGetQuery(con, query$sql, params = query$params)
+  rowIds <- as.character(result[["_reactable_rowid"]])
+  structure(list(rowIds = rowIds), class = "reactable_selectAllResult")
+}
+
+#' @exportS3Method
 reactableServerData.reactable_backendDuckdb <- function(
   x,
   data = NULL,
@@ -127,25 +144,11 @@ reactableServerData.reactable_backendDuckdb <- function(
   groupBy = NULL,
   pagination = NULL,
   paginateSubRows = NULL,
-  selectAll = NULL,
   expanded = NULL,
   ...
 ) {
   con <- x$private$con
   cols <- x$private$columns
-
-  # Handle select-all request: return just the matching row IDs
-  if (isTRUE(selectAll)) {
-    query <- buildDuckdbRowIdQuery(
-      tableName = "reactable_data",
-      columns = cols,
-      filters = filters,
-      searchValue = searchValue
-    )
-    result <- DBI::dbGetQuery(con, query$sql, params = query$params)
-    rowIds <- as.character(result[["_reactable_rowid"]])
-    return(structure(list(rowIds = rowIds), class = "reactable_selectAllResult"))
-  }
 
   if (length(groupBy) > 0) {
     if (isTRUE(paginateSubRows)) {

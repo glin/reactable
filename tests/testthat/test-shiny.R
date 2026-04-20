@@ -243,6 +243,40 @@ test_that("reactableFilterFunc", {
   expect_error(reactableFilterFunc(data, req), "reactable server backends must return a `resolvedData\\(\\)` object from `reactableServerData\\(\\)`")
 })
 
+test_that("reactableFilterFunc dispatches selectAll to reactableServerSelectAll", {
+  backend <- structure(list(), class = "test_selectall_backend")
+  reactableServerData.test_selectall_backend <- function(...) {
+    stop("reactableServerData should not be called for selectAll requests")
+  }
+  registerS3method("reactableServerData", "test_selectall_backend", reactableServerData.test_selectall_backend)
+
+  df <- data.frame(
+    name = c("Ford Mustang", "Toyota Corolla", "Honda Civic", "Ford Focus"),
+    city = c("Detroit", "Tokyo", "Tokyo", "Detroit"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "name", type = "character"),
+    list(id = "city", type = "character")
+  )
+  data <- list(backend = backend, data = df, columns = columns)
+
+  # selectAll with no filters returns all row IDs (via default method)
+  body <- '{"selectAll":true}'
+  req <- list(rook.input = list(read = function() charToRaw(body)))
+  resp <- reactableFilterFunc(data, req)
+  expect_equal(resp$status, 200L)
+  parsed <- jsonlite::parse_json(resp$content)
+  expect_equal(sort(unlist(parsed$rowIds)), c("0", "1", "2", "3"))
+
+  # selectAll with search filter returns only matching row IDs
+  body2 <- '{"selectAll":true,"searchValue":"ford"}'
+  req2 <- list(rook.input = list(read = function() charToRaw(body2)))
+  resp2 <- reactableFilterFunc(data, req2)
+  parsed2 <- jsonlite::parse_json(resp2$content)
+  expect_equal(sort(unlist(parsed2$rowIds)), c("0", "3"))
+})
+
 test_that("parseParams", {
   # Empty arrays should be empty lists, empty objects should be empty named lists,
   # arrays of primitives should be lists

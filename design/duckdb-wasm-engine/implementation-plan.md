@@ -849,15 +849,13 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
    `?reactableServerData` accurate: "selection will only work for rows on the current page"
    when the backend doesn't support it.
 
-5. **Refactor `selectAll` out of `reactableServerData`:** The `selectAll` parameter overloads
-   `reactableServerData()` to serve two unrelated purposes (return page data vs. return all
-   matching row IDs) with a polymorphic return type. Refactor into a separate S3 generic,
-   e.g. `reactableServerSelectAll(x, data, columns, filters, searchValue, ...)`. Provide a
-   default method that calls `reactableServerData()` without pagination and extracts row IDs
-   from `__state$id`, so custom backends get cross-page select-all for free without
-   implementing anything extra. Keep the existing overloaded approach working for backward
-   compatibility (if a backend handles `selectAll` in `reactableServerData`, use that;
-   otherwise dispatch to the new generic).
+5. **~~Refactor `selectAll` out of `reactableServerData`:~~** Fixed. Created a separate
+   `reactableServerSelectAll(x, data, columns, filters, searchValue, ...)` S3 generic.
+   The default method uses R data frame operations (dfFilter + dfGlobalSearch) to extract
+   matching row IDs, so custom backends get cross-page select-all for free without
+   implementing anything extra. DuckDB provides its own SQL-based method for efficiency.
+   The `selectAll` parameter was removed from `reactableServerData` (never released).
+   `reactableFilterFunc` intercepts selectAll requests before calling `reactableServerData`.
 
 #### 9E: Server-side expansion (lazy sub-row fetching)
 
@@ -996,10 +994,18 @@ needed for that path.
       This is another reason to prefer DuckDB over V8.
 - [ ] **9.14** Add `resolvedData()` validation for grouped `.subRows` structure.
 - [ ] **9.15** Consider `reactableServerDestroy()` for backends needing cleanup (DB connections).
+- [ ] **9.16** Centralize `_reactable_rowid` assignment and document `__state`. Currently, each
+      built-in backend independently adds `data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L`
+      and converts it to a `__state` column before returning. This could be centralized in
+      `reactableFilterFunc` (or `reactable()` at init time) so backends get row IDs for free.
+      The `__state` column format (with `id`, `index`, `grouped`, `subRowCount`, `parentId`
+      fields) is also undocumented, which means custom backends won't know they need it for
+      row selection to work across pages. At minimum, document `__state` in the
+      `reactableServerData` roxygen block.
 
 #### 9H: Server-side data testing
 
-- [ ] **9.16** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
+- [ ] **9.17** Add missing test coverage per `design/server-side-data/server-side-data.md` test matrix:
       Shiny integration tests (end-to-end HTTP), toggleGroupBy + df backend, invalid `resolvedData()` returns,
       `maxRowCount` pagination edge cases.
 

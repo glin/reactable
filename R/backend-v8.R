@@ -124,21 +124,8 @@ reactableServerData.reactable_backendV8 <- function(x, data = NULL, columns = NU
                                                     sortBy = NULL, filters = NULL,
                                                     searchValue = NULL, searchMethod = NULL,
                                                     groupBy = NULL, pagination = NULL,
-                                                    paginateSubRows = NULL, selectAll = NULL,
+                                                    paginateSubRows = NULL,
                                                     expanded = NULL, ...) {
-  # Handle select-all request using R data frame operations (V8 JS engine
-  # doesn't need to be involved for this).
-  if (isTRUE(selectAll) && !is.null(data)) {
-    data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
-    if (length(filters) > 0) {
-      data <- dfFilter(data, filters)
-    }
-    if (!is.null(searchValue)) {
-      data <- dfGlobalSearch(data, searchValue)
-    }
-    rowIds <- as.character(data[["_reactable_rowid"]])
-    return(structure(list(rowIds = rowIds), class = "reactable_selectAllResult"))
-  }
   x$data(
     pageIndex = pageIndex, pageSize = pageSize, sortBy = sortBy,
     filters = filters, searchValue = searchValue, groupBy = groupBy,
