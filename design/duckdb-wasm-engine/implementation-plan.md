@@ -841,14 +841,13 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
    (via `table()`); the JS version uses insertion order. Both are stable within each
    backend, so no fix needed (minor cross-backend ordering difference is acceptable).
 
-4. **Select-all has no fallback for custom backends:** The `toggleAllRowsSelected` override
-   in `Reactable.js` queries the backend for all matching row IDs (`selectAll: true`). If a
-   custom backend doesn't implement `selectAll` (returns empty `rowIds` or errors), select-all
-   effectively selects zero rows instead of falling back to current-page rows. Fix: save the
-   original `toggleAllRowsSelected` before overriding it, and if `getMatchingRowIds()` returns
-   an empty array, call through to the original (which enumerates `nonGroupedRowsById`, i.e.,
-   current-page rows). This makes the documented behavior in `?reactableServerData` accurate:
-   "selection will only work for rows on the current page" when the backend doesn't support it.
+4. **~~Select-all has no fallback for custom backends:~~** Fixed. The `toggleAllRowsSelected`
+   override now saves a reference to the original (current-page-only) implementation before
+   overriding it. If `getMatchingRowIds()` returns an empty array (backend doesn't support
+   `selectAll`) or throws an error, it calls through to the original, which selects
+   `nonGroupedRowsById` (current-page rows). This makes the documented behavior in
+   `?reactableServerData` accurate: "selection will only work for rows on the current page"
+   when the backend doesn't support it.
 
 5. **Refactor `selectAll` out of `reactableServerData`:** The `selectAll` parameter overloads
    `reactableServerData()` to serve two unrelated purposes (return page data vs. return all

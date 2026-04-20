@@ -1912,6 +1912,108 @@ describe('DuckDB backend', () => {
     expect(checkboxes[4].checked).toBe(false) // row 3 - not selected
     expect(checkboxes[5].checked).toBe(true) // row 4 - selected
   })
+
+  it('select-all falls back to current-page selection when backend returns empty rowIds', async () => {
+    const mockBackend = createMockBackend(10)
+    // Simulate a custom backend that doesn't implement selectAll. Built-in backends
+    // (DuckDB, V8, df) always return rowIds; this tests the fallback for custom backends
+    // whose reactableServerData(selectAll=TRUE) returns no rowIds field.
+    mockBackend.queryRowIds.mockResolvedValue([])
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Click select-all checkbox
+    const checkboxes = getSelectRowCheckboxes(container)
+    await act(async () => {
+      fireEvent.click(checkboxes[0])
+    })
+
+    // Should fall back to selecting only current-page rows
+    await waitFor(() => {
+      const updatedCheckboxes = getSelectRowCheckboxes(container)
+      // Current page rows should be selected
+      for (let i = 1; i <= 5; i++) {
+        expect(updatedCheckboxes[i].checked).toBe(true)
+      }
+    })
+
+    // Navigate to page 2 - rows there should NOT be selected (only page 1 was selected)
+    await act(async () => {
+      fireEvent.click(getNextButton(container))
+    })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledWith(expect.objectContaining({ pageIndex: 1 }))
+    })
+
+    const page2Checkboxes = getSelectRowCheckboxes(container)
+    expect(page2Checkboxes[0].checked).toBe(false) // select-all not checked
+    for (let i = 1; i <= 5; i++) {
+      expect(page2Checkboxes[i].checked).toBe(false) // page 2 rows not selected
+    }
+  })
+
+  it('select-all falls back to current-page selection when backend errors', async () => {
+    const mockBackend = createMockBackend(10)
+    // Simulate a custom backend that errors on selectAll (e.g., unhandled parameter)
+    mockBackend.queryRowIds.mockRejectedValue(new Error('selectAll not supported'))
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        selection="multiple"
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Click select-all checkbox
+    const checkboxes = getSelectRowCheckboxes(container)
+    await act(async () => {
+      fireEvent.click(checkboxes[0])
+    })
+
+    // Should fall back to selecting only current-page rows
+    await waitFor(() => {
+      const updatedCheckboxes = getSelectRowCheckboxes(container)
+      for (let i = 1; i <= 5; i++) {
+        expect(updatedCheckboxes[i].checked).toBe(true)
+      }
+    })
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.

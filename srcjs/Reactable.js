@@ -1456,6 +1456,11 @@ function Table({
   // stale state and overwriting the first call's result.
   const toggleAllInProgressRef = React.useRef(false)
   if (useDuckDB || useServerData) {
+    // Save the original (current-page-only) toggleAllRowsSelected before overriding.
+    // Used as a fallback when a custom backend doesn't implement selectAll. Built-in
+    // backends (DuckDB, V8, df) all support selectAll, so this only applies to custom
+    // backends that don't return rowIds from their reactableServerData(selectAll=TRUE) call.
+    const originalToggleAllRowsSelected = instance.toggleAllRowsSelected
     instance.toggleAllRowsSelected = async value => {
       if (toggleAllInProgressRef.current) return
       toggleAllInProgressRef.current = true
@@ -1489,7 +1494,11 @@ function Table({
 
       try {
         const matchingIds = await getMatchingRowIds()
-        if (shouldSelect) {
+        if (matchingIds.length === 0) {
+          // Backend doesn't support selectAll (custom backend returned no rowIds) -
+          // fall back to current-page selection only
+          originalToggleAllRowsSelected(value)
+        } else if (shouldSelect) {
           // Add matching IDs to existing selection
           const currentIds = Object.keys(getSelectedRowIds())
           const mergedIds = [...new Set([...currentIds, ...matchingIds])]
@@ -1500,8 +1509,9 @@ function Table({
           const remainingIds = Object.keys(getSelectedRowIds()).filter(id => !removeSet.has(id))
           instance.setRowsSelected(remainingIds)
         }
-      } catch (err) {
-        console.error('Failed to fetch row IDs for select-all:', err)
+      } catch (ignoreErr) {
+        // On error, fall back to current-page selection
+        originalToggleAllRowsSelected(value)
       } finally {
         toggleAllInProgressRef.current = false
       }
