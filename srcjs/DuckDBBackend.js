@@ -13,7 +13,7 @@ const aggregateSQLMap = {
   min: { sql: col => `MIN(${col})`, numeric: true },
   median: { sql: col => `MEDIAN(${col})`, numeric: true },
   count: { sql: col => `COUNT(${col})`, numeric: false },
-  unique: { sql: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ')`, numeric: false }
+  unique: { sql: col => `STRING_AGG(DISTINCT CAST(${col} AS VARCHAR), ', ' ORDER BY 1)`, numeric: false }
   // frequency: computed from sub-rows (too complex for a single GROUP BY expression)
 }
 
@@ -185,7 +185,8 @@ export class DuckDBBackend {
         filters,
         searchValue,
         columns,
-        groupBy
+        groupBy,
+        expanded
       })
     }
 
@@ -239,8 +240,21 @@ export class DuckDBBackend {
 
   // Query with GROUP BY for grouped tables. Returns rows with nested .subRows and
   // __state metadata so the client can render the grouped table correctly.
-  async queryGrouped({ pageIndex, pageSize, sortBy, filters, searchValue, columns, groupBy }) {
+  async queryGrouped({
+    pageIndex,
+    pageSize,
+    sortBy,
+    filters,
+    searchValue,
+    columns,
+    groupBy,
+    expanded
+  }) {
     const baseWhere = this.buildWhereParts(filters, searchValue, columns)
+    // expanded=undefined means all groups expanded (fetch all sub-rows).
+    // expanded={} means all collapsed. expanded={"id":true} means only that group
+    // is expanded. Pass through as-is; buildGroupLevel checks for null.
+    const expandedMap = expanded
     const rows = await this.buildGroupLevel({
       groupBy,
       columns,
@@ -249,7 +263,9 @@ export class DuckDBBackend {
       depth: 0,
       pageIndex,
       pageSize,
-      sortBy
+      sortBy,
+      expandedMap,
+      parentId: null
     })
 
     // Count total groups at top level
@@ -568,7 +584,9 @@ export class DuckDBBackend {
     depth,
     pageIndex,
     pageSize,
-    sortBy
+    sortBy,
+    expandedMap,
+    parentId
   }) {
     const groupCol = groupBy[depth]
     const escapedGroupCol = this.escapeIdentifier(groupCol)
@@ -579,8 +597,8 @@ export class DuckDBBackend {
     const allParams = [...baseWhere.params, ...parentFilters.params]
     const whereStr = allClauses.length > 0 ? ' WHERE ' + allClauses.join(' AND ') : ''
 
-    // Build GROUP BY SELECT: group column + SQL-computable aggregates
-    const selectParts = [escapedGroupCol]
+    // Build GROUP BY SELECT: group column + COUNT(*) for sub-row counts + SQL-computable aggregates
+    const selectParts = [escapedGroupCol, 'COUNT(*) AS _sub_count']
     const postComputeAggs = [] // aggregates computed from sub-rows (e.g. frequency)
     const numericAggCols = [] // columns with numeric SQL aggregates that need precision rounding
 
@@ -636,16 +654,32 @@ export class DuckDBBackend {
       return groupRows
     }
 
-    // Fetch sub-rows for all groups in a single query using IN()
-    const groupValues = groupRows.map(row => row[groupCol])
-    const inPlaceholders = groupValues.map(() => '?').join(', ')
-    const subClauses = [...allClauses, `${escapedGroupCol} IN (${inPlaceholders})`]
-    const subParams = [...allParams, ...groupValues]
-    const subWhereStr = ' WHERE ' + subClauses.join(' AND ')
+    // Classify groups as expanded or collapsed based on the expanded map.
+    // expandedMap=null/undefined means all groups expanded (fetch all sub-rows).
+    // Collapsed groups get empty .subRows with subRowCount for the expander arrow.
+    // Expanded groups get full sub-rows fetched from the database.
+    const expandedGroups = []
+    const collapsedGroups = []
+    for (const row of groupRows) {
+      const stateId = `${groupCol}:${row[groupCol]}`
+      const rowId = parentId ? parentId + '.' + stateId : stateId
+      const subCount = Number(row._sub_count)
+      delete row._sub_count
+
+      if (expandedMap == null || expandedMap[rowId]) {
+        expandedGroups.push(row)
+      } else {
+        collapsedGroups.push(row)
+        row['.subRows'] = []
+        row['__state'] = { id: stateId, grouped: true, subRowCount: subCount }
+      }
+    }
 
     if (depth + 1 < groupBy.length) {
-      // More grouping levels — recurse for each group
-      for (const row of groupRows) {
+      // More grouping levels — recurse only for expanded groups
+      for (const row of expandedGroups) {
+        const stateId = `${groupCol}:${row[groupCol]}`
+        const rowId = parentId ? parentId + '.' + stateId : stateId
         const childFilters = {
           clauses: [...parentFilters.clauses, `${escapedGroupCol} = ?`],
           params: [...parentFilters.params, row[groupCol]]
@@ -658,12 +692,20 @@ export class DuckDBBackend {
           depth: depth + 1,
           pageIndex: 0,
           pageSize: Number.MAX_SAFE_INTEGER,
-          sortBy
+          sortBy,
+          expandedMap,
+          parentId: rowId
         })
-        row['__state'] = { id: `${groupCol}:${row[groupCol]}`, grouped: true }
+        row['__state'] = { id: stateId, grouped: true }
       }
-    } else {
-      // Leaf level — fetch all individual rows for visible groups
+    } else if (expandedGroups.length > 0) {
+      // Leaf level — fetch individual rows only for expanded groups
+      const groupValues = expandedGroups.map(row => row[groupCol])
+      const inPlaceholders = groupValues.map(() => '?').join(', ')
+      const subClauses = [...allClauses, `${escapedGroupCol} IN (${inPlaceholders})`]
+      const subParams = [...allParams, ...groupValues]
+      const subWhereStr = ' WHERE ' + subClauses.join(' AND ')
+
       let subSql = 'SELECT * FROM reactable_data' + subWhereStr
       if (sortBy && sortBy.length > 0) {
         const leafSorts = sortBy.map(
@@ -683,9 +725,10 @@ export class DuckDBBackend {
         subRowsByGroup.get(key).push(subRow)
       }
 
-      for (const row of groupRows) {
+      for (const row of expandedGroups) {
+        const stateId = `${groupCol}:${row[groupCol]}`
         row['.subRows'] = subRowsByGroup.get(row[groupCol]) || []
-        row['__state'] = { id: `${groupCol}:${row[groupCol]}`, grouped: true }
+        row['__state'] = { id: stateId, grouped: true }
 
         // Extract _reactable_rowid into __state for sub-rows
         for (const subRow of row['.subRows']) {

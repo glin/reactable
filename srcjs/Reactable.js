@@ -1104,15 +1104,15 @@ function Table({
           }
         })
 
-        // Add placeholder subRows for aggregated row counts
-        if (paginateSubRows) {
-          rows.forEach(row => {
-            const rowState = row.original[rowStateKey]
-            if (rowState && rowState.subRowCount != null) {
-              row.subRows.length = rowState.subRowCount
-            }
-          })
-        }
+        // Add placeholder subRows for aggregated row counts so canExpand is true.
+        // For paginateSubRows: all grouped rows need placeholders (partial sub-rows).
+        // For non-paginateSubRows backends: collapsed groups need placeholders (no sub-rows).
+        rows.forEach(row => {
+          const rowState = row.original[rowStateKey]
+          if (rowState && rowState.subRowCount != null) {
+            row.subRows.length = rowState.subRowCount
+          }
+        })
       }
       setRowProps(rows)
     })
@@ -1377,7 +1377,7 @@ function Table({
         searchValue: state.globalFilter,
         columns: dataColumns,
         groupBy: state.groupBy,
-        expanded: paginateSubRows ? state.expanded : undefined,
+        expanded: state.groupBy.length > 0 ? state.expanded : undefined,
         paginateSubRows
       })
       .then(result => {
@@ -1393,14 +1393,17 @@ function Table({
   }, [
     useDuckDB,
     duckdbReady,
+    canSkipInitialDuckDBQuery,
+    defaultSorted,
     pagination,
+    paginateSubRows,
     state.pageIndex,
     state.pageSize,
     state.sortBy,
     state.filters,
     state.globalFilter,
     state.groupBy,
-    paginateSubRows ? state.expanded : undefined,
+    state.expanded,
     dataColumns
   ])
 

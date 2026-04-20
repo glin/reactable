@@ -225,7 +225,7 @@ test_that("duckdbAggregateSQL maps all supported aggregates", {
   expect_equal(duckdbAggregateSQL("min", "x"), 'MIN("x")')
   expect_equal(duckdbAggregateSQL("median", "x"), 'MEDIAN("x")')
   expect_equal(duckdbAggregateSQL("count", "x"), 'COUNT("x")')
-  expect_equal(duckdbAggregateSQL("unique", "x"), "STRING_AGG(DISTINCT CAST(\"x\" AS VARCHAR), ', ')")
+  expect_equal(duckdbAggregateSQL("unique", "x"), "STRING_AGG(DISTINCT CAST(\"x\" AS VARCHAR), ', ' ORDER BY 1)")
   # frequency returns NULL (computed from sub-rows)
   expect_null(duckdbAggregateSQL("frequency", "x"))
   # Unknown aggregate returns NULL

@@ -900,3 +900,110 @@ test_that("backendDuckdb - paginateSubRows multi-level page boundary inside expa
                              paginateSubRows = TRUE, expanded = expanded)
   expect_equal(nrow(r3$data), 2)
 })
+
+
+# Lazy sub-row fetching (9E) ---------------------------------------------------------
+
+test_that("backendDuckdb - lazy expansion: collapsed groups have empty subRows with subRowCount", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi", "Audi", "BMW"),
+    model = c("Integra", "Legend", "90", "100", "535i"),
+    price = c(15.9, 33.9, 29.1, 37.7, 30.0),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"),
+                                expanded = list())
+
+  expect_equal(result$rowCount, 3)
+  expect_equal(nrow(result$data), 3)
+
+  # All groups collapsed: empty sub-rows with subRowCount
+  for (i in seq_len(nrow(result$data))) {
+    expect_equal(nrow(result$data[[".subRows"]][[i]]), 0)
+  }
+  expect_true(all(!is.na(result$data[["__state"]]$subRowCount)))
+  expect_true(all(result$data[["__state"]]$subRowCount > 0))
+
+  # SQL aggregates should still be computed
+  acura_row <- result$data[result$data$mfr == "Acura", ]
+  expect_equal(acura_row$price, 15.9 + 33.9)
+})
+
+test_that("backendDuckdb - lazy expansion: expanded group gets sub-rows", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi", "Audi"),
+    model = c("Integra", "Legend", "90", "100"),
+    price = c(15.9, 33.9, 29.1, 37.7),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character"),
+    list(id = "price", type = "numeric", aggregate = "sum")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  expanded <- list("mfr:Acura" = TRUE)
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"),
+                                expanded = expanded)
+
+  # Acura: expanded, has sub-rows
+  acura_idx <- which(result$data$mfr == "Acura")
+  expect_equal(nrow(result$data[[".subRows"]][[acura_idx]]), 2)
+  # subRowCount should be NA for expanded groups
+  expect_true(is.na(result$data[["__state"]]$subRowCount[acura_idx]))
+
+  # Audi: collapsed, empty sub-rows with subRowCount
+  audi_idx <- which(result$data$mfr == "Audi")
+  expect_equal(nrow(result$data[[".subRows"]][[audi_idx]]), 0)
+  expect_equal(result$data[["__state"]]$subRowCount[audi_idx], 2L)
+})
+
+test_that("backendDuckdb - lazy expansion: expanded=NULL fetches all sub-rows (backward compat)", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df <- data.frame(
+    mfr = c("Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "90"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "mfr", type = "character"),
+    list(id = "model", type = "character")
+  )
+  reactableServerInit(backend, data = df, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  result <- reactableServerData(backend, data = df, columns = columns,
+                                pageIndex = 0, pageSize = 10,
+                                groupBy = list("mfr"))
+
+  # All sub-rows should be present (no lazy fetching)
+  acura_idx <- which(result$data$mfr == "Acura")
+  expect_equal(nrow(result$data[[".subRows"]][[acura_idx]]), 2)
+  audi_idx <- which(result$data$mfr == "Audi")
+  expect_equal(nrow(result$data[[".subRows"]][[audi_idx]]), 1)
+})

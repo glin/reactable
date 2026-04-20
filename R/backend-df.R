@@ -60,7 +60,7 @@ reactableServerData.reactable_backendDf <- function(
 
   # Grouping and aggregation
   if (length(groupBy) > 0) {
-    data <- dfGroupBy(data, groupBy, columns)
+    data <- dfGroupBy(data, groupBy, columns, expanded = expanded)
   }
 
   # Pagination
@@ -106,7 +106,7 @@ dfSortBy <- function(df, by) {
   df
 }
 
-dfGroupBy <- function(df, by, columns = NULL, depth = 0) {
+dfGroupBy <- function(df, by, columns = NULL, depth = 0, expanded = NULL, parentId = NULL) {
   by <- unlist(by)
   if (length(by) == depth) {
     return(df)
@@ -166,27 +166,45 @@ dfGroupBy <- function(df, by, columns = NULL, depth = 0) {
     }), recursive = FALSE)
   }
 
-  df[[".subRows"]] <- lapply(values, function(x) {
+  # Compute row state IDs before building .subRows (needed for expanded check and parentId)
+  rowIds <- unname(vapply(values, function(x) {
+    value <- if (is.list(x)) toJSON(x) else as.character(x)
+    sprintf("%s:%s", groupedColumnId, value)
+  }, character(1)))
+
+  df[[".subRows"]] <- lapply(seq_along(values), function(j) {
+    x <- values[[j]]
     value <- if (is.list(x)) toJSON(x) else as.character(x)
     subGroup <- groups[[value]]
-    dfGroupBy(subGroup, by, columns = columns, depth = depth + 1)
+    childParentId <- if (!is.null(parentId)) paste0(parentId, ".", rowIds[j]) else rowIds[j]
+    dfGroupBy(subGroup, by, columns = columns, depth = depth + 1,
+              expanded = expanded, parentId = childParentId)
   })
 
   # Add row state for grouped rows. This includes:
 
   # - id: unique identifier for the row (format: "columnId:value")
   # - grouped: TRUE to mark this as a grouped row
-  # - subRowCount: count of sub rows (for paginateSubRows)
-  rowIds <- unname(vapply(values, function(x) {
-    value <- if (is.list(x)) toJSON(x) else as.character(x)
-    sprintf("%s:%s", groupedColumnId, value)
-  }, character(1)))
+  # - subRowCount: count of sub rows (for paginateSubRows and lazy sub-row fetching)
   subRowCounts <- vapply(df[[".subRows"]], nrow, integer(1))
   df[["__state"]] <- dataFrame(
     id = rowIds,
     grouped = rep(TRUE, length(rowIds)),
     subRowCount = subRowCounts
   )
+
+  # Trim sub-rows for collapsed groups (lazy sub-row fetching).
+  # When expanded is provided, only expanded groups keep their sub-rows.
+  # Collapsed groups get empty data frames; subRowCount is preserved in __state
+  # so the expander arrow still shows.
+  if (!is.null(expanded)) {
+    for (i in seq_along(rowIds)) {
+      fullRowId <- if (!is.null(parentId)) paste0(parentId, ".", rowIds[i]) else rowIds[i]
+      if (!isTRUE(expanded[[fullRowId]])) {
+        df[[".subRows"]][[i]] <- df[[".subRows"]][[i]][0, , drop = FALSE]
+      }
+    }
+  }
 
   df
 }

@@ -1,5 +1,5 @@
 ---
-title: "Server-Side Data — Selection Tests"
+title: "Server-Side Data — Tests"
 output:
   html_document:
     self_contained: true
@@ -9,6 +9,197 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 library(reactable)
+```
+
+## Lazy sub-row fetching (grouped expansion)
+
+These examples test that expanding/collapsing groups triggers a re-query and
+only fetches sub-rows for expanded groups (9E lazy sub-row fetching).
+
+**What to verify:**
+1. All groups start collapsed with expander arrows visible
+2. Clicking a group expander shows sub-rows (triggers server re-query)
+3. Collapsing a group hides sub-rows (triggers another re-query)
+4. Multi-level: expanding a parent shows sub-groups (also collapsed initially)
+5. Performance: with 100k rows, expanding a group should be fast (only fetches
+   that group's sub-rows, not all groups)
+
+### DuckDB server backend - single-level groupBy
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("DuckDB server - lazy grouped expansion"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
+      backend = backendDuckDB(),
+      defaultPageSize = 10,
+      groupBy = "Manufacturer",
+      filterable = TRUE,
+      searchable = TRUE,
+      columns = list(
+        Min.Price = colDef(aggregate = "sum"),
+        Max.Price = colDef(aggregate = "mean"),
+        Horsepower = colDef(aggregate = "max")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### DuckDB server backend - multi-level groupBy
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("DuckDB server - multi-level lazy expansion"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Origin", "Min.Price", "Max.Price")],
+      backend = backendDuckDB(),
+      defaultPageSize = 10,
+      groupBy = c("Origin", "Type"),
+      filterable = TRUE,
+      searchable = TRUE,
+      columns = list(
+        Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+        Max.Price = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+        Manufacturer = colDef(aggregate = "unique")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### df backend - single-level groupBy
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("df backend - lazy grouped expansion"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Min.Price", "Max.Price", "Horsepower")],
+      backend = backendDf(),
+      defaultPageSize = 10,
+      groupBy = "Manufacturer",
+      filterable = TRUE,
+      searchable = TRUE,
+      columns = list(
+        Min.Price = colDef(aggregate = "sum"),
+        Max.Price = colDef(aggregate = "mean"),
+        Horsepower = colDef(aggregate = "max")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### df backend - multi-level groupBy
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("df backend - multi-level lazy expansion"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      MASS::Cars93[, c("Manufacturer", "Model", "Type", "Origin", "Min.Price", "Max.Price")],
+      backend = backendDf(),
+      defaultPageSize = 10,
+      groupBy = c("Origin", "Type"),
+      filterable = TRUE,
+      searchable = TRUE,
+      columns = list(
+        Min.Price = colDef(aggregate = "sum", format = colFormat(digits = 1)),
+        Max.Price = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+        Manufacturer = colDef(aggregate = "unique")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Large dataset - 1000 rows with DuckDB server
+
+Tests lazy fetching with a moderate dataset. Without lazy fetching, expanding any group would
+fetch all sub-rows for all visible groups. With lazy fetching, only the expanded
+group's sub-rows are fetched. Kept to 1000 rows since non-paginateSubRows renders all
+sub-rows in the DOM at once.
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+n <- 1000
+data <- data.frame(
+  region = sample(c("East", "West", "North", "South"), n, replace = TRUE),
+  state = sample(state.name[1:10], n, replace = TRUE),
+  category = sample(LETTERS[1:5], n, replace = TRUE),
+  revenue = round(runif(n, 100, 50000), 2),
+  quantity = sample(1:100, n, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+ui <- fluidPage(
+  h3("DuckDB server - 100k rows lazy expansion"),
+  p("Expand a group - only that group's sub-rows should be fetched"),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable({
+    reactable(
+      data,
+      backend = backendDuckDB(),
+      defaultPageSize = 20,
+      groupBy = "region",
+      filterable = TRUE,
+      searchable = TRUE,
+      sortable = TRUE,
+      columns = list(
+        revenue = colDef(aggregate = "sum", format = colFormat(currency = "USD", separators = TRUE, digits = 0)),
+        quantity = colDef(aggregate = "sum"),
+        state = colDef(aggregate = "unique"),
+        category = colDef(aggregate = "count")
+      )
+    )
+  })
+}
+
+shinyApp(ui, server)
 ```
 
 These tests use the V8 server backend (`backendV8()`). All selection tests

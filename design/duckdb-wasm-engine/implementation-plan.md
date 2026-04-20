@@ -833,6 +833,33 @@ integer vector via `setdiff(seq_len(rowCount), deselected)`. The payload is self
    selection state. This matches client-side semantics where select-all only applies to
    the currently filtered rows.
 
+3. **~~`unique` aggregator is nondeterministic:~~** Fixed. Added `ORDER BY 1` inside the
+   `STRING_AGG` in both DuckDB WASM client (`DuckDBBackend.js`) and DuckDB R server
+   (`duckdb-sql.R`). Values are now sorted alphabetically, making the output deterministic.
+   The `frequency` aggregator was also checked: it's computed from sub-rows using
+   `Object.entries(counts)` in JS and `table()` in R. The R version sorts alphabetically
+   (via `table()`); the JS version uses insertion order. Both are stable within each
+   backend, so no fix needed (minor cross-backend ordering difference is acceptable).
+
+4. **Select-all has no fallback for custom backends:** The `toggleAllRowsSelected` override
+   in `Reactable.js` queries the backend for all matching row IDs (`selectAll: true`). If a
+   custom backend doesn't implement `selectAll` (returns empty `rowIds` or errors), select-all
+   effectively selects zero rows instead of falling back to current-page rows. Fix: save the
+   original `toggleAllRowsSelected` before overriding it, and if `getMatchingRowIds()` returns
+   an empty array, call through to the original (which enumerates `nonGroupedRowsById`, i.e.,
+   current-page rows). This makes the documented behavior in `?reactableServerData` accurate:
+   "selection will only work for rows on the current page" when the backend doesn't support it.
+
+5. **Refactor `selectAll` out of `reactableServerData`:** The `selectAll` parameter overloads
+   `reactableServerData()` to serve two unrelated purposes (return page data vs. return all
+   matching row IDs) with a polymorphic return type. Refactor into a separate S3 generic,
+   e.g. `reactableServerSelectAll(x, data, columns, filters, searchValue, ...)`. Provide a
+   default method that calls `reactableServerData()` without pagination and extracts row IDs
+   from `__state$id`, so custom backends get cross-page select-all for free without
+   implementing anything extra. Keep the existing overloaded approach working for backward
+   compatibility (if a backend handles `selectAll` in `reactableServerData`, use that;
+   otherwise dispatch to the new generic).
+
 #### 9E: Server-side expansion (lazy sub-row fetching)
 
 **Goal:** Only fetch sub-rows for expanded groups, not all groups on the page. Currently, in
@@ -901,32 +928,32 @@ needed for that path.
 
 **Steps:**
 
-- [ ] **9E.1** **Reactable.js:** Always pass `expanded: state.expanded` (not just when
+- [x] **9E.1** **Reactable.js:** Always pass `expanded: state.expanded` (not just when
       `paginateSubRows`) in the DuckDB query effect when `groupBy` is active. Add
-      `state.expanded` to the dependency array for grouped DuckDB queries. Extend the
-      `subRowCount` placeholder pattern to apply in `(useDuckDB || useServerData) && !paginateSubRows`
-      mode (currently only `paginateSubRows`).
-- [ ] **9E.2** **Reactable.js (server data):** The V8 server useEffect already sends `expanded`
-      and has it in deps. For non-V8 server backends (df/duckdb-server), the expanded state
-      needs to reach the backend. Verify that the server POST includes `expanded` and that the
-      R `reactableServerData` methods pass it through to the grouping functions.
-- [ ] **9E.3** **DuckDB WASM (`DuckDBBackend.js`):** Update `queryGrouped()` to accept
-      `expanded` param. At leaf level, split groups into expanded/collapsed. For expanded groups,
-      fetch sub-rows via `IN()` as before. For collapsed groups, skip the sub-row query and set
-      `.subRows = []` with `__state.subRowCount` from `COUNT(*)` (needs to be added to
-      `buildGroupLevel()` SELECT; see `_sub_count` in `buildPaginatedGroupTree` for reference).
-      For multi-level, only recurse into expanded groups.
-- [ ] **9E.4** **DuckDB R server (`backend-duckdb.R`):** Update `duckdbGroupedQuery()` to
-      accept and use `expanded`. Add `COUNT(*) AS _sub_row_count` to the GROUP BY select if not
-      already present. Skip sub-row fetch for collapsed groups. Set `__state$subRowCount`.
-      Pass `expanded` from `reactableServerData` to `duckdbGroupedQuery()`.
-- [ ] **9E.5** **df backend (`backend-df.R`):** Update `dfGroupBy()` or add post-processing in
-      `reactableServerData` to trim sub-rows for collapsed groups. Set `__state$subRowCount`
-      for collapsed groups. Pass `expanded` through from `reactableServerData`.
-- [ ] **9E.6** **Tests:** JS tests: grouped table with DuckDB, expand group triggers re-query
-      and shows sub-rows, collapse group triggers re-query and hides sub-rows. Verify collapsed
-      groups show expander arrow (canExpand is true). R tests: verify `__state$subRowCount` in
-      responses, verify sub-rows only returned for expanded groups.
+      `state.expanded` to the dependency array for grouped DuckDB queries. Removed the
+      `paginateSubRows` guard on the `subRowCount` placeholder pattern (the inner
+      `subRowCount != null` check is sufficient since we're inside `manualPagination`).
+- [x] **9E.2** **Reactable.js (server data):** Verified: the V8 server useEffect already
+      sends `expanded: state.expanded` and has it in deps. No changes needed; the server
+      POST already includes `expanded` for all backends.
+- [x] **9E.3** **DuckDB WASM (`DuckDBBackend.js`):** `queryGrouped()` accepts `expanded`.
+      `buildGroupLevel()` adds `COUNT(*) AS _sub_count` to GROUP BY SELECT, classifies
+      groups as expanded/collapsed, only fetches sub-rows (IN() query) for expanded groups.
+      Collapsed groups get `.subRows = []` with `__state.subRowCount`. Multi-level only
+      recurses into expanded groups. `expanded=undefined` means all expanded (backward compat);
+      `expanded={}` means all collapsed.
+- [x] **9E.4** **DuckDB R server (`backend-duckdb.R`):** `duckdbGroupedQuery()` accepts
+      `expanded` and `parentId`. Adds `COUNT(*) AS _sub_row_count` to GROUP BY SELECT.
+      Skips sub-row fetch for collapsed groups. Sets `__state$subRowCount` (NA for expanded,
+      integer for collapsed). `expanded=NULL` is backward compat (all expanded).
+- [x] **9E.5** **df backend (`backend-df.R`):** `dfGroupBy()` accepts `expanded` and
+      `parentId`. After building full sub-rows and computing `subRowCount`, trims sub-rows
+      for collapsed groups to empty data frames. `expanded=NULL` is backward compat.
+      Passes `expanded` and `parentId` through recursion for multi-level groupBy.
+- [x] **9E.6** **Tests:** 4 new JS tests (collapsed groups, expanded/collapsed mix,
+      multi-level collapsed, multi-level expanded parent). 4 new df R tests (all collapsed,
+      expanded/collapsed mix, backward compat, multi-level). 3 new DuckDB R tests (all
+      collapsed, expanded/collapsed mix, backward compat). All 515 JS tests pass, all R tests pass.
 
 #### 9F: Server-side data documentation
 

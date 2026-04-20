@@ -2357,7 +2357,7 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(groupSql.sql).toContain('MIN("c4") AS "c4"')
     expect(groupSql.sql).toContain('MEDIAN("c5") AS "c5"')
     expect(groupSql.sql).toContain('COUNT("c6") AS "c6"')
-    expect(groupSql.sql).toContain('STRING_AGG(DISTINCT CAST("c7" AS VARCHAR), \', \') AS "c7"')
+    expect(groupSql.sql).toContain('STRING_AGG(DISTINCT CAST("c7" AS VARCHAR), \', \' ORDER BY 1) AS "c7"')
   })
 
   it('rounds numeric SQL aggregates to avoid floating-point precision artifacts', async () => {
@@ -2720,6 +2720,222 @@ describe('DuckDBBackend.query with groupBy', () => {
     expect(stmts[0].sql).toContain('SELECT *')
     expect(stmts[0].sql).not.toContain('GROUP BY')
     expect(result.rows).toEqual([{ a: 1, b: 'x' }])
+  })
+
+  it('lazy expansion: collapsed groups have empty subRows with subRowCount', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { Manufacturer: 'Acura', _sub_count: 2 },
+          { Manufacturer: 'Audi', _sub_count: 3 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const columns = [
+      { id: 'Manufacturer', type: 'character' },
+      { id: 'Model', type: 'character' }
+    ]
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['Manufacturer'],
+      expanded: {} // nothing expanded
+    })
+
+    expect(result.rows).toHaveLength(2)
+    expect(result.rows[0]['.subRows']).toEqual([])
+    expect(result.rows[0].__state).toEqual({
+      id: 'Manufacturer:Acura',
+      grouped: true,
+      subRowCount: 2
+    })
+    expect(result.rows[1]['.subRows']).toEqual([])
+    expect(result.rows[1].__state).toEqual({
+      id: 'Manufacturer:Audi',
+      grouped: true,
+      subRowCount: 3
+    })
+
+    // Should NOT have generated a sub-row IN() query
+    const subRowQuery = stmts.find(s => s.sql.includes('IN ('))
+    expect(subRowQuery).toBeUndefined()
+  })
+
+  it('lazy expansion: expanded group gets sub-rows, collapsed group does not', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { Manufacturer: 'Acura', _sub_count: 2 },
+          { Manufacturer: 'Audi', _sub_count: 3 }
+        ])
+      }
+      // Sub-row query for expanded group only
+      return arrowResult([
+        { Manufacturer: 'Acura', Model: 'Integra' },
+        { Manufacturer: 'Acura', Model: 'Legend' }
+      ])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const columns = [
+      { id: 'Manufacturer', type: 'character' },
+      { id: 'Model', type: 'character' }
+    ]
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['Manufacturer'],
+      expanded: { 'Manufacturer:Acura': true } // only Acura expanded
+    })
+
+    // Acura: expanded with sub-rows
+    expect(result.rows[0].__state).toEqual({ id: 'Manufacturer:Acura', grouped: true })
+    expect(result.rows[0]['.subRows']).toHaveLength(2)
+    expect(result.rows[0]['.subRows'][0]).toMatchObject({ Model: 'Integra' })
+
+    // Audi: collapsed with subRowCount
+    expect(result.rows[1].__state).toEqual({
+      id: 'Manufacturer:Audi',
+      grouped: true,
+      subRowCount: 3
+    })
+    expect(result.rows[1]['.subRows']).toEqual([])
+
+    // Sub-row query should only include the expanded group
+    const subRowQuery = stmts.find(s => s.sql.includes('IN ('))
+    expect(subRowQuery).toBeTruthy()
+    expect(subRowQuery.lastParams).toEqual(['Acura'])
+  })
+
+  it('lazy expansion: multi-level collapsed parent skips sub-group recursion', async () => {
+    const { conn, stmts } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        return arrowResult([
+          { region: 'East', _sub_count: 5 },
+          { region: 'West', _sub_count: 8 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const columns = [
+      { id: 'region', type: 'character' },
+      { id: 'city', type: 'character' },
+      { id: 'value', type: 'numeric' }
+    ]
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['region', 'city'],
+      expanded: {} // nothing expanded
+    })
+
+    // Both collapsed at top level
+    expect(result.rows[0]['.subRows']).toEqual([])
+    expect(result.rows[0].__state).toEqual({
+      id: 'region:East',
+      grouped: true,
+      subRowCount: 5
+    })
+    expect(result.rows[1]['.subRows']).toEqual([])
+    expect(result.rows[1].__state).toEqual({
+      id: 'region:West',
+      grouped: true,
+      subRowCount: 8
+    })
+
+    // Only 2 SQL statements: GROUP BY + COUNT(DISTINCT) - no sub-group queries
+    expect(stmts).toHaveLength(2)
+  })
+
+  it('lazy expansion: multi-level expanded parent shows sub-groups', async () => {
+    let callCount = 0
+    const { conn } = createGroupMockConn(sql => {
+      if (sql.includes('COUNT(DISTINCT')) return arrowResult([{ n: 2 }])
+      if (sql.includes('GROUP BY')) {
+        callCount++
+        if (callCount === 1) {
+          // Top-level groups (regions)
+          return arrowResult([
+            { region: 'East', _sub_count: 5 },
+            { region: 'West', _sub_count: 8 }
+          ])
+        }
+        // Sub-groups (cities under East)
+        return arrowResult([
+          { city: 'NYC', _sub_count: 3 },
+          { city: 'Boston', _sub_count: 2 }
+        ])
+      }
+      return arrowResult([])
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    const columns = [
+      { id: 'region', type: 'character' },
+      { id: 'city', type: 'character' },
+      { id: 'value', type: 'numeric' }
+    ]
+
+    const result = await backend.query({
+      pageIndex: 0,
+      pageSize: 10,
+      sortBy: [],
+      filters: [],
+      searchValue: undefined,
+      columns,
+      groupBy: ['region', 'city'],
+      expanded: { 'region:East': true } // only East expanded
+    })
+
+    // East: expanded, has sub-groups (cities)
+    expect(result.rows[0].__state).toEqual({ id: 'region:East', grouped: true })
+    expect(result.rows[0]['.subRows']).toHaveLength(2)
+    // Sub-groups are collapsed (East is expanded, but cities within East are not)
+    expect(result.rows[0]['.subRows'][0].__state).toEqual({
+      id: 'city:NYC',
+      grouped: true,
+      subRowCount: 3
+    })
+    expect(result.rows[0]['.subRows'][0]['.subRows']).toEqual([])
+
+    // West: collapsed at top level
+    expect(result.rows[1].__state).toEqual({
+      id: 'region:West',
+      grouped: true,
+      subRowCount: 8
+    })
+    expect(result.rows[1]['.subRows']).toEqual([])
   })
 
   it('paginateSubRows: returns flat group headers with subRowCount when no groups expanded', async () => {

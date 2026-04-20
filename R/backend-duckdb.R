@@ -153,7 +153,7 @@ reactableServerData.reactable_backendDuckdb <- function(
                                    pageIndex, pageSize, groupBy, expanded))
     }
     return(duckdbGroupedQuery(con, cols, filters, searchValue, sortBy,
-                              pageIndex, pageSize, groupBy))
+                              pageIndex, pageSize, groupBy, expanded))
   }
 
   query <- buildDuckdbQuery(
@@ -187,15 +187,16 @@ reactableServerData.reactable_backendDuckdb <- function(
 # Execute a grouped query: GROUP BY for top level, then sub-rows for each group.
 # Returns resolvedData with nested .subRows matching the server-df format.
 duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
-                                pageIndex, pageSize, groupBy,
-                                depth = 0, parentFilters = list(clauses = character(0), params = list())) {
+                                pageIndex, pageSize, groupBy, expanded = NULL,
+                                depth = 0, parentFilters = list(clauses = character(0), params = list()),
+                                parentId = NULL) {
   groupCol <- groupBy[[depth + 1]]
   groupedCols <- groupBy[seq_len(depth + 1)]
   baseWhere <- buildDuckdbWhere(columns, filters, searchValue)
 
-  # Build SELECT with group column + SQL aggregates
+  # Build SELECT with group column + COUNT(*) for sub-row counts + SQL aggregates
   escapedGroupCol <- duckdbQuoteIdentifier(groupCol)
-  selectParts <- escapedGroupCol
+  selectParts <- c(escapedGroupCol, "COUNT(*) AS _sub_row_count")
   postComputeAggs <- list()
 
   for (col in columns) {
@@ -249,29 +250,51 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
     return(groupData)
   }
 
-  # Fetch sub-rows for each group
+  # Extract sub-row counts and remove the helper column
+  subRowCounts <- groupData[["_sub_row_count"]]
+  groupData[["_sub_row_count"]] <- NULL
+
+  # Classify groups as expanded or collapsed.
+  # expanded=NULL means all groups expanded (no lazy fetching, backward compat).
+  # expanded=list() means nothing expanded (all collapsed).
   groupValues <- groupData[[groupCol]]
+  stateIds <- vapply(groupValues, function(val) paste0(groupCol, ":", val), character(1))
+  rowIds <- if (!is.null(parentId)) paste0(parentId, ".", stateIds) else stateIds
+  if (is.null(expanded)) {
+    isExpanded <- rep(TRUE, length(groupValues))
+  } else {
+    isExpanded <- vapply(rowIds, function(id) isTRUE(expanded[[id]]), logical(1))
+  }
+
+  # Fetch sub-rows only for expanded groups
   subRowsList <- vector("list", length(groupValues))
 
   for (i in seq_along(groupValues)) {
+    if (!isExpanded[[i]]) {
+      # Collapsed group: empty sub-rows (subRowCount set in __state below)
+      subRowsList[[i]] <- data.frame()
+      next
+    }
+
     childFilters <- list(
       clauses = c(parentFilters$clauses, paste0(escapedGroupCol, " = ?")),
       params = c(parentFilters$params, list(groupValues[[i]]))
     )
 
     if (depth + 1 < length(groupBy)) {
-      # More grouping levels — recurse
+      # More grouping levels - recurse only for expanded groups
       subResult <- duckdbGroupedQuery(con, columns, filters, searchValue, sortBy,
                                        pageIndex = 0, pageSize = .Machine$integer.max,
-                                       groupBy, depth = depth + 1,
-                                       parentFilters = childFilters)
+                                       groupBy, expanded = expanded, depth = depth + 1,
+                                       parentFilters = childFilters,
+                                       parentId = rowIds[[i]])
       if (inherits(subResult, "reactable_resolvedData")) {
         subRowsList[[i]] <- subResult$data
       } else {
         subRowsList[[i]] <- subResult
       }
     } else {
-      # Leaf level -- fetch individual rows
+      # Leaf level - fetch individual rows
       subQuery <- buildDuckdbSubRowSql("reactable_data", baseWhere, childFilters, sortBy)
       subRows <- DBI::dbGetQuery(con, subQuery$sql, params = subQuery$params)
       # Extract _reactable_rowid into __state for stable row identification
@@ -297,10 +320,12 @@ duckdbGroupedQuery <- function(con, columns, filters, searchValue, sortBy,
 
   groupData[[".subRows"]] <- subRowsList
 
-  # Add __state with group ID for group header rows
+  # Add __state with group ID for group header rows.
+  # Collapsed groups include subRowCount so the expander arrow shows.
   groupData[["__state"]] <- dataFrame(
-    id = vapply(groupValues, function(val) paste0(groupCol, ":", val), character(1)),
-    grouped = rep(TRUE, length(groupValues))
+    id = unname(stateIds),
+    grouped = rep(TRUE, length(stateIds)),
+    subRowCount = ifelse(isExpanded, NA_integer_, as.integer(subRowCounts))
   )
 
   if (depth == 0) {

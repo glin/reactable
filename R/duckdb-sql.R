@@ -202,7 +202,7 @@ duckdbAggregateSQL <- function(aggregate, columnId) {
     "min" = paste0("MIN(", col, ")"),
     "median" = paste0("MEDIAN(", col, ")"),
     "count" = paste0("COUNT(", col, ")"),
-    "unique" = paste0("STRING_AGG(DISTINCT CAST(", col, " AS VARCHAR), ', ')"),
+    "unique" = paste0("STRING_AGG(DISTINCT CAST(", col, " AS VARCHAR), ', ' ORDER BY 1)"),
     NULL  # frequency and unknown aggregates are computed from sub-rows
   )
 }

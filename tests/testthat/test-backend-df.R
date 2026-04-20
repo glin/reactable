@@ -975,3 +975,78 @@ test_that("dfPaginateSubRows multi-level page boundary inside expanded children"
   expect_equal(nrow(r3$data), 2)
   expect_equal(r3$data[["__state"]]$id, c("mfr:Acura.type:Large", "mfr:Audi"))
 })
+
+
+# Lazy sub-row fetching (9E) ---------------------------------------------------------
+
+test_that("dfGroupBy with expanded={} collapses all groups", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi"),
+    model = c("Integra", "Legend", "90", "100"),
+    price = c(1, 2, 3, 4)
+  )
+  grouped <- dfGroupBy(df, list("mfr"), expanded = list())
+
+  # subRowCount should reflect the original sub-row counts
+  expect_equal(grouped[["__state"]]$subRowCount, c(2L, 2L))
+  # .subRows should be empty data frames (collapsed)
+  expect_equal(nrow(grouped[[".subRows"]][[1]]), 0)
+  expect_equal(nrow(grouped[[".subRows"]][[2]]), 0)
+  # __state should have correct IDs
+  expect_equal(grouped[["__state"]]$id, c("mfr:Acura", "mfr:Audi"))
+  expect_equal(grouped[["__state"]]$grouped, c(TRUE, TRUE))
+})
+
+test_that("dfGroupBy with expanded: one group expanded, one collapsed", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi", "Audi"),
+    model = c("Integra", "Legend", "90", "100"),
+    price = c(1, 2, 3, 4)
+  )
+  expanded <- list("mfr:Acura" = TRUE)
+  grouped <- dfGroupBy(df, list("mfr"), expanded = expanded)
+
+  # Acura: expanded, has sub-rows
+  expect_equal(nrow(grouped[[".subRows"]][[1]]), 2)
+  expect_equal(grouped[[".subRows"]][[1]]$model, c("Integra", "Legend"))
+
+  # Audi: collapsed, empty sub-rows but subRowCount preserved
+  expect_equal(nrow(grouped[[".subRows"]][[2]]), 0)
+  expect_equal(grouped[["__state"]]$subRowCount, c(2L, 2L))
+})
+
+test_that("dfGroupBy with expanded=NULL fetches all sub-rows (backward compat)", {
+  df <- dataFrame(
+    mfr = c("Acura", "Acura", "Audi"),
+    model = c("Integra", "Legend", "90")
+  )
+  grouped <- dfGroupBy(df, list("mfr"), expanded = NULL)
+
+  # All sub-rows should be present (no lazy fetching)
+  expect_equal(nrow(grouped[[".subRows"]][[1]]), 2)
+  expect_equal(nrow(grouped[[".subRows"]][[2]]), 1)
+})
+
+test_that("dfGroupBy multi-level with lazy expansion", {
+  df <- dataFrame(
+    region = c("East", "East", "West", "West"),
+    city = c("NYC", "Boston", "LA", "SF"),
+    value = c(1, 2, 3, 4)
+  )
+  # Expand East but not West. Cities within East are not expanded.
+  expanded <- list("region:East" = TRUE)
+  grouped <- dfGroupBy(df, list("region", "city"), expanded = expanded)
+
+  # East: expanded, has sub-groups (cities)
+  expect_equal(nrow(grouped[[".subRows"]][[1]]), 2)
+  east_cities <- grouped[[".subRows"]][[1]]
+  expect_equal(east_cities[["__state"]]$id, c("city:NYC", "city:Boston"))
+  # Cities within East are collapsed (not in expanded map)
+  expect_equal(nrow(east_cities[[".subRows"]][[1]]), 0)
+  expect_equal(nrow(east_cities[[".subRows"]][[2]]), 0)
+  expect_equal(east_cities[["__state"]]$subRowCount, c(1L, 1L))
+
+  # West: collapsed, empty sub-groups
+  expect_equal(nrow(grouped[[".subRows"]][[2]]), 0)
+  expect_equal(grouped[["__state"]]$subRowCount[2], 2L)
+})
