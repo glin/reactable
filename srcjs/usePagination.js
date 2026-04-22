@@ -126,8 +126,17 @@ function useInstance(instance) {
     // Prefer user-specified row count for manual pagination. Server-side pagination
     // typically requires the server-side row count to be known, so providing page count
     // is unnecessary when it can be derived from row count and page size.
-    pageCount =
-      userRowCount != null && userRowCount >= 0 ? Math.ceil(userRowCount / pageSize) : userPageCount
+    // Guard against pageSize === 0 (e.g., when pagination is disabled and data is empty
+    // during initial render, before windowed fetch returns). Dividing by 0 gives Infinity,
+    // which causes RangeError when used as array length.
+    if (pageSize === 0) {
+      pageCount = 0
+    } else {
+      pageCount =
+        userRowCount != null && userRowCount >= 0
+          ? Math.ceil(userRowCount / pageSize)
+          : userPageCount
+    }
   } else if (pageSize === 0) {
     // When pagination is disabled and there are no rows (e.g., all rows filtered out),
     // pageSize is 0 and dividing by 0 would result in NaN.

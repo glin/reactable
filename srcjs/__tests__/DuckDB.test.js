@@ -27,7 +27,9 @@ import {
   getSortableHeaders,
   getFilters,
   getSearchInput,
-  getSelectRowCheckboxes
+  getSelectRowCheckboxes,
+  getTable,
+  getVirtualSpacer
 } from './utils/test-utils'
 
 jest.mock('reactR')
@@ -3415,5 +3417,414 @@ describe('DuckDBBackend.query with groupBy', () => {
       grouped: true,
       subRowCount: 2
     })
+  })
+})
+
+describe('windowed fetching (virtual + no pagination + DuckDB)', () => {
+  // Set up virtual DOM mocks required for @tanstack/react-virtual
+  beforeAll(() => {
+    Element.prototype.getBoundingClientRect = jest.fn(function () {
+      if (this.classList && this.classList.contains('rt-tr-group')) {
+        return { width: 500, height: 36, top: 0, left: 0, bottom: 36, right: 500 }
+      }
+      if (this.classList && this.classList.contains('rt-tr-placeholder')) {
+        return { width: 500, height: 36, top: 0, left: 0, bottom: 36, right: 500 }
+      }
+      return { width: 500, height: 400, top: 0, left: 0, bottom: 400, right: 500 }
+    })
+
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      configurable: true,
+      get: function () {
+        return this.classList.contains('rt-table') ? 400 : 36
+      }
+    })
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get: function () {
+        return this.classList.contains('rt-table') ? 400 : 36
+      }
+    })
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      get: function () {
+        return this.classList.contains('rt-table') ? 400 : 36
+      }
+    })
+  })
+
+  // Helper that creates a mock backend with larger row counts for windowed testing.
+  // Uses Math.round on offset to handle fractional pageIndex values.
+  function createWindowedMockBackend(totalRows = 1000) {
+    const allRows = Array.from({ length: totalRows }, (_, i) => ({
+      a: i + 1,
+      b: `row${i + 1}`,
+      __state: { id: String(i), index: i }
+    }))
+
+    const mockBackend = {
+      totalRowCount: totalRows,
+      init: jest.fn().mockResolvedValue(undefined),
+      query: jest.fn().mockImplementation(({ pageIndex, pageSize }) => {
+        if (pageSize == null) {
+          return Promise.resolve({ rows: allRows, rowCount: totalRows })
+        }
+        const start = Math.round(pageIndex * pageSize)
+        const end = Math.min(start + pageSize, totalRows)
+        const rows = allRows.slice(start, end)
+        return Promise.resolve({ rows, rowCount: totalRows })
+      }),
+      queryRowIds: jest.fn().mockResolvedValue(allRows.map(r => r.__state.id)),
+      destroy: jest.fn().mockResolvedValue(undefined)
+    }
+
+    window.__ReactableDuckDB = {
+      DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
+      wasmBasePath: '/mock/path/'
+    }
+
+    return mockBackend
+  }
+
+  it('uses windowed fetching with buffer size instead of fetching all rows', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    // Wait for DuckDB to init and first windowed query
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // Should request a buffer (500 rows), not all rows (pageSize: null)
+    const queryCall = mockBackend.query.mock.calls[0][0]
+    expect(queryCall.pageSize).toBe(500)
+    expect(queryCall.pageSize).not.toBeNull()
+  })
+
+  it('fetches initial buffer at offset 0', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // First fetch should be at offset 0
+    const queryCall = mockBackend.query.mock.calls[0][0]
+    expect(Math.round(queryCall.pageIndex * queryCall.pageSize)).toBe(0)
+  })
+
+  it('renders data rows from the buffer', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // Should have a virtual spacer (virtual mode is active)
+    const spacer = getVirtualSpacer(container)
+    expect(spacer).toBeInTheDocument()
+
+    // Rows visible in the viewport should have data content
+    const rows = container.querySelectorAll('.rt-tr-group:not(.rt-tr-placeholder)')
+    expect(rows.length).toBeGreaterThan(0)
+  })
+
+  it('sets aria-rowcount to total row count, not buffer size', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    const table = getTable(container)
+    // aria-rowcount should include header rows + total data rows (1000)
+    const ariaRowCount = Number(table.getAttribute('aria-rowcount'))
+    expect(ariaRowCount).toBeGreaterThan(500)
+    expect(ariaRowCount).toBeLessThanOrEqual(1001) // 1000 data + 1 header
+  })
+
+  it('placeholder rows have aria-rowindex offset by header row count', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    // Return only 5 rows so most visible virtual items become placeholders
+    mockBackend.query.mockImplementation(({ pageSize }) => {
+      if (pageSize == null) {
+        return Promise.resolve({ rows: [], rowCount: 1000 })
+      }
+      const rows = Array.from({ length: 5 }, (_, i) => ({
+        a: i + 1,
+        b: `row${i + 1}`,
+        __state: { id: String(i), index: i }
+      }))
+      return Promise.resolve({ rows, rowCount: 1000 })
+    })
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // With only 5 rows in the buffer but 1000 total, virtual items beyond index 4
+    // are rendered as placeholders.
+    const placeholders = container.querySelectorAll('.rt-tr-placeholder')
+    expect(placeholders.length).toBeGreaterThan(0)
+
+    // Header row occupies aria-rowindex=1, so the first data row should be 2.
+    // Placeholder rows should never have aria-rowindex=1 (that's the header).
+    placeholders.forEach(placeholder => {
+      const ariaRowIndex = Number(placeholder.getAttribute('aria-rowindex'))
+      // Must be > 1 (offset past the header row)
+      expect(ariaRowIndex).toBeGreaterThan(1)
+    })
+
+    // All aria-rowindex values across real rows and placeholders should be unique
+    const allRows = container.querySelectorAll('.rt-tr-group')
+    const ariaIndices = []
+    allRows.forEach(row => {
+      const idx = row.getAttribute('aria-rowindex')
+      if (idx) ariaIndices.push(Number(idx))
+    })
+    const uniqueIndices = new Set(ariaIndices)
+    expect(uniqueIndices.size).toBe(ariaIndices.length)
+  })
+
+  it('resets buffer on sort change', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={[
+          { name: 'colA', id: 'a', type: 'numeric', sortable: true },
+          { name: 'colB', id: 'b', sortable: true }
+        ]}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+        sortable
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledTimes(1)
+    })
+
+    // Click a sort header
+    const sortHeaders = getSortableHeaders(container)
+    fireEvent.click(sortHeaders[0])
+
+    // Should trigger a new fetch with sort info
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledTimes(2)
+    })
+
+    const secondCall = mockBackend.query.mock.calls[1][0]
+    expect(secondCall.sortBy.length).toBe(1)
+    expect(secondCall.sortBy[0].id).toBe('a')
+    // Should fetch from offset 0 (reset)
+    expect(Math.round(secondCall.pageIndex * secondCall.pageSize)).toBe(0)
+  })
+
+  it('resets buffer on filter change', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={[
+          { name: 'colA', id: 'a', type: 'numeric' },
+          { name: 'colB', id: 'b', filterable: true }
+        ]}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+        filterable
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledTimes(1)
+    })
+
+    // Type in filter input
+    const filters = getFilters(container)
+    fireEvent.change(filters[1], { target: { value: 'test' } })
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalledTimes(2)
+    })
+
+    const secondCall = mockBackend.query.mock.calls[1][0]
+    expect(secondCall.filters.length).toBe(1)
+    // Should fetch from offset 0 (reset)
+    expect(Math.round(secondCall.pageIndex * secondCall.pageSize)).toBe(0)
+  })
+
+  it('does not use windowed fetching when pagination is enabled', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    render(
+      <Reactable
+        data={{ a: [1, 2, 3, 4, 5], b: ['row1', 'row2', 'row3', 'row4', 'row5'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        pagination
+        virtual
+        height={400}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    // With pagination enabled, the regular DuckDB query effect should be used, not windowed.
+    // The initial query should be skipped (pre-rendered data matches)
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Query should not have been called (pre-rendered first page skip logic)
+    expect(mockBackend.query).not.toHaveBeenCalled()
+  })
+
+  it('does not use windowed fetching when virtual is off', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    render(
+      <Reactable
+        data={{ a: [1, 2, 3], b: ['row1', 'row2', 'row3'] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    // Without virtual, all rows should be fetched (pageSize: null)
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    const queryCall = mockBackend.query.mock.calls[0][0]
+    expect(queryCall.pageSize).toBeNull()
+  })
+
+  it('renders without error when groupBy is set and data starts empty', async () => {
+    // Regression: DuckDB + groupBy + virtual + no pagination starts with empty data
+    // (data = [] to avoid showing flat pre-rendered rows). With empty data, pageSize = 0
+    // (pagination disabled), and computing Math.ceil(rowCount / 0) = Infinity caused
+    // RangeError: Invalid array length in [...new Array(Infinity)].
+    const mockBackend = createWindowedMockBackend(1000)
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [], b: [] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        groupBy={['a']}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    // Should not throw RangeError. Wait for DuckDB init and windowed query.
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // Table should render (even if initially empty, no crash)
+    expect(container.querySelector('.rt-table')).toBeTruthy()
   })
 })

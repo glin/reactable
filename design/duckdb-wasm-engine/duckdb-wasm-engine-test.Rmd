@@ -128,7 +128,13 @@ reactable(
 )
 ```
 
-### Large dataset: 1M rows (virtualized)
+### Large dataset: 1M rows (virtualized, windowed fetching)
+
+With `virtual = TRUE, pagination = FALSE`, windowed fetching queries only ~500 rows at a time
+from DuckDB-WASM instead of building 1M react-table row models in JS memory. Scrollbar reflects
+the full dataset. Fast scrolling shows placeholder rows briefly until the new buffer loads.
+Auto-format: 1M rows exceeds the ~20 MB Arrow IPC threshold, so this will use a Parquet sidecar
+file (where windowing also avoids downloading the full file).
 
 ```{r}
 n <- 1000000
@@ -151,7 +157,12 @@ reactable(
 )
 ```
 
-### Unpaginated with virtual scrolling (MASS::Cars93)
+### Unpaginated with virtual scrolling (MASS::Cars93, windowed fetching)
+
+Small dataset with windowed fetching using Arrow IPC. With only 93 rows, the entire dataset
+fits in the initial buffer (~500 rows), so no additional fetches occur on scroll and no
+placeholder rows are shown. Windowing adds no real benefit at this size but exercises the
+same code path as large datasets.
 
 ```{r}
 reactable(
@@ -164,6 +175,109 @@ reactable(
   filterable = TRUE,
   searchable = TRUE,
   striped = TRUE
+)
+```
+
+### Windowed fetching with grouped data
+
+Windowed mode with `groupBy` uses `paginateSubRows` internally to flatten the group tree
+into a single stream. Expanding a group should refetch at the current scroll position.
+Uses Arrow IPC (100k rows, auto-format). Windowing keeps react-table row models capped
+at ~500 instead of building all 100k.
+
+```{r}
+n <- 100000
+grouped_data <- data.frame(
+  group = sample(LETTERS[1:10], n, replace = TRUE),
+  subgroup = sample(letters[1:5], n, replace = TRUE),
+  value = round(runif(n, 0, 1000), 2),
+  label = paste0("item_", seq_len(n)),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  grouped_data,
+  backend = backendDuckDB(),
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  groupBy = "group",
+  columns = list(
+    value = colDef(aggregate = "mean"),
+    label = colDef(aggregate = "count")
+  ),
+  sortable = TRUE,
+  highlight = TRUE
+)
+```
+
+### Windowed fetching with row selection
+
+Select a row, scroll away, scroll back. Selection should persist across buffer changes
+(uses inverted selection model with stable `__state.id` row IDs). Uses Arrow IPC (100k rows
+from grouped_data, auto-format).
+
+```{r}
+reactable(
+  grouped_data[, c("group", "value", "label")],
+  backend = backendDuckDB(),
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  selection = "multiple",
+  highlight = TRUE,
+  onClick = "select"
+)
+```
+
+### Windowed fetching with paginateSubRows
+
+Windowed mode with explicit `paginateSubRows = TRUE` and single-level groupBy. When
+`groupBy` is set, windowed mode already uses `paginateSubRows` internally to flatten
+groups into a LIMIT/OFFSET stream. Setting it explicitly should produce the same behavior.
+Expanding a group should show sub-rows inline and refetch the buffer at the current scroll
+position.
+
+```{r}
+reactable(
+  grouped_data,
+  backend = backendDuckDB(),
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  groupBy = "group",
+  paginateSubRows = TRUE,
+  columns = list(
+    value = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    label = colDef(aggregate = "count")
+  ),
+  sortable = TRUE,
+  highlight = TRUE
+)
+```
+
+### Windowed fetching with paginateSubRows and multi-level groupBy
+
+Two-level grouping (`group` + `subgroup`) with windowed fetching and explicit
+`paginateSubRows`. Expanding a top-level group should reveal nested subgroup headers.
+Expanding a subgroup should show leaf rows. All expansions use the flattened
+LIMIT/OFFSET stream.
+
+```{r}
+reactable(
+  grouped_data,
+  backend = backendDuckDB(),
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  groupBy = c("group", "subgroup"),
+  paginateSubRows = TRUE,
+  columns = list(
+    value = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    label = colDef(aggregate = "count")
+  ),
+  sortable = TRUE,
+  highlight = TRUE
 )
 ```
 
@@ -1114,10 +1228,10 @@ reactable(
 )
 ```
 
-### Parquet with virtual scrolling
+### Parquet with virtual scrolling (windowed fetching)
 
-Unpaginated virtual scrolling with Parquet sidecar. DuckDB sends all rows in a single
-query (pageSize = null), and virtual scrolling handles rendering.
+Unpaginated virtual scrolling with Parquet sidecar. Windowed fetching loads only ~500 rows
+at a time via HTTP range requests, avoiding a full Parquet file download on initial load.
 
 ```{r}
 n <- 1000000

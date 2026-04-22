@@ -977,6 +977,25 @@ needed for that path.
         capabilities differ: DuckDB works everywhere, others are Shiny-only.
       - Consider whether Phase 10 (JS backend plugin) should be designed first, so the custom
         backend docs can reference a future extension point for client-side backends.
+- [ ] **9.13** Update DuckDB backend vignette with a "When to use DuckDB" decision guide. The
+      current vignette doesn't help users evaluate whether the DuckDB backend is worth it for
+      their use case. DuckDB-WASM adds ~33 MB uncompressed (~7 MB gzipped) to the document.
+      For smaller datasets (e.g., under 10K rows), the default client-side backend is faster
+      to load and has zero overhead. The vignette should cover:
+      - **When to use default (no backend):** Small-to-medium data. No extra weight. Client-side
+        sort/filter is instant for <50K rows.
+      - **When to use `backendDuckDB()` (embedded Arrow IPC):** Medium-to-large data (50K-500K
+        rows) in static HTML / R Markdown. Sort/filter speed scales better than client-side.
+        Tradeoff: ~7 MB gzipped WASM overhead + ~1-2s DuckDB init time.
+      - **When to use `backendDuckDB(format = "parquet")`:** Very large data (500K+ rows) where
+        embedding the data in the HTML is impractical. Parquet sidecar keeps document size small.
+        Requires a web server (not `file://`).
+      - **When to use server-side backends (Shiny):** Interactive apps where data lives on the
+        server. No WASM overhead. Network round-trip per interaction.
+      - **Crossover points:** At what dataset size does DuckDB's faster sort/filter outweigh the
+        WASM loading cost? Include concrete numbers from the Phase 8 benchmarks (page load,
+        sort time, search time at various row counts). The break-even depends on whether the
+        user's priority is initial load time vs. interaction speed.
 
 #### 9G: Server-side data API refinements (optional)
 
@@ -1115,11 +1134,12 @@ A backend plugin is a JS object with well-known methods:
 - [ ] Remove `backendDf()` and `backendDt()`: These were carried over from development but are unlikely to be
       needed. DuckDB server mode should cover the same use cases with better performance. Can be removed
       without a deprecation cycle since they were never in a CRAN release.
-- [ ] Virtualized windowed fetching: With `virtual = TRUE, pagination = FALSE`, DuckDB currently fetches all
-      rows at once (`pageSize: null` omits LIMIT/OFFSET). For Parquet, this means downloading the entire file
-      over HTTP before the table renders. Use scroll-position-driven queries to fetch only a sliding window of
-      rows around the viewport, leveraging Parquet HTTP range requests for efficient partial reads. See
-      `design/duckdb-wasm-engine/duckdb-wasm-engine.md` "Future: virtualized windowed fetching" section.
+- [x] Virtualized windowed fetching: With `virtual = TRUE, pagination = FALSE`, DuckDB fetches only a
+      sliding window of ~500 rows around the viewport instead of all rows at once. Scroll-position-driven
+      queries via `useWindowedData` hook, debounced buffer fetching, placeholder rows for out-of-buffer
+      indices. Works with all backends (DuckDB WASM, server-side). Grouped data handled via internal
+      `paginateSubRows`. See `design/server-side-data/virtual-windowed-fetching.md` for the full design.
+- [ ] Update virtual scrolling and DuckDB backend vignettes with windowed fetching documentation
 
 ---
 

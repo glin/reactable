@@ -12,6 +12,7 @@ import {
 } from 'react-table'
 import PropTypes from 'prop-types'
 import { hydrate } from 'reactR'
+import { useWindowedData } from './useWindowedData'
 
 import Pagination from './Pagination'
 import WidgetContainer from './WidgetContainer'
@@ -621,8 +622,15 @@ function VirtualTbody({
   compact,
   scrollElementRef,
   noData,
-  minRows
+  minRows,
+  // Windowed fetching props (when virtualRowCount is set, windowed mode is active)
+  virtualRowCount,
+  bufferStart,
+  onRangeChange,
+  headerRowCount
 }) {
+  const windowed = virtualRowCount != null
+
   // Estimated row height for initial render before dynamic measurement.
   // These values are derived from reactable.css default styles:
   //   Default:  7px padding-top + 7px padding-bottom + ~20px line-height + 1px border = ~36px
@@ -632,7 +640,7 @@ function VirtualTbody({
   const estimatedRowHeight = compact ? 30 : 36
 
   const virtualizer = useVirtualizer({
-    count: rowsToRender.length,
+    count: windowed ? virtualRowCount : rowsToRender.length,
     getScrollElement: () => scrollElementRef.current,
     estimateSize: () => estimatedRowHeight,
     overscan: 5,
@@ -645,9 +653,20 @@ function VirtualTbody({
 
   const virtualItems = virtualizer.getVirtualItems()
 
-  // Leave at least one row to show the no data message properly
+  // Report visible range changes for windowed fetching
+  const range = virtualizer.range
+  const onRangeChangeRef = React.useRef(onRangeChange)
+  onRangeChangeRef.current = onRangeChange
+  React.useEffect(() => {
+    if (onRangeChangeRef.current && range) {
+      onRangeChangeRef.current(range)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range?.startIndex, range?.endIndex])
+
+  // Leave at least one row to show the no data message properly (not needed in windowed mode)
   const minRowCount = minRows ? Math.max(minRows, 1) : 1
-  const padRowCount = Math.max(minRowCount - rowsToRender.length, 0)
+  const padRowCount = windowed ? 0 : Math.max(minRowCount - rowsToRender.length, 0)
 
   // Total height includes real rows plus pad rows
   const totalRowsHeight = virtualizer.getTotalSize()
@@ -674,6 +693,32 @@ function VirtualTbody({
             width: '100%',
             transform: `translateY(${virtualRow.start}px)`
           }
+
+          if (windowed) {
+            const dataIndex = virtualRow.index - (bufferStart || 0)
+            if (dataIndex < 0 || dataIndex >= rowsToRender.length) {
+              // Placeholder row for out-of-buffer indices
+              return (
+                <div
+                  key={`placeholder_${virtualRow.index}`}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                  className="rt-tr-group rt-tr-placeholder"
+                  style={{ ...style, height: estimatedRowHeight }}
+                  role="row"
+                  aria-rowindex={virtualRow.index + 1 + (headerRowCount || 0)}
+                />
+              )
+            }
+            return renderRow(
+              rowsToRender[dataIndex],
+              virtualRow.index,
+              style,
+              virtualizer.measureElement,
+              virtualRow.index
+            )
+          }
+
           return renderRow(
             rowsToRender[virtualRow.index],
             virtualRow.index,
@@ -710,7 +755,11 @@ VirtualTbody.propTypes = {
   compact: PropTypes.bool,
   scrollElementRef: PropTypes.object.isRequired,
   noData: PropTypes.node,
-  minRows: PropTypes.number
+  minRows: PropTypes.number,
+  virtualRowCount: PropTypes.number,
+  bufferStart: PropTypes.number,
+  onRangeChange: PropTypes.func,
+  headerRowCount: PropTypes.number
 }
 
 function TableData({
@@ -1137,6 +1186,13 @@ function Table({
     }
   }, [useServerData, useDuckDB])
 
+  // Windowed fetching mode: virtual + no pagination + backend
+  const hasGroupBy = groupBy && groupBy.length > 0
+  const windowed = virtual && !pagination && (useDuckDB || useServerData)
+  // In windowed mode with groupBy, internally use paginateSubRows to flatten the group tree
+  // into a single stream that can be windowed with LIMIT/OFFSET.
+  const effectivePaginateSubRows = paginateSubRows || (windowed && hasGroupBy)
+
   const { state, ...instance } = useTable(
     {
       columns,
@@ -1151,7 +1207,7 @@ function Table({
           : {}
       },
       globalFilter,
-      paginateExpandedRows: paginateSubRows ? true : false,
+      paginateExpandedRows: effectivePaginateSubRows ? true : false,
       disablePagination: !pagination,
       getSubRows,
       getRowId,
@@ -1183,7 +1239,7 @@ function Table({
       // Disable manual row expansion
       manualExpandedKey: null,
       // Prevent duplicate sub rows when sub rows are paginated server-side
-      expandSubRows: !((useServerData || useDuckDB) && paginateSubRows),
+      expandSubRows: !((useServerData || useDuckDB) && effectivePaginateSubRows),
       rowCount: useServerData || useDuckDB ? serverRowCount : null
     },
     useServerSideRows,
@@ -1205,6 +1261,10 @@ function Table({
   const skipInitialFetch = React.useRef(initialServerRowCount != null)
   React.useEffect(() => {
     if (!useServerData) {
+      return
+    }
+    // Windowed mode handles its own fetching via useWindowedData
+    if (windowed) {
       return
     }
     // Skip initial data fetch if the first page was provided
@@ -1246,6 +1306,7 @@ function Table({
       })
   }, [
     useServerData,
+    windowed,
     dataURL,
     state.pageIndex,
     state.pageSize,
@@ -1336,16 +1397,101 @@ function Table({
     }
   }, [useDuckDB, arrowData, parquetId])
 
+  // Track buffer start so VirtualTbody knows where buffer rows map to in the full dataset.
+  // Updated atomically with setNewData in handleWindowedBufferChange.
+  const windowedBufferStartRef = React.useRef(0)
+
+  const handleWindowedBufferChange = React.useCallback(buffer => {
+    windowedBufferStartRef.current = buffer.start
+    setNewData(buffer.rows)
+    setServerRowCount(buffer.rowCount)
+    setServerMaxRowCount(prev => Math.max(prev ?? 0, buffer.rowCount))
+  }, [])
+
+  // Stable ref for windowed fetch data callback (captures latest state via refs)
+  const windowedStateRef = React.useRef()
+  windowedStateRef.current = {
+    sortBy: state.sortBy,
+    filters: state.filters,
+    globalFilter: state.globalFilter,
+    groupBy: state.groupBy,
+    expanded: state.expanded
+  }
+
+  const windowedFetchData = React.useCallback(
+    async (offset, limit) => {
+      const s = windowedStateRef.current
+      const hasGroupBy = s.groupBy && s.groupBy.length > 0
+      if (useDuckDB && duckdbRef.current) {
+        return duckdbRef.current.query({
+          // Use fractional pageIndex: offset / limit gives the correct OFFSET when
+          // the backend computes OFFSET = pageIndex * pageSize.
+          pageIndex: offset / limit,
+          pageSize: limit,
+          sortBy: s.sortBy,
+          filters: s.filters,
+          searchValue: s.globalFilter,
+          columns: dataColumns,
+          groupBy: s.groupBy,
+          expanded: hasGroupBy ? s.expanded : undefined,
+          // Grouped windowed mode uses paginateSubRows to flatten the group tree
+          paginateSubRows: effectivePaginateSubRows
+        })
+      }
+      if (useServerData && dataURL) {
+        const url = new window.URL(dataURL, window.location)
+        const params = {
+          pageIndex: offset / limit,
+          pageSize: limit,
+          sortBy: s.sortBy,
+          filters: s.filters,
+          searchValue: s.globalFilter,
+          groupBy: s.groupBy,
+          expanded: s.expanded
+        }
+        const res = await window.fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        })
+        const body = await res.json()
+        const rows = normalizeColumnData(body.data, dataColumns)
+        return { rows, rowCount: body.rowCount }
+      }
+      return { rows: [], rowCount: 0 }
+    },
+    [useDuckDB, useServerData, dataURL, dataColumns, effectivePaginateSubRows]
+  )
+
+  const windowedData = useWindowedData({
+    enabled: windowed && (useDuckDB ? duckdbReady : true),
+    fetchData: windowedFetchData,
+    onBufferChange: handleWindowedBufferChange,
+    initialTotalRowCount: initialServerRowCount || 0,
+    resetDeps: [state.sortBy, state.filters, state.globalFilter, state.groupBy],
+    refetchDeps: [state.expanded]
+  })
+
+  // Reset scroll to top when sort/filter/search changes in windowed mode
+  useMountedLayoutEffect(() => {
+    if (windowed && tableElement.current) {
+      tableElement.current.scrollTop = 0
+    }
+  }, [windowed, state.sortBy, state.filters, state.globalFilter, state.groupBy])
+
   // Query DuckDB on page/sort/filter/search changes.
   // Don't skip the initial query when groupBy is set — the pre-rendered first page is flat
   // (ungrouped), so we must query DuckDB immediately to get properly grouped data.
   // Don't skip when pagination is disabled — the pre-rendered page is only a subset of all rows.
-  const hasGroupBy = groupBy && groupBy.length > 0
   const canSkipInitialDuckDBQuery =
     useDuckDB && originalData.length > 0 && !hasGroupBy && pagination
   const duckdbQueryCount = React.useRef(0)
   React.useEffect(() => {
     if (!useDuckDB || !duckdbReady || !duckdbRef.current) {
+      return
+    }
+    // Windowed mode handles its own fetching via useWindowedData
+    if (windowed) {
       return
     }
 
@@ -1378,7 +1524,7 @@ function Table({
         columns: dataColumns,
         groupBy: state.groupBy,
         expanded: state.groupBy.length > 0 ? state.expanded : undefined,
-        paginateSubRows
+        paginateSubRows: effectivePaginateSubRows
       })
       .then(result => {
         setNewData(result.rows)
@@ -1393,10 +1539,11 @@ function Table({
   }, [
     useDuckDB,
     duckdbReady,
+    windowed,
     canSkipInitialDuckDBQuery,
     defaultSorted,
     pagination,
-    paginateSubRows,
+    effectivePaginateSubRows,
     state.pageIndex,
     state.pageSize,
     state.sortBy,
@@ -1971,8 +2118,10 @@ function Table({
         // which row is being measured. It comes from virtualRow.index in VirtualTbody.
         trGroupProps['data-index'] = dataIndex
       }
-      // aria-rowindex is 1-based, data rows come after header rows
-      const ariaRowIndex = virtual ? row.index + 1 + instance.headerGroups.length : null
+      // aria-rowindex is 1-based, data rows come after header rows.
+      // In windowed mode, row.index is buffer-relative; use viewIndex (absolute position) instead.
+      const rowIndexForAria = windowed ? viewIndex : row.index
+      const ariaRowIndex = virtual ? rowIndexForAria + 1 + instance.headerGroups.length : null
       return (
         <TrGroupComponent {...trGroupProps}>
           <TrComponent {...resolvedRowProps} key={undefined} aria-rowindex={ariaRowIndex}>
@@ -2203,6 +2352,10 @@ function Table({
           scrollElementRef={tableElement}
           noData={noData}
           minRows={minRows}
+          virtualRowCount={windowed ? windowedData.totalRowCount : undefined}
+          bufferStart={windowed ? windowedBufferStartRef.current : undefined}
+          onRangeChange={windowed ? windowedData.onRangeChange : undefined}
+          headerRowCount={instance.headerGroups.length}
         />
       )
     }
@@ -2740,7 +2893,12 @@ function Table({
         ref={tableElement}
         tabIndex={tableHasScrollbar ? 0 : null}
         className={tableClassName}
-        aria-rowcount={virtual ? instance.rows.length + instance.headerGroups.length : null}
+        aria-rowcount={
+          virtual
+            ? (windowed ? windowedData.totalRowCount : instance.rows.length) +
+              instance.headerGroups.length
+            : null
+        }
       >
         {makeThead()}
         {makeTbody()}

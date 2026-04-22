@@ -426,3 +426,117 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+## Windowed fetching (virtual + no pagination + server backend)
+
+These examples test windowed fetching with server-side backends. With `virtual = TRUE`
+and `pagination = FALSE`, only ~500 rows are fetched at a time instead of all rows.
+
+**What to verify:**
+1. Initial load fetches a buffer (~500 rows), not all rows
+2. Scrolling loads new buffers (placeholder rows visible briefly during fast scroll)
+3. Sort/filter/search resets scroll to top and fetches new buffer from offset 0
+4. Grouped data works (paginateSubRows used internally)
+
+### Windowed fetching with DuckDB server backend
+
+```r
+library(shiny)
+library(reactable)
+
+set.seed(1)
+n <- 50000
+windowed_data <- data.frame(
+  id = seq_len(n),
+  group = sample(LETTERS[1:10], n, replace = TRUE),
+  value = round(runif(n, 0, 1000), 2),
+  label = paste0("row_", seq_len(n)),
+  stringsAsFactors = FALSE
+)
+
+ui <- fluidPage(
+  h3("DuckDB server: virtual + no pagination (windowed fetching)"),
+  reactableOutput("windowed_duckdb")
+)
+
+server <- function(input, output, session) {
+  output$windowed_duckdb <- renderReactable({
+    reactable(
+      windowed_data,
+      backend = backendDuckDB(),
+      virtual = TRUE,
+      pagination = FALSE,
+      height = 500,
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      highlight = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Windowed fetching with df backend
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("df backend: virtual + no pagination (windowed fetching)"),
+  reactableOutput("windowed_df")
+)
+
+server <- function(input, output, session) {
+  output$windowed_df <- renderReactable({
+    reactable(
+      windowed_data,
+      backend = backendDf(),
+      virtual = TRUE,
+      pagination = FALSE,
+      height = 500,
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      highlight = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Windowed fetching with grouped data (DuckDB server)
+
+```r
+library(shiny)
+library(reactable)
+
+ui <- fluidPage(
+  h3("DuckDB server: windowed + grouped"),
+  reactableOutput("windowed_grouped")
+)
+
+server <- function(input, output, session) {
+  output$windowed_grouped <- renderReactable({
+    reactable(
+      windowed_data,
+      backend = backendDuckDB(),
+      virtual = TRUE,
+      pagination = FALSE,
+      height = 500,
+      groupBy = "group",
+      columns = list(
+        value = colDef(aggregate = "mean"),
+        label = colDef(aggregate = "count")
+      ),
+      sortable = TRUE,
+      highlight = TRUE
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
