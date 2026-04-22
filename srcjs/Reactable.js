@@ -1447,7 +1447,8 @@ function Table({
           filters: s.filters,
           searchValue: s.globalFilter,
           groupBy: s.groupBy,
-          expanded: s.expanded
+          expanded: s.expanded,
+          paginateSubRows: effectivePaginateSubRows
         }
         const res = await window.fetch(url, {
           method: 'POST',
@@ -1467,7 +1468,10 @@ function Table({
     enabled: windowed && (useDuckDB ? duckdbReady : true),
     fetchData: windowedFetchData,
     onBufferChange: handleWindowedBufferChange,
-    initialTotalRowCount: initialServerRowCount || 0,
+    // For grouped data, the initial server row count is the flat (ungrouped) count, not
+    // the grouped count. Start with 0 to avoid showing a full table of placeholders that
+    // shrinks when the first fetch returns the actual grouped count.
+    initialTotalRowCount: hasGroupBy ? 0 : (initialServerRowCount || 0),
     resetDeps: [state.sortBy, state.filters, state.globalFilter, state.groupBy],
     refetchDeps: [state.expanded]
   })
@@ -2352,8 +2356,8 @@ function Table({
           scrollElementRef={tableElement}
           noData={noData}
           minRows={minRows}
-          virtualRowCount={windowed ? windowedData.totalRowCount : undefined}
-          bufferStart={windowed ? windowedBufferStartRef.current : undefined}
+          virtualRowCount={windowed && windowedData.totalRowCount > 0 ? windowedData.totalRowCount : undefined}
+          bufferStart={windowed && windowedData.totalRowCount > 0 ? windowedBufferStartRef.current : undefined}
           onRangeChange={windowed ? windowedData.onRangeChange : undefined}
           headerRowCount={instance.headerGroups.length}
         />

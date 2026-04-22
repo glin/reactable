@@ -1106,6 +1106,9 @@ A backend plugin is a JS object with well-known methods:
       a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
       flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
       the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
+      Note: grouped tables (`groupBy`) already work without pre-rendering -- they start with empty
+      data and load from DuckDB on mount. Windowed+grouped tables start with 0 rows and populate
+      once the first fetch returns. So this is mainly about non-grouped tables.
 - [ ] Defer `resolveDuckDBMode()` to render time: Currently, `backendDuckDB(mode = "auto")` resolves
       client vs. server at `reactable()` call time, which means calling `reactable()` at the top level
       of a Shiny script (outside `renderReactable()`) incorrectly picks client mode. The V8 backend

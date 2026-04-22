@@ -178,6 +178,39 @@ reactable(
 )
 ```
 
+### Windowed fetching with grouped data (Parquet)
+
+Windowed mode with `groupBy` and explicit Parquet format. Combines windowed fetching,
+grouped data with `paginateSubRows`, and Parquet HTTP range requests. 1M rows to force
+Parquet sidecar. Expanding a group should refetch at the current scroll position.
+
+```{r}
+n <- 1000000
+big_grouped <- data.frame(
+  group = sample(LETTERS[1:10], n, replace = TRUE),
+  subgroup = sample(letters[1:5], n, replace = TRUE),
+  value = round(runif(n, 0, 1000), 2),
+  label = paste0("item_", seq_len(n)),
+  stringsAsFactors = FALSE
+)
+
+reactable(
+  big_grouped,
+  backend = backendDuckDB(format = "parquet"),
+  virtual = TRUE,
+  pagination = FALSE,
+  height = 500,
+  groupBy = "group",
+  columns = list(
+    value = colDef(aggregate = "mean", format = colFormat(digits = 1)),
+    label = colDef(aggregate = "count")
+  ),
+  sortable = TRUE,
+  filterable = TRUE,
+  highlight = TRUE
+)
+```
+
 ### Windowed fetching with grouped data
 
 Windowed mode with `groupBy` uses `paginateSubRows` internally to flatten the group tree

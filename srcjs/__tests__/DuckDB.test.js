@@ -3827,4 +3827,97 @@ describe('windowed fetching (virtual + no pagination + DuckDB)', () => {
     // Table should render (even if initially empty, no crash)
     expect(container.querySelector('.rt-table')).toBeTruthy()
   })
+
+  it('grouped windowed table starts with totalRowCount 0 to avoid placeholder flash', async () => {
+    // When groupBy is set, the flat serverRowCount (e.g. 1000) is meaningless for the
+    // grouped display (which might have only 10 group headers). Starting with 0 avoids
+    // a flash of placeholder rows that shrinks when the real grouped count arrives.
+    const mockBackend = createWindowedMockBackend(1000)
+
+    // Delay the query response so we can check the initial render state
+    let resolveQuery
+    mockBackend.query.mockImplementation(() => {
+      return new Promise(resolve => {
+        resolveQuery = resolve
+      })
+    })
+
+    const { container } = render(
+      <Reactable
+        data={{ a: [], b: [] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        groupBy={['a']}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    // Wait for the query to be called (after DuckDB init resolves)
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // Before the query resolves, there should be no placeholder rows.
+    // VirtualTbody should be in non-windowed mode (virtualRowCount is undefined
+    // because totalRowCount is 0).
+    expect(container.querySelectorAll('.rt-tr-placeholder').length).toBe(0)
+
+    // The table's aria-rowcount should not reflect the flat serverRowCount (1000).
+    // It should be based on the actual data (0 rows + header rows).
+    const table = container.querySelector('.rt-table')
+    const ariaRowCount = Number(table.getAttribute('aria-rowcount'))
+    expect(ariaRowCount).toBeLessThan(1000)
+
+    // Resolve the query with grouped data (10 group headers)
+    await act(async () => {
+      resolveQuery({
+        rows: Array.from({ length: 10 }, (_, i) => ({
+          a: `group${i}`,
+          b: null,
+          __state: { id: `g${i}`, index: i, isGrouped: true }
+        })),
+        rowCount: 10
+      })
+    })
+
+    await waitFor(() => {
+      // After data arrives, aria-rowcount should reflect the grouped count
+      const updatedAriaRowCount = Number(table.getAttribute('aria-rowcount'))
+      expect(updatedAriaRowCount).toBeGreaterThan(0)
+    })
+  })
+
+  it('windowed query includes paginateSubRows for grouped tables', async () => {
+    const mockBackend = createWindowedMockBackend(1000)
+
+    render(
+      <Reactable
+        data={{ a: [], b: [] }}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={10}
+        pagination={false}
+        virtual
+        height={400}
+        groupBy={['a']}
+        serverRowCount={1000}
+        serverMaxRowCount={1000}
+      />
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.query).toHaveBeenCalled()
+    })
+
+    // The windowed query for a grouped table should include paginateSubRows: true
+    const queryCall = mockBackend.query.mock.calls[0][0]
+    expect(queryCall.paginateSubRows).toBe(true)
+  })
 })
