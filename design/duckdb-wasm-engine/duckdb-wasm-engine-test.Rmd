@@ -1749,3 +1749,124 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+## Dynamic data updates: Reactable.setData() with DuckDB WASM
+
+**Repro for broken behavior:** After calling `Reactable.setData()` with new data, the table
+initially shows the new data. But sorting or filtering reverts to the OLD data because the
+DuckDB WASM instance still holds the original Arrow data.
+
+```{r}
+htmltools::browsable(htmltools::tagList(
+  reactable(
+    mtcars[1:10, ],
+    backend = backendDuckDB(),
+    defaultPageSize = 5,
+    searchable = TRUE,
+    elementId = "setdata-duckdb-test"
+  ),
+  htmltools::tags$div(
+    style = "margin: 10px 0;",
+    htmltools::tags$button(
+      onclick = "
+        var newData = [
+          {mpg: 999, cyl: 4, disp: 100, hp: 50, drat: 3.0, wt: 2.0, qsec: 18, vs: 1, am: 1, gear: 4, carb: 1},
+          {mpg: 888, cyl: 6, disp: 200, hp: 100, drat: 3.5, wt: 2.5, qsec: 17, vs: 0, am: 0, gear: 3, carb: 2},
+          {mpg: 777, cyl: 8, disp: 300, hp: 150, drat: 4.0, wt: 3.0, qsec: 16, vs: 0, am: 1, gear: 5, carb: 4}
+        ];
+        Reactable.setData('setdata-duckdb-test', newData);
+      ",
+      "Set new data (3 rows)"
+    ),
+    htmltools::tags$span(
+      style = "margin-left: 10px; color: #666;",
+      "After clicking, try sorting or searching. BUG: sort/search reverts to old data."
+    )
+  )
+))
+```
+
+## Dynamic data updates: updateReactable(data=...) with DuckDB Shiny server
+
+**Repro for broken behavior:** After calling `updateReactable(data = newDf)` in Shiny, the table
+shows the new data initially. But sorting or filtering reverts to the OLD data because the
+server-side backend still holds the original data frame.
+
+Note: `updateReactable(data=...)` reuses the column definitions from the initial render, so the
+new data must have the same columns. Swapping to a dataset with different columns is not supported.
+
+```{r}
+library(shiny)
+
+cars_usa <- MASS::Cars93[MASS::Cars93$Origin == "USA", ]
+cars_non_usa <- MASS::Cars93[MASS::Cars93$Origin == "non-USA", ]
+
+ui <- fluidPage(
+  h3("updateReactable(data=...) with DuckDB server backend"),
+  actionButton("swap_data", "Swap to non-USA cars"),
+  actionButton("swap_back", "Swap back to USA cars"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      cars_usa,
+      backend = backendDuckDB(),
+      defaultPageSize = 10,
+      searchable = TRUE,
+      filterable = TRUE
+    )
+  })
+
+  observeEvent(input$swap_data, {
+    updateReactable("table", data = cars_non_usa)
+  })
+
+  observeEvent(input$swap_back, {
+    updateReactable("table", data = cars_usa)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Dynamic data updates: updateReactable(data=...) with backendDf()
+
+Same repro as above but with `backendDf()` server backend.
+
+```{r}
+library(shiny)
+
+cars_usa <- MASS::Cars93[MASS::Cars93$Origin == "USA", ]
+cars_non_usa <- MASS::Cars93[MASS::Cars93$Origin == "non-USA", ]
+
+ui <- fluidPage(
+  h3("updateReactable(data=...) with backendDf()"),
+  actionButton("swap_data", "Swap to non-USA cars"),
+  actionButton("swap_back", "Swap back to USA cars"),
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable({
+    reactable(
+      cars_usa,
+      backend = backendDf(),
+      defaultPageSize = 10,
+      searchable = TRUE,
+      filterable = TRUE
+    )
+  })
+
+  observeEvent(input$swap_data, {
+    updateReactable("table", data = cars_non_usa)
+  })
+
+  observeEvent(input$swap_back, {
+    updateReactable("table", data = cars_usa)
+  })
+}
+
+shinyApp(ui, server)
+```

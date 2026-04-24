@@ -175,6 +175,41 @@ updateReactable <- function(outputId, data = NULL, sortBy = NULL, page = NULL,
     jsEvals <- NULL
   }
 
+  # For server backends, update the mutable data store so subsequent server
+  # queries use the new data. Also signal JS to re-fetch from the server.
+  serverDataUpdated <- NULL
+  if (!is.null(data)) {
+    serverDataStore <- session$userData[[paste0("__reactable__", outputId)]]
+    if (!is.null(serverDataStore)) {
+      storeValue <- serverDataStore$value
+      storeValue$data <- data
+      # Re-initialize the backend with the new data (e.g., DuckDB re-registers the table).
+      # Update the store only after re-init succeeds to avoid desync if init throws.
+      backendArgs <- storeValue[names(storeValue) != "backend"]
+      do.call(reactableServerInit, c(list(storeValue$backend), backendArgs))
+      serverDataStore$value <- storeValue
+      # Pre-calculate initial page with new data for immediate display. This uses
+      # the default page/sort state from init time, not the user's current view state
+      # (which is only known on the JS side). This means if the user has active filters
+      # or a custom sort, they'll briefly see the default-sorted first page before the
+      # re-fetch corrects it. This is a deliberate tradeoff: showing slightly wrong new
+      # data is better than showing stale old data with mismatched row counts. The JS
+      # side will trigger a proper re-fetch with the current state via serverDataVersion
+      # after receiving this message.
+      initialPage <- do.call(reactableServerData, c(list(storeValue$backend), backendArgs))
+      if (is.resolvedData(initialPage)) {
+        data <- initialPage$data
+        serverDataUpdated <- list(
+          serverRowCount = initialPage$rowCount,
+          serverMaxRowCount = if (!is.null(initialPage$maxRowCount)) initialPage$maxRowCount else initialPage$rowCount
+        )
+      } else {
+        warning("reactableServerData() did not return resolvedData after data update; ",
+                "the server backend may not reflect the new data", call. = FALSE)
+      }
+    }
+  }
+
   newState <- filterNulls(list(
     data = data,
     dataKey = dataKey,
@@ -183,7 +218,8 @@ updateReactable <- function(outputId, data = NULL, sortBy = NULL, page = NULL,
     page = page,
     meta = meta,
     sortBy = sortBy,
-    jsEvals = jsEvals
+    jsEvals = jsEvals,
+    serverDataUpdated = serverDataUpdated
   ))
 
   if (length(newState) > 0) {
@@ -502,6 +538,11 @@ is.resolvedData <- function(x) {
 }
 
 reactableFilterFunc <- function(data, req) {
+  # Unwrap mutable data store environment (used by updateReactable to swap data)
+  if (is.environment(data)) {
+    data <- data$value
+  }
+
   body <- rawToChar(req$rook.input$read())
   params <- parseParams(body)
 

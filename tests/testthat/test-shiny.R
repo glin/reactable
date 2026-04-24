@@ -212,6 +212,90 @@ test_that("resolvedData", {
   expect_equal(result$maxRowCount, 20)
 })
 
+test_that("updateReactable updates server data store and re-inits backend", {
+  # Create a test backend that tracks init calls and returns data from its environment
+  backend <- structure(list(private = new.env(parent = emptyenv())), class = "test_server_backend")
+  backend$private$initCount <- 0
+  backend$private$lastData <- NULL
+
+  reactableServerInit.test_server_backend <- function(x, data = NULL, ...) {
+    x$private$initCount <- x$private$initCount + 1
+    x$private$lastData <- data
+  }
+  registerS3method("reactableServerInit", "test_server_backend", reactableServerInit.test_server_backend)
+
+  reactableServerData.test_server_backend <- function(x, data = NULL, pageIndex = 0, pageSize = 10, ...) {
+    resolvedData(data[seq_len(min(pageSize, nrow(data))), , drop = FALSE], rowCount = nrow(data))
+  }
+  registerS3method("reactableServerData", "test_server_backend", reactableServerData.test_server_backend)
+
+  session <- mockSession()
+  session$userData <- list()
+
+  # Set up the server data store as reactable() would
+  originalData <- data.frame(a = 1:5, b = letters[1:5], stringsAsFactors = FALSE)
+  storeValue <- list(
+    backend = backend,
+    data = originalData,
+    columns = list(list(id = "a"), list(id = "b")),
+    pageIndex = 0,
+    pageSize = 10
+  )
+  serverDataStore <- new.env(parent = emptyenv())
+  serverDataStore$value <- storeValue
+  session$userData[["__reactable__mytbl"]] <- serverDataStore
+
+  # Update with new data
+  newData <- data.frame(a = 10:12, b = c("x", "y", "z"), stringsAsFactors = FALSE)
+  updateReactable("mytbl", data = newData, session = session)
+
+  # Backend should have been re-initialized with the new data
+  expect_equal(backend$private$initCount, 1)
+  expect_equal(backend$private$lastData, newData)
+
+  # The store should now hold the new data
+
+  expect_equal(serverDataStore$value$data, newData)
+
+  # The message should include serverDataUpdated with row count info
+  msg <- session$lastMsg$message
+  expect_false(is.null(msg$serverDataUpdated))
+  expect_equal(msg$serverDataUpdated$serverRowCount, 3)
+  # maxRowCount falls back to rowCount when the backend doesn't provide maxRowCount
+  expect_equal(msg$serverDataUpdated$serverMaxRowCount, 3)
+
+  # The data in the message should be the pre-calculated first page
+  expect_equal(msg$data, newData)
+})
+
+test_that("reactableFilterFunc unwraps mutable data store environment", {
+  backend <- structure(list(), class = "test_env_backend")
+  reactableServerData.test_env_backend <- function(x, data = NULL, pageIndex = 0, pageSize = 10, ...) {
+    resolvedData(data, rowCount = nrow(data))
+  }
+  registerS3method("reactableServerData", "test_env_backend", reactableServerData.test_env_backend)
+
+  originalData <- data.frame(x = 1:3)
+  storeValue <- list(backend = backend, data = originalData, pageIndex = 0)
+  serverDataStore <- new.env(parent = emptyenv())
+  serverDataStore$value <- storeValue
+
+  body <- '{"pageIndex":0,"pageSize":10}'
+  req <- list(rook.input = list(read = function() charToRaw(body)))
+
+  # Should work with the environment wrapper
+  resp <- reactableFilterFunc(serverDataStore, req)
+  expect_equal(resp$status, 200L)
+  parsed <- jsonlite::parse_json(resp$content, simplifyVector = TRUE)
+  expect_equal(parsed$data$x, 1:3)
+
+  # Mutate the data in the store (as updateReactable would)
+  serverDataStore$value$data <- data.frame(x = 10:12)
+  resp2 <- reactableFilterFunc(serverDataStore, req)
+  parsed2 <- jsonlite::parse_json(resp2$content, simplifyVector = TRUE)
+  expect_equal(parsed2$data$x, 10:12)
+})
+
 test_that("reactableFilterFunc", {
   backend <- structure(list(), class = "test_backend")
   reactableServerData.test_backend <- function(pageIndex = NULL, pageSize = NULL, groupBy = NULL, ...) {

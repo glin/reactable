@@ -103,12 +103,19 @@ reactableServerInit.reactable_backendDuckdb <- function(x, data = NULL, columns 
          'Install with: install.packages(c("duckdb", "DBI"))', call. = FALSE)
   }
 
-  con <- DBI::dbConnect(duckdb::duckdb())
   # Add 0-based row IDs for stable row identification across pages
   data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
-  # Zero-copy registration - DuckDB reads directly from R data frame memory
-  duckdb::duckdb_register(con, "reactable_data", data)
-  x$private$con <- con
+
+  if (!is.null(x$private$con)) {
+    # Re-initialization with new data: unregister old table and re-register
+    duckdb::duckdb_unregister(x$private$con, "reactable_data")
+    duckdb::duckdb_register(x$private$con, "reactable_data", data)
+  } else {
+    con <- DBI::dbConnect(duckdb::duckdb())
+    # Zero-copy registration - DuckDB reads directly from R data frame memory
+    duckdb::duckdb_register(con, "reactable_data", data)
+    x$private$con <- con
+  }
   # Filter out virtual columns that don't exist in the data
   x$private$columns <- Filter(function(col) !(col$id %in% virtualColumnIds), columns)
 }

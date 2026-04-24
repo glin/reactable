@@ -6,15 +6,17 @@ import '@testing-library/jest-dom/extend-expect'
 // Must mock before importing DuckDBBackend (which imports @duckdb/duckdb-wasm)
 jest.mock('@duckdb/duckdb-wasm', () => ({}))
 
-// Mock apache-arrow DataType for temporal type detection
+// Mock apache-arrow DataType for temporal type detection, and tableFromArrays/tableToIPC for replaceData
 jest.mock('apache-arrow', () => ({
   DataType: {
     isDate: type => type && type._arrowType === 'date',
     isTimestamp: type => type && type._arrowType === 'timestamp'
-  }
+  },
+  tableFromArrays: jest.fn().mockReturnValue({ mockArrowTable: true }),
+  tableToIPC: jest.fn().mockReturnValue(new Uint8Array([1, 2, 3]))
 }))
 
-import { Reactable, getState } from '../Reactable'
+import { Reactable, getState, setData } from '../Reactable'
 import { DuckDBBackend } from '../DuckDBBackend'
 
 import {
@@ -54,11 +56,20 @@ function createMockBackend(totalRows = 20) {
     init: jest.fn().mockResolvedValue(undefined),
     query: jest.fn().mockImplementation(({ pageIndex, pageSize }) => {
       if (pageSize == null) {
-        return Promise.resolve({ rows: allRows, rowCount: totalRows })
+        return Promise.resolve({ rows: allRows, rowCount: mockBackend.totalRowCount })
       }
       const start = pageIndex * pageSize
       const rows = allRows.slice(start, start + pageSize)
-      return Promise.resolve({ rows, rowCount: totalRows })
+      return Promise.resolve({ rows, rowCount: mockBackend.totalRowCount })
+    }),
+    replaceData: jest.fn().mockImplementation(rows => {
+      mockBackend.totalRowCount = rows.length
+      // Update allRows so subsequent queries return the new data
+      allRows.length = 0
+      rows.forEach((row, i) => {
+        allRows.push({ ...row, __state: { id: String(i), index: i } })
+      })
+      return Promise.resolve()
     }),
     queryRowIds: jest.fn().mockImplementation(() => {
       // By default, return all row IDs (no filtering in mock)
@@ -2016,6 +2027,178 @@ describe('DuckDB backend', () => {
       }
     })
   })
+
+  it('Reactable.setData replaces data in DuckDB so sort/filter uses new data', async () => {
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    const { container } = render(
+      <Reactable
+        data={firstPageData}
+        columns={baseColumns}
+        backend="duckdb"
+        arrowData="mock-base64-arrow-data"
+        defaultPageSize={5}
+        serverRowCount={10}
+        serverMaxRowCount={10}
+        elementId="setdata-test"
+      />
+    )
+
+    // Wait for DuckDB to initialize
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Replace data with new rows
+    const newRows = [
+      { a: 100, b: 'new1' },
+      { a: 200, b: 'new2' },
+      { a: 300, b: 'new3' }
+    ]
+    await act(async () => {
+      setData('setdata-test', newRows)
+    })
+
+    // replaceData should have been called on the DuckDB backend
+    expect(mockBackend.replaceData).toHaveBeenCalledWith(newRows)
+
+    // After replaceData resolves, a re-query should be triggered (duckdbDataVersion changed).
+    // The mock now returns new data since replaceData mutated allRows.
+    await waitFor(() => {
+      // The query effect re-fires after duckdbDataVersion increments.
+      // Last query call should be after replaceData.
+      const lastQueryCall = mockBackend.query.mock.calls[mockBackend.query.mock.calls.length - 1]
+      expect(lastQueryCall).toBeTruthy()
+    })
+
+    // Table should show new data (3 rows)
+    expect(getRows(container)).toHaveLength(3)
+    expect(getCellsText(container)).toEqual(['100', 'new1', '200', 'new2', '300', 'new3'])
+  })
+
+  it('Shiny updateState with data replaces data in DuckDB', async () => {
+    window.Shiny = {
+      onInputChange: jest.fn(),
+      addCustomMessageHandler: jest.fn(),
+      bindAll: jest.fn(),
+      unbindAll: jest.fn()
+    }
+    window.HTMLWidgets = { evaluateStringMember: jest.fn() }
+
+    const mockBackend = createMockBackend(10)
+
+    const firstPageData = {
+      a: [1, 2, 3, 4, 5],
+      b: ['row1', 'row2', 'row3', 'row4', 'row5']
+    }
+
+    render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable
+          data={firstPageData}
+          columns={baseColumns}
+          backend="duckdb"
+          arrowData="mock-base64-arrow-data"
+          defaultPageSize={5}
+          serverRowCount={10}
+          serverMaxRowCount={10}
+        />
+      </div>
+    )
+
+    await waitFor(() => {
+      expect(mockBackend.init).toHaveBeenCalled()
+    })
+
+    // Get the updateState handler registered by the Shiny effect
+    const [, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+
+    // Send a data update via Shiny message
+    const newData = { a: [100, 200], b: ['new1', 'new2'] }
+    await act(async () => {
+      updateState({ data: newData })
+    })
+
+    // replaceData should have been called on the DuckDB backend
+    expect(mockBackend.replaceData).toHaveBeenCalled()
+
+    // After replaceData resolves, a re-query should be triggered
+    await waitFor(() => {
+      expect(getRows(document.body)).toHaveLength(2)
+    })
+    expect(getCellsText(document.body)).toEqual(['100', 'new1', '200', 'new2'])
+
+    delete window.Shiny
+    delete window.HTMLWidgets
+  })
+
+  it('Shiny serverDataUpdated triggers server data re-fetch', async () => {
+    window.Shiny = {
+      onInputChange: jest.fn(),
+      addCustomMessageHandler: jest.fn(),
+      bindAll: jest.fn(),
+      unbindAll: jest.fn()
+    }
+    window.HTMLWidgets = { evaluateStringMember: jest.fn() }
+
+    // Use a non-DuckDB server backend (dataURL-based)
+    const firstPageData = {
+      a: [1, 2, 3],
+      b: ['row1', 'row2', 'row3']
+    }
+
+    // Mock fetch before rendering (jsdom doesn't provide window.fetch)
+    const newData = { a: [10, 20, 30, 40], b: ['a', 'b', 'c', 'd'] }
+    window.fetch = jest.fn().mockResolvedValue({
+      json: () => Promise.resolve({ data: newData, rowCount: 4, maxRowCount: 4 })
+    })
+
+    const { container } = render(
+      <div data-reactable-output="shiny-output-container">
+        <Reactable
+          data={firstPageData}
+          columns={baseColumns}
+          dataURL="http://localhost/data"
+          defaultPageSize={10}
+          serverRowCount={3}
+          serverMaxRowCount={3}
+        />
+      </div>
+    )
+
+    expect(getRows(container)).toHaveLength(3)
+
+    // Get the updateState handler
+    const [, updateState] = window.Shiny.addCustomMessageHandler.mock.calls[0]
+    // Clear any initial fetch calls
+    window.fetch.mockClear()
+
+    // Send serverDataUpdated signal (with initial page data)
+    await act(async () => {
+      updateState({
+        data: newData,
+        serverDataUpdated: { serverRowCount: 4, serverMaxRowCount: 4 }
+      })
+    })
+
+    // serverDataVersion increment should trigger a server re-fetch
+    await waitFor(() => {
+      expect(window.fetch).toHaveBeenCalled()
+    })
+
+    // Table should show the new data (from setNewData or the re-fetch)
+    expect(getRows(container)).toHaveLength(4)
+    expect(getCellsText(container)).toEqual(['10', 'a', '20', 'b', '30', 'c', '40', 'd'])
+
+    delete window.Shiny
+    delete window.HTMLWidgets
+    delete window.fetch
+  })
 })
 
 // Unit tests for the DuckDBBackend class itself, with a mock conn.
@@ -3919,5 +4102,109 @@ describe('windowed fetching (virtual + no pagination + DuckDB)', () => {
     // The windowed query for a grouped table should include paginateSubRows: true
     const queryCall = mockBackend.query.mock.calls[0][0]
     expect(queryCall.paginateSubRows).toBe(true)
+  })
+})
+
+describe('DuckDBBackend.replaceData', () => {
+  function createMockConn() {
+    const queries = []
+    const conn = {
+      query: jest.fn().mockImplementation(sql => {
+        queries.push(sql)
+        if (sql.includes('COUNT')) {
+          return Promise.resolve({
+            toArray: () => [{ n: 0 }]
+          })
+        }
+        return Promise.resolve()
+      }),
+      insertArrowFromIPCStream: jest.fn().mockResolvedValue(undefined)
+    }
+    return { conn, queries }
+  }
+
+  it('atomically replaces table with new data using temp table', async () => {
+    const { conn, queries } = createMockConn()
+    // Override count to return 2 (for the new data)
+    conn.query.mockImplementation(sql => {
+      queries.push(sql)
+      if (sql.includes('COUNT')) {
+        return Promise.resolve({ toArray: () => [{ n: 2 }] })
+      }
+      return Promise.resolve()
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    await backend.replaceData([
+      { a: 10, b: 'x' },
+      { a: 20, b: 'y' }
+    ])
+
+    // Should use atomic CREATE temp -> DROP old -> RENAME pattern
+    expect(queries).toContain('DROP TABLE IF EXISTS reactable_data_new')
+    expect(conn.insertArrowFromIPCStream).toHaveBeenCalledWith(
+      expect.anything(),
+      { name: 'reactable_data_new', create: true }
+    )
+    expect(queries).toContain('DROP TABLE IF EXISTS reactable_data')
+    expect(queries).toContain('DROP VIEW IF EXISTS reactable_data')
+    expect(queries).toContain('ALTER TABLE reactable_data_new RENAME TO reactable_data')
+    expect(queries).toContain('SELECT COUNT(*) as n FROM reactable_data')
+    expect(backend.totalRowCount).toBe(2)
+  })
+
+  it('handles empty data by preserving schema from old table', async () => {
+    const { conn, queries } = createMockConn()
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    await backend.replaceData([])
+
+    // Should create new table from old schema, drop old, rename
+    expect(queries).toContain(
+      'CREATE TABLE reactable_data_new AS SELECT * FROM reactable_data WHERE false'
+    )
+    expect(queries).toContain('DROP TABLE IF EXISTS reactable_data')
+    expect(queries).toContain('DROP VIEW IF EXISTS reactable_data')
+    expect(queries).toContain('ALTER TABLE reactable_data_new RENAME TO reactable_data')
+    expect(backend.totalRowCount).toBe(0)
+    // Should NOT call insertArrowFromIPCStream for empty data
+    expect(conn.insertArrowFromIPCStream).not.toHaveBeenCalled()
+  })
+
+  it('throws if connection is not initialized', async () => {
+    const backend = new DuckDBBackend()
+    backend.conn = null
+    await expect(backend.replaceData([{ a: 1 }])).rejects.toThrow(
+      'DuckDB connection not initialized'
+    )
+  })
+
+  it('filters out __state and .subRows from row data', async () => {
+    const { conn, queries } = createMockConn()
+    conn.query.mockImplementation(sql => {
+      queries.push(sql)
+      if (sql.includes('COUNT')) {
+        return Promise.resolve({ toArray: () => [{ n: 1 }] })
+      }
+      return Promise.resolve()
+    })
+
+    const backend = new DuckDBBackend()
+    backend.conn = conn
+
+    await backend.replaceData([
+      { a: 1, b: 'x', __state: { id: '0' }, '.subRows': [] }
+    ])
+
+    // The insertArrowFromIPCStream call should have been made (data is non-empty)
+    expect(conn.insertArrowFromIPCStream).toHaveBeenCalled()
+    expect(backend.totalRowCount).toBe(1)
+
+    // Verify that only real data columns (plus _reactable_rowid) were passed to tableFromArrays
+    const { tableFromArrays } = require('apache-arrow')
+    expect(Object.keys(tableFromArrays.mock.calls[0][0])).toEqual(['a', 'b', '_reactable_rowid'])
   })
 })

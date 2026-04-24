@@ -1005,3 +1005,51 @@ test_that("backendDuckdb - lazy expansion: expanded=NULL fetches all sub-rows (b
   audi_idx <- which(result$data$mfr == "Audi")
   expect_equal(nrow(result$data[[".subRows"]][[audi_idx]]), 1)
 })
+
+test_that("backendDuckdb - re-initialization with new data", {
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  backend <- backendDuckdbServer()
+  df1 <- data.frame(
+    x = c(1, 2, 3),
+    y = c("a", "b", "c"),
+    stringsAsFactors = FALSE
+  )
+  columns <- list(
+    list(id = "x", type = "numeric"),
+    list(id = "y", type = "character")
+  )
+  reactableServerInit(backend, data = df1, columns = columns)
+  on.exit(DBI::dbDisconnect(backend$private$con, shutdown = TRUE), add = TRUE)
+
+  # Verify initial data
+  result1 <- reactableServerData(backend, data = df1, columns = columns,
+                                 pageIndex = 0, pageSize = 10)
+  expect_equal(result1$rowCount, 3)
+  expect_equal(result1$data$x, c(1, 2, 3))
+
+  # Re-initialize with new data (simulates updateReactable(data=...))
+  df2 <- data.frame(
+    x = c(10, 20, 30, 40),
+    y = c("w", "x", "y", "z"),
+    stringsAsFactors = FALSE
+  )
+  reactableServerInit(backend, data = df2, columns = columns)
+
+  # Verify new data is returned
+  result2 <- reactableServerData(backend, data = df2, columns = columns,
+                                 pageIndex = 0, pageSize = 10)
+  expect_equal(result2$rowCount, 4)
+  expect_equal(result2$data$x, c(10, 20, 30, 40))
+  expect_equal(result2$data$y, c("w", "x", "y", "z"))
+
+  # Verify sorting works on new data
+  result3 <- reactableServerData(backend, data = df2, columns = columns,
+                                 pageIndex = 0, pageSize = 10,
+                                 sortBy = list(list(id = "x", desc = TRUE)))
+  expect_equal(result3$data$x, c(40, 30, 20, 10))
+
+  # Verify connection was reused (not a new connection)
+  expect_true(!is.null(backend$private$con))
+})

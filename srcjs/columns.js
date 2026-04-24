@@ -3,6 +3,7 @@ import { hydrate } from 'reactR'
 
 import WidgetContainer from './WidgetContainer'
 import { getAggregateFunction } from './aggregators'
+import { subRowsKey, rowStateKey } from './constants'
 import {
   classNames,
   escapeRegExp,
@@ -14,13 +15,11 @@ import {
 // Use zero-width spaces to preserve the height of empty cells
 export const emptyValue = '\u200b'
 
-// Override default subRows property
-const subRowsKey = '.subRows'
+// Re-export for convenience so existing imports from columns.js still work
+export { rowStateKey, subRowsKey }
 
 export const rowSelectedKey = '.selected'
 export const rowExpandedKey = '.expanded'
-
-export const rowStateKey = '__state'
 
 export function getSubRows(row) {
   return row[subRowsKey] || []

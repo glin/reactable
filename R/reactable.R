@@ -782,9 +782,14 @@ reactable <- function(
         return(instance)
       }
       outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
+      # Use a mutable environment so updateReactable(data=...) can swap the data
+      # and subsequent server queries use the new data.
+      serverDataStore <- new.env(parent = emptyenv())
+      serverDataStore$value <- c(list(backend = backend), initialProps)
+      session$userData[[paste0("__reactable__", outputId)]] <- serverDataStore
       dataURL <- session$registerDataObj(
         outputId,
-        c(list(backend = backend), initialProps),
+        serverDataStore,
         reactableFilterFunc
       )
       instance$x$tag$attribs$dataURL <- dataURL

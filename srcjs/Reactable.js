@@ -1258,6 +1258,9 @@ function Table({
   )
 
   // Server-side data
+  // Incremented when server-side data is updated via updateReactable(data=...),
+  // to force the server data fetch effect to re-run
+  const [serverDataVersion, setServerDataVersion] = React.useState(0)
   const skipInitialFetch = React.useRef(initialServerRowCount != null)
   React.useEffect(() => {
     if (!useServerData) {
@@ -1315,12 +1318,15 @@ function Table({
     state.globalFilter,
     state.groupBy,
     state.expanded,
-    dataColumns
+    dataColumns,
+    serverDataVersion
   ])
 
   // DuckDB-WASM backend data
   const duckdbRef = React.useRef(null)
   const [duckdbReady, setDuckdbReady] = React.useState(false)
+  // Incremented when setData() replaces DuckDB data, to force the query effect to re-run
+  const [duckdbDataVersion, setDuckdbDataVersion] = React.useState(0)
 
   // Initialize DuckDB backend on mount
   React.useEffect(() => {
@@ -1397,6 +1403,32 @@ function Table({
     }
   }, [useDuckDB, arrowData, parquetId])
 
+  // Replace data in the DuckDB WASM instance and trigger a re-query.
+  // Shared by instance.setData() and the Shiny updateState handler.
+  // Deps are [] because it only uses duckdbRef (a ref, always current) and React
+  // state setters (guaranteed stable by React), so it never needs to be recreated.
+  const replaceDuckDBData = React.useCallback(
+    data => {
+      if (!duckdbRef.current) return
+      const backend = duckdbRef.current
+      backend
+        .replaceData(data)
+        .then(() => {
+          // Guard: if backend was destroyed (component unmounted), skip state updates
+          if (!duckdbRef.current) return
+          // Set maxRowCount to the new total (baseline for pagination visibility).
+          // Don't set serverRowCount here - the re-query triggered by duckdbDataVersion
+          // will set it to the correct filtered count for the current view.
+          setServerMaxRowCount(backend.totalRowCount)
+          setDuckdbDataVersion(v => v + 1)
+        })
+        .catch(err => {
+          console.error('DuckDB-WASM replaceData failed:', err)
+        })
+    },
+    []
+  )
+
   // Track buffer start so VirtualTbody knows where buffer rows map to in the full dataset.
   // Updated atomically with setNewData in handleWindowedBufferChange.
   const windowedBufferStartRef = React.useRef(0)
@@ -1472,7 +1504,7 @@ function Table({
     // the grouped count. Start with 0 to avoid showing a full table of placeholders that
     // shrinks when the first fetch returns the actual grouped count.
     initialTotalRowCount: hasGroupBy ? 0 : (initialServerRowCount || 0),
-    resetDeps: [state.sortBy, state.filters, state.globalFilter, state.groupBy],
+    resetDeps: [state.sortBy, state.filters, state.globalFilter, state.groupBy, duckdbDataVersion, serverDataVersion],
     refetchDeps: [state.expanded]
   })
 
@@ -1543,6 +1575,7 @@ function Table({
   }, [
     useDuckDB,
     duckdbReady,
+    duckdbDataVersion,
     windowed,
     canSkipInitialDuckDBQuery,
     defaultSorted,
@@ -2610,7 +2643,22 @@ function Table({
       }
       if (newState.data != null) {
         const data = normalizeColumnData(newState.data, dataColumns)
+        // When DuckDB WASM is active, also replace data in DuckDB so subsequent
+        // sort/filter/page queries use the new data (not the old Arrow data).
+        if (useDuckDB) {
+          replaceDuckDBData(data)
+        }
         setNewData(data)
+      }
+      // When server-side data was updated via updateReactable(data=...), trigger
+      // a re-fetch so sort/filter/page queries use the new data on the server.
+      // Note: the page index is not reset here (consistent with client-side setData
+      // behavior). If the new data has fewer pages, react-table will clamp the page
+      // index automatically when pageCount decreases.
+      if (newState.serverDataUpdated != null) {
+        setServerRowCount(newState.serverDataUpdated.serverRowCount)
+        setServerMaxRowCount(newState.serverDataUpdated.serverMaxRowCount)
+        setServerDataVersion(v => v + 1)
       }
       if (newState.selected != null) {
         const selectedRowIds = newState.selected.map(index => String(index))
@@ -2647,7 +2695,9 @@ function Table({
     instance.toggleAllRowsExpanded,
     dataColumns,
     getPageCount,
-    setMeta
+    setMeta,
+    useDuckDB,
+    replaceDuckDBData
   ])
 
   // Set up Crosstalk and apply initial selection/filtering.
@@ -2824,6 +2874,13 @@ function Table({
     // If data is in row format, it's assumed to have all numbers normalized (NA/NaN/Inf/-Inf not as strings)
     if (!Array.isArray(data)) {
       data = normalizeColumnData(data, dataColumns)
+    }
+    if (useDuckDB) {
+      // For DuckDB WASM: replace data in the DuckDB instance so subsequent
+      // sort/filter/page queries use the new data. setNewData() updates the
+      // displayed rows immediately, then incrementing duckdbDataVersion triggers
+      // the query effect to re-query DuckDB with the current view state.
+      replaceDuckDBData(data)
     }
     setNewData(data)
     if (options.resetSelected) {

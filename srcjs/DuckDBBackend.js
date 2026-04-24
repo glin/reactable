@@ -1,7 +1,8 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
-import { DataType } from 'apache-arrow'
+import { DataType, tableFromArrays, tableToIPC } from 'apache-arrow'
 
 import { round } from './aggregators'
+import { rowIdKey, rowStateKey, subRowsKey } from './constants'
 
 // Map reactable aggregate function names to SQL aggregate expressions.
 // The column identifier is passed pre-escaped.
@@ -94,6 +95,59 @@ export class DuckDBBackend {
     }
 
     // Get total row count
+    const countResult = await this.conn.query('SELECT COUNT(*) as n FROM reactable_data')
+    this.totalRowCount = Number(countResult.toArray()[0].n)
+  }
+
+  // Replace the data in DuckDB with new row data (from Reactable.setData()).
+  // Drops the existing table and creates a new one from the provided rows.
+  // If called concurrently, the last call wins (earlier calls' tables get dropped).
+  async replaceData(rows) {
+    if (!this.conn) {
+      throw new Error('DuckDB connection not initialized')
+    }
+
+    // For empty data, preserve the column schema from the existing table before dropping
+    if (rows.length === 0) {
+      // Drop any orphaned temp table from a previously interrupted call
+      await this.conn.query('DROP TABLE IF EXISTS reactable_data_new')
+      await this.conn.query(
+        'CREATE TABLE reactable_data_new AS SELECT * FROM reactable_data WHERE false'
+      )
+      await this.conn.query('DROP TABLE IF EXISTS reactable_data')
+      await this.conn.query('DROP VIEW IF EXISTS reactable_data')
+      await this.conn.query('ALTER TABLE reactable_data_new RENAME TO reactable_data')
+      this.totalRowCount = 0
+      return
+    }
+
+    // Convert row-oriented data to column arrays for Apache Arrow.
+    // Filter out internal metadata keys and rowIdKey (which we always regenerate
+    // below) that aren't real data columns.
+    const columnNames = Object.keys(rows[0]).filter(
+      k => k !== rowStateKey && k !== subRowsKey && k !== rowIdKey
+    )
+    const columns = {}
+    for (const name of columnNames) {
+      columns[name] = rows.map(row => row[name])
+    }
+    // Add rowIdKey for row identification (matches R-side Arrow IPC serialization)
+    columns[rowIdKey] = rows.map((_, i) => i)
+
+    // Build Arrow table into a temp name, then atomically swap. This ensures
+    // that if tableFromArrays/tableToIPC/insert fails, the old table is preserved.
+    const arrowTable = tableFromArrays(columns)
+    const ipcBytes = tableToIPC(arrowTable)
+    await this.conn.query('DROP TABLE IF EXISTS reactable_data_new')
+    await this.conn.insertArrowFromIPCStream(ipcBytes, {
+      name: 'reactable_data_new',
+      create: true
+    })
+    await this.conn.query('DROP TABLE IF EXISTS reactable_data')
+    await this.conn.query('DROP VIEW IF EXISTS reactable_data')
+    await this.conn.query('ALTER TABLE reactable_data_new RENAME TO reactable_data')
+
+    // Update total row count
     const countResult = await this.conn.query('SELECT COUNT(*) as n FROM reactable_data')
     this.totalRowCount = Number(countResult.toArray()[0].n)
   }
@@ -217,11 +271,11 @@ export class DuckDBBackend {
     const rows = arrowTableToRows(dataResult)
     const rowCount = Number(countResult.toArray()[0].n)
 
-    // Extract _reactable_rowid into __state for stable row identification across pages
+    // Extract rowIdKey into __state for stable row identification across pages
     for (const row of rows) {
-      if (row._reactable_rowid != null) {
-        row['__state'] = { id: String(row._reactable_rowid), index: row._reactable_rowid }
-        delete row._reactable_rowid
+      if (row[rowIdKey] != null) {
+        row[rowStateKey] = { id: String(row[rowIdKey]), index: row[rowIdKey] }
+        delete row[rowIdKey]
       }
     }
 
@@ -233,13 +287,13 @@ export class DuckDBBackend {
   async queryRowIds({ filters, searchValue, columns }) {
     const where = this.buildWhereParts(filters, searchValue, columns)
     const whereStr = where.clauses.length > 0 ? ' WHERE ' + where.clauses.join(' AND ') : ''
-    const sql = 'SELECT _reactable_rowid FROM reactable_data' + whereStr
+    const sql = `SELECT ${rowIdKey} FROM reactable_data` + whereStr
     const result = await this.runPrepared(sql, where.params)
-    return result.toArray().map(row => String(row._reactable_rowid))
+    return result.toArray().map(row => String(row[rowIdKey]))
   }
 
-  // Query with GROUP BY for grouped tables. Returns rows with nested .subRows and
-  // __state metadata so the client can render the grouped table correctly.
+  // Query with GROUP BY for grouped tables. Returns rows with nested subRowsKey and
+  // rowStateKey metadata so the client can render the grouped table correctly.
   async queryGrouped({
     pageIndex,
     pageSize,
@@ -505,7 +559,7 @@ export class DuckDBBackend {
         const headerRow = { ...node.row }
         delete headerRow._sub_count
         delete headerRow._sub_group_count
-        headerRow['__state'] = {
+        headerRow[rowStateKey] = {
           id: node.groupId,
           grouped: true,
           // subRowCount: number of immediate children for the expander "(N)" display.
@@ -542,13 +596,13 @@ export class DuckDBBackend {
             const subRows = arrowTableToRows(subResult)
 
             for (const subRow of subRows) {
-              if (subRow._reactable_rowid != null) {
-                subRow['__state'] = {
-                  id: String(subRow._reactable_rowid),
-                  index: subRow._reactable_rowid,
+              if (subRow[rowIdKey] != null) {
+                subRow[rowStateKey] = {
+                  id: String(subRow[rowIdKey]),
+                  index: subRow[rowIdKey],
                   parentId: node.groupId
                 }
-                delete subRow._reactable_rowid
+                delete subRow[rowIdKey]
               }
               rows.push(subRow)
             }
@@ -670,8 +724,8 @@ export class DuckDBBackend {
         expandedGroups.push(row)
       } else {
         collapsedGroups.push(row)
-        row['.subRows'] = []
-        row['__state'] = { id: stateId, grouped: true, subRowCount: subCount }
+        row[subRowsKey] = []
+        row[rowStateKey] = { id: stateId, grouped: true, subRowCount: subCount }
       }
     }
 
@@ -684,7 +738,7 @@ export class DuckDBBackend {
           clauses: [...parentFilters.clauses, `${escapedGroupCol} = ?`],
           params: [...parentFilters.params, row[groupCol]]
         }
-        row['.subRows'] = await this.buildGroupLevel({
+        row[subRowsKey] = await this.buildGroupLevel({
           groupBy,
           columns,
           baseWhere,
@@ -696,7 +750,7 @@ export class DuckDBBackend {
           expandedMap,
           parentId: rowId
         })
-        row['__state'] = { id: stateId, grouped: true }
+        row[rowStateKey] = { id: stateId, grouped: true }
       }
     } else if (expandedGroups.length > 0) {
       // Leaf level — fetch individual rows only for expanded groups
@@ -727,23 +781,23 @@ export class DuckDBBackend {
 
       for (const row of expandedGroups) {
         const stateId = `${groupCol}:${row[groupCol]}`
-        row['.subRows'] = subRowsByGroup.get(row[groupCol]) || []
-        row['__state'] = { id: stateId, grouped: true }
+        row[subRowsKey] = subRowsByGroup.get(row[groupCol]) || []
+        row[rowStateKey] = { id: stateId, grouped: true }
 
-        // Extract _reactable_rowid into __state for sub-rows
-        for (const subRow of row['.subRows']) {
-          if (subRow._reactable_rowid != null) {
-            subRow['__state'] = {
-              id: String(subRow._reactable_rowid),
-              index: subRow._reactable_rowid
+        // Extract rowIdKey into rowStateKey for sub-rows
+        for (const subRow of row[subRowsKey]) {
+          if (subRow[rowIdKey] != null) {
+            subRow[rowStateKey] = {
+              id: String(subRow[rowIdKey]),
+              index: subRow[rowIdKey]
             }
-            delete subRow._reactable_rowid
+            delete subRow[rowIdKey]
           }
         }
 
         // Post-compute aggregates that can't be expressed in SQL (e.g. frequency)
         for (const agg of postComputeAggs) {
-          row[agg.id] = this.computeAggregate(agg.aggregate, row['.subRows'], agg.id)
+          row[agg.id] = this.computeAggregate(agg.aggregate, row[subRowsKey], agg.id)
         }
       }
     }

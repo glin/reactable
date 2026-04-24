@@ -1041,6 +1041,111 @@ manual testing checklist, and related GitHub issues.
 
 ---
 
+### Phase 9I: Dynamic data updates (`setData` + `updateReactable(data=...)`) -- DONE
+
+**Goal:** Make `Reactable.setData()` (JS API) and `updateReactable(data = ...)` (Shiny) work
+correctly with all backend modes. Currently, both only update React state without re-initializing
+the backend, so subsequent sort/filter/page operations still query the old data.
+
+**Current behavior (broken):**
+
+- **`Reactable.setData(tableId, newData)`**: Calls `setNewData()` which replaces the displayed
+  rows in React state. But the DuckDB WASM instance still holds the old Arrow data in its
+  `reactable_data` table. Any subsequent sort/filter/page change re-queries DuckDB and reverts
+  to the old data.
+- **`updateReactable(outputId, data = newDf)`**: R side sends new data as JSON via Shiny custom
+  message. JS handler calls `normalizeColumnData()` + `setNewData()`. Same problem: DuckDB WASM
+  (if active) still has old data. Additionally, for server backends (V8/df/dt/DuckDB server), the
+  `dataURL` closure registered via `session$registerDataObj` still holds the original data, so
+  server queries return old results.
+
+**Scope:**
+
+1. **DuckDB WASM (`Reactable.setData()`):** Re-import new data into the existing DuckDB instance.
+   Drop the old `reactable_data` table, insert the new data, update `totalRowCount`, then re-query
+   for the current view.
+2. **Server backends (`updateReactable(data=...)`):** Update the server-side data in the
+   `reactableFilterFunc` closure so subsequent Shiny requests query the new data. Then trigger
+   a re-fetch from the client.
+3. **DuckDB server (`updateReactable(data=...)`):** Same as server backends, plus need to
+   re-register the new data frame in DuckDB via `duckdb_register()`.
+
+**Design:**
+
+For DuckDB WASM `setData()`:
+- Add a `replaceData(rows, columns)` method to `DuckDBBackend` that drops the old table,
+  creates a new one from the provided row data using DuckDB's `INSERT INTO ... VALUES` or
+  by converting to Arrow IPC in JS, and updates `totalRowCount`.
+- In `Reactable.js`, when `setData()` is called and `useDuckDB` is true, call
+  `duckdbRef.current.replaceData()` instead of just `setNewData()`. After replacement,
+  re-query DuckDB for the current page/sort/filter state.
+
+For server backends `updateReactable(data=...)`:
+- The `reactableFilterFunc` closure holds `data` as its first argument (passed to
+  `session$registerDataObj`). Shiny's `registerDataObj` stores this in `session$userData`.
+  We need to mutate the stored data object so subsequent requests use the new data.
+- Use a mutable container (environment or reactiveVal) to hold the server-side data, so
+  `updateReactable(data=...)` can swap it out. The R side sends a message to update the
+  container, then the JS side triggers a re-fetch.
+- For DuckDB server: also call `duckdb_unregister()` + `duckdb_register()` with the new data.
+- For other server backends: `reactableServerInit()` may need to be called again with the
+  new data.
+
+#### Steps
+
+- [x] **9I.1** **DuckDB WASM `replaceData()`:** Added `replaceData(rows)` method to
+      `DuckDBBackend.js`. Uses atomic temp table pattern: builds Arrow table via
+      `tableFromArrays()` + `tableToIPC()`, inserts into `reactable_data_new`, then
+      drops old table and renames. Empty data path preserves schema via
+      `CREATE TABLE ... AS SELECT * FROM old WHERE false`. Filters internal metadata
+      keys (`rowStateKey`, `subRowsKey`, `rowIdKey`) and regenerates `rowIdKey`.
+- [x] **9I.2** **JS `setData()` for DuckDB:** `instance.setData()` calls
+      `replaceDuckDBData(data)` then `setNewData(data)` when DuckDB is active.
+      `replaceDuckDBData` callback calls `duckdbRef.current.replaceData()` and increments
+      `duckdbDataVersion` to trigger re-query. Uses empty `[]` dep array (only refs + stable setters).
+- [x] **9I.3** **R server data container:** `preRenderHook` wraps server data in
+      `new.env(parent = emptyenv())` stored in `session$userData` keyed by
+      `__reactable__<outputId>`. `reactableFilterFunc` unwraps the mutable environment.
+- [x] **9I.4** **`updateReactable(data=...)` for server backends:** Looks up mutable
+      data store in `session$userData`, calls `reactableServerInit()` first (prevents
+      desync on error), then writes new data to store. Sends `serverDataUpdated` signal
+      with `serverRowCount`, `serverMaxRowCount` (falls back to `rowCount` when NULL),
+      and pre-calculated initial page data.
+- [x] **9I.5** **DuckDB server re-registration:** `reactableServerInit.reactable_backendDuckdb`
+      handles re-initialization via `duckdb_unregister()` + `duckdb_register()` on existing
+      connection.
+- [x] **9I.6** **JS re-fetch trigger:** `serverDataVersion` state variable added to
+      non-windowed server fetch effect deps and windowed `resetDeps`. Shiny `updateState`
+      handler increments it on `serverDataUpdated` signal. For DuckDB client mode,
+      `duckdbDataVersion` triggers re-queries.
+- [x] **9I.7** **Tests:** JS tests: atomic swap pattern, empty data schema preservation,
+      metadata key filtering, `setData` with DuckDB integration, Shiny `updateState` with
+      DuckDB data, Shiny `serverDataUpdated` triggers re-fetch. R tests: `updateReactable`
+      updates server data store and re-inits backend (verifies S3 dispatch, data swap,
+      `serverDataUpdated` with `maxRowCount` fallback), `reactableFilterFunc` unwraps
+      mutable environment, DuckDB re-initialization with connection reuse.
+- [x] **9I.8** **Test Rmd examples:** Added `setData` test (combined `browsable(tagList(...))`
+      chunk with table + button) and Shiny `updateReactable(data=...)` examples using
+      `MASS::Cars93` USA/non-USA subsets (same columns). Added `backendDf()` variant.
+- [x] **9I.9** **Shared constants:** Extracted `rowStateKey`, `subRowsKey`, `rowIdKey` into
+      `srcjs/constants.js` (dependency-free module). `DuckDBBackend.js` imports from
+      `constants.js`; `columns.js` re-exports from `constants.js` for backward compatibility.
+
+#### Validate
+
+- [x] `Reactable.setData()` with DuckDB WASM: set new data, sort a column, verify new data is sorted
+      (unit tested; browser validation blocked by R segfault)
+- [x] `updateReactable(data=...)` with `backendDf()`: update data, verify table shows new data
+      (unit tested; browser validation blocked by R segfault)
+- [x] `updateReactable(data=...)` with `backendDuckDB()` (server): update data, sort, verify new data
+      (unit tested; browser validation blocked by R segfault)
+- [x] All existing tests pass (544 JS tests, 77 shiny R tests, 128 backend-duckdb R tests)
+- [x] `npm test` passes
+- [x] `npm run build` passes
+- [x] `npm run lint` passes
+
+---
+
 ### Phase 10: Internal JS backend plugin interface
 
 **Goal:** Define an internal generic backend interface in JS and refactor DuckDB to be a plugin of
@@ -1094,10 +1199,6 @@ A backend plugin is a JS object with well-known methods:
 - [x] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
       where sub-rows count toward the page size. See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
       Implemented for DuckDB WASM, DuckDB R server, and df server backends.
-- [ ] `Reactable.setData()` JS API for DuckDB: When data changes dynamically, the DuckDB engine instance still
-      holds old Arrow data and needs to be re-initialized. Currently, `setData()` only updates React state.
-- [ ] Shiny `updateReactable(data = ...)` for DuckDB: Same issue as `setData()`. The DuckDB R server backend
-      would need to re-register the new data, and DuckDB WASM would need re-import of Arrow IPC.
 - [x] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests.
       Implemented: `backendDuckDB(format = "parquet")`, auto-format picks Parquet when Arrow IPC > ~20 MB.
 - [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
@@ -1201,3 +1302,28 @@ WASM setup + Arrow/Parquet import, `resolveData()` to `query()`/`queryGrouped()`
 - Grouped data in resolver mode: support `.subRows` in return value, or only for built-in backends?
 - Backend factory vs object: `function(tableId) { return {...} }` for per-instance state, or plain object?
 - Loading state / error state rendering (shared concern with "remove pre-rendering" deferred item)
+
+---
+
+### Known issue: updateReactable(data=...) does not handle rownames
+
+**Pre-existing bug** (not introduced by Phase 9I, exists on `main` for all backends).
+
+`reactable()` auto-detects character rownames and prepends a `.rownames` column to the data
+(R/reactable.R lines 309-330). But `updateReactable()` in R/shiny.R has no rownames handling at all.
+When swapping data via `updateReactable("table", data = mtcars[11:20, ])`, the new data frame has
+character rownames but they are never converted to a `.rownames` column, causing a column mismatch.
+
+**Why it is not trivial to fix:**
+
+- `updateReactable()` does not know whether the original `reactable()` was called with
+  `rownames = TRUE`, `rownames = FALSE`, or `rownames = NULL` (auto-detect). Re-running auto-detection
+  on the new data is close but incorrect if the user explicitly set `rownames = FALSE`.
+- The clean fix requires storing the resolved `rownames` boolean from the original `reactable()` call
+  in the mutable session store (or widget state) so `updateReactable()` can apply the same logic.
+- Needs tests for: auto-detected rownames, explicit `rownames = TRUE`, explicit `rownames = FALSE`,
+  and data where one swap has character rownames and the other does not.
+
+**Workaround:** Use data without character rownames, or strip rownames before passing to
+`updateReactable()` (e.g., `data.frame(mtcars, check.names = FALSE)` or reset with
+`rownames(df) <- NULL`).
