@@ -1194,56 +1194,88 @@ A backend plugin is a JS object with well-known methods:
 
 ---
 
-### Deferred / Future
+### Phase 9J: Remove pre-rendering + defer DuckDB mode resolution
 
-- [x] `paginateSubRows` support for DuckDB engine: Flatten grouped + expanded rows into a single paginated list
-      where sub-rows count toward the page size. See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
-      Implemented for DuckDB WASM, DuckDB R server, and df server backends.
-- [x] Parquet sidecar files: For very large data, write Parquet alongside HTML, query via HTTP range requests.
-      Implemented: `backendDuckDB(format = "parquet")`, auto-format picks Parquet when Arrow IPC > ~20 MB.
-- [ ] Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first page is the entire
-      dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as JSON). Even with pagination, the
-      pre-rendered JSON page is redundant weight. Consider removing R-side pre-rendering entirely and instead showing
-      a loading skeleton or CSS placeholder until DuckDB initializes and returns the first page. This avoids the
-      flash-of-content problem (pre-rendered page briefly visible, then replaced by DuckDB results) and eliminates
-      the duplicate payload. Needs a CSS/JS loading state that prevents layout shift.
+**Goal:** Remove R-side first-page pre-rendering for DuckDB client mode and defer `resolveDuckDBMode()`
+to render time. These are tightly coupled: deferring mode resolution is much simpler once pre-rendering
+is removed, since both client and server paths only need Arrow IPC serialization at `reactable()` time.
+
+**Previously completed (from earlier phases):**
+- [x] `paginateSubRows` support (Phase 5)
+- [x] Parquet sidecar files (Phase 8.5)
+- [x] Web Worker isolation (Phase 2)
+- [x] CRAN package size evaluation (Phase 2)
+- [x] Virtualized windowed fetching (Phase 9E)
+
+#### Steps
+
+- [ ] **9J.1** Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first
+      page is the entire dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as
+      JSON). Even with pagination, the pre-rendered JSON page is redundant weight. Remove R-side
+      pre-rendering entirely and instead show a loading skeleton or CSS placeholder until DuckDB
+      initializes and returns the first page. This avoids the flash-of-content problem (pre-rendered
+      page briefly visible, then replaced by DuckDB results) and eliminates the duplicate payload.
+      Needs a CSS/JS loading state that prevents layout shift.
       Note: grouped tables (`groupBy`) already work without pre-rendering -- they start with empty
       data and load from DuckDB on mount. Windowed+grouped tables start with 0 rows and populate
       once the first fetch returns. So this is mainly about non-grouped tables.
-- [ ] Defer `resolveDuckDBMode()` to render time: Currently, `backendDuckDB(mode = "auto")` resolves
-      client vs. server at `reactable()` call time, which means calling `reactable()` at the top level
-      of a Shiny script (outside `renderReactable()`) incorrectly picks client mode. The V8 backend
-      works at the top level because it has no auto-detection. To fix, defer mode resolution to
-      `preRenderHook`, where the Shiny session is available. This is much simpler after removing
-      first-page pre-rendering (above), since both paths would just need Arrow IPC serialization
-      at `reactable()` time, with the server path discarding it in the hook. Currently, a warning
-      is emitted when DuckDB client mode is rendered in Shiny.
-- [x] Web Worker isolation: ~~Move DuckDB queries to a dedicated Web Worker to guarantee UI thread never blocks~~
-      Already implemented. `DuckDBBackend.js` creates an `AsyncDuckDB(logger, worker)` instance with a Web Worker
-      (blob URL from `duckdb-browser-eh.worker.js`). All SQL execution runs off the main thread via Worker
-      `postMessage`. Only `arrowTableToRows()` result conversion runs on the main thread (unavoidable).
+- [ ] **9J.2** Defer `resolveDuckDBMode()` to render time: Currently, `backendDuckDB(mode = "auto")`
+      resolves client vs. server at `reactable()` call time via `shiny::getDefaultReactiveDomain()`.
+      Calling `reactable()` at the top level of a Shiny script (outside `renderReactable()`)
+      incorrectly picks client mode because there is no reactive domain yet. The V8/df/dt backends
+      work at the top level because they always assume server mode and defer session detection to
+      `preRenderHook`. To fix, defer DuckDB mode resolution to `preRenderHook`, where the Shiny
+      session is available. After removing pre-rendering (9J.1), both paths just need Arrow IPC
+      serialization at `reactable()` time, with the server path discarding it in the hook.
+      Currently, a warning is emitted when DuckDB client mode is rendered in Shiny but the mode
+      is not corrected.
+
+#### Validate
+
+- [ ] DuckDB client mode shows a loading state instead of pre-rendered first page
+- [ ] No duplicate payload (Arrow IPC + JSON) in the HTML document
+- [ ] `reactable(data, backend = backendDuckDB())` called at top level of Shiny script correctly
+      detects server mode at render time
+- [ ] `reactable(data, backend = backendDuckDB())` still works in static HTML (client mode)
+- [ ] All existing tests pass
+
+---
+
+### Phase 9K: Polish and release preparation
+
+**Goal:** Final cleanup, attribution, and documentation before Phase 10.
+
+#### Steps
+
+- [ ] **9K.1** Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field
+      (copyright holders). DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0
+      licensed (Apache Software Foundation).
+- [ ] **9K.2** Update virtual scrolling and DuckDB backend vignettes with windowed fetching
+      documentation.
+- [ ] **9K.3** Shared DuckDB instance: Multiple reactable tables on one page share a single
+      DuckDB-WASM instance instead of each creating its own.
+- [ ] **9K.4** Remove `backendDf()` and `backendDt()`: These were carried over from development but
+      are unlikely to be needed. DuckDB server mode should cover the same use cases with better
+      performance. Can be removed without a deprecation cycle since they were never in a CRAN release.
+
+#### Validate
+
+- [ ] `DESCRIPTION` has correct author attributions
+- [ ] Vignettes document windowed fetching
+- [ ] Multiple tables on one page share a DuckDB instance
+- [ ] `backendDf()` and `backendDt()` are removed, tests updated
+- [ ] `R CMD check` passes
+
+---
+
+### Deferred / Future
+
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once
-- [ ] Shared DuckDB instance: Multiple reactable tables on one page share a single DuckDB-WASM instance
-- [x] CRAN package size: The `duckdb-eh.wasm` file is ~32.7 MB uncompressed but compresses to ~7.3 MB with
-      gzip/tar.gz. A full source tarball is ~8.9 MB, within CRAN's 10 MB limit (CRAN prefers bundling third-party
-      source software over runtime downloads, and modest limit increases are available on request). No separate
-      delivery mechanism is needed.
-- [ ] Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field (copyright holders).
-      DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0 licensed (Apache Software Foundation).
-- [ ] Public custom JS backend API: Expose the internal backend plugin interface as a public API so users can
-      write custom client-side backends. Requires substantial documentation of the backend contract, object shapes,
-      return types, column discovery, and error handling. See "Design notes: custom JS backend API" below for the
-      full design sketch.
-- [ ] Remove `backendDf()` and `backendDt()`: These were carried over from development but are unlikely to be
-      needed. DuckDB server mode should cover the same use cases with better performance. Can be removed
-      without a deprecation cycle since they were never in a CRAN release.
-- [x] Virtualized windowed fetching: With `virtual = TRUE, pagination = FALSE`, DuckDB fetches only a
-      sliding window of ~500 rows around the viewport instead of all rows at once. Scroll-position-driven
-      queries via `useWindowedData` hook, debounced buffer fetching, placeholder rows for out-of-buffer
-      indices. Works with all backends (DuckDB WASM, server-side). Grouped data handled via internal
-      `paginateSubRows`. See `design/server-side-data/virtual-windowed-fetching.md` for the full design.
-- [ ] Update virtual scrolling and DuckDB backend vignettes with windowed fetching documentation
+- [ ] Public custom JS backend API: Expose the internal backend plugin interface (Phase 10) as a public
+      API so users can write custom client-side backends. Requires substantial documentation of the
+      backend contract, object shapes, return types, column discovery, and error handling. See
+      "Design notes: custom JS backend API" below for the full design sketch.
 
 ---
 

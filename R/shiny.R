@@ -199,6 +199,11 @@ updateReactable <- function(outputId, data = NULL, sortBy = NULL, page = NULL,
       initialPage <- do.call(reactableServerData, c(list(storeValue$backend), backendArgs))
       if (is.resolvedData(initialPage)) {
         data <- initialPage$data
+        # Signal to JS that server data was replaced. JS reads serverRowCount and
+        # serverMaxRowCount to update pagination state, then increments serverDataVersion
+        # to trigger a re-fetch with the user's current sort/filter state.
+        # Shape: { serverRowCount: number, serverMaxRowCount: number }
+        # Consumed by: Reactable.js updateState handler (search for 'serverDataUpdated')
         serverDataUpdated <- list(
           serverRowCount = initialPage$rowCount,
           serverMaxRowCount = if (!is.null(initialPage$maxRowCount)) initialPage$maxRowCount else initialPage$rowCount

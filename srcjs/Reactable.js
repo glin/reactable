@@ -2650,14 +2650,23 @@ function Table({
         }
         setNewData(data)
       }
-      // When server-side data was updated via updateReactable(data=...), trigger
-      // a re-fetch so sort/filter/page queries use the new data on the server.
+      // Server data was replaced via R's updateReactable(data=...). Update pagination
+      // counts from the initial page, then bump serverDataVersion to trigger a re-fetch
+      // with the user's current sort/filter state.
+      // Produced by: R/shiny.R updateReactable() (search for 'serverDataUpdated')
       // Note: the page index is not reset here (consistent with client-side setData
       // behavior). If the new data has fewer pages, react-table will clamp the page
       // index automatically when pageCount decreases.
       if (newState.serverDataUpdated != null) {
-        setServerRowCount(newState.serverDataUpdated.serverRowCount)
-        setServerMaxRowCount(newState.serverDataUpdated.serverMaxRowCount)
+        const { serverRowCount, serverMaxRowCount } = newState.serverDataUpdated
+        if (serverRowCount == null || serverMaxRowCount == null) {
+          console.error(
+            'serverDataUpdated missing required fields. Expected { serverRowCount, serverMaxRowCount }, got:',
+            newState.serverDataUpdated
+          )
+        }
+        setServerRowCount(serverRowCount)
+        setServerMaxRowCount(serverMaxRowCount)
         setServerDataVersion(v => v + 1)
       }
       if (newState.selected != null) {

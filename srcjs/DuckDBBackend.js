@@ -61,6 +61,10 @@ export class DuckDBBackend {
     this.db = null
     this.conn = null
     this.totalRowCount = 0
+    // Monotonic counter for replaceData concurrency control. Each call captures
+    // the version at start; if a newer call arrives before the swap completes,
+    // the older call aborts instead of interleaving DuckDB operations.
+    this._replaceVersion = 0
   }
 
   async init({ arrowBase64, parquetUrl, wasmBasePath }) {
@@ -99,21 +103,30 @@ export class DuckDBBackend {
     this.totalRowCount = Number(countResult.toArray()[0].n)
   }
 
-  // Replace the data in DuckDB with new row data (from Reactable.setData()).
-  // Drops the existing table and creates a new one from the provided rows.
-  // If called concurrently, the last call wins (earlier calls' tables get dropped).
+  // Replace the data in DuckDB with new row data (from Reactable.setData() or
+  // Shiny updateReactable(data=...)). Converts rows to Arrow IPC, inserts into a
+  // temp table, then atomically swaps with the old table to avoid data loss on error.
+  //
+  // Concurrency: Uses a version counter so that if a newer replaceData() call arrives
+  // while an earlier one is in progress, the earlier call aborts cleanly after each
+  // await point. The last call always wins.
   async replaceData(rows) {
     if (!this.conn) {
       throw new Error('DuckDB connection not initialized')
     }
 
+    const version = ++this._replaceVersion
+    const isStale = () => this._replaceVersion !== version
+
     // For empty data, preserve the column schema from the existing table before dropping
     if (rows.length === 0) {
       // Drop any orphaned temp table from a previously interrupted call
       await this.conn.query('DROP TABLE IF EXISTS reactable_data_new')
+      if (isStale()) return
       await this.conn.query(
         'CREATE TABLE reactable_data_new AS SELECT * FROM reactable_data WHERE false'
       )
+      if (isStale()) return
       await this.conn.query('DROP TABLE IF EXISTS reactable_data')
       await this.conn.query('DROP VIEW IF EXISTS reactable_data')
       await this.conn.query('ALTER TABLE reactable_data_new RENAME TO reactable_data')
@@ -139,10 +152,12 @@ export class DuckDBBackend {
     const arrowTable = tableFromArrays(columns)
     const ipcBytes = tableToIPC(arrowTable)
     await this.conn.query('DROP TABLE IF EXISTS reactable_data_new')
+    if (isStale()) return
     await this.conn.insertArrowFromIPCStream(ipcBytes, {
       name: 'reactable_data_new',
       create: true
     })
+    if (isStale()) return
     await this.conn.query('DROP TABLE IF EXISTS reactable_data')
     await this.conn.query('DROP VIEW IF EXISTS reactable_data')
     await this.conn.query('ALTER TABLE reactable_data_new RENAME TO reactable_data')
