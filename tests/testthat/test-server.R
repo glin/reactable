@@ -61,6 +61,42 @@ test_that("backendDuckDB() auto mode switches to server in preRenderHook", {
   expect_s3_class(serverDataStore$value$backend, "reactable_backendDuckdb")
   expect_equal(nrow(serverDataStore$value$data), 2)
   expect_false("_reactable_rowid" %in% colnames(serverDataStore$value$data))
+  # Should have removed client-mode dependencies (duckdb-wasm, parquet sidecar)
+  depNames <- vapply(tbl3$dependencies, function(d) d$name, character(1))
+  expect_false("duckdb-wasm" %in% depNames)
+  expect_false(any(startsWith(depNames, "reactable-parquet-")))
+})
+
+test_that("backendDuckDB(format = 'parquet') auto mode removes parquet dependency", {
+  skip_if_not_installed("arrow")
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
+
+  data <- data.frame(x = c(1, 2), y = c("a", "b"))
+  tbl <- reactable(data, backend = backendDuckDB(format = "parquet"))
+
+  # Parquet format should have parquet sidecar dependency in client mode
+  depNames <- vapply(tbl$dependencies, function(d) d$name, character(1))
+  expect_true(any(startsWith(depNames, "reactable-parquet-")))
+
+  # Inside Shiny, preRenderHook should switch to server mode and remove parquet dep
+  registeredURL <- NULL
+  mockShinySession <- new.env(parent = emptyenv())
+  mockShinySession$userData <- new.env(parent = emptyenv())
+  mockShinySession$registerDataObj <- function(name, data, filterFunc) {
+    registeredURL <<- paste0("/session/", name)
+    registeredURL
+  }
+  local_mocked_bindings(
+    getDefaultReactiveDomain = function() mockShinySession,
+    getCurrentOutputInfo = function(session) list(name = "test_table2"),
+    .package = "shiny"
+  )
+  tbl2 <- tbl$preRenderHook(tbl)
+
+  depNames2 <- vapply(tbl2$dependencies, function(d) d$name, character(1))
+  expect_false("duckdb-wasm" %in% depNames2)
+  expect_false(any(startsWith(depNames2, "reactable-parquet-")))
 })
 
 test_that("backendDuckDB(mode = 'client') has no preRenderHook", {

@@ -1334,7 +1334,7 @@ function Table({
       return
     }
 
-    const duckdbModule = window.__ReactableDuckDB
+    const duckdbModule = window.Reactable && window.Reactable.__DuckDB
     if (!duckdbModule) {
       console.error(
         'DuckDB-WASM backend not loaded. Make sure the duckdb-wasm dependency is included.'
@@ -1345,7 +1345,7 @@ function Table({
     // Resolve Parquet URL from the locator script registered by parquetDependency
     let parquetUrl = null
     if (parquetId) {
-      const parquetRegistry = window.__ReactableParquet
+      const parquetRegistry = window.Reactable && window.Reactable.__Parquet
       if (parquetRegistry && parquetRegistry[parquetId]) {
         parquetUrl = parquetRegistry[parquetId]
         // If the locator script couldn't detect its base path (e.g., in Shiny where

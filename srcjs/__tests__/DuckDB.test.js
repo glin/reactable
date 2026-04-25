@@ -39,8 +39,11 @@ reactR.hydrate = (components, tag) => tag
 
 afterEach(() => {
   jest.clearAllMocks()
-  delete window.__ReactableDuckDB
-  delete window.__ReactableParquet
+  if (window.Reactable) {
+    delete window.Reactable.__DuckDB
+    delete window.Reactable.__DuckDBBasePath
+    delete window.Reactable.__Parquet
+  }
 })
 
 // Helper to create a mock DuckDB backend that returns predictable data
@@ -78,7 +81,8 @@ function createMockBackend(totalRows = 20) {
     destroy: jest.fn().mockResolvedValue(undefined)
   }
 
-  window.__ReactableDuckDB = {
+  window.Reactable = window.Reactable || {}
+  window.Reactable.__DuckDB = {
     DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
     wasmBasePath: '/mock/path/'
   }
@@ -482,11 +486,11 @@ describe('DuckDB backend', () => {
     // Data should be rendered normally from the data prop
     expect(getCellsText(container)).toEqual(['1', 'x', '2', 'y', '3', 'z'])
 
-    // __ReactableDuckDB should not have been accessed
-    expect(window.__ReactableDuckDB).toBeUndefined()
+    // Reactable.__DuckDB should not have been accessed
+    expect(window.Reactable && window.Reactable.__DuckDB).toBeFalsy()
   })
 
-  it('logs error when __ReactableDuckDB is not available', async () => {
+  it('logs error when Reactable.__DuckDB is not available', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
     const firstPageData = { a: [1], b: ['row1'] }
@@ -522,7 +526,8 @@ describe('DuckDB backend', () => {
       destroy: jest.fn().mockResolvedValue(undefined)
     }
 
-    window.__ReactableDuckDB = {
+    window.Reactable = window.Reactable || {}
+    window.Reactable.__DuckDB = {
       DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
       wasmBasePath: '/mock/path/'
     }
@@ -560,7 +565,8 @@ describe('DuckDB backend', () => {
     const mockBackend = createMockBackend(20)
 
     // Register a Parquet URL via the locator mechanism
-    window.__ReactableParquet = {
+    window.Reactable = window.Reactable || {}
+    window.Reactable.__Parquet = {
       abc12345: 'http://localhost/lib/reactable-parquet-abc12345-1/reactable-data-abc12345.parquet'
     }
 
@@ -3661,7 +3667,8 @@ describe('windowed fetching (virtual + no pagination + DuckDB)', () => {
       destroy: jest.fn().mockResolvedValue(undefined)
     }
 
-    window.__ReactableDuckDB = {
+    window.Reactable = window.Reactable || {}
+    window.Reactable.__DuckDB = {
       DuckDBBackend: jest.fn().mockReturnValue(mockBackend),
       wasmBasePath: '/mock/path/'
     }

@@ -55,10 +55,10 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
 
 - Separate webpack bundle (`webpack.config.duckdb.js`) keeps DuckDB out of the main reactable bundle (0 cost when not used)
 - `srcjs/DuckDBEngine.js` — the engine class (init, query, destroy)
-- `srcjs/duckdb-entry.js` — entry point that registers `window.__ReactableDuckDB` with engine class + WASM base path
+- `srcjs/duckdb-entry.js` — entry point that registers `window.Reactable.__DuckDB` with engine class + WASM base path
 - `reactable-duckdb.js` (202KB prod) + WASM files + worker files in `inst/htmlwidgets/lib/duckdb-wasm/`
 - R adds `htmltools::htmlDependency` for duckdb-wasm only when `engine = "duckdb"`
-- `Reactable.js` checks `window.__ReactableDuckDB`, creates engine instance, queries on page changes
+- `Reactable.js` checks `window.Reactable.__DuckDB`, creates engine instance, queries on page changes
 
 **Tests added** (8 tests in `srcjs/__tests__/DuckDB.test.js`):
 
@@ -68,7 +68,7 @@ proof that the full pipeline works end-to-end (R → Arrow → browser → DuckD
 - Engine cleanup on unmount
 - Empty data (0 rows)
 - Normal mode unaffected when engine not set
-- Error when `__ReactableDuckDB` not available
+- Error when `Reactable.__DuckDB` not available
 - Graceful handling of init failure
 
 #### Steps
@@ -1244,25 +1244,24 @@ is removed, since both client and server paths only need Arrow IPC serialization
       Note: grouped tables (`groupBy`) already work without pre-rendering -- they start with empty
       data and load from DuckDB on mount. Windowed+grouped tables start with 0 rows and populate
       once the first fetch returns. So this is mainly about non-grouped tables.
-- [ ] **9J.2** Defer `resolveDuckDBMode()` to render time: Currently, `backendDuckDB(mode = "auto")`
-      resolves client vs. server at `reactable()` call time via `shiny::getDefaultReactiveDomain()`.
-      Calling `reactable()` at the top level of a Shiny script (outside `renderReactable()`)
-      incorrectly picks client mode because there is no reactive domain yet. The V8/df/dt backends
-      work at the top level because they always assume server mode and defer session detection to
-      `preRenderHook`. To fix, defer DuckDB mode resolution to `preRenderHook`, where the Shiny
-      session is available. After removing pre-rendering (9J.1), both paths just need Arrow IPC
-      serialization at `reactable()` time, with the server path discarding it in the hook.
-      Currently, a warning is emitted when DuckDB client mode is rendered in Shiny but the mode
-      is not corrected.
+- [x] **9J.2** ~~Defer `resolveDuckDBMode()` to render time~~: **Done.** Implemented a dual-detection
+      strategy: `resolveDuckDBMode()` attempts detection at `reactable()` call time, with a
+      `preRenderHook` fallback that detects Shiny at render time and switches from client to server
+      mode. This correctly handles `reactable()` called at the top level of a Shiny script (outside
+      `renderReactable()`) where no reactive domain exists yet. The preRenderHook removes client-mode
+      dependencies (duckdb-wasm, parquet sidecar) and registers the server backend. Pre-rendering
+      (9J.0/9J.1) is not a prerequisite; the current implementation prepares client mode with Arrow
+      IPC at `reactable()` time, then the hook discards it and switches to server mode if Shiny is
+      detected.
 
 #### Validate
 
 - [ ] DuckDB client mode shows a loading state instead of pre-rendered first page
 - [ ] No duplicate payload (Arrow IPC + JSON) in the HTML document
-- [ ] `reactable(data, backend = backendDuckDB())` called at top level of Shiny script correctly
+- [x] `reactable(data, backend = backendDuckDB())` called at top level of Shiny script correctly
       detects server mode at render time
-- [ ] `reactable(data, backend = backendDuckDB())` still works in static HTML (client mode)
-- [ ] All existing tests pass
+- [x] `reactable(data, backend = backendDuckDB())` still works in static HTML (client mode)
+- [x] All existing tests pass
 
 ---
 

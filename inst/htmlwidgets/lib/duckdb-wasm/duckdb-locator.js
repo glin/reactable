@@ -6,5 +6,6 @@
   var s = document.currentScript ||
     document.querySelector('script[src*="duckdb-locator"]');
   var basePath = s ? s.src.replace(/[^/]*$/, '') : '';
-  window.__ReactableDuckDBBasePath = basePath;
+  window.Reactable = window.Reactable || {};
+  window.Reactable.__DuckDBBasePath = basePath;
 })();

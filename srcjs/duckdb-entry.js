@@ -5,10 +5,14 @@ import { DuckDBBackend } from './DuckDBBackend'
 // document.currentScript to detect its own URL, which is more reliable than trying
 // to detect the path from within a webpack bundle (where document.currentScript
 // may not be set, e.g., in Shiny's dynamic dependency loading).
-const wasmBasePath = window.__ReactableDuckDBBasePath || ''
+window.Reactable = window.Reactable || {}
+const wasmBasePath = window.Reactable.__DuckDBBasePath || ''
 
-// Register globally so the main reactable bundle can access it
-window.__ReactableDuckDB = {
+// Register globally so the main reactable bundle can access it.
+// Uses the window.Reactable namespace to avoid polluting the global scope.
+// This runs before the main reactable.js bundle, which uses webpack's
+// assign-properties library type that preserves existing properties.
+window.Reactable.__DuckDB = {
   DuckDBBackend,
   wasmBasePath
 }

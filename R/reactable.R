@@ -1326,7 +1326,7 @@ parquetDependency <- function(parquetDir, parquetFilename, parquetId) {
   # Uses document.currentScript to detect the deployed path, with a querySelector
   # fallback for Shiny where scripts are dynamically inserted.
   locatorJs <- sprintf(
-    "(function(){var s=document.currentScript||document.querySelector('script[src*=\"reactable-parquet-%s\"]');var b=s?s.src.replace(/[^/]*$/,''):'';window.__ReactableParquet=window.__ReactableParquet||{};window.__ReactableParquet['%s']=b+'%s';})();",
+    "(function(){var s=document.currentScript||document.querySelector('script[src*=\"reactable-parquet-%s\"]');var b=s?s.src.replace(/[^/]*$/,''):'';var r=window.Reactable=window.Reactable||{};r.__Parquet=r.__Parquet||{};r.__Parquet['%s']=b+'%s';})();",
     parquetId, parquetId, parquetFilename
   )
   locatorFile <- file.path(parquetDir, "parquet-locator.js")
