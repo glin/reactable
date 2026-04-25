@@ -487,7 +487,8 @@ See [paginate-sub-rows.md](paginate-sub-rows.md) for the design.
 
 ### Phase 6: Polish and edge cases
 
-- ~~**6.1** Loading state~~ — Skipped (pre-rendered first page is sufficient)
+- ~~**6.1** Loading state~~ — Skipped (pre-rendered first page is sufficient). **But see
+  9J.0** -- there is a race condition where controls are interactive before DuckDB is ready.
 - ~~**6.2** Error handling~~ — Skipped for now (console.error + pre-rendered fallback is acceptable)
 - ~~**6.3** Document R render limitation~~ — Covered by 6.10.2 warnings; vignette will mention it
 - ~~**6.4** Column formatting verification~~ — Skipped (`colFormat()` is client-side JS, works fine).
@@ -1209,6 +1210,30 @@ is removed, since both client and server paths only need Arrow IPC serialization
 
 #### Steps
 
+- [ ] **9J.0** Fix race condition: disable controls while DuckDB initializes.
+
+      **Bug:** After hydration, the table's pagination, sort, filter, and search controls are
+      immediately interactive, but DuckDB-WASM is still loading (downloading WASM, decoding Arrow
+      IPC or fetching Parquet). Clicking "Next" during this window updates the pagination UI
+      (page 2 becomes current) but the data doesn't change because the query useEffect bails out
+      at the `!duckdbReady` guard. The table appears frozen with stale pre-rendered data and an
+      incorrect page indicator. Once DuckDB becomes ready the query fires and data catches up, but
+      the user has already concluded "nothing happens."
+
+      This is most noticeable with external Parquet files where DuckDB must fetch the file over
+      HTTP, but also affects Arrow IPC mode on slow connections or large datasets.
+
+      **Fix:** Compute `backendLoading = useDuckDB && !duckdbReady` in the component. While true:
+      - Pagination buttons: disabled
+      - Sort headers: non-sortable (or clicks suppressed)
+      - Filter inputs: disabled
+      - Search input: disabled
+      - Add `rt-loading` CSS class on the root `.Reactable` element for author styling
+
+      This is a standalone fix that should ship before 9J.1. When 9J.1 removes pre-rendering,
+      the same `rt-loading` class and disabled-controls pattern applies, just with a loading
+      skeleton/placeholder instead of stale pre-rendered data.
+
 - [ ] **9J.1** Remove R-side first-page pre-rendering: When `pagination = FALSE`, the pre-rendered first
       page is the entire dataset, doubling the payload (full data in Arrow IPC/Parquet + full data as
       JSON). Even with pagination, the pre-rendered JSON page is redundant weight. Remove R-side
@@ -1268,7 +1293,97 @@ is removed, since both client and server paths only need Arrow IPC serialization
 
 ---
 
+### Netlify Parquet deployment: verified working
+
+Tested on: https://v0-4-5-9000-51aea00--reactable-docs.netlify.app/articles/duckdb-backend-parquet
+
+Initially appeared broken during automated browser testing (pagination clicks had no effect), but
+this was a false positive caused by the browser automation tool (`agent-browser click`) not
+dispatching events in a way React's synthetic event system recognizes. Direct JavaScript `.click()`
+calls work correctly.
+
+**Verified working:**
+- DuckDB-WASM initializes successfully (WASM downloads happen via Web Workers)
+- Pagination works (page 2 loads rows 11-20 from the 1M row dataset)
+- Search works (searching "Chicago" filters to ~14,147 matching rows)
+- `ReactDOM.hydrate` path works correctly with React 18, effects fire properly
+- Parquet file URL resolution via `parquet-locator.js` works on Netlify CDN
+
+---
+
 ### Deferred / Future
+
+#### External Parquet file support (no R-side data)
+
+Accept a Parquet file path or URL as `data` instead of a data frame. DuckDB backend is implied
+automatically. No R-side data processing, serialization, or re-encoding.
+
+**Motivation:** Today, if a user already has a Parquet file, the workflow is wasteful:
+1. `df <- arrow::read_parquet("data.parquet")` -- reads entire file into R memory
+2. `reactable(df, backend = backendDuckDB(format = "parquet"))` -- writes a new Parquet file
+3. Browser loads the new Parquet file via range requests
+
+The user had the data in the right format already and was forced to round-trip through R memory
+just to produce essentially the same file. For a 70MB Parquet file, this is slow and pointless.
+
+With external Parquet support, the user skips all of that:
+```r
+reactable("https://example.com/r-help-2005-2009.parquet",
+  columns = list(
+    date = colDef(name = "Date"),
+    from = colDef(name = "From"),
+    subject = colDef(name = "Subject")
+  )
+)
+```
+
+The HTML payload contains only the column config and the URL string. Zero R-side data processing.
+
+**Two modes:**
+- **Remote URL** (https://.../*.parquet): The URL passes straight through to the JS. DuckDB does
+  `read_parquet('https://...')` with HTTP range requests. No R-side file handling at all.
+  CORS is required on the remote server.
+- **Local file** (relative or absolute path): The file is copied (not re-encoded) into the
+  htmlwidgets dependency directory for deployment. Same sidecar mechanism as today, just skipping
+  the Arrow-to-Parquet serialization step.
+
+**API design:**
+- `data` argument accepts a character string ending in `.parquet` (or a helper class like
+  `parquet_file("path")` if more options are needed).
+- When `data` is a Parquet path/URL, `backend = backendDuckDB()` is implied automatically.
+  Specifying a different backend is an error.
+- `columns` should be specified explicitly since R does not have the schema. Column names must
+  match the Parquet file's column names.
+- Optional schema discovery: if `columns` is omitted, DuckDB can query Parquet metadata at init
+  time (`DESCRIBE SELECT * FROM read_parquet(...)`) to get column names and types. But explicit
+  `columns` is better UX for most cases since you typically want to name/format/hide columns.
+
+**Design considerations:**
+- `data` is currently required to be a data frame. This would be the first mode where it is not,
+  which touches validation logic throughout `reactable()` and related functions.
+- No pre-rendering is possible since R does not have the data. This is the purest 9J.1 scenario:
+  the table starts empty, DuckDB reads Parquet metadata (including total row count), then the
+  first page appears. The `rt-loading` / disabled-controls pattern from 9J.0 applies directly.
+- `serverRowCount` / `serverMaxRowCount` would be populated from Parquet metadata (DuckDB reads
+  the row count from the footer without scanning) rather than from R.
+- CORS is the main usability concern for remote URLs. The server must support both CORS and HTTP
+  range requests (`Accept-Ranges: bytes`, return `206 Partial Content`). GitHub raw URLs, S3,
+  and most CDNs support this. Should document clearly and provide good error messages.
+- Could extend to other formats DuckDB supports (CSV, JSON, etc.) in the future, but Parquet
+  is the obvious first target given the range-request efficiency.
+
+**Steps (rough):**
+- [ ] Accept character `data` ending in `.parquet` in `reactable()`
+- [ ] Auto-infer `backendDuckDB()` when data is a Parquet path/URL
+- [ ] Remote URL mode: pass URL string through to JS, no R-side file handling
+- [ ] Local file mode: copy file into htmlwidgets dependency directory (no re-encoding)
+- [ ] JS side: detect URL-only mode (no `arrowData`, just `parquetUrl` prop), init DuckDB with
+      `read_parquet(url)` directly
+- [ ] Schema discovery: query Parquet metadata for column names/types when `columns` not specified
+- [ ] Error messages for CORS failures, missing range request support
+- [ ] Vignette with remote Parquet example
+
+---
 
 - [ ] Custom SQL filter methods: Let users pass custom SQL WHERE clauses per column
 - [ ] Arrow IPC streaming: For Shiny, stream Arrow data incrementally instead of all-at-once

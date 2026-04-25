@@ -502,6 +502,52 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+### Top-level reactable() in Shiny (auto mode deferred resolution)
+
+Bug repro: calling `reactable()` at the top level of a Shiny script, outside `renderReactable()`.
+Previously, `backendDuckDB(mode = "auto")` would eagerly call `getDefaultReactiveDomain()` at
+`reactable()` call time, getting NULL and incorrectly resolving to client mode. The fix defers
+mode resolution to the `preRenderHook`, which runs at render time when the Shiny session exists.
+
+This app should use server mode (check: pagination fetches from server, no Arrow IPC in HTML source).
+
+```{r eval=FALSE}
+library(shiny)
+library(reactable)
+
+data <- MASS::Cars93
+
+# reactable() called at the TOP LEVEL, not inside renderReactable().
+# Auto mode should detect Shiny at render time and switch to server mode.
+tbl <- reactable(
+  data,
+  backend = backendDuckDB(),
+  defaultPageSize = 10,
+  filterable = TRUE,
+  searchable = TRUE,
+  sortable = TRUE,
+  highlight = TRUE,
+  columns = list(
+    Manufacturer = colDef(name = "Make"),
+    Model = colDef(name = "Model"),
+    Min.Price = colDef(name = "Min Price", format = colFormat(digits = 1)),
+    Max.Price = colDef(name = "Max Price", format = colFormat(digits = 1))
+  )
+)
+
+ui <- fluidPage(
+  titlePanel("Top-level reactable() - Auto Mode Deferred Resolution"),
+  p("This table was created at the top level. Auto mode should detect Shiny and use server mode."),
+  reactableOutput("tbl")
+)
+
+server <- function(input, output) {
+  output$tbl <- renderReactable(tbl)
+}
+
+shinyApp(ui, server)
+```
+
 ### Full Shiny app with 1M rows
 
 ```{r eval=FALSE}

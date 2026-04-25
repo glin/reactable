@@ -717,12 +717,16 @@ reactable <- function(
     })
   }
 
-  # Resolve backend mode: "auto" detects Shiny vs static, then route to client or server path
+  # Resolve backend mode: "auto" detects Shiny vs static, then route to client or server path.
+  # For "auto" mode, we try to detect Shiny now but also set up a preRenderHook fallback:
+  # if reactable() is called at the top level of a Shiny script (outside renderReactable()),
+  # getDefaultReactiveDomain() returns NULL here, so we prepare for client mode. The
+  # preRenderHook will detect the Shiny session at render time and switch to server mode.
   isDuckDBClientMode <- FALSE
-  isDuckDBClientModeExplicit <- FALSE
+  isDuckDBAutoMode <- FALSE
   isServerMode <- FALSE
   if (isDuckDBBackend(backend)) {
-    isDuckDBClientModeExplicit <- identical(backend$mode, "client")
+    isDuckDBAutoMode <- identical(backend$mode, "auto")
     resolvedMode <- resolveDuckDBMode(backend)
     if (resolvedMode == "server") {
       # Route DuckDB server mode through the server infrastructure
@@ -873,6 +877,8 @@ reactable <- function(
     # Add 0-based row IDs for stable row identification across pages. DuckDB queries
     # return different rows per page, so page-relative indices (0, 1, 2...) would collide.
     # The JS side extracts this column and uses it for __state.id and __state.index.
+    # Save original data before mutation for potential server-mode fallback in preRenderHook.
+    duckdbOriginalData <- data
     data[["_reactable_rowid"]] <- seq_len(nrow(data)) - 1L
 
     arrowData <- serializeArrowIPC(data)
@@ -925,23 +931,66 @@ reactable <- function(
     serverMaxRowCount <- totalRowCount
     dependencies <- c(dependencies, list(duckdbDependency()))
 
-    # Warn if this widget ends up being rendered in a Shiny session, since DuckDB-WASM
-    # (client mode) was selected because no Shiny session was detected at reactable() call time.
-    # This happens when reactable() is called at the top level of a Shiny app script.
-    # Don't warn if the user explicitly set mode = "client".
-    if (!isDuckDBClientModeExplicit) {
+    # For auto mode: if a Shiny session is detected at render time, switch to server
+    # mode. This handles the case where reactable() is called at the top level of a Shiny
+    # script (outside renderReactable()), where getDefaultReactiveDomain() returns NULL
+    # at call time but a session exists at render time.
+    # For explicit client mode: no preRenderHook needed (user chose client intentionally).
+    if (isDuckDBAutoMode) {
       preRenderHook <- function(instance) {
         session <- if (requireNamespace("shiny", quietly = TRUE)) {
           shiny::getDefaultReactiveDomain()
         }
-        if (!is.null(session)) {
-          warning(
-            "`backendDuckDB()` was configured for client-side mode because `reactable()` was called ",
-            "outside of a Shiny render function. Move the `reactable()` call inside `renderReactable()` ",
-            "so the backend can detect the Shiny session and use server mode.",
-            call. = FALSE
-          )
+        if (is.null(session)) {
+          # Not in Shiny: keep client mode as-is
+          return(instance)
         }
+
+        # Shiny session detected at render time: switch from client to server mode.
+        # Initialize the DuckDB server backend with the original data (before Arrow
+        # serialization). Clear client-mode props and set up the server data URL.
+        serverBackend <- getServerBackend(backend = "duckdb")
+        initialProps <- list(
+          data = duckdbOriginalData,
+          columns = cols,
+          pagination = pagination,
+          paginateSubRows = paginateSubRows,
+          pageIndex = 0,
+          pageSize = defaultPageSize,
+          sortBy = defaultSorted,
+          groupBy = groupBy,
+          searchMethod = searchMethod
+        )
+        do.call(reactableServerInit, c(list(serverBackend), initialProps))
+        initialPage <- do.call(reactableServerData, c(list(serverBackend), initialProps))
+        if (!is.resolvedData(initialPage)) {
+          stop("reactable server backends must return a `resolvedData()` object from `reactableServerData()`")
+        }
+
+        # Replace widget props: server mode uses dataURL instead of arrowData/parquetId
+        instance$x$tag$attribs$data <- toJSON(initialPage$data)
+        instance$x$tag$attribs$arrowData <- NULL
+        instance$x$tag$attribs$parquetId <- NULL
+        instance$x$tag$attribs$backend <- NULL
+        # Remove client-mode dependencies that are not needed in server mode:
+        # - duckdb-wasm: WASM binaries, locator script, DuckDB JS (not used server-side)
+        # - reactable-parquet-*: Parquet sidecar file (auto format may have created one)
+        instance$dependencies <- Filter(function(dep) {
+          dep$name != "duckdb-wasm" && !startsWith(dep$name, "reactable-parquet-")
+        }, instance$dependencies)
+        instance$x$tag$attribs$serverRowCount <- initialPage$rowCount
+        instance$x$tag$attribs$serverMaxRowCount <- initialPage$maxRowCount
+
+        outputId <- shiny::getCurrentOutputInfo(session = session)[["name"]]
+        serverDataStore <- new.env(parent = emptyenv())
+        serverDataStore$value <- c(list(backend = serverBackend), initialProps)
+        session$userData[[paste0("__reactable__", outputId)]] <- serverDataStore
+        dataURL <- session$registerDataObj(
+          outputId,
+          serverDataStore,
+          reactableFilterFunc
+        )
+        instance$x$tag$attribs$dataURL <- dataURL
         instance
       }
     }

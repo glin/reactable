@@ -12,26 +12,58 @@ test_that("backend warns outside of a Shiny context", {
   expect_equal(getAttrib(tbl, "groupBy"), list("x"))
 })
 
-test_that("backendDuckDB() client mode has preRenderHook for Shiny detection", {
+test_that("backendDuckDB() auto mode switches to server in preRenderHook", {
   skip_if_not_installed("arrow")
+  skip_if_not_installed("duckdb")
+  skip_if_not_installed("DBI")
 
   data <- data.frame(x = c(1, 2), y = c("a", "b"))
   tbl <- reactable(data, backend = backendDuckDB())
-  # preRenderHook should be set to warn if rendered in Shiny
+
+  # preRenderHook should be set for auto mode
   expect_true(!is.null(tbl$preRenderHook))
-  # Outside Shiny, no warning should be emitted
+
+  # Outside Shiny, preRenderHook keeps client mode (no changes)
   tbl2 <- tbl$preRenderHook(tbl)
   expect_identical(tbl2, tbl)
+  expect_equal(getAttrib(tbl2, "backend"), "duckdb")
+  expect_true(!is.null(getAttrib(tbl2, "arrowData")))
+  expect_null(getAttrib(tbl2, "dataURL"))
 
-  # Inside Shiny, should warn about calling reactable() outside renderReactable()
+  # Inside Shiny, preRenderHook should switch to server mode
+  registeredURL <- NULL
+  mockShinySession <- new.env(parent = emptyenv())
+  mockShinySession$userData <- new.env(parent = emptyenv())
+  mockShinySession$registerDataObj <- function(name, data, filterFunc) {
+    registeredURL <<- paste0("/session/", name)
+    registeredURL
+  }
   local_mocked_bindings(
-    getDefaultReactiveDomain = function() list(),
+    getDefaultReactiveDomain = function() mockShinySession,
+    getCurrentOutputInfo = function(session) list(name = "test_table"),
     .package = "shiny"
   )
-  expect_warning(tbl$preRenderHook(tbl), "outside of a Shiny render function")
+  tbl3 <- tbl$preRenderHook(tbl)
+
+  # Should have switched to server mode: dataURL set, client-mode props cleared
+  expect_equal(getAttrib(tbl3, "dataURL"), registeredURL)
+  expect_null(getAttrib(tbl3, "arrowData"))
+  expect_null(getAttrib(tbl3, "parquetId"))
+  expect_null(getAttrib(tbl3, "backend"))
+  # Should have server row counts
+  expect_equal(getAttrib(tbl3, "serverRowCount"), 2)
+  expect_null(getAttrib(tbl3, "serverMaxRowCount"))
+  # Should have registered data URL with the session
+  expect_equal(registeredURL, "/session/test_table")
+  # Should have stored backend and data in session$userData
+  serverDataStore <- mockShinySession$userData[["__reactable__test_table"]]
+  expect_true(!is.null(serverDataStore))
+  expect_s3_class(serverDataStore$value$backend, "reactable_backendDuckdb")
+  expect_equal(nrow(serverDataStore$value$data), 2)
+  expect_false("_reactable_rowid" %in% colnames(serverDataStore$value$data))
 })
 
-test_that("backendDuckDB(mode = 'client') skips preRenderHook warning", {
+test_that("backendDuckDB(mode = 'client') has no preRenderHook", {
   skip_if_not_installed("arrow")
 
   data <- data.frame(x = c(1, 2), y = c("a", "b"))
