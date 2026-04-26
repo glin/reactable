@@ -1396,8 +1396,11 @@ test_that("reactable.yaml widget dependencies are included with correct version.
 })
 
 test_that("duckdbDependency() version matches @duckdb/duckdb-wasm in package.json", {
-  skip_if_not_installed("jsonlite")
-  pkgJson <- jsonlite::fromJSON("../../package.json")
+  # package.json is excluded via .Rbuildignore, so this test only runs in the
+  # source tree (e.g., devtools::test()), not during R CMD check.
+  pkgJsonPath <- "../../package.json"
+  skip_if_not(file.exists(pkgJsonPath), message = "package.json not found (not in source tree)")
+  pkgJson <- jsonlite::fromJSON(pkgJsonPath)
   npmVersion <- pkgJson$dependencies[["@duckdb/duckdb-wasm"]]
   # Strip semver range prefix (^, ~) and prerelease suffix (-dev20.0, -beta.1, etc.)
   baseVersion <- sub("^[~^]", "", npmVersion)

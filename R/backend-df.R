@@ -406,7 +406,7 @@ rbindFill <- function(dfs) {
       stateList[[k]] <- state[, allStateCols, drop = FALSE]
     } else {
       stateList[[k]] <- as.data.frame(
-        setNames(replicate(length(allStateCols), rep(NA, n), simplify = FALSE), allStateCols),
+        stats::setNames(replicate(length(allStateCols), rep(NA, n), simplify = FALSE), allStateCols),
         stringsAsFactors = FALSE
       )
     }

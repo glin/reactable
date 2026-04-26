@@ -21,3 +21,4 @@
 ^vignettes$
 ^webpack\.config.*\.js$
 ^\.claude$
+^\.positai$
