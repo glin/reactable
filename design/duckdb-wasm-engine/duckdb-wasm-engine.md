@@ -703,13 +703,56 @@ goes directly to the Parquet file via range requests. This keeps WASM memory usa
 
 #### Hosting requirements
 
-Parquet sidecar files need a server that supports HTTP range requests (`Accept-Ranges: bytes`). This includes:
+Parquet sidecar files work on any web server, but the **range-request streaming benefit** (where only needed bytes are
+fetched per query) requires a server that supports HTTP range requests (`Accept-Ranges: bytes`). Servers that support
+range requests:
 
-- Any static file server (nginx, Apache, Caddy, Python's `http.server`)
+- Any static file server (nginx, Apache, Caddy)
 - GitHub Pages, Netlify, Vercel, S3, GCS, Azure Blob Storage
-- R Markdown / Quarto `self_contained: false` output
+- Node.js `http-server` (`npm run docs` uses this)
 
 It does NOT work with `self_contained: true` (which inlines everything) or the RStudio Viewer pane.
+
+#### Servers without range request support (graceful fallback)
+
+DuckDB-WASM detects range request support by checking for `Accept-Ranges: bytes` in the HEAD response. When the server
+does not advertise range support, DuckDB falls back to downloading the entire Parquet file in a single GET request. The
+table still works correctly, but the streaming benefit is lost: the full file is loaded into the Web Worker's memory,
+similar to embedded Arrow IPC.
+
+Servers that fall back to full download:
+
+- **Shiny (httpuv `staticPaths`)** -- httpuv serves `htmlDependency` files via its C++ I/O thread (non-blocking), so
+  the file is accessible. However, httpuv's static file serving does not support HTTP range requests. DuckDB detects
+  this via HEAD, downloads the entire file, and caches it. The table works but does not benefit from streaming.
+  Note: the default `backendDuckDB()` already uses server-side processing in Shiny (`mode = "auto"` resolves to
+  `"server"`), so Parquet sidecar files are not involved in the normal Shiny path. This only matters if client mode
+  is explicitly forced with `backendDuckDB(mode = "client", format = "parquet")`.
+- **Python's `http.server`** -- does not support range requests, and also serves `.js` files with incorrect MIME types
+  on some systems (e.g., `text/plain` on Windows), which blocks script execution entirely.
+
+#### Servers that fail entirely
+
+- **`servr::httw()` / `servr::httd()`** -- routes all requests through R's single-threaded handler instead of httpuv's
+  C++ static file serving. DuckDB-WASM's Web Worker sends synchronous XHR requests, which cannot be processed while R
+  is busy handling the page load. This causes a `NetworkError` on the initial HEAD request and the table fails to load.
+
+#### Why `servr::httw()` fails but Shiny works
+
+Both use httpuv, but they serve files differently:
+
+- **Shiny** uses `httpuv::startServer()` with `staticPaths`. When Shiny processes an `htmlDependency`, it calls
+  `addResourcePath()`, which registers the directory via `server$setStaticPath()`. httpuv serves static paths entirely
+  within its C++ I/O thread, independent of R. DuckDB's XHR requests are handled by the I/O thread even when R is busy.
+- **`servr::httw()`** passes only a `call` function to `httpuv::startServer()`, with no `staticPaths`. Every file
+  request goes through R's `call` handler on the main thread. When the DuckDB worker sends synchronous XHR, httpuv's
+  I/O thread receives it but must dispatch to R for the handler. R is already busy, so the request hangs and times out.
+
+#### Local docs preview with external Parquet
+
+Use `npm run docs` (which runs `npx http-server docs -p 8888 -c-1`) to preview docs locally. This is the only local
+option that supports HTTP range requests for efficient parquet streaming. Do not use `servr::httw("docs")` for pages
+that use external Parquet files (it will fail with a NetworkError).
 
 #### Limitations
 

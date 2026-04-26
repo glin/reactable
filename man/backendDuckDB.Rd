@@ -55,8 +55,16 @@ The DuckDB backend does not support:
 \item Custom JavaScript \code{aggregate} functions (use built-in aggregate names like \code{"sum"}, \code{"mean"})
 \item R function renderers for \code{cell}, \code{details}, \code{style}, \code{class}, \code{rowClass}, \code{rowStyle}
 (use \code{JS()} function renderers instead)
-\item Row selection
 }
+
+\strong{Parquet hosting requirements:} External Parquet files (\code{format = "parquet"}) rely on
+\href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests}{HTTP range requests}
+for efficient streaming, where DuckDB downloads only the bytes it needs for each query.
+Most static hosting services support this (GitHub Pages, Netlify, S3, nginx, etc.).
+In Shiny, the default \code{mode = "auto"} already uses server-side processing, so Parquet
+sidecar files are not involved. If client mode is explicitly forced in Shiny, httpuv does
+not support range requests and DuckDB falls back to downloading the entire file.
+See \code{vignette("duckdb-backend-parquet")} for details.
 }
 \examples{
 \dontrun{

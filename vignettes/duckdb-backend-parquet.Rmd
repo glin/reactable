@@ -79,8 +79,22 @@ reactable(data, backend = backendDuckDB(format = "arrow"))
 ## Requirements and limitations
 
 - **Not compatible with self-contained output**: External Parquet files cannot be embedded in a single self-contained HTML file. If the output format uses `self_contained: true`, the Parquet file will not be included. Use `self_contained: false` or `embed_resources: false` when using external Parquet files.
-- **Web server required**: The Parquet file must be served over HTTP so that DuckDB can request specific byte ranges from the file instead of downloading it all at once. Most web servers (including GitHub Pages) support this. This is the same requirement as the DuckDB-WASM files themselves.
+- **Web server required**: The Parquet file must be served over HTTP. Most web servers and static hosting services (including GitHub Pages, Netlify, and S3) support this. See [Hosting and range requests](#hosting-and-range-requests) below for details on which servers support efficient streaming.
 - **File deployment**: The Parquet file is deployed as an htmlwidgets dependency alongside the HTML output (in the `*_files/lib/` directory). When deploying, include this directory along with the HTML file.
+
+## Hosting and range requests {#hosting-and-range-requests}
+
+External Parquet files work best with servers that support [HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests) (`Accept-Ranges: bytes`). With range request support, DuckDB-WASM downloads only the bytes it needs for each query, so sorting or filtering a 50-column table might fetch just one or two columns rather than the whole file.
+
+Most static hosting services support range requests out of the box:
+
+- **GitHub Pages, Netlify, Vercel, S3, Azure Blob Storage** -- full range request support
+- **nginx, Apache, Caddy** -- full range request support
+- **Node.js `http-server`** -- supports range requests (used by `npm run docs` for local preview)
+
+**Shiny**: External Parquet files are primarily designed for static documents (R Markdown, Quarto), not Shiny. The default `backendDuckDB()` already uses server-side processing in Shiny, so Parquet sidecar files are not involved. If you explicitly force client-side mode in Shiny with `backendDuckDB(mode = "client", format = "parquet")`, the table will work but Shiny's web server (httpuv) does not support range requests, so DuckDB falls back to downloading the entire file without streaming benefits.
+
+**Servers that do not work**: `servr::httw()` cannot serve Parquet files to DuckDB because it handles all requests through R's single thread, blocking the concurrent requests DuckDB needs. Python's `http.server` also does not support range requests.
 
 ## How it works
 

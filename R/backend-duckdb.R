@@ -42,8 +42,16 @@
 #'   \item Custom JavaScript `aggregate` functions (use built-in aggregate names like `"sum"`, `"mean"`)
 #'   \item R function renderers for `cell`, `details`, `style`, `class`, `rowClass`, `rowStyle`
 #'     (use `JS()` function renderers instead)
-#'   \item Row selection
 #' }
+#'
+#' **Parquet hosting requirements:** External Parquet files (`format = "parquet"`) rely on
+#' [HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests)
+#' for efficient streaming, where DuckDB downloads only the bytes it needs for each query.
+#' Most static hosting services support this (GitHub Pages, Netlify, S3, nginx, etc.).
+#' In Shiny, the default `mode = "auto"` already uses server-side processing, so Parquet
+#' sidecar files are not involved. If client mode is explicitly forced in Shiny, httpuv does
+#' not support range requests and DuckDB falls back to downloading the entire file.
+#' See `vignette("duckdb-backend-parquet")` for details.
 #'
 #' @examples
 #' \dontrun{

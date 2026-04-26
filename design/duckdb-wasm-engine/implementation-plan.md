@@ -1278,9 +1278,20 @@ is removed, since both client and server paths only need Arrow IPC serialization
       documentation.
 - [ ] **9K.3** Shared DuckDB instance: Multiple reactable tables on one page share a single
       DuckDB-WASM instance instead of each creating its own.
-- [ ] **9K.4** Remove `backendDf()` and `backendDt()`: These were carried over from development but
-      are unlikely to be needed. DuckDB server mode should cover the same use cases with better
-      performance. Can be removed without a deprecation cycle since they were never in a CRAN release.
+- [ ] **9K.4** Remove `backendDt()`: The data.table backend was carried over from development but is
+      unlikely to be needed -- DuckDB server mode covers the same use cases with better performance.
+      Can be removed without a deprecation cycle since it was never in a CRAN release. Keep
+      `backendDf()` as a zero-dependency reference implementation (useful for users who want a
+      server backend without installing DuckDB or V8).
+- [ ] **9K.5** Add DuckDB backend examples to `vignettes/examples.Rmd`. The DuckDB-WASM dependency
+      adds ~33 MB uncompressed (~7 MB gzipped) to the document, so examples should note this
+      tradeoff and help users decide when DuckDB is worth the overhead vs. the default client-side
+      backend (which has zero extra weight and is faster for small datasets).
+- [ ] **9K.6** Update `README.md` with a brief mention of the DuckDB backend as a key feature,
+      similar to existing feature highlights. Link to the backend vignette for details.
+- [ ] **9K.7** Update `NEWS.md` with the DuckDB backend entry (completes deferred 8.2).
+- [ ] **9K.8** Review and update existing vignettes (`vignettes/`) for any references to
+      server-side data that should mention the new `backend` parameter or `backendDuckDB()`.
 
 #### Validate
 
