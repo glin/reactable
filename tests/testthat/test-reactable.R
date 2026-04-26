@@ -1395,6 +1395,17 @@ test_that("reactable.yaml widget dependencies are included with correct version.
   expect_equal(reactableDep$stylesheet, "reactable.css")
 })
 
+test_that("duckdbDependency() version matches @duckdb/duckdb-wasm in package.json", {
+  skip_if_not_installed("jsonlite")
+  pkgJson <- jsonlite::fromJSON("../../package.json")
+  npmVersion <- pkgJson$dependencies[["@duckdb/duckdb-wasm"]]
+  # Strip semver range prefix (^, ~) and prerelease suffix (-dev20.0, -beta.1, etc.)
+  baseVersion <- sub("^[~^]", "", npmVersion)
+  baseVersion <- sub("-.*$", "", baseVersion)
+  dep <- duckdbDependency()
+  expect_equal(dep$version, baseVersion)
+})
+
 # Skip tests that rely on V8 if V8 was built against a version of libv8 without
 # ICU / i18n support. If running on Fedora, this is an issue with Fedora's V8 package
 # that was fixed in Fedora 37. The workaround on Fedora <= 36 is to build the V8

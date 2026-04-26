@@ -1271,7 +1271,7 @@ is removed, since both client and server paths only need Arrow IPC serialization
 
 #### Steps
 
-- [ ] **9K.1** Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field
+- [x] **9K.1** Add DuckDB-WASM and Apache Arrow authors/license to `DESCRIPTION` `Authors@R` field
       (copyright holders). DuckDB-WASM is MIT licensed (DuckDB Labs). Apache Arrow is Apache-2.0
       licensed (Apache Software Foundation).
 - [ ] **9K.2** Update virtual scrolling and DuckDB backend vignettes with windowed fetching

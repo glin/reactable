@@ -102,3 +102,4 @@ When adding a new JS library dependency that gets shipped to users (included in 
 
 1. **Consider bundle size**: Evaluate the impact on bundle size and whether the functionality justifies the increase.
 2. **Update Authors@R**: Add the library author to the `Authors@R` field in the `DESCRIPTION` file with the appropriate role (typically `"ctb"` for contributor and `"cph"` for copyright holder).
+3. **Keep versions in sync**: When upgrading a JS dependency in `package.json`, update the corresponding `htmlDependency()` version in R code (e.g., `duckdbDependency()` in `R/reactable.R`). These are not auto-synced.

@@ -1310,9 +1310,10 @@ reactDependencies <- function() {
 }
 
 duckdbDependency <- function() {
+  # Version must be kept in sync with @duckdb/duckdb-wasm in package.json
   htmltools::htmlDependency(
     name = "duckdb-wasm",
-    version = "1.29.0",
+    version = "1.33.1",
     src = system.file("htmlwidgets/lib/duckdb-wasm", package = "reactable"),
     script = c("duckdb-locator.js", "reactable-duckdb.js"),
     all_files = TRUE

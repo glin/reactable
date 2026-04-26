@@ -38,6 +38,8 @@ Other contributors:
   \item  Feross Aboukhadijeh, and other contributors (buffer library) [contributor, copyright holder]
   \item Roman Shtylman (process library) [contributor, copyright holder]
   \item James Halliday (stream-browserify library) [contributor, copyright holder]
+  \item  DuckDB Labs (DuckDB-WASM library) [contributor, copyright holder]
+  \item  The Apache Software Foundation (Apache Arrow library) [contributor, copyright holder]
   \item  Posit Software, PBC [funder, copyright holder]
 }
 

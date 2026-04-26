@@ -19,6 +19,9 @@ Authors@R: c(
            comment = "buffer library"),
     person("Roman", "Shtylman", role = c("ctb", "cph"), comment = "process library"),
     person("James", "Halliday", role = c("ctb", "cph"), comment = "stream-browserify library"),
+    person(family = "DuckDB Labs", role = c("ctb", "cph"), comment = "DuckDB-WASM library"),
+    person(family = "The Apache Software Foundation", role = c("ctb", "cph"),
+           comment = "Apache Arrow library"),
     person(family = "Posit Software, PBC", role = c("fnd", "cph"))
     )
 Description: Interactive data tables for R, based on the 'React Table'
