@@ -16,7 +16,8 @@
     "duckdb": "webpack -c webpack.config.duckdb.js --mode production",
     "duckdb-dev": "webpack -c webpack.config.duckdb.js --mode development",
     "lint": "eslint srcjs",
-    "format": "prettier --write srcjs"
+    "format": "prettier --write srcjs",
+    "docs": "npx http-server docs -p 8888 -c-1"
   },
   "license": "MIT",
   "dependencies": {
