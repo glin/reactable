@@ -208,8 +208,8 @@ export function buildColumnDefs(columns, groups, tableProps = {}) {
     // maxWidth takes priority over minWidth
     col.minWidth = Math.min(col.minWidth, col.maxWidth)
 
-    // Start column width at min width / flex width, like in v6
-    col.width = col.minWidth
+    // Start column width at initial width, otherwise at min width / flex width, like in v6
+    col.width = col.initWidth || col.minWidth
 
     col.resizable = getFirstDefined(col.resizable, resizable)
     // Disable resizing on fixed width columns

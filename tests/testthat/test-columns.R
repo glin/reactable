@@ -185,6 +185,15 @@ test_that("colDef minWidth", {
   expect_equal(colDef(minWidth = 100)$minWidth, 100)
 })
 
+test_that("colDef initWidth", {
+  expect_error(colDef(initWidth = "auto"), "`initWidth` must be numeric")
+  expect_equal(colDef()$initWidth, NULL)
+  expect_equal(colDef(initWidth = 150)$initWidth, 150)
+  expect_error(colDef(width = 100, initWidth = 120), "`initWidth` cannot be specified if `width` is specified")
+  expect_error(colDef(initWidth = 50), "`initWidth` must be greater than or equal to `minWidth`")
+  expect_error(colDef(maxWidth = 200, initWidth = 250), "`initWidth` must be less than or equal to `maxWidth`")
+})
+
 test_that("colDef vAlign", {
   expect_error(colDef(vAlign = TRUE), '`vAlign` must be one of "top", "center", "bottom"')
   expect_null(colDef()$vAlign)

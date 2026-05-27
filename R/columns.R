@@ -65,6 +65,8 @@
 #'  Cells in the row names column are automatically marked up as row headers.
 #' @param minWidth Minimum width of the column in pixels. Defaults to 100.
 #' @param maxWidth Maximum width of the column in pixels.
+#' @param initWidth Initial width of the column in pixels. Cannot be specified
+#'   if `width` is specified.
 #' @param width Fixed width of the column in pixels. Overrides `minWidth` and `maxWidth`.
 #' @param align Horizontal alignment of content in the column. One of
 #'   `"left"`, `"right"`, `"center"`. By default, all numbers are right-aligned,
@@ -142,6 +144,7 @@ colDef <- function(
   rowHeader = FALSE,
   minWidth = 100,
   maxWidth = NULL,
+  initWidth = NULL,
   width = NULL,
   align = NULL,
   vAlign = NULL,
@@ -256,6 +259,22 @@ colDef <- function(
     stop("`maxWidth` must be numeric")
   }
 
+  if (!is.null(initWidth) && !is.numeric(initWidth)) {
+    stop("`initWidth` must be numeric")
+  }
+
+  if (!is.null(initWidth) && !is.null(width)) {
+    stop("`initWidth` cannot be specified if `width` is specified")
+  }
+
+  if (!is.null(initWidth) && !is.null(minWidth) && initWidth < minWidth) {
+    stop("`initWidth` must be greater than or equal to `minWidth`")
+  }
+
+  if (!is.null(initWidth) && !is.null(maxWidth) && initWidth > maxWidth) {
+    stop("`initWidth` must be less than or equal to `maxWidth`")
+  }
+
   if (!is.null(width) && !is.numeric(width)) {
     stop("`width` must be numeric")
   }
@@ -338,6 +357,7 @@ colDef <- function(
       rowHeader = if ("rowHeader" %in% userArgs) rowHeader,
       minWidth = if ("minWidth" %in% userArgs) minWidth,
       maxWidth = maxWidth,
+      initWidth = initWidth,
       width = width,
       align = align,
       vAlign = vAlign,

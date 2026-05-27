@@ -28,6 +28,7 @@ colDef(
   rowHeader = FALSE,
   minWidth = 100,
   maxWidth = NULL,
+  initWidth = NULL,
   width = NULL,
   align = NULL,
   vAlign = NULL,
@@ -127,6 +128,9 @@ Cells in the row names column are automatically marked up as row headers.}
 \item{minWidth}{Minimum width of the column in pixels. Defaults to 100.}
 
 \item{maxWidth}{Maximum width of the column in pixels.}
+
+\item{initWidth}{Initial width of the column in pixels. Cannot be specified
+if \code{width} is specified.}
 
 \item{width}{Fixed width of the column in pixels. Overrides \code{minWidth} and \code{maxWidth}.}
 

@@ -625,6 +625,14 @@ describe('buildColumnDefs', () => {
     expect(cols[0].maxWidth).toEqual(111)
     expect(cols[0].width).toEqual(111)
     expect(cols[0].disableResizing).toEqual(true)
+
+    // Initial width sets width, does not affect min or max width, leaves column resizable
+    cols = buildColumnDefs([{ id: 'x', initWidth: 120, minWidth: 100, maxWidth: 200, resizable: true }])
+    expect(cols[0].width).toEqual(120)
+    expect(cols[0].minWidth).toEqual(100)
+    expect(cols[0].maxWidth).toEqual(200)
+    expect(cols[0].resizable).toEqual(true)
+    expect(cols[0].disableResizing).toEqual(false)
   })
 
   test('header sort icons', () => {
