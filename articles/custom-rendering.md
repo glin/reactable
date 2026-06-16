@@ -23,6 +23,7 @@ For example, you can easily add a column total using an R render
 function:
 
 ``` r
+
 data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -42,6 +43,7 @@ need a JavaScript render function with access to the client-side
 filtered state:
 
 ``` r
+
 data <- MASS::Cars93[20:24, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -71,6 +73,7 @@ To customize cell rendering, provide an R function with up to 3 optional
 arguments:
 
 ``` r
+
 colDef(
   cell = function(value, index, name) {
     # input:
@@ -92,6 +95,7 @@ Or a JavaScript function, wrapped in
 optional arguments:
 
 ``` r
+
 colDef(
   cell = JS("
     function(cellInfo, state) {
@@ -112,6 +116,7 @@ With JavaScript functions, you can also customize rendering of grouped
 cells and aggregated cells:
 
 ``` r
+
 colDef(
   grouped = JS("function(cellInfo, state) {
     return cellInfo.value
@@ -124,37 +129,37 @@ colDef(
 
 #### `cellInfo` properties
 
-| Property            | Example                                           | Description                                                                                                           |
-|---------------------|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `value`             | `"setosa"`                                        | cell value                                                                                                            |
-| `row`               | `{ Petal.Length: 1.7, Species: "setosa" }`        | row data                                                                                                              |
-| `column`            | `{ id: "Petal.Length" }`                          | column info object                                                                                                    |
-| `index`             | `20`                                              | row index (zero-based)                                                                                                |
-| `viewIndex`         | `0`                                               | row index within the page (zero-based)                                                                                |
-| `aggregated`        | `true`                                            | whether the row is aggregated                                                                                         |
-| `expanded`          | `true`                                            | whether the row is expanded                                                                                           |
-| `filterValue`       | `"petal"`                                         | column filter value                                                                                                   |
-| `subRows`           | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated cells only)                                                                                 |
-| `level`             | `0`                                               | row nesting depth (zero-based)                                                                                        |
-| `selected`          | `true`                                            | whether the row is selected                                                                                           |
-| `toggleRowSelected` | `function (isSelected?: boolean)`                 | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
+| Property | Example | Description |
+|----|----|----|
+| `value` | `"setosa"` | cell value |
+| `row` | `{ Petal.Length: 1.7, Species: "setosa" }` | row data |
+| `column` | `{ id: "Petal.Length" }` | column info object |
+| `index` | `20` | row index (zero-based) |
+| `viewIndex` | `0` | row index within the page (zero-based) |
+| `aggregated` | `true` | whether the row is aggregated |
+| `expanded` | `true` | whether the row is expanded |
+| `filterValue` | `"petal"` | column filter value |
+| `subRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | sub rows data (aggregated cells only) |
+| `level` | `0` | row nesting depth (zero-based) |
+| `selected` | `true` | whether the row is selected |
+| `toggleRowSelected` | `function (isSelected?: boolean)` | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
 
 #### `state` properties
 
-| Property        | Example                                           | Description                                                                           |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
-| `page`          | `2`                                               | page index (zero-based)                                                               |
-| `pageSize`      | `10`                                              | page size                                                                             |
-| `pages`         | `5`                                               | number of pages                                                                       |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
-| `searchValue`   | `"petal"`                                         | table search value                                                                    |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
-| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `meta` | `{ custom: 123 }` | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |
 
 ## Headers
 
@@ -164,6 +169,7 @@ To customize header rendering, provide an R function with up to 2
 optional arguments:
 
 ``` r
+
 colDef(
   header = function(value, name) {
     # input:
@@ -182,6 +188,7 @@ colDef(
 Or a JavaScript function with up to 2 optional arguments:
 
 ``` r
+
 colDef(
   header = JS("
     function(column, state) {
@@ -200,31 +207,31 @@ colDef(
 
 #### `column` properties
 
-| Property      | Example                                                              | Description                                                                      |
-|---------------|----------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| `id`          | `"Petal.Length"`                                                     | column ID                                                                        |
-| `name`        | `"Petal Length"`                                                     | column display name                                                              |
-| `filterValue` | `"petal"`                                                            | column filter value                                                              |
-| `setFilter`   | `function (value: any)`                                              | function to set the column filter value (set to `undefined` to clear the filter) |
-| `column`      | `{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }` | column info object (deprecated in v0.3.0)                                        |
-| `data`        | `[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]`       | current row data in the table (deprecated in v0.3.0)                             |
+| Property | Example | Description |
+|----|----|----|
+| `id` | `"Petal.Length"` | column ID |
+| `name` | `"Petal Length"` | column display name |
+| `filterValue` | `"petal"` | column filter value |
+| `setFilter` | `function (value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
+| `column` | `{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }` | column info object (deprecated in v0.3.0) |
+| `data` | `[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]` | current row data in the table (deprecated in v0.3.0) |
 
 #### `state` properties
 
-| Property        | Example                                           | Description                                                                           |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
-| `page`          | `2`                                               | page index (zero-based)                                                               |
-| `pageSize`      | `10`                                              | page size                                                                             |
-| `pages`         | `5`                                               | number of pages                                                                       |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
-| `searchValue`   | `"petal"`                                         | table search value                                                                    |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
-| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `meta` | `{ custom: 123 }` | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |
 
 ## Footers
 
@@ -234,6 +241,7 @@ To add footer content, provide an R function with up to 2 optional
 arguments:
 
 ``` r
+
 colDef(
   footer = function(values, name) {
     # input:
@@ -252,6 +260,7 @@ colDef(
 Or a JavaScript function with up to 2 optional arguments:
 
 ``` r
+
 colDef(
   footer = JS("
     function(column, state) {
@@ -270,31 +279,31 @@ colDef(
 
 #### `column` properties
 
-| Property      | Example                                                              | Description                                                                      |
-|---------------|----------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| `id`          | `"Petal.Length"`                                                     | column ID                                                                        |
-| `name`        | `"Petal Length"`                                                     | column display name                                                              |
-| `filterValue` | `"petal"`                                                            | column filter value                                                              |
-| `setFilter`   | `function (value: any)`                                              | function to set the column filter value (set to `undefined` to clear the filter) |
-| `column`      | `{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }` | column info object (deprecated in v0.3.0)                                        |
-| `data`        | `[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]`       | current row data in the table (deprecated in v0.3.0)                             |
+| Property | Example | Description |
+|----|----|----|
+| `id` | `"Petal.Length"` | column ID |
+| `name` | `"Petal Length"` | column display name |
+| `filterValue` | `"petal"` | column filter value |
+| `setFilter` | `function (value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
+| `column` | `{ id: "Petal.Length", name: "Petal Length", filterValue: "petal" }` | column info object (deprecated in v0.3.0) |
+| `data` | `[{ Petal.Length: 1.7, Petal.Width: 0.2, _subRows: [] }, ...]` | current row data in the table (deprecated in v0.3.0) |
 
 #### `state` properties
 
-| Property        | Example                                           | Description                                                                           |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
-| `page`          | `2`                                               | page index (zero-based)                                                               |
-| `pageSize`      | `10`                                              | page size                                                                             |
-| `pages`         | `5`                                               | number of pages                                                                       |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
-| `searchValue`   | `"petal"`                                         | table search value                                                                    |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
-| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `meta` | `{ custom: 123 }` | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |
 
 ## Expandable Row Details
 
@@ -304,6 +313,7 @@ To add expandable row details, provide an R function with up to 2
 optional arguments:
 
 ``` r
+
 reactable(
   details = function(index, name) {
     # input:
@@ -325,6 +335,7 @@ reactable(
 Or a JavaScript function with up to 2 optional arguments:
 
 ``` r
+
 reactable(
   details = JS("
     function(rowInfo, state) {
@@ -342,30 +353,30 @@ reactable(
 
 #### `rowInfo` properties
 
-| Property            | Example                                    | Description                                                                                                           |
-|---------------------|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| `values`            | `{ Petal.Length: 1.7, Species: "setosa" }` | row data values                                                                                                       |
-| `row`               | `{ Petal.Length: 1.7, Species: "setosa" }` | same as `values` (deprecated in v0.3.0)                                                                               |
-| `index`             | `20`                                       | row index (zero-based)                                                                                                |
-| `viewIndex`         | `0`                                        | row index within the page (zero-based)                                                                                |
-| `expanded`          | `true`                                     | whether the row is expanded                                                                                           |
-| `level`             | `0`                                        | row nesting depth (zero-based)                                                                                        |
-| `selected`          | `true`                                     | whether the row is selected                                                                                           |
-| `toggleRowSelected` | `function (isSelected?: boolean)`          | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
+| Property | Example | Description |
+|----|----|----|
+| `values` | `{ Petal.Length: 1.7, Species: "setosa" }` | row data values |
+| `row` | `{ Petal.Length: 1.7, Species: "setosa" }` | same as `values` (deprecated in v0.3.0) |
+| `index` | `20` | row index (zero-based) |
+| `viewIndex` | `0` | row index within the page (zero-based) |
+| `expanded` | `true` | whether the row is expanded |
+| `level` | `0` | row nesting depth (zero-based) |
+| `selected` | `true` | whether the row is selected |
+| `toggleRowSelected` | `function (isSelected?: boolean)` | function to toggle the row's selection. Optionally pass `true` to select or `false` to deselect. (new in v0.4.5.9000) |
 
 #### `state` properties
 
-| Property        | Example                                           | Description                                                                           |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
-| `page`          | `2`                                               | page index (zero-based)                                                               |
-| `pageSize`      | `10`                                              | page size                                                                             |
-| `pages`         | `5`                                               | number of pages                                                                       |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
-| `searchValue`   | `"petal"`                                         | table search value                                                                    |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
-| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `meta` | `{ custom: 123 }` | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |

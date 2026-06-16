@@ -7,6 +7,7 @@ on a data frame or matrix. The table will be sortable and paginated by
 default:
 
 ``` r
+
 library(reactable)
 
 reactable(iris)
@@ -149,6 +150,7 @@ definitions created by [`colDef()`](../reference/colDef.md) to
 `columns`:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   columns = list(
@@ -224,6 +226,7 @@ For convenience, you can also specify a default
 `defaultColDef`:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   defaultColDef = colDef(
@@ -320,6 +323,7 @@ You can set the default sorted columns by providing a vector of column
 names to `defaultSorted`:
 
 ``` r
+
 reactable(iris[48:52, ], defaultSorted = c("Species", "Petal.Length"))
 ```
 
@@ -387,6 +391,7 @@ You can also provide a named list to customize the default sort orders.
 Use `"asc"` for ascending order, or `"desc"` for descending order:
 
 ``` r
+
 reactable(iris[48:52, ], defaultSorted = list(Species = "asc", Petal.Length = "desc"))
 ```
 
@@ -462,6 +467,7 @@ in its [`colDef()`](../reference/colDef.md) to `"asc"` or `"desc"`. The
 default sort order of the column takes precedence over the table.
 
 ``` r
+
 reactable(
   iris[48:52, ],
   defaultSortOrder = "desc",
@@ -538,6 +544,7 @@ You can ignore missing values when sorting by setting `sortNALast` on a
 column:
 
 ``` r
+
 reactable(
   data.frame(
     n = c(1, 2, 3, -Inf, Inf),
@@ -592,6 +599,7 @@ column. When only some columns are sortable, it can help to indicate
 sortable columns using `showSortable`:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   sortable = FALSE,
@@ -670,6 +678,7 @@ only recommended when you want to use a [custom sort
 indicator](cookbook/cookbook.html#custom-sort-indicators).
 
 ``` r
+
 reactable(iris[1:5, ], showSortIcon = FALSE)
 ```
 
@@ -739,6 +748,7 @@ You can make columns filterable by setting `filterable = TRUE` in
 [`reactable()`](../reference/reactable.md):
 
 ``` r
+
 data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, filterable = TRUE, minRows = 10)
@@ -868,6 +878,7 @@ To make specific columns filterable (or not), set `filterable` to `TRUE`
 or `FALSE` in [`colDef()`](../reference/colDef.md):
 
 ``` r
+
 reactable(
   data,
   filterable = TRUE,
@@ -964,6 +975,7 @@ filtering on the `Manufacturer` column to be case-sensitive rather than
 case-insensitive. (Try filtering for “bmw” and then “BMW”).
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -1057,6 +1069,7 @@ You can make the entire table searchable by setting `searchable = TRUE`
 in [`reactable()`](../reference/reactable.md):
 
 ``` r
+
 data <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, searchable = TRUE, minRows = 10)
@@ -1193,6 +1206,7 @@ Filtering](custom-filtering.md) guide for details and examples.
 You can change the default page size by configuring `defaultPageSize`:
 
 ``` r
+
 reactable(iris[1:6, ], defaultPageSize = 4)
 ```
 
@@ -1261,6 +1275,7 @@ useful when rows don’t completely fill the page, or if the table has
 filtering:
 
 ``` r
+
 reactable(iris[1:6, ], defaultPageSize = 4, minRows = 4, searchable = TRUE)
 ```
 
@@ -1331,6 +1346,7 @@ You can show a dropdown of page sizes for users to choose from using
 `pageSizeOptions`:
 
 ``` r
+
 reactable(
   iris[1:12, ],
   showPageSizeOptions = TRUE,
@@ -1414,6 +1430,7 @@ to:
 #### Page jump
 
 ``` r
+
 reactable(iris[1:50, ], paginationType = "jump", defaultPageSize = 4)
 ```
 
@@ -1478,6 +1495,7 @@ Next
 #### Simple
 
 ``` r
+
 reactable(iris[1:50, ], paginationType = "simple", defaultPageSize = 4)
 ```
 
@@ -1544,6 +1562,7 @@ Next
 You can hide page info by setting `showPageInfo` to `FALSE`:
 
 ``` r
+
 reactable(iris[1:12, ], showPageInfo = FALSE, defaultPageSize = 4)
 ```
 
@@ -1608,6 +1627,7 @@ Previous
 Next
 
 ``` r
+
 reactable(iris[1:12, ], showPageInfo = FALSE, showPageSizeOptions = TRUE, defaultPageSize = 4)
 ```
 
@@ -1681,6 +1701,7 @@ useful if you want to keep the page info showing the number of rows in
 the table.
 
 ``` r
+
 reactable(iris[1:5, ], showPagination = TRUE)
 ```
 
@@ -1758,6 +1779,7 @@ Tables are paginated by default, but you can disable pagination by
 setting `pagination = FALSE`:
 
 ``` r
+
 reactable(iris[1:20, ], pagination = FALSE, highlight = TRUE, height = 250)
 ```
 
@@ -1975,6 +1997,7 @@ If you want to keep the row count and pagination controls visible even
 when pagination is disabled, set `showPagination = TRUE`:
 
 ``` r
+
 reactable(iris[1:20, ], pagination = FALSE, showPagination = TRUE, highlight = TRUE, height = 250)
 ```
 
@@ -1995,6 +2018,7 @@ when pagination is disabled. It can also be combined with expandable row
 details and grouped rows.
 
 ``` r
+
 set.seed(10)
 
 rows <- 1000
@@ -2039,6 +2063,7 @@ You can group rows in a table by specifying one or more columns in
 `groupBy`:
 
 ``` r
+
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
 reactable(data, groupBy = "Manufacturer")
@@ -2074,6 +2099,7 @@ When rows are grouped, you can aggregate data in a column using an
 `aggregate` function:
 
 ``` r
+
 data <- MASS::Cars93[14:38, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
 
 reactable(
@@ -2173,6 +2199,7 @@ Yes (5)
 You can use one of the built-in aggregate functions:
 
 ``` r
+
 colDef(aggregate = "sum")        # Sum of numbers
 colDef(aggregate = "mean")       # Mean of numbers
 colDef(aggregate = "max")        # Maximum of numbers
@@ -2186,6 +2213,7 @@ colDef(aggregate = "frequency")  # Comma-separated counts of unique values
 Or a custom aggregate function in JavaScript:
 
 ``` r
+
 colDef(
   aggregate = JS("
     function(values, rows) {
@@ -2204,6 +2232,7 @@ colDef(
 ### Multiple groups
 
 ``` r
+
 data <- data.frame(
   State = state.name,
   Region = state.region,
@@ -2295,6 +2324,7 @@ Here’s an example that calculates an aggregate average price by dividing
 the the sum of two columns, `Price` and `Units`:
 
 ``` r
+
 library(dplyr)
 
 set.seed(10)
@@ -2386,6 +2416,7 @@ with a large number of rows where expanded rows may not all fit on one
 page.
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
 reactable(data, groupBy = "Type", paginateSubRows = TRUE)
@@ -2456,6 +2487,7 @@ affecting the underlying data. Sorting, filtering, and grouping will
 still work on the original data.
 
 ``` r
+
 data <- data.frame(
   price_USD = c(123456.56, 132, 5650.12),
   price_INR = c(350, 23208.552, 1773156.4),
@@ -2526,6 +2558,7 @@ Sun Sep 22 2019
 ### Date formatting
 
 ``` r
+
 datetimes <- as.POSIXct(c("2019-01-02 3:22:15", "2019-03-15 09:15:55", "2019-09-22 14:20:00"),
                         tz = "America/New_York")
 data <- data.frame(
@@ -2588,6 +2621,7 @@ Sun Sep 22 2019 18:20:00 GMT+0000 (UTC)
 ### Currency formatting
 
 ``` r
+
 data <- data.frame(
   USD = c(12.12, 2141.213, 0.42, 1.55, 34414),
   EUR = c(10.68, 1884.27, 0.37, 1.36, 30284.32),
@@ -2682,6 +2716,7 @@ default. If you want to format aggregated cells separately, provide a
 named list of `cell` and `aggregated` options:
 
 ``` r
+
 colDef(
   format = list(
     cell = colFormat(...),       # Standard cells
@@ -2693,6 +2728,7 @@ colDef(
 For example, only the aggregated `States` are formatted here:
 
 ``` r
+
 data <- data.frame(
   States = state.name,
   Region = state.region,
@@ -2762,6 +2798,7 @@ default. You can customize their display text by setting `na` on a
 column:
 
 ``` r
+
 reactable(
   data.frame(
     n = c(1, 2, NA, 4, 5),
@@ -2841,6 +2878,7 @@ still work on the original data.
 #### R render function
 
 ``` r
+
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, columns = list(
@@ -2923,6 +2961,7 @@ Midsize
 #### JavaScript render function
 
 ``` r
+
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "AirBags", "Price")]
 
 reactable(data, columns = list(
@@ -3011,6 +3050,7 @@ Midsize
 #### Embedding HTML widgets
 
 ``` r
+
 library(dplyr)
 library(sparkline)
 
@@ -3055,6 +3095,7 @@ sunflower
 ### Grouped cell rendering
 
 ``` r
+
 data <- MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
 
 reactable(
@@ -3109,6 +3150,7 @@ Chrysler
 ### Aggregated cell rendering
 
 ``` r
+
 library(dplyr)
 
 set.seed(10)
@@ -3184,6 +3226,7 @@ Van, Midsize, Sporty
 This example requires reactable v0.3.0 or above.
 
 ``` r
+
 library(htmltools)
 
 reactable(
@@ -3299,6 +3342,7 @@ Use custom metadata to:
 - Share JavaScript code or data between different render functions
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -3431,6 +3475,7 @@ functions.
 ### R render function
 
 ``` r
+
 library(dplyr)
 library(htmltools)
 
@@ -3527,6 +3572,7 @@ Next
 This example requires reactable v0.3.0 or above.
 
 ``` r
+
 reactable(
   data,
   searchable = TRUE,
@@ -3625,6 +3671,7 @@ Next
 ### Embedding HTML widgets
 
 ``` r
+
 library(sparkline)
 
 reactable(
@@ -3724,6 +3771,7 @@ Rendering](custom-rendering.md) for details on how to use render
 functions.
 
 ``` r
+
 reactable(iris[1:5, ], details = function(index) {
   htmltools::div(
     "Details for row: ", index,
@@ -3817,6 +3865,7 @@ The details column can be customized by providing a
 column name, render HTML content, or change the column width:
 
 ``` r
+
 reactable(iris[1:5, ], details = colDef(
   name = "More",
   details = JS("function(rowInfo) {
@@ -3916,6 +3965,7 @@ With R render functions, you can render HTML tags, HTML widgets, and
 even nested tables:
 
 ``` r
+
 data <- unique(CO2[, c("Plant", "Type")])
 
 reactable(data, details = function(index) {
@@ -4026,6 +4076,7 @@ R render functions support conditional rendering. If a render function
 returns `NULL`, the row won’t be expandable:
 
 ``` r
+
 reactable(iris[1:5, ], details = function(index) {
   if (index %in% c(3, 5)) {
     reactable(data.frame(x = c(1, 2, 3), y = c("a", "b", "c")), fullWidth = FALSE)
@@ -4115,6 +4166,7 @@ You can add `details` to individual columns, and even show multiple
 details for a row:
 
 ``` r
+
 reactable(iris[1:5, ],
   details = function(index) {
     if (index %in% c(3, 5)) {
@@ -4234,6 +4286,7 @@ You can expand all rows by default by setting `defaultExpanded` to
 `TRUE`:
 
 ``` r
+
 reactable(
   iris[1:12, ],
   defaultPageSize = 4,
@@ -4335,6 +4388,7 @@ even more examples of conditional styling.
 #### R style function
 
 ``` r
+
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(
     style = function(value) {
@@ -4398,6 +4452,7 @@ ID
 This example requires reactable v0.3.0 or above.
 
 ``` r
+
 reactable(sleep[1:6, ], columns = list(
   extra = colDef(
     style = JS("function(rowInfo) {
@@ -4463,6 +4518,7 @@ ID
 #### R style function
 
 ``` r
+
 reactable(sleep[1:6, ], 
   rowStyle = function(index) {
     if (sleep[index, "extra"] < -1) {
@@ -4530,6 +4586,7 @@ ID
 This example requires reactable v0.3.0 or above.
 
 ``` r
+
 reactable(sleep[1:6, ],
   rowStyle = JS("function(rowInfo) {
     if (rowInfo.values['extra'] < -1) {
@@ -4609,6 +4666,7 @@ Use custom metadata to:
 - Share JavaScript code or data between different style functions
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:6, c("Manufacturer", "Model", "Type", "Price", "MPG.city")]
@@ -4737,6 +4795,7 @@ combined:
 ### Highlight rows on hover
 
 ``` r
+
 reactable(iris[1:5, ], highlight = TRUE)
 ```
 
@@ -4803,6 +4862,7 @@ setosa
 ### Bordered
 
 ``` r
+
 reactable(iris[1:5, ], bordered = TRUE)
 ```
 
@@ -4869,6 +4929,7 @@ setosa
 ### Borderless
 
 ``` r
+
 reactable(iris[1:5, ], borderless = TRUE)
 ```
 
@@ -4935,6 +4996,7 @@ setosa
 ### Outlined
 
 ``` r
+
 reactable(iris[1:5, ], outlined = TRUE)
 ```
 
@@ -5001,6 +5063,7 @@ setosa
 ### Striped
 
 ``` r
+
 reactable(iris[1:5, ], striped = TRUE)
 ```
 
@@ -5067,6 +5130,7 @@ setosa
 ### Bordered + striped + highlighting
 
 ``` r
+
 reactable(iris[1:5, ], bordered = TRUE, striped = TRUE, highlight = TRUE)
 ```
 
@@ -5133,6 +5197,7 @@ setosa
 ### Outlined + borderless
 
 ``` r
+
 reactable(iris[1:5, ], outlined = TRUE, borderless = TRUE)
 ```
 
@@ -5199,6 +5264,7 @@ setosa
 ### Compact
 
 ``` r
+
 reactable(iris[1:5, ], compact = TRUE)
 ```
 
@@ -5268,6 +5334,7 @@ Long text is wrapped by default, but you can force text to fit on a
 single line by setting `wrap` to `FALSE`:
 
 ``` r
+
 data <- aggregate(. ~ Species, iris, toString)
 
 reactable(
@@ -5365,6 +5432,7 @@ Scrollable tables are automatically made focusable when navigating using
 a keyboard to ensure that they’re always accessible for keyboard users.
 
 ``` r
+
 reactable(
   iris[1:20, ],
   height = 270,
@@ -5515,6 +5583,8 @@ arguments in [`colDef()`](../reference/colDef.md):
 
 - `minWidth` - minimum width of the column in pixels (defaults to `100`)
 - `maxWidth` - maximum width of the column in pixels
+- `initWidth` - initial width of the column in pixels, which can still
+  be resized (unlike `width`)
 - `width` - fixed width of the column in pixels (overrides `minWidth`
   and `maxWidth`)
 
@@ -5529,6 +5599,7 @@ widths of 200px, 100px, and 100px, the columns will take up 50%, 25%,
 and 25% of the table’s width respectively:
 
 ``` r
+
 reactable(
   MASS::Cars93[1:6, c("Make", "Type", "Weight")],
   columns = list(
@@ -5588,6 +5659,7 @@ Tables are full width by default, but you can shrink the table to fit
 its contents by setting `fullWidth` to `FALSE`:
 
 ``` r
+
 reactable(
   MASS::Cars93[1:5, 1:5],
   fullWidth = FALSE,
@@ -5659,6 +5731,7 @@ Midsize
 You can also set a maximum or fixed width on the table:
 
 ``` r
+
 reactable(
   MASS::Cars93[1:5, 1:5],
   bordered = TRUE,
@@ -5740,6 +5813,7 @@ header cells. Possible options are `"top"` (the default), `"center"`,
 and `"bottom"`.
 
 ``` r
+
 library(dplyr)
 library(htmltools)
 
@@ -5857,6 +5931,7 @@ For more control over styling, you can add custom class names to the
 table and apply your own CSS:
 
 ``` r
+
 reactable(
   iris[1:18, ],
   defaultPageSize = 6,
@@ -5999,6 +6074,7 @@ To apply a theme, provide a
 [`reactableTheme()`](../reference/reactableTheme.md) to `theme`:
 
 ``` r
+
 reactable(
   iris[1:30, ],
   searchable = TRUE,
@@ -6144,6 +6220,7 @@ To set the default theme for all tables, use the global
 `reactable.theme` option:
 
 ``` r
+
 options(reactable.theme = reactableTheme(
   color = "hsl(233, 9%, 87%)",
   backgroundColor = "hsl(233, 9%, 19%)",
@@ -6340,6 +6417,7 @@ adding styles in a certain context like `.outer-container &`.
 For example, to highlight headers when sorting:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   columns = list(Sepal.Length = colDef(sortable = FALSE)),
@@ -6418,6 +6496,7 @@ Or to apply a dark theme when a parent element has a certain class, like
 `.dark`:
 
 ``` r
+
 theme <- reactableTheme(
   style = list(".dark &" = list(color = "#fff", background = "#282a36")),
   cellStyle = list(".dark &" = list(borderColor = "rgba(255, 255, 255, 0.15)")),
@@ -6530,6 +6609,7 @@ For example, to style tables in RStudio R Notebooks only when a dark
 editor theme is active:
 
 ``` r
+
 options(reactable.theme = function() {
   theme <- reactableTheme(
     color = "hsl(233, 9%, 85%)",
@@ -6557,6 +6637,7 @@ You can create column groups by passing a list of
 [`colGroup()`](../reference/colGroup.md) definitions to `columnGroups`:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   columns = list(
@@ -6643,7 +6724,353 @@ setosa
 You can make columns resizable by setting `resizable` to `TRUE`:
 
 ``` r
+
 reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
+```
+
+Manufacturer
+
+Model
+
+Type
+
+Min.Price
+
+Price
+
+Max.Price
+
+MPG.city
+
+MPG.highway
+
+AirBags
+
+DriveTrain
+
+Cylinders
+
+EngineSize
+
+Horsepower
+
+RPM
+
+Rev.per.mile
+
+Man.trans.avail
+
+Fuel.tank.capacity
+
+Passengers
+
+Length
+
+Wheelbase
+
+Width
+
+Turn.circle
+
+Rear.seat.room
+
+Luggage.room
+
+Weight
+
+Origin
+
+Make
+
+Acura
+
+Integra
+
+Small
+
+12.9
+
+15.9
+
+18.8
+
+25
+
+31
+
+None
+
+Front
+
+4
+
+1.8
+
+140
+
+6300
+
+2890
+
+Yes
+
+13.2
+
+5
+
+177
+
+102
+
+68
+
+37
+
+26.5
+
+11
+
+2705
+
+non-USA
+
+Acura Integra
+
+Acura
+
+Legend
+
+Midsize
+
+29.2
+
+33.9
+
+38.7
+
+18
+
+25
+
+Driver & Passenger
+
+Front
+
+6
+
+3.2
+
+200
+
+5500
+
+2335
+
+Yes
+
+18
+
+5
+
+195
+
+115
+
+71
+
+38
+
+30
+
+15
+
+3560
+
+non-USA
+
+Acura Legend
+
+Audi
+
+90
+
+Compact
+
+25.9
+
+29.1
+
+32.3
+
+20
+
+26
+
+Driver only
+
+Front
+
+6
+
+2.8
+
+172
+
+5500
+
+2280
+
+Yes
+
+16.9
+
+5
+
+180
+
+102
+
+67
+
+37
+
+28
+
+14
+
+3375
+
+non-USA
+
+Audi 90
+
+Audi
+
+100
+
+Midsize
+
+30.8
+
+37.7
+
+44.6
+
+19
+
+26
+
+Driver & Passenger
+
+Front
+
+6
+
+2.8
+
+172
+
+5500
+
+2535
+
+Yes
+
+21.1
+
+6
+
+193
+
+106
+
+70
+
+37
+
+31
+
+17
+
+3405
+
+non-USA
+
+Audi 100
+
+BMW
+
+535i
+
+Midsize
+
+23.7
+
+30
+
+36.2
+
+22
+
+30
+
+Driver only
+
+Rear
+
+4
+
+3.5
+
+208
+
+5700
+
+2545
+
+Yes
+
+21.1
+
+4
+
+186
+
+109
+
+69
+
+39
+
+27
+
+13
+
+3640
+
+non-USA
+
+BMW 535i
+
+To give a column a custom starting width while keeping it resizable, set
+`initWidth` in [`colDef()`](../reference/colDef.md). Unlike `width`,
+which fixes the column width and disables resizing, `initWidth` only
+sets the initial width, so the column can still be resized within its
+`minWidth` and `maxWidth`:
+
+New in v0.4.5.9000
+
+``` r
+
+reactable(
+  MASS::Cars93[1:5, ],
+  resizable = TRUE,
+  wrap = FALSE,
+  bordered = TRUE,
+  columns = list(
+    Manufacturer = colDef(initWidth = 250)  # starts at 250px, still resizable
+  )
+)
 ```
 
 Manufacturer
@@ -6979,6 +7406,7 @@ You can make columns sticky when scrolling horizontally using the
 side.
 
 ``` r
+
 reactable(
   MASS::Cars93[1:5, ],
   columns = list(
@@ -7326,6 +7754,7 @@ BMW 535i
 ### Multiple sticky columns
 
 ``` r
+
 # Background style to visually distinguish sticky columns
 sticky_style <- list(backgroundColor = "#f7f7f7")
 
@@ -7684,6 +8113,7 @@ If a column group is sticky, all columns in the group will automatically
 be made sticky.
 
 ``` r
+
 reactable(
   MASS::Cars93[1:5, ],
   columnGroups = list(
@@ -8092,6 +8522,7 @@ names column by adding a column definition using `".rownames"` as the
 column name:
 
 ``` r
+
 reactable(
   USPersonalExpenditure,
   columns = list(
@@ -8176,6 +8607,7 @@ If row names haven’t been set explicitly, you can force them to show by
 setting `rownames` to `TRUE`:
 
 ``` r
+
 reactable(iris[1:5, ], rownames = TRUE)
 ```
 
@@ -8262,6 +8694,7 @@ Cells in the row names column are automatically marked up as row
 headers.
 
 ``` r
+
 data <- MASS::Cars93[1:5, c("Make", "Type", "Price", "MPG.city", "AirBags")]
 
 reactable(
@@ -8346,6 +8779,7 @@ accepts the following values:
 ### Expand on click
 
 ``` r
+
 reactable(
   iris[48:52, ],
   groupBy = "Species",
@@ -8377,6 +8811,7 @@ versicolor (2)
 ### Select on click
 
 ``` r
+
 reactable(iris[1:5, ], selection = "multiple", onClick = "select")
 ```
 
@@ -8472,6 +8907,7 @@ This example uses a custom click action to create custom “show details”
 action buttons in each row of the table:
 
 ``` r
+
 data <- cbind(
   MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")],
   details = NA
@@ -8577,6 +9013,7 @@ You can customize the language in the table by providing a set of
 `language`:
 
 ``` r
+
 reactable(
   iris[1:30, ],
   searchable = TRUE,
@@ -8721,6 +9158,7 @@ To set the default language strings for all tables, use the global
 `reactable.language` option:
 
 ``` r
+
 options(reactable.language = reactableLang(
   pageSizeOptions = "\u663e\u793a {rows}",
   pageInfo = "{rowStart} \u81f3 {rowEnd} \u9879\u7ed3\u679c,\u5171 {rows} \u9879",
@@ -8802,6 +9240,7 @@ To use reactable in Shiny apps, use
 [`reactableOutput()`](../reference/reactable-shiny.md):
 
 ``` r
+
 library(shiny)
 library(reactable)
 
@@ -8830,6 +9269,7 @@ rows are given as a vector of row indices (e.g. `c(1, 6, 4)`) or `NULL`
 if no rows are selected.
 
 ``` r
+
 library(shiny)
 library(reactable)
 
@@ -8864,6 +9304,7 @@ You can preselect rows by specifying a vector of row indices in
 `defaultSelected`:
 
 ``` r
+
 reactable(iris[1:4, ], selection = "multiple", defaultSelected = c(1, 3))
 ```
 
@@ -8933,6 +9374,7 @@ You can style selected rows using `rowSelectedStyle` in
 [`reactableTheme()`](../reference/reactableTheme.md):
 
 ``` r
+
 reactable(
   iris[1:4, ],
   selection = "multiple",
@@ -9008,6 +9450,7 @@ setosa
 Or using a `rowStyle` or `rowClass` JavaScript function:
 
 ``` r
+
 reactable(
   MASS::Cars93[10:22, c("Manufacturer", "Model", "Type", "Price", "MPG.city")],
   groupBy = "Manufacturer",
@@ -9065,6 +9508,7 @@ You can customize the selection column using `".selection"` as the
 column name:
 
 ``` r
+
 reactable(
   MASS::Cars93[1:4, ],
   columns = list(
@@ -9369,6 +9813,7 @@ You can update the selected rows, expanded rows, current page, or data
 using [`updateReactable()`](../reference/updateReactable.md):
 
 ``` r
+
 library(shiny)
 library(reactable)
 
@@ -9455,6 +9900,7 @@ To only watch for changes on a specific value, you can use the optional
 `name` argument, like `getReactableState(outputId, "selected")`.
 
 ``` r
+
 library(shiny)
 library(reactable)
 library(htmltools)
@@ -9524,6 +9970,7 @@ install the `crosstalk` package and wrap your data frame in a
 object:
 
 ``` r
+
 install.packages("crosstalk")
 
 library(crosstalk)
@@ -9535,6 +9982,7 @@ Then, pass the shared data to [`reactable()`](../reference/reactable.md)
 and any other Crosstalk-compatible HTML widget or filter input:
 
 ``` r
+
 reactable(data)
 
 filter_slider("sepal_length", "Sepal Length", data, ~Sepal.Length)
@@ -9555,6 +10003,7 @@ and
 inputs:
 
 ``` r
+
 library(crosstalk)
 
 cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
@@ -9702,6 +10151,7 @@ responsive grid using CSS grid.
 Example: grid layout using CSS grid
 
 ``` r
+
 library(crosstalk)
 
 cars <- MASS::Cars93[1:20, c("Manufacturer", "Model", "Type", "Price")]
@@ -9730,6 +10180,7 @@ In this example, you can select rows to highlight points on the map, or
 select areas on the map to highlight rows in the table.
 
 ``` r
+
 library(crosstalk)
 library(leaflet)
 library(dplyr)
@@ -9904,6 +10355,7 @@ including how to customize the field separator, decimal separator,
 included columns, and more.
 
 ``` r
+
 library(htmltools)
 library(fontawesome)
 
@@ -9999,6 +10451,7 @@ automatically applies any client-side filtering that has been done to
 the table.
 
 ``` r
+
 library(shiny)
 library(reactable)
 library(htmltools)
@@ -10030,6 +10483,7 @@ shinyApp(ui, server)
 ### Custom column filter
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
@@ -10122,6 +10576,7 @@ Next
 ### Custom search input
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:15, c("Manufacturer", "Model", "Type", "Price")]
@@ -10206,6 +10661,7 @@ Next
 ### Column grouping select
 
 ``` r
+
 library(dplyr)
 library(htmltools)
 
@@ -10317,6 +10773,7 @@ Next
 ### Row expansion toggle button
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price")]
@@ -10365,6 +10822,7 @@ BMW (1)
 New in v0.4.0
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Price",

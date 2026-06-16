@@ -5,6 +5,7 @@ alternative using virtual scrolling instead of pagination, see [100k
 Rows (Virtualized)](100k-rows-virtual.md).
 
 ``` r
+
 library(reactable)
 
 rows <- 100000
@@ -116,7 +117,7 @@ Oklahoma City
 
 2018-10-24
 
-Bismark
+Bismarck
 
 [New Mexico](https://wikipedia.org/wiki/New%20Mexico)
 

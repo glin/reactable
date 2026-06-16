@@ -15,6 +15,7 @@ Raw data: [`top_tracks.json`](top_tracks.json),
 ## Source Code
 
 ``` r
+
 library(reactable)
 library(htmltools)
 
@@ -207,6 +208,7 @@ div(class = "spotify-charts",
 ```
 
 ``` r
+
 tags$link(href = "https://fonts.googleapis.com/css?family=Work+Sans:400,600,700|Source+Code+Pro:400&display=fallback",
           rel = "stylesheet")
 ```

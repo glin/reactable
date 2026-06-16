@@ -29,6 +29,7 @@ colDef(
   rowHeader = FALSE,
   minWidth = 100,
   maxWidth = NULL,
+  initWidth = NULL,
   width = NULL,
   align = NULL,
   vAlign = NULL,
@@ -190,6 +191,11 @@ colDef(
 - maxWidth:
 
   Maximum width of the column in pixels.
+
+- initWidth:
+
+  Initial width of the column in pixels. Cannot be specified if `width`
+  is specified.
 
 - width:
 

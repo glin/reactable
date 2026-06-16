@@ -144,6 +144,7 @@ Demo](../building-twitter-followers.md)
 ## Source Code
 
 ``` r
+
 library(reactable)
 library(htmltools)
 
@@ -215,6 +216,7 @@ div(class = "twitter-followers",
 ```
 
 ``` r
+
 htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
 ```
 

@@ -40,6 +40,7 @@ This product uses the TMDb API but is not endorsed or certified by TMDb.
 ## Source Code
 
 ``` r
+
 library(reactable)
 library(jsonlite)
 library(dplyr)
@@ -205,6 +206,7 @@ function donutChart(value, color) {
 ```
 
 ``` r
+
 # Custom Crosstalk select filter. This is a single-select input that works
 # on columns containing multiple values per row (list columns).
 select_filter <- function(id, label, shared_data, group, choices = NULL,
@@ -356,6 +358,7 @@ range_filter <- function(id, label, shared_data, group, min = NULL, max = NULL,
 ```
 
 ``` r
+
 div(
   class = "movies",
   div(

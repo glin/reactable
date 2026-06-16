@@ -3,6 +3,7 @@
 ### Using inline styles
 
 ``` r
+
 reactable(
   MASS::Cars93,
   selection = "multiple",
@@ -25,6 +26,7 @@ reactable(
 ### Using CSS
 
 ``` r
+
 reactable(
   MASS::Cars93,
   selection = "multiple",

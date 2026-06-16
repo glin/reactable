@@ -5,6 +5,7 @@ A collection of recipes used to create the reactable demos.
 ## Insert links
 
 ``` r
+
 data <- data.frame(
   Address = c("https://google.com", "https://yahoo.com", "https://duckduckgo.com"),
   Site = c("Google", "Yahoo", "DuckDuckGo")
@@ -34,6 +35,7 @@ utilities](https://bookdown.org/rdpeng/exdata/plotting-and-color-in-r.html#color
 (or other color manipulation package):
 
 ``` r
+
 data <- iris[10:29, ]
 orange_pal <- function(x) rgb(colorRamp(c("#ffe4cc", "#ff9500"))(x), maxColorValue = 255)
 
@@ -50,6 +52,7 @@ reactable(
 ```
 
 ``` r
+
 dimnames <- list(start(nottem)[1]:end(nottem)[1], month.abb)
 temps <- matrix(nottem, ncol = 12, byrow = TRUE, dimnames = dimnames)
 
@@ -78,6 +81,7 @@ reactable(
 ### Formatting changes
 
 ``` r
+
 stocks <- data.frame(
   Symbol = c("GOOG", "FB", "AMZN", "NFLX", "TSLA"),
   Price = c(1265.13, 187.89, 1761.33, 276.82, 328.13),
@@ -107,6 +111,7 @@ reactable(
 ### Tags and badges
 
 ``` r
+
 library(htmltools)
 
 orders <- data.frame(
@@ -154,6 +159,7 @@ reactable(
 ```
 
 ``` r
+
 library(htmltools)
 
 status_badge <- function(color = "#aaa", width = "0.55rem", height = width) {
@@ -191,6 +197,7 @@ one way inspired by [Making Charts with
 CSS](https://css-tricks.com/making-charts-with-css/).
 
 ``` r
+
 library(htmltools)
 
 # Render a bar chart with a label on the left
@@ -220,6 +227,7 @@ reactable(
 ### Positive and negative values
 
 ``` r
+
 library(htmltools)
 
 # Render a bar chart with positive and negative values
@@ -279,6 +287,7 @@ inspired by an [example from the DT
 package](https://rstudio.github.io/DT/010-style.html).
 
 ``` r
+
 # Render a bar chart in the background of the cell
 bar_style <- function(width = 1, fill = "#e6e6e6", height = "75%",
                       align = c("left", "right"), color = NULL) {
@@ -338,6 +347,7 @@ case).
 ### External image files
 
 ``` r
+
 library(htmltools)
 
 data <- data.frame(
@@ -386,6 +396,7 @@ This can be more portable, but is usually only recommended for small
 image files.
 
 ``` r
+
 library(htmltools)
 
 data <- data.frame(
@@ -422,6 +433,7 @@ and alternative text is added using an `aria-label` or `title`
 attribute.
 
 ``` r
+
 library(htmltools)
 
 rating_stars <- function(rating, max_rating = 5) {
@@ -459,6 +471,7 @@ row index argument in an R render function, or `cellInfo.row` in a
 JavaScript render function. This example shows both ways.
 
 ``` r
+
 library(dplyr)
 library(htmltools)
 
@@ -469,6 +482,7 @@ data <- starwars %>%
 ### R render function
 
 ``` r
+
 reactable(
   data,
   columns = list(
@@ -494,6 +508,7 @@ reactable(
 ### JavaScript render function
 
 ``` r
+
 reactable(
   data,
   columns = list(
@@ -521,6 +536,7 @@ reactable(
 ## Total rows
 
 ``` r
+
 library(dplyr)
 library(htmltools)
 
@@ -546,6 +562,7 @@ To update the total when filtering the table, calculate the total in a
 JavaScript render function:
 
 ``` r
+
 reactable(
   data,
   searchable = TRUE,
@@ -570,6 +587,7 @@ reactable(
 #### Totals with aggregated rows
 
 ``` r
+
 reactable(
   data,
   groupBy = "Manufacturer",
@@ -598,6 +616,7 @@ To create nested tables, use
 [`reactable()`](../../reference/reactable.md) in a row details renderer:
 
 ``` r
+
 library(dplyr)
 
 data <- MASS::Cars93[18:47, ] %>%
@@ -630,6 +649,7 @@ values by adding white space to the cells without units. Two ways to do
 this are shown below.
 
 ``` r
+
 data <- MASS::Cars93[40:44, c("Make", "Length", "Luggage.room")]
 
 reactable(
@@ -677,6 +697,7 @@ element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/abbr)
 with a `title` attribute:
 
 ``` r
+
 library(htmltools)
 library(dplyr)
 
@@ -710,6 +731,7 @@ JavaScript-based tooltip that supports keyboard, touch, and screen
 reader use.
 
 ``` r
+
 library(htmltools)
 library(dplyr)
 library(tippy)
@@ -735,6 +757,7 @@ reactable(
 ## Highlight cells
 
 ``` r
+
 data <- MASS::road[11:17, ]
 
 reactable(
@@ -752,6 +775,7 @@ reactable(
 ## Highlight columns
 
 ``` r
+
 reactable(
   iris[1:5, ],
   columns = list(
@@ -763,6 +787,7 @@ reactable(
 ## Highlight rows
 
 ``` r
+
 reactable(
   iris[1:5, ],
   rowStyle = function(index) {
@@ -778,6 +803,7 @@ To style sortable headers on hover, select headers with an `aria-sort`
 attribute and `:hover` pseudo-class in CSS:
 
 ``` r
+
 reactable(iris[1:5, ], defaultColDef = colDef(headerClass = "sort-header"))
 ```
 
@@ -803,6 +829,7 @@ To style sorted columns, use a JavaScript function to style columns
 based on the table’s sorted state:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   defaultSorted = "Sepal.Width",
@@ -829,6 +856,7 @@ sorted, use a JavaScript function to style rows only when the groups are
 sorted.
 
 ``` r
+
 library(dplyr)
 
 data <- as_tibble(MASS::painters, rownames = "Painter") %>%
@@ -871,6 +899,7 @@ JavaScript style function for grouping to work with sorting, filtering,
 and pagination.
 
 ``` r
+
 library(dplyr)
 
 data <- as_tibble(MASS::painters, rownames = "Painter") %>%
@@ -903,6 +932,7 @@ reactable(
 ## Borders between columns
 
 ``` r
+
 reactable(
   iris[1:5, ],
   columns = list(
@@ -920,6 +950,7 @@ their [nesting `level`
 property](../conditional-styling.html#rowinfo-properties):
 
 ``` r
+
 data <- MASS::Cars93[4:8, c("Type", "Price", "MPG.city", "DriveTrain", "Man.trans.avail")]
 
 reactable(
@@ -952,6 +983,7 @@ To customize the table font, you can set a font on the page, or on the
 table itself:
 
 ``` r
+
 reactable(
   iris[1:5, ],
   style = list(fontFamily = "Work Sans, sans-serif", fontSize = "0.875rem"),
@@ -983,6 +1015,7 @@ Or in Shiny apps, the `<link>` tag can be included in the `<head>` of
 the page via `ui`:
 
 ``` r
+
 library(shiny)
 library(reactable)
 
@@ -1046,6 +1079,7 @@ attribute on table headers to style based on whether the column is
 sorted in ascending or descending order.
 
 ``` r
+
 reactable(
   MASS::Cars93[1:5, c("Manufacturer", "Model", "Type", "Min.Price", "Price")],
   showSortIcon = FALSE,

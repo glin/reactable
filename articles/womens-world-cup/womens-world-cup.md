@@ -725,6 +725,7 @@ Full source:
 [`vignettes/womens-world-cup/womens-world-cup.Rmd`](https://github.com/glin/reactable/blob/main/vignettes/womens-world-cup/womens-world-cup.Rmd)
 
 ``` r
+
 library(reactable)
 library(htmltools)
 
@@ -870,6 +871,7 @@ div(class = "standings",
 ```
 
 ``` r
+
 htmltools::tags$link(
   href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
   rel = "stylesheet"

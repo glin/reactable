@@ -7,6 +7,7 @@ alternative using pagination instead of virtual scrolling, see [100k
 Rows](100k-rows.md).
 
 ``` r
+
 library(reactable)
 
 rows <- 100000

@@ -12,6 +12,7 @@
 Install dependencies for R:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_dev_deps()
 ```
@@ -40,6 +41,7 @@ preferably only once per branch.
 Run R tests:
 
 ``` r
+
 devtools::test()
 
 # With test coverage (requires DT)

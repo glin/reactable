@@ -1,6 +1,7 @@
 # Internationalization
 
 ``` r
+
 reactable(
   iris[1:30, ],
   searchable = TRUE,

@@ -49,12 +49,14 @@ Table](https://github.com/tanstack/table/tree/v7) library and made with
 You can install reactable from CRAN with:
 
 ``` r
+
 install.packages("reactable")
 ```
 
 Or install the development version from GitHub with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("glin/reactable")
 ```
@@ -65,6 +67,7 @@ To create a table, use [`reactable()`](reference/reactable.md) on a data
 frame or matrix:
 
 ``` r
+
 library(reactable)
 
 reactable(iris)
@@ -84,6 +87,7 @@ You can embed tables in **R Markdown** or **Quarto** documents:
 Or use them in **Shiny** applications:
 
 ``` r
+
 library(shiny)
 library(reactable)
 

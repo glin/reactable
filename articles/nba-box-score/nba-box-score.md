@@ -1132,6 +1132,7 @@ Raw data: [`line_score.csv`](line_score.csv),
 ## Source Code
 
 ``` r
+
 library(reactable)
 library(htmltools)
 
@@ -1286,6 +1287,7 @@ div(class = "box-score",
 ```
 
 ``` r
+
 htmltools::tags$link(href = "https://fonts.googleapis.com/css?family=Roboto:400,500&display=fallback", rel = "stylesheet")
 ```
 

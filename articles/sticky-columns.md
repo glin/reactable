@@ -19,6 +19,7 @@ columns just don’t stick.
 content.
 
 ``` r
+
 reactable(
   MASS::Cars93,
   columns = list(
@@ -38,6 +39,7 @@ reactable(
 Adding a border style and reducing some of the repetition:
 
 ``` r
+
 sticky_style <- function(left = TRUE) {
   style <- list(position = "sticky", background = "#fff", zIndex = 1)
   if (left) {
@@ -74,6 +76,7 @@ default, so the 2nd column from left needs `left: 100px;`, the 3rd
 column from left needs `left: 200px;`, etc.
 
 ``` r
+
 reactable(
   MASS::Cars93,
   columns = list(
@@ -129,6 +132,7 @@ reactable(
 Sticky columns should work fine with sticky headers and footers:
 
 ``` r
+
 reactable(
   MASS::Cars93[1:20, ],
   pagination = FALSE,

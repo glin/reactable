@@ -51,6 +51,7 @@ package](https://github.com/jeroen/V8) is installed first. V8 is not
 installed with reactable by default.
 
 ``` r
+
 install.packages("V8")
 ```
 
@@ -58,6 +59,7 @@ Then, use `reactable(static = TRUE)` to render a single table to static
 HTML:
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(data, defaultPageSize = 5, static = TRUE)
@@ -135,6 +137,7 @@ Or use `options(reactable.static = TRUE)` to enable static rendering for
 all tables:
 
 ``` r
+
 options(reactable.static = TRUE)
 
 reactable(data, defaultPageSize = 5)
@@ -256,6 +259,7 @@ make sense to use for every table.
   prevent rendering failures:
 
   ``` r
+
   colDef(
     cell = JS("
       function(cellInfo) {

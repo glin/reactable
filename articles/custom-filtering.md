@@ -21,6 +21,7 @@ Column filter methods can be customized using the `filterMethod`
 argument in [`colDef()`](../reference/colDef.md):
 
 ``` r
+
 colDef(
   filterMethod = JS("
     function(rows, columnId, filterValue) {
@@ -76,6 +77,7 @@ The global table search method can be customized using the
 `searchMethod` argument in [`reactable()`](../reference/reactable.md):
 
 ``` r
+
 reactable(
   searchMethod = JS("
     function(rows, columnIds, filterValue) {
@@ -165,6 +167,7 @@ R render functions take up to 2 optional arguments — the column values
 and column name — and return the element to render.
 
 ``` r
+
 colDef(
   filterInput = function(values, name) {
     # input:
@@ -191,6 +194,7 @@ optional arguments — a column object and a table state object — and
 return the element to render.
 
 ``` r
+
 colDef(
   filterInput = JS("
     function(column, state) {
@@ -215,28 +219,28 @@ colDef(
 
 #### `column` properties
 
-| Property      | Example                          | Description                                                                      |
-|---------------|----------------------------------|----------------------------------------------------------------------------------|
-| `id`          | `"Petal.Length"`                 | column ID                                                                        |
-| `name`        | `"Petal Length"`                 | column display name                                                              |
-| `filterValue` | `"petal"`                        | column filter value                                                              |
-| `setFilter`   | `function setFilter(value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
+| Property | Example | Description |
+|----|----|----|
+| `id` | `"Petal.Length"` | column ID |
+| `name` | `"Petal Length"` | column display name |
+| `filterValue` | `"petal"` | column filter value |
+| `setFilter` | `function setFilter(value: any)` | function to set the column filter value (set to `undefined` to clear the filter) |
 
 #### `state` properties
 
-| Property        | Example                                           | Description                                                        |
-|-----------------|---------------------------------------------------|--------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                  |
-| `page`          | `2`                                               | page index (zero-based)                                            |
-| `pageSize`      | `10`                                              | page size                                                          |
-| `pages`         | `5`                                               | number of pages                                                    |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                               |
-| `searchValue`   | `"petal"`                                         | table search value                                                 |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                  |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                       |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                     |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                  |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |
 
 ## Examples
 
@@ -247,6 +251,7 @@ filtering on the `Manufacturer` column to be case-sensitive rather than
 case-insensitive. (Try filtering for “bmw” and then “BMW”).
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -279,6 +284,7 @@ to convert values to strings before calling string methods like
 [`indexOf()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf).
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -308,6 +314,7 @@ to convert values to strings before comparing them with the filter
 value.
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -333,6 +340,7 @@ This example shows how you can filter a numeric column based on a
 minimum value. (Try filtering the `Price` column for `30`).
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -362,6 +370,7 @@ for an example of how to escape special characters in regular
 expressions.
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -394,6 +403,7 @@ This also shows how you can create reusable search or filter methods
 that can be shared across multiple tables or columns.
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -440,6 +450,7 @@ unique values, and includes an additional “All” option to clear the
 filter.
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -479,6 +490,7 @@ This example also shows how you can create reusable filter inputs, or
 set default custom filters based on column type.
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -532,6 +544,7 @@ element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
 for numeric filtering. The `Price` column is filtered by minimum value.
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -571,6 +584,7 @@ This example shows how you can create custom filter inputs outside the
 table, using a more complex version of the range filter from above.
 
 ``` r
+
 library(htmltools)
 
 # Custom range input filter with label and value
@@ -612,6 +626,7 @@ filterMinValue <- JS("function(rows, columnId, filterValue) {
 ```
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 browsable(tagList(
@@ -650,6 +665,7 @@ row are missing, and filter for `true` values when the checkbox is
 checked.
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -706,6 +722,7 @@ in JavaScript, using React. It renders a basic text input filter for the
 `Manufacturer` column.
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(
@@ -788,6 +805,7 @@ function filterMinValue(rows, columnId, filterValue) {
 ```
 
 ``` r
+
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
 
 reactable(

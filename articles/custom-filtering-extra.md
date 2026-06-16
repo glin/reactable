@@ -65,6 +65,7 @@ const filterRange = (rows, columnId, filterValue) => {
 ```
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]

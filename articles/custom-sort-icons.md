@@ -3,6 +3,7 @@
 ### Custom sort icons using CSS pseudo-elements
 
 ``` r
+
 library(reactable)
 library(htmltools)
 

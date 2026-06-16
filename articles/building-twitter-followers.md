@@ -31,6 +31,7 @@ article, but we’ll conveniently begin working with a cleaned CSV file:
 [`twitter_followers.csv`](https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv).
 
 ``` r
+
 data <- read.csv("https://raw.githubusercontent.com/glin/reactable/main/vignettes/twitter-followers/twitter_followers.csv",
                  stringsAsFactors = FALSE)
 
@@ -49,6 +50,7 @@ The first thing we’ll do is create a basic table using
 [`reactable()`](../reference/reactable.md):
 
 ``` r
+
 library(reactable)
 
 reactable(data)
@@ -67,6 +69,7 @@ Twitter handles, add thousands separators to the follower counts, and
 format the percentages with 1 decimal place.
 
 ``` r
+
 reactable(
   data,
   defaultSorted = "exclusive_followers_pct",
@@ -113,6 +116,7 @@ out how the bar charts were made, which colors and fonts were used, and
 so on.
 
 ``` r
+
 library(htmltools)
 
 # Render a bar chart with a label on the left
@@ -174,6 +178,7 @@ can learn more about the different types of fonts in this article,
 Figures](https://www.fonts.com/content/learning/fontology/level-3/numbers/proportional-vs-tabular-figures).
 
 ``` r
+
 reactable(
   data,
   defaultSorted = "exclusive_followers_pct",
@@ -233,6 +238,7 @@ JavaScript. We’ll generate the same bar chart HTML by concatenating
 strings, and it’ll be kind of ugly written as a character string in R.
 
 ``` r
+
 reactable(
   data,
   defaultSorted = "exclusive_followers_pct",
@@ -325,6 +331,7 @@ Share of each 2020 candidate's followers who don't follow any other
 candidates
 
 ``` r
+
 tbl <- reactable(
   data,
   pagination = FALSE,
@@ -383,6 +390,7 @@ tbl <- reactable(
 ```
 
 ``` r
+
 # Add the title and subtitle
 div(class = "twitter-followers",
     div(class = "followers-header",
@@ -394,6 +402,7 @@ div(class = "twitter-followers",
 ```
 
 ``` r
+
 # Add Google Fonts to the page
 tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback",
           rel = "stylesheet")

@@ -16,6 +16,7 @@ Common use cases for the JavaScript API include:
 #### Example: CSV download button
 
 ``` r
+
 library(htmltools)
 
 htmltools::browsable(
@@ -43,6 +44,7 @@ distinguishes it from other tables:
   [`reactable()`](../reference/reactable.md):
 
   ``` r
+
   reactable(MASS::Cars93, elementId = "cars-table")
   ```
 
@@ -51,6 +53,7 @@ distinguishes it from other tables:
   example, the table in this app uses `cars_table` as its ID:
 
   ``` r
+
   library(shiny)
 
   ui <- fluidPage(
@@ -92,6 +95,7 @@ This example uses the `htmltools` package to render a CSV download
 button. You can copy this code into an R console to view the output:
 
 ``` r
+
 library(htmltools)
 
 htmltools::browsable(
@@ -113,6 +117,7 @@ To reuse this button in other tables, you can also convert it into a
 function that generates download buttons:
 
 ``` r
+
 library(htmltools)
 
 csvDownloadButton <- function(tableId, label = "Download as CSV", filename = "data.csv") {
@@ -666,20 +671,20 @@ Reactable.getState(tableId: string)
 
 An object with the following properties:
 
-| Property        | Example                                           | Description                                                                           |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------|
-| `sorted`        | `[{ id: "Petal.Length", desc: true }, ...]`       | columns being sorted in the table                                                     |
-| `page`          | `2`                                               | page index (zero-based)                                                               |
-| `pageSize`      | `10`                                              | page size                                                                             |
-| `pages`         | `5`                                               | number of pages                                                                       |
-| `filters`       | `[{ id: "Species", value: "petal" }]`             | column filter values                                                                  |
-| `searchValue`   | `"petal"`                                         | table search value                                                                    |
-| `selected`      | `[0, 1, 4]`                                       | selected row indices (zero-based)                                                     |
-| `pageRows`      | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page                                                          |
-| `sortedData`    | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping)                    |
-| `data`          | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table                                                        |
-| `meta`          | `{ custom: 123 }`                                 | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
-| `hiddenColumns` | `["Petal.Length"]`                                | columns being hidden in the table                                                     |
+| Property | Example | Description |
+|----|----|----|
+| `sorted` | `[{ id: "Petal.Length", desc: true }, ...]` | columns being sorted in the table |
+| `page` | `2` | page index (zero-based) |
+| `pageSize` | `10` | page size |
+| `pages` | `5` | number of pages |
+| `filters` | `[{ id: "Species", value: "petal" }]` | column filter values |
+| `searchValue` | `"petal"` | table search value |
+| `selected` | `[0, 1, 4]` | selected row indices (zero-based) |
+| `pageRows` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data on the page |
+| `sortedData` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | current row data in the table (after sorting, filtering, grouping) |
+| `data` | `[{ Petal.Length: 1.7, Species: "setosa" }, ...]` | original row data in the table |
+| `meta` | `{ custom: 123 }` | custom table metadata from [`reactable()`](../reference/reactable.md) (new in v0.4.0) |
+| `hiddenColumns` | `["Petal.Length"]` | columns being hidden in the table |
 
 #### Examples
 
@@ -734,6 +739,7 @@ cancel()
 ##### Static widgets
 
 ``` r
+
 library(htmltools)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
@@ -767,6 +773,7 @@ browsable(
 ##### Shiny outputs
 
 ``` r
+
 library(shiny)
 
 data <- MASS::Cars93[, c("Manufacturer", "Model", "Type", "Price")]
