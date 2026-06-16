@@ -1447,8 +1447,6 @@ arguments in [`colDef()`](../reference/colDef.md):
 
 - `minWidth` - minimum width of the column in pixels (defaults to `100`)
 - `maxWidth` - maximum width of the column in pixels
-- `initWidth` - initial width of the column in pixels, which can still
-  be resized (unlike `width`)
 - `width` - fixed width of the column in pixels (overrides `minWidth`
   and `maxWidth`)
 
@@ -1772,27 +1770,6 @@ You can make columns resizable by setting `resizable` to `TRUE`:
 ``` r
 
 reactable(MASS::Cars93[1:5, ], resizable = TRUE, wrap = FALSE, bordered = TRUE)
-```
-
-To give a column a custom starting width while keeping it resizable, set
-`initWidth` in [`colDef()`](../reference/colDef.md). Unlike `width`,
-which fixes the column width and disables resizing, `initWidth` only
-sets the initial width, so the column can still be resized within its
-`minWidth` and `maxWidth`:
-
-New in v0.4.5.9000
-
-``` r
-
-reactable(
-  MASS::Cars93[1:5, ],
-  resizable = TRUE,
-  wrap = FALSE,
-  bordered = TRUE,
-  columns = list(
-    Manufacturer = colDef(initWidth = 250)  # starts at 250px, still resizable
-  )
-)
 ```
 
 ## Sticky Columns

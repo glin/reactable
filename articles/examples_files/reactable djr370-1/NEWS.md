@@ -58,7 +58,6 @@
     result
   })
   ```
-* `colDef()` gains an `initWidth` argument to set a column's initial width in pixels while keeping the column resizable. Unlike `width`, which sets a fixed width and disables resizing, `initWidth` only sets the starting width, so the column can still be resized within its `minWidth` and `maxWidth`. (@nteetor, [#223](https://github.com/glin/reactable/issues/223), [#374](https://github.com/glin/reactable/issues/374))
 
 ## Minor improvements and bug fixes
 
