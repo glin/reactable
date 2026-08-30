@@ -122,10 +122,12 @@
 <span>  <span class="va">result</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </li>
+<li><p><code><a href="../reference/colDef.html">colDef()</a></code> gains an <code>initWidth</code> argument to set a column’s initial width in pixels while keeping the column resizable. Unlike <code>width</code>, which sets a fixed width and disables resizing, <code>initWidth</code> only sets the starting width, so the column can still be resized within its <code>minWidth</code> and <code>maxWidth</code>. (<a href="https://github.com/nteetor" class="external-link">@nteetor</a>, <a href="https://github.com/glin/reactable/issues/223" class="external-link">#223</a>, <a href="https://github.com/glin/reactable/issues/374" class="external-link">#374</a>)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-bug-fixes-0-4-5-9000">Minor improvements and bug fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bug-fixes-0-4-5-9000"></a></h3>
-<ul><li>Fixed inconsistent spacing between column group borders on resizable tables. (<a href="https://github.com/wvictor14" class="external-link">@wvictor14</a>, <a href="https://github.com/glin/reactable/issues/396" class="external-link">#396</a>)</li>
+<ul><li>Improved rendering performance for large tables.</li>
+<li>Fixed inconsistent spacing between column group borders on resizable tables. (<a href="https://github.com/wvictor14" class="external-link">@wvictor14</a>, <a href="https://github.com/glin/reactable/issues/396" class="external-link">#396</a>)</li>
 <li>Fixed <code><a href="https://rdrr.io/pkg/htmlwidgets/man/JS.html" class="external-link">JS()</a></code> not working when <code>htmlwidgets</code> 1.6.3 or later is installed. (<a href="https://github.com/glin/reactable/issues/348" class="external-link">#348</a>)</li>
 <li>In <code><a href="../reference/reactableTheme.html">reactableTheme()</a></code>, <code>stripedColor</code> and <code>highlightColor</code> now work when using sticky columns. (<a href="https://github.com/grcatlin" class="external-link">@grcatlin</a>, <a href="https://github.com/glin/reactable/issues/401" class="external-link">#401</a>)</li>
 <li>In Crosstalk tables, pagination no longer resets when selecting a row on a page greater than 1. (<a href="https://github.com/msaltieri" class="external-link">@msaltieri</a>, <a href="https://github.com/glin/reactable/issues/349" class="external-link">#349</a>)</li>
@@ -475,7 +477,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 </footer></div>
 
