@@ -1305,7 +1305,14 @@ function Table({
     )
   }
 
-  const rowData = convertRowsToV6(instance.rows)
+  // Convert rows to the deprecated v6 data format for the public state object and legacy
+  // render functions. The cost scales with the whole row model, not the page, so memoize it.
+  // instance.rows and instance.page are memoized upstream and change identity when their
+  // contents change, which makes them safe keys. rowData also feeds the stateInfo memo below,
+  // so converting on every render would rebuild the public state object every render too.
+  // The converted arrays are shared between renders, so row data in the state is read-only.
+  const rowData = React.useMemo(() => convertRowsToV6(instance.rows), [instance.rows])
+  const pageRowData = React.useMemo(() => convertRowsToV6(instance.page), [instance.page])
   const stateInfo = React.useMemo(() => {
     return {
       ...state,
@@ -1314,7 +1321,7 @@ function Table({
       hiddenColumns: state.hiddenColumns.filter(id => id !== crosstalkId),
       // For v6 compatibility
       sorted: state.sortBy,
-      pageRows: convertRowsToV6(instance.page),
+      pageRows: pageRowData,
       sortedData: rowData,
       data: data,
       page: state.pageIndex,
@@ -1322,16 +1329,7 @@ function Table({
       pages: instance.pageCount,
       selected: selectedRowIndexes
     }
-  }, [
-    state,
-    meta,
-    crosstalkId,
-    instance.page,
-    rowData,
-    data,
-    instance.pageCount,
-    selectedRowIndexes
-  ])
+  }, [state, meta, crosstalkId, pageRowData, rowData, data, instance.pageCount, selectedRowIndexes])
 
   const makeThead = () => {
     const theadProps = instance.getTheadProps()

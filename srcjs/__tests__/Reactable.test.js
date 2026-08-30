@@ -10568,6 +10568,41 @@ describe('reactable JavaScript API', () => {
     await waitFor(() => expect(currentState.groupBy).toEqual(['a']))
   })
 
+  it('memoizes the converted row data (sortedData) so it is only recomputed when rows change', () => {
+    const props = {
+      data: { a: ['aaa1', 'bbb2'], b: [1, 2] },
+      columns: [
+        { name: 'a', id: 'a' },
+        { name: 'b', id: 'b' }
+      ],
+      elementId: 'my-tbl'
+    }
+    render(<Reactable {...props} />)
+
+    // A render that does not change the row model (toggling row selection) should reuse the
+    // same converted sortedData/pageRows references, so the conversion doesn't run again.
+    const initialState = reactable.getState('my-tbl')
+    act(() => reactable.toggleRowSelected('my-tbl', 0))
+    const selectedState = reactable.getState('my-tbl')
+    expect(selectedState).not.toBe(initialState)
+    expect(selectedState.sortedData).toBe(initialState.sortedData)
+    expect(selectedState.pageRows).toBe(initialState.pageRows)
+
+    // sortedData and pageRows must stay distinct arrays even when they hold equal contents,
+    // since the page row model can be the same array as the table row model
+    expect(selectedState.sortedData).toEqual(selectedState.pageRows)
+    expect(selectedState.sortedData).not.toBe(selectedState.pageRows)
+
+    // Sorting changes the row model, so the converted data must be recomputed (new reference).
+    act(() => reactable.toggleSortBy('my-tbl', 'a', true))
+    const sortedState = reactable.getState('my-tbl')
+    expect(sortedState.sortedData).not.toBe(selectedState.sortedData)
+    expect(sortedState.sortedData).toEqual([
+      { a: 'bbb2', b: 2 },
+      { a: 'aaa1', b: 1 }
+    ])
+  })
+
   it('Reactable.gotoPage', () => {
     const props = {
       data: { a: ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'] },
