@@ -42,6 +42,15 @@ and `aria-busy`; callback errors use `role="alert"`. Loading finishes when Shiny
 
 ## Test plan
 
+For a small three-level example, install this checkout and run
+`shiny::runApp("design/lazy-details/app.R")`. Expand a car, a system, and individual checks. The calculation log should
+start at zero, grow once per opening, and stay unchanged when closing a panel. Closing a parent removes its descendants;
+reopening starts fresh. "Recreate tables" should close every panel without calculating any new details.
+
+With the app running, `python3 design/lazy-details/test-nested-app.py http://127.0.0.1:3847` runs browser checks using
+Python Playwright and Chromium. It checks three-level nesting, reopening, sibling panels, table recreation, and opening
+all 36 leaf panels on the first page before collapsing their parents.
+
 Run `test-lazy-reactable.R` in a fresh R session. It installs the feature branch, or a local checkout selected by
 `REACTABLE_LOCAL_SOURCE`. Check zero initial calls, nested expansion, reopen timestamps, sorting, paging, refreshed data,
 error recovery, independent tables, module namespaces and virtual scrolling. Download the event report with session details.
