@@ -42,6 +42,25 @@ and `aria-busy`; callback errors use `role="alert"`. Loading finishes when Shiny
 
 ## Test plan
 
+### Portfolio dashboard demo
+
+Install this checkout, then run `shiny::runApp("design/lazy-details/dashboard-app.R")` for the Atlas portfolio demo.
+It has 10,000 synthetic account rows, each with an on-demand dashboard, 12 nested market dashboards, and 30 transaction
+receipts per market. The directory supports virtual scrolling, pagination, search, region filtering, and refresh.
+Charts use inline SVG generated in R; no additional chart packages or external assets are required.
+
+Live telemetry reports table build/serialization time, widget JSON size, callback counts, and retained panels. The
+"Compare eager vs lazy" button benchmarks the same 50 accounts in both modes, leaving market/receipt descendants lazy
+in both cases. Benchmark registrations are cleaned up and sample builds are excluded from the exploration counters.
+This sample comparison does not represent a measured eager run on all 10,000 accounts.
+
+Run `python3 design/lazy-details/test-dashboard-app.py http://127.0.0.1:3847` with Python Playwright and Chromium installed
+to verify zero startup dashboard work, three-level expansion, retention through virtual scrolling, collapse/reopen,
+account 9,999, region filtering, refresh, pagination, and benchmark cleanup. It saves screenshots in `/tmp`.
+For a standalone comparison, run `Rscript design/lazy-details/benchmark-dashboard.R` from the repository root.
+
+### Small nested example
+
 For a small three-level example, install this checkout and run
 `shiny::runApp("design/lazy-details/app.R")`. Expand a car, a system, and individual checks. The calculation log should
 start at zero, grow once per opening, and stay unchanged when closing a panel. Closing a parent removes its descendants;
