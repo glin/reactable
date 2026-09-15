@@ -1,0 +1,26 @@
+---
+title: "Native lazy details acceptance tests"
+output: html_document
+runtime: shiny
+---
+
+::: {.callout}
+New in v0.4.5.9000
+:::
+
+```{r}
+library(reactable)
+library(shiny)
+calls <- reactiveVal(0L)
+renderText(paste("Detail calculations:", calls()))
+renderReactable({
+  reactable(mtcars, lazyDetails = TRUE, searchable = TRUE, details = function(index) {
+    calls(isolate(calls()) + 1L)
+    div(paste(rownames(mtcars)[index], "calculated", Sys.time()))
+  })
+})
+```
+
+Expect zero calculations initially. Open one car, then sort or page away and back: its retained detail should not
+recalculate. Close and reopen it: the count and timestamp should change. For nested tables, modules, data replacement,
+intentional errors and a downloadable report, run `test-lazy-reactable.R` in this directory.

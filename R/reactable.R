@@ -68,6 +68,18 @@
 #'   that takes the row index and column name as arguments, or a [JS()] function
 #'   that takes a row info object as an argument. Can also be a [colDef()] to
 #'   customize the details expander column.
+#' @param lazyDetails Calculate R row details only when opened, in a live Shiny session?
+#'   Defaults to `FALSE`. Works with ordinary `reactableOutput()` and `renderReactable()`,
+#'   including nested `reactable(..., lazyDetails = TRUE)` calls. The existing details
+#'   callback arguments (row index and column name) are unchanged. Open details are
+#'   snapshots; closing discards them and reopening recalculates them. Sorting, paging,
+#'   and virtual scrolling do not recalculate a detail that remains expanded.
+#'   Update data by rerendering the table, not `updateReactable(data = ...)` or the
+#'   JavaScript `setData()` API. Currently incompatible with `server` and `static`.
+#'   All rows have expanders, including callbacks that eventually return `NULL`.
+#'   Requires Shiny 1.5.0 or later. For nested lazy details, each parent must also
+#'   use `lazyDetails = TRUE`; lazy tables cannot be embedded in eager details or cells.
+#'   Do not cache rendered lazy widgets with Shiny's `bindCache()`.
 #' @param defaultExpanded Expand all rows by default?
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
@@ -239,8 +251,22 @@ reactable <- function(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
-  selectionId = NULL
+  selectionId = NULL,
+  lazyDetails = FALSE
 ) {
+  if (!is.logical(lazyDetails) || length(lazyDetails) != 1L || is.na(lazyDetails)) {
+    stop("`lazyDetails` must be TRUE or FALSE")
+  }
+  lazySession <- NULL
+  if (lazyDetails) {
+    lazySession <- if (requireNamespace("shiny", quietly = TRUE)) shiny::getDefaultReactiveDomain()
+    if (is.null(lazySession)) stop("`lazyDetails = TRUE` requires an active Shiny session")
+    if (utils::packageVersion("shiny") < "1.5.0") {
+      stop("`lazyDetails = TRUE` requires Shiny 1.5.0 or later")
+    }
+    if (!isFALSE(server)) stop("`lazyDetails` cannot currently be combined with `server`")
+    if (isTRUE(static)) stop("`lazyDetails` cannot be combined with `static = TRUE`")
+  }
   crosstalkKey <- NULL
   crosstalkGroup <- NULL
   dependencies <- list()
@@ -571,6 +597,7 @@ reactable <- function(
     dependencies <<- htmltools::resolveDependencies(dependencies)
   }
 
+  lazyCallbacks <- list()
   cols <- lapply(columnKeys, function(key) {
     column <- list(
       id = key,
@@ -617,11 +644,16 @@ reactable <- function(
 
     details <- column[["details"]]
     if (is.function(details)) {
-      details <- lapply(seq_len(nrow(data)), function(index) {
-        callFunc(details, index, key)
-      })
-      column$details <- lapply(details, asReactTag)
-      addDependencies(column$details)
+      if (lazyDetails) {
+        lazyCallbacks[[key]] <<- details
+        column$details <- list(lazy = TRUE)
+      } else {
+        details <- lapply(seq_len(nrow(data)), function(index) {
+          callFunc(details, index, key)
+        })
+        column$details <- lapply(details, asReactTag)
+        addDependencies(column$details)
+      }
     }
 
     filterInput <- column[["filterInput"]]
@@ -671,6 +703,10 @@ reactable <- function(
       }
       group
     })
+  }
+
+  lazyConfig <- if (length(lazyCallbacks)) {
+    registerLazyDetails(lazyCallbacks, nrow(data), lazySession)
   }
 
   preRenderHook <- NULL
@@ -791,6 +827,7 @@ reactable <- function(
     crosstalkGroup = crosstalkGroup,
     elementId = elementId,
     dataKey = dataKey,
+    lazyDetails = lazyConfig,
     static = static,
     serverRowCount = serverRowCount,
     serverMaxRowCount = serverMaxRowCount
@@ -909,7 +946,15 @@ reactableOutput <- function(outputId, width = "auto", height = "auto", inline = 
 #' @export
 renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) }
-  htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
+  render <- htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
+  func <- function(...) {
+    clearLazyOutput()
+    withCallingHandlers(render(...), error = function(e) clearLazyOutput())
+  }
+  # Preserve htmlwidgets/Shiny metadata, including the original cache hint for
+  # eager outputs. Different expressions must not share a cached result.
+  attributes(func) <- attributes(render)
+  func
 }
 
 #' Convert a reactable widget to HTML tags
