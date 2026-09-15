@@ -230,7 +230,7 @@ export function Reactable({
       language={language}
       // Reset all state when the data changes. By default, most of the table state
       // persists when the data changes (sorted, filtered, grouped state, etc.).
-      key={dataKey}
+      key={rest.lazyDetails ? JSON.stringify([dataKey, rest.lazyDetails.id]) : dataKey}
       {...rest}
     />
   )

@@ -8,7 +8,7 @@ import { getExpanders, getHeaders } from './utils/test-utils'
 let handlers
 const config = { id: 'table1', inputId: '__reactable_lazy__' }
 const columns = [{ id: 'value', name: 'Value', details: { lazy: true } }]
-const requests = () => window.Shiny.setInputValue.mock.calls.flatMap(call => call[1])
+const requests = () => window.Shiny.setInputValue.mock.calls.flatMap(call => JSON.parse(call[1]))
 const flush = () =>
   act(() => {
     jest.runOnlyPendingTimers()
@@ -50,6 +50,21 @@ test('no startup work, one request per expansion, fresh request on reopening', (
   unmount()
   flush()
   expect(requests().at(-1).action).toBe('dispose')
+})
+
+test('a new lazy registration resets expanded panels even when data is unchanged', () => {
+  const props = { data: { value: ['A'] }, columns, lazyDetails: config }
+  const { container, rerender, unmount } = render(<Reactable {...props} />)
+  fireEvent.click(getExpanders(container)[0])
+  flush()
+  expect(requests().filter(request => request.action === 'open')).toHaveLength(1)
+  rerender(<Reactable {...props} lazyDetails={{ ...config, id: 'table2' }} />)
+  flush()
+  expect(getExpanders(container)[0]).toHaveAttribute('aria-expanded', 'false')
+  expect(requests().filter(request => request.action === 'open')).toHaveLength(1)
+  expect(requests()).toContainEqual({ table: 'table1', action: 'dispose' })
+  unmount()
+  flush()
 })
 
 test('sorting requests the original data index', () => {

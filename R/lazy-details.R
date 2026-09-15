@@ -13,9 +13,13 @@ lazyDetailsRegistry <- function(session) {
   session$userData$reactableLazyDetails <- registry
   registry$observer <- shiny::observeEvent(session$input[["__reactable_lazy__"]], {
     requests <- session$input[["__reactable_lazy__"]]
+    if (is.character(requests) && length(requests) == 1L && !is.na(requests)) {
+      requests <- tryCatch(jsonlite::fromJSON(requests, simplifyVector = FALSE),
+        error = function(e) NULL)
+    }
     if (!is.list(requests)) return()
     for (request in requests) lazyDetailsRequest(registry, request)
-  }, ignoreInit = TRUE, domain = session)
+  }, domain = session)
   session$onSessionEnded(function() {
     for (id in ls(registry$tables)) destroyLazyTable(registry, id)
     registry$observer$destroy()

@@ -108,7 +108,7 @@ test_that("requests registered first inside a module use the root input observer
   module <- session$makeScope("module")
   shiny::withReactiveDomain(module, {
     widget <- reactable(data.frame(x = 1), lazyDetails = TRUE, details = function(index) "module")
-    expect_identical(getAttribs(widget)$lazyDetails$inputId, "__reactable_lazy__")
+    expect_identical(getAttribs(widget)$lazyDetails$inputId, session$ns("__reactable_lazy__"))
     registry <- session$userData$reactableLazyDetails
     id <- getAttribs(widget)$lazyDetails$id
     expect_identical(registry$tables[[id]]$session, module)
@@ -124,12 +124,17 @@ test_that("request batches travel through the Shiny observer", {
     widget <- reactable(data.frame(x = 1:2), lazyDetails = TRUE,
       details = function(index) { calls <<- c(calls, index); "ok" })
     id <- getAttribs(widget)$lazyDetails$id
-    session$flushReact()
-    session$setInputs(`__reactable_lazy__` = list(
+    session$setInputs(`__reactable_lazy__` = jsonlite::toJSON(list(
       list(table = id, request = "r1", action = "open", index = 1, column = ".details"),
       list(table = id, request = "r2", action = "open", index = 2, column = ".details")
-    ))
+    ), auto_unbox = TRUE))
     expect_identical(calls, 1:2)
+    session$setInputs(`__reactable_lazy__` = "invalid JSON")
+    expect_identical(calls, 1:2)
+    session$setInputs(`__reactable_lazy__` = jsonlite::toJSON(list(
+      list(table = id, request = "r3", action = "open", index = 1, column = ".details")
+    ), auto_unbox = TRUE))
+    expect_identical(calls, c(1L, 2L, 1L))
   })
 })
 

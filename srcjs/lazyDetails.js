@@ -19,7 +19,9 @@ function send(config, event) {
     flushTimer = setTimeout(() => {
       flushTimer = null
       for (const [inputId, requests] of pending) {
-        window.Shiny.setInputValue(inputId, requests, { priority: 'event' })
+        // Shiny simplifies array inputs, which can flatten a single request and
+        // coerce its numeric row index to a string. Preserve the JSON structure.
+        window.Shiny.setInputValue(inputId, JSON.stringify(requests), { priority: 'event' })
       }
       pending.clear()
     }, 0)
