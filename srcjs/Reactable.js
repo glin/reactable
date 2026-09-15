@@ -15,6 +15,7 @@ import { hydrate } from 'reactR'
 
 import Pagination from './Pagination'
 import WidgetContainer from './WidgetContainer'
+import { createLazyDetails, LazyRowDetails } from './lazyDetails'
 import useFlexLayout from './useFlexLayout'
 import useStickyColumns from './useStickyColumns'
 import useGroupBy from './useGroupBy'
@@ -955,7 +956,8 @@ function Table({
   nested,
   dataURL,
   serverRowCount: initialServerRowCount,
-  serverMaxRowCount: initialServerMaxRowCount
+  serverMaxRowCount: initialServerMaxRowCount,
+  lazyDetails
 }) {
   const [newData, setNewData] = React.useState(null)
   const data = React.useMemo(() => {
@@ -1552,8 +1554,17 @@ function Table({
     }
   }, [instance.toggleAllRowsExpanded, defaultExpanded])
 
+  const lazyManager = React.useMemo(() => createLazyDetails(lazyDetails), [lazyDetails])
+  React.useEffect(() => {
+    lazyManager?.observe(rootElement.current)
+    return () => lazyManager?.dispose()
+  }, [lazyManager])
+
   // Track expanded columns for multiple row details
   const [expandedColumns, setExpandedColumns] = React.useState({})
+  React.useEffect(() => {
+    lazyManager?.retain(state.expanded, expandedColumns, instance.visibleColumns)
+  }, [lazyManager, state.expanded, expandedColumns, instance.visibleColumns])
   const makeRowDetails = (rowInfo, state) => {
     // Ensure that row is expanded and not a grouped row. Row details are
     // currently not supported on grouped rows.
@@ -1576,6 +1587,17 @@ function Table({
     }
 
     const { details, html } = expandedCol
+    if (details?.lazy && lazyManager) {
+      return (
+        <LazyRowDetails
+          key={`${expandedCol.id}_${rowInfo.index}`}
+          manager={lazyManager}
+          rowId={rowInfo.id}
+          index={rowInfo.index}
+          column={expandedCol.id}
+        />
+      )
+    }
     let props = {}
     if (typeof details === 'function') {
       let content = details(rowInfo, state)
@@ -2390,6 +2412,9 @@ function Table({
     origToggleHideColumn(columnId, isHidden)
   }
   instance.setData = (data, options = {}) => {
+    if (lazyDetails) {
+      throw new Error('For lazy details, update data by rerendering with renderReactable()')
+    }
     options = Object.assign({ resetSelected: true, resetExpanded: false }, options)
     if (typeof data !== 'object' || data == null) {
       throw new Error('data must be an array of row objects or an object containing column arrays')
@@ -2534,6 +2559,7 @@ Reactable.propTypes = {
   nested: PropTypes.bool,
   dataKey: PropTypes.string,
   dataURL: PropTypes.string,
+  lazyDetails: PropTypes.object,
   serverRowCount: PropTypes.number,
   serverMaxRowCount: PropTypes.number
 }

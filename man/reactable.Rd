@@ -56,7 +56,8 @@ reactable(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
-  selectionId = NULL
+  selectionId = NULL,
+  lazyDetails = FALSE
 )
 }
 \arguments{
@@ -137,6 +138,16 @@ also be combined with expandable row details (\code{details}) and grouped rows
 that takes the row index and column name as arguments, or a \code{\link[=JS]{JS()}} function
 that takes a row info object as an argument. Can also be a \code{\link[=colDef]{colDef()}} to
 customize the details expander column.}
+
+\item{lazyDetails}{Calculate R row details only when opened, in a live Shiny session?
+Defaults to \code{FALSE}. Works with ordinary \code{reactableOutput()} and \code{renderReactable()},
+including nested \code{reactable(..., lazyDetails = TRUE)} calls. The existing details
+callback arguments (row index and column name) are unchanged. Open details are
+snapshots; closing discards them and reopening recalculates them. Sorting, paging,
+and virtual scrolling do not recalculate a detail that remains expanded.
+Update data by rerendering the table, not \code{updateReactable(data = ...)} or the
+JavaScript \code{setData()} API. Currently incompatible with \code{server} and \code{static}.
+All rows have expanders, including callbacks that eventually return \code{NULL}.}
 
 \item{defaultExpanded}{Expand all rows by default?}
 
