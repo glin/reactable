@@ -1,5 +1,7 @@
 # reactable 0.4.5.9000 (Unreleased)
 
+* Added opt-in `lazyDetails = TRUE` for native R-side lazy row details in Shiny, including nested tables, fresh calculation on reopening, and cleanup on collapse.
+
 ## New features
 
 * Experimental support for server-side data processing in Shiny apps. Use

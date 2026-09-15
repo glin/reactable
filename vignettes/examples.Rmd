@@ -2582,3 +2582,25 @@ htmltools::browsable(
   font-size: inherit;
 }
 ```
+
+
+## Lazy row details in Shiny
+
+::: {.callout}
+New in v0.4.5.9000
+:::
+
+Set `lazyDetails = TRUE` to calculate R details when a row is first opened. Use a live Shiny session with the ordinary
+`reactableOutput()` and `renderReactable()` functions. Closing discards the detail; reopening calculates it again.
+
+```{r, eval=FALSE}
+output$table <- renderReactable({
+  reactable(mtcars, lazyDetails = TRUE, details = function(index) {
+    htmltools::div(paste("Calculated for", rownames(mtcars)[index], "at", Sys.time()))
+  })
+})
+```
+
+The callback may return another `reactable(..., lazyDetails = TRUE)` for nested lazy details. Open details are snapshots;
+reactive changes do not automatically recalculate them. Replace data by rerendering the table, rather than using
+`updateReactable(data = ...)`. This initial implementation requires Shiny and does not support `server` or `static` modes.
