@@ -124,6 +124,9 @@ isTagList <- function(x) {
 }
 
 asReactTag <- function(x) {
+  if (inherits(x, "reactable") && !is.null(x$x$tag$attribs$lazyDetails)) {
+    stop("Nested lazy tables must be returned from a lazy details callback; set `lazyDetails = TRUE` on the parent")
+  }
   if (is.htmlwidget(x)) {
     if (inherits(x, "reactable")) {
       # Extract tag for nested tables

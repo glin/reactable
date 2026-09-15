@@ -10,6 +10,7 @@ let shinyConnection
 let nextRequest = 0
 const pending = new Map()
 let flushTimer
+const outputCompletions = new WeakMap()
 
 function send(config, event) {
   const events = pending.get(config.inputId) || []
@@ -34,6 +35,41 @@ function connect() {
   window.Shiny.addCustomMessageHandler('__reactable_lazy__', message => {
     managers.get(message.table)?.registered(message)
   })
+  // Delegate HTML/dependency rendering to Shiny, but also observe its completion.
+  // In recent Shiny versions dependencies load asynchronously: collapse can run
+  // before renderValue finishes binding inputs into an already detached panel.
+  const htmlBinding = window.Shiny.outputBindings
+    .getBindings()
+    .find(({ binding }) => binding.name === 'shiny.htmlOutput').binding
+  const binding = Object.create(htmlBinding)
+  binding.find = scope => window.jQuery(scope).find('.rt-lazy-output')
+  binding.renderValue = function (element, value) {
+    const complete = () => outputCompletions.get(element)?.()
+    try {
+      return Promise.resolve(htmlBinding.renderValue.call(this, element, value)).then(
+        complete,
+        error => {
+          complete()
+          throw error
+        }
+      )
+    } catch (error) {
+      complete()
+      throw error
+    }
+  }
+  binding.onValueError = function (element, error) {
+    htmlBinding.onValueError.call(this, element, error)
+    outputCompletions.get(element)?.()
+  }
+  window.Shiny.outputBindings.register(binding, 'reactable.lazyDetails')
+}
+
+function unbindPanel(panel) {
+  panel.host.querySelectorAll('.reactable.html-widget').forEach(element => {
+    ReactDOM.unmountComponentAtNode(element)
+  })
+  window.Shiny.unbindAll(panel.host)
 }
 
 export function createLazyDetails(config) {
@@ -77,22 +113,27 @@ export function createLazyDetails(config) {
       }
       container.appendChild(panel.host)
       manager.bind(panel)
+      // Dependencies may finish while this expanded panel is offscreen. The
+      // htmlwidget scanner only visits connected DOM, so initialize any widgets
+      // it missed when the panel returns. Already bound widgets are skipped.
+      if (panel.output && window.HTMLWidgets) window.HTMLWidgets.staticRender()
     },
     registered(message) {
       const panel = [...panels.values()].find(panel => panel.request === message.request)
       if (!panel || disposed || panel.output) return
       const output = document.createElement('div')
       output.id = message.outputId
-      output.className = 'shiny-html-output'
+      output.className = 'rt-lazy-output'
       panel.output = output
       panel.host.appendChild(output)
-      // Shiny emits these events on the output element, including render errors.
-      if (window.jQuery) {
-        window.jQuery(output).on('shiny:value.reactableLazy shiny:error.reactableLazy', () => {
+      outputCompletions.set(output, () => {
+        if (panel.closed) {
+          unbindPanel(panel)
+        } else {
           panel.loading.remove()
           panel.host.setAttribute('aria-busy', 'false')
-        })
-      }
+        }
+      })
       manager.bind(panel)
     },
     bind(panel) {
@@ -102,7 +143,7 @@ export function createLazyDetails(config) {
         .then(() => {
           // bindAll can finish after a fast collapse. Release any bindings it
           // attached after close() performed its initial cleanup.
-          if (disposed || !panels.has(panel.key)) window.Shiny.unbindAll(panel.host)
+          if (panel.closed) unbindPanel(panel)
         })
         .catch(error => {
           panel.loading.textContent = 'Could not display details. Close and reopen to retry.'
@@ -127,13 +168,11 @@ export function createLazyDetails(config) {
     },
     close(panel) {
       panels.delete(panel.key)
+      panel.closed = true
       // Nested htmlwidgets create independent React roots. Unmount those roots
       // as well as Shiny bindings, including roots retained offscreen.
-      panel.host.querySelectorAll('.reactable.html-widget').forEach(element => {
-        ReactDOM.unmountComponentAtNode(element)
-      })
-      window.Shiny.unbindAll(panel.host)
-      if (panel.output && window.jQuery) window.jQuery(panel.output).off('.reactableLazy')
+      unbindPanel(panel)
+      panel.host.removeAttribute('data-reactable-lazy-retained')
       panel.host.remove()
       send(config, { action: 'close', request: panel.request })
     },

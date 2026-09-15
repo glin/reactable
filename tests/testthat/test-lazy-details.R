@@ -159,3 +159,85 @@ test_that("silent validation and callback errors do not abort the request observ
     expect_null(registry$current)
   })
 })
+
+test_that("one render owns all registrations and rerendering invalidates them", {
+  skip_if_not_installed("shiny", "1.5.0")
+  session <- shiny::MockShinySession$new()
+  on.exit(session$close())
+  module <- session$makeScope("module")
+  revision <- shiny::reactiveVal(0L)
+  calls <- integer()
+  shiny::withReactiveDomain(module, {
+    module$output$table <- renderReactable({
+      revision()
+      widgets <- lapply(1:2, function(index) {
+        reactable(data.frame(y = index), lazyDetails = TRUE, details = function(i) {
+          calls <<- c(calls, index)
+          "child"
+        })
+      })
+      widgets[[2]]
+    })
+    session$flushReact()
+    registry <- session$userData$reactableLazyDetails
+    ids <- ls(registry$tables)
+    expect_length(ids, 2L)
+    expect_setequal(registry$outputs[[module$ns("table")]], ids)
+    request <- function(id) list(table = id, request = "r1", action = "open",
+      index = 1, column = ".details")
+    for (id in ids) lazyDetailsRequest(registry, request(id))
+    expect_identical(calls, 1:2)
+    expect_error(updateReactable("table", data = data.frame(x = 3:4)), "rerendering")
+    expect_silent(updateReactable("table", expanded = FALSE))
+    revision(1L)
+    session$flushReact()
+    expect_length(ls(registry$tables), 2L)
+    expect_length(intersect(ids, ls(registry$tables)), 0L)
+    for (id in ids) lazyDetailsRequest(registry, request(id))
+    expect_identical(calls, 1:2)
+    # Switching to an eager result also releases the old callbacks immediately.
+    module$output$table <- renderReactable(reactable(data.frame(x = 1:2)))
+    session$flushReact()
+    expect_length(ls(registry$tables), 0L)
+    expect_length(ls(registry$outputs), 0L)
+    expect_silent(updateReactable("table", data = data.frame(x = 3:4)))
+  })
+})
+
+
+test_that("eager parents reject lazy children that cannot survive reopening", {
+  skip_if_not_installed("shiny", "1.5.0")
+  session <- shiny::MockShinySession$new()
+  on.exit(session$close())
+  shiny::withReactiveDomain(session, {
+    expect_error(reactable(data.frame(x = 1), details = function(index) {
+      reactable(data.frame(y = 1), lazyDetails = TRUE, details = function(index) "child")
+    }), "set `lazyDetails = TRUE` on the parent", fixed = TRUE)
+  })
+})
+
+test_that("failed renders release registrations constructed before the error", {
+  skip_if_not_installed("shiny", "1.5.0")
+  session <- shiny::MockShinySession$new()
+  on.exit(session$close())
+  shiny::withReactiveDomain(session, {
+    session$output$table <- renderReactable({
+      reactable(data.frame(x = 1), lazyDetails = TRUE, details = function(index) "detail")
+      stop("render failed")
+    })
+    expect_error(session$getOutput("table"), "render failed")
+    expect_length(ls(session$userData$reactableLazyDetails$tables), 0L)
+    expect_length(ls(session$userData$reactableLazyDetails$outputs), 0L)
+  })
+})
+
+test_that("eager render caching still distinguishes different expressions", {
+  skip_if_not_installed("shiny", "1.6.0")
+  shiny::testServer(function(input, output, session) {
+    output$first <- shiny::bindCache(renderReactable(reactable(data.frame(x = "first"))), 1)
+    output$second <- shiny::bindCache(renderReactable(reactable(data.frame(x = "second"))), 1)
+  }, {
+    expect_match(output$first, '"x":\\["first"\\]')
+    expect_match(output$second, '"x":\\["second"\\]')
+  })
+})

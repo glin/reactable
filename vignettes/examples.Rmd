@@ -2601,6 +2601,7 @@ output$table <- renderReactable({
 })
 ```
 
-The callback may return another `reactable(..., lazyDetails = TRUE)` for nested lazy details. Open details are snapshots;
+Each lazy callback may return another `reactable(..., lazyDetails = TRUE)` for nested lazy details. All parents must
+also be lazy; embedding lazy tables in eager details or cells is unsupported. Open details are snapshots;
 reactive changes do not automatically recalculate them. Replace data by rerendering the table, rather than using
-`updateReactable(data = ...)`. This initial implementation requires Shiny and does not support `server` or `static` modes.
+`updateReactable(data = ...)`. This implementation requires Shiny 1.5.0 or later and does not support `server` or `static` modes.

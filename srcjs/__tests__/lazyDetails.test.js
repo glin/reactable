@@ -6,6 +6,8 @@ import { createLazyDetails, LazyRowDetails } from '../lazyDetails'
 import { getExpanders, getHeaders } from './utils/test-utils'
 
 let handlers
+let htmlBinding
+let outputBinding
 const config = { id: 'table1', inputId: '__reactable_lazy__' }
 const columns = [{ id: 'value', name: 'Value', details: { lazy: true } }]
 const requests = () => window.Shiny.setInputValue.mock.calls.flatMap(call => JSON.parse(call[1]))
@@ -17,6 +19,7 @@ const flush = () =>
 beforeEach(() => {
   jest.useFakeTimers()
   handlers = {}
+  htmlBinding = { name: 'shiny.htmlOutput', renderValue: jest.fn(), onValueError: jest.fn() }
   window.Shiny = {
     setInputValue: jest.fn(),
     onInputChange: jest.fn(),
@@ -24,7 +27,13 @@ beforeEach(() => {
       handlers[name] = handler
     }),
     bindAll: jest.fn(() => Promise.resolve()),
-    unbindAll: jest.fn()
+    unbindAll: jest.fn(),
+    outputBindings: {
+      getBindings: () => [{ binding: htmlBinding }],
+      register: binding => {
+        outputBinding = binding
+      }
+    }
   }
 })
 afterEach(() => {
@@ -223,4 +232,60 @@ test('removing dynamic UI disposes the registration', async () => {
   })
   flush()
   expect(requests().at(-1)).toMatchObject({ table: 'table1', action: 'dispose' })
+})
+
+test('dependency rendering that finishes after reopening cleans only the closed panel', async () => {
+  let finishRendering
+  htmlBinding.renderValue.mockImplementation(
+    () =>
+      new Promise(resolve => {
+        finishRendering = resolve
+      })
+  )
+  const { container, unmount } = render(
+    <Reactable data={{ value: ['A'] }} columns={columns} lazyDetails={config} />
+  )
+  fireEvent.click(getExpanders(container)[0])
+  flush()
+  act(() => handlers.__reactable_lazy__({ ...requests()[0], outputId: 'delayed' }))
+  const output = container.querySelector('#delayed')
+  const host = output.parentElement
+  let rendering
+  act(() => {
+    rendering = outputBinding.renderValue(output, { html: 'detail', deps: [] })
+  })
+  expect(host).toHaveAttribute('aria-busy', 'true')
+  fireEvent.click(getExpanders(container)[0])
+  fireEvent.click(getExpanders(container)[0])
+  flush()
+  const currentHost = container.querySelector('[data-reactable-lazy-retained]')
+  window.Shiny.unbindAll.mockClear()
+  await act(async () => {
+    finishRendering()
+    await rendering
+  })
+  expect(window.Shiny.unbindAll).toHaveBeenCalledWith(host)
+  expect(window.Shiny.unbindAll).not.toHaveBeenCalledWith(currentHost)
+  expect(host).not.toHaveAttribute('data-reactable-lazy-retained')
+  unmount()
+  flush()
+})
+
+test('loading status ends after native HTML rendering completes, including synchronous Shiny', async () => {
+  const manager = createLazyDetails(config)
+  const { container, unmount } = render(
+    <LazyRowDetails manager={manager} rowId="0" index={0} column="value" />
+  )
+  flush()
+  act(() => handlers.__reactable_lazy__({ ...requests()[0], outputId: 'ready' }))
+  const output = container.querySelector('#ready')
+  await act(async () => {
+    await outputBinding.renderValue(output, null)
+  })
+  expect(htmlBinding.renderValue).toHaveBeenCalledWith(output, null)
+  expect(output.parentElement).toHaveAttribute('aria-busy', 'false')
+  expect(container.querySelector('[role="status"]')).toBeNull()
+  unmount()
+  manager.dispose()
+  flush()
 })

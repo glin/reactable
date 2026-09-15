@@ -38,9 +38,7 @@ registerLazyDetails <- function(callbacks, rowCount, session) {
     if (!is.null(info$name)) {
       # Shiny output info already contains the fully namespaced output name.
       outputId <- info$name
-      old <- registry$outputs[[outputId]]
-      if (!is.null(old)) destroyLazyTable(registry, old)
-      registry$outputs[[outputId]] <- id
+      registry$outputs[[outputId]] <- c(registry$outputs[[outputId]], id)
     }
   }
   entry <- new.env(parent = emptyenv())
@@ -73,10 +71,29 @@ destroyLazyTable <- function(registry, id) {
   entry <- registry$tables[[id]]
   if (is.null(entry)) return(invisible(NULL))
   for (request in ls(entry$panels)) destroyLazyPanel(registry, id, request)
-  if (!is.null(entry$outputId) && identical(registry$outputs[[entry$outputId]], id)) {
-    rm(list = entry$outputId, envir = registry$outputs)
+  if (!is.null(entry$outputId)) {
+    remaining <- setdiff(registry$outputs[[entry$outputId]], id)
+    if (length(remaining)) {
+      registry$outputs[[entry$outputId]] <- remaining
+    } else if (exists(entry$outputId, envir = registry$outputs, inherits = FALSE)) {
+      rm(list = entry$outputId, envir = registry$outputs)
+    }
   }
   rm(list = id, envir = registry$tables)
+  invisible(NULL)
+}
+
+# A render may construct several candidate widgets. Invalidate the previous
+# render once, before construction, including when the new result is eager.
+clearLazyOutput <- function() {
+  session <- shiny::getDefaultReactiveDomain()
+  if (is.null(session)) return(invisible(NULL))
+  registry <- session$userData$reactableLazyDetails
+  if (is.null(registry)) return(invisible(NULL))
+  outputId <- shiny::getCurrentOutputInfo(session = session)$name
+  if (!is.null(outputId)) {
+    for (id in registry$outputs[[outputId]]) destroyLazyTable(registry, id)
+  }
   invisible(NULL)
 }
 

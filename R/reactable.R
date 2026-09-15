@@ -77,6 +77,9 @@
 #'   Update data by rerendering the table, not `updateReactable(data = ...)` or the
 #'   JavaScript `setData()` API. Currently incompatible with `server` and `static`.
 #'   All rows have expanders, including callbacks that eventually return `NULL`.
+#'   Requires Shiny 1.5.0 or later. For nested lazy details, each parent must also
+#'   use `lazyDetails = TRUE`; lazy tables cannot be embedded in eager details or cells.
+#'   Do not cache rendered lazy widgets with Shiny's `bindCache()`.
 #' @param defaultExpanded Expand all rows by default?
 #' @param selection Enable row selection? Either `"multiple"` or `"single"` for
 #'   multiple or single row selection.
@@ -258,6 +261,9 @@ reactable <- function(
   if (lazyDetails) {
     lazySession <- if (requireNamespace("shiny", quietly = TRUE)) shiny::getDefaultReactiveDomain()
     if (is.null(lazySession)) stop("`lazyDetails = TRUE` requires an active Shiny session")
+    if (utils::packageVersion("shiny") < "1.5.0") {
+      stop("`lazyDetails = TRUE` requires Shiny 1.5.0 or later")
+    }
     if (!isFALSE(server)) stop("`lazyDetails` cannot currently be combined with `server`")
     if (isTRUE(static)) stop("`lazyDetails` cannot be combined with `static = TRUE`")
   }
@@ -940,7 +946,15 @@ reactableOutput <- function(outputId, width = "auto", height = "auto", inline = 
 #' @export
 renderReactable <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) }
-  htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
+  render <- htmlwidgets::shinyRenderWidget(expr, reactableOutput, env, quoted = TRUE)
+  func <- function(...) {
+    clearLazyOutput()
+    withCallingHandlers(render(...), error = function(e) clearLazyOutput())
+  }
+  # Preserve htmlwidgets/Shiny metadata, including the original cache hint for
+  # eager outputs. Different expressions must not share a cached result.
+  attributes(func) <- attributes(render)
+  func
 }
 
 #' Convert a reactable widget to HTML tags
