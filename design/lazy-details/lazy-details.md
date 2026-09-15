@@ -23,22 +23,26 @@ A native lifecycle observer handles Shiny removing dynamic UI without unmounting
 
 ## Initial boundaries
 
-- Requires Shiny. Static HTML cannot evaluate arbitrary R callbacks after rendering.
+- Requires Shiny 1.5.0 or later. Static HTML cannot evaluate arbitrary R callbacks after rendering.
 - Rerender to replace data. `updateReactable(data = ...)` and JavaScript `setData()` are rejected for lazy tables because
   existing callback closures may capture the previous dataset. State-only `updateReactable()` remains available.
 - Server-side data processing and static server rendering are not supported with lazy details in this first version.
 - All eligible rows show an expander. A callback that returns `NULL` results in an empty panel; discovering that in
   advance would require evaluating the callback eagerly.
 - Open details are snapshots. Reactive changes do not automatically rerun an open callback. Close and reopen to refresh.
+- Do not cache rendered lazy widgets with `bindCache()`: cached widget identities cannot restore disposed callbacks.
 - Computation is synchronous in R. A long callback still occupies that Shiny R process; the option postpones work but
   does not move it to a background worker or cancel an already executing R call.
-- Nested lazy tables should be constructed directly inside the details callback. Arbitrary application-created
+- Nested lazy tables must be constructed directly inside a lazy details callback. Eager details and cells reject
+  embedded lazy tables because their serialized registrations cannot be recreated on reopening. Arbitrary application-created
   observers or separately registered Shiny outputs remain the application's responsibility.
 
 ## Accessibility
 
 Existing expander keyboard interaction and `aria-expanded` behavior are preserved. Pending content uses `role="status"`
-and `aria-busy`; callback errors use `role="alert"`. Loading finishes when Shiny delivers the output value or error.
+and `aria-busy`; callback errors use `role="alert"`. Loading finishes after Shiny renders the output or reports an error. A dedicated output binding delegates to
+Shiny’s native HTML renderer and releases bindings if asynchronous dependency loading finishes after collapse.
+Widgets whose dependencies finish offscreen initialize when their retained panel returns to view.
 
 ## Test plan
 
@@ -52,7 +56,8 @@ Charts use inline SVG generated in R; no additional chart packages or external a
 Live telemetry reports table build/serialization time, widget JSON size, callback counts, and retained panels. The
 "Compare eager vs lazy" button benchmarks the same 50 accounts in both modes, leaving market/receipt descendants lazy
 in both cases. Benchmark registrations are cleaned up and sample builds are excluded from the exploration counters.
-This sample comparison does not represent a measured eager run on all 10,000 accounts.
+The samples capture HTML snapshots for construction/serialization measurement only; they are never mounted in a
+live eager parent. This sample comparison does not represent a measured eager run on all 10,000 accounts.
 
 Run `python3 design/lazy-details/test-dashboard-app.py http://127.0.0.1:3847` with Python Playwright and Chromium installed
 to verify zero startup dashboard work, three-level expansion, retention through virtual scrolling, collapse/reopen,
@@ -77,3 +82,10 @@ error recovery, independent tables, module namespaces and virtual scrolling. Dow
 Automated R tests cover deferred evaluation, unchanged eager behavior, invalid request validation, duplicate suppression,
 reactive isolation and recursive cleanup. JavaScript tests cover request identity, batching, sorting, stale replies,
 retained DOM and column switching. Run the existing R and JS suites as well as these new tests.
+
+### Delayed dependency lifecycle
+
+Run `shiny::runApp("design/lazy-details/lifecycle-app.R")`, then
+`python3 design/lazy-details/test-lifecycle-app.py http://127.0.0.1:3847` with Shiny 1.7.5 or later. The test delays a
+script dependency, collapses the panel, and verifies that no inputs remain bound to its detached content. It then
+checks reopening and nested expansion, plus initialization after a dependency finishes while the panel is paged out.

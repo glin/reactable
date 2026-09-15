@@ -5,7 +5,7 @@ app <- source("design/lazy-details/dashboard-app.R")$value
 result <- NULL
 shiny::testServer(app, {
   session$setInputs(region = "All regions", virtual = TRUE, refresh = 0)
-  result <<- dashboard_benchmark(account_dashboard)
+  result <<- run_benchmark()
   stopifnot(result$lazy$dashboards == 0L, result$eager$dashboards == 50L,
     isolate(stats())$market == 0L, isolate(stats())$receipt == 0L)
 })

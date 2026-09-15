@@ -89,7 +89,10 @@ dashboard_benchmark <- function(build, data = accounts[seq_len(50), ]) {
     start <- proc.time()[["elapsed"]]
     widget <- reactable(data, theme = table_theme, lazyDetails = lazy, details = function(index) {
       calculated <<- calculated + 1L
-      build(data[index, ], index)
+      # Benchmark serialization only: capture identical HTML in both modes.
+      # These samples are never displayed, so nested lazy registrations are not
+      # mounted inside an eager parent (an unsupported live configuration).
+      htmltools::HTML(as.character(build(data[index, ], index)))
     })
     bytes <- nchar(reactable:::toJSON(widget$x), type = "bytes")
     list(seconds = unname(proc.time()[["elapsed"]] - start), bytes = bytes, dashboards = calculated)
