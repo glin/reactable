@@ -168,7 +168,7 @@ div(class = "standings",
 
 ---
 
-Source: [FiveThirtyEight](https://projects.fivethirtyeight.com/2019-womens-world-cup-predictions/)
+Source: [FiveThirtyEight (Internet Archive)](https://web.archive.org/web/20230315000000/https://projects.fivethirtyeight.com/2019-womens-world-cup-predictions/) *(FiveThirtyEight's live URL now redirects to ABC News; see [Football Charts](https://www.football-charts.com/rankings) for active SPI-style football ratings and tournament/league probability tables)*
 
 Raw data: [`wwc_forecasts.csv`](wwc_forecasts.csv)
 
