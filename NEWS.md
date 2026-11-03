@@ -2,6 +2,8 @@
 
 ## New features
 
+* Added opt-in `lazyDetails = TRUE` for R row details in Shiny (>= 1.5.0), including nested tables, fresh calculation on reopening, and cleanup on collapse. Open details retain a snapshot until closed. Data replacement requires rerendering; server-side processing and static rendering are not yet supported.
+
 * Experimental support for server-side data processing in Shiny apps. Use
   `reactable(server = TRUE)` to render a table using server-side data processing in Shiny.
   Server-side data processing requires the V8 package, which is not installed

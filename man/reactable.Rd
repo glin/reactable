@@ -56,7 +56,8 @@ reactable(
   elementId = NULL,
   static = getOption("reactable.static", FALSE),
   server = FALSE,
-  selectionId = NULL
+  selectionId = NULL,
+  lazyDetails = FALSE
 )
 }
 \arguments{
@@ -231,6 +232,19 @@ Server-side data processing is currently \strong{experimental}.}
 
 \item{selectionId}{\strong{Deprecated}. Use \code{\link[=getReactableState]{getReactableState()}} to get the selected rows
 in Shiny.}
+
+\item{lazyDetails}{Calculate R row details only when opened, in a live Shiny session?
+Defaults to \code{FALSE}. Works with ordinary \code{reactableOutput()} and \code{renderReactable()},
+including nested \code{reactable(..., lazyDetails = TRUE)} calls. The existing details
+callback arguments (row index and column name) are unchanged. Open details are
+snapshots; closing discards them and reopening recalculates them. Sorting, paging,
+and virtual scrolling do not recalculate a detail that remains expanded.
+Update data by rerendering the table, not \code{updateReactable(data = ...)} or the
+JavaScript \code{setData()} API. Currently incompatible with \code{server} and \code{static}.
+All rows have expanders, including callbacks that eventually return \code{NULL}.
+Requires Shiny 1.5.0 or later. For nested lazy details, each parent must also
+use \code{lazyDetails = TRUE}; lazy tables cannot be embedded in eager details or cells.
+Do not cache rendered lazy widgets with Shiny's \code{bindCache()}.}
 }
 \value{
 A \code{reactable} HTML widget that can be used in R Markdown documents

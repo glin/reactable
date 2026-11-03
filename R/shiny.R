@@ -112,6 +112,10 @@ updateReactable <- function(outputId, data = NULL, sortBy = NULL, page = NULL,
 
   dataKey <- NULL
   if (!is.null(data)) {
+    registry <- session$userData$reactableLazyDetails
+    if (!is.null(registry) && !is.null(registry$outputs[[outputId]])) {
+      stop("For lazy details, update data by rerendering with renderReactable(), not updateReactable(data = ...)")
+    }
     if (!is.data.frame(data) && !is.matrix(data)) {
       stop("`data` must be a data frame or matrix")
     }
